@@ -506,19 +506,19 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <script>
 // ========== CONFIG - EDIT THESE ==========
 const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBZsbVPs7csdRRNj4oMxmxxFpkaC_99Z-I",
+  authDomain: "moi-et-toi-mt.firebaseapp.com",
+  databaseURL: "https://moi-et-toi-mt-default-rtdb.firebaseio.com",
+  projectId: "moi-et-toi-mt",
+  storageBucket: "moi-et-toi-mt.firebasestorage.app",
+  messagingSenderId: "687030081738",
+  appId: "1:687030081738:web:cb1b27a6faece0735ebc33"
 };
 
-const CLAUDE_API_KEY = "YOUR_ANTHROPIC_API_KEY";
+const CLAUDE_API_KEY = "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";
 
-// Profile names (change to your actual names)
-const NAMES = { her: "Babe", him: "King" };
+// Profile names - loaded from Firebase, defaults shown on login
+let NAMES = { her: "Her", him: "Him" };
 
 // ==========================================
 
@@ -528,8 +528,23 @@ let db, user, partner, selectedMood = 0, logExercises = [], logType = '', chatHi
 function init() {
   firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.database();
-  document.getElementById('her-name-login').textContent = NAMES.her;
-  document.getElementById('him-name-login').textContent = NAMES.him;
+  
+  // Load names from Firebase
+  db.ref('profiles').on('value', snap => {
+    const data = snap.val();
+    if (data) {
+      if (data.her) NAMES.her = data.her;
+      if (data.him) NAMES.him = data.him;
+    }
+    document.getElementById('her-name-login').textContent = NAMES.her;
+    document.getElementById('him-name-login').textContent = NAMES.him;
+    // Update names in app if already logged in
+    if (user) {
+      document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
+      document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
+    }
+  });
+  
   const saved = localStorage.getItem('met_user');
   if (saved) login(saved);
 }
@@ -538,6 +553,45 @@ function login(id) {
   user = id;
   partner = id === 'her' ? 'him' : 'her';
   localStorage.setItem('met_user', id);
+  
+  // Check if this user has set their name
+  if (NAMES[id] === 'Her' || NAMES[id] === 'Him') {
+    // Show name setup
+    showNameSetup(id);
+    return;
+  }
+  
+  finishLogin();
+}
+
+function showNameSetup(id) {
+  document.getElementById('login').innerHTML = `
+    <div class="login-logo">M</div>
+    <h1>Moi et Toi</h1>
+    <div class="sub">Set Up Your Profile</div>
+    <div class="lbl">What should we call you?</div>
+    <input type="text" id="name-input" placeholder="Your name..." 
+           style="width:100%;max-width:280px;padding:14px 18px;border-radius:12px;border:1px solid var(--bdr);
+           background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:16px;
+           text-align:center;outline:none;margin-bottom:16px"
+           onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--bdr)'">
+    <button onclick="saveName()" style="width:100%;max-width:280px;padding:14px;border-radius:12px;
+            border:1px solid var(--gold);background:rgba(155,35,53,.1);color:var(--gold);
+            font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;letter-spacing:1px;
+            cursor:pointer">Save & Enter ♡</button>
+  `;
+  setTimeout(() => document.getElementById('name-input').focus(), 300);
+}
+
+async function saveName() {
+  const name = document.getElementById('name-input').value.trim();
+  if (!name) { toast('Enter your name'); return; }
+  NAMES[user] = name;
+  await db.ref('profiles/' + user).set(name);
+  finishLogin();
+}
+
+function finishLogin() {
   document.getElementById('login').classList.add('h');
   document.getElementById('shell').classList.add('on');
   document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
@@ -679,7 +733,7 @@ async function sendAI() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1024,
-        system: `You are the AI assistant for "Moi et Toi", a private relationship app for two people in a long-distance relationship. Their names are ${NAMES.her} and ${NAMES.him}. You help with anything they need: meal plans, workout advice, relationship tips, planning dates, managing shared goals, or just being someone to talk to. Be warm, supportive, and concise. You're part of their team. The current user talking to you is ${NAMES[user]}.`,
+        system: `You are the AI assistant for "Moi et Toi", a private relationship app for two people. Their names are ${NAMES.her} and ${NAMES.him}. You help with anything they need: meal plans, workout advice, relationship tips, planning dates, managing shared goals, or just being someone to talk to. Be warm, supportive, and concise. You're part of their team. The current user talking to you is ${NAMES[user]}.`,
         messages: chatHistory
       })
     });
