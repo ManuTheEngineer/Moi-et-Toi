@@ -284,6 +284,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="mi" onclick="go('w3')"><div class="mic v">⬡</div><div class="mt"><h4>Full Body</h4><p>Complete</p></div></div>
   <div class="msl">Account</div>
   <div class="mi" onclick="switchUser()"><div class="mic a">↔</div><div class="mt"><h4>Switch Profile</h4></div></div>
+  <div class="mi" onclick="updateApiKey()"><div class="mic a">🔑</div><div class="mt"><h4>API Key</h4></div></div>
   <div class="mi" onclick="logout()"><div class="mic a">←</div><div class="mt"><h4>Log Out</h4></div></div>
   <div class="mfoot">Moi et Toi ✦</div>
 </div>
@@ -504,18 +505,48 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <!-- ===== JAVASCRIPT ===== -->
 <script>
-// ========== CONFIG - EDIT THESE ==========
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBZsbVPs7csdRRNj4oMxmxxFpkaC_99Z-I",
-  authDomain: "moi-et-toi-mt.firebaseapp.com",
-  databaseURL: "https://moi-et-toi-mt-default-rtdb.firebaseio.com",
-  projectId: "moi-et-toi-mt",
-  storageBucket: "moi-et-toi-mt.firebasestorage.app",
-  messagingSenderId: "687030081738",
-  appId: "1:687030081738:web:cb1b27a6faece0735ebc33"
-};
+// ========== CONFIG ==========
+// All keys stored in Firebase after first setup - nothing in source code
 
-const CLAUDE_API_KEY = "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";
+let FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_firebase_config') || 'null');
+
+if (!FIREBASE_CONFIG) {
+  // First time setup - show config prompt
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('login').innerHTML = `
+      <div class="login-logo">M</div>
+      <h1>Moi et Toi</h1>
+      <div class="sub">First Time Setup</div>
+      <div class="lbl" style="margin-bottom:12px">Firebase Config (paste the whole JSON object)</div>
+      <textarea id="fb-config" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"...","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}'
+        style="width:100%;max-width:340px;height:120px;padding:12px;border-radius:12px;border:1px solid var(--bdr);
+        background:var(--bg2);color:var(--t1);font-family:monospace;font-size:11px;outline:none;resize:none;margin-bottom:16px"
+        onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--bdr)'"></textarea>
+      <button onclick="saveFirebaseConfig()" style="width:100%;max-width:340px;padding:14px;border-radius:12px;
+        border:1px solid var(--gold);background:rgba(155,35,53,.1);color:var(--gold);
+        font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;letter-spacing:1px;
+        cursor:pointer">Connect & Continue</button>
+      <div style="margin-top:20px;font-size:11px;color:var(--t3);text-align:center;max-width:340px">
+        This saves to your browser only. You'll need to do this once on each device.</div>
+    `;
+  });
+}
+
+function saveFirebaseConfig() {
+  const raw = document.getElementById('fb-config').value.trim();
+  try {
+    const config = JSON.parse(raw);
+    if (!config.apiKey || !config.databaseURL) throw new Error('Missing fields');
+    localStorage.setItem('met_firebase_config', JSON.stringify(config));
+    FIREBASE_CONFIG = config;
+    location.reload();
+  } catch(e) {
+    alert('Invalid config. Paste the JSON object with apiKey, databaseURL, etc.');
+  }
+}
+
+// API key loaded from Firebase - set once, works for both
+let CLAUDE_API_KEY = "";
 
 // Profile names - loaded from Firebase, defaults shown on login
 let NAMES = { her: "Her", him: "Him" };
@@ -535,6 +566,7 @@ function init() {
     if (data) {
       if (data.her) NAMES.her = data.her;
       if (data.him) NAMES.him = data.him;
+      if (data.apiKey) CLAUDE_API_KEY = data.apiKey;
     }
     document.getElementById('her-name-login').textContent = NAMES.her;
     document.getElementById('him-name-login').textContent = NAMES.him;
@@ -602,6 +634,15 @@ function finishLogin() {
 
 function switchUser() { localStorage.removeItem('met_user'); location.reload(); }
 function logout() { localStorage.removeItem('met_user'); location.reload(); }
+function updateApiKey() {
+  const key = prompt('Enter Anthropic API key:', CLAUDE_API_KEY || '');
+  if (key && key.startsWith('sk-ant-')) {
+    CLAUDE_API_KEY = key;
+    db.ref('profiles/apiKey').set(key);
+    toast('API key updated for both ✓');
+    closeMenu();
+  } else if (key) { toast('Invalid key format'); }
+}
 
 // ===== NAV =====
 function go(p) {
@@ -713,6 +754,15 @@ function renderDashMoods(moods) {
 
 // ===== AI CHAT =====
 async function sendAI() {
+  // Check for API key
+  if (!CLAUDE_API_KEY) {
+    const key = prompt('Enter your Anthropic API key (one-time setup, works for both of you):');
+    if (!key || !key.startsWith('sk-ant-')) { toast('Invalid API key'); return; }
+    CLAUDE_API_KEY = key;
+    await db.ref('profiles/apiKey').set(key);
+    toast('API key saved for both ✓');
+  }
+  
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
@@ -812,7 +862,9 @@ if ('serviceWorker' in navigator) {
 }
 
 // ===== BOOT =====
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  if (FIREBASE_CONFIG) init();
+});
 </script>
 </body>
 </html>
