@@ -519,25 +519,18 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <!-- ===== JAVASCRIPT ===== -->
 <script>
 // ========== CONFIG ==========
-// Firebase config stored locally per device. Set via setup link (one-click).
-// Anthropic API key stored in Firebase, set once by admin.
+// Firebase config is safe to be public (it's just an identifier)
+// Anthropic API key is stored securely in Firebase, set once by admin
 
-let FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_fb') || 'null');
-
-// Check for setup link: ?setup=BASE64CONFIG
-const urlParams = new URLSearchParams(window.location.search);
-const setupParam = urlParams.get('setup');
-if (setupParam) {
-  try {
-    const decoded = JSON.parse(atob(setupParam));
-    if (decoded.apiKey && decoded.databaseURL) {
-      localStorage.setItem('met_fb', JSON.stringify(decoded));
-      FIREBASE_CONFIG = decoded;
-      // Clean URL
-      window.history.replaceState({}, '', window.location.pathname);
-    }
-  } catch(e) {}
-}
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBZsbVPs7csdRRNj4oMxmxxFpkaC_99Z-I",
+  authDomain: "moi-et-toi-mt.firebaseapp.com",
+  databaseURL: "https://moi-et-toi-mt-default-rtdb.firebaseio.com",
+  projectId: "moi-et-toi-mt",
+  storageBucket: "moi-et-toi-mt.firebasestorage.app",
+  messagingSenderId: "687030081738",
+  appId: "1:687030081738:web:cb1b27a6faece0735ebc33"
+};
 
 // API key loaded from Firebase - set once, works for both
 let CLAUDE_API_KEY = "";
@@ -606,12 +599,17 @@ async function doLogin() {
       finishLogin();
     }
   } catch(e) {
+    console.error('Login error:', e.code, e.message);
     if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-      showError('Wrong password.');
+      showError('Wrong email or password.');
     } else if (e.code === 'auth/user-not-found') {
       showError('Account not found.');
+    } else if (e.code === 'auth/invalid-email') {
+      showError('Invalid email format.');
+    } else if (e.code === 'auth/too-many-requests') {
+      showError('Too many attempts. Wait a minute.');
     } else {
-      showError('Sign in failed. Try again.');
+      showError(e.code || 'Sign in failed. Try again.');
     }
   }
 }
