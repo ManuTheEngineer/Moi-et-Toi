@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <style>
 /* ===== CONFIG - EDIT THESE ===== */
 /* Firebase and API keys are set in the <script> at the bottom of this file */
@@ -260,11 +261,23 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="login-logo">M</div>
   <h1>Moi et Toi</h1>
   <div class="sub">Me and You</div>
-  <div class="lbl">Who's Here?</div>
-  <div class="pcards">
-    <div class="pcard" onclick="login('her')"><div class="pav">✦</div><h3 id="her-name-login">Her</h3><p>View + Check In</p></div>
-    <div class="pcard" onclick="login('him')"><div class="pav">◆</div><h3 id="him-name-login">Him</h3><p>View + Check In</p></div>
-  </div>
+  <div class="lbl">Sign In</div>
+  <input type="email" id="login-email" placeholder="Email" 
+    style="width:100%;max-width:300px;padding:14px 18px;border-radius:12px;border:1px solid var(--bdr);
+    background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;
+    text-align:center;outline:none;margin-bottom:10px"
+    onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--bdr)'">
+  <input type="password" id="login-pass" placeholder="Password"
+    style="width:100%;max-width:300px;padding:14px 18px;border-radius:12px;border:1px solid var(--bdr);
+    background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;
+    text-align:center;outline:none;margin-bottom:16px"
+    onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--bdr)'"
+    onkeydown="if(event.key==='Enter')doLogin()">
+  <button onclick="doLogin()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;
+    border:1px solid var(--gold);background:rgba(155,35,53,.1);color:var(--gold);
+    font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;letter-spacing:1px;
+    cursor:pointer">Enter ♡</button>
+  <div id="login-err" style="margin-top:14px;font-size:12px;color:var(--red);text-align:center"></div>
 </div>
 
 <!-- ===== APP SHELL ===== -->
@@ -506,97 +519,127 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <!-- ===== JAVASCRIPT ===== -->
 <script>
 // ========== CONFIG ==========
-// All keys stored in Firebase after first setup - nothing in source code
+// Firebase config stored locally per device. Set via setup link (one-click).
+// Anthropic API key stored in Firebase, set once by admin.
 
-let FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_firebase_config') || 'null');
+let FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_fb') || 'null');
 
-if (!FIREBASE_CONFIG) {
-  // First time setup - show config prompt
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('login').innerHTML = `
-      <div class="login-logo">M</div>
-      <h1>Moi et Toi</h1>
-      <div class="sub">First Time Setup</div>
-      <div class="lbl" style="margin-bottom:12px">Firebase Config (paste the whole JSON object)</div>
-      <textarea id="fb-config" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"...","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}'
-        style="width:100%;max-width:340px;height:120px;padding:12px;border-radius:12px;border:1px solid var(--bdr);
-        background:var(--bg2);color:var(--t1);font-family:monospace;font-size:11px;outline:none;resize:none;margin-bottom:16px"
-        onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--bdr)'"></textarea>
-      <button onclick="saveFirebaseConfig()" style="width:100%;max-width:340px;padding:14px;border-radius:12px;
-        border:1px solid var(--gold);background:rgba(155,35,53,.1);color:var(--gold);
-        font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;letter-spacing:1px;
-        cursor:pointer">Connect & Continue</button>
-      <div style="margin-top:20px;font-size:11px;color:var(--t3);text-align:center;max-width:340px">
-        This saves to your browser only. You'll need to do this once on each device.</div>
-    `;
-  });
-}
-
-function saveFirebaseConfig() {
-  const raw = document.getElementById('fb-config').value.trim();
+// Check for setup link: ?setup=BASE64CONFIG
+const urlParams = new URLSearchParams(window.location.search);
+const setupParam = urlParams.get('setup');
+if (setupParam) {
   try {
-    const config = JSON.parse(raw);
-    if (!config.apiKey || !config.databaseURL) throw new Error('Missing fields');
-    localStorage.setItem('met_firebase_config', JSON.stringify(config));
-    FIREBASE_CONFIG = config;
-    location.reload();
-  } catch(e) {
-    alert('Invalid config. Paste the JSON object with apiKey, databaseURL, etc.');
-  }
+    const decoded = JSON.parse(atob(setupParam));
+    if (decoded.apiKey && decoded.databaseURL) {
+      localStorage.setItem('met_fb', JSON.stringify(decoded));
+      FIREBASE_CONFIG = decoded;
+      // Clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  } catch(e) {}
 }
 
 // API key loaded from Firebase - set once, works for both
 let CLAUDE_API_KEY = "";
 
-// Profile names - loaded from Firebase, defaults shown on login
+// Profile names - loaded from Firebase
 let NAMES = { her: "Her", him: "Him" };
 
 // ==========================================
 
-let db, user, partner, selectedMood = 0, logExercises = [], logType = '', chatHistory = [];
+let db, user, partner, authUser, selectedMood = 0, logExercises = [], logType = '', chatHistory = [];
+
+// Map email to profile role
+const EMAIL_MAP = {
+  'abokemmanuel1@gmail.com': 'him',
+  'takelley11@gmail.com': 'her'
+};
 
 // ===== INIT =====
-function init() {
+async function init() {
   firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.database();
   
-  // Load names from Firebase
-  db.ref('profiles').on('value', snap => {
-    const data = snap.val();
-    if (data) {
-      if (data.her) NAMES.her = data.her;
-      if (data.him) NAMES.him = data.him;
-      if (data.apiKey) CLAUDE_API_KEY = data.apiKey;
-    }
-    document.getElementById('her-name-login').textContent = NAMES.her;
-    document.getElementById('him-name-login').textContent = NAMES.him;
-    // Update names in app if already logged in
-    if (user) {
-      document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
-      document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
+  // Check if already signed in
+  firebase.auth().onAuthStateChanged(async (fbUser) => {
+    if (fbUser) {
+      authUser = fbUser;
+      const role = EMAIL_MAP[fbUser.email];
+      if (role) {
+        user = role;
+        partner = role === 'her' ? 'him' : 'her';
+        await loadProfiles();
+        finishLogin();
+      } else {
+        firebase.auth().signOut();
+        showError('Account not authorized.');
+      }
     }
   });
-  
-  const saved = localStorage.getItem('met_user');
-  if (saved) login(saved);
 }
 
-function login(id) {
-  user = id;
-  partner = id === 'her' ? 'him' : 'her';
-  localStorage.setItem('met_user', id);
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
   
-  // Check if this user has set their name
-  if (NAMES[id] === 'Her' || NAMES[id] === 'Him') {
-    // Show name setup
-    showNameSetup(id);
-    return;
+  if (!email || !pass) { showError('Enter email and password'); return; }
+  
+  try {
+    const result = await firebase.auth().signInWithEmailAndPassword(email, pass);
+    authUser = result.user;
+    const role = EMAIL_MAP[email];
+    
+    if (!role) { 
+      firebase.auth().signOut();
+      showError('Account not authorized.'); 
+      return; 
+    }
+    
+    user = role;
+    partner = role === 'her' ? 'him' : 'her';
+    await loadProfiles();
+    
+    // Check if name is set
+    if (NAMES[user] === 'Her' || NAMES[user] === 'Him') {
+      showNameSetup();
+    } else {
+      finishLogin();
+    }
+  } catch(e) {
+    if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+      showError('Wrong password.');
+    } else if (e.code === 'auth/user-not-found') {
+      showError('Account not found.');
+    } else {
+      showError('Sign in failed. Try again.');
+    }
   }
-  
-  finishLogin();
 }
 
-function showNameSetup(id) {
+function showError(msg) {
+  const el = document.getElementById('login-err');
+  if (el) el.textContent = msg;
+}
+
+async function loadProfiles() {
+  return new Promise(resolve => {
+    db.ref('profiles').on('value', snap => {
+      const data = snap.val();
+      if (data) {
+        if (data.her) NAMES.her = data.her;
+        if (data.him) NAMES.him = data.him;
+        if (data.apiKey) CLAUDE_API_KEY = data.apiKey;
+      }
+      if (user) {
+        document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
+        document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
+      }
+      resolve();
+    });
+  });
+}
+
+function showNameSetup() {
   document.getElementById('login').innerHTML = `
     <div class="login-logo">M</div>
     <h1>Moi et Toi</h1>
@@ -606,7 +649,8 @@ function showNameSetup(id) {
            style="width:100%;max-width:280px;padding:14px 18px;border-radius:12px;border:1px solid var(--bdr);
            background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:16px;
            text-align:center;outline:none;margin-bottom:16px"
-           onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--bdr)'">
+           onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--bdr)'"
+           onkeydown="if(event.key==='Enter')saveName()">
     <button onclick="saveName()" style="width:100%;max-width:280px;padding:14px;border-radius:12px;
             border:1px solid var(--gold);background:rgba(155,35,53,.1);color:var(--gold);
             font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;letter-spacing:1px;
@@ -632,8 +676,8 @@ function finishLogin() {
   listenMoods();
 }
 
-function switchUser() { localStorage.removeItem('met_user'); location.reload(); }
-function logout() { localStorage.removeItem('met_user'); location.reload(); }
+function switchUser() { firebase.auth().signOut(); location.reload(); }
+function logout() { firebase.auth().signOut(); location.reload(); }
 function updateApiKey() {
   const key = prompt('Enter Anthropic API key:', CLAUDE_API_KEY || '');
   if (key && key.startsWith('sk-ant-')) {
@@ -862,9 +906,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // ===== BOOT =====
-document.addEventListener('DOMContentLoaded', () => {
-  if (FIREBASE_CONFIG) init();
-});
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
