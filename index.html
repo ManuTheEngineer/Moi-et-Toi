@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#F5F3F0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Moi et Toi">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+<title>Moi et Toi</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+/* ===== CONFIG - EDIT THESE ===== */
+/* Firebase and API keys are set in the <script> at the bottom of this file */
+
+/* ===== VARIABLES ===== */
+:root {
+  --bg: #F5F3F0; --bg2: #EBE8E4; --bg3: #E0DCD8;
+  --gold: #9B2335; --gold-l: #B52A3F; --amber: #4D4647; --amber-s: #3A3536;
+  --cream: #2A2425; --cream-d: #4D4647;
+  --t1: #2A2425; --t2: #6B6465; --t3: #9A9394;
+  --bdr: rgba(155,35,53,0.12);
+  --red: #9B2335; --red-s: rgba(155,35,53,0.1); --red-b: rgba(155,35,53,0.2);
+  --vio: #7B5B8C; --vio-s: rgba(123,91,140,0.1); --vio-b: rgba(123,91,140,0.2);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(155,35,53,.04) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(77,70,71,.03) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+/* ===== LOGIN ===== */
+.login{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:40px 24px}
+.login.h{display:none}
+.login-logo{width:68px;height:68px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);margin-bottom:28px;animation:glow 3s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(155,35,53,0)}50%{box-shadow:0 0 24px 3px rgba(155,35,53,.15)}}
+.login h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:36px;letter-spacing:5px;text-transform:uppercase;color:var(--cream);margin-bottom:6px}
+.login .sub{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:52px}
+.login .lbl{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--t3);margin-bottom:20px}
+.pcards{display:flex;gap:16px;width:100%;max-width:340px}
+.pcard{flex:1;padding:30px 14px;border-radius:14px;text-align:center;cursor:pointer;transition:all .3s;border:1px solid var(--bdr);background:var(--bg2)}
+.pcard:hover{transform:translateY(-4px)}
+.pcard:first-child:hover{border-color:var(--gold);box-shadow:0 8px 30px rgba(155,35,53,.1)}
+.pcard:last-child:hover{border-color:var(--amber);box-shadow:0 8px 30px rgba(77,70,71,.1)}
+.pav{width:52px;height:52px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.pcard:first-child .pav{background:rgba(155,35,53,.12);border:1px solid rgba(155,35,53,.2);color:var(--gold)}
+.pcard:last-child .pav{background:rgba(77,70,71,.12);border:1px solid rgba(77,70,71,.2);color:var(--amber)}
+.pcard h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--cream);margin-bottom:3px}
+.pcard p{font-size:11px;color:var(--t3)}
+
+/* ===== SHELL ===== */
+.shell{display:none;padding-bottom:74px}
+.shell.on{display:block}
+.ctn{max-width:480px;margin:0 auto;padding:20px 20px 30px;position:relative;z-index:1}
+
+/* ===== BOTTOM NAV ===== */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:800;background:rgba(245,243,240,.95);backdrop-filter:blur(12px);border-top:1px solid var(--bdr);display:flex;justify-content:space-around;padding:8px 0 env(safe-area-inset-bottom,8px)}
+.bn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;cursor:pointer;border:none;background:none}
+.bn .ni{font-size:18px;color:var(--t3);transition:color .2s}
+.bn .nl{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);font-family:'Outfit',sans-serif;transition:color .2s}
+.bn.on .ni,.bn.on .nl{color:var(--gold)}
+
+/* ===== HAMBURGER ===== */
+.hbg{position:fixed;top:16px;right:16px;z-index:1000;width:40px;height:40px;background:rgba(245,243,240,.9);backdrop-filter:blur(12px);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all .3s}
+.hbg:hover{border-color:var(--gold)}
+.hbg span{display:block;width:18px;height:1.5px;background:var(--gold);transition:all .3s;border-radius:2px}
+.hbg.on span:nth-child(1){transform:rotate(45deg) translate(4.5px,4.5px)}
+.hbg.on span:nth-child(2){opacity:0}
+.hbg.on span:nth-child(3){transform:rotate(-45deg) translate(4.5px,-4.5px)}
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:900;opacity:0;pointer-events:none;transition:opacity .3s}
+.mov.on{opacity:1;pointer-events:all}
+.mpan{position:fixed;top:0;right:-280px;width:260px;height:100vh;background:#EDE9E5;border-left:1px solid var(--bdr);z-index:950;padding:80px 22px 40px;transition:right .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}
+.mpan.on{right:0}
+.msl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin:18px 0 8px}
+.mi{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(201,168,76,.06);cursor:pointer;transition:all .2s}
+.mi:hover{padding-left:6px}
+.mic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.mic.g{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.15);color:var(--gold)}
+.mic.r{background:var(--red-s);border:1px solid var(--red-b);color:var(--red)}
+.mic.v{background:var(--vio-s);border:1px solid var(--vio-b);color:var(--vio)}
+.mic.a{background:rgba(212,148,58,.1);border:1px solid rgba(212,148,58,.2);color:var(--amber)}
+.mt h4{font-size:12px;font-weight:500;color:var(--cream)}
+.mt p{font-size:10px;color:var(--t3)}
+.mfoot{margin-top:auto;padding-top:20px;font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--t3)}
+
+/* ===== PAGES ===== */
+.pg{display:none}.pg.on{display:block}
+.phd{padding:28px 0 18px;text-align:center}
+.phd h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:26px;letter-spacing:3px;text-transform:uppercase;color:var(--cream)}
+.phd p{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-top:4px}
+
+/* ===== CARDS ===== */
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;padding:18px;margin-bottom:12px}
+.card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.card-t{font-size:14px;font-weight:500;color:var(--cream)}
+.card-s{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
+.slbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);font-weight:500;margin:22px 0 10px}
+
+/* ===== STAT GRID ===== */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.sb{text-align:center;padding:10px 4px;background:rgba(155,35,53,.04);border-radius:8px;border:1px solid rgba(155,35,53,.08)}
+.sn{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--gold-l)}
+.sl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:2px}
+
+/* ===== MOOD CHECK-IN ===== */
+.mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0}
+.mood-btn{padding:14px 4px;border-radius:12px;text-align:center;cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);transition:all .2s}
+.mood-btn:hover{transform:translateY(-2px)}
+.mood-btn.sel{border-color:var(--gold);background:rgba(201,168,76,.1);transform:scale(1.05)}
+.mood-emoji{font-size:24px;display:block;margin-bottom:4px}
+.mood-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)}
+.mood-btn.sel .mood-label{color:var(--gold)}
+
+.energy-row{display:flex;align-items:center;gap:12px;margin:12px 0}
+.energy-row label{font-size:11px;color:var(--t3);min-width:50px}
+.energy-row input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:rgba(201,168,76,.15);border-radius:2px;outline:none}
+.energy-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer}
+.energy-val{font-size:11px;color:var(--gold-l);min-width:60px;text-align:right}
+
+.mood-note{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;outline:none;resize:none;min-height:50px;margin:10px 0}
+.mood-note:focus{border-color:var(--gold)}
+.mood-note::placeholder{color:var(--t3)}
+
+.mood-submit{width:100%;padding:12px;border-radius:12px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;letter-spacing:1px;cursor:pointer;transition:all .2s;margin-top:6px}
+.mood-submit:hover{background:rgba(201,168,76,.2)}
+
+.mood-history{margin-top:24px}
+.mh-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(201,168,76,.04)}
+.mh-item:last-child{border-bottom:none}
+.mh-emoji{font-size:24px;min-width:36px;text-align:center}
+.mh-info{flex:1}
+.mh-name{font-size:12px;font-weight:500;color:var(--cream)}
+.mh-detail{font-size:11px;color:var(--t3);margin-top:2px}
+.mh-note{font-size:11px;color:var(--t2);margin-top:4px;font-style:italic}
+.mh-time{font-size:10px;color:var(--t3);text-align:right;min-width:50px}
+
+/* ===== AI CHAT ===== */
+.chat-messages{min-height:200px;max-height:50vh;overflow-y:auto;margin-bottom:12px;padding:4px 0}
+.chat-msg{padding:12px 16px;border-radius:12px;margin-bottom:8px;max-width:88%;font-size:13px;line-height:1.6}
+.chat-msg.user{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.12);margin-left:auto;color:var(--cream)}
+.chat-msg.ai{background:var(--bg2);border:1px solid var(--bdr);margin-right:auto;color:var(--cream-d)}
+.chat-msg .msg-from{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.chat-input-row{display:flex;gap:8px}
+.chat-input{flex:1;padding:12px 16px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;outline:none}
+.chat-input:focus{border-color:var(--gold)}
+.chat-input::placeholder{color:var(--t3)}
+.chat-send{padding:12px 18px;border-radius:10px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;transition:all .2s}
+.chat-send:hover{background:rgba(201,168,76,.2)}
+.typing{font-size:11px;color:var(--t3);padding:8px 0;font-style:italic;display:none}
+.typing.on{display:block}
+
+/* ===== QUICK ACTIONS ===== */
+.qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.qa{padding:18px 8px;border-radius:12px;text-align:center;cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);transition:all .2s}
+.qa:hover{transform:translateY(-2px)}
+.qa .qi{font-size:18px;margin-bottom:6px}
+.qa .ql{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--cream)}
+
+/* ===== WORKOUT PAGES (compact) ===== */
+.who{text-align:center;padding:28px 0 22px;border-bottom:1px solid var(--bdr);margin-bottom:22px}
+.wic{width:42px;height:42px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px}
+.wic.wg{border:1px solid var(--gold);color:var(--gold);animation:glow 3s ease-in-out infinite}
+.wic.wr{border:1px solid var(--red);color:var(--red);animation:glr 3s ease-in-out infinite}
+.wic.wv{border:1px solid var(--vio);color:var(--vio);animation:glv 3s ease-in-out infinite}
+@keyframes glr{0%,100%{box-shadow:0 0 0 0 rgba(196,75,75,0)}50%{box-shadow:0 0 20px 2px rgba(196,75,75,.15)}}
+@keyframes glv{0%,100%{box-shadow:0 0 0 0 rgba(155,111,197,0)}50%{box-shadow:0 0 20px 2px rgba(155,111,197,.15)}}
+.wbdg{display:inline-block;font-size:9px;letter-spacing:3px;text-transform:uppercase;font-weight:600;padding:4px 14px;border-radius:20px;margin-bottom:12px}
+.wbdg.wbg{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2);color:var(--gold)}
+.wbdg.wbr{background:var(--red-s);border:1px solid var(--red-b);color:var(--red)}
+.wbdg.wbv{background:var(--vio-s);border:1px solid var(--vio-b);color:var(--vio)}
+.who h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:26px;letter-spacing:3px;text-transform:uppercase;color:var(--cream);margin-bottom:5px}
+.who p{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
+.wnt{border-radius:12px;padding:16px;margin-bottom:22px;font-size:12.5px;line-height:1.7;color:var(--cream-d)}
+.wnt.wng{background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(212,148,58,.04));border:1px solid var(--bdr)}
+.wnt.wnr{background:linear-gradient(135deg,rgba(196,75,75,.06),rgba(212,148,58,.04));border:1px solid var(--red-b)}
+.wnt.wnv{background:linear-gradient(135deg,rgba(155,111,197,.06),rgba(212,148,58,.04));border:1px solid var(--vio-b)}
+.wnt strong.sg{color:var(--gold-l)}.wnt strong.sr{color:var(--red)}.wnt strong.sv{color:var(--vio)}
+.wsc{margin-bottom:28px}
+.wsl{font-size:10px;letter-spacing:4px;text-transform:uppercase;font-weight:500;margin-bottom:5px}
+.wsl.lg{color:var(--amber)}.wsl.lr{color:var(--red)}.wsl.lv{color:var(--vio)}
+.wst{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--cream);margin-bottom:12px;letter-spacing:1px}
+.ec{background:var(--bg2);border:1px solid var(--bdr);border-radius:11px;padding:14px;margin-bottom:9px;transition:background .3s}
+.ec:hover{background:var(--bg3)}
+.ec.ecr{border-color:rgba(196,75,75,.12)}.ec.ecv{border-color:rgba(155,111,197,.12)}
+.et{display:flex;align-items:flex-start;margin-bottom:7px}
+.en{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;line-height:1;min-width:26px;opacity:.6}
+.en.ng{color:var(--gold)}.en.nr{color:var(--red)}.en.nv{color:var(--vio)}
+.ei{flex:1;padding-left:11px}
+.ei h3{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.ei p{font-size:11.5px;color:var(--t2);line-height:1.6}
+.tr{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px;padding-top:9px;border-top:1px solid rgba(201,168,76,.06)}
+.tb{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:3px 9px;font-size:10.5px;letter-spacing:.3px}
+.tb.tg{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.1);color:var(--gold-l)}
+.tb.tgr{background:rgba(212,148,58,.06);border:1px solid rgba(212,148,58,.1);color:var(--amber-s)}
+.tb.trr{background:var(--red-s);border:1px solid var(--red-b);color:#E07070}
+.tb.trrr{background:rgba(196,75,75,.05);border:1px solid rgba(196,75,75,.1);color:#B87070}
+.tb.tv{background:var(--vio-s);border:1px solid var(--vio-b);color:#B990DD}
+.tb.tvr{background:rgba(155,111,197,.05);border:1px solid rgba(155,111,197,.1);color:#9A80B8}
+.dc{border-radius:12px;padding:16px;margin-bottom:9px;position:relative;overflow:hidden}
+.dc.dg{background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(212,148,58,.06));border:1px solid rgba(201,168,76,.2)}
+.dtg{display:inline-block;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:10px;margin-bottom:8px;color:var(--bg)}
+.dtg.dgg{background:var(--gold)}
+.dc h3{font-size:14px;font-weight:500;color:var(--cream);margin-bottom:4px}
+.dc p{font-size:11.5px;color:var(--cream-d);line-height:1.7}
+.lbtn{width:100%;padding:13px;margin:22px 0;border-radius:12px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;letter-spacing:1px;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.lbtn:hover{background:rgba(201,168,76,.2)}
+.lbtn.lbr{border-color:var(--red);background:var(--red-s);color:var(--red)}
+.lbtn.lbv{border-color:var(--vio);background:var(--vio-s);color:var(--vio)}
+.wft{text-align:center;padding-top:28px;margin-top:14px;border-top:1px solid var(--bdr)}
+.wfq{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;font-style:italic;letter-spacing:.5px;margin-bottom:5px}
+.wfs{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)}
+.nxt{margin-top:28px;margin-bottom:14px;padding:22px 18px;border-radius:14px;text-align:center;cursor:pointer;transition:all .3s}
+.nxt:hover{transform:translateY(-2px)}
+.nxt.nxr{background:linear-gradient(135deg,rgba(196,75,75,.06),rgba(196,75,75,.02));border:1px solid var(--red-b)}
+.nxt.nxv{background:linear-gradient(135deg,rgba(155,111,197,.06),rgba(155,111,197,.02));border:1px solid var(--vio-b)}
+.nxe{font-size:9px;letter-spacing:4px;text-transform:uppercase;font-weight:500;margin-bottom:8px}
+.nxt-t{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--cream);margin-bottom:5px}
+.nxd{font-size:11.5px;color:var(--t3);line-height:1.5;margin-bottom:10px}
+.nxa{font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;transition:gap .3s}
+
+/* ===== LOG MODAL ===== */
+.lmod{position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.lmod.on{opacity:1;pointer-events:all}
+.lsht{width:100%;max-width:480px;max-height:88vh;overflow-y:auto;background:var(--bg);border-top:1px solid var(--bdr);border-radius:20px 20px 0 0;padding:22px 20px 36px;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.lmod.on .lsht{transform:translateY(0)}
+.lhdl{width:40px;height:4px;background:var(--t3);border-radius:2px;margin:0 auto 18px;opacity:.4}
+.ltit{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--cream);margin-bottom:3px}
+.lsub{font-size:11px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:18px}
+.lslb{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin:14px 0 7px}
+.lig{display:flex;gap:6px;margin-bottom:7px}
+.lig input{padding:9px 11px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:11px;outline:none}
+.lig input:focus{border-color:var(--gold)}
+.lig input::placeholder{color:var(--t3)}
+.lig .ni{flex:2}.lig .si{flex:1}
+.lab{padding:9px 13px;border-radius:8px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);cursor:pointer;font-family:'Outfit',sans-serif;font-size:11px;transition:all .2s}
+.lei{display:flex;justify-content:space-between;padding:7px 10px;background:rgba(201,168,76,.04);border-radius:6px;margin-bottom:3px;font-size:11px}
+.lei span:first-child{color:var(--cream)}.lei span:last-child{color:var(--t3)}
+.lsubmit{width:100%;padding:13px;margin-top:18px;border-radius:12px;border:1px solid var(--gold);background:rgba(201,168,76,.12);color:var(--gold);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;letter-spacing:1px;cursor:pointer;transition:all .2s}
+.lsubmit:hover{background:rgba(201,168,76,.2)}
+.lcancel{text-align:center;margin-top:10px;font-size:11px;color:var(--t3);cursor:pointer}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:var(--bg);padding:10px 24px;border-radius:10px;font-size:12px;font-weight:500;opacity:0;pointer-events:none;transition:all .3s;z-index:1200}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== EMPTY ===== */
+.empty{text-align:center;padding:28px;font-size:12px;color:var(--t3)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:400px){.ctn{padding:16px 16px 24px}.sg{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div class="login" id="login">
+  <div class="login-logo">M</div>
+  <h1>Moi et Toi</h1>
+  <div class="sub">Me and You</div>
+  <div class="lbl">Who's Here?</div>
+  <div class="pcards">
+    <div class="pcard" onclick="login('her')"><div class="pav">✦</div><h3 id="her-name-login">Her</h3><p>View + Check In</p></div>
+    <div class="pcard" onclick="login('him')"><div class="pav">◆</div><h3 id="him-name-login">Him</h3><p>View + Check In</p></div>
+  </div>
+</div>
+
+<!-- ===== APP SHELL ===== -->
+<div class="shell" id="shell">
+
+<!-- Hamburger -->
+<div class="hbg" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+<div class="mov" onclick="toggleMenu()"></div>
+<div class="mpan">
+  <div class="msl">Modules</div>
+  <div class="mi" onclick="go('dash')"><div class="mic g">◎</div><div class="mt"><h4>Home</h4></div></div>
+  <div class="mi" onclick="go('mood')"><div class="mic g">♡</div><div class="mt"><h4>Mood Check-in</h4></div></div>
+  <div class="mi" onclick="go('ai')"><div class="mic a">✧</div><div class="mt"><h4>AI Assistant</h4></div></div>
+  <div class="msl">Waist Where?</div>
+  <div class="mi" onclick="go('w1')"><div class="mic g">✦</div><div class="mt"><h4>Foundation</h4><p>Beginner</p></div></div>
+  <div class="mi" onclick="go('w2')"><div class="mic r">◆</div><div class="mt"><h4>Elevated</h4><p>Advanced</p></div></div>
+  <div class="mi" onclick="go('w3')"><div class="mic v">⬡</div><div class="mt"><h4>Full Body</h4><p>Complete</p></div></div>
+  <div class="msl">Account</div>
+  <div class="mi" onclick="switchUser()"><div class="mic a">↔</div><div class="mt"><h4>Switch Profile</h4></div></div>
+  <div class="mi" onclick="logout()"><div class="mic a">←</div><div class="mt"><h4>Log Out</h4></div></div>
+  <div class="mfoot">Moi et Toi ✦</div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bnav">
+  <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni">◎</span><span class="nl">Home</span></button>
+  <button class="bn" data-p="mood" onclick="go('mood')"><span class="ni">♡</span><span class="nl">Mood</span></button>
+  <button class="bn" data-p="w1" onclick="go('w1')"><span class="ni">✦</span><span class="nl">Train</span></button>
+  <button class="bn" data-p="ai" onclick="go('ai')"><span class="ni">✧</span><span class="nl">AI</span></button>
+</nav>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="pg on" id="pg-dash">
+<div class="ctn">
+  <div class="phd"><h1>Moi et Toi</h1><p>Welcome, <span class="uname"></span></p></div>
+
+  <div class="card" id="today-mood">
+    <div class="card-h"><span class="card-t">Today's Vibe</span><span class="card-s">Mood Check-in</span></div>
+    <div class="empty">Tap Mood in the nav to check in today</div>
+  </div>
+
+  <div class="card" id="partner-mood">
+    <div class="card-h"><span class="card-t"><span class="pname"></span>'s Vibe</span><span class="card-s">Their Check-in</span></div>
+    <div class="empty">Waiting for their check-in</div>
+  </div>
+
+  <div class="slbl">Quick Start</div>
+  <div class="qa-grid">
+    <div class="qa" onclick="go('mood')"><div class="qi">♡</div><div class="ql">Check In</div></div>
+    <div class="qa" onclick="go('w1')"><div class="qi">✦</div><div class="ql">Train</div></div>
+    <div class="qa" onclick="go('ai')"><div class="qi">✧</div><div class="ql">AI Chat</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== MOOD CHECK-IN ===== -->
+<div class="pg" id="pg-mood">
+<div class="ctn">
+  <div class="phd"><h1>Mood Check-in</h1><p>How are you feeling?</p></div>
+
+  <div class="slbl">Your Mood</div>
+  <div class="mood-grid" id="mood-grid">
+    <div class="mood-btn" onclick="selMood(1,this)"><span class="mood-emoji">😴</span><span class="mood-label">Low</span></div>
+    <div class="mood-btn" onclick="selMood(2,this)"><span class="mood-emoji">😐</span><span class="mood-label">Meh</span></div>
+    <div class="mood-btn" onclick="selMood(3,this)"><span class="mood-emoji">🙂</span><span class="mood-label">Good</span></div>
+    <div class="mood-btn" onclick="selMood(4,this)"><span class="mood-emoji">😊</span><span class="mood-label">Great</span></div>
+    <div class="mood-btn" onclick="selMood(5,this)"><span class="mood-emoji">🔥</span><span class="mood-label">Amazing</span></div>
+  </div>
+
+  <div class="slbl">Energy Level</div>
+  <div class="energy-row">
+    <label>Energy</label>
+    <input type="range" id="energy-slider" min="1" max="5" step="1" value="3" oninput="updEnergy()">
+    <span class="energy-val" id="energy-val">☀ Steady</span>
+  </div>
+
+  <div class="slbl">Note (optional)</div>
+  <textarea class="mood-note" id="mood-note" placeholder="What's on your mind..."></textarea>
+
+  <button class="mood-submit" onclick="submitMood()">Save Check-in ♡</button>
+
+  <div class="mood-history">
+    <div class="slbl">Recent Check-ins</div>
+    <div id="mood-feed"><div class="empty">No check-ins yet</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== AI CHAT ===== -->
+<div class="pg" id="pg-ai">
+<div class="ctn">
+  <div class="phd"><h1>AI Assistant</h1><p>Powered by Claude</p></div>
+
+  <div class="chat-messages" id="chat-messages">
+    <div class="chat-msg ai"><div class="msg-from">Claude</div>Hey! I'm your shared AI assistant. Ask me anything, tell me to update your plans, or just talk. Both of you can chat with me and I'll remember context from this conversation.</div>
+  </div>
+  <div class="typing" id="typing">Claude is thinking...</div>
+  <div class="chat-input-row">
+    <input class="chat-input" id="chat-input" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="chat-send" onclick="sendAI()">Send</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== FOUNDATION WORKOUT ===== -->
+<div class="pg" id="pg-w1">
+<div class="ctn">
+  <div class="who"><div class="wic wg">✦</div><span class="wbdg wbg">Foundation</span><h1>Your Sculpt Guide</h1><p>Strength · Shape · Confidence</p></div>
+  <div class="wnt wng">This plan is designed for <strong class="sg">beginners</strong>. Every move has clear timing and built-in rest. Go at your own pace. <strong class="sg">Showing up is what matters.</strong></div>
+
+  <div class="wsc"><div class="wsl lg">Phase 1</div><div class="wst">Core Strengthening</div>
+    <div class="ec"><div class="et"><div class="en ng">01</div><div class="ei"><h3>Lying Leg Raises</h3><p>Lie flat. Raise straight legs to ceiling, lower without touching floor. Go slow. The slower, the better.</p></div></div><div class="tr"><span class="tb tg">⏱ 10 reps</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 45s rest</span></div></div>
+    <div class="ec"><div class="et"><div class="en ng">02</div><div class="ei"><h3>Flutter Kicks</h3><p>Hands under hips, legs a few inches off ground. Small alternating kicks. Lower back pressed down.</p></div></div><div class="tr"><span class="tb tg">⏱ 20 sec</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 40s rest</span></div></div>
+    <div class="ec"><div class="et"><div class="en ng">03</div><div class="ei"><h3>Reverse Crunches</h3><p>Knees bent, curl hips off floor bringing knees to chest. Hold 2 sec at top, lower gently.</p></div></div><div class="tr"><span class="tb tg">⏱ 12 reps</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 45s rest</span></div></div>
+    <div class="ec"><div class="et"><div class="en ng">04</div><div class="ei"><h3>Mountain Climbers</h3><p>Push-up position. Drive knees to chest alternating. Like running on the floor. Keep hips level.</p></div></div><div class="tr"><span class="tb tg">⏱ 25 sec</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 50s rest</span></div></div>
+    <div class="ec"><div class="et"><div class="en ng">05</div><div class="ei"><h3>Dead Bugs</h3><p>On back, arms up, knees 90 degrees. Extend opposite arm and leg slowly. Return, switch sides.</p></div></div><div class="tr"><span class="tb tg">⏱ 8 each side</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 40s rest</span></div></div>
+  </div>
+
+  <div class="wsc"><div class="wsl lg">Phase 2</div><div class="wst">Waist Sculpting</div>
+    <div class="ec"><div class="et"><div class="en ng">06</div><div class="ei"><h3>Russian Twists</h3><p>Seated, lean back, feet off ground. Rotate torso side to side. Controlled. No rushing.</p></div></div><div class="tr"><span class="tb tg">⏱ 16 reps (8/side)</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 40s rest</span></div></div>
+    <div class="ec"><div class="et"><div class="en ng">07</div><div class="ei"><h3>Side Plank Hip Dips</h3><p>Side plank on forearm. Dip hips down and back up. Feel it along the waistline.</p></div></div><div class="tr"><span class="tb tg">⏱ 10 each side</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 45s rest</span></div></div>
+    <div class="ec"><div class="et"><div class="en ng">08</div><div class="ei"><h3>Standing Side Crunches</h3><p>Hand behind head. Lift knee to meet same-side elbow. Squeeze at top. No equipment needed.</p></div></div><div class="tr"><span class="tb tg">⏱ 12 each side</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 40s rest</span></div></div>
+    <div class="ec"><div class="et"><div class="en ng">09</div><div class="ei"><h3>Woodchoppers</h3><p>Feet apart. Diagonal chopping motion from shoulder to opposite hip. Tightens the waist beautifully.</p></div></div><div class="tr"><span class="tb tg">⏱ 10 each side</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 45s rest</span></div></div>
+  </div>
+
+  <div class="wsc"><div class="wsl lg">Every Day</div><div class="wst">Your Daily Practice</div>
+    <div class="dc dg"><div class="dtg dgg">✦ Do This Every Day</div><h3>Stomach Vacuums</h3><p>Breathe out completely. Pull belly button toward spine. Hold 15 to 20 seconds. Repeat. Trains your deepest core muscle. Like an internal corset.</p><div class="tr" style="margin-top:9px;padding-top:9px;border-top:1px solid rgba(201,168,76,.1)"><span class="tb tg">⏱ 15-20s hold</span><span class="tb tg">↻ 5 rounds</span><span class="tb tgr">☁ 15s rest</span></div></div>
+  </div>
+
+  <div class="wsc"><div class="wsl lg">Phase 3</div><div class="wst">Shape &amp; Silhouette</div>
+    <div class="ec"><div class="et"><div class="en ng">10</div><div class="ei"><h3>Hip Thrusts</h3><p>Back against couch. Feet flat, knees bent. Drive hips up, squeeze 2 seconds at top.</p></div></div><div class="tr"><span class="tb tg">⏱ 15 reps</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 50s rest</span></div></div>
+    <div class="ec"><div class="et"><div class="en ng">11</div><div class="ei"><h3>Sumo Squats</h3><p>Wide stance, toes out. Squat deep, chest up. Press through heels to stand.</p></div></div><div class="tr"><span class="tb tg">⏱ 15 reps</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 50s rest</span></div></div>
+    <div class="ec"><div class="et"><div class="en ng">12</div><div class="ei"><h3>Lateral Shoulder Raises</h3><p>Light weights at sides. Raise arms to shoulder height. Lower with control. Shapes the silhouette.</p></div></div><div class="tr"><span class="tb tg">⏱ 12 reps</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 40s rest</span></div></div>
+  </div>
+
+  <button class="lbtn" onclick="openLog('Foundation')">Log This Workout ✦</button>
+  <div class="nxt nxr" onclick="go('w2')"><div class="nxe" style="color:var(--red)">When You're Ready</div><div class="nxt-t">The Elevated Program</div><div class="nxd">Harder moves. Shorter rest. Deeper definition.</div><div class="nxa" style="color:var(--red)">Enter ➔</div></div>
+  <div class="wft"><div class="wfq" style="color:var(--gold-l)">You are already becoming her.</div><div class="wfs">One day at a time</div></div>
+</div>
+</div>
+
+<!-- ===== ELEVATED WORKOUT ===== -->
+<div class="pg" id="pg-w2">
+<div class="ctn">
+  <div class="who"><div class="wic wr">◆</div><span class="wbdg wbr">Elevated</span><h1>Elevated Sculpt</h1><p>Power · Definition · Shape</p></div>
+  <div class="wnt wnr">You made it here because you put in the work. <strong class="sr">Higher reps, shorter rest, more intense combinations.</strong> Trust the process. You've already proven you can do this.</div>
+
+  <div class="wsc"><div class="wsl lr">Phase 1</div><div class="wst">Deep Core Sculpt</div>
+    <div class="ec ecr"><div class="et"><div class="en nr">01</div><div class="ei"><h3>Hanging Leg Raises</h3><p>Hang from bar. Raise straight legs to 90 degrees. Lower with full control.</p></div></div><div class="tr"><span class="tb trr">⏱ 12 reps</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 30s rest</span></div></div>
+    <div class="ec ecr"><div class="et"><div class="en nr">02</div><div class="ei"><h3>Scissor Kicks</h3><p>Legs hovering, cross over each other in X pattern. Core tight. Lower legs = harder.</p></div></div><div class="tr"><span class="tb trr">⏱ 40 sec</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 25s rest</span></div></div>
+    <div class="ec ecr"><div class="et"><div class="en nr">03</div><div class="ei"><h3>Plank to Pike</h3><p>Plank position. Walk feet to hands, hips into inverted V. Walk back out. One fluid motion.</p></div></div><div class="tr"><span class="tb trr">⏱ 12 reps</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 30s rest</span></div></div>
+    <div class="ec ecr"><div class="et"><div class="en nr">04</div><div class="ei"><h3>V-Ups</h3><p>Lie flat. Lift legs and upper body simultaneously, reach for toes. Lower with control.</p></div></div><div class="tr"><span class="tb trr">⏱ 15 reps</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 30s rest</span></div></div>
+    <div class="ec ecr"><div class="et"><div class="en nr">05</div><div class="ei"><h3>Mountain Climber Sprints</h3><p>As fast as you can. Explosive knee drives. Full intensity cardio + core.</p></div></div><div class="tr"><span class="tb trr">⏱ 45 sec</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 25s rest</span></div></div>
+  </div>
+
+  <div class="wsc"><div class="wsl lr">Phase 2</div><div class="wst">Waist Definition</div>
+    <div class="ec ecr"><div class="et"><div class="en nr">06</div><div class="ei"><h3>Weighted Russian Twists</h3><p>Hold a dumbbell or heavy water bottle. Added resistance sculpts deeper waist definition.</p></div></div><div class="tr"><span class="tb trr">⏱ 24 reps (12/side)</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 25s rest</span></div></div>
+    <div class="ec ecr"><div class="et"><div class="en nr">07</div><div class="ei"><h3>Side Plank Reach Through</h3><p>Side plank. Thread top arm underneath body, rotating torso. Return. Sharpens the waistline.</p></div></div><div class="tr"><span class="tb trr">⏱ 12 each side</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 25s rest</span></div></div>
+    <div class="ec ecr"><div class="et"><div class="en nr">08</div><div class="ei"><h3>Band Woodchoppers</h3><p>Resistance band at head height. Pull diagonally across body. Controlled rotation.</p></div></div><div class="tr"><span class="tb trr">⏱ 14 each side</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 30s rest</span></div></div>
+    <div class="ec ecr"><div class="et"><div class="en nr">09</div><div class="ei"><h3>Slow Bicycle Crunches</h3><p>Elbow to opposite knee. Hold each twist 1 second. Slow is where results live.</p></div></div><div class="tr"><span class="tb trr">⏱ 20 reps (10/side)</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 25s rest</span></div></div>
+  </div>
+
+  <div class="wsc"><div class="wsl lr">Phase 3</div><div class="wst">Power Sculpt</div>
+    <div class="ec ecr"><div class="et"><div class="en nr">10</div><div class="ei"><h3>Weighted Hip Thrusts</h3><p>Weight across hips. Press up, squeeze 3 seconds at top. Number one curve builder.</p></div></div><div class="tr"><span class="tb trr">⏱ 15 reps</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 35s rest</span></div></div>
+    <div class="ec ecr"><div class="et"><div class="en nr">11</div><div class="ei"><h3>Bulgarian Split Squats</h3><p>One foot on couch behind you. Lower until front thigh is parallel. Press back up.</p></div></div><div class="tr"><span class="tb trr">⏱ 12 each leg</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 35s rest</span></div></div>
+    <div class="ec ecr"><div class="et"><div class="en nr">12</div><div class="ei"><h3>Arnold Press</h3><p>Dumbbells at chest, palms facing you. Press up rotating palms outward. Full shoulder sculpt.</p></div></div><div class="tr"><span class="tb trr">⏱ 12 reps</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 30s rest</span></div></div>
+  </div>
+
+  <button class="lbtn lbr" onclick="openLog('Elevated')">Log This Workout ◆</button>
+  <div class="nxt nxv" onclick="go('w3')"><div class="nxe" style="color:var(--vio)">The Complete Session</div><div class="nxt-t">Full Body Sculpt</div><div class="nxd">Every muscle group. One session. Total transformation.</div><div class="nxa" style="color:var(--vio)">Enter ➔</div></div>
+  <div class="wft"><div class="wfq" style="color:#E07070">She didn't just dream it. She built it.</div><div class="wfs">Every rep counts</div></div>
+</div>
+</div>
+
+<!-- ===== FULL BODY WORKOUT ===== -->
+<div class="pg" id="pg-w3">
+<div class="ctn">
+  <div class="who"><div class="wic wv">⬡</div><span class="wbdg wbv">Full Body</span><h1>Full Body Sculpt</h1><p>Head to Toe · One Session</p></div>
+  <div class="wnt wnv"><strong class="sv">Every major muscle group in one workout.</strong> Upper body, core, waist, glutes, legs. Allow 60 to 75 minutes. Warm up 5 minutes first. You've got this.</div>
+
+  <div class="wsc"><div class="wsl lv">Block A</div><div class="wst">Upper Body</div>
+    <div class="ec ecv"><div class="et"><div class="en nv">01</div><div class="ei"><h3>Push-Ups</h3><p>Shoulder-width hands. Lower chest to floor, push back up. Drop to knees if needed.</p></div></div><div class="tr"><span class="tb tv">⏱ 10 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 40s rest</span></div></div>
+    <div class="ec ecv"><div class="et"><div class="en nv">02</div><div class="ei"><h3>Lateral Raises</h3><p>Light weights. Raise arms to shoulder height. Lower slowly. Builds shoulder caps.</p></div></div><div class="tr"><span class="tb tv">⏱ 15 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 35s rest</span></div></div>
+    <div class="ec ecv"><div class="et"><div class="en nv">03</div><div class="ei"><h3>Bent Over Rows</h3><p>Hinge forward. Pull weights to ribs, squeeze shoulder blades. Strengthens the back.</p></div></div><div class="tr"><span class="tb tv">⏱ 12 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 40s rest</span></div></div>
+    <div class="ec ecv"><div class="et"><div class="en nv">04</div><div class="ei"><h3>Tricep Dips</h3><p>Edge of chair. Lower by bending elbows. Push back up. Tones back of arms.</p></div></div><div class="tr"><span class="tb tv">⏱ 12 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 40s rest</span></div></div>
+  </div>
+
+  <div class="wsc"><div class="wsl lv">Block B</div><div class="wst">Core + Waist</div>
+    <div class="ec ecv"><div class="et"><div class="en nv">05</div><div class="ei"><h3>Leg Raises</h3><p>Raise straight legs, lower without touching floor. Lower back pressed down.</p></div></div><div class="tr"><span class="tb tv">⏱ 12 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 35s rest</span></div></div>
+    <div class="ec ecv"><div class="et"><div class="en nv">06</div><div class="ei"><h3>Bicycle Crunches</h3><p>Elbow to opposite knee. Go slow. Hold each twist 1 second.</p></div></div><div class="tr"><span class="tb tv">⏱ 20 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 35s rest</span></div></div>
+    <div class="ec ecv"><div class="et"><div class="en nv">07</div><div class="ei"><h3>Russian Twists</h3><p>Seated, lean back, feet off ground. Rotate side to side. Controlled and steady.</p></div></div><div class="tr"><span class="tb tv">⏱ 20 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 35s rest</span></div></div>
+    <div class="ec ecv"><div class="et"><div class="en nv">08</div><div class="ei"><h3>Plank Hold</h3><p>Forearms on ground, body straight. Hold. Breathe. Don't let hips sag.</p></div></div><div class="tr"><span class="tb tv">⏱ 30-45 sec</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 30s rest</span></div></div>
+  </div>
+
+  <div class="wsc"><div class="wsl lv">Block C</div><div class="wst">Lower Body + Glutes</div>
+    <div class="ec ecv"><div class="et"><div class="en nv">09</div><div class="ei"><h3>Sumo Squats</h3><p>Wide stance, toes out. Squat deep. Hold weight at center for extra challenge.</p></div></div><div class="tr"><span class="tb tv">⏱ 15 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 40s rest</span></div></div>
+    <div class="ec ecv"><div class="et"><div class="en nv">10</div><div class="ei"><h3>Hip Thrusts</h3><p>Back against couch. Drive hips up, squeeze at top 2 to 3 seconds.</p></div></div><div class="tr"><span class="tb tv">⏱ 15 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 40s rest</span></div></div>
+    <div class="ec ecv"><div class="et"><div class="en nv">11</div><div class="ei"><h3>Reverse Lunges</h3><p>Step back, lower knee toward ground. Push through front heel. Alternate legs.</p></div></div><div class="tr"><span class="tb tv">⏱ 12 each leg</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 40s rest</span></div></div>
+    <div class="ec ecv"><div class="et"><div class="en nv">12</div><div class="ei"><h3>Glute Bridges</h3><p>On back, knees bent. Lift hips, squeeze glutes at top. Hold 2 seconds.</p></div></div><div class="tr"><span class="tb tv">⏱ 15 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 35s rest</span></div></div>
+    <div class="ec ecv"><div class="et"><div class="en nv">13</div><div class="ei"><h3>Calf Raises</h3><p>Rise onto toes, hold 1 second, lower slowly. Completes the leg sculpt.</p></div></div><div class="tr"><span class="tb tv">⏱ 20 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 30s rest</span></div></div>
+  </div>
+
+  <button class="lbtn lbv" onclick="openLog('Full Body')">Log This Workout ⬡</button>
+  <div class="wft"><div class="wfq" style="color:#B990DD">The whole body. The whole vision. The whole her.</div><div class="wfs">Complete</div></div>
+</div>
+</div>
+
+<!-- ===== LOG MODAL ===== -->
+<div class="lmod" id="lmod">
+<div class="lsht">
+  <div class="lhdl"></div>
+  <div class="ltit">Log Workout</div>
+  <div class="lsub" id="log-type">Foundation</div>
+  <div class="lslb">Exercises Completed</div>
+  <div class="lig">
+    <input class="ni" id="ex-n" placeholder="Exercise name">
+    <input class="si" id="ex-s" placeholder="Sets" type="number">
+    <input class="si" id="ex-r" placeholder="Reps" type="number">
+    <button class="lab" onclick="addEx()">+</button>
+  </div>
+  <div id="ex-list"></div>
+  <div class="lslb">Energy</div>
+  <div class="energy-row"><label>Level</label><input type="range" id="log-e" min="1" max="5" value="3"><span class="energy-val" id="log-ev">☀ Steady</span></div>
+  <div class="lslb">Mood</div>
+  <div class="energy-row"><label>Feeling</label><input type="range" id="log-m" min="1" max="5" value="3"><span class="energy-val" id="log-mv">🙂 Good</span></div>
+  <div class="lslb">Notes</div>
+  <textarea class="mood-note" id="log-notes" placeholder="How did it feel..."></textarea>
+  <button class="lsubmit" onclick="submitLog()">Save Workout ✓</button>
+  <div class="lcancel" onclick="closeLog()">Cancel</div>
+</div>
+</div>
+
+</div><!-- end shell -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// ========== CONFIG - EDIT THESE ==========
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const CLAUDE_API_KEY = "YOUR_ANTHROPIC_API_KEY";
+
+// Profile names (change to your actual names)
+const NAMES = { her: "Babe", him: "King" };
+
+// ==========================================
+
+let db, user, partner, selectedMood = 0, logExercises = [], logType = '', chatHistory = [];
+
+// ===== INIT =====
+function init() {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.database();
+  document.getElementById('her-name-login').textContent = NAMES.her;
+  document.getElementById('him-name-login').textContent = NAMES.him;
+  const saved = localStorage.getItem('met_user');
+  if (saved) login(saved);
+}
+
+function login(id) {
+  user = id;
+  partner = id === 'her' ? 'him' : 'her';
+  localStorage.setItem('met_user', id);
+  document.getElementById('login').classList.add('h');
+  document.getElementById('shell').classList.add('on');
+  document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
+  document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
+  go('dash');
+  listenMoods();
+}
+
+function switchUser() { localStorage.removeItem('met_user'); location.reload(); }
+function logout() { localStorage.removeItem('met_user'); location.reload(); }
+
+// ===== NAV =====
+function go(p) {
+  document.querySelectorAll('.pg').forEach(e => e.classList.remove('on'));
+  const pg = document.getElementById('pg-' + p);
+  if (pg) pg.classList.add('on');
+  document.querySelectorAll('.bn').forEach(e => e.classList.remove('on'));
+  const bn = document.querySelector(`[data-p="${p}"]`);
+  if (bn) bn.classList.add('on');
+  closeMenu();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleMenu() {
+  document.querySelector('.hbg').classList.toggle('on');
+  document.querySelector('.mov').classList.toggle('on');
+  document.querySelector('.mpan').classList.toggle('on');
+}
+function closeMenu() {
+  document.querySelector('.hbg').classList.remove('on');
+  document.querySelector('.mov').classList.remove('on');
+  document.querySelector('.mpan').classList.remove('on');
+}
+
+// ===== MOOD =====
+function selMood(val, el) {
+  selectedMood = val;
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function updEnergy() {
+  const v = document.getElementById('energy-slider').value;
+  const labels = ['', '🌙 Rest Needed', '☁ Low', '☀ Steady', '✨ Strong', '⚡ On Fire'];
+  document.getElementById('energy-val').textContent = labels[v];
+}
+
+async function submitMood() {
+  if (!selectedMood) { toast('Pick a mood first'); return; }
+  const entry = {
+    mood: selectedMood,
+    energy: parseInt(document.getElementById('energy-slider').value),
+    note: document.getElementById('mood-note').value.trim(),
+    user: user,
+    userName: NAMES[user],
+    timestamp: Date.now(),
+    date: new Date().toISOString().split('T')[0]
+  };
+  const key = db.ref('moods').push().key;
+  await db.ref('moods/' + key).set(entry);
+  document.getElementById('mood-note').value = '';
+  selectedMood = 0;
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
+  toast('Check-in saved ♡');
+}
+
+function listenMoods() {
+  db.ref('moods').orderByChild('timestamp').limitToLast(20).on('value', snap => {
+    const moods = [];
+    snap.forEach(c => moods.push(c.val()));
+    moods.reverse();
+    renderMoodFeed(moods);
+    renderDashMoods(moods);
+  });
+}
+
+function renderMoodFeed(moods) {
+  const el = document.getElementById('mood-feed');
+  if (!moods.length) { el.innerHTML = '<div class="empty">No check-ins yet. Be the first.</div>'; return; }
+  const emojis = ['', '😴', '😐', '🙂', '😊', '🔥'];
+  const eLbls = ['', '🌙', '☁', '☀', '✨', '⚡'];
+  el.innerHTML = moods.map(m => {
+    const t = new Date(m.timestamp);
+    const ts = t.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    return `<div class="mh-item">
+      <div class="mh-emoji">${emojis[m.mood]}</div>
+      <div class="mh-info">
+        <div class="mh-name">${m.userName || 'Unknown'} ${eLbls[m.energy] || ''}</div>
+        <div class="mh-detail">Mood ${m.mood}/5 · Energy ${m.energy}/5</div>
+        ${m.note ? `<div class="mh-note">"${m.note}"</div>` : ''}
+      </div>
+      <div class="mh-time">${ts}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashMoods(moods) {
+  const emojis = ['', '😴', '😐', '🙂', '😊', '🔥'];
+  const labels = ['', 'Rest Needed', 'Meh', 'Good', 'Great', 'Amazing'];
+  const today = new Date().toISOString().split('T')[0];
+
+  const myToday = moods.find(m => m.user === user && m.date === today);
+  const partnerToday = moods.find(m => m.user === partner && m.date === today);
+
+  const myEl = document.getElementById('today-mood');
+  if (myToday) {
+    myEl.innerHTML = `<div class="card-h"><span class="card-t">Your Vibe Today</span><span class="card-s">${emojis[myToday.mood]} ${labels[myToday.mood]}</span></div>
+      <div style="text-align:center;font-size:36px;padding:8px 0">${emojis[myToday.mood]}</div>
+      ${myToday.note ? `<div style="text-align:center;font-size:12px;color:var(--t2);font-style:italic;padding:4px 0">"${myToday.note}"</div>` : ''}`;
+  }
+
+  const pEl = document.getElementById('partner-mood');
+  if (partnerToday) {
+    pEl.innerHTML = `<div class="card-h"><span class="card-t">${NAMES[partner]}'s Vibe</span><span class="card-s">${emojis[partnerToday.mood]} ${labels[partnerToday.mood]}</span></div>
+      <div style="text-align:center;font-size:36px;padding:8px 0">${emojis[partnerToday.mood]}</div>
+      ${partnerToday.note ? `<div style="text-align:center;font-size:12px;color:var(--t2);font-style:italic;padding:4px 0">"${partnerToday.note}"</div>` : ''}`;
+  }
+}
+
+// ===== AI CHAT =====
+async function sendAI() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  const msgEl = document.getElementById('chat-messages');
+  msgEl.innerHTML += `<div class="chat-msg user"><div class="msg-from">${NAMES[user]}</div>${text}</div>`;
+
+  chatHistory.push({ role: 'user', content: `[${NAMES[user]}]: ${text}` });
+
+  document.getElementById('typing').classList.add('on');
+  msgEl.scrollTop = msgEl.scrollHeight;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
+        system: `You are the AI assistant for "Moi et Toi", a private relationship app for two people in a long-distance relationship. Their names are ${NAMES.her} and ${NAMES.him}. You help with anything they need: meal plans, workout advice, relationship tips, planning dates, managing shared goals, or just being someone to talk to. Be warm, supportive, and concise. You're part of their team. The current user talking to you is ${NAMES[user]}.`,
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Sorry, I had trouble responding. Try again.';
+    chatHistory.push({ role: 'assistant', content: reply });
+
+    document.getElementById('typing').classList.remove('on');
+    msgEl.innerHTML += `<div class="chat-msg ai"><div class="msg-from">Claude</div>${reply}</div>`;
+    msgEl.scrollTop = msgEl.scrollHeight;
+  } catch (err) {
+    document.getElementById('typing').classList.remove('on');
+    msgEl.innerHTML += `<div class="chat-msg ai"><div class="msg-from">Claude</div>Connection error. Check your API key in the config.</div>`;
+  }
+}
+
+// ===== WORKOUT LOG =====
+function openLog(type) {
+  logType = type; logExercises = [];
+  document.getElementById('log-type').textContent = type;
+  document.getElementById('ex-list').innerHTML = '';
+  document.getElementById('log-notes').value = '';
+  document.getElementById('lmod').classList.add('on');
+  updLogSliders();
+}
+function closeLog() { document.getElementById('lmod').classList.remove('on'); }
+
+function addEx() {
+  const n = document.getElementById('ex-n').value.trim();
+  const s = document.getElementById('ex-s').value.trim();
+  const r = document.getElementById('ex-r').value.trim();
+  if (!n) return;
+  logExercises.push({ name: n, sets: s, reps: r });
+  document.getElementById('ex-list').innerHTML += `<div class="lei"><span>${n}</span><span>${s ? s + 's ' : ''}${r ? r + 'r' : ''}</span></div>`;
+  document.getElementById('ex-n').value = '';
+  document.getElementById('ex-s').value = '';
+  document.getElementById('ex-r').value = '';
+  document.getElementById('ex-n').focus();
+}
+
+function updLogSliders() {
+  const eLabels = ['', '🌙 Rest Needed', '☁ Low', '☀ Steady', '✨ Strong', '⚡ On Fire'];
+  const mLabels = ['', '😴 Tough', '😐 Okay', '🙂 Good', '😊 Great', '🔥 Amazing'];
+  document.getElementById('log-e').oninput = function() { document.getElementById('log-ev').textContent = eLabels[this.value]; };
+  document.getElementById('log-m').oninput = function() { document.getElementById('log-mv').textContent = mLabels[this.value]; };
+}
+
+async function submitLog() {
+  const entry = {
+    workoutType: logType,
+    exercises: logExercises,
+    energy: parseInt(document.getElementById('log-e').value),
+    mood: parseInt(document.getElementById('log-m').value),
+    notes: document.getElementById('log-notes').value.trim(),
+    user: user,
+    userName: NAMES[user],
+    timestamp: Date.now(),
+    date: new Date().toISOString().split('T')[0]
+  };
+  const key = db.ref('workoutLogs').push().key;
+  await db.ref('workoutLogs/' + key).set(entry);
+  closeLog();
+  toast('Workout logged ✓');
+}
+
+// ===== TOAST =====
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2500);
+}
+
+// ===== SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+
+// ===== BOOT =====
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
