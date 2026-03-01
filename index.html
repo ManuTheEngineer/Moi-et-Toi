@@ -519,18 +519,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <!-- ===== JAVASCRIPT ===== -->
 <script>
 // ========== CONFIG ==========
-// Firebase config is safe to be public (it's just an identifier)
-// Anthropic API key is stored securely in Firebase, set once by admin
+// Firebase config stored in browser localStorage. Set once per device.
+// Anthropic API key stored in Firebase, set once by admin.
 
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBZsbVPs7csdRRNj4oMxmxxFpkaC_99Z-I",
-  authDomain: "moi-et-toi-mt.firebaseapp.com",
-  databaseURL: "https://moi-et-toi-mt-default-rtdb.firebaseio.com",
-  projectId: "moi-et-toi-mt",
-  storageBucket: "moi-et-toi-mt.firebasestorage.app",
-  messagingSenderId: "687030081738",
-  appId: "1:687030081738:web:cb1b27a6faece0735ebc33"
-};
+let FIREBASE_CONFIG = null;
+try { FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_fb_config')); } catch(e) {}
 
 // API key loaded from Firebase - set once, works for both
 let CLAUDE_API_KEY = "";
@@ -904,7 +897,57 @@ if ('serviceWorker' in navigator) {
 }
 
 // ===== BOOT =====
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  if (FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey) {
+    init();
+  } else {
+    showConfigSetup();
+  }
+});
+
+function showConfigSetup() {
+  document.getElementById('login').innerHTML = `
+    <div class="login-logo">M</div>
+    <h1>Moi et Toi</h1>
+    <div class="sub">One-Time Device Setup</div>
+    <div class="lbl" style="margin-bottom:14px">Paste your connection key</div>
+    <input type="password" id="config-input" placeholder="Paste key here..."
+      style="width:100%;max-width:300px;padding:14px 18px;border-radius:12px;border:1px solid var(--bdr);
+      background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;
+      text-align:center;outline:none;margin-bottom:16px"
+      onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--bdr)'"
+      onkeydown="if(event.key==='Enter')saveConfig()">
+    <button onclick="saveConfig()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;
+      border:1px solid var(--gold);background:rgba(155,35,53,.1);color:var(--gold);
+      font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;letter-spacing:1px;
+      cursor:pointer">Connect ♡</button>
+    <div id="config-err" style="margin-top:14px;font-size:12px;color:var(--red);text-align:center"></div>
+    <div style="margin-top:20px;font-size:11px;color:var(--t3);text-align:center;max-width:280px;line-height:1.5">
+      Ask Manu for the connection key. You only need to do this once on each device.</div>
+  `;
+}
+
+function saveConfig() {
+  const raw = document.getElementById('config-input').value.trim();
+  try {
+    // Try as base64 first
+    let config;
+    try {
+      config = JSON.parse(atob(raw));
+    } catch(e) {
+      // Try as raw JSON
+      config = JSON.parse(raw);
+    }
+    if (!config.apiKey || !config.databaseURL || !config.projectId) {
+      throw new Error('Missing fields');
+    }
+    localStorage.setItem('met_fb_config', JSON.stringify(config));
+    FIREBASE_CONFIG = config;
+    location.reload();
+  } catch(e) {
+    document.getElementById('config-err').textContent = 'Invalid key. Try again.';
+  }
+}
 </script>
 </body>
 </html>
