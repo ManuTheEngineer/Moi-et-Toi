@@ -402,7 +402,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ===== EMPTY ===== */
-.empty{text-align:center;padding:32px 20px;font-size:12px;color:var(--t3);font-style:italic;line-height:1.6}
+.empty{text-align:center;padding:32px 20px;font-size:12px;color:var(--t3);line-height:1.8}
+.empty::before{content:'';display:block;width:40px;height:2px;background:var(--tint);border-radius:1px;margin:0 auto 12px}
 
 /* ===== SKELETON LOADING ===== */
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -958,43 +959,77 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="pg on" id="pg-dash">
 <div class="ctn">
   <div class="ptr" id="ptr"><span class="ptr-spinner"></span><span class="ptr-text">Pull to refresh</span></div>
-  <div class="phd"><h1>Moi et Toi</h1><p>Welcome home, <span class="uname"></span></p></div>
 
-  <!-- Streak + Quick Taps -->
-  <div class="feat-card fc-grow" onclick="go('connect')" style="cursor:pointer">
-    <div class="fc-label">Send a feeling</div>
-    <div class="tap-bar" style="margin-bottom:0" onclick="event.stopPropagation()">
-      <div class="tap-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="sendTap('hug','🤗')"><span class="tap-emoji" style="font-size:22px">🤗</span><span class="tap-label" style="color:rgba(255,255,255,.8)">Hug</span></div>
-      <div class="tap-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="sendTap('kiss','💋')"><span class="tap-emoji" style="font-size:22px">💋</span><span class="tap-label" style="color:rgba(255,255,255,.8)">Kiss</span></div>
-      <div class="tap-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="sendTap('love','❤️')"><span class="tap-emoji" style="font-size:22px">❤️</span><span class="tap-label" style="color:rgba(255,255,255,.8)">Love</span></div>
-      <div class="tap-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="sendTap('miss','🥺')"><span class="tap-emoji" style="font-size:22px">🥺</span><span class="tap-label" style="color:rgba(255,255,255,.8)">Miss</span></div>
-      <div class="tap-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="sendTap('thinking','💭')"><span class="tap-emoji" style="font-size:22px">💭</span><span class="tap-label" style="color:rgba(255,255,255,.8)">Think</span></div>
+  <!-- Time-Aware Hero -->
+  <div id="dash-hero" style="padding:38px 0 10px">
+    <div style="font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:6px" id="dash-time-label">Good morning</div>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:36px;letter-spacing:3px;color:var(--cream)" id="dash-greeting">...</h1>
+    <div id="dash-together" style="font-size:13px;color:var(--gold);margin-top:10px;font-weight:500"></div>
+  </div>
+
+  <!-- Partner Status — the first thing you care about -->
+  <div id="dash-partner-card" style="background:var(--card-bg);border-radius:24px;padding:22px;margin:16px 0;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:16px;cursor:pointer" onclick="go('connect')">
+    <div id="dash-partner-avatar" style="width:52px;height:52px;border-radius:50%;background:var(--tint);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">♡</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:15px;font-weight:500;color:var(--cream)" id="dash-partner-name">...</div>
+      <div style="font-size:12px;color:var(--t3);margin-top:3px" id="dash-partner-status">Waiting for their check-in</div>
+    </div>
+    <div id="dash-partner-mood-emoji" style="font-size:28px"></div>
+  </div>
+
+  <!-- Unread / Action Nudges -->
+  <div id="dash-nudges" style="display:flex;gap:10px;margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Quick Taps — compressed inline -->
+  <div style="display:flex;gap:8px;margin-bottom:20px" id="dash-taps">
+    <div style="flex:1;text-align:center;padding:14px 4px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer" onclick="sendTap('hug','🤗')"><div style="font-size:22px">🤗</div><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Hug</div></div>
+    <div style="flex:1;text-align:center;padding:14px 4px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer" onclick="sendTap('kiss','💋')"><div style="font-size:22px">💋</div><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Kiss</div></div>
+    <div style="flex:1;text-align:center;padding:14px 4px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer" onclick="sendTap('love','❤️')"><div style="font-size:22px">❤️</div><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Love</div></div>
+    <div style="flex:1;text-align:center;padding:14px 4px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer" onclick="sendTap('miss','🥺')"><div style="font-size:22px">🥺</div><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Miss</div></div>
+    <div style="flex:1;text-align:center;padding:14px 4px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer" onclick="sendTap('thinking','💭')"><div style="font-size:22px">💭</div><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Think</div></div>
+  </div>
+
+  <!-- Your Mood vs Partner Mood — side by side -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+    <div class="card" id="today-mood" style="margin-bottom:0">
+      <div class="card-h"><span class="card-t">You</span><span class="card-s">Today</span></div>
+      <div class="skel skel-block" style="margin:4px 0"></div>
+    </div>
+    <div class="card" id="partner-mood" style="margin-bottom:0">
+      <div class="card-h"><span class="card-t"><span class="pname"></span></span><span class="card-s">Today</span></div>
+      <div class="skel skel-block" style="margin:4px 0"></div>
     </div>
   </div>
 
-  <!-- Streak Card -->
-  <div class="feat-card fc-mood" onclick="go('question')" style="cursor:pointer">
-    <div class="fc-label">Daily Streak</div>
-    <div class="fc-title" id="dash-streak">0 days strong</div>
-    <div class="fc-sub">Keep checking in together to build your streak</div>
-    <div class="fc-num" id="dash-streak-num">0</div>
+  <!-- Daily Question — most engaging feature, surface it -->
+  <div id="dash-dq-card" style="background:var(--card-bg);border-radius:24px;padding:22px;margin-bottom:18px;box-shadow:var(--card-shadow);cursor:pointer;display:none" onclick="go('question')">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600">Daily Question</span>
+      <span id="dash-dq-streak" style="font-size:12px;color:var(--gold);font-weight:500">🔥 0</span>
+    </div>
+    <div id="dash-dq-text" style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--cream);line-height:1.5"></div>
+    <div id="dash-dq-status" style="font-size:11px;color:var(--t3);margin-top:10px;font-style:italic"></div>
   </div>
 
-  <!-- Mood Cards -->
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Today's Vibes</div></div>
-  <div class="card" id="today-mood">
-    <div class="card-h"><span class="card-t">Your Vibe Today</span><span class="card-s">Mood Check-in</span></div>
-    <div class="skel skel-block" style="margin:4px 0"></div>
-  </div>
-
-  <div class="card" id="partner-mood">
-    <div class="card-h"><span class="card-t"><span class="pname"></span>'s Vibe</span><span class="card-s">Their Check-in</span></div>
-    <div class="skel skel-block" style="margin:4px 0"></div>
+  <!-- Streak Card — compact -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+    <div style="background:var(--card-bg);border-radius:20px;padding:18px;box-shadow:var(--card-shadow);text-align:center;cursor:pointer" onclick="go('question')">
+      <div style="font-size:28px;margin-bottom:4px">🔥</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);line-height:1" id="dash-streak-num">0</div>
+      <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Day Streak</div>
+    </div>
+    <div style="background:var(--card-bg);border-radius:20px;padding:18px;box-shadow:var(--card-shadow);text-align:center;cursor:pointer" onclick="go('mood')">
+      <div style="font-size:28px;margin-bottom:4px" id="dash-my-mood-icon">◎</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);line-height:1" id="dash-mood-val">--</div>
+      <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Your Mood</div>
+    </div>
   </div>
 
   <!-- Mood Trend Chart -->
   <div class="chart-wrap" id="dash-chart">
-    <div class="chart-title">Mood This Week</div>
+    <div class="chart-title">This Week</div>
     <svg class="chart-svg" viewBox="0 0 320 120" id="mood-chart">
       <defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-1)" stop-opacity=".3"/><stop offset="100%" stop-color="var(--chart-1)" stop-opacity="0"/></linearGradient></defs>
       <text class="chart-label" x="4" y="16">5</text><text class="chart-label" x="4" y="56">3</text><text class="chart-label" x="4" y="96">1</text>
@@ -1003,33 +1038,32 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
       <path class="chart-line" id="chart-line" d="M20,50"/>
     </svg>
     <div class="chart-legend">
-      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-1)"></div>Your mood</div>
-      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-2)"></div>Partner's mood</div>
+      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-1)"></div>You</div>
+      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-2)"></div><span class="pname"></span></div>
     </div>
   </div>
 
-  <!-- Quick Actions -->
-  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Quick Start</div></div>
+  <!-- Explore — 2 featured + grid -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 12px">Explore</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <div class="feat-card fc-connect" onclick="go('connect')" style="cursor:pointer;padding:16px;margin:0">
-      <div class="fc-label">Connect</div>
+    <div class="feat-card fc-connect" onclick="go('connect')" style="cursor:pointer;padding:18px;margin:0">
+      <div class="fc-label">♡ Connect</div>
       <div style="font-size:15px;font-weight:500">Love Letters</div>
     </div>
-    <div class="feat-card fc-games" onclick="go('games')" style="cursor:pointer;padding:16px;margin:0">
-      <div class="fc-label">Play</div>
+    <div class="feat-card fc-games" onclick="go('games')" style="cursor:pointer;padding:18px;margin:0">
+      <div class="fc-label">🎮 Play</div>
       <div style="font-size:15px;font-weight:500">Games</div>
     </div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-    <div class="feat-card fc-story" onclick="go('story')" style="cursor:pointer;padding:16px;margin:0">
-      <div class="fc-label">Timeline</div>
-      <div style="font-size:15px;font-weight:500">Our Story</div>
+    <div class="feat-card fc-love" onclick="go('datenight')" style="cursor:pointer;padding:18px;margin:0">
+      <div class="fc-label">🕯 Tonight</div>
+      <div style="font-size:15px;font-weight:500">Date Night</div>
     </div>
-    <div class="feat-card fc-mood" onclick="go('mood')" style="cursor:pointer;padding:16px;margin:0">
-      <div class="fc-label">Check In</div>
-      <div style="font-size:15px;font-weight:500">Mood</div>
+    <div class="feat-card fc-story" onclick="go('deeptalk')" style="cursor:pointer;padding:18px;margin:0">
+      <div class="fc-label">🗣 Talk</div>
+      <div style="font-size:15px;font-weight:500">Deep Talk</div>
     </div>
   </div>
+
 </div>
 </div>
 
@@ -1185,71 +1219,91 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== MORE HUB ===== -->
 <div class="pg" id="pg-more">
 <div class="ctn">
-  <div class="phd"><h1>More</h1><p>Everything else</p></div>
-
-  <div class="slbl">Together</div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="go('datenight')"><span class="hc-icon">🕯</span><div class="hc-title">Date Night</div><div class="hc-sub">Idea generator</div></div>
-    <div class="hub-card" onclick="go('deeptalk')"><span class="hc-icon">🗣</span><div class="hc-title">Deep Talk</div><div class="hc-sub">Real conversations</div></div>
-  </div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="go('lovelang')"><span class="hc-icon">♡</span><div class="hc-title">Love Languages</div><div class="hc-sub">Know each other</div></div>
-    <div class="hub-card" onclick="go('checkin')"><span class="hc-icon">✦</span><div class="hc-title">Weekly Check-in</div><div class="hc-sub">Relationship care</div></div>
-  </div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="go('culture')"><span class="hc-icon">🌍</span><div class="hc-title">Our Cultures</div><div class="hc-sub">Togo meets Texas</div></div>
-    <div class="hub-card" onclick="go('foundation')"><span class="hc-icon">🏗</span><div class="hc-title">Our Foundation</div><div class="hc-sub">Values & agreements</div></div>
+  <div style="padding:38px 0 10px">
+    <div style="font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:6px">Discover</div>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;letter-spacing:3px;color:var(--cream)">Everything</h1>
   </div>
 
-  <div class="slbl">Life Building</div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="go('family')"><span class="hc-icon">👶</span><div class="hc-title">Future Family</div><div class="hc-sub">Plan & dream</div></div>
-    <div class="hub-card" onclick="go('homelife')"><span class="hc-icon">🏠</span><div class="hc-title">Home Life</div><div class="hc-sub">Budget, meals, tasks</div></div>
+  <!-- Featured — full-width cards for the most important modules -->
+  <div class="feat-card fc-love" onclick="go('datenight')" style="cursor:pointer;margin-bottom:12px">
+    <div class="fc-label">🕯 Tonight</div>
+    <div class="fc-title">Date Night Generator</div>
+    <div class="fc-sub">Spin the wheel for your next adventure</div>
   </div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="go('spiritual')"><span class="hc-icon">🕊</span><div class="hc-title">Our Spirit</div><div class="hc-sub">Faith & prayer</div></div>
-    <div class="hub-card" onclick="go('dreams')"><span class="hc-icon">✧</span><div class="hc-title">Our Dreams</div><div class="hc-sub">Vision board</div></div>
-  </div>
-
-  <div class="slbl">Personal</div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="go('herspace')"><span class="hc-icon">🌸</span><div class="hc-title">Her Space</div><div class="hc-sub">Wellness & goals</div></div>
-    <div class="hub-card" onclick="go('hisspace')"><span class="hc-icon">⚡</span><div class="hc-title">His Space</div><div class="hc-sub">Growth & strength</div></div>
+  <div class="feat-card fc-grow" onclick="go('deeptalk')" style="cursor:pointer;margin-bottom:12px">
+    <div class="fc-label">🗣 Deeper</div>
+    <div class="fc-title">Deep Talk</div>
+    <div class="fc-sub">Questions that bring you closer</div>
   </div>
 
-  <div class="slbl">Tools</div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="go('ai')"><span class="hc-icon">✧</span><div class="hc-title">AI Assistant</div><div class="hc-sub">Chat with Claude</div></div>
-    <div class="hub-card" onclick="go('question')"><span class="hc-icon">❓</span><div class="hc-title">Daily Question</div><div class="hc-sub">Answer together</div></div>
+  <!-- Relationship — list style for quicker scanning -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Relationship</div>
+  <div style="background:var(--card-bg);border-radius:22px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:18px">
+    <div onclick="go('lovelang')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;transition:background .15s"><span style="font-size:20px;width:36px;text-align:center">♡</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Love Languages</div><div style="font-size:11px;color:var(--t3)">Understand how you love</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('checkin')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;transition:background .15s"><span style="font-size:20px;width:36px;text-align:center">✦</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Weekly Check-in</div><div style="font-size:11px;color:var(--t3)">How are we doing?</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('culture')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;transition:background .15s"><span style="font-size:20px;width:36px;text-align:center">🌍</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Our Cultures</div><div style="font-size:11px;color:var(--t3)">Togo meets Texas</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('foundation')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;transition:background .15s"><span style="font-size:20px;width:36px;text-align:center">🏗</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Our Foundation</div><div style="font-size:11px;color:var(--t3)">Values & agreements</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
   </div>
 
-  <div class="slbl">Workouts</div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="go('w1')"><span class="hc-icon">✦</span><div class="hc-title">Foundation</div><div class="hc-sub">Beginner</div></div>
-    <div class="hub-card" onclick="go('w2')"><span class="hc-icon">◆</span><div class="hc-title">Elevated</div><div class="hc-sub">Advanced</div></div>
-  </div>
-  <div class="hub-grid" style="grid-template-columns:1fr">
-    <div class="hub-card" onclick="go('w3')"><span class="hc-icon">⬡</span><div class="hc-title">Full Body</div><div class="hc-sub">Complete session</div></div>
+  <!-- Life Building -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Life Building</div>
+  <div style="background:var(--card-bg);border-radius:22px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:18px">
+    <div onclick="go('family')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer"><span style="font-size:20px;width:36px;text-align:center">👶</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Future Family</div><div style="font-size:11px;color:var(--t3)">Plan & dream together</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('homelife')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer"><span style="font-size:20px;width:36px;text-align:center">🏠</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Home Life</div><div style="font-size:11px;color:var(--t3)">Budget, meals & tasks</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('spiritual')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer"><span style="font-size:20px;width:36px;text-align:center">🕊</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Our Spirit</div><div style="font-size:11px;color:var(--t3)">Faith & prayer</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('dreams')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer"><span style="font-size:20px;width:36px;text-align:center">✧</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Our Dreams</div><div style="font-size:11px;color:var(--t3)">Vision board</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
   </div>
 
-  <div class="slbl">Activities</div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="go('games')"><span class="hc-icon">🎮</span><div class="hc-title">Games</div><div class="hc-sub">Fun & quizzes</div></div>
-    <div class="hub-card" onclick="go('bucket')"><span class="hc-icon">🪣</span><div class="hc-title">Bucket List</div><div class="hc-sub">Dream together</div></div>
+  <!-- Personal Spaces — cards side by side -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Personal</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+    <div class="feat-card fc-connect" onclick="go('herspace')" style="cursor:pointer;padding:18px;margin:0">
+      <div class="fc-label">🌸</div>
+      <div style="font-size:15px;font-weight:500">Her Space</div>
+      <div class="fc-sub" style="font-size:11px">Wellness & goals</div>
+    </div>
+    <div class="feat-card fc-grow" onclick="go('hisspace')" style="cursor:pointer;padding:18px;margin:0">
+      <div class="fc-label">⚡</div>
+      <div style="font-size:15px;font-weight:500">His Space</div>
+      <div class="fc-sub" style="font-size:11px">Growth & strength</div>
+    </div>
   </div>
-  <div class="hub-grid">
+
+  <!-- Activities -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Activities</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+    <div class="hub-card" onclick="go('games')"><span class="hc-icon">🎮</span><div class="hc-title">Games</div><div class="hc-sub">Fun together</div></div>
+    <div class="hub-card" onclick="go('bucket')"><span class="hc-icon">🪣</span><div class="hc-title">Bucket List</div><div class="hc-sub">Dream big</div></div>
     <div class="hub-card" onclick="go('wishlist')"><span class="hc-icon">🎁</span><div class="hc-title">Wishlists</div><div class="hc-sub">Gift ideas</div></div>
-    <div class="hub-card" onclick="go('gratitude')"><span class="hc-icon">🙏</span><div class="hc-title">Gratitude</div><div class="hc-sub">Daily thankfulness</div></div>
+    <div class="hub-card" onclick="go('gratitude')"><span class="hc-icon">🙏</span><div class="hc-title">Gratitude</div><div class="hc-sub">Thankfulness</div></div>
+    <div class="hub-card" onclick="go('ai')"><span class="hc-icon">✧</span><div class="hc-title">AI Chat</div><div class="hc-sub">Ask Claude</div></div>
+    <div class="hub-card" onclick="go('question')"><span class="hc-icon">❓</span><div class="hc-title">Daily Q</div><div class="hc-sub">Answer together</div></div>
   </div>
 
-  <div class="slbl">Settings</div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="toggleTheme()"><span class="hc-icon">◐</span><div class="hc-title">Theme</div><div class="hc-sub" id="more-theme-sub">Auto</div></div>
-    <div class="hub-card" onclick="updateApiKey()"><span class="hc-icon">🔑</span><div class="hc-title">API Key</div><div class="hc-sub">Claude config</div></div>
+  <!-- Fitness — compact horizontal scroll feel -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Fitness</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px">
+    <div class="hub-card" onclick="go('w1')" style="padding:18px 10px"><span class="hc-icon">✦</span><div class="hc-title">Foundation</div></div>
+    <div class="hub-card" onclick="go('w2')" style="padding:18px 10px"><span class="hc-icon">◆</span><div class="hc-title">Elevated</div></div>
+    <div class="hub-card" onclick="go('w3')" style="padding:18px 10px"><span class="hc-icon">⬡</span><div class="hc-title">Full Body</div></div>
   </div>
-  <div class="hub-grid">
-    <div class="hub-card" onclick="switchUser()"><span class="hc-icon">↔</span><div class="hc-title">Switch Profile</div><div class="hc-sub">Change account</div></div>
-    <div class="hub-card" onclick="logout()"><span class="hc-icon">←</span><div class="hc-title">Log Out</div><div class="hc-sub">Sign out</div></div>
+
+  <!-- Settings — minimal -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Settings</div>
+  <div style="background:var(--card-bg);border-radius:22px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:18px">
+    <div onclick="toggleTheme()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer"><span style="font-size:18px;width:32px;text-align:center">◐</span><div style="flex:1;font-size:13px;color:var(--cream)">Theme</div><span style="font-size:12px;color:var(--t3)" id="more-theme-sub">Auto</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="updateApiKey()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer"><span style="font-size:18px;width:32px;text-align:center">🔑</span><div style="flex:1;font-size:13px;color:var(--cream)">API Key</div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="switchUser()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer"><span style="font-size:18px;width:32px;text-align:center">↔</span><div style="flex:1;font-size:13px;color:var(--cream)">Switch Profile</div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="logout()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer"><span style="font-size:18px;width:32px;text-align:center">←</span><div style="font-size:13px;color:var(--red)">Log Out</div></div>
   </div>
 </div>
 </div>
@@ -2268,6 +2322,11 @@ function finishLogin() {
   listenMeals();
   listenChores();
   enforcePrivacy();
+  // Dashboard UX
+  renderDashHero();
+  renderDashNudges();
+  renderDashDQCard();
+  renderDashCountdown();
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
@@ -2362,7 +2421,7 @@ function listenMoods() {
 
 function renderMoodFeed(moods) {
   const el = document.getElementById('mood-feed');
-  if (!moods.length) { el.innerHTML = '<div class="empty">No check-ins yet. Be the first.</div>'; return; }
+  if (!moods.length) { el.innerHTML = '<div class="empty">Your mood story starts with one check-in</div>'; return; }
   const emojis = ['', '😴', '😐', '🙂', '😊', '🔥'];
   const eLbls = ['', '🌙', '☁', '☀', '✨', '⚡'];
   el.innerHTML = moods.map(m => {
@@ -2382,31 +2441,53 @@ function renderMoodFeed(moods) {
 
 function renderDashMoods(moods) {
   const emojis = ['', '😴', '😐', '🙂', '😊', '🔥'];
-  const labels = ['', 'Rest Needed', 'Meh', 'Good', 'Great', 'Amazing'];
+  const labels = ['', 'Low', 'Meh', 'Good', 'Great', 'Amazing'];
   const today = new Date().toISOString().split('T')[0];
 
   const myToday = moods.find(m => m.user === user && m.date === today);
   const partnerToday = moods.find(m => m.user === partner && m.date === today);
 
+  // Compact side-by-side mood cards
   const myEl = document.getElementById('today-mood');
   if (myToday) {
-    myEl.innerHTML = `<div class="card-h"><span class="card-t">Your Vibe Today</span><span class="card-s">${emojis[myToday.mood]} ${labels[myToday.mood]}</span></div>
-      <div style="text-align:center;font-size:36px;padding:8px 0">${emojis[myToday.mood]}</div>
-      ${myToday.note ? `<div style="text-align:center;font-size:12px;color:var(--t2);font-style:italic;padding:4px 0">"${myToday.note}"</div>` : ''}`;
+    myEl.innerHTML = `<div class="card-h"><span class="card-t">You</span><span class="card-s">${labels[myToday.mood]}</span></div>
+      <div style="text-align:center;font-size:40px;padding:6px 0">${emojis[myToday.mood]}</div>`;
   } else {
-    myEl.innerHTML = `<div class="card-h"><span class="card-t">Today's Vibe</span><span class="card-s">Mood Check-in</span></div>
-      <div class="empty">Tap Mood in the nav to check in today</div>`;
+    myEl.innerHTML = `<div class="card-h"><span class="card-t">You</span><span class="card-s">Today</span></div>
+      <div style="text-align:center;padding:12px 0;font-size:11px;color:var(--t3);cursor:pointer" onclick="go('mood')">Tap to check in</div>`;
   }
 
   const pEl = document.getElementById('partner-mood');
   if (partnerToday) {
-    pEl.innerHTML = `<div class="card-h"><span class="card-t">${NAMES[partner]}'s Vibe</span><span class="card-s">${emojis[partnerToday.mood]} ${labels[partnerToday.mood]}</span></div>
-      <div style="text-align:center;font-size:36px;padding:8px 0">${emojis[partnerToday.mood]}</div>
-      ${partnerToday.note ? `<div style="text-align:center;font-size:12px;color:var(--t2);font-style:italic;padding:4px 0">"${partnerToday.note}"</div>` : ''}`;
+    pEl.innerHTML = `<div class="card-h"><span class="card-t">${NAMES[partner]}</span><span class="card-s">${labels[partnerToday.mood]}</span></div>
+      <div style="text-align:center;font-size:40px;padding:6px 0">${emojis[partnerToday.mood]}</div>`;
   } else {
-    pEl.innerHTML = `<div class="card-h"><span class="card-t"><span class="pname"></span>'s Vibe</span><span class="card-s">Their Check-in</span></div>
-      <div class="empty">Waiting for their check-in</div>`;
-    document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
+    pEl.innerHTML = `<div class="card-h"><span class="card-t">${NAMES[partner]}</span><span class="card-s">Today</span></div>
+      <div style="text-align:center;padding:12px 0;font-size:11px;color:var(--t3)">Waiting...</div>`;
+  }
+
+  // Update partner status card on dashboard
+  const partnerNameEl = document.getElementById('dash-partner-name');
+  const partnerStatusEl = document.getElementById('dash-partner-status');
+  const partnerMoodEl = document.getElementById('dash-partner-mood-emoji');
+  const partnerAvatar = document.getElementById('dash-partner-avatar');
+  if (partnerNameEl) partnerNameEl.textContent = NAMES[partner];
+  if (partnerToday && partnerMoodEl) {
+    partnerMoodEl.textContent = emojis[partnerToday.mood];
+    if (partnerStatusEl) partnerStatusEl.textContent = `Feeling ${labels[partnerToday.mood].toLowerCase()} today`;
+    if (partnerAvatar) partnerAvatar.textContent = emojis[partnerToday.mood];
+  } else {
+    if (partnerMoodEl) partnerMoodEl.textContent = '';
+    if (partnerStatusEl) partnerStatusEl.textContent = 'Haven\'t checked in today yet';
+    if (partnerAvatar) partnerAvatar.textContent = '♡';
+  }
+
+  // Update compact mood stat
+  const moodVal = document.getElementById('dash-mood-val');
+  const moodIcon = document.getElementById('dash-my-mood-icon');
+  if (myToday && moodVal) {
+    moodVal.textContent = labels[myToday.mood];
+    if (moodIcon) moodIcon.textContent = emojis[myToday.mood];
   }
 
   // Render dashboard mood chart and mood page analytics
@@ -2827,7 +2908,7 @@ function listenLetters() {
 function renderLetterFeed(letters) {
   const el = document.getElementById('letter-feed');
   if (!el) return;
-  if (!letters.length) { el.innerHTML = '<div class="empty">No letters yet. Write the first one.</div>'; return; }
+  if (!letters.length) { el.innerHTML = '<div class="empty">Write the first letter. Even a few words can make their whole day.</div>'; return; }
   el.innerHTML = letters.map(l => {
     const time = new Date(l.timestamp);
     const ts = time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -2879,7 +2960,7 @@ function listenMilestones() {
 function renderTimeline(milestones) {
   const el = document.getElementById('timeline');
   if (!el) return;
-  if (!milestones.length) { el.innerHTML = '<div class="empty">No milestones yet. Start your story!</div>'; return; }
+  if (!milestones.length) { el.innerHTML = '<div class="empty">Every love story has a beginning. Add your first milestone.</div>'; return; }
   el.innerHTML = milestones.map(m => {
     const d = new Date(m.date + 'T00:00:00');
     const dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
@@ -4931,12 +5012,149 @@ function showConfetti() {
 
 // ===== DASHBOARD STREAK WIRING =====
 function updateDashStreak(data) {
-  const streakEl = document.getElementById('dash-streak');
   const numEl = document.getElementById('dash-streak-num');
-  if (!streakEl || !numEl) return;
-  const count = data.current || 0;
-  streakEl.textContent = count + (count === 1 ? ' day strong' : ' days strong');
-  numEl.textContent = count;
+  if (numEl) numEl.textContent = data.current || 0;
+  // Also update the daily question streak on dashboard
+  const dqStreakEl = document.getElementById('dash-dq-streak');
+  if (dqStreakEl) dqStreakEl.textContent = '🔥 ' + (data.current || 0);
+}
+
+// ===== DASHBOARD HERO (time-aware) =====
+function renderDashHero() {
+  const h = new Date().getHours();
+  const timeLabel = document.getElementById('dash-time-label');
+  const greeting = document.getElementById('dash-greeting');
+  const together = document.getElementById('dash-together');
+
+  if (timeLabel && greeting) {
+    let timeText, greetText;
+    if (h < 6) { timeText = 'Late night'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
+    else if (h < 12) { timeText = 'Good morning'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
+    else if (h < 17) { timeText = 'Good afternoon'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
+    else if (h < 21) { timeText = 'Good evening'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
+    else { timeText = 'Good night'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
+    timeLabel.textContent = timeText;
+    greeting.textContent = greetText;
+  }
+
+  // Calculate "together since" from first milestone
+  if (together && db) {
+    db.ref('milestones').orderByChild('date').limitToFirst(1).once('value', snap => {
+      if (snap.exists()) {
+        let firstDate = null;
+        snap.forEach(c => { firstDate = c.val().date; });
+        if (firstDate) {
+          const start = new Date(firstDate + 'T00:00:00');
+          const now = new Date();
+          const days = Math.floor((now - start) / 86400000);
+          if (days > 0) together.textContent = days + ' days together';
+        }
+      }
+    });
+  }
+}
+
+// ===== DASHBOARD NUDGES (unread letters, actions needed) =====
+function renderDashNudges() {
+  const container = document.getElementById('dash-nudges');
+  if (!container || !db) return;
+
+  const nudges = [];
+  const today = new Date().toISOString().split('T')[0];
+
+  // Check for unread letters
+  db.ref('letters').orderByChild('timestamp').limitToLast(10).once('value', snap => {
+    let unreadCount = 0;
+    snap.forEach(c => {
+      const l = c.val();
+      if (l.from === partner && !l.read) unreadCount++;
+    });
+
+    if (unreadCount > 0) {
+      nudges.push(`<div onclick="go('connect')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:var(--gold);color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">${unreadCount} unread letter${unreadCount > 1 ? 's' : ''} 💌</div>`);
+    }
+
+    // Check if user hasn't done mood today
+    db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value', moodSnap => {
+      let checkedIn = false;
+      moodSnap.forEach(c => {
+        const m = c.val();
+        if (m.user === user && m.date === today) checkedIn = true;
+      });
+
+      if (!checkedIn) {
+        nudges.push(`<div onclick="go('mood')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:12px;color:var(--cream);cursor:pointer;white-space:nowrap;font-weight:500">Check in today ◎</div>`);
+      }
+
+      // Check daily question
+      db.ref('dailyAnswers/' + today + '/' + user).once('value', dqSnap => {
+        if (!dqSnap.exists()) {
+          nudges.push(`<div onclick="go('question')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:12px;color:var(--cream);cursor:pointer;white-space:nowrap;font-weight:500">Answer today's question ❓</div>`);
+        }
+
+        container.innerHTML = nudges.join('');
+        if (nudges.length === 0) container.style.display = 'none';
+      });
+    });
+  });
+}
+
+// ===== DASHBOARD DAILY QUESTION CARD =====
+function renderDashDQCard() {
+  const card = document.getElementById('dash-dq-card');
+  if (!card) return;
+
+  const today = new Date().toISOString().split('T')[0];
+  const q = getTodayQuestion();
+  if (!q) return;
+
+  const textEl = document.getElementById('dash-dq-text');
+  const statusEl = document.getElementById('dash-dq-status');
+  if (textEl) textEl.textContent = q.q;
+  card.style.display = 'block';
+
+  // Check answer status
+  if (db) {
+    db.ref('dailyAnswers/' + today).once('value', snap => {
+      const data = snap.val() || {};
+      if (data[user] && data[partner]) {
+        if (statusEl) statusEl.textContent = 'Both answered — tap to see';
+      } else if (data[user]) {
+        if (statusEl) statusEl.textContent = 'Waiting for ' + NAMES[partner] + '...';
+      } else {
+        if (statusEl) statusEl.textContent = 'Tap to answer together';
+      }
+    });
+  }
+}
+
+// ===== DASHBOARD UPCOMING COUNTDOWN =====
+function renderDashCountdown() {
+  // Find nearest upcoming countdown to show on dashboard
+  if (!db) return;
+  db.ref('countdowns').once('value', snap => {
+    if (!snap.exists()) return;
+    const now = new Date();
+    let nearest = null, nearestDays = Infinity;
+    snap.forEach(c => {
+      const cd = c.val();
+      if (!cd.date) return;
+      const target = new Date(cd.date + 'T00:00:00');
+      const diff = Math.ceil((target - now) / 86400000);
+      if (diff > 0 && diff < nearestDays) {
+        nearestDays = diff;
+        nearest = cd;
+      }
+    });
+    if (nearest) {
+      const togetherEl = document.getElementById('dash-together');
+      if (togetherEl) {
+        const existingText = togetherEl.textContent;
+        if (existingText) togetherEl.textContent = existingText + '  ·  ' + nearestDays + 'd to ' + nearest.title;
+        else togetherEl.textContent = nearestDays + ' days until ' + nearest.title;
+      }
+    }
+  });
 }
 </script>
 </body>
