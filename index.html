@@ -131,7 +131,9 @@
   --chart-1: #E0768A; --chart-2: #E0A88E; --chart-3: #D4B878; --chart-4: #9068B0; --chart-5: #B84050;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px);overscroll-behavior-y:none}
+::selection{background:var(--tint-b);color:var(--gold)}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,var(--grad-gold) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,var(--grad-grey) 0%,transparent 60%);pointer-events:none;z-index:0}
 
 /* ===== LOGIN ===== */
@@ -168,13 +170,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .ctn{max-width:480px;margin:0 auto;padding:20px 20px 30px;position:relative;z-index:1}
 
 /* ===== BOTTOM NAV ===== */
-.bnav{position:fixed;bottom:0;left:0;right:0;z-index:800;background:var(--bg-nav);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--bdr);display:flex;justify-content:space-around;padding:8px 0 env(safe-area-inset-bottom,8px)}
-.bn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;cursor:pointer;border:none;background:none;transition:transform .15s,opacity .15s}
-.bn .ni{font-size:18px;color:var(--t3);transition:color .2s,transform .2s}
-.bn .nl{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);font-family:'Outfit',sans-serif;transition:color .2s}
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:800;background:var(--bg-nav);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--bdr-s);display:flex;justify-content:space-around;padding:6px 0 env(safe-area-inset-bottom,6px)}
+.bn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 12px;cursor:pointer;border:none;background:none;transition:all .25s cubic-bezier(.2,.8,.3,1);border-radius:12px;position:relative}
+.bn .ni{font-size:18px;color:var(--t3);transition:all .25s}
+.bn .nl{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);font-family:'Outfit',sans-serif;transition:all .25s}
+.bn.on{background:var(--tint)}
 .bn.on .ni,.bn.on .nl{color:var(--gold)}
-.bn.on .ni{transform:scale(1.1)}
-.bn:active{transform:scale(0.92);opacity:0.8}
+.bn.on .ni{transform:scale(1.15)}
+.bn:active{transform:scale(0.88)}
 
 /* ===== HAMBURGER ===== */
 .hbg{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:1000;width:40px;height:40px;background:var(--bg-nav);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--bdr);border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all .3s}
@@ -202,20 +205,21 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 /* ===== PAGES ===== */
 .pg{display:none}
-.pg.on{display:block;animation:pageIn .28s ease forwards}
-.pg.out{display:block;animation:pageOut .18s ease forwards}
-@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pageOut{from{opacity:1}to{opacity:0;transform:translateY(-4px)}}
-.phd{padding:28px 0 18px;text-align:center}
-.phd h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:26px;letter-spacing:3px;text-transform:uppercase;color:var(--cream)}
-.phd p{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-top:4px}
+.pg.on{display:block;animation:pageIn .35s cubic-bezier(.2,.8,.3,1) forwards}
+.pg.out{display:block;animation:pageOut .2s ease forwards}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes pageOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.98)}}
+.phd{padding:32px 0 20px;text-align:center}
+.phd h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:28px;letter-spacing:4px;text-transform:uppercase;color:var(--cream)}
+.phd p{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t3);margin-top:5px}
 
 /* ===== CARDS ===== */
-.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;padding:18px;margin-bottom:12px}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;padding:20px;margin-bottom:14px;transition:transform .2s,box-shadow .2s}
+.card:active{transform:scale(.99)}
 .card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .card-t{font-size:14px;font-weight:500;color:var(--cream)}
 .card-s{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
-.slbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);font-weight:500;margin:22px 0 10px}
+.slbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--amber);font-weight:500;margin:24px 0 12px}
 
 /* ===== STAT GRID ===== */
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
@@ -370,11 +374,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .lcancel{text-align:center;margin-top:10px;font-size:11px;color:var(--t3);cursor:pointer}
 
 /* ===== TOAST ===== */
-.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:var(--bg);padding:10px 24px;border-radius:10px;font-size:12px;font-weight:500;opacity:0;pointer-events:none;transition:all .3s;z-index:1200}
+.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:#fff;padding:12px 28px;border-radius:12px;font-size:12px;font-weight:500;opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.2,.8,.3,1);z-index:1200;box-shadow:0 6px 24px rgba(107,29,42,.3);letter-spacing:.3px}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ===== EMPTY ===== */
-.empty{text-align:center;padding:28px;font-size:12px;color:var(--t3)}
+.empty{text-align:center;padding:32px 20px;font-size:12px;color:var(--t3);font-style:italic;line-height:1.6}
 
 /* ===== SKELETON LOADING ===== */
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -568,7 +572,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 /* ===== HUB PAGES ===== */
 .hub-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
-.hub-card{padding:20px 14px;border-radius:14px;text-align:center;cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);transition:all .2s}
+.hub-card{padding:22px 14px;border-radius:16px;text-align:center;cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);transition:all .25s cubic-bezier(.2,.8,.3,1)}
+.hub-card:active{transform:scale(.95);opacity:.85}
+.hub-card:hover{border-color:var(--gold);box-shadow:0 4px 20px var(--glow-gold)}
 .hub-card:hover{transform:translateY(-2px);border-color:var(--gold)}
 .hub-card:active{transform:scale(0.96);opacity:0.85}
 .hub-card .hc-icon{font-size:24px;margin-bottom:8px;display:block}
@@ -587,7 +593,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .soon-features li span{font-size:16px}
 
 /* ===== GRADIENT FEATURE CARDS ===== */
-.feat-card{border-radius:16px;padding:20px;margin-bottom:14px;color:#fff;position:relative;overflow:hidden}
+.feat-card{border-radius:18px;padding:22px;margin-bottom:14px;color:#fff;position:relative;overflow:hidden;transition:transform .2s cubic-bezier(.2,.8,.3,1);box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.feat-card:active{transform:scale(.97)}
 .feat-card::after{content:'';position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.15));pointer-events:none}
 .feat-card.fc-love{background:var(--grad-love)}
 .feat-card.fc-mood{background:var(--grad-mood)}
@@ -763,6 +770,102 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .pg-goal-text{flex:1;font-size:13px}
 .pg-goal-date{font-size:10px;color:var(--t3)}
 
+/* ===== CULTURE EXCHANGE ===== */
+.cx-hero{display:flex;align-items:center;justify-content:center;gap:16px;padding:24px 0;margin-bottom:16px}
+.cx-flag{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:40px}
+.cx-flag span{font-size:11px;color:var(--t2);font-weight:500}
+.cx-bridge{font-size:24px;color:var(--gold);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.1)}}
+.cx-phrase-form{padding:8px 0}
+.cx-phrase{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg2);border-radius:12px;margin-bottom:8px;border:1px solid var(--bdr-s)}
+.cx-phrase-word{font-weight:600;font-size:15px;color:var(--gold)}
+.cx-phrase-meaning{font-size:12px;color:var(--t2)}
+.cx-phrase-lang{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);background:var(--tint-xs);padding:2px 8px;border-radius:6px}
+.cx-phrase-by{font-size:10px;color:var(--t3)}
+.cx-trad-form,.cx-recipe-form{background:var(--bg2);border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid var(--bdr-s)}
+.cx-trad-card,.cx-recipe-card{background:var(--bg2);border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid var(--bdr-s)}
+.cx-trad-origin{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;font-weight:500;margin-bottom:4px}
+.cx-trad-origin.togo{color:#1A6B4A}.cx-trad-origin.texas{color:var(--red)}.cx-trad-origin.ours{color:var(--gold)}
+.cx-trad-title{font-weight:600;font-size:15px;margin-bottom:4px}
+.cx-trad-desc{font-size:12px;color:var(--t2);line-height:1.5}
+.cx-trad-meta{font-size:10px;color:var(--t3);margin-top:6px}
+
+/* ===== DEEP TALK ===== */
+.dt-current{background:var(--bg2);border-radius:20px;padding:32px 24px;text-align:center;margin-bottom:16px;border:1px solid var(--bdr);min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dt-depth{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:600;margin-bottom:12px}
+.dt-prompt{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--t1);line-height:1.4;margin-bottom:12px}
+.dt-instruction{font-size:11px;color:var(--t3);font-style:italic}
+.dt-controls{display:flex;gap:8px;margin-bottom:20px}
+.dt-journal-form{margin-bottom:16px}
+.dt-note-card{background:var(--bg2);border-radius:12px;padding:14px;margin-bottom:8px;border:1px solid var(--bdr-s)}
+.dt-note-meta{font-size:10px;color:var(--t3);margin-bottom:4px}
+.dt-note-text{font-size:12px;color:var(--t1);line-height:1.5}
+
+/* ===== FAMILY PLANNING ===== */
+.fam-stage{background:var(--grad-love);border-radius:16px;padding:24px 20px;text-align:center;color:#fff;margin-bottom:20px}
+.fam-stage-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;opacity:.7;margin-bottom:6px}
+.fam-stage-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:12px}
+.fam-stage-bar{height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-bottom:10px;overflow:hidden}
+.fam-stage-fill{height:100%;background:#fff;border-radius:2px;transition:width .6s ease}
+.fam-stage-steps{display:flex;justify-content:space-between;font-size:9px;opacity:.6}
+.fam-step.active{opacity:1;font-weight:600}
+.fam-discuss-item{background:var(--bg2);border-radius:12px;padding:14px;margin-bottom:8px;border:1px solid var(--bdr-s);cursor:pointer;transition:all .2s}
+.fam-discuss-item.discussed{opacity:.6}
+.fam-discuss-q{font-size:13px;font-weight:500}
+.fam-discuss-cat{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-top:4px}
+.fam-name-card{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg2);border-radius:12px;margin-bottom:8px;border:1px solid var(--bdr-s)}
+.fam-name-text{flex:1;font-weight:500;font-size:14px}
+.fam-name-gender{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+.fam-name-heart{cursor:pointer;font-size:16px;color:var(--t3);transition:all .2s}
+.fam-name-heart.loved{color:var(--gold)}
+
+/* ===== OUR FOUNDATION ===== */
+.fdn-agree-item{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg2);border-radius:12px;margin-bottom:8px;border:1px solid var(--bdr-s);cursor:pointer;font-size:13px;transition:all .2s}
+.fdn-agree-item.agreed{background:var(--tint);border-color:var(--gold)}
+.fdn-agree-item.agreed .fdn-check::after{content:'✓';color:var(--gold)}
+.fdn-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.fdn-conflict-card{background:var(--bg2);border-radius:16px;padding:20px;border:1px solid var(--bdr-s)}
+.fdn-conflict-step{display:flex;gap:10px;margin-bottom:14px;font-size:12px;color:var(--t2);line-height:1.5;align-items:flex-start}
+.fdn-conflict-step:last-child{margin-bottom:0}
+.fdn-num{width:24px;height:24px;border-radius:50%;background:var(--tint);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.fdn-value-card{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg2);border-radius:12px;margin-bottom:8px;border:1px solid var(--bdr-s)}
+.fdn-value-icon{font-size:18px}
+.fdn-value-text{flex:1;font-size:13px;font-weight:500}
+.fdn-value-by{font-size:10px;color:var(--t3)}
+
+/* ===== SPIRITUAL SPACE ===== */
+.sp-devo{background:linear-gradient(135deg,rgba(107,29,42,.9),rgba(90,56,112,.9));border-radius:16px;padding:28px 24px;text-align:center;color:#fff;cursor:pointer;margin-bottom:20px}
+.sp-devo-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;opacity:.6;margin-bottom:10px}
+.sp-devo-verse{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;line-height:1.5;margin-bottom:8px;font-style:italic}
+.sp-devo-ref{font-size:11px;opacity:.7;font-weight:500}
+.sp-prayer-form,.sp-bless-form{margin-bottom:12px}
+.sp-prayer-card,.sp-bless-card{background:var(--bg2);border-radius:12px;padding:14px;margin-bottom:8px;border:1px solid var(--bdr-s)}
+.sp-prayer-from{font-size:11px;color:var(--t3);margin-bottom:4px;font-weight:500}
+.sp-prayer-text{font-size:12px;color:var(--t1);line-height:1.5}
+.sp-prayer-pray{font-size:10px;color:var(--gold);cursor:pointer;margin-top:6px}
+.sp-intent-card{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg2);border-radius:12px;margin-bottom:8px;border:1px solid var(--bdr-s)}
+.sp-intent-text{flex:1;font-size:13px}
+.sp-intent-by{font-size:10px;color:var(--t3)}
+
+/* ===== HOME BUILDING ===== */
+.hl-budget-form{background:var(--bg2);border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid var(--bdr-s)}
+.hl-savings-card{background:var(--bg2);border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid var(--bdr-s)}
+.hl-savings-name{font-weight:600;font-size:14px;margin-bottom:6px}
+.hl-savings-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:6px}
+.hl-savings-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .6s ease}
+.hl-savings-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--t2)}
+.hl-savings-update{padding:6px 12px;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--gold);font-size:10px;cursor:pointer;font-family:'Outfit',sans-serif;margin-top:6px}
+.hl-meal-card{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg2);border-radius:12px;margin-bottom:8px;border:1px solid var(--bdr-s)}
+.hl-meal-day{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:600;min-width:40px}
+.hl-meal-name{flex:1;font-size:13px;font-weight:500}
+.hl-meal-by{font-size:10px;color:var(--t3)}
+.hl-chore-card{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg2);border-radius:12px;margin-bottom:8px;border:1px solid var(--bdr-s)}
+.hl-chore-card.done{opacity:.5}
+.hl-chore-card.done .hl-chore-name{text-decoration:line-through}
+.hl-chore-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--gold);flex-shrink:0}
+.hl-chore-name{flex:1;font-size:13px}
+.hl-chore-who{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);background:var(--tint-xs);padding:2px 8px;border-radius:6px}
+
 /* ===== RESPONSIVE ===== */
 @media(max-width:400px){.ctn{padding:16px 16px 24px}.sg{grid-template-columns:repeat(2,1fr)}.hub-grid{grid-template-columns:1fr}.ll-pair{grid-template-columns:1fr;gap:16px}.ll-divider{display:none}}
 </style>
@@ -796,9 +899,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="mi" onclick="go('ai')"><div class="mic a">✧</div><div class="mt"><h4>AI Assistant</h4></div></div>
   <div class="msl">Together</div>
   <div class="mi" onclick="go('datenight')"><div class="mic g">🕯</div><div class="mt"><h4>Date Night</h4><p>Idea generator</p></div></div>
-  <div class="mi" onclick="go('lovelang')"><div class="mic r">♡</div><div class="mt"><h4>Love Languages</h4><p>Know each other</p></div></div>
-  <div class="mi" onclick="go('checkin')"><div class="mic v">✦</div><div class="mt"><h4>Weekly Check-in</h4><p>Relationship care</p></div></div>
-  <div class="mi" onclick="go('dreams')"><div class="mic g">✧</div><div class="mt"><h4>Our Dreams</h4><p>Future together</p></div></div>
+  <div class="mi" onclick="go('deeptalk')"><div class="mic r">🗣</div><div class="mt"><h4>Deep Talk</h4><p>Real conversations</p></div></div>
+  <div class="mi" onclick="go('culture')"><div class="mic v">🌍</div><div class="mt"><h4>Our Cultures</h4><p>Togo meets Texas</p></div></div>
+  <div class="mi" onclick="go('lovelang')"><div class="mic g">♡</div><div class="mt"><h4>Love Languages</h4><p>Know each other</p></div></div>
+  <div class="mi" onclick="go('foundation')"><div class="mic r">🏗</div><div class="mt"><h4>Our Foundation</h4><p>Values & agreements</p></div></div>
+  <div class="msl">Life Building</div>
+  <div class="mi" onclick="go('family')"><div class="mic g">👶</div><div class="mt"><h4>Future Family</h4><p>Plan & dream</p></div></div>
+  <div class="mi" onclick="go('homelife')"><div class="mic r">🏠</div><div class="mt"><h4>Home Life</h4><p>Budget, meals, tasks</p></div></div>
+  <div class="mi" onclick="go('spiritual')"><div class="mic v">🕊</div><div class="mt"><h4>Our Spirit</h4><p>Faith & prayer</p></div></div>
   <div class="msl">Personal</div>
   <div class="mi" onclick="go('herspace')"><div class="mic r">🌸</div><div class="mt"><h4>Her Space</h4><p>Wellness & goals</p></div></div>
   <div class="mi" onclick="go('hisspace')"><div class="mic v">⚡</div><div class="mt"><h4>His Space</h4><p>Growth & strength</p></div></div>
@@ -1060,11 +1168,25 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="slbl">Together</div>
   <div class="hub-grid">
     <div class="hub-card" onclick="go('datenight')"><span class="hc-icon">🕯</span><div class="hc-title">Date Night</div><div class="hc-sub">Idea generator</div></div>
-    <div class="hub-card" onclick="go('lovelang')"><span class="hc-icon">♡</span><div class="hc-title">Love Languages</div><div class="hc-sub">Know each other</div></div>
+    <div class="hub-card" onclick="go('deeptalk')"><span class="hc-icon">🗣</span><div class="hc-title">Deep Talk</div><div class="hc-sub">Real conversations</div></div>
   </div>
   <div class="hub-grid">
+    <div class="hub-card" onclick="go('lovelang')"><span class="hc-icon">♡</span><div class="hc-title">Love Languages</div><div class="hc-sub">Know each other</div></div>
     <div class="hub-card" onclick="go('checkin')"><span class="hc-icon">✦</span><div class="hc-title">Weekly Check-in</div><div class="hc-sub">Relationship care</div></div>
-    <div class="hub-card" onclick="go('dreams')"><span class="hc-icon">✧</span><div class="hc-title">Our Dreams</div><div class="hc-sub">Future together</div></div>
+  </div>
+  <div class="hub-grid">
+    <div class="hub-card" onclick="go('culture')"><span class="hc-icon">🌍</span><div class="hc-title">Our Cultures</div><div class="hc-sub">Togo meets Texas</div></div>
+    <div class="hub-card" onclick="go('foundation')"><span class="hc-icon">🏗</span><div class="hc-title">Our Foundation</div><div class="hc-sub">Values & agreements</div></div>
+  </div>
+
+  <div class="slbl">Life Building</div>
+  <div class="hub-grid">
+    <div class="hub-card" onclick="go('family')"><span class="hc-icon">👶</span><div class="hc-title">Future Family</div><div class="hc-sub">Plan & dream</div></div>
+    <div class="hub-card" onclick="go('homelife')"><span class="hc-icon">🏠</span><div class="hc-title">Home Life</div><div class="hc-sub">Budget, meals, tasks</div></div>
+  </div>
+  <div class="hub-grid">
+    <div class="hub-card" onclick="go('spiritual')"><span class="hc-icon">🕊</span><div class="hc-title">Our Spirit</div><div class="hc-sub">Faith & prayer</div></div>
+    <div class="hub-card" onclick="go('dreams')"><span class="hc-icon">✧</span><div class="hc-title">Our Dreams</div><div class="hc-sub">Vision board</div></div>
   </div>
 
   <div class="slbl">Personal</div>
@@ -1623,6 +1745,287 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 </div>
 
+<!-- ===== CULTURE EXCHANGE ===== -->
+<div class="pg" id="pg-culture">
+<div class="ctn">
+  <div class="phd"><h1>Our Cultures</h1><p>Togo meets Texas — carry each other's roots</p></div>
+
+  <!-- Culture Cards -->
+  <div class="cx-hero">
+    <div class="cx-flag" onclick="go('culture')">🇹🇬<span>Togo</span></div>
+    <div class="cx-bridge">♡</div>
+    <div class="cx-flag" onclick="go('culture')">🇺🇸<span>Texas</span></div>
+  </div>
+
+  <!-- Teach Me -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Teach Me</div></div>
+  <div class="card">
+    <div class="card-h"><span class="card-t">Language Exchange</span><span class="card-s">Learn each other's words</span></div>
+    <div class="cx-phrase-form">
+      <input type="text" id="cx-word" placeholder="Word or phrase..." class="quiz-q">
+      <input type="text" id="cx-meaning" placeholder="What it means..." class="quiz-q">
+      <select id="cx-lang" style="padding:10px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+        <option value="ewe">Ewe (Togo)</option>
+        <option value="french">French</option>
+        <option value="mina">Mina</option>
+        <option value="english">Southern English</option>
+        <option value="slang">Texas Slang</option>
+      </select>
+      <button class="dq-submit" onclick="addPhrase()" style="margin-top:8px">Add Phrase</button>
+    </div>
+    <div id="cx-phrases"><div class="empty">Teach each other your languages</div></div>
+  </div>
+
+  <!-- Cultural Traditions -->
+  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Our Traditions</div></div>
+  <div class="cx-trad-form">
+    <input type="text" id="cx-trad-title" placeholder="A tradition, food, or custom...">
+    <div class="ms-row">
+      <input type="text" id="cx-trad-emoji" placeholder="🎉" maxlength="2" style="max-width:50px;text-align:center">
+      <select id="cx-trad-origin" style="padding:10px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;flex:1">
+        <option value="togo">From Togo</option>
+        <option value="texas">From Texas</option>
+        <option value="ours">Ours (new)</option>
+      </select>
+    </div>
+    <textarea id="cx-trad-desc" class="mood-note" placeholder="Tell the story behind it..."></textarea>
+    <button class="dq-submit" onclick="addTradition()">Save Tradition</button>
+  </div>
+  <div id="cx-traditions"><div class="empty">Share your cultural traditions</div></div>
+
+  <!-- Recipes -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Recipes From Home</div></div>
+  <div class="cx-recipe-form">
+    <input type="text" id="cx-recipe-name" placeholder="Dish name...">
+    <div class="ms-row">
+      <input type="text" id="cx-recipe-emoji" placeholder="🍲" maxlength="2" style="max-width:50px;text-align:center">
+      <select id="cx-recipe-origin" style="padding:10px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;flex:1">
+        <option value="togo">Togolese</option>
+        <option value="texas">Texan</option>
+        <option value="fusion">Our Fusion</option>
+      </select>
+    </div>
+    <textarea id="cx-recipe-how" class="mood-note" placeholder="Ingredients & how to make it..."></textarea>
+    <button class="dq-submit" onclick="addRecipe()">Save Recipe</button>
+  </div>
+  <div id="cx-recipes"><div class="empty">Share recipes from your cultures</div></div>
+</div>
+</div>
+
+<!-- ===== DEEP TALK ===== -->
+<div class="pg" id="pg-deeptalk">
+<div class="ctn">
+  <div class="phd"><h1>Deep Talk</h1><p>The conversations that build forever</p></div>
+
+  <div class="dt-current" id="dt-current">
+    <div class="dt-depth" id="dt-depth">Level 1</div>
+    <div class="dt-prompt" id="dt-prompt"></div>
+    <div class="dt-instruction">Sit together. No phones. Look at each other. Talk.</div>
+  </div>
+
+  <div class="dt-controls">
+    <button class="dn-action" onclick="prevDeepTalk()">Previous</button>
+    <button class="dn-action" onclick="nextDeepTalk()" style="background:var(--gold);color:#fff;border-color:var(--gold)">Next Prompt</button>
+  </div>
+
+  <div class="slbl">Choose Depth</div>
+  <div class="bl-cats" id="dt-levels">
+    <span class="bl-cat on" onclick="setDTLevel('light',this)">Light</span>
+    <span class="bl-cat" onclick="setDTLevel('medium',this)">Medium</span>
+    <span class="bl-cat" onclick="setDTLevel('deep',this)">Deep</span>
+    <span class="bl-cat" onclick="setDTLevel('soul',this)">Soul</span>
+  </div>
+
+  <!-- Conversation Log -->
+  <div class="slbl">Conversation Journal</div>
+  <div class="dt-journal-form">
+    <textarea class="mood-note" id="dt-journal" placeholder="What did you learn about each other tonight?"></textarea>
+    <button class="dq-submit" onclick="saveConvoNote()">Save Reflection</button>
+  </div>
+  <div id="dt-journal-feed"><div class="empty">After a deep conversation, write what you learned.</div></div>
+</div>
+</div>
+
+<!-- ===== FAMILY PLANNING ===== -->
+<div class="pg" id="pg-family">
+<div class="ctn">
+  <div class="phd"><h1>Our Future Family</h1><p>From dreaming to building</p></div>
+
+  <!-- Life Stage -->
+  <div class="fam-stage" id="fam-stage">
+    <div class="fam-stage-label">Current Stage</div>
+    <div class="fam-stage-name" id="fam-stage-name">Dating & Building</div>
+    <div class="fam-stage-bar">
+      <div class="fam-stage-fill" id="fam-stage-fill" style="width:15%"></div>
+    </div>
+    <div class="fam-stage-steps">
+      <span class="fam-step active">Dating</span>
+      <span class="fam-step">Engaged</span>
+      <span class="fam-step">Married</span>
+      <span class="fam-step">Parents</span>
+      <span class="fam-step">Growing</span>
+    </div>
+  </div>
+
+  <!-- Discussions -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Things to Discuss</div></div>
+  <div class="fam-discuss" id="fam-discuss"></div>
+
+  <!-- Baby Names -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Name Ideas</div></div>
+  <div class="bl-form">
+    <input type="text" id="fam-name-input" placeholder="A name you love...">
+    <select id="fam-name-gender" style="padding:10px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+      <option value="girl">Girl</option>
+      <option value="boy">Boy</option>
+      <option value="neutral">Neutral</option>
+    </select>
+    <button onclick="addBabyName()">+</button>
+  </div>
+  <div id="fam-names"><div class="empty">Save names you both love</div></div>
+
+  <!-- Family Goals -->
+  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Family Goals</div></div>
+  <div class="bl-form">
+    <input type="text" id="fam-goal-input" placeholder="A goal for your family...">
+    <button onclick="addFamilyGoal()">+</button>
+  </div>
+  <div id="fam-goals"><div class="empty">Set goals for your future family</div></div>
+</div>
+</div>
+
+<!-- ===== OUR FOUNDATION ===== -->
+<div class="pg" id="pg-foundation">
+<div class="ctn">
+  <div class="phd"><h1>Our Foundation</h1><p>The principles we build on</p></div>
+
+  <!-- Shared Values -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Our Values</div></div>
+  <div class="fdn-values" id="fdn-values"></div>
+  <div class="bl-form">
+    <input type="text" id="fdn-value-input" placeholder="A value we share...">
+    <button onclick="addValue()">+</button>
+  </div>
+  <div id="fdn-value-list"><div class="empty">What do you both stand for?</div></div>
+
+  <!-- Communication Agreements -->
+  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Communication Agreements</div></div>
+  <div class="fdn-agreements" id="fdn-agreements">
+    <div class="fdn-agree-item" onclick="toggleAgreement(this,0)"><span class="fdn-check"></span>We don't go to bed angry</div>
+    <div class="fdn-agree-item" onclick="toggleAgreement(this,1)"><span class="fdn-check"></span>We use "I feel" not "you always"</div>
+    <div class="fdn-agree-item" onclick="toggleAgreement(this,2)"><span class="fdn-check"></span>We take a pause when heated before responding</div>
+    <div class="fdn-agree-item" onclick="toggleAgreement(this,3)"><span class="fdn-check"></span>We validate each other's feelings, even when we disagree</div>
+    <div class="fdn-agree-item" onclick="toggleAgreement(this,4)"><span class="fdn-check"></span>We never bring up past resolved issues</div>
+    <div class="fdn-agree-item" onclick="toggleAgreement(this,5)"><span class="fdn-check"></span>We choose understanding over winning</div>
+  </div>
+  <div class="bl-form" style="margin-top:12px">
+    <input type="text" id="fdn-agree-input" placeholder="Add your own agreement...">
+    <button onclick="addAgreement()">+</button>
+  </div>
+  <div id="fdn-custom-agrees"></div>
+
+  <!-- Conflict Resolution -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">When We Disagree</div></div>
+  <div class="fdn-conflict-card">
+    <div class="fdn-conflict-step"><span class="fdn-num">1</span><strong>Pause.</strong> Take 20 minutes apart to cool down. No texting in anger.</div>
+    <div class="fdn-conflict-step"><span class="fdn-num">2</span><strong>Own your part.</strong> Start with "I feel ___ when ___" — no blame.</div>
+    <div class="fdn-conflict-step"><span class="fdn-num">3</span><strong>Listen to understand</strong>, not to respond. Repeat back what you heard.</div>
+    <div class="fdn-conflict-step"><span class="fdn-num">4</span><strong>Find the need.</strong> Behind every complaint is an unmet need. Find it.</div>
+    <div class="fdn-conflict-step"><span class="fdn-num">5</span><strong>Repair.</strong> Say what you'll do differently. Mean it. Follow through.</div>
+  </div>
+</div>
+</div>
+
+<!-- ===== SPIRITUAL SPACE ===== -->
+<div class="pg" id="pg-spiritual">
+<div class="ctn">
+  <div class="phd"><h1>Our Spirit</h1><p>Grow in faith together</p></div>
+
+  <!-- Daily Devotional -->
+  <div class="sp-devo" id="sp-devo" onclick="nextDevotional()">
+    <div class="sp-devo-label">Daily Reflection</div>
+    <div class="sp-devo-verse" id="sp-devo-verse"></div>
+    <div class="sp-devo-ref" id="sp-devo-ref"></div>
+    <div class="hs-affirm-tap">Tap for another</div>
+  </div>
+
+  <!-- Prayer Requests -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Prayer Requests</div></div>
+  <div class="sp-prayer-form">
+    <textarea class="mood-note" id="sp-prayer-input" placeholder="What's on your heart..."></textarea>
+    <button class="dq-submit" onclick="addPrayer()">Share Prayer Request</button>
+  </div>
+  <div id="sp-prayers"><div class="empty">Share what you need prayer for</div></div>
+
+  <!-- Gratitude to God -->
+  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Blessings Journal</div></div>
+  <div class="sp-bless-form">
+    <textarea class="mood-note" id="sp-bless-input" placeholder="A blessing you're thankful for..."></textarea>
+    <button class="dq-submit" onclick="addBlessing()">Give Thanks</button>
+  </div>
+  <div id="sp-blessings"><div class="empty">Count your blessings together</div></div>
+
+  <!-- Shared Intentions -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Our Intentions</div></div>
+  <div class="bl-form">
+    <input type="text" id="sp-intent-input" placeholder="An intention for this season...">
+    <button onclick="addIntention()">+</button>
+  </div>
+  <div id="sp-intentions"><div class="empty">Set spiritual intentions together</div></div>
+</div>
+</div>
+
+<!-- ===== HOME BUILDING ===== -->
+<div class="pg" id="pg-homelife">
+<div class="ctn">
+  <div class="phd"><h1>Home Life</h1><p>Build your household together</p></div>
+
+  <!-- Shared Budget -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Money Goals</div></div>
+  <div class="hl-budget-form">
+    <input type="text" id="hl-goal-name" placeholder="Saving for...">
+    <div class="ms-row">
+      <input type="number" id="hl-goal-target" placeholder="Target $" style="flex:1">
+      <input type="number" id="hl-goal-saved" placeholder="Saved $" style="flex:1">
+    </div>
+    <button class="dq-submit" onclick="addSavingsGoal()">Add Goal</button>
+  </div>
+  <div id="hl-savings"><div class="empty">Set savings goals together</div></div>
+
+  <!-- Meal Planning -->
+  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Meal Ideas</div></div>
+  <div class="bl-form">
+    <input type="text" id="hl-meal-input" placeholder="What should we cook?">
+    <select id="hl-meal-day" style="padding:10px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+      <option value="anytime">Anytime</option>
+      <option value="mon">Monday</option>
+      <option value="tue">Tuesday</option>
+      <option value="wed">Wednesday</option>
+      <option value="thu">Thursday</option>
+      <option value="fri">Friday</option>
+      <option value="sat">Saturday</option>
+      <option value="sun">Sunday</option>
+    </select>
+    <button onclick="addMeal()">+</button>
+  </div>
+  <div id="hl-meals"><div class="empty">Plan your meals together</div></div>
+
+  <!-- Chore Rotation -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Household Tasks</div></div>
+  <div class="bl-form">
+    <input type="text" id="hl-chore-input" placeholder="Add a task...">
+    <select id="hl-chore-who" style="padding:10px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+      <option value="shared">Shared</option>
+      <option value="her">Her</option>
+      <option value="him">Him</option>
+      <option value="alternate">Alternate</option>
+    </select>
+    <button onclick="addChore()">+</button>
+  </div>
+  <div id="hl-chores"><div class="empty">Divide and conquer household tasks</div></div>
+</div>
+</div>
+
 <!-- ===== LOG MODAL ===== -->
 <div class="lmod" id="lmod">
 <div class="lsht">
@@ -1823,6 +2226,26 @@ function finishLogin() {
   loadClarity();
   listenPersonalGoals('her');
   listenPersonalGoals('him');
+  // New modules v2
+  listenPhrases();
+  listenTraditions();
+  listenRecipes();
+  loadDeepTalk();
+  listenConvoNotes();
+  renderFamDiscussions();
+  listenBabyNames();
+  listenFamilyGoals();
+  listenValues();
+  loadAgreements();
+  listenCustomAgreements();
+  loadDevotional();
+  listenPrayers();
+  listenBlessings();
+  listenIntentions();
+  listenSavings();
+  listenMeals();
+  listenChores();
+  enforcePrivacy();
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
@@ -1839,7 +2262,7 @@ function updateApiKey() {
 
 // ===== NAV =====
 // Map sub-pages to their parent tab
-const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more', 'question': 'more', 'gratitude': 'more', 'games': 'more', 'bucket': 'more', 'wishlist': 'more', 'datenight': 'more', 'lovelang': 'more', 'checkin': 'more', 'dreams': 'more', 'herspace': 'more', 'hisspace': 'more' };
+const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more', 'question': 'more', 'gratitude': 'more', 'games': 'more', 'bucket': 'more', 'wishlist': 'more', 'datenight': 'more', 'lovelang': 'more', 'checkin': 'more', 'dreams': 'more', 'herspace': 'more', 'hisspace': 'more', 'culture': 'more', 'deeptalk': 'more', 'family': 'more', 'foundation': 'more', 'spiritual': 'more', 'homelife': 'more' };
 
 function go(p) {
   const current = document.querySelector('.pg.on');
@@ -2193,7 +2616,23 @@ async function sendAI() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1024,
-        system: `You are the AI assistant for "Moi et Toi", a private relationship app for two people. Their names are ${NAMES.her} and ${NAMES.him}. You help with anything they need: meal plans, workout advice, relationship tips, planning dates, managing shared goals, or just being someone to talk to. Be warm, supportive, and concise. You're part of their team. The current user talking to you is ${NAMES[user]}.`,
+        system: `You are the AI assistant for "Moi et Toi", a private relationship app built for ${NAMES.him} and ${NAMES.her}.
+
+ABOUT THEM:
+- ${NAMES.him} is from Togo, West Africa. His culture includes Ewe, Mina, and French languages, Togolese traditions, food, and values.
+- ${NAMES.her} is from Texas, USA. Her culture includes Southern American traditions, Texan food, and American values.
+- They are an intercultural couple building a life together. Their differences are their strength.
+- They are young, ambitious, and building toward marriage, family, and a shared future.
+
+YOUR ROLE:
+- You are their private advisor, counselor, coach, and friend. You're part of their inner circle.
+- Help with: relationship advice, cultural understanding, meal planning, workout guidance, date ideas, financial planning, conflict resolution, parenting prep, spiritual growth, communication coaching, individual growth, household management, or just being someone to talk to.
+- Be warm, wise, direct, and concise. Speak with the honesty of a trusted friend, not a generic chatbot.
+- When they ask about cultural topics, draw on knowledge of both Togolese and Texan culture.
+- When relevant, reference the app's features: mood check-ins, love languages, weekly check-ins, deep talk prompts, date night generator, dream board, family planning, spiritual space, and their personal spaces.
+- You can suggest they use specific app features when appropriate.
+
+The current user talking to you is ${NAMES[user]} (${user === 'him' ? 'from Togo' : 'from Texas'}).`,
         messages: chatHistory
       })
     });
@@ -3499,6 +3938,601 @@ async function toggleGoal(who, key, done) {
   if (!db) return;
   await db.ref('personalGoals/' + who + '/' + key + '/done').set(done);
   if (done) toast('Goal completed!');
+}
+
+// ===== CULTURE EXCHANGE =====
+async function addPhrase() {
+  if (!db || !user) return;
+  const word = document.getElementById('cx-word').value.trim();
+  const meaning = document.getElementById('cx-meaning').value.trim();
+  const lang = document.getElementById('cx-lang').value;
+  if (!word || !meaning) { toast('Word and meaning required'); return; }
+  await db.ref('culture/phrases').push({
+    word, meaning, lang, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
+  });
+  document.getElementById('cx-word').value = '';
+  document.getElementById('cx-meaning').value = '';
+  toast('Phrase added!');
+}
+
+function listenPhrases() {
+  db.ref('culture/phrases').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const el = document.getElementById('cx-phrases');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Teach each other your languages</div>'; return; }
+    const langLabels = {ewe:'Ewe',french:'French',mina:'Mina',english:'English',slang:'Texas Slang'};
+    el.innerHTML = items.map(i => `<div class="cx-phrase">
+      <div style="flex:1"><div class="cx-phrase-word">${i.word}</div><div class="cx-phrase-meaning">${i.meaning}</div></div>
+      <div style="text-align:right"><div class="cx-phrase-lang">${langLabels[i.lang]||i.lang}</div><div class="cx-phrase-by">${i.addedByName||'?'}</div></div>
+    </div>`).join('');
+  });
+}
+
+async function addTradition() {
+  if (!db || !user) return;
+  const title = document.getElementById('cx-trad-title').value.trim();
+  const emoji = document.getElementById('cx-trad-emoji').value.trim() || '🎉';
+  const origin = document.getElementById('cx-trad-origin').value;
+  const desc = document.getElementById('cx-trad-desc').value.trim();
+  if (!title) { toast('Describe the tradition'); return; }
+  await db.ref('culture/traditions').push({
+    title, emoji, origin, description: desc,
+    addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
+  });
+  document.getElementById('cx-trad-title').value = '';
+  document.getElementById('cx-trad-emoji').value = '';
+  document.getElementById('cx-trad-desc').value = '';
+  toast('Tradition saved!');
+}
+
+function listenTraditions() {
+  db.ref('culture/traditions').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const el = document.getElementById('cx-traditions');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Share your cultural traditions</div>'; return; }
+    const originLabels = {togo:'From Togo',texas:'From Texas',ours:'Our Tradition'};
+    el.innerHTML = items.map(i => {
+      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      return `<div class="cx-trad-card">
+        <div class="cx-trad-origin ${i.origin}">${originLabels[i.origin]||i.origin}</div>
+        <div class="cx-trad-title">${i.emoji} ${i.title}</div>
+        ${i.description ? `<div class="cx-trad-desc">${i.description.replace(/</g,'&lt;')}</div>` : ''}
+        <div class="cx-trad-meta">${i.addedByName||'?'} · ${ts}</div>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function addRecipe() {
+  if (!db || !user) return;
+  const name = document.getElementById('cx-recipe-name').value.trim();
+  const emoji = document.getElementById('cx-recipe-emoji').value.trim() || '🍲';
+  const origin = document.getElementById('cx-recipe-origin').value;
+  const how = document.getElementById('cx-recipe-how').value.trim();
+  if (!name) { toast('Name the dish'); return; }
+  await db.ref('culture/recipes').push({
+    name, emoji, origin, recipe: how,
+    addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
+  });
+  document.getElementById('cx-recipe-name').value = '';
+  document.getElementById('cx-recipe-emoji').value = '';
+  document.getElementById('cx-recipe-how').value = '';
+  toast('Recipe saved!');
+}
+
+function listenRecipes() {
+  db.ref('culture/recipes').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const el = document.getElementById('cx-recipes');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Share recipes from your cultures</div>'; return; }
+    const originLabels = {togo:'Togolese',texas:'Texan',fusion:'Fusion'};
+    el.innerHTML = items.map(i => {
+      return `<div class="cx-recipe-card">
+        <div class="cx-trad-origin ${i.origin==='togo'?'togo':i.origin==='texas'?'texas':'ours'}">${originLabels[i.origin]||i.origin}</div>
+        <div class="cx-trad-title">${i.emoji} ${i.name}</div>
+        ${i.recipe ? `<div class="cx-trad-desc">${i.recipe.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>` : ''}
+        <div class="cx-trad-meta">${i.addedByName||'?'}</div>
+      </div>`;
+    }).join('');
+  });
+}
+
+// ===== DEEP TALK =====
+const DEEP_PROMPTS = {
+  light: [
+    "What's a small thing I do that always makes your day better?",
+    "If we could have dinner with any couple in history, who would you pick?",
+    "What's a hobby you'd love for us to try together?",
+    "What's the funniest thing that's happened to us?",
+    "If you could describe our relationship as a movie genre, what would it be?",
+    "What's something you think we do better than most couples?",
+    "What's a place you've never been but dream of going with me?",
+    "What's the best meal we've ever shared?",
+  ],
+  medium: [
+    "What's something you've been wanting to tell me but haven't found the right moment?",
+    "How has our relationship changed who you are?",
+    "What's a boundary you need me to respect better?",
+    "What does feeling safe with me look like for you?",
+    "When do you feel most loved by me? Most disconnected?",
+    "What's a fear you carry that I might not know about?",
+    "How do you want me to support you when you're stressed?",
+    "What part of your childhood shaped how you love?",
+  ],
+  deep: [
+    "What does unconditional love mean to you, and do you feel it from me?",
+    "Is there a resentment you're holding that we need to address?",
+    "What role does vulnerability play in how close you feel to me?",
+    "How has your family of origin shaped your expectations of our relationship?",
+    "What's the hardest thing about being with someone from a different culture?",
+    "What do you need from me that you've been afraid to ask for?",
+    "How do you define loyalty, and do you feel it's mutual between us?",
+    "What's a pattern in our relationship you want to break?",
+  ],
+  soul: [
+    "If I could see every version of you — past, present, future — what would you want me to understand?",
+    "What does your soul need right now that nobody is giving it?",
+    "What kind of old people do you want us to become together?",
+    "What are you most afraid of losing in this life?",
+    "If you wrote a letter to our future children about us, what would it say?",
+    "What does God or the universe mean to you, and how does it shape how you love?",
+    "What wound do you carry that you want me to help heal?",
+    "What would you say to me if you had no fear at all?",
+  ]
+};
+
+let dtLevel = 'light', dtIndex = 0;
+
+function loadDeepTalk() {
+  const prompts = DEEP_PROMPTS[dtLevel];
+  const prompt = prompts[dtIndex % prompts.length];
+  const depthLabels = {light:'Level 1 · Light',medium:'Level 2 · Medium',deep:'Level 3 · Deep',soul:'Level 4 · Soul'};
+  document.getElementById('dt-depth').textContent = depthLabels[dtLevel];
+  document.getElementById('dt-prompt').textContent = prompt;
+}
+
+function setDTLevel(level, el) {
+  dtLevel = level; dtIndex = 0;
+  document.querySelectorAll('#dt-levels .bl-cat').forEach(e => e.classList.remove('on'));
+  if (el) el.classList.add('on');
+  loadDeepTalk();
+}
+
+function nextDeepTalk() { dtIndex++; loadDeepTalk(); }
+function prevDeepTalk() { dtIndex = Math.max(0, dtIndex - 1); loadDeepTalk(); }
+
+async function saveConvoNote() {
+  if (!db || !user) return;
+  const text = document.getElementById('dt-journal').value.trim();
+  if (!text) { toast('Write a reflection first'); return; }
+  await db.ref('deepTalkJournal').push({
+    text, user, userName: NAMES[user], timestamp: Date.now(),
+    date: new Date().toISOString().split('T')[0]
+  });
+  document.getElementById('dt-journal').value = '';
+  toast('Reflection saved ♡');
+}
+
+function listenConvoNotes() {
+  db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(20).on('value', snap => {
+    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const el = document.getElementById('dt-journal-feed');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">After a deep conversation, write what you learned.</div>'; return; }
+    el.innerHTML = items.map(i => {
+      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      return `<div class="dt-note-card"><div class="dt-note-meta">${i.userName||'?'} · ${ts}</div><div class="dt-note-text">${i.text.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div></div>`;
+    }).join('');
+  });
+}
+
+// ===== FAMILY PLANNING =====
+const FAM_DISCUSSIONS = [
+  {q:"How many children do you want, and why?",cat:"Children"},
+  {q:"What parenting style resonates with you?",cat:"Parenting"},
+  {q:"How do you feel about our different cultural approaches to raising children?",cat:"Culture"},
+  {q:"What values are non-negotiable for you to pass on?",cat:"Values"},
+  {q:"How will we handle discipline?",cat:"Parenting"},
+  {q:"What role will religion play in our children's lives?",cat:"Faith"},
+  {q:"How do we feel about our families' involvement?",cat:"Family"},
+  {q:"What's our financial plan for starting a family?",cat:"Financial"},
+  {q:"Where do we want to raise our family?",cat:"Home"},
+  {q:"How will we balance career and family?",cat:"Lifestyle"},
+  {q:"What names from your culture would you want to honor?",cat:"Culture"},
+  {q:"How do we feel about adoption or fostering?",cat:"Family"},
+  {q:"What traditions from Togo and Texas do we blend?",cat:"Culture"},
+  {q:"How do we handle disagreements about parenting?",cat:"Communication"},
+  {q:"What kind of home environment do you want for our kids?",cat:"Home"},
+];
+
+function renderFamDiscussions() {
+  const el = document.getElementById('fam-discuss');
+  if (!el || !db) return;
+  db.ref('family/discussed').once('value', snap => {
+    const discussed = snap.val() || {};
+    el.innerHTML = FAM_DISCUSSIONS.map((d,i) =>
+      `<div class="fam-discuss-item ${discussed[i]?'discussed':''}" onclick="toggleDiscussed(${i})">
+        <div class="fam-discuss-q">${d.q}</div>
+        <div class="fam-discuss-cat">${d.cat}${discussed[i]?' · ✓ Discussed':''}</div>
+      </div>`
+    ).join('');
+  });
+}
+
+async function toggleDiscussed(idx) {
+  if (!db) return;
+  const snap = await db.ref('family/discussed/' + idx).once('value');
+  await db.ref('family/discussed/' + idx).set(!snap.val());
+  renderFamDiscussions();
+  toast(snap.val() ? 'Unmarked' : 'Marked as discussed ✓');
+}
+
+async function addBabyName() {
+  if (!db || !user) return;
+  const name = document.getElementById('fam-name-input').value.trim();
+  const gender = document.getElementById('fam-name-gender').value;
+  if (!name) { toast('Enter a name'); return; }
+  await db.ref('family/names').push({
+    name, gender, addedBy: user, addedByName: NAMES[user],
+    loved: {}, timestamp: Date.now()
+  });
+  document.getElementById('fam-name-input').value = '';
+  toast('Name added!');
+}
+
+function listenBabyNames() {
+  db.ref('family/names').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); }); items.reverse();
+    const el = document.getElementById('fam-names');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Save names you both love</div>'; return; }
+    const genderEmoji = {girl:'♀',boy:'♂',neutral:'◎'};
+    el.innerHTML = items.map(i => {
+      const isLoved = i.loved && i.loved[user];
+      return `<div class="fam-name-card">
+        <div class="fam-name-text">${i.name}</div>
+        <div class="fam-name-gender">${genderEmoji[i.gender]||''} ${i.gender}</div>
+        <div class="fam-name-heart ${isLoved?'loved':''}" onclick="toggleNameLove('${i._key}')">${isLoved?'♥':'♡'}</div>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function toggleNameLove(key) {
+  if (!db || !user) return;
+  const snap = await db.ref('family/names/' + key + '/loved/' + user).once('value');
+  await db.ref('family/names/' + key + '/loved/' + user).set(!snap.val());
+}
+
+async function addFamilyGoal() {
+  if (!db || !user) return;
+  const title = document.getElementById('fam-goal-input').value.trim();
+  if (!title) { toast('Enter a goal'); return; }
+  await db.ref('family/goals').push({ title, done: false, addedBy: user, timestamp: Date.now() });
+  document.getElementById('fam-goal-input').value = '';
+  toast('Family goal added!');
+}
+
+function listenFamilyGoals() {
+  db.ref('family/goals').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); }); items.reverse();
+    const el = document.getElementById('fam-goals');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Set goals for your future family</div>'; return; }
+    el.innerHTML = items.map(i => `<div class="pg-goal ${i.done?'done':''}">
+      <div class="pg-goal-check" onclick="toggleFamGoal('${i._key}',${!i.done})">${i.done?'✓':''}</div>
+      <div class="pg-goal-text">${i.title}</div>
+    </div>`).join('');
+  });
+}
+
+async function toggleFamGoal(key, done) {
+  if (!db) return;
+  await db.ref('family/goals/' + key + '/done').set(done);
+}
+
+// ===== OUR FOUNDATION =====
+async function addValue() {
+  if (!db || !user) return;
+  const title = document.getElementById('fdn-value-input').value.trim();
+  if (!title) { toast('Enter a value'); return; }
+  await db.ref('foundation/values').push({
+    title, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
+  });
+  document.getElementById('fdn-value-input').value = '';
+  toast('Value added!');
+}
+
+function listenValues() {
+  db.ref('foundation/values').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const el = document.getElementById('fdn-value-list');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">What do you both stand for?</div>'; return; }
+    const icons = ['◆','✦','♡','⬡','◇','✧','●','○'];
+    el.innerHTML = items.map((i,idx) => `<div class="fdn-value-card">
+      <div class="fdn-value-icon">${icons[idx%icons.length]}</div>
+      <div class="fdn-value-text">${i.title}</div>
+      <div class="fdn-value-by">${i.addedByName||'?'}</div>
+    </div>`).join('');
+  });
+}
+
+function toggleAgreement(el, idx) {
+  el.classList.toggle('agreed');
+  if (db) db.ref('foundation/agreements/' + user + '/' + idx).set(el.classList.contains('agreed'));
+}
+
+function loadAgreements() {
+  if (!db || !user) return;
+  db.ref('foundation/agreements/' + user).once('value', snap => {
+    const data = snap.val() || {};
+    document.querySelectorAll('#fdn-agreements .fdn-agree-item').forEach((el, i) => {
+      if (data[i]) el.classList.add('agreed');
+    });
+  });
+}
+
+async function addAgreement() {
+  if (!db || !user) return;
+  const text = document.getElementById('fdn-agree-input').value.trim();
+  if (!text) return;
+  await db.ref('foundation/customAgreements').push({
+    text, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
+  });
+  document.getElementById('fdn-agree-input').value = '';
+  toast('Agreement added!');
+}
+
+function listenCustomAgreements() {
+  db.ref('foundation/customAgreements').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const el = document.getElementById('fdn-custom-agrees');
+    if (!el) return;
+    el.innerHTML = items.map(i =>
+      `<div class="fdn-agree-item agreed"><span class="fdn-check" style="border-color:var(--gold)">✓</span>${i.text}</div>`
+    ).join('');
+  });
+}
+
+// ===== SPIRITUAL SPACE =====
+const DEVOTIONALS = [
+  {verse:"Love is patient, love is kind. It does not envy, it does not boast, it is not proud.",ref:"1 Corinthians 13:4"},
+  {verse:"Above all, love each other deeply, because love covers over a multitude of sins.",ref:"1 Peter 4:8"},
+  {verse:"Two are better than one, because they have a good return for their labor.",ref:"Ecclesiastes 4:9"},
+  {verse:"Be completely humble and gentle; be patient, bearing with one another in love.",ref:"Ephesians 4:2"},
+  {verse:"Let all that you do be done in love.",ref:"1 Corinthians 16:14"},
+  {verse:"And now these three remain: faith, hope and love. But the greatest of these is love.",ref:"1 Corinthians 13:13"},
+  {verse:"Trust in the Lord with all your heart and lean not on your own understanding.",ref:"Proverbs 3:5"},
+  {verse:"For where two or three gather in my name, there am I with them.",ref:"Matthew 18:20"},
+  {verse:"Be strong and courageous. Do not be afraid; do not be discouraged.",ref:"Joshua 1:9"},
+  {verse:"He who finds a wife finds what is good and receives favor from the Lord.",ref:"Proverbs 18:22"},
+  {verse:"Do not be anxious about anything, but in every situation, by prayer and petition, present your requests to God.",ref:"Philippians 4:6"},
+  {verse:"The Lord bless you and keep you; the Lord make his face shine on you.",ref:"Numbers 6:24-25"},
+  {verse:"Commit to the Lord whatever you do, and he will establish your plans.",ref:"Proverbs 16:3"},
+  {verse:"I can do all things through Christ who strengthens me.",ref:"Philippians 4:13"},
+  {verse:"For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you.",ref:"Jeremiah 29:11"},
+];
+let devIdx = Math.floor(Math.random() * DEVOTIONALS.length);
+
+function loadDevotional() {
+  const d = DEVOTIONALS[devIdx % DEVOTIONALS.length];
+  const vEl = document.getElementById('sp-devo-verse');
+  const rEl = document.getElementById('sp-devo-ref');
+  if (vEl) vEl.textContent = d.verse;
+  if (rEl) rEl.textContent = '— ' + d.ref;
+}
+
+function nextDevotional() { devIdx++; loadDevotional(); }
+
+async function addPrayer() {
+  if (!db || !user) return;
+  const text = document.getElementById('sp-prayer-input').value.trim();
+  if (!text) { toast('Share your prayer'); return; }
+  await db.ref('spiritual/prayers').push({
+    text, user, userName: NAMES[user], timestamp: Date.now(), prayedFor: {}
+  });
+  document.getElementById('sp-prayer-input').value = '';
+  toast('Prayer shared ♡');
+}
+
+function listenPrayers() {
+  db.ref('spiritual/prayers').orderByChild('timestamp').limitToLast(20).on('value', snap => {
+    const items = []; snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); }); items.reverse();
+    const el = document.getElementById('sp-prayers');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Share what you need prayer for</div>'; return; }
+    el.innerHTML = items.map(i => {
+      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const prayed = i.prayedFor && i.prayedFor[user];
+      return `<div class="sp-prayer-card">
+        <div class="sp-prayer-from">${i.userName||'?'} · ${ts}</div>
+        <div class="sp-prayer-text">${i.text.replace(/</g,'&lt;')}</div>
+        <div class="sp-prayer-pray" onclick="prayFor('${i._key}')">${prayed?'🙏 Prayed for':'Tap to pray for this'}</div>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function prayFor(key) {
+  if (!db || !user) return;
+  await db.ref('spiritual/prayers/' + key + '/prayedFor/' + user).set(true);
+  toast('Praying with you 🙏');
+}
+
+async function addBlessing() {
+  if (!db || !user) return;
+  const text = document.getElementById('sp-bless-input').value.trim();
+  if (!text) { toast('Share a blessing'); return; }
+  await db.ref('spiritual/blessings').push({
+    text, user, userName: NAMES[user], timestamp: Date.now()
+  });
+  document.getElementById('sp-bless-input').value = '';
+  toast('Blessing recorded ♡');
+}
+
+function listenBlessings() {
+  db.ref('spiritual/blessings').orderByChild('timestamp').limitToLast(20).on('value', snap => {
+    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const el = document.getElementById('sp-blessings');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Count your blessings together</div>'; return; }
+    el.innerHTML = items.map(i => {
+      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      return `<div class="sp-bless-card"><div class="sp-prayer-from">${i.userName||'?'} · ${ts}</div><div class="sp-prayer-text">${i.text.replace(/</g,'&lt;')}</div></div>`;
+    }).join('');
+  });
+}
+
+async function addIntention() {
+  if (!db || !user) return;
+  const text = document.getElementById('sp-intent-input').value.trim();
+  if (!text) return;
+  await db.ref('spiritual/intentions').push({
+    text, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
+  });
+  document.getElementById('sp-intent-input').value = '';
+  toast('Intention set ♡');
+}
+
+function listenIntentions() {
+  db.ref('spiritual/intentions').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const el = document.getElementById('sp-intentions');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Set spiritual intentions together</div>'; return; }
+    el.innerHTML = items.map(i =>
+      `<div class="sp-intent-card"><div class="sp-intent-text">${i.text}</div><div class="sp-intent-by">${i.addedByName||'?'}</div></div>`
+    ).join('');
+  });
+}
+
+// ===== HOME BUILDING =====
+async function addSavingsGoal() {
+  if (!db || !user) return;
+  const name = document.getElementById('hl-goal-name').value.trim();
+  const target = parseFloat(document.getElementById('hl-goal-target').value) || 0;
+  const saved = parseFloat(document.getElementById('hl-goal-saved').value) || 0;
+  if (!name || !target) { toast('Name and target required'); return; }
+  await db.ref('homelife/savings').push({
+    name, target, saved, addedBy: user, timestamp: Date.now()
+  });
+  document.getElementById('hl-goal-name').value = '';
+  document.getElementById('hl-goal-target').value = '';
+  document.getElementById('hl-goal-saved').value = '';
+  toast('Savings goal added!');
+}
+
+function listenSavings() {
+  db.ref('homelife/savings').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); }); items.reverse();
+    const el = document.getElementById('hl-savings');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Set savings goals together</div>'; return; }
+    el.innerHTML = items.map(i => {
+      const pct = Math.min(100, Math.round((i.saved/i.target)*100));
+      return `<div class="hl-savings-card">
+        <div class="hl-savings-name">${i.name}</div>
+        <div class="hl-savings-bar"><div class="hl-savings-fill" style="width:${pct}%"></div></div>
+        <div class="hl-savings-meta"><span>$${i.saved.toLocaleString()} saved</span><span>$${i.target.toLocaleString()} goal · ${pct}%</span></div>
+        <button class="hl-savings-update" onclick="updateSavings('${i._key}')">Update Amount</button>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function updateSavings(key) {
+  if (!db) return;
+  const amount = parseFloat(prompt('Enter new saved amount:') || '0');
+  if (amount > 0) {
+    await db.ref('homelife/savings/' + key + '/saved').set(amount);
+    toast('Updated!');
+  }
+}
+
+async function addMeal() {
+  if (!db || !user) return;
+  const name = document.getElementById('hl-meal-input').value.trim();
+  const day = document.getElementById('hl-meal-day').value;
+  if (!name) { toast('Name a meal'); return; }
+  await db.ref('homelife/meals').push({
+    name, day, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
+  });
+  document.getElementById('hl-meal-input').value = '';
+  toast('Meal added!');
+}
+
+function listenMeals() {
+  db.ref('homelife/meals').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const el = document.getElementById('hl-meals');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Plan your meals together</div>'; return; }
+    el.innerHTML = items.map(i =>
+      `<div class="hl-meal-card"><div class="hl-meal-day">${i.day==='anytime'?'':i.day}</div><div class="hl-meal-name">${i.name}</div><div class="hl-meal-by">${i.addedByName||'?'}</div></div>`
+    ).join('');
+  });
+}
+
+async function addChore() {
+  if (!db || !user) return;
+  const name = document.getElementById('hl-chore-input').value.trim();
+  const who = document.getElementById('hl-chore-who').value;
+  if (!name) { toast('Name the task'); return; }
+  await db.ref('homelife/chores').push({
+    name, assignedTo: who, done: false, timestamp: Date.now()
+  });
+  document.getElementById('hl-chore-input').value = '';
+  toast('Task added!');
+}
+
+function listenChores() {
+  db.ref('homelife/chores').orderByChild('timestamp').on('value', snap => {
+    const items = []; snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); }); items.reverse();
+    const el = document.getElementById('hl-chores');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Divide and conquer household tasks</div>'; return; }
+    const whoLabels = {shared:'Shared',her:NAMES.her,him:NAMES.him,alternate:'Alternate'};
+    el.innerHTML = items.map(i =>
+      `<div class="hl-chore-card ${i.done?'done':''}">
+        <div class="hl-chore-check" onclick="toggleChore('${i._key}',${!i.done})">${i.done?'✓':''}</div>
+        <div class="hl-chore-name">${i.name}</div>
+        <div class="hl-chore-who">${whoLabels[i.assignedTo]||i.assignedTo}</div>
+      </div>`
+    ).join('');
+  });
+}
+
+async function toggleChore(key, done) {
+  if (!db) return;
+  await db.ref('homelife/chores/' + key + '/done').set(done);
+}
+
+// ===== INDIVIDUAL SPACE PRIVACY =====
+function enforcePrivacy() {
+  // Hide the other person's individual space from More hub and menu
+  const herPage = document.getElementById('pg-herspace');
+  const hisPage = document.getElementById('pg-hisspace');
+  // User can only access their own space
+  if (user === 'him' && herPage) herPage.remove();
+  if (user === 'her' && hisPage) hisPage.remove();
+  // Hide menu items for the other person's space
+  document.querySelectorAll('.mi').forEach(mi => {
+    const h4 = mi.querySelector('h4');
+    if (!h4) return;
+    if (user === 'him' && h4.textContent === 'Her Space') mi.style.display = 'none';
+    if (user === 'her' && h4.textContent === 'His Space') mi.style.display = 'none';
+  });
+  // Hide hub cards for the other person's space
+  document.querySelectorAll('.hub-card').forEach(card => {
+    const title = card.querySelector('.hc-title');
+    if (!title) return;
+    if (user === 'him' && title.textContent === 'Her Space') card.style.display = 'none';
+    if (user === 'her' && title.textContent === 'His Space') card.style.display = 'none';
+  });
 }
 
 // ===== TOAST =====
