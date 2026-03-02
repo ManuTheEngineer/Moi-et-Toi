@@ -2799,7 +2799,7 @@ function listenTaps() {
 function renderTapFeed(taps) {
   const el = document.getElementById('tap-feed');
   if (!el) return;
-  if (!taps.length) { el.innerHTML = '<div class="empty">Send a quick tap to let them know you're thinking of them</div>'; return; }
+  if (!taps.length) { el.innerHTML = '<div class="empty">Send a quick tap — let them know you are thinking of them</div>'; return; }
   el.innerHTML = taps.slice(0, 15).map(t => {
     const time = new Date(t.timestamp);
     const ts = time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -3149,7 +3149,7 @@ function listenGratitude() {
 function renderGratitude(entries) {
   const el = document.getElementById('grat-feed');
   if (!el) return;
-  if (!entries.length) { el.innerHTML = '<div class="empty">Tell them what you're grateful for today</div>'; return; }
+  if (!entries.length) { el.innerHTML = '<div class="empty">Tell them what you are grateful for today</div>'; return; }
   el.innerHTML = entries.map(g => {
     const time = new Date(g.timestamp);
     const ts = time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -3387,7 +3387,7 @@ function listenWishlists() {
     items.reverse();
     const el = document.getElementById('wl-theirs');
     if (!el) return;
-    if (!items.length) { el.innerHTML = '<div class="empty">Nothing here yet — they're being mysterious</div>'; return; }
+    if (!items.length) { el.innerHTML = '<div class="empty">Nothing here yet — someone is being mysterious</div>'; return; }
     el.innerHTML = items.map(i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
       <div class="wl-info">
         <div class="wl-title">${i.title}</div>
