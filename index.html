@@ -1035,29 +1035,29 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="ctn">
   <div class="phd"><h1>Mood Check-in</h1><p>How's your heart today?</p></div>
 
-  <div class="slbl">Your Mood</div>
+  <div class="slbl">How are you?</div>
   <div class="mood-grid" id="mood-grid">
     <div class="mood-btn" onclick="selMood(1,this)"><span class="mood-emoji">😴</span><span class="mood-label">Low</span></div>
     <div class="mood-btn" onclick="selMood(2,this)"><span class="mood-emoji">😐</span><span class="mood-label">Meh</span></div>
     <div class="mood-btn" onclick="selMood(3,this)"><span class="mood-emoji">🙂</span><span class="mood-label">Good</span></div>
     <div class="mood-btn" onclick="selMood(4,this)"><span class="mood-emoji">😊</span><span class="mood-label">Great</span></div>
-    <div class="mood-btn" onclick="selMood(5,this)"><span class="mood-emoji">🔥</span><span class="mood-label">Amazing</span></div>
+    <div class="mood-btn" onclick="selMood(5,this)"><span class="mood-emoji">🔥</span><span class="mood-label">On top</span></div>
   </div>
 
-  <div class="slbl">Energy Level</div>
+  <div class="slbl">Energy</div>
   <div class="energy-row">
-    <label>Energy</label>
+    <label>Level</label>
     <input type="range" id="energy-slider" min="1" max="5" step="1" value="3" oninput="updEnergy()">
-    <span class="energy-val" id="energy-val">☀ Steady</span>
+    <span class="energy-val" id="energy-val">Steady</span>
   </div>
 
-  <div class="slbl">Note (optional)</div>
+  <div class="slbl">Add a note</div>
   <textarea class="mood-note" id="mood-note" placeholder="Anything on your mind?"></textarea>
 
-  <button class="mood-submit" onclick="submitMood()">Save Check-in ♡</button>
+  <button class="mood-submit" id="mood-submit-btn" onclick="submitMood()">Check in</button>
 
   <!-- Mood Analytics -->
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Your Analytics</div></div>
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Trends</div></div>
 
   <!-- Mood Distribution Donut -->
   <div class="chart-wrap">
@@ -1108,26 +1108,26 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
   <div class="phd"><h1>Connect</h1><p>Say what you feel</p></div>
 
   <!-- Quick Taps -->
-  <div class="slbl">Thinking of You</div>
+  <div class="slbl">Quick tap</div>
   <div class="tap-bar">
     <div class="tap-btn" onclick="sendTap('hug','🤗')"><span class="tap-emoji">🤗</span><span class="tap-label">Hug</span></div>
     <div class="tap-btn" onclick="sendTap('kiss','💋')"><span class="tap-emoji">💋</span><span class="tap-label">Kiss</span></div>
     <div class="tap-btn" onclick="sendTap('love','❤️')"><span class="tap-emoji">❤️</span><span class="tap-label">Love</span></div>
-    <div class="tap-btn" onclick="sendTap('miss','🥺')"><span class="tap-emoji">🥺</span><span class="tap-label">Miss You</span></div>
-    <div class="tap-btn" onclick="sendTap('thinking','💭')"><span class="tap-emoji">💭</span><span class="tap-label">Thinking</span></div>
+    <div class="tap-btn" onclick="sendTap('miss','🥺')"><span class="tap-emoji">🥺</span><span class="tap-label">Miss</span></div>
+    <div class="tap-btn" onclick="sendTap('thinking','💭')"><span class="tap-emoji">💭</span><span class="tap-label">Think</span></div>
   </div>
 
   <!-- Recent Taps -->
   <div class="card">
-    <div class="card-h"><span class="card-t">Recent Taps</span><span class="card-s">History</span></div>
+    <div class="card-h"><span class="card-t">Recent</span></div>
     <div class="tap-feed" id="tap-feed"><div class="empty">Send a quick tap to let them know you're thinking of them</div></div>
   </div>
 
   <!-- Love Letters -->
-  <div class="slbl">Love Letters</div>
+  <div class="slbl">Write a letter</div>
   <div class="letter-compose">
     <textarea class="letter-textarea" id="letter-input" placeholder="Say something real..."></textarea>
-    <button class="letter-send" onclick="sendLetter()">Send Letter 💌</button>
+    <button class="letter-send" id="letter-send-btn" onclick="sendLetter()">Send</button>
   </div>
 
   <div class="letter-feed" id="letter-feed"><div class="empty">Write something only they will read</div></div>
@@ -1288,7 +1288,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <div class="dq-category" id="dq-category">Loading...</div>
     <div class="dq-question" id="dq-question">...</div>
     <input class="dq-input" id="dq-answer" placeholder="Your answer..." onkeydown="if(event.key==='Enter')submitDailyAnswer()">
-    <button class="dq-submit" onclick="submitDailyAnswer()">Submit Answer</button>
+    <button class="dq-submit" id="dq-submit-btn" onclick="submitDailyAnswer()">Answer</button>
     <div class="dq-answers" id="dq-answers"></div>
   </div>
 </div>
@@ -1299,13 +1299,13 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="ctn">
   <div class="phd"><h1>Gratitude</h1><p>The little things that matter</p></div>
 
-  <div class="slbl">Today's Gratitude</div>
+  <div class="slbl">Today</div>
   <div class="grat-compose">
     <textarea class="grat-textarea" id="grat-input" placeholder="Today I'm grateful for..."></textarea>
-    <button class="dq-submit" onclick="submitGratitude()" style="margin-top:8px">Share Gratitude 🙏</button>
+    <button class="dq-submit" id="grat-submit-btn" onclick="submitGratitude()" style="margin-top:8px">Share</button>
   </div>
 
-  <div class="slbl">Gratitude Feed</div>
+  <div class="slbl">Feed</div>
   <div id="grat-feed"><div class="empty">Tell them what you're grateful for today</div></div>
 </div>
 </div>
@@ -1330,9 +1330,9 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
   </div>
 
   <!-- How Well Do You Know Me -->
-  <div class="slbl" style="margin-top:28px">How Well Do You Know Me?</div>
+  <div class="slbl" style="margin-top:28px">How well do you know me?</div>
   <div class="card">
-    <div class="card-h"><span class="card-t">Create a Quiz</span><span class="card-s">For your partner</span></div>
+    <div class="card-h"><span class="card-t">Your questions</span><span class="card-s">For <span class="pname"></span></span></div>
     <div class="quiz-form">
       <input class="quiz-q" id="quiz-q" placeholder="Write a question about yourself...">
       <input class="quiz-q" id="quiz-a" placeholder="The correct answer...">
@@ -1342,7 +1342,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
   </div>
 
   <div class="card" style="margin-top:12px">
-    <div class="card-h"><span class="card-t"><span class="pname"></span>'s Quiz</span><span class="card-s">Test yourself</span></div>
+    <div class="card-h"><span class="card-t"><span class="pname"></span>'s questions</span><span class="card-s">Test yourself</span></div>
     <div id="quiz-theirs"><div class="empty">Waiting for your partner to write some questions</div></div>
   </div>
 
@@ -1468,7 +1468,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <div class="ec"><div class="et"><div class="en ng">12</div><div class="ei"><h3>Lateral Shoulder Raises</h3><p>Light weights at sides. Raise arms to shoulder height. Lower with control. Shapes the silhouette.</p></div></div><div class="tr"><span class="tb tg">⏱ 12 reps</span><span class="tb tg">↻ 3 sets</span><span class="tb tgr">☁ 40s rest</span></div></div>
   </div>
 
-  <button class="lbtn" onclick="openLog('Foundation')">Log This Workout ✦</button>
+  <button class="lbtn" onclick="openLog('Foundation')">Log workout</button>
   <div class="nxt nxr" onclick="go('w2')"><div class="nxe" style="color:var(--red)">When You're Ready</div><div class="nxt-t">The Elevated Program</div><div class="nxd">Harder moves. Shorter rest. Deeper definition.</div><div class="nxa" style="color:var(--red)">Enter ➔</div></div>
   <div class="wft"><div class="wfq" style="color:var(--gold-l)">You're already becoming who you want to be.</div><div class="wfs">One day at a time</div></div>
 </div>
@@ -1501,7 +1501,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <div class="ec ecr"><div class="et"><div class="en nr">12</div><div class="ei"><h3>Arnold Press</h3><p>Dumbbells at chest, palms facing you. Press up rotating palms outward. Full shoulder sculpt.</p></div></div><div class="tr"><span class="tb trr">⏱ 12 reps</span><span class="tb trr">↻ 4 sets</span><span class="tb trrr">☁ 30s rest</span></div></div>
   </div>
 
-  <button class="lbtn lbr" onclick="openLog('Elevated')">Log This Workout ◆</button>
+  <button class="lbtn lbr" onclick="openLog('Elevated')">Log workout</button>
   <div class="nxt nxv" onclick="go('w3')"><div class="nxe" style="color:var(--vio)">The Complete Session</div><div class="nxt-t">Full Body Sculpt</div><div class="nxd">Every muscle group. One session. Total transformation.</div><div class="nxa" style="color:var(--vio)">Enter ➔</div></div>
   <div class="wft"><div class="wfq" style="color:var(--red-tag)">You didn't just dream it. You built it.</div><div class="wfs">Every rep counts</div></div>
 </div>
@@ -1535,7 +1535,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <div class="ec ecv"><div class="et"><div class="en nv">13</div><div class="ei"><h3>Calf Raises</h3><p>Rise onto toes, hold 1 second, lower slowly. Completes the leg sculpt.</p></div></div><div class="tr"><span class="tb tv">⏱ 20 reps</span><span class="tb tv">↻ 3 sets</span><span class="tb tvr">☁ 30s rest</span></div></div>
   </div>
 
-  <button class="lbtn lbv" onclick="openLog('Full Body')">Log This Workout ⬡</button>
+  <button class="lbtn lbv" onclick="openLog('Full Body')">Log workout</button>
   <div class="wft"><div class="wfq" style="color:var(--vio-tag)">The whole body. The whole vision. The whole her.</div><div class="wfs">Complete</div></div>
 </div>
 </div>
@@ -1557,12 +1557,12 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <div class="dn-idea" id="dn-result-idea"></div>
     <div class="dn-desc" id="dn-result-desc"></div>
     <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="dn-action" onclick="saveDateIdea()">Save ♡</button>
+      <button class="dn-action" onclick="saveDateIdea()">Save this</button>
       <button class="dn-action dn-skip" onclick="spinDateNight()">Try Another</button>
     </div>
   </div>
 
-  <div class="slbl">Filter by Mood</div>
+  <div class="slbl">Filter by vibe</div>
   <div class="bl-cats" id="dn-cats">
     <span class="bl-cat on" onclick="filterDN('all',this)">All</span>
     <span class="bl-cat" onclick="filterDN('home',this)">Home</span>
@@ -1637,9 +1637,9 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <div class="ci-section">
       <div class="ci-icon">⚡</div>
       <div class="ci-label">Relationship energy this week</div>
-      <div class="energy-row"><label>Level</label><input type="range" id="ci-energy" min="1" max="5" value="3" oninput="updCIEnergy()"><span class="energy-val" id="ci-energy-val">☀ Steady</span></div>
+      <div class="energy-row"><label>Level</label><input type="range" id="ci-energy" min="1" max="5" value="3" oninput="updCIEnergy()"><span class="energy-val" id="ci-energy-val">Steady</span></div>
     </div>
-    <button class="dq-submit" onclick="submitCheckin()">Submit Check-in ♡</button>
+    <button class="dq-submit" onclick="submitCheckin()">Submit</button>
   </div>
 
   <div class="slbl">Past Check-ins</div>
@@ -1666,7 +1666,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
       </select>
     </div>
     <textarea id="dr-desc" class="mood-note" placeholder="Describe the dream... (optional)"></textarea>
-    <button class="dq-submit" onclick="addDream()">Add Dream ✦</button>
+    <button class="dq-submit" onclick="addDream()">Add dream</button>
   </div>
 
   <div class="bl-cats" id="dr-cats">
@@ -1757,7 +1757,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
         <input type="number" id="him-pr-weight" placeholder="Weight" style="flex:1">
         <input type="number" id="him-pr-reps" placeholder="Reps" style="flex:1">
       </div>
-      <button class="dq-submit" onclick="logPR()" style="margin-top:8px">Log PR ⚡</button>
+      <button class="dq-submit" onclick="logPR()" style="margin-top:8px">Log PR</button>
     </div>
     <div id="him-pr-list"><div class="empty">Log your first PR</div></div>
   </div>
@@ -2298,7 +2298,7 @@ function updateApiKey() {
   if (key && key.startsWith('sk-ant-')) {
     CLAUDE_API_KEY = key;
     db.ref('profiles/apiKey').set(key);
-    toast('API key updated for both ✓');
+    toast('API key updated');
     closeMenu();
   } else if (key) { toast('Invalid key format'); }
 }
@@ -2347,12 +2347,14 @@ function selMood(val, el) {
 
 function updEnergy() {
   const v = document.getElementById('energy-slider').value;
-  const labels = ['', '🌙 Rest Needed', '☁ Low', '☀ Steady', '✨ Strong', '⚡ On Fire'];
+  const labels = ['', 'Drained', 'Low', 'Steady', 'Strong', 'On fire'];
   document.getElementById('energy-val').textContent = labels[v];
 }
 
 async function submitMood() {
   if (!selectedMood) { toast('Pick a mood first'); return; }
+  const btn = document.getElementById('mood-submit-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   const entry = {
     mood: selectedMood,
     energy: parseInt(document.getElementById('energy-slider').value),
@@ -2367,8 +2369,11 @@ async function submitMood() {
   document.getElementById('mood-note').value = '';
   selectedMood = 0;
   document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
+  document.getElementById('energy-slider').value = 3;
+  document.getElementById('energy-val').textContent = 'Steady';
   updateStreak();
-  toast('Check-in saved ♡');
+  if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Check in'; }, 1500); }
+  toast('Checked in');
 }
 
 function listenMoods() {
@@ -2385,16 +2390,16 @@ function renderMoodFeed(moods) {
   const el = document.getElementById('mood-feed');
   if (!moods.length) { el.innerHTML = '<div class="empty">Your mood story starts with one check-in</div>'; return; }
   const emojis = ['', '😴', '😐', '🙂', '😊', '🔥'];
-  const eLbls = ['', '🌙', '☁', '☀', '✨', '⚡'];
+  const energyLbls = ['', 'Drained', 'Low', 'Steady', 'Strong', 'On fire'];
   el.innerHTML = moods.map(m => {
     const t = new Date(m.timestamp);
-    const ts = t.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const ts = timeAgo(t);
     return `<div class="mh-item">
       <div class="mh-emoji">${emojis[m.mood]}</div>
       <div class="mh-info">
-        <div class="mh-name">${m.userName || 'Unknown'} ${eLbls[m.energy] || ''}</div>
-        <div class="mh-detail">Mood ${m.mood}/5 · Energy ${m.energy}/5</div>
-        ${m.note ? `<div class="mh-note">"${m.note}"</div>` : ''}
+        <div class="mh-name">${m.userName || 'Unknown'}</div>
+        <div class="mh-detail">${energyLbls[m.energy] || ''} energy</div>
+        ${m.note ? `<div class="mh-note">${m.note}</div>` : ''}
       </div>
       <div class="mh-time">${ts}</div>
     </div>`;
@@ -2650,7 +2655,7 @@ async function sendAI() {
     if (!key || !key.startsWith('sk-ant-')) { toast('Invalid API key'); return; }
     CLAUDE_API_KEY = key;
     await db.ref('profiles/apiKey').set(key);
-    toast('API key saved for both ✓');
+    toast('API key saved');
   }
   
   const input = document.getElementById('chat-input');
@@ -2750,7 +2755,7 @@ async function submitLog() {
   const key = db.ref('workoutLogs').push().key;
   await db.ref('workoutLogs/' + key).set(entry);
   closeLog();
-  toast('Workout logged ✓');
+  toast('Workout logged');
 }
 
 // ===== TAPS (Thinking of You) =====
@@ -2802,11 +2807,12 @@ function renderTapFeed(taps) {
   if (!taps.length) { el.innerHTML = '<div class="empty">Send a quick tap — let them know you are thinking of them</div>'; return; }
   el.innerHTML = taps.slice(0, 15).map(t => {
     const time = new Date(t.timestamp);
-    const ts = time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const ts = timeAgo(time);
     const emoji = TAP_EMOJIS[t.type] || '♡';
+    const isMe = t.from === user;
     return `<div class="tap-item">
       <div class="tap-type">${emoji}</div>
-      <div class="tap-from">${t.fromName || 'Someone'} <span style="color:var(--t3);font-weight:300;font-size:10px">${TAP_MSGS[t.type] || ''}</span></div>
+      <div class="tap-from">${isMe ? 'You' : t.fromName} <span style="color:var(--t3);font-weight:300;font-size:10px">${TAP_MSGS[t.type] || ''}</span></div>
       <div class="tap-time">${ts}</div>
     </div>`;
   }).join('');
@@ -2828,8 +2834,10 @@ function showTapOverlay(type) {
 async function sendLetter() {
   if (!db || !user) return;
   const input = document.getElementById('letter-input');
+  const btn = document.getElementById('letter-send-btn');
   const text = input.value.trim();
   if (!text) { toast('Write something first'); return; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
   const entry = {
     from: user,
     fromName: NAMES[user],
@@ -2839,7 +2847,8 @@ async function sendLetter() {
   };
   await db.ref('letters').push(entry);
   input.value = '';
-  toast('Letter sent ♡');
+  if (btn) { btn.textContent = 'Sent'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Send'; }, 1500); }
+  toast('Delivered');
 }
 
 function listenLetters() {
@@ -2860,14 +2869,14 @@ function listenLetters() {
 function renderLetterFeed(letters) {
   const el = document.getElementById('letter-feed');
   if (!el) return;
-  if (!letters.length) { el.innerHTML = '<div class="empty">Write the first letter. Even a few words can make their whole day.</div>'; return; }
+  if (!letters.length) { el.innerHTML = '<div class="empty">Write something only they will read</div>'; return; }
   el.innerHTML = letters.map(l => {
     const time = new Date(l.timestamp);
-    const ts = time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const ts = timeAgo(time);
     const isMe = l.from === user;
     return `<div class="letter-card ${isMe ? 'from-me' : 'from-them'}">
       <div class="letter-header">
-        <span class="letter-from">${l.fromName || 'Unknown'}${!isMe && !l.read ? '<span class="letter-unread"></span>' : ''}</span>
+        <span class="letter-from">${isMe ? 'You' : l.fromName}${!isMe && !l.read ? '<span class="letter-unread"></span>' : ''}</span>
         <span class="letter-time">${ts}</span>
       </div>
       <div class="letter-body">${l.message.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
@@ -2897,7 +2906,7 @@ async function saveMilestone() {
   document.getElementById('ms-emoji').value = '';
   document.getElementById('ms-desc').value = '';
   toggleMsForm();
-  toast('Milestone saved ✨');
+  toast('Milestone saved');
 }
 
 function listenMilestones() {
@@ -2912,7 +2921,7 @@ function listenMilestones() {
 function renderTimeline(milestones) {
   const el = document.getElementById('timeline');
   if (!el) return;
-  if (!milestones.length) { el.innerHTML = '<div class="empty">Every love story has a beginning. Add your first milestone.</div>'; return; }
+  if (!milestones.length) { el.innerHTML = '<div class="empty">Add your first milestone together</div>'; return; }
   el.innerHTML = milestones.map(m => {
     const d = new Date(m.date + 'T00:00:00');
     const dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
@@ -2944,7 +2953,7 @@ async function saveCountdown() {
   document.getElementById('cd-date').value = '';
   document.getElementById('cd-emoji').value = '';
   toggleCdForm();
-  toast('Countdown created ⏳');
+  toast('Countdown added');
 }
 
 function listenCountdowns() {
@@ -3041,14 +3050,17 @@ function loadDailyQuestion() {
 async function submitDailyAnswer() {
   if (!db || !user) return;
   const input = document.getElementById('dq-answer');
+  const btn = document.getElementById('dq-submit-btn');
   const answer = input.value.trim();
   if (!answer) { toast('Write an answer first'); return; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   const today = new Date().toISOString().split('T')[0];
   await db.ref('dailyAnswers/' + today + '/' + user).set({
     answer, userName: NAMES[user], timestamp: Date.now()
   });
   input.value = '';
-  toast('Answer saved! ✨');
+  if (btn) { btn.textContent = 'Saved'; }
+  toast('Answer submitted');
 }
 
 function listenDailyAnswers() {
@@ -3075,12 +3087,12 @@ function renderDailyAnswers(data) {
 
   let html = '';
   if (myAnswer) {
-    html += `<div class="dq-answer mine"><div class="dq-answer-name">${myAnswer.userName || 'You'}</div>${myAnswer.answer}</div>`;
+    html += `<div class="dq-answer mine"><div class="dq-answer-name">You</div>${myAnswer.answer}</div>`;
   }
   if (theirAnswer) {
-    html += `<div class="dq-answer theirs"><div class="dq-answer-name">${theirAnswer.userName || NAMES[partner]}</div>${theirAnswer.answer}</div>`;
+    html += `<div class="dq-answer theirs"><div class="dq-answer-name">${NAMES[partner]}</div>${theirAnswer.answer}</div>`;
   } else if (myAnswer) {
-    html += '<div class="dq-waiting">Waiting for ' + NAMES[partner] + ' to answer...</div>';
+    html += '<div class="dq-waiting">' + NAMES[partner] + ' hasn\'t answered yet</div>';
   }
   el.innerHTML = html;
 }
@@ -3123,8 +3135,10 @@ async function updateStreak() {
 async function submitGratitude() {
   if (!db || !user) return;
   const input = document.getElementById('grat-input');
+  const btn = document.getElementById('grat-submit-btn');
   const text = input.value.trim();
-  if (!text) { toast('Write something you\'re grateful for'); return; }
+  if (!text) { toast('Write something first'); return; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Sharing...'; }
   const entry = {
     from: user,
     fromName: NAMES[user],
@@ -3134,7 +3148,8 @@ async function submitGratitude() {
   };
   await db.ref('gratitude').push(entry);
   input.value = '';
-  toast('Gratitude shared 🙏');
+  if (btn) { btn.textContent = 'Shared'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Share'; }, 1500); }
+  toast('Shared');
 }
 
 function listenGratitude() {
@@ -3152,9 +3167,10 @@ function renderGratitude(entries) {
   if (!entries.length) { el.innerHTML = '<div class="empty">Tell them what you are grateful for today</div>'; return; }
   el.innerHTML = entries.map(g => {
     const time = new Date(g.timestamp);
-    const ts = time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const ts = timeAgo(time);
+    const isMe = g.from === user;
     return `<div class="grat-card">
-      <div class="grat-from">${g.fromName || 'Someone'} · ${ts}</div>
+      <div class="grat-from">${isMe ? 'You' : g.fromName} · ${ts}</div>
       <div class="grat-msg">${g.message.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
     </div>`;
   }).join('');
@@ -3277,7 +3293,7 @@ function checkQuizAnswer(input, correct) {
   if (guess === answer) {
     parent.innerHTML += '<div class="quiz-item-a correct">Correct! ✅ ' + correct + '</div>';
     input.remove();
-    toast('You got it! 🎉');
+    toast('Correct!');
   } else {
     toast('Not quite! Try again 🤔');
   }
@@ -3307,7 +3323,7 @@ async function addBucketItem() {
   });
   document.getElementById('bl-input').value = '';
   document.getElementById('bl-emoji').value = '';
-  toast('Dream added! ✨');
+  toast('Dream added');
 }
 
 function filterBucket(cat, el) {
@@ -3344,7 +3360,7 @@ function renderBucketList(items) {
 async function toggleBucket(key, completed) {
   if (!db) return;
   await db.ref('bucketList/' + key + '/completed').set(completed);
-  if (completed) toast('Dream achieved! 🎉');
+  if (completed) toast('Dream achieved');
 }
 
 // ===== WISHLISTS =====
@@ -3632,7 +3648,7 @@ function getWeekId() {
 
 function updCIEnergy() {
   const v = document.getElementById('ci-energy').value;
-  const labels = ['','🌙 Disconnected','☁ Low','☀ Steady','✨ Strong','⚡ Thriving'];
+  const labels = ['','Distant','Low','Steady','Strong','Thriving'];
   document.getElementById('ci-energy-val').textContent = labels[v];
 }
 
@@ -3651,7 +3667,7 @@ async function submitCheckin() {
   document.getElementById('ci-well').value = '';
   document.getElementById('ci-better').value = '';
   document.getElementById('ci-need').value = '';
-  toast('Check-in submitted ♡');
+  toast('Check-in saved');
 }
 
 function listenCheckins() {
@@ -4168,7 +4184,7 @@ async function saveConvoNote() {
     date: new Date().toISOString().split('T')[0]
   });
   document.getElementById('dt-journal').value = '';
-  toast('Reflection saved ♡');
+  toast('Reflection saved');
 }
 
 function listenConvoNotes() {
@@ -4391,7 +4407,7 @@ async function addPrayer() {
     text, user, userName: NAMES[user], timestamp: Date.now(), prayedFor: {}
   });
   document.getElementById('sp-prayer-input').value = '';
-  toast('Prayer shared ♡');
+  toast('Prayer shared');
 }
 
 function listenPrayers() {
@@ -4415,7 +4431,7 @@ function listenPrayers() {
 async function prayFor(key) {
   if (!db || !user) return;
   await db.ref('spiritual/prayers/' + key + '/prayedFor/' + user).set(true);
-  toast('Praying with you 🙏');
+  toast('Noted');
 }
 
 async function addBlessing() {
@@ -4426,7 +4442,7 @@ async function addBlessing() {
     text, user, userName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('sp-bless-input').value = '';
-  toast('Blessing recorded ♡');
+  toast('Blessing added');
 }
 
 function listenBlessings() {
@@ -4450,7 +4466,7 @@ async function addIntention() {
     text, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('sp-intent-input').value = '';
-  toast('Intention set ♡');
+  toast('Intention set');
 }
 
 function listenIntentions() {
@@ -4588,6 +4604,21 @@ function enforcePrivacy() {
     if (user === 'him' && title.textContent === "Taylor's Space") card.style.display = 'none';
     if (user === 'her' && title.textContent === "Manu's Space") card.style.display = 'none';
   });
+}
+
+// ===== TIME AGO =====
+function timeAgo(date) {
+  const now = Date.now();
+  const diff = now - date.getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + 'h ago';
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return days + 'd ago';
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 // ===== TOAST =====
