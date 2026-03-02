@@ -410,6 +410,50 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @keyframes tapFloat{0%{transform:scale(0.3);opacity:0}30%{transform:scale(1.2);opacity:1}60%{transform:scale(1);opacity:1}100%{transform:scale(1) translateY(-20px);opacity:0}}
 @keyframes tapFadeIn{0%{opacity:0;transform:translateY(10px)}50%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
 
+/* ===== OUR STORY — TIMELINE & COUNTDOWNS ===== */
+.countdown-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.cd-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;padding:16px;text-align:center}
+.cd-emoji{font-size:24px;margin-bottom:6px}
+.cd-days{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--gold);line-height:1}
+.cd-unit{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-top:2px}
+.cd-title{font-size:11px;font-weight:500;color:var(--cream);margin-top:8px}
+.cd-date{font-size:10px;color:var(--t3)}
+.cd-add{padding:16px;border-radius:14px;border:1px dashed var(--bdr);text-align:center;cursor:pointer;transition:all .2s;background:transparent}
+.cd-add:hover{border-color:var(--gold);background:var(--tint-xs)}
+.cd-add:active{transform:scale(0.97)}
+.cd-add span{font-size:20px;display:block;margin-bottom:4px;color:var(--t3)}
+.cd-add div{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)}
+
+.timeline{position:relative;padding-left:24px;margin-top:16px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--bdr);border-radius:1px}
+.tl-item{position:relative;margin-bottom:20px;padding-left:20px}
+.tl-item::before{content:'';position:absolute;left:-20px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--gold);border:2px solid var(--bg)}
+.tl-date{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.tl-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--cream);margin-bottom:4px}
+.tl-desc{font-size:12px;color:var(--t2);line-height:1.6}
+.tl-emoji{font-size:16px;margin-right:6px}
+
+/* Milestone form */
+.ms-form{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:20px;display:none}
+.ms-form.on{display:block}
+.ms-form input,.ms-form textarea{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg3);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;outline:none;margin-bottom:8px}
+.ms-form input:focus,.ms-form textarea:focus{border-color:var(--gold)}
+.ms-form input::placeholder,.ms-form textarea::placeholder{color:var(--t3)}
+.ms-form textarea{resize:none;min-height:50px}
+.ms-row{display:flex;gap:8px}
+.ms-row input{flex:1}
+.ms-save{width:100%;padding:11px;border-radius:10px;border:1px solid var(--gold);background:var(--tint);color:var(--gold);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;margin-top:4px}
+.ms-save:hover{background:var(--tint-b)}
+.ms-save:active{transform:scale(0.98)}
+.ms-cancel{text-align:center;margin-top:8px;font-size:11px;color:var(--t3);cursor:pointer}
+
+/* Countdown form */
+.cd-form{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:16px;display:none}
+.cd-form.on{display:block}
+.cd-form input{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg3);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;outline:none;margin-bottom:8px}
+.cd-form input:focus{border-color:var(--gold)}
+.cd-form input::placeholder{color:var(--t3)}
+
 /* ===== HUB PAGES ===== */
 .hub-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
 .hub-card{padding:20px 14px;border-radius:14px;text-align:center;cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);transition:all .2s}
@@ -612,22 +656,40 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
 </div>
 
-<!-- ===== OUR STORY (Coming Soon) ===== -->
+<!-- ===== OUR STORY ===== -->
 <div class="pg" id="pg-story">
 <div class="ctn">
-  <div class="phd"><h1>Our Story</h1><p>Where it all began</p></div>
-  <div class="soon-page">
-    <span class="soon-icon">📖</span>
-    <div class="soon-title">Your Timeline Together</div>
-    <div class="soon-desc">Build a beautiful timeline of your milestones, memories, and the moments that define your love story.</div>
-    <ul class="soon-features">
-      <li><span>🗓</span> Milestone timeline</li>
-      <li><span>⏳</span> Countdown to next visit</li>
-      <li><span>🎂</span> Anniversary & birthday trackers</li>
-      <li><span>📸</span> Photo memories</li>
-      <li><span>✨</span> "On This Day" flashbacks</li>
-    </ul>
+  <div class="phd"><h1>Our Story</h1><p>Your journey together</p></div>
+
+  <!-- Countdowns -->
+  <div class="slbl">Counting Down</div>
+  <div class="countdown-grid" id="countdown-grid">
+    <div class="cd-add" onclick="toggleCdForm()"><span>+</span><div>Add Countdown</div></div>
   </div>
+  <div class="cd-form" id="cd-form">
+    <input type="text" id="cd-title" placeholder="What are you counting down to?">
+    <div class="ms-row">
+      <input type="date" id="cd-date">
+      <input type="text" id="cd-emoji" placeholder="Emoji" maxlength="2" style="max-width:60px;text-align:center">
+    </div>
+    <button class="ms-save" onclick="saveCountdown()">Save Countdown</button>
+    <div class="ms-cancel" onclick="toggleCdForm()">Cancel</div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="slbl">Milestones</div>
+  <button class="mood-submit" onclick="toggleMsForm()" style="margin-bottom:16px">+ Add Milestone</button>
+  <div class="ms-form" id="ms-form">
+    <input type="text" id="ms-title" placeholder="Milestone title (e.g. First Date)">
+    <div class="ms-row">
+      <input type="date" id="ms-date">
+      <input type="text" id="ms-emoji" placeholder="Emoji" maxlength="2" style="max-width:60px;text-align:center">
+    </div>
+    <textarea id="ms-desc" placeholder="Description (optional)..."></textarea>
+    <button class="ms-save" onclick="saveMilestone()">Save Milestone</button>
+    <div class="ms-cancel" onclick="toggleMsForm()">Cancel</div>
+  </div>
+  <div class="timeline" id="timeline"><div class="empty">No milestones yet. Start your story!</div></div>
 </div>
 </div>
 
@@ -950,6 +1012,8 @@ function finishLogin() {
   listenMoods();
   listenTaps();
   listenLetters();
+  listenMilestones();
+  listenCountdowns();
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
@@ -1308,6 +1372,111 @@ function renderLetterFeed(letters) {
       <div class="letter-body">${l.message.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
     </div>`;
   }).join('');
+}
+
+// ===== MILESTONES & TIMELINE =====
+function toggleMsForm() {
+  document.getElementById('ms-form').classList.toggle('on');
+}
+
+async function saveMilestone() {
+  if (!db || !user) return;
+  const title = document.getElementById('ms-title').value.trim();
+  const date = document.getElementById('ms-date').value;
+  const emoji = document.getElementById('ms-emoji').value.trim() || '✨';
+  const desc = document.getElementById('ms-desc').value.trim();
+  if (!title || !date) { toast('Title and date required'); return; }
+  const entry = {
+    title, date, emoji, description: desc,
+    user: user, userName: NAMES[user], timestamp: Date.now()
+  };
+  await db.ref('milestones').push(entry);
+  document.getElementById('ms-title').value = '';
+  document.getElementById('ms-date').value = '';
+  document.getElementById('ms-emoji').value = '';
+  document.getElementById('ms-desc').value = '';
+  toggleMsForm();
+  toast('Milestone saved ✨');
+}
+
+function listenMilestones() {
+  db.ref('milestones').orderByChild('date').on('value', snap => {
+    const milestones = [];
+    snap.forEach(c => milestones.push(c.val()));
+    milestones.reverse();
+    renderTimeline(milestones);
+  });
+}
+
+function renderTimeline(milestones) {
+  const el = document.getElementById('timeline');
+  if (!el) return;
+  if (!milestones.length) { el.innerHTML = '<div class="empty">No milestones yet. Start your story!</div>'; return; }
+  el.innerHTML = milestones.map(m => {
+    const d = new Date(m.date + 'T00:00:00');
+    const dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    return `<div class="tl-item">
+      <div class="tl-date">${dateStr}</div>
+      <div class="tl-title"><span class="tl-emoji">${m.emoji || '✨'}</span>${m.title}</div>
+      ${m.description ? `<div class="tl-desc">${m.description}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ===== COUNTDOWNS =====
+function toggleCdForm() {
+  document.getElementById('cd-form').classList.toggle('on');
+}
+
+async function saveCountdown() {
+  if (!db || !user) return;
+  const title = document.getElementById('cd-title').value.trim();
+  const date = document.getElementById('cd-date').value;
+  const emoji = document.getElementById('cd-emoji').value.trim() || '⏳';
+  if (!title || !date) { toast('Title and date required'); return; }
+  const entry = {
+    title, date, emoji,
+    createdBy: user, timestamp: Date.now()
+  };
+  await db.ref('countdowns').push(entry);
+  document.getElementById('cd-title').value = '';
+  document.getElementById('cd-date').value = '';
+  document.getElementById('cd-emoji').value = '';
+  toggleCdForm();
+  toast('Countdown created ⏳');
+}
+
+function listenCountdowns() {
+  db.ref('countdowns').on('value', snap => {
+    const countdowns = [];
+    snap.forEach(c => countdowns.push(c.val()));
+    renderCountdowns(countdowns);
+  });
+}
+
+function renderCountdowns(countdowns) {
+  const el = document.getElementById('countdown-grid');
+  if (!el) return;
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  const cards = countdowns
+    .map(c => {
+      const target = new Date(c.date + 'T00:00:00');
+      const diff = Math.ceil((target - now) / (1000*60*60*24));
+      return { ...c, daysLeft: diff };
+    })
+    .filter(c => c.daysLeft >= 0)
+    .sort((a,b) => a.daysLeft - b.daysLeft);
+
+  let html = cards.map(c => `<div class="cd-card">
+    <div class="cd-emoji">${c.emoji || '⏳'}</div>
+    <div class="cd-days">${c.daysLeft}</div>
+    <div class="cd-unit">${c.daysLeft === 1 ? 'day' : 'days'}</div>
+    <div class="cd-title">${c.title}</div>
+    <div class="cd-date">${new Date(c.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+  </div>`).join('');
+  html += '<div class="cd-add" onclick="toggleCdForm()"><span>+</span><div>Add Countdown</div></div>';
+  el.innerHTML = html;
 }
 
 // ===== TOAST =====
