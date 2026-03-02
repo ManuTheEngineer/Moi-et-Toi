@@ -1,4 +1,4 @@
-const CACHE_NAME = 'moiettoi-v7';
+const CACHE_NAME = 'moiettoi-v8';
 
 self.addEventListener('install', e => {
   self.skipWaiting();

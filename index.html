@@ -666,8 +666,105 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
 .tot-option .tot-or{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:1px;font-weight:600;z-index:2}
 
+/* ===== DATE NIGHT ===== */
+.dn-wheel{width:160px;height:160px;margin:20px auto;border-radius:50%;background:var(--grad-love);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .6s cubic-bezier(.2,1,.3,1);box-shadow:0 8px 30px rgba(107,29,42,.2)}
+.dn-wheel:active{transform:scale(.92)}
+.dn-wheel.spinning{animation:dnSpin 1s ease-out}
+@keyframes dnSpin{0%{transform:rotate(0)}100%{transform:rotate(720deg)}}
+.dn-spinner{text-align:center;color:#fff}
+.dn-emoji{font-size:40px;margin-bottom:4px}
+.dn-label{font-size:11px;opacity:.8;font-weight:400}
+.dn-result{background:var(--bg2);border-radius:16px;padding:20px;margin:16px 0;border:1px solid var(--bdr)}
+.dn-cat{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-weight:500;margin-bottom:6px}
+.dn-idea{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--t1);margin-bottom:6px}
+.dn-desc{font-size:12px;color:var(--t2);line-height:1.5}
+.dn-action{padding:10px 20px;border-radius:10px;border:1px solid var(--bdr);background:var(--tint);color:var(--gold);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;flex:1}
+.dn-skip{background:transparent;color:var(--t2)}
+.dn-saved-card{background:var(--bg2);border-radius:12px;padding:14px;margin-bottom:8px;border:1px solid var(--bdr-s);display:flex;align-items:center;gap:12px}
+.dn-saved-emoji{font-size:24px}
+.dn-saved-info{flex:1}
+.dn-saved-title{font-weight:500;font-size:13px}
+.dn-saved-meta{font-size:10px;color:var(--t3);margin-top:2px}
+.dn-done-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--bdr);background:transparent;color:var(--gold);font-size:10px;cursor:pointer;font-family:'Outfit',sans-serif}
+
+/* ===== LOVE LANGUAGES ===== */
+.ll-results{margin-bottom:20px}
+.ll-pair{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;margin-bottom:16px}
+.ll-profile{text-align:center}
+.ll-name{font-size:12px;color:var(--t2);margin-bottom:6px;font-weight:500}
+.ll-primary{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--gold);margin-bottom:10px}
+.ll-divider{width:1px;background:var(--bdr);margin:0 4px}
+.ll-bars{display:flex;flex-direction:column;gap:6px}
+.ll-bar{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t2)}
+.ll-bar-track{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.ll-bar-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .6s ease}
+.ll-tips{background:var(--tint-xs);border-radius:12px;padding:14px;border:1px solid var(--bdr-s)}
+.ll-tips-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:500;margin-bottom:8px}
+.ll-tip{font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:6px;padding-left:12px;position:relative}
+.ll-tip::before{content:'♡';position:absolute;left:0;color:var(--gold);font-size:10px}
+.ll-progress{font-size:11px;color:var(--t3);text-align:center;margin-bottom:12px;font-weight:500}
+.ll-question{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;text-align:center;color:var(--t1);margin-bottom:20px;min-height:52px}
+.ll-options{display:flex;flex-direction:column;gap:10px}
+.ll-option{padding:14px 16px;border-radius:12px;border:1px solid var(--bdr);background:var(--bg2);font-size:13px;color:var(--t1);cursor:pointer;transition:all .2s;text-align:left;font-family:'Outfit',sans-serif}
+.ll-option:active{background:var(--tint);border-color:var(--gold);transform:scale(.98)}
+
+/* ===== WEEKLY CHECK-IN ===== */
+.ci-status{background:var(--tint-xs);border-radius:12px;padding:14px;margin-bottom:16px;border:1px solid var(--bdr-s);text-align:center}
+.ci-status-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:500}
+.ci-status-text{font-size:13px;color:var(--t2);margin-top:4px}
+.ci-section{margin-bottom:16px}
+.ci-icon{font-size:16px;color:var(--gold);margin-bottom:4px}
+.ci-label{font-size:13px;font-weight:500;color:var(--t1);margin-bottom:8px}
+.ci-card{background:var(--bg2);border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid var(--bdr-s)}
+.ci-card-week{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:500;margin-bottom:8px}
+.ci-card-name{font-size:11px;color:var(--t2);font-weight:500;margin-bottom:6px}
+.ci-card-q{font-size:11px;color:var(--t3);margin-bottom:2px}
+.ci-card-a{font-size:12px;color:var(--t1);margin-bottom:8px;padding-left:8px;border-left:2px solid var(--bdr)}
+
+/* ===== DREAM BOARD ===== */
+.dr-form{background:var(--bg2);border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid var(--bdr-s)}
+.dr-card{background:var(--bg2);border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid var(--bdr-s);display:flex;gap:12px;align-items:flex-start}
+.dr-card.achieved{opacity:.7}
+.dr-card.achieved .dr-title{text-decoration:line-through}
+.dr-emoji{font-size:28px;flex-shrink:0}
+.dr-info{flex:1}
+.dr-title{font-weight:500;font-size:14px}
+.dr-cat-tag{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:500;margin-top:2px}
+.dr-desc{font-size:12px;color:var(--t2);margin-top:4px;line-height:1.4}
+.dr-meta{font-size:10px;color:var(--t3);margin-top:6px}
+.dr-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:12px;color:var(--gold);transition:all .2s}
+.dr-check:active{transform:scale(.9)}
+
+/* ===== HER SPACE ===== */
+.hs-affirm{background:var(--grad-love);border-radius:16px;padding:24px 20px;margin-bottom:20px;cursor:pointer;text-align:center;color:#fff}
+.him-affirm{background:var(--grad-grow)!important}
+.hs-affirm-label{font-size:9px;text-transform:uppercase;letter-spacing:2px;opacity:.7;margin-bottom:8px}
+.hs-affirm-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;line-height:1.4;min-height:56px;display:flex;align-items:center;justify-content:center}
+.hs-affirm-tap{font-size:10px;opacity:.5;margin-top:10px}
+.hs-cycle-ring{display:flex;justify-content:center;padding:12px 0}
+.hs-cycle-svg{width:120px;height:120px}
+.hs-cycle-actions{display:flex;gap:8px;margin:10px 0}
+.hs-cycle-info{font-size:11px;color:var(--t2);line-height:1.6;padding:8px 0}
+.hs-care-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.hs-care-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 8px;border-radius:12px;background:var(--bg2);border:1px solid var(--bdr-s);cursor:pointer;transition:all .2s}
+.hs-care-item.done{background:var(--tint);border-color:var(--gold)}
+.hs-care-item:active{transform:scale(.95)}
+.hs-care-emoji{font-size:22px}
+.hs-care-label{font-size:10px;color:var(--t2);font-weight:500}
+.hs-care-streak{font-size:11px;color:var(--t3);text-align:center;margin-bottom:16px}
+.him-pr-form{padding:8px 0}
+.him-pr-card{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr-s)}
+.him-pr-name{font-weight:500;font-size:13px;flex:1}
+.him-pr-val{font-size:12px;color:var(--gold);font-weight:500}
+.him-pr-date{font-size:10px;color:var(--t3)}
+.pg-goal{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg2);border-radius:12px;margin-bottom:8px;border:1px solid var(--bdr-s)}
+.pg-goal.done .pg-goal-text{text-decoration:line-through;opacity:.6}
+.pg-goal-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--gold);flex-shrink:0}
+.pg-goal-text{flex:1;font-size:13px}
+.pg-goal-date{font-size:10px;color:var(--t3)}
+
 /* ===== RESPONSIVE ===== */
-@media(max-width:400px){.ctn{padding:16px 16px 24px}.sg{grid-template-columns:repeat(2,1fr)}.hub-grid{grid-template-columns:1fr}}
+@media(max-width:400px){.ctn{padding:16px 16px 24px}.sg{grid-template-columns:repeat(2,1fr)}.hub-grid{grid-template-columns:1fr}.ll-pair{grid-template-columns:1fr;gap:16px}.ll-divider{display:none}}
 </style>
 </head>
 <body>
@@ -697,6 +794,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="mi" onclick="go('mood')"><div class="mic g">◎</div><div class="mt"><h4>Mood Check-in</h4></div></div>
   <div class="mi" onclick="go('story')"><div class="mic g">◇</div><div class="mt"><h4>Our Story</h4><p>Timeline & Milestones</p></div></div>
   <div class="mi" onclick="go('ai')"><div class="mic a">✧</div><div class="mt"><h4>AI Assistant</h4></div></div>
+  <div class="msl">Together</div>
+  <div class="mi" onclick="go('datenight')"><div class="mic g">🕯</div><div class="mt"><h4>Date Night</h4><p>Idea generator</p></div></div>
+  <div class="mi" onclick="go('lovelang')"><div class="mic r">♡</div><div class="mt"><h4>Love Languages</h4><p>Know each other</p></div></div>
+  <div class="mi" onclick="go('checkin')"><div class="mic v">✦</div><div class="mt"><h4>Weekly Check-in</h4><p>Relationship care</p></div></div>
+  <div class="mi" onclick="go('dreams')"><div class="mic g">✧</div><div class="mt"><h4>Our Dreams</h4><p>Future together</p></div></div>
+  <div class="msl">Personal</div>
+  <div class="mi" onclick="go('herspace')"><div class="mic r">🌸</div><div class="mt"><h4>Her Space</h4><p>Wellness & goals</p></div></div>
+  <div class="mi" onclick="go('hisspace')"><div class="mic v">⚡</div><div class="mt"><h4>His Space</h4><p>Growth & strength</p></div></div>
   <div class="msl">Waist Where?</div>
   <div class="mi" onclick="go('w1')"><div class="mic g">✦</div><div class="mt"><h4>Foundation</h4><p>Beginner</p></div></div>
   <div class="mi" onclick="go('w2')"><div class="mic r">◆</div><div class="mt"><h4>Elevated</h4><p>Advanced</p></div></div>
@@ -951,6 +1056,22 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div class="pg" id="pg-more">
 <div class="ctn">
   <div class="phd"><h1>More</h1><p>Everything else</p></div>
+
+  <div class="slbl">Together</div>
+  <div class="hub-grid">
+    <div class="hub-card" onclick="go('datenight')"><span class="hc-icon">🕯</span><div class="hc-title">Date Night</div><div class="hc-sub">Idea generator</div></div>
+    <div class="hub-card" onclick="go('lovelang')"><span class="hc-icon">♡</span><div class="hc-title">Love Languages</div><div class="hc-sub">Know each other</div></div>
+  </div>
+  <div class="hub-grid">
+    <div class="hub-card" onclick="go('checkin')"><span class="hc-icon">✦</span><div class="hc-title">Weekly Check-in</div><div class="hc-sub">Relationship care</div></div>
+    <div class="hub-card" onclick="go('dreams')"><span class="hc-icon">✧</span><div class="hc-title">Our Dreams</div><div class="hc-sub">Future together</div></div>
+  </div>
+
+  <div class="slbl">Personal</div>
+  <div class="hub-grid">
+    <div class="hub-card" onclick="go('herspace')"><span class="hc-icon">🌸</span><div class="hc-title">Her Space</div><div class="hc-sub">Wellness & goals</div></div>
+    <div class="hub-card" onclick="go('hisspace')"><span class="hc-icon">⚡</span><div class="hc-title">His Space</div><div class="hc-sub">Growth & strength</div></div>
+  </div>
 
   <div class="slbl">Tools</div>
   <div class="hub-grid">
@@ -1258,6 +1379,250 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 </div>
 </div>
 
+<!-- ===== DATE NIGHT GENERATOR ===== -->
+<div class="pg" id="pg-datenight">
+<div class="ctn">
+  <div class="phd"><h1>Date Night</h1><p>Never run out of ideas</p></div>
+
+  <div class="dn-wheel" id="dn-wheel" onclick="spinDateNight()">
+    <div class="dn-spinner" id="dn-spinner">
+      <div class="dn-emoji" id="dn-emoji">🎲</div>
+      <div class="dn-label">Tap to Spin</div>
+    </div>
+  </div>
+
+  <div class="dn-result" id="dn-result" style="display:none">
+    <div class="dn-cat" id="dn-result-cat"></div>
+    <div class="dn-idea" id="dn-result-idea"></div>
+    <div class="dn-desc" id="dn-result-desc"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="dn-action" onclick="saveDateIdea()">Save ♡</button>
+      <button class="dn-action dn-skip" onclick="spinDateNight()">Try Another</button>
+    </div>
+  </div>
+
+  <div class="slbl">Filter by Mood</div>
+  <div class="bl-cats" id="dn-cats">
+    <span class="bl-cat on" onclick="filterDN('all',this)">All</span>
+    <span class="bl-cat" onclick="filterDN('home',this)">Home</span>
+    <span class="bl-cat" onclick="filterDN('outdoor',this)">Outdoor</span>
+    <span class="bl-cat" onclick="filterDN('fancy',this)">Fancy</span>
+    <span class="bl-cat" onclick="filterDN('adventure',this)">Adventure</span>
+    <span class="bl-cat" onclick="filterDN('budget',this)">Budget</span>
+  </div>
+
+  <div class="slbl">Saved Ideas</div>
+  <div id="dn-saved"><div class="empty">Spin the wheel to discover date ideas!</div></div>
+
+  <div class="slbl">Date History</div>
+  <div id="dn-history"><div class="empty">No dates logged yet. Make memories!</div></div>
+</div>
+</div>
+
+<!-- ===== LOVE LANGUAGES ===== -->
+<div class="pg" id="pg-lovelang">
+<div class="ctn">
+  <div class="phd"><h1>Love Languages</h1><p>Understand how you love</p></div>
+
+  <div class="ll-results" id="ll-results" style="display:none">
+    <div class="ll-pair">
+      <div class="ll-profile">
+        <div class="ll-name"><span class="uname"></span></div>
+        <div class="ll-primary" id="ll-my-primary">--</div>
+        <div class="ll-bars" id="ll-my-bars"></div>
+      </div>
+      <div class="ll-divider"></div>
+      <div class="ll-profile">
+        <div class="ll-name"><span class="pname"></span></div>
+        <div class="ll-primary" id="ll-partner-primary">--</div>
+        <div class="ll-bars" id="ll-partner-bars"></div>
+      </div>
+    </div>
+    <div class="ll-tips" id="ll-tips"></div>
+    <button class="dq-submit" onclick="retakeLLQuiz()" style="margin-top:16px">Retake Quiz</button>
+  </div>
+
+  <div id="ll-quiz">
+    <div class="ll-progress" id="ll-progress">Question 1 of 10</div>
+    <div class="ll-question" id="ll-q-text"></div>
+    <div class="ll-options" id="ll-options"></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== WEEKLY CHECK-IN ===== -->
+<div class="pg" id="pg-checkin">
+<div class="ctn">
+  <div class="phd"><h1>Weekly Check-in</h1><p>Nurture what matters</p></div>
+
+  <div class="ci-status" id="ci-status"></div>
+
+  <div id="ci-form">
+    <div class="ci-section">
+      <div class="ci-icon">✦</div>
+      <div class="ci-label">What went well this week for us?</div>
+      <textarea class="mood-note" id="ci-well" placeholder="The good stuff..."></textarea>
+    </div>
+    <div class="ci-section">
+      <div class="ci-icon">◇</div>
+      <div class="ci-label">What could be better?</div>
+      <textarea class="mood-note" id="ci-better" placeholder="Be honest and kind..."></textarea>
+    </div>
+    <div class="ci-section">
+      <div class="ci-icon">♡</div>
+      <div class="ci-label">What do you need from me this week?</div>
+      <textarea class="mood-note" id="ci-need" placeholder="I need..."></textarea>
+    </div>
+    <div class="ci-section">
+      <div class="ci-icon">⚡</div>
+      <div class="ci-label">Relationship energy this week</div>
+      <div class="energy-row"><label>Level</label><input type="range" id="ci-energy" min="1" max="5" value="3" oninput="updCIEnergy()"><span class="energy-val" id="ci-energy-val">☀ Steady</span></div>
+    </div>
+    <button class="dq-submit" onclick="submitCheckin()">Submit Check-in ♡</button>
+  </div>
+
+  <div class="slbl">Past Check-ins</div>
+  <div id="ci-feed"><div class="empty">No check-ins yet. Start your first one!</div></div>
+</div>
+</div>
+
+<!-- ===== DREAM BOARD ===== -->
+<div class="pg" id="pg-dreams">
+<div class="ctn">
+  <div class="phd"><h1>Our Dreams</h1><p>Build your future together</p></div>
+
+  <div class="dr-form">
+    <input type="text" id="dr-title" placeholder="A dream for our future...">
+    <div class="ms-row">
+      <input type="text" id="dr-emoji" placeholder="🏡" maxlength="2" style="max-width:50px;text-align:center">
+      <select id="dr-cat" style="padding:10px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;flex:1">
+        <option value="home">Home & Living</option>
+        <option value="travel">Travel</option>
+        <option value="career">Career</option>
+        <option value="family">Family</option>
+        <option value="experience">Experiences</option>
+        <option value="financial">Financial</option>
+      </select>
+    </div>
+    <textarea id="dr-desc" class="mood-note" placeholder="Describe the dream... (optional)"></textarea>
+    <button class="dq-submit" onclick="addDream()">Add Dream ✦</button>
+  </div>
+
+  <div class="bl-cats" id="dr-cats">
+    <span class="bl-cat on" onclick="filterDreams('all',this)">All</span>
+    <span class="bl-cat" onclick="filterDreams('home',this)">Home</span>
+    <span class="bl-cat" onclick="filterDreams('travel',this)">Travel</span>
+    <span class="bl-cat" onclick="filterDreams('career',this)">Career</span>
+    <span class="bl-cat" onclick="filterDreams('family',this)">Family</span>
+    <span class="bl-cat" onclick="filterDreams('financial',this)">Financial</span>
+  </div>
+
+  <div id="dr-list"><div class="empty">No dreams yet. Dream big together!</div></div>
+</div>
+</div>
+
+<!-- ===== HER SPACE ===== -->
+<div class="pg" id="pg-herspace">
+<div class="ctn">
+  <div class="phd"><h1>Her Space</h1><p>Your personal sanctuary</p></div>
+
+  <!-- Daily Affirmation -->
+  <div class="hs-affirm" id="hs-affirm" onclick="nextAffirmation()">
+    <div class="hs-affirm-label">Today's Affirmation</div>
+    <div class="hs-affirm-text" id="hs-affirm-text"></div>
+    <div class="hs-affirm-tap">Tap for another</div>
+  </div>
+
+  <!-- Cycle Tracker -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Cycle Tracker</div></div>
+  <div class="card">
+    <div class="card-h"><span class="card-t">Current Cycle</span><span class="card-s" id="hs-cycle-phase">--</span></div>
+    <div class="hs-cycle-ring" id="hs-cycle-ring">
+      <svg viewBox="0 0 120 120" class="hs-cycle-svg">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg3)" stroke-width="8"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round" stroke-dasharray="314" id="hs-cycle-arc" stroke-dashoffset="314" transform="rotate(-90 60 60)"/>
+        <text x="60" y="55" text-anchor="middle" fill="var(--t1)" font-size="18" font-weight="600" font-family="Outfit" id="hs-cycle-day">--</text>
+        <text x="60" y="72" text-anchor="middle" fill="var(--t3)" font-size="9" font-family="Outfit">day of cycle</text>
+      </svg>
+    </div>
+    <div class="hs-cycle-actions">
+      <button class="dn-action" onclick="logPeriodStart()">Log Period Start</button>
+      <button class="dn-action dn-skip" onclick="logPeriodEnd()">Log Period End</button>
+    </div>
+    <div class="hs-cycle-info" id="hs-cycle-info"></div>
+  </div>
+
+  <!-- Self-Care Checklist -->
+  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Self-Care Today</div></div>
+  <div class="hs-care-grid" id="hs-care-grid">
+    <div class="hs-care-item" onclick="toggleCare(this,'water')"><span class="hs-care-emoji">💧</span><span class="hs-care-label">Water</span></div>
+    <div class="hs-care-item" onclick="toggleCare(this,'skincare')"><span class="hs-care-emoji">✨</span><span class="hs-care-label">Skincare</span></div>
+    <div class="hs-care-item" onclick="toggleCare(this,'movement')"><span class="hs-care-emoji">🧘</span><span class="hs-care-label">Movement</span></div>
+    <div class="hs-care-item" onclick="toggleCare(this,'journal')"><span class="hs-care-emoji">📝</span><span class="hs-care-label">Journal</span></div>
+    <div class="hs-care-item" onclick="toggleCare(this,'sleep')"><span class="hs-care-emoji">🌙</span><span class="hs-care-label">Sleep 8h</span></div>
+    <div class="hs-care-item" onclick="toggleCare(this,'nourish')"><span class="hs-care-emoji">🥗</span><span class="hs-care-label">Nourish</span></div>
+  </div>
+  <div class="hs-care-streak" id="hs-care-streak"></div>
+
+  <!-- Personal Goals -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">My Goals</div></div>
+  <div class="bl-form">
+    <input type="text" id="hs-goal-input" placeholder="Add a personal goal...">
+    <button onclick="addPersonalGoal('her')">+</button>
+  </div>
+  <div id="hs-goals"><div class="empty">Set goals just for you</div></div>
+</div>
+</div>
+
+<!-- ===== HIS SPACE ===== -->
+<div class="pg" id="pg-hisspace">
+<div class="ctn">
+  <div class="phd"><h1>His Space</h1><p>Your personal ground</p></div>
+
+  <!-- Daily Motivation -->
+  <div class="hs-affirm him-affirm" id="him-affirm" onclick="nextMotivation()">
+    <div class="hs-affirm-label">Today's Focus</div>
+    <div class="hs-affirm-text" id="him-affirm-text"></div>
+    <div class="hs-affirm-tap">Tap for another</div>
+  </div>
+
+  <!-- Strength Tracker -->
+  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Strength Log</div></div>
+  <div class="card">
+    <div class="card-h"><span class="card-t">Personal Records</span><span class="card-s">Track progress</span></div>
+    <div class="him-pr-form">
+      <input type="text" id="him-pr-exercise" placeholder="Exercise name...">
+      <div class="ms-row">
+        <input type="number" id="him-pr-weight" placeholder="Weight" style="flex:1">
+        <input type="number" id="him-pr-reps" placeholder="Reps" style="flex:1">
+      </div>
+      <button class="dq-submit" onclick="logPR()" style="margin-top:8px">Log PR ⚡</button>
+    </div>
+    <div id="him-pr-list"><div class="empty">No records yet. Start lifting!</div></div>
+  </div>
+
+  <!-- Mental Clarity -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Mental Clarity</div></div>
+  <div class="him-clarity-grid" id="him-clarity-grid">
+    <div class="hs-care-item" onclick="toggleClarity(this,'meditate')"><span class="hs-care-emoji">🧠</span><span class="hs-care-label">Meditate</span></div>
+    <div class="hs-care-item" onclick="toggleClarity(this,'read')"><span class="hs-care-emoji">📚</span><span class="hs-care-label">Read</span></div>
+    <div class="hs-care-item" onclick="toggleClarity(this,'workout')"><span class="hs-care-emoji">💪</span><span class="hs-care-label">Workout</span></div>
+    <div class="hs-care-item" onclick="toggleClarity(this,'cold')"><span class="hs-care-emoji">🧊</span><span class="hs-care-label">Cold Exp.</span></div>
+    <div class="hs-care-item" onclick="toggleClarity(this,'noscreen')"><span class="hs-care-emoji">📵</span><span class="hs-care-label">Screen Off</span></div>
+    <div class="hs-care-item" onclick="toggleClarity(this,'gratitude')"><span class="hs-care-emoji">🙏</span><span class="hs-care-label">Grateful</span></div>
+  </div>
+  <div class="him-clarity-streak" id="him-clarity-streak"></div>
+
+  <!-- Personal Goals -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">My Goals</div></div>
+  <div class="bl-form">
+    <input type="text" id="him-goal-input" placeholder="Add a personal goal...">
+    <button onclick="addPersonalGoal('him')">+</button>
+  </div>
+  <div id="him-goals"><div class="empty">Set goals just for you</div></div>
+</div>
+</div>
+
 <!-- ===== LOG MODAL ===== -->
 <div class="lmod" id="lmod">
 <div class="lsht">
@@ -1445,6 +1810,19 @@ function finishLogin() {
   loadTOT();
   renderStreakCalendar();
   updateCompat();
+  // New modules
+  listenDateNights();
+  loadLLQuiz();
+  listenCheckins();
+  listenDreams();
+  loadAffirmation();
+  loadMotivation();
+  loadCycleData();
+  loadSelfCare();
+  listenPRs();
+  loadClarity();
+  listenPersonalGoals('her');
+  listenPersonalGoals('him');
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
@@ -1461,7 +1839,7 @@ function updateApiKey() {
 
 // ===== NAV =====
 // Map sub-pages to their parent tab
-const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more', 'question': 'more', 'gratitude': 'more', 'games': 'more', 'bucket': 'more', 'wishlist': 'more' };
+const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more', 'question': 'more', 'gratitude': 'more', 'games': 'more', 'bucket': 'more', 'wishlist': 'more', 'datenight': 'more', 'lovelang': 'more', 'checkin': 'more', 'dreams': 'more', 'herspace': 'more', 'hisspace': 'more' };
 
 function go(p) {
   const current = document.querySelector('.pg.on');
@@ -2531,6 +2909,596 @@ async function markPurchased(key) {
   if (!db) return;
   await db.ref('wishlists/' + partner + '/' + key + '/purchased').set(true);
   toast('Marked as purchased! 🎁');
+}
+
+// ===== DATE NIGHT GENERATOR =====
+const DATE_IDEAS = [
+  {cat:'home',emoji:'🍿',title:'Movie Marathon Night',desc:'Pick a trilogy or director. Make popcorn. No phones. Blankets required.'},
+  {cat:'home',emoji:'👨‍🍳',title:'Cook-Off Challenge',desc:'Each person picks a secret recipe. Cook simultaneously. Judge each other\'s dishes.'},
+  {cat:'home',emoji:'🎨',title:'Paint & Sip',desc:'Get two canvases, some paint, wine. Paint the same subject, compare results.'},
+  {cat:'home',emoji:'🕯',title:'Candlelit Dinner at Home',desc:'Dress up nice. Set the table properly. Cook something special. Real napkins.'},
+  {cat:'home',emoji:'🧩',title:'Puzzle Night',desc:'1000-piece puzzle, music, snacks. See how far you get in one evening.'},
+  {cat:'home',emoji:'📖',title:'Read Together',desc:'Same book, same couch, different ends. Discuss chapters over tea.'},
+  {cat:'home',emoji:'🎮',title:'Retro Game Night',desc:'Old-school video games or board games. Winner picks dessert.'},
+  {cat:'home',emoji:'💆',title:'Spa Night',desc:'Face masks, foot soaks, massage oils. Take turns pampering each other.'},
+  {cat:'home',emoji:'🌮',title:'Taco Tuesday Deluxe',desc:'Every topping imaginable. Build your own tacos. Compete for best creation.'},
+  {cat:'home',emoji:'🔮',title:'Question Deep Dive',desc:'36 questions that lead to love. No distractions. Just each other.'},
+  {cat:'outdoor',emoji:'🌅',title:'Sunrise Picnic',desc:'Wake up early. Pack breakfast. Find the best view. Watch the sky change.'},
+  {cat:'outdoor',emoji:'🥾',title:'Hike & Discover',desc:'Find a trail neither of you has done. Pack snacks. Take photos at the top.'},
+  {cat:'outdoor',emoji:'🚗',title:'Mystery Drive',desc:'Take turns saying left/right/straight. End up somewhere random. Explore.'},
+  {cat:'outdoor',emoji:'⭐',title:'Stargazing',desc:'Blanket, hot drinks, star map app. Find constellations. Make wishes.'},
+  {cat:'outdoor',emoji:'🚴',title:'Bike Ride Adventure',desc:'Rent bikes or use your own. Explore a new neighborhood or trail together.'},
+  {cat:'outdoor',emoji:'📸',title:'Photo Walk',desc:'Each take 20 photos of things that catch your eye. Compare perspectives after.'},
+  {cat:'outdoor',emoji:'🧺',title:'Sunset Picnic',desc:'Pack a basket. Find a park or waterfront spot. Watch the sun go down together.'},
+  {cat:'fancy',emoji:'🍷',title:'Wine Tasting',desc:'Visit a winery or buy 4 bottles. Rate each one blindfolded. Find your couple wine.'},
+  {cat:'fancy',emoji:'🎭',title:'Theatre or Live Show',desc:'Book tickets to something neither of you would normally see. Dress up.'},
+  {cat:'fancy',emoji:'🍽',title:'Chef\'s Table Experience',desc:'Find a tasting menu restaurant. Let someone else cook. Savor every course.'},
+  {cat:'fancy',emoji:'💃',title:'Dancing Night',desc:'Salsa, swing, or ballroom class. Then go out dancing after.'},
+  {cat:'fancy',emoji:'🎵',title:'Jazz Club Evening',desc:'Find a live jazz spot. Dress sharp. Sip cocktails. Feel like old Hollywood.'},
+  {cat:'adventure',emoji:'🧗',title:'Rock Climbing',desc:'Indoor climbing gym. Belay each other. Trust falls built in.'},
+  {cat:'adventure',emoji:'🛶',title:'Kayak or Canoe',desc:'Rent one and paddle somewhere scenic. Teamwork required.'},
+  {cat:'adventure',emoji:'🎯',title:'Axe Throwing',desc:'Surprisingly fun couples activity. Release some energy. Compete.'},
+  {cat:'adventure',emoji:'🏄',title:'Learn Something Together',desc:'Surfing, pottery, archery, glass blowing. First-timers together.'},
+  {cat:'adventure',emoji:'🗺',title:'Tourist in Your Own City',desc:'Visit attractions you\'ve never been to in your own town. Pretend you\'re tourists.'},
+  {cat:'budget',emoji:'☕',title:'Coffee Shop Hop',desc:'Visit 3 different coffee shops. Rate each one. Find your new favorite spot.'},
+  {cat:'budget',emoji:'🌳',title:'Park & People Watch',desc:'Pack snacks, find a bench. Create backstories for strangers walking by.'},
+  {cat:'budget',emoji:'🎪',title:'Free Community Event',desc:'Check local listings for free concerts, markets, festivals, or outdoor movies.'},
+  {cat:'budget',emoji:'📝',title:'Love Letter Exchange',desc:'Sit in the same room. Write each other a letter. Exchange and read aloud.'},
+  {cat:'budget',emoji:'🌙',title:'Night Walk',desc:'Walk through your neighborhood at night. Different energy. Hold hands. Talk.'},
+  {cat:'budget',emoji:'🏠',title:'Fort Building',desc:'Blankets, pillows, fairy lights. Build a fort in the living room. Never grow up.'},
+];
+
+let currentDateIdea = null;
+let dnFilter = 'all';
+
+function spinDateNight() {
+  const wheel = document.getElementById('dn-wheel');
+  const filtered = dnFilter === 'all' ? DATE_IDEAS : DATE_IDEAS.filter(d => d.cat === dnFilter);
+  if (!filtered.length) return;
+  wheel.classList.add('spinning');
+  setTimeout(() => {
+    wheel.classList.remove('spinning');
+    currentDateIdea = filtered[Math.floor(Math.random() * filtered.length)];
+    document.getElementById('dn-emoji').textContent = currentDateIdea.emoji;
+    document.getElementById('dn-result-cat').textContent = currentDateIdea.cat.toUpperCase();
+    document.getElementById('dn-result-idea').textContent = currentDateIdea.title;
+    document.getElementById('dn-result-desc').textContent = currentDateIdea.desc;
+    document.getElementById('dn-result').style.display = 'block';
+  }, 600);
+}
+
+function filterDN(cat, el) {
+  dnFilter = cat;
+  document.querySelectorAll('#dn-cats .bl-cat').forEach(e => e.classList.remove('on'));
+  if (el) el.classList.add('on');
+}
+
+async function saveDateIdea() {
+  if (!db || !user || !currentDateIdea) return;
+  await db.ref('dateNights').push({
+    ...currentDateIdea, savedBy: user, savedByName: NAMES[user],
+    done: false, timestamp: Date.now()
+  });
+  toast('Date idea saved!');
+}
+
+function listenDateNights() {
+  db.ref('dateNights').orderByChild('timestamp').on('value', snap => {
+    const items = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+    items.reverse();
+    const saved = items.filter(i => !i.done);
+    const done = items.filter(i => i.done);
+    const sEl = document.getElementById('dn-saved');
+    const hEl = document.getElementById('dn-history');
+    if (sEl) {
+      if (!saved.length) sEl.innerHTML = '<div class="empty">No saved ideas yet. Spin the wheel!</div>';
+      else sEl.innerHTML = saved.map(i => `<div class="dn-saved-card">
+        <div class="dn-saved-emoji">${i.emoji}</div>
+        <div class="dn-saved-info"><div class="dn-saved-title">${i.title}</div><div class="dn-saved-meta">${i.cat} · saved by ${i.savedByName||'?'}</div></div>
+        <button class="dn-done-btn" onclick="markDateDone('${i._key}')">Did it!</button>
+      </div>`).join('');
+    }
+    if (hEl) {
+      if (!done.length) hEl.innerHTML = '<div class="empty">No dates done yet. Go on one!</div>';
+      else hEl.innerHTML = done.map(i => {
+        const ts = new Date(i.doneAt||i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+        return `<div class="dn-saved-card" style="opacity:.7"><div class="dn-saved-emoji">${i.emoji}</div><div class="dn-saved-info"><div class="dn-saved-title">${i.title}</div><div class="dn-saved-meta">${ts} · ${i.rating?'★'.repeat(i.rating):''}</div></div></div>`;
+      }).join('');
+    }
+  });
+}
+
+async function markDateDone(key) {
+  if (!db) return;
+  const rating = parseInt(prompt('Rate this date 1-5 stars:') || '0');
+  await db.ref('dateNights/' + key).update({ done: true, doneAt: Date.now(), rating: Math.min(5, Math.max(0, rating)) });
+  toast('Date completed! Nice one!');
+}
+
+// ===== LOVE LANGUAGES =====
+const LL_NAMES = ['Words of Affirmation','Quality Time','Receiving Gifts','Acts of Service','Physical Touch'];
+const LL_QUIZ = [
+  {q:'I feel most loved when my partner...',a:['Tells me how much I mean to them','Spends undivided time with me'],l:[0,1]},
+  {q:'What makes you feel most appreciated?',a:['A thoughtful gift, even small','When they help without being asked'],l:[2,3]},
+  {q:'After a long day, I want my partner to...',a:['Hold me and be close','Tell me they\'re proud of me'],l:[4,0]},
+  {q:'The best surprise would be...',a:['A day planned just for us two','A heartfelt handwritten note'],l:[1,0]},
+  {q:'I feel disconnected when...',a:['We haven\'t touched in a while','They forget to help with things I need'],l:[4,3]},
+  {q:'My ideal evening involves...',a:['Sitting close, watching something together','Receiving a small unexpected gift'],l:[1,2]},
+  {q:'I feel most valued when they...',a:['Take something off my plate without me asking','Say specific things they love about me'],l:[3,0]},
+  {q:'What warms your heart most?',a:['A long hug after time apart','When they plan our time intentionally'],l:[4,1]},
+  {q:'Which means more to you?',a:['They remembered something I mentioned wanting','They wrote me a love letter'],l:[2,0]},
+  {q:'I feel closest to my partner when...',a:['We\'re doing something together, phones away','They do my least favorite chore for me'],l:[1,3]},
+];
+let llStep = 0;
+let llScores = [0,0,0,0,0];
+
+function loadLLQuiz() {
+  if (!db || !user) return;
+  db.ref('loveLang/' + user).once('value', snap => {
+    const data = snap.val();
+    if (data && data.scores) {
+      showLLResults();
+    } else {
+      llStep = 0; llScores = [0,0,0,0,0];
+      renderLLQuestion();
+      document.getElementById('ll-quiz').style.display = 'block';
+      document.getElementById('ll-results').style.display = 'none';
+    }
+  });
+}
+
+function renderLLQuestion() {
+  if (llStep >= LL_QUIZ.length) { submitLLResults(); return; }
+  const q = LL_QUIZ[llStep];
+  document.getElementById('ll-progress').textContent = `Question ${llStep+1} of ${LL_QUIZ.length}`;
+  document.getElementById('ll-q-text').textContent = q.q;
+  document.getElementById('ll-options').innerHTML = q.a.map((a,i) =>
+    `<button class="ll-option" onclick="pickLL(${i})">${a}</button>`
+  ).join('');
+}
+
+function pickLL(choice) {
+  const q = LL_QUIZ[llStep];
+  llScores[q.l[choice]] += 2;
+  // Give 1 point to the other option too (secondary)
+  llScores[q.l[1-choice]] += 1;
+  llStep++;
+  renderLLQuestion();
+}
+
+async function submitLLResults() {
+  if (!db || !user) return;
+  await db.ref('loveLang/' + user).set({ scores: llScores, timestamp: Date.now() });
+  showLLResults();
+}
+
+function showLLResults() {
+  document.getElementById('ll-quiz').style.display = 'none';
+  document.getElementById('ll-results').style.display = 'block';
+  db.ref('loveLang').on('value', snap => {
+    const data = snap.val() || {};
+    renderLLProfile('ll-my-primary', 'll-my-bars', data[user]);
+    renderLLProfile('ll-partner-primary', 'll-partner-bars', data[partner]);
+    renderLLTips(data[user], data[partner]);
+    document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
+    document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
+  });
+}
+
+function renderLLProfile(primaryId, barsId, data) {
+  const pEl = document.getElementById(primaryId);
+  const bEl = document.getElementById(barsId);
+  if (!pEl || !bEl) return;
+  if (!data || !data.scores) { pEl.textContent = 'Not taken yet'; bEl.innerHTML = ''; return; }
+  const scores = data.scores;
+  const max = Math.max(...scores);
+  const primary = scores.indexOf(max);
+  pEl.textContent = LL_NAMES[primary];
+  bEl.innerHTML = scores.map((s,i) => {
+    const pct = max > 0 ? Math.round(s/max*100) : 0;
+    return `<div class="ll-bar"><span style="min-width:60px;font-size:9px">${LL_NAMES[i].split(' ')[0]}</span><div class="ll-bar-track"><div class="ll-bar-fill" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+}
+
+function renderLLTips(myData, theirData) {
+  const el = document.getElementById('ll-tips');
+  if (!el || !myData?.scores || !theirData?.scores) {
+    if (el) el.innerHTML = '<div class="ll-tips-title">Tips</div><div class="ll-tip">Both partners need to complete the quiz to see personalized tips.</div>';
+    return;
+  }
+  const myPrimary = LL_NAMES[myData.scores.indexOf(Math.max(...myData.scores))];
+  const theirPrimary = LL_NAMES[theirData.scores.indexOf(Math.max(...theirData.scores))];
+  const tips = {
+    'Words of Affirmation': 'Leave notes, send texts saying what you appreciate. Be specific: "I loved how you handled that" means more than "you\'re great."',
+    'Quality Time': 'Put the phone away. Plan intentional time. It\'s not about quantity — it\'s about being fully present.',
+    'Receiving Gifts': 'It\'s not about price. It\'s about "I saw this and thought of you." Small, thoughtful tokens matter most.',
+    'Acts of Service': 'Do something they usually do themselves. Take a task off their plate. Actions speak louder than words.',
+    'Physical Touch': 'Hold hands walking. Touch their back passing by. A long hug when they get home. Proximity matters.'
+  };
+  el.innerHTML = `<div class="ll-tips-title">How to Love Each Other Better</div>
+    <div class="ll-tip">For <strong>${NAMES[partner]}</strong> (${theirPrimary}): ${tips[theirPrimary]}</div>
+    <div class="ll-tip">For <strong>${NAMES[user]}</strong> (${myPrimary}): ${tips[myPrimary]}</div>`;
+}
+
+function retakeLLQuiz() {
+  llStep = 0; llScores = [0,0,0,0,0];
+  document.getElementById('ll-quiz').style.display = 'block';
+  document.getElementById('ll-results').style.display = 'none';
+  renderLLQuestion();
+}
+
+// ===== WEEKLY CHECK-IN =====
+function getWeekId() {
+  const d = new Date();
+  const jan1 = new Date(d.getFullYear(),0,1);
+  const weekNum = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+  return d.getFullYear() + '-W' + String(weekNum).padStart(2,'0');
+}
+
+function updCIEnergy() {
+  const v = document.getElementById('ci-energy').value;
+  const labels = ['','🌙 Disconnected','☁ Low','☀ Steady','✨ Strong','⚡ Thriving'];
+  document.getElementById('ci-energy-val').textContent = labels[v];
+}
+
+async function submitCheckin() {
+  if (!db || !user) return;
+  const well = document.getElementById('ci-well').value.trim();
+  const better = document.getElementById('ci-better').value.trim();
+  const need = document.getElementById('ci-need').value.trim();
+  const energy = parseInt(document.getElementById('ci-energy').value);
+  if (!well && !better && !need) { toast('Share at least one thought'); return; }
+  const week = getWeekId();
+  await db.ref('checkins/' + week + '/' + user).set({
+    well, better, need, energy,
+    userName: NAMES[user], timestamp: Date.now()
+  });
+  document.getElementById('ci-well').value = '';
+  document.getElementById('ci-better').value = '';
+  document.getElementById('ci-need').value = '';
+  toast('Check-in submitted ♡');
+}
+
+function listenCheckins() {
+  db.ref('checkins').orderByKey().limitToLast(8).on('value', snap => {
+    const weeks = [];
+    snap.forEach(c => weeks.push({ week: c.key, data: c.val() }));
+    weeks.reverse();
+    renderCheckinStatus(weeks);
+    renderCheckinFeed(weeks);
+  });
+}
+
+function renderCheckinStatus(weeks) {
+  const el = document.getElementById('ci-status');
+  if (!el) return;
+  const currentWeek = getWeekId();
+  const thisWeek = weeks.find(w => w.week === currentWeek);
+  const myDone = thisWeek?.data?.[user];
+  const theirDone = thisWeek?.data?.[partner];
+  if (myDone && theirDone) {
+    el.innerHTML = '<div class="ci-status-label">This Week</div><div class="ci-status-text">Both checked in! Read each other\'s thoughts below.</div>';
+  } else if (myDone) {
+    el.innerHTML = `<div class="ci-status-label">This Week</div><div class="ci-status-text">You've checked in. Waiting for ${NAMES[partner]}...</div>`;
+  } else {
+    el.innerHTML = '<div class="ci-status-label">This Week</div><div class="ci-status-text">Time for your weekly relationship check-in.</div>';
+  }
+}
+
+function renderCheckinFeed(weeks) {
+  const el = document.getElementById('ci-feed');
+  if (!el) return;
+  const completed = weeks.filter(w => w.data[user] || w.data[partner]);
+  if (!completed.length) { el.innerHTML = '<div class="empty">No check-ins yet.</div>'; return; }
+  el.innerHTML = completed.map(w => {
+    let html = `<div class="ci-card"><div class="ci-card-week">${w.week}</div>`;
+    [user, partner].forEach(u => {
+      const d = w.data[u];
+      if (!d) return;
+      const name = u === user ? NAMES[user] : NAMES[partner];
+      html += `<div class="ci-card-name">${name}</div>`;
+      if (d.well) html += `<div class="ci-card-q">What went well:</div><div class="ci-card-a">${d.well.replace(/</g,'&lt;')}</div>`;
+      if (d.better) html += `<div class="ci-card-q">Could be better:</div><div class="ci-card-a">${d.better.replace(/</g,'&lt;')}</div>`;
+      if (d.need) html += `<div class="ci-card-q">What I need:</div><div class="ci-card-a">${d.need.replace(/</g,'&lt;')}</div>`;
+    });
+    return html + '</div>';
+  }).join('');
+}
+
+// ===== DREAM BOARD =====
+let dreamFilter = 'all';
+
+async function addDream() {
+  if (!db || !user) return;
+  const title = document.getElementById('dr-title').value.trim();
+  const emoji = document.getElementById('dr-emoji').value.trim() || '✧';
+  const cat = document.getElementById('dr-cat').value;
+  const desc = document.getElementById('dr-desc').value.trim();
+  if (!title) { toast('Describe your dream'); return; }
+  await db.ref('dreams').push({
+    title, emoji, category: cat, description: desc,
+    addedBy: user, addedByName: NAMES[user],
+    achieved: false, timestamp: Date.now()
+  });
+  document.getElementById('dr-title').value = '';
+  document.getElementById('dr-emoji').value = '';
+  document.getElementById('dr-desc').value = '';
+  toast('Dream added ✧');
+}
+
+function filterDreams(cat, el) {
+  dreamFilter = cat;
+  document.querySelectorAll('#dr-cats .bl-cat').forEach(e => e.classList.remove('on'));
+  if (el) el.classList.add('on');
+}
+
+function listenDreams() {
+  db.ref('dreams').orderByChild('timestamp').on('value', snap => {
+    const items = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+    items.reverse();
+    renderDreams(items);
+  });
+}
+
+function renderDreams(items) {
+  const el = document.getElementById('dr-list');
+  if (!el) return;
+  const filtered = dreamFilter === 'all' ? items : items.filter(i => i.category === dreamFilter);
+  if (!filtered.length) { el.innerHTML = '<div class="empty">No dreams in this category yet.</div>'; return; }
+  el.innerHTML = filtered.map(i => {
+    const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    return `<div class="dr-card ${i.achieved?'achieved':''}">
+      <div class="dr-check" onclick="toggleDream('${i._key}',${!i.achieved})">${i.achieved?'✓':''}</div>
+      <div class="dr-emoji">${i.emoji}</div>
+      <div class="dr-info">
+        <div class="dr-title">${i.title}</div>
+        <div class="dr-cat-tag">${i.category}</div>
+        ${i.description ? `<div class="dr-desc">${i.description.replace(/</g,'&lt;')}</div>` : ''}
+        <div class="dr-meta">${i.addedByName||'?'} · ${ts}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function toggleDream(key, achieved) {
+  if (!db) return;
+  await db.ref('dreams/' + key + '/achieved').set(achieved);
+  if (achieved) { toast('Dream achieved!'); showConfetti(); }
+}
+
+// ===== HER SPACE =====
+const AFFIRMATIONS = [
+  "You are becoming the woman you've always wanted to be.",
+  "Your softness is not weakness. It is your superpower.",
+  "You don't have to earn rest. You deserve it now.",
+  "Your body is doing incredible things. Trust her.",
+  "You are allowed to take up space unapologetically.",
+  "The right things will find you when you stop chasing them.",
+  "Your intuition has never been wrong. Listen closer.",
+  "You are not behind. You are exactly where you need to be.",
+  "Every version of you has been necessary for who you're becoming.",
+  "You don't need to be fixed. You need to be understood.",
+  "Your feelings are valid, even when they're inconvenient.",
+  "You are someone's answered prayer.",
+  "The love you give the world starts with the love you give yourself.",
+  "You are allowed to outgrow people, places, and versions of yourself.",
+  "Your presence is a gift. Never let anyone make you feel otherwise.",
+  "She believed she could, so she did.",
+  "You are both the storm and the calm after it.",
+  "Your worth is not measured by your productivity.",
+  "Healing is not linear, but you are still moving forward.",
+  "The woman you are becoming will cost you relationships, spaces, and material things. Choose her over everything."
+];
+
+let affirmIdx = Math.floor(Math.random() * AFFIRMATIONS.length);
+
+function loadAffirmation() {
+  const el = document.getElementById('hs-affirm-text');
+  if (el) el.textContent = AFFIRMATIONS[affirmIdx % AFFIRMATIONS.length];
+}
+
+function nextAffirmation() {
+  affirmIdx++;
+  loadAffirmation();
+}
+
+function logPeriodStart() {
+  if (!db || !user) return;
+  const today = new Date().toISOString().split('T')[0];
+  db.ref('herWellness/cycle').push({ type: 'start', date: today, timestamp: Date.now() });
+  toast('Period start logged');
+  loadCycleData();
+}
+
+function logPeriodEnd() {
+  if (!db || !user) return;
+  const today = new Date().toISOString().split('T')[0];
+  db.ref('herWellness/cycle').push({ type: 'end', date: today, timestamp: Date.now() });
+  toast('Period end logged');
+  loadCycleData();
+}
+
+function loadCycleData() {
+  if (!db) return;
+  db.ref('herWellness/cycle').orderByChild('timestamp').limitToLast(10).once('value', snap => {
+    const entries = [];
+    snap.forEach(c => entries.push(c.val()));
+    entries.sort((a,b) => b.timestamp - a.timestamp);
+    const lastStart = entries.find(e => e.type === 'start');
+    const phaseEl = document.getElementById('hs-cycle-phase');
+    const dayEl = document.getElementById('hs-cycle-day');
+    const arcEl = document.getElementById('hs-cycle-arc');
+    const infoEl = document.getElementById('hs-cycle-info');
+    if (!lastStart) {
+      if (phaseEl) phaseEl.textContent = 'Not tracked yet';
+      return;
+    }
+    const start = new Date(lastStart.date + 'T00:00:00');
+    const today = new Date(); today.setHours(0,0,0,0);
+    const dayOfCycle = Math.floor((today - start) / 86400000) + 1;
+    const cycleLength = 28;
+    if (dayEl) dayEl.textContent = dayOfCycle > cycleLength ? '--' : dayOfCycle;
+    if (arcEl) {
+      const pct = Math.min(dayOfCycle / cycleLength, 1);
+      arcEl.setAttribute('stroke-dashoffset', String(314 - pct * 314));
+    }
+    let phase = '', info = '';
+    if (dayOfCycle <= 5) { phase = 'Menstrual'; info = 'Rest is productive right now. Honor your body\'s need to slow down. Iron-rich foods help.'; }
+    else if (dayOfCycle <= 13) { phase = 'Follicular'; info = 'Energy is rising. Great time for new projects, socializing, and trying new things.'; }
+    else if (dayOfCycle <= 16) { phase = 'Ovulatory'; info = 'Peak energy and confidence. Communication skills are sharpest now.'; }
+    else if (dayOfCycle <= 28) { phase = 'Luteal'; info = 'Winding down. Focus on completion, not starting new things. Self-care is essential.'; }
+    else { phase = 'Cycle day ' + dayOfCycle; info = 'If your cycle is longer than 28 days, that\'s normal. Everyone\'s different.'; }
+    if (phaseEl) phaseEl.textContent = phase;
+    if (infoEl) infoEl.textContent = info;
+  });
+}
+
+function toggleCare(el, type) {
+  if (!db || !user) return;
+  el.classList.toggle('done');
+  const today = new Date().toISOString().split('T')[0];
+  const done = el.classList.contains('done');
+  db.ref('herWellness/selfcare/' + today + '/' + type).set(done ? true : null);
+}
+
+function loadSelfCare() {
+  if (!db) return;
+  const today = new Date().toISOString().split('T')[0];
+  db.ref('herWellness/selfcare/' + today).once('value', snap => {
+    const data = snap.val() || {};
+    document.querySelectorAll('#hs-care-grid .hs-care-item').forEach(el => {
+      const type = el.onclick.toString().match(/'(\w+)'/)?.[1];
+      if (type && data[type]) el.classList.add('done');
+    });
+  });
+}
+
+// ===== HIS SPACE =====
+const MOTIVATIONS = [
+  "Discipline is choosing between what you want now and what you want most.",
+  "The man you want to be is built by the things you do when no one is watching.",
+  "Strength isn't just physical. It's showing up emotionally when it's hard.",
+  "You don't rise to the level of your goals. You fall to the level of your systems.",
+  "Protect your energy. Not everything deserves a reaction.",
+  "The obstacle is the way. What's hard is what makes you grow.",
+  "A calm man in a chaotic world is the most powerful thing there is.",
+  "Your word is your bond. Say less, mean more, follow through always.",
+  "The best investment you'll ever make is in yourself.",
+  "Comfort is the enemy of growth. Get uncomfortable on purpose.",
+  "Real confidence is quiet. Insecurity is loud.",
+  "Build in silence. Let results make the noise.",
+  "You are not your mistakes. You are what you do after them.",
+  "Control what you can. Release what you can't. Know the difference.",
+  "The man who masters himself is greater than the one who conquers cities.",
+  "Your energy introduces you before you speak. Make it count.",
+  "Stop waiting for motivation. Discipline will carry you further.",
+  "Be the man she doesn't have to question.",
+  "Growth requires sacrifice. What are you willing to give up?",
+  "Legacy is not what you leave for people. It's what you leave in them."
+];
+
+let motivIdx = Math.floor(Math.random() * MOTIVATIONS.length);
+
+function loadMotivation() {
+  const el = document.getElementById('him-affirm-text');
+  if (el) el.textContent = MOTIVATIONS[motivIdx % MOTIVATIONS.length];
+}
+
+function nextMotivation() {
+  motivIdx++;
+  loadMotivation();
+}
+
+async function logPR() {
+  if (!db || !user) return;
+  const exercise = document.getElementById('him-pr-exercise').value.trim();
+  const weight = document.getElementById('him-pr-weight').value.trim();
+  const reps = document.getElementById('him-pr-reps').value.trim();
+  if (!exercise) { toast('Enter an exercise'); return; }
+  await db.ref('hisWellness/prs').push({
+    exercise, weight: weight || '--', reps: reps || '--',
+    timestamp: Date.now(), date: new Date().toISOString().split('T')[0]
+  });
+  document.getElementById('him-pr-exercise').value = '';
+  document.getElementById('him-pr-weight').value = '';
+  document.getElementById('him-pr-reps').value = '';
+  toast('PR logged!');
+}
+
+function listenPRs() {
+  db.ref('hisWellness/prs').orderByChild('timestamp').limitToLast(20).on('value', snap => {
+    const items = [];
+    snap.forEach(c => items.push(c.val()));
+    items.reverse();
+    const el = document.getElementById('him-pr-list');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">No records yet. Start lifting!</div>'; return; }
+    el.innerHTML = items.map(i => {
+      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      return `<div class="him-pr-card"><div class="him-pr-name">${i.exercise}</div><div class="him-pr-val">${i.weight}${i.weight!=='--'?' lbs':''} × ${i.reps}</div><div class="him-pr-date">${ts}</div></div>`;
+    }).join('');
+  });
+}
+
+function toggleClarity(el, type) {
+  if (!db || !user) return;
+  el.classList.toggle('done');
+  const today = new Date().toISOString().split('T')[0];
+  const done = el.classList.contains('done');
+  db.ref('hisWellness/clarity/' + today + '/' + type).set(done ? true : null);
+}
+
+function loadClarity() {
+  if (!db) return;
+  const today = new Date().toISOString().split('T')[0];
+  db.ref('hisWellness/clarity/' + today).once('value', snap => {
+    const data = snap.val() || {};
+    document.querySelectorAll('#him-clarity-grid .hs-care-item').forEach(el => {
+      const type = el.onclick.toString().match(/'(\w+)'/)?.[1];
+      if (type && data[type]) el.classList.add('done');
+    });
+  });
+}
+
+// ===== PERSONAL GOALS (shared between her/him spaces) =====
+async function addPersonalGoal(who) {
+  if (!db || !user) return;
+  const inputId = who === 'her' ? 'hs-goal-input' : 'him-goal-input';
+  const title = document.getElementById(inputId).value.trim();
+  if (!title) { toast('Enter a goal'); return; }
+  await db.ref('personalGoals/' + who).push({
+    title, done: false, timestamp: Date.now()
+  });
+  document.getElementById(inputId).value = '';
+  toast('Goal added!');
+}
+
+function listenPersonalGoals(who) {
+  const listId = who === 'her' ? 'hs-goals' : 'him-goals';
+  db.ref('personalGoals/' + who).orderByChild('timestamp').on('value', snap => {
+    const items = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+    items.reverse();
+    const el = document.getElementById(listId);
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Set goals just for you</div>'; return; }
+    el.innerHTML = items.map(i => {
+      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      return `<div class="pg-goal ${i.done?'done':''}">
+        <div class="pg-goal-check" onclick="toggleGoal('${who}','${i._key}',${!i.done})">${i.done?'✓':''}</div>
+        <div class="pg-goal-text">${i.title}</div>
+        <div class="pg-goal-date">${ts}</div>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function toggleGoal(who, key, done) {
+  if (!db) return;
+  await db.ref('personalGoals/' + who + '/' + key + '/done').set(done);
+  if (done) toast('Goal completed!');
 }
 
 // ===== TOAST =====
