@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#FAF8F5">
+<meta name="theme-color" content="#FAF6F1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Moi et Toi">
@@ -18,117 +18,117 @@
 <style>
 /* ===== VARIABLES — LIGHT MODE (default) ===== */
 :root {
-  --bg: #FAFAF7; --bg2: #F2F0EB; --bg3: #E8E5DF;
-  --bg-nav: rgba(250,250,247,.92);
-  --gold: #1A6B4A; --gold-l: #22885E; --amber: #5C534A; --amber-s: #3D3530;
-  --cream: #1A1A1A; --cream-d: #3A3530;
-  --t1: #1A1A1A; --t2: #504A44; --t3: #8A8480;
-  --bdr: rgba(26,107,74,0.1); --bdr-s: rgba(26,107,74,0.05);
-  --red: #C06830; --red-s: rgba(192,104,48,0.1); --red-b: rgba(192,104,48,0.2);
-  --vio: #B8942C; --vio-s: rgba(184,148,44,0.1); --vio-b: rgba(184,148,44,0.2);
-  --tint: rgba(26,107,74,0.08); --tint-s: rgba(26,107,74,0.05); --tint-xs: rgba(26,107,74,0.03);
-  --tint-b: rgba(26,107,74,0.12); --tint-bd: rgba(26,107,74,0.14);
-  --red-tag: #D07838; --red-tag-s: #B07038;
-  --vio-tag: #C8A434; --vio-tag-s: #A89030;
-  --glow-gold: rgba(26,107,74,.18); --glow-red: rgba(192,104,48,.18); --glow-vio: rgba(184,148,44,.18);
-  --grad-gold: rgba(26,107,74,.04); --grad-grey: rgba(92,83,74,.03);
-  --sec-bg: rgba(92,83,74,.1); --sec-bd: rgba(92,83,74,.18);
-  --amber-bg: rgba(26,107,74,.06); --amber-bd: rgba(26,107,74,.1);
-  --wg-gold: linear-gradient(135deg,rgba(26,107,74,.06),rgba(26,107,74,.02));
-  --wg-red: linear-gradient(135deg,rgba(192,104,48,.06),rgba(192,104,48,.02));
-  --wg-vio: linear-gradient(135deg,rgba(184,148,44,.06),rgba(184,148,44,.02));
-  --wg-dc: linear-gradient(135deg,rgba(26,107,74,.1),rgba(26,107,74,.04));
-  --wg-nxr: linear-gradient(135deg,rgba(192,104,48,.06),rgba(192,104,48,.02));
-  --wg-nxv: linear-gradient(135deg,rgba(184,148,44,.06),rgba(184,148,44,.02));
-  --ec-red: rgba(192,104,48,.1); --ec-vio: rgba(184,148,44,.1);
-  --tgr-bg: rgba(26,107,74,.04); --tgr-bd: rgba(26,107,74,.07); --tgr-c: var(--amber-s);
-  --trr-bg: rgba(192,104,48,.04); --trr-bd: rgba(192,104,48,.08);
-  --tvr-bg: rgba(184,148,44,.04); --tvr-bd: rgba(184,148,44,.08);
+  --bg: #FAF6F1; --bg2: #F0E8DF; --bg3: #E4D8CC;
+  --bg-nav: rgba(250,246,241,.94);
+  --gold: #6B1D2A; --gold-l: #8A2838; --amber: #6E5A4E; --amber-s: #4A3830;
+  --cream: #2A1A14; --cream-d: #4A3830;
+  --t1: #2A1A14; --t2: #5E4A40; --t3: #9A8A80;
+  --bdr: rgba(107,29,42,0.12); --bdr-s: rgba(107,29,42,0.06);
+  --red: #C4856E; --red-s: rgba(196,133,110,0.12); --red-b: rgba(196,133,110,0.22);
+  --vio: #B89860; --vio-s: rgba(184,152,96,0.12); --vio-b: rgba(184,152,96,0.22);
+  --tint: rgba(107,29,42,0.08); --tint-s: rgba(107,29,42,0.05); --tint-xs: rgba(107,29,42,0.03);
+  --tint-b: rgba(107,29,42,0.14); --tint-bd: rgba(107,29,42,0.16);
+  --red-tag: #C4856E; --red-tag-s: #A87060;
+  --vio-tag: #B89860; --vio-tag-s: #A08450;
+  --glow-gold: rgba(107,29,42,.2); --glow-red: rgba(196,133,110,.2); --glow-vio: rgba(184,152,96,.2);
+  --grad-gold: rgba(107,29,42,.05); --grad-grey: rgba(110,90,78,.03);
+  --sec-bg: rgba(110,90,78,.1); --sec-bd: rgba(110,90,78,.18);
+  --amber-bg: rgba(107,29,42,.06); --amber-bd: rgba(107,29,42,.1);
+  --wg-gold: linear-gradient(135deg,rgba(107,29,42,.07),rgba(107,29,42,.02));
+  --wg-red: linear-gradient(135deg,rgba(196,133,110,.07),rgba(196,133,110,.02));
+  --wg-vio: linear-gradient(135deg,rgba(184,152,96,.07),rgba(184,152,96,.02));
+  --wg-dc: linear-gradient(135deg,rgba(107,29,42,.1),rgba(107,29,42,.04));
+  --wg-nxr: linear-gradient(135deg,rgba(196,133,110,.07),rgba(196,133,110,.02));
+  --wg-nxv: linear-gradient(135deg,rgba(184,152,96,.07),rgba(184,152,96,.02));
+  --ec-red: rgba(196,133,110,.12); --ec-vio: rgba(184,152,96,.12);
+  --tgr-bg: rgba(107,29,42,.04); --tgr-bd: rgba(107,29,42,.08); --tgr-c: var(--amber-s);
+  --trr-bg: rgba(196,133,110,.05); --trr-bd: rgba(196,133,110,.1);
+  --tvr-bg: rgba(184,152,96,.05); --tvr-bd: rgba(184,152,96,.08);
   /* Feature-specific gradients */
-  --grad-love: linear-gradient(135deg,#D4566A 0%,#E88A6A 100%);
-  --grad-mood: linear-gradient(135deg,#E8885A 0%,#E8C86A 100%);
-  --grad-story: linear-gradient(135deg,#C8942C 0%,#D4B860 100%);
-  --grad-grow: linear-gradient(135deg,#1A6B4A 0%,#34A070 100%);
-  --grad-games: linear-gradient(135deg,#6A4CA0 0%,#9A6AD4 100%);
-  --grad-connect: linear-gradient(135deg,#C44A6A 0%,#E87080 100%);
+  --grad-love: linear-gradient(135deg,#8A2838 0%,#B84858 100%);
+  --grad-mood: linear-gradient(135deg,#C4856E 0%,#D4A88A 100%);
+  --grad-story: linear-gradient(135deg,#B89860 0%,#D0B878 100%);
+  --grad-grow: linear-gradient(135deg,#6B1D2A 0%,#9A3048 100%);
+  --grad-games: linear-gradient(135deg,#5A3870 0%,#7E5098 100%);
+  --grad-connect: linear-gradient(135deg,#A03040 0%,#C45060 100%);
   /* Chart colors */
-  --chart-1: #1A6B4A; --chart-2: #D4566A; --chart-3: #E8885A; --chart-4: #6A4CA0; --chart-5: #C8942C;
+  --chart-1: #6B1D2A; --chart-2: #C4856E; --chart-3: #B89860; --chart-4: #5A3870; --chart-5: #A03040;
 }
 
 /* ===== DARK MODE — system auto (unless user forced light) ===== */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0A0E0C; --bg2: #121816; --bg3: #1A2220;
-    --bg-nav: rgba(10,14,12,.92);
-    --gold: #3CD48A; --gold-l: #50E8A0; --amber: #A09A94; --amber-s: #807874;
-    --cream: #F0EBE5; --cream-d: #B8B0A8;
-    --t1: #F0EBE5; --t2: #A09A94; --t3: #686460;
-    --bdr: rgba(60,212,138,0.12); --bdr-s: rgba(60,212,138,0.06);
-    --red: #E8985A; --red-s: rgba(232,152,90,0.12); --red-b: rgba(232,152,90,0.22);
-    --vio: #E8C84A; --vio-s: rgba(232,200,74,0.12); --vio-b: rgba(232,200,74,0.22);
-    --tint: rgba(60,212,138,0.1); --tint-s: rgba(60,212,138,0.06); --tint-xs: rgba(60,212,138,0.04);
-    --tint-b: rgba(60,212,138,0.14); --tint-bd: rgba(60,212,138,0.16);
-    --red-tag: #E8A060; --red-tag-s: #C89050;
-    --vio-tag: #E8D060; --vio-tag-s: #C8B050;
-    --glow-gold: rgba(60,212,138,.22); --glow-red: rgba(232,152,90,.22); --glow-vio: rgba(232,200,74,.22);
-    --grad-gold: rgba(60,212,138,.06); --grad-grey: rgba(160,154,148,.04);
-    --sec-bg: rgba(160,154,148,.1); --sec-bd: rgba(160,154,148,.18);
-    --amber-bg: rgba(60,212,138,.08); --amber-bd: rgba(60,212,138,.12);
-    --wg-gold: linear-gradient(135deg,rgba(60,212,138,.08),rgba(60,212,138,.03));
-    --wg-red: linear-gradient(135deg,rgba(232,152,90,.08),rgba(232,152,90,.03));
-    --wg-vio: linear-gradient(135deg,rgba(232,200,74,.08),rgba(232,200,74,.03));
-    --wg-dc: linear-gradient(135deg,rgba(60,212,138,.12),rgba(60,212,138,.05));
-    --wg-nxr: linear-gradient(135deg,rgba(232,152,90,.08),rgba(232,152,90,.03));
-    --wg-nxv: linear-gradient(135deg,rgba(232,200,74,.08),rgba(232,200,74,.03));
-    --ec-red: rgba(232,152,90,.14); --ec-vio: rgba(232,200,74,.14);
-    --tgr-bg: rgba(60,212,138,.05); --tgr-bd: rgba(60,212,138,.08); --tgr-c: var(--amber-s);
-    --trr-bg: rgba(232,152,90,.05); --trr-bd: rgba(232,152,90,.1);
-    --tvr-bg: rgba(232,200,74,.05); --tvr-bd: rgba(232,200,74,.08);
-    --grad-love: linear-gradient(135deg,#D4566A 0%,#E88A6A 100%);
-    --grad-mood: linear-gradient(135deg,#E88058 0%,#E8C060 100%);
-    --grad-story: linear-gradient(135deg,#C8942C 0%,#D4B860 100%);
-    --grad-grow: linear-gradient(135deg,#28A068 0%,#3CD48A 100%);
-    --grad-games: linear-gradient(135deg,#7A58B8 0%,#A878E0 100%);
-    --grad-connect: linear-gradient(135deg,#D45070 0%,#E87888 100%);
-    --chart-1: #3CD48A; --chart-2: #E87080; --chart-3: #E8985A; --chart-4: #A878E0; --chart-5: #E8C84A;
+    --bg: #120C0E; --bg2: #1E1418; --bg3: #2A1E22;
+    --bg-nav: rgba(18,12,14,.94);
+    --gold: #E0768A; --gold-l: #E8909E; --amber: #A8988E; --amber-s: #887870;
+    --cream: #F2ECE6; --cream-d: #C0B4AA;
+    --t1: #F2ECE6; --t2: #A8988E; --t3: #706460;
+    --bdr: rgba(224,118,138,0.14); --bdr-s: rgba(224,118,138,0.07);
+    --red: #E0A88E; --red-s: rgba(224,168,142,0.14); --red-b: rgba(224,168,142,0.24);
+    --vio: #D4B878; --vio-s: rgba(212,184,120,0.14); --vio-b: rgba(212,184,120,0.24);
+    --tint: rgba(224,118,138,0.1); --tint-s: rgba(224,118,138,0.06); --tint-xs: rgba(224,118,138,0.04);
+    --tint-b: rgba(224,118,138,0.16); --tint-bd: rgba(224,118,138,0.18);
+    --red-tag: #E0A88E; --red-tag-s: #C89878;
+    --vio-tag: #D4B878; --vio-tag-s: #BCA068;
+    --glow-gold: rgba(224,118,138,.24); --glow-red: rgba(224,168,142,.24); --glow-vio: rgba(212,184,120,.24);
+    --grad-gold: rgba(224,118,138,.07); --grad-grey: rgba(168,152,142,.04);
+    --sec-bg: rgba(168,152,142,.1); --sec-bd: rgba(168,152,142,.18);
+    --amber-bg: rgba(224,118,138,.08); --amber-bd: rgba(224,118,138,.12);
+    --wg-gold: linear-gradient(135deg,rgba(224,118,138,.1),rgba(224,118,138,.03));
+    --wg-red: linear-gradient(135deg,rgba(224,168,142,.1),rgba(224,168,142,.03));
+    --wg-vio: linear-gradient(135deg,rgba(212,184,120,.1),rgba(212,184,120,.03));
+    --wg-dc: linear-gradient(135deg,rgba(224,118,138,.14),rgba(224,118,138,.05));
+    --wg-nxr: linear-gradient(135deg,rgba(224,168,142,.1),rgba(224,168,142,.03));
+    --wg-nxv: linear-gradient(135deg,rgba(212,184,120,.1),rgba(212,184,120,.03));
+    --ec-red: rgba(224,168,142,.16); --ec-vio: rgba(212,184,120,.16);
+    --tgr-bg: rgba(224,118,138,.06); --tgr-bd: rgba(224,118,138,.1); --tgr-c: var(--amber-s);
+    --trr-bg: rgba(224,168,142,.06); --trr-bd: rgba(224,168,142,.12);
+    --tvr-bg: rgba(212,184,120,.06); --tvr-bd: rgba(212,184,120,.1);
+    --grad-love: linear-gradient(135deg,#A83848 0%,#C86070 100%);
+    --grad-mood: linear-gradient(135deg,#D49878 0%,#E0B898 100%);
+    --grad-story: linear-gradient(135deg,#C4A460 0%,#D4C080 100%);
+    --grad-grow: linear-gradient(135deg,#8A3040 0%,#B04860 100%);
+    --grad-games: linear-gradient(135deg,#6A4888 0%,#9068B0 100%);
+    --grad-connect: linear-gradient(135deg,#B84050 0%,#D06878 100%);
+    --chart-1: #E0768A; --chart-2: #E0A88E; --chart-3: #D4B878; --chart-4: #9068B0; --chart-5: #B84050;
   }
 }
 
 /* ===== DARK MODE — manual override ===== */
 :root[data-theme="dark"] {
-  --bg: #0A0E0C; --bg2: #121816; --bg3: #1A2220;
-  --bg-nav: rgba(10,14,12,.92);
-  --gold: #3CD48A; --gold-l: #50E8A0; --amber: #A09A94; --amber-s: #807874;
-  --cream: #F0EBE5; --cream-d: #B8B0A8;
-  --t1: #F0EBE5; --t2: #A09A94; --t3: #686460;
-  --bdr: rgba(60,212,138,0.12); --bdr-s: rgba(60,212,138,0.06);
-  --red: #E8985A; --red-s: rgba(232,152,90,0.12); --red-b: rgba(232,152,90,0.22);
-  --vio: #E8C84A; --vio-s: rgba(232,200,74,0.12); --vio-b: rgba(232,200,74,0.22);
-  --tint: rgba(60,212,138,0.1); --tint-s: rgba(60,212,138,0.06); --tint-xs: rgba(60,212,138,0.04);
-  --tint-b: rgba(60,212,138,0.14); --tint-bd: rgba(60,212,138,0.16);
-  --red-tag: #E8A060; --red-tag-s: #C89050;
-  --vio-tag: #E8D060; --vio-tag-s: #C8B050;
-  --glow-gold: rgba(60,212,138,.22); --glow-red: rgba(232,152,90,.22); --glow-vio: rgba(232,200,74,.22);
-  --grad-gold: rgba(60,212,138,.06); --grad-grey: rgba(160,154,148,.04);
-  --sec-bg: rgba(160,154,148,.1); --sec-bd: rgba(160,154,148,.18);
-  --amber-bg: rgba(60,212,138,.08); --amber-bd: rgba(60,212,138,.12);
-  --wg-gold: linear-gradient(135deg,rgba(60,212,138,.08),rgba(60,212,138,.03));
-  --wg-red: linear-gradient(135deg,rgba(232,152,90,.08),rgba(232,152,90,.03));
-  --wg-vio: linear-gradient(135deg,rgba(232,200,74,.08),rgba(232,200,74,.03));
-  --wg-dc: linear-gradient(135deg,rgba(60,212,138,.12),rgba(60,212,138,.05));
-  --wg-nxr: linear-gradient(135deg,rgba(232,152,90,.08),rgba(232,152,90,.03));
-  --wg-nxv: linear-gradient(135deg,rgba(232,200,74,.08),rgba(232,200,74,.03));
-  --ec-red: rgba(232,152,90,.14); --ec-vio: rgba(232,200,74,.14);
-  --tgr-bg: rgba(60,212,138,.05); --tgr-bd: rgba(60,212,138,.08); --tgr-c: var(--amber-s);
-  --trr-bg: rgba(232,152,90,.05); --trr-bd: rgba(232,152,90,.1);
-  --tvr-bg: rgba(232,200,74,.05); --tvr-bd: rgba(232,200,74,.08);
-  --grad-love: linear-gradient(135deg,#D4566A 0%,#E88A6A 100%);
-  --grad-mood: linear-gradient(135deg,#E88058 0%,#E8C060 100%);
-  --grad-story: linear-gradient(135deg,#C8942C 0%,#D4B860 100%);
-  --grad-grow: linear-gradient(135deg,#28A068 0%,#3CD48A 100%);
-  --grad-games: linear-gradient(135deg,#7A58B8 0%,#A878E0 100%);
-  --grad-connect: linear-gradient(135deg,#D45070 0%,#E87888 100%);
-  --chart-1: #3CD48A; --chart-2: #E87080; --chart-3: #E8985A; --chart-4: #A878E0; --chart-5: #E8C84A;
+  --bg: #120C0E; --bg2: #1E1418; --bg3: #2A1E22;
+  --bg-nav: rgba(18,12,14,.94);
+  --gold: #E0768A; --gold-l: #E8909E; --amber: #A8988E; --amber-s: #887870;
+  --cream: #F2ECE6; --cream-d: #C0B4AA;
+  --t1: #F2ECE6; --t2: #A8988E; --t3: #706460;
+  --bdr: rgba(224,118,138,0.14); --bdr-s: rgba(224,118,138,0.07);
+  --red: #E0A88E; --red-s: rgba(224,168,142,0.14); --red-b: rgba(224,168,142,0.24);
+  --vio: #D4B878; --vio-s: rgba(212,184,120,0.14); --vio-b: rgba(212,184,120,0.24);
+  --tint: rgba(224,118,138,0.1); --tint-s: rgba(224,118,138,0.06); --tint-xs: rgba(224,118,138,0.04);
+  --tint-b: rgba(224,118,138,0.16); --tint-bd: rgba(224,118,138,0.18);
+  --red-tag: #E0A88E; --red-tag-s: #C89878;
+  --vio-tag: #D4B878; --vio-tag-s: #BCA068;
+  --glow-gold: rgba(224,118,138,.24); --glow-red: rgba(224,168,142,.24); --glow-vio: rgba(212,184,120,.24);
+  --grad-gold: rgba(224,118,138,.07); --grad-grey: rgba(168,152,142,.04);
+  --sec-bg: rgba(168,152,142,.1); --sec-bd: rgba(168,152,142,.18);
+  --amber-bg: rgba(224,118,138,.08); --amber-bd: rgba(224,118,138,.12);
+  --wg-gold: linear-gradient(135deg,rgba(224,118,138,.1),rgba(224,118,138,.03));
+  --wg-red: linear-gradient(135deg,rgba(224,168,142,.1),rgba(224,168,142,.03));
+  --wg-vio: linear-gradient(135deg,rgba(212,184,120,.1),rgba(212,184,120,.03));
+  --wg-dc: linear-gradient(135deg,rgba(224,118,138,.14),rgba(224,118,138,.05));
+  --wg-nxr: linear-gradient(135deg,rgba(224,168,142,.1),rgba(224,168,142,.03));
+  --wg-nxv: linear-gradient(135deg,rgba(212,184,120,.1),rgba(212,184,120,.03));
+  --ec-red: rgba(224,168,142,.16); --ec-vio: rgba(212,184,120,.16);
+  --tgr-bg: rgba(224,118,138,.06); --tgr-bd: rgba(224,118,138,.1); --tgr-c: var(--amber-s);
+  --trr-bg: rgba(224,168,142,.06); --trr-bd: rgba(224,168,142,.12);
+  --tvr-bg: rgba(212,184,120,.06); --tvr-bd: rgba(212,184,120,.1);
+  --grad-love: linear-gradient(135deg,#A83848 0%,#C86070 100%);
+  --grad-mood: linear-gradient(135deg,#D49878 0%,#E0B898 100%);
+  --grad-story: linear-gradient(135deg,#C4A460 0%,#D4C080 100%);
+  --grad-grow: linear-gradient(135deg,#8A3040 0%,#B04860 100%);
+  --grad-games: linear-gradient(135deg,#6A4888 0%,#9068B0 100%);
+  --grad-connect: linear-gradient(135deg,#B84050 0%,#D06878 100%);
+  --chart-1: #E0768A; --chart-2: #E0A88E; --chart-3: #D4B878; --chart-4: #9068B0; --chart-5: #B84050;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px);overscroll-behavior-y:none}
@@ -1096,7 +1096,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <circle cx="70" cy="70" r="52" fill="none" stroke="var(--bg3)" stroke-width="12"/>
       <circle cx="70" cy="70" r="52" fill="none" stroke="url(#compatGrad)" stroke-width="12" stroke-linecap="round"
         stroke-dasharray="327" id="compat-ring" stroke-dashoffset="327" transform="rotate(-90 70 70)"/>
-      <defs><linearGradient id="compatGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1A6B4A"/><stop offset="100%" stop-color="#D4566A"/></linearGradient></defs>
+      <defs><linearGradient id="compatGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6B1D2A"/><stop offset="100%" stop-color="#C4856E"/></linearGradient></defs>
       <text class="donut-label" x="70" y="66" id="compat-score">--</text>
       <text class="donut-sub" x="70" y="84">match</text>
     </svg>
@@ -2571,7 +2571,7 @@ function updateThemeColor() {
   const pref = getThemePref();
   const isDark = pref === 'dark' || (pref === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = isDark ? '#0C0F0D' : '#FAF8F5';
+  if (meta) meta.content = isDark ? '#120C0E' : '#FAF6F1';
   // Update More page theme label if visible
   const mts = document.getElementById('more-theme-sub');
   if (mts) { const labels = { auto: 'Auto', dark: 'Dark', light: 'Light' }; mts.textContent = labels[pref]; }
@@ -2891,7 +2891,7 @@ function showConfetti() {
   container.style.cssText = 'position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden';
   document.body.appendChild(container);
 
-  const colors = ['#1A6B4A', '#D4566A', '#E8885A', '#6A4CA0', '#C8942C', '#3CD48A', '#E87080'];
+  const colors = ['#6B1D2A', '#8A2838', '#C4856E', '#B89860', '#5A3870', '#A03040', '#D4A88A'];
   for (let i = 0; i < 60; i++) {
     const piece = document.createElement('div');
     const color = colors[Math.floor(Math.random() * colors.length)];
