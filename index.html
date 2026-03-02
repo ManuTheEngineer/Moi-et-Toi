@@ -4578,15 +4578,15 @@ function enforcePrivacy() {
   document.querySelectorAll('.mi').forEach(mi => {
     const h4 = mi.querySelector('h4');
     if (!h4) return;
-    if (user === 'him' && h4.textContent === 'Taylor's Space') mi.style.display = 'none';
-    if (user === 'her' && h4.textContent === 'Manu's Space') mi.style.display = 'none';
+    if (user === 'him' && h4.textContent === "Taylor's Space") mi.style.display = 'none';
+    if (user === 'her' && h4.textContent === "Manu's Space") mi.style.display = 'none';
   });
   // Hide hub cards for the other person's space
   document.querySelectorAll('.hub-card').forEach(card => {
     const title = card.querySelector('.hc-title');
     if (!title) return;
-    if (user === 'him' && title.textContent === 'Taylor's Space') card.style.display = 'none';
-    if (user === 'her' && title.textContent === 'Manu's Space') card.style.display = 'none';
+    if (user === 'him' && title.textContent === "Taylor's Space") card.style.display = 'none';
+    if (user === 'her' && title.textContent === "Manu's Space") card.style.display = 'none';
   });
 }
 
