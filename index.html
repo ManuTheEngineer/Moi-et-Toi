@@ -960,75 +960,51 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="ctn">
   <div class="ptr" id="ptr"><span class="ptr-spinner"></span><span class="ptr-text">Pull to refresh</span></div>
 
-  <!-- Time-Aware Hero -->
-  <div id="dash-hero" style="padding:38px 0 10px">
-    <div style="font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:6px" id="dash-time-label">Good morning</div>
-    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:36px;letter-spacing:3px;color:var(--cream)" id="dash-greeting">...</h1>
-    <div id="dash-together" style="font-size:13px;color:var(--gold);margin-top:10px;font-weight:500"></div>
+  <!-- Greeting — tight -->
+  <div style="padding:32px 0 6px">
+    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)" id="dash-time-label">Good morning</div>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;letter-spacing:2px;color:var(--cream);margin-top:4px" id="dash-greeting">...</h1>
   </div>
 
-  <!-- Partner Status — the first thing you care about -->
-  <div id="dash-partner-card" style="background:var(--card-bg);border-radius:24px;padding:22px;margin:16px 0;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:16px;cursor:pointer" onclick="go('connect')">
-    <div id="dash-partner-avatar" style="width:52px;height:52px;border-radius:50%;background:var(--tint);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">♡</div>
+  <!-- Partner row — compact inline -->
+  <div id="dash-partner-card" style="display:flex;align-items:center;gap:12px;padding:14px 0;margin-bottom:16px;cursor:pointer" onclick="go('connect')">
+    <div id="dash-partner-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--tint);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:var(--gold)">M</div>
     <div style="flex:1;min-width:0">
-      <div style="font-size:15px;font-weight:500;color:var(--cream)" id="dash-partner-name">...</div>
-      <div style="font-size:12px;color:var(--t3);margin-top:3px" id="dash-partner-status">Waiting for their check-in</div>
+      <div style="font-size:14px;font-weight:500;color:var(--cream)" id="dash-partner-name">...</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:1px" id="dash-partner-status">...</div>
     </div>
-    <div id="dash-partner-mood-emoji" style="font-size:28px"></div>
+    <div id="dash-partner-mood-emoji" style="font-size:22px"></div>
   </div>
 
-  <!-- Unread / Action Nudges -->
-  <div id="dash-nudges" style="display:flex;gap:10px;margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">
-    <!-- Populated by JS -->
-  </div>
+  <!-- Nudges — only if something needs attention -->
+  <div id="dash-nudges" style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none"></div>
 
-  <!-- Quick Taps — compressed inline -->
-  <div style="display:flex;gap:8px;margin-bottom:20px" id="dash-taps">
-    <div style="flex:1;text-align:center;padding:14px 4px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer" onclick="sendTap('hug','🤗')"><div style="font-size:22px">🤗</div><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Hug</div></div>
-    <div style="flex:1;text-align:center;padding:14px 4px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer" onclick="sendTap('kiss','💋')"><div style="font-size:22px">💋</div><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Kiss</div></div>
-    <div style="flex:1;text-align:center;padding:14px 4px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer" onclick="sendTap('love','❤️')"><div style="font-size:22px">❤️</div><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Love</div></div>
-    <div style="flex:1;text-align:center;padding:14px 4px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer" onclick="sendTap('miss','🥺')"><div style="font-size:22px">🥺</div><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Miss</div></div>
-    <div style="flex:1;text-align:center;padding:14px 4px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer" onclick="sendTap('thinking','💭')"><div style="font-size:22px">💭</div><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Think</div></div>
-  </div>
-
-  <!-- Your Mood vs Partner Mood — side by side -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
-    <div class="card" id="today-mood" style="margin-bottom:0">
+  <!-- Moods side-by-side — compact -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+    <div class="card" id="today-mood" style="margin-bottom:0;padding:18px">
       <div class="card-h"><span class="card-t">You</span><span class="card-s">Today</span></div>
       <div class="skel skel-block" style="margin:4px 0"></div>
     </div>
-    <div class="card" id="partner-mood" style="margin-bottom:0">
+    <div class="card" id="partner-mood" style="margin-bottom:0;padding:18px">
       <div class="card-h"><span class="card-t"><span class="pname"></span></span><span class="card-s">Today</span></div>
       <div class="skel skel-block" style="margin:4px 0"></div>
     </div>
   </div>
 
-  <!-- Daily Question — most engaging feature, surface it -->
-  <div id="dash-dq-card" style="background:var(--card-bg);border-radius:24px;padding:22px;margin-bottom:18px;box-shadow:var(--card-shadow);cursor:pointer;display:none" onclick="go('question')">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600">Daily Question</span>
-      <span id="dash-dq-streak" style="font-size:12px;color:var(--gold);font-weight:500">🔥 0</span>
+  <!-- Stats row — streak + together counter -->
+  <div style="display:flex;gap:10px;margin-bottom:14px">
+    <div style="flex:1;background:var(--card-bg);border-radius:16px;padding:14px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:10px;cursor:pointer" onclick="go('question')">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);line-height:1;min-width:28px" id="dash-streak-num">0</div>
+      <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">day streak</div>
     </div>
-    <div id="dash-dq-text" style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--cream);line-height:1.5"></div>
-    <div id="dash-dq-status" style="font-size:11px;color:var(--t3);margin-top:10px;font-style:italic"></div>
-  </div>
-
-  <!-- Streak Card — compact -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
-    <div style="background:var(--card-bg);border-radius:20px;padding:18px;box-shadow:var(--card-shadow);text-align:center;cursor:pointer" onclick="go('question')">
-      <div style="font-size:28px;margin-bottom:4px">🔥</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);line-height:1" id="dash-streak-num">0</div>
-      <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Day Streak</div>
-    </div>
-    <div style="background:var(--card-bg);border-radius:20px;padding:18px;box-shadow:var(--card-shadow);text-align:center;cursor:pointer" onclick="go('mood')">
-      <div style="font-size:28px;margin-bottom:4px" id="dash-my-mood-icon">◎</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);line-height:1" id="dash-mood-val">--</div>
-      <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px">Your Mood</div>
+    <div id="dash-together-card" style="flex:1;background:var(--card-bg);border-radius:16px;padding:14px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:10px;cursor:pointer" onclick="go('story')">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);line-height:1;min-width:28px" id="dash-together-num">--</div>
+      <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">days together</div>
     </div>
   </div>
 
-  <!-- Mood Trend Chart -->
-  <div class="chart-wrap" id="dash-chart">
+  <!-- Chart — kept but tighter -->
+  <div class="chart-wrap" id="dash-chart" style="padding:16px;margin-bottom:14px">
     <div class="chart-title">This Week</div>
     <svg class="chart-svg" viewBox="0 0 320 120" id="mood-chart">
       <defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-1)" stop-opacity=".3"/><stop offset="100%" stop-color="var(--chart-1)" stop-opacity="0"/></linearGradient></defs>
@@ -1043,25 +1019,12 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     </div>
   </div>
 
-  <!-- Explore — 2 featured + grid -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 12px">Explore</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <div class="feat-card fc-connect" onclick="go('connect')" style="cursor:pointer;padding:18px;margin:0">
-      <div class="fc-label">♡ Connect</div>
-      <div style="font-size:15px;font-weight:500">Love Letters</div>
-    </div>
-    <div class="feat-card fc-games" onclick="go('games')" style="cursor:pointer;padding:18px;margin:0">
-      <div class="fc-label">🎮 Play</div>
-      <div style="font-size:15px;font-weight:500">Games</div>
-    </div>
-    <div class="feat-card fc-love" onclick="go('datenight')" style="cursor:pointer;padding:18px;margin:0">
-      <div class="fc-label">🕯 Tonight</div>
-      <div style="font-size:15px;font-weight:500">Date Night</div>
-    </div>
-    <div class="feat-card fc-story" onclick="go('deeptalk')" style="cursor:pointer;padding:18px;margin:0">
-      <div class="fc-label">🗣 Talk</div>
-      <div style="font-size:15px;font-weight:500">Deep Talk</div>
-    </div>
+  <!-- Quick nav — 4 compact links -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
+    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('connect')"><div style="font-size:11px;font-weight:500;color:var(--cream)">Letters</div></div>
+    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('games')"><div style="font-size:11px;font-weight:500;color:var(--cream)">Games</div></div>
+    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('datenight')"><div style="font-size:11px;font-weight:500;color:var(--cream)">Date</div></div>
+    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('deeptalk')"><div style="font-size:11px;font-weight:500;color:var(--cream)">Talk</div></div>
   </div>
 
 </div>
@@ -1219,91 +1182,91 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== MORE HUB ===== -->
 <div class="pg" id="pg-more">
 <div class="ctn">
-  <div style="padding:38px 0 10px">
-    <div style="font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:6px">Discover</div>
-    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;letter-spacing:3px;color:var(--cream)">Everything</h1>
+  <div style="padding:32px 0 6px">
+    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)">Discover</div>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;letter-spacing:2px;color:var(--cream);margin-top:4px">Everything</h1>
   </div>
 
-  <!-- Featured — full-width cards for the most important modules -->
-  <div class="feat-card fc-love" onclick="go('datenight')" style="cursor:pointer;margin-bottom:12px">
-    <div class="fc-label">🕯 Tonight</div>
-    <div class="fc-title">Date Night Generator</div>
-    <div class="fc-sub">Spin the wheel for your next adventure</div>
-  </div>
-  <div class="feat-card fc-grow" onclick="go('deeptalk')" style="cursor:pointer;margin-bottom:12px">
-    <div class="fc-label">🗣 Deeper</div>
-    <div class="fc-title">Deep Talk</div>
-    <div class="fc-sub">Questions that bring you closer</div>
+  <!-- Featured -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+    <div class="feat-card fc-love" onclick="go('datenight')" style="cursor:pointer;padding:16px;margin:0">
+      <div class="fc-label">Tonight</div>
+      <div style="font-size:14px;font-weight:500">Date Night</div>
+    </div>
+    <div class="feat-card fc-grow" onclick="go('deeptalk')" style="cursor:pointer;padding:16px;margin:0">
+      <div class="fc-label">Deeper</div>
+      <div style="font-size:14px;font-weight:500">Deep Talk</div>
+    </div>
   </div>
 
-  <!-- Relationship — list style for quicker scanning -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Relationship</div>
-  <div style="background:var(--card-bg);border-radius:22px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:18px">
-    <div onclick="go('lovelang')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;transition:background .15s"><span style="font-size:20px;width:36px;text-align:center">♡</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Love Languages</div><div style="font-size:11px;color:var(--t3)">Understand how you love</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+  <!-- Relationship -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Relationship</div>
+  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+    <div onclick="go('lovelang')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Love Languages</div><span style="color:var(--t3);font-size:13px">›</span></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('checkin')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;transition:background .15s"><span style="font-size:20px;width:36px;text-align:center">✦</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Weekly Check-in</div><div style="font-size:11px;color:var(--t3)">How are we doing?</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div onclick="go('checkin')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Weekly Check-in</div><span style="color:var(--t3);font-size:13px">›</span></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('culture')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;transition:background .15s"><span style="font-size:20px;width:36px;text-align:center">🌍</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Our Cultures</div><div style="font-size:11px;color:var(--t3)">Togo meets Texas</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div onclick="go('culture')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Our Cultures</div><span style="color:var(--t3);font-size:13px">›</span></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('foundation')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;transition:background .15s"><span style="font-size:20px;width:36px;text-align:center">🏗</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Our Foundation</div><div style="font-size:11px;color:var(--t3)">Values & agreements</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div onclick="go('foundation')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Our Foundation</div><span style="color:var(--t3);font-size:13px">›</span></div>
   </div>
 
   <!-- Life Building -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Life Building</div>
-  <div style="background:var(--card-bg);border-radius:22px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:18px">
-    <div onclick="go('family')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer"><span style="font-size:20px;width:36px;text-align:center">👶</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Future Family</div><div style="font-size:11px;color:var(--t3)">Plan & dream together</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Life Building</div>
+  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+    <div onclick="go('family')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Future Family</div><span style="color:var(--t3);font-size:13px">›</span></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('homelife')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer"><span style="font-size:20px;width:36px;text-align:center">🏠</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Home Life</div><div style="font-size:11px;color:var(--t3)">Budget, meals & tasks</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div onclick="go('homelife')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Home Life</div><span style="color:var(--t3);font-size:13px">›</span></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('spiritual')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer"><span style="font-size:20px;width:36px;text-align:center">🕊</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Our Spirit</div><div style="font-size:11px;color:var(--t3)">Faith & prayer</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div onclick="go('spiritual')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Our Spirit</div><span style="color:var(--t3);font-size:13px">›</span></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('dreams')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer"><span style="font-size:20px;width:36px;text-align:center">✧</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--cream)">Our Dreams</div><div style="font-size:11px;color:var(--t3)">Vision board</div></div><span style="color:var(--t3);font-size:14px">›</span></div>
+    <div onclick="go('dreams')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Our Dreams</div><span style="color:var(--t3);font-size:13px">›</span></div>
   </div>
 
-  <!-- Personal Spaces — cards side by side -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Personal</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
-    <div class="feat-card fc-connect" onclick="go('herspace')" style="cursor:pointer;padding:18px;margin:0">
-      <div class="fc-label">🌸</div>
-      <div style="font-size:15px;font-weight:500">Her Space</div>
-      <div class="fc-sub" style="font-size:11px">Wellness & goals</div>
-    </div>
-    <div class="feat-card fc-grow" onclick="go('hisspace')" style="cursor:pointer;padding:18px;margin:0">
-      <div class="fc-label">⚡</div>
-      <div style="font-size:15px;font-weight:500">His Space</div>
-      <div class="fc-sub" style="font-size:11px">Growth & strength</div>
-    </div>
+  <!-- Personal -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Personal</div>
+  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+    <div onclick="go('herspace')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Her Space</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('hisspace')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">His Space</div><span style="color:var(--t3);font-size:13px">›</span></div>
   </div>
 
   <!-- Activities -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Activities</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
-    <div class="hub-card" onclick="go('games')"><span class="hc-icon">🎮</span><div class="hc-title">Games</div><div class="hc-sub">Fun together</div></div>
-    <div class="hub-card" onclick="go('bucket')"><span class="hc-icon">🪣</span><div class="hc-title">Bucket List</div><div class="hc-sub">Dream big</div></div>
-    <div class="hub-card" onclick="go('wishlist')"><span class="hc-icon">🎁</span><div class="hc-title">Wishlists</div><div class="hc-sub">Gift ideas</div></div>
-    <div class="hub-card" onclick="go('gratitude')"><span class="hc-icon">🙏</span><div class="hc-title">Gratitude</div><div class="hc-sub">Thankfulness</div></div>
-    <div class="hub-card" onclick="go('ai')"><span class="hc-icon">✧</span><div class="hc-title">AI Chat</div><div class="hc-sub">Ask Claude</div></div>
-    <div class="hub-card" onclick="go('question')"><span class="hc-icon">❓</span><div class="hc-title">Daily Q</div><div class="hc-sub">Answer together</div></div>
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Activities</div>
+  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+    <div onclick="go('games')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Games</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('bucket')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Bucket List</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('wishlist')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Wishlists</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('gratitude')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Gratitude</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('question')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Daily Question</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('ai')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">AI Chat</div><span style="color:var(--t3);font-size:13px">›</span></div>
   </div>
 
-  <!-- Fitness — compact horizontal scroll feel -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Fitness</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px">
-    <div class="hub-card" onclick="go('w1')" style="padding:18px 10px"><span class="hc-icon">✦</span><div class="hc-title">Foundation</div></div>
-    <div class="hub-card" onclick="go('w2')" style="padding:18px 10px"><span class="hc-icon">◆</span><div class="hc-title">Elevated</div></div>
-    <div class="hub-card" onclick="go('w3')" style="padding:18px 10px"><span class="hc-icon">⬡</span><div class="hc-title">Full Body</div></div>
+  <!-- Fitness -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Fitness</div>
+  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+    <div onclick="go('w1')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Foundation</div><span style="font-size:11px;color:var(--t3)">Beginner</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('w2')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Elevated</div><span style="font-size:11px;color:var(--t3)">Advanced</span></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div onclick="go('w3')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Full Body</div><span style="font-size:11px;color:var(--t3)">Complete</span></div>
   </div>
 
-  <!-- Settings — minimal -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:24px 0 10px">Settings</div>
-  <div style="background:var(--card-bg);border-radius:22px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:18px">
-    <div onclick="toggleTheme()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer"><span style="font-size:18px;width:32px;text-align:center">◐</span><div style="flex:1;font-size:13px;color:var(--cream)">Theme</div><span style="font-size:12px;color:var(--t3)" id="more-theme-sub">Auto</span></div>
+  <!-- Settings -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Settings</div>
+  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:18px">
+    <div onclick="toggleTheme()" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;color:var(--cream)">Theme</div><span style="font-size:12px;color:var(--t3)" id="more-theme-sub">Auto</span></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="updateApiKey()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer"><span style="font-size:18px;width:32px;text-align:center">🔑</span><div style="flex:1;font-size:13px;color:var(--cream)">API Key</div></div>
+    <div onclick="updateApiKey()" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;color:var(--cream)">API Key</div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="switchUser()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer"><span style="font-size:18px;width:32px;text-align:center">↔</span><div style="flex:1;font-size:13px;color:var(--cream)">Switch Profile</div></div>
+    <div onclick="switchUser()" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;color:var(--cream)">Switch Profile</div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="logout()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer"><span style="font-size:18px;width:32px;text-align:center">←</span><div style="font-size:13px;color:var(--red)">Log Out</div></div>
+    <div onclick="logout()" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="font-size:13px;color:var(--red)">Log Out</div></div>
   </div>
 </div>
 </div>
@@ -2325,7 +2288,6 @@ function finishLogin() {
   // Dashboard UX
   renderDashHero();
   renderDashNudges();
-  renderDashDQCard();
   renderDashCountdown();
 }
 
@@ -2480,14 +2442,6 @@ function renderDashMoods(moods) {
     if (partnerMoodEl) partnerMoodEl.textContent = '';
     if (partnerStatusEl) partnerStatusEl.textContent = 'Haven\'t checked in today yet';
     if (partnerAvatar) partnerAvatar.textContent = '♡';
-  }
-
-  // Update compact mood stat
-  const moodVal = document.getElementById('dash-mood-val');
-  const moodIcon = document.getElementById('dash-my-mood-icon');
-  if (myToday && moodVal) {
-    moodVal.textContent = labels[myToday.mood];
-    if (moodIcon) moodIcon.textContent = emojis[myToday.mood];
   }
 
   // Render dashboard mood chart and mood page analytics
@@ -5014,9 +4968,6 @@ function showConfetti() {
 function updateDashStreak(data) {
   const numEl = document.getElementById('dash-streak-num');
   if (numEl) numEl.textContent = data.current || 0;
-  // Also update the daily question streak on dashboard
-  const dqStreakEl = document.getElementById('dash-dq-streak');
-  if (dqStreakEl) dqStreakEl.textContent = '🔥 ' + (data.current || 0);
 }
 
 // ===== DASHBOARD HERO (time-aware) =====
@@ -5024,8 +4975,6 @@ function renderDashHero() {
   const h = new Date().getHours();
   const timeLabel = document.getElementById('dash-time-label');
   const greeting = document.getElementById('dash-greeting');
-  const together = document.getElementById('dash-together');
-
   if (timeLabel && greeting) {
     let timeText, greetText;
     if (h < 6) { timeText = 'Late night'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
@@ -5038,7 +4987,8 @@ function renderDashHero() {
   }
 
   // Calculate "together since" from first milestone
-  if (together && db) {
+  const togetherNum = document.getElementById('dash-together-num');
+  if (togetherNum && db) {
     db.ref('milestones').orderByChild('date').limitToFirst(1).once('value', snap => {
       if (snap.exists()) {
         let firstDate = null;
@@ -5047,7 +4997,7 @@ function renderDashHero() {
           const start = new Date(firstDate + 'T00:00:00');
           const now = new Date();
           const days = Math.floor((now - start) / 86400000);
-          if (days > 0) together.textContent = days + ' days together';
+          if (days > 0) togetherNum.textContent = days;
         }
       }
     });
@@ -5099,38 +5049,9 @@ function renderDashNudges() {
   });
 }
 
-// ===== DASHBOARD DAILY QUESTION CARD =====
-function renderDashDQCard() {
-  const card = document.getElementById('dash-dq-card');
-  if (!card) return;
-
-  const today = new Date().toISOString().split('T')[0];
-  const q = getTodayQuestion();
-  if (!q) return;
-
-  const textEl = document.getElementById('dash-dq-text');
-  const statusEl = document.getElementById('dash-dq-status');
-  if (textEl) textEl.textContent = q.q;
-  card.style.display = 'block';
-
-  // Check answer status
-  if (db) {
-    db.ref('dailyAnswers/' + today).once('value', snap => {
-      const data = snap.val() || {};
-      if (data[user] && data[partner]) {
-        if (statusEl) statusEl.textContent = 'Both answered — tap to see';
-      } else if (data[user]) {
-        if (statusEl) statusEl.textContent = 'Waiting for ' + NAMES[partner] + '...';
-      } else {
-        if (statusEl) statusEl.textContent = 'Tap to answer together';
-      }
-    });
-  }
-}
-
 // ===== DASHBOARD UPCOMING COUNTDOWN =====
 function renderDashCountdown() {
-  // Find nearest upcoming countdown to show on dashboard
+  // Find nearest upcoming countdown and show as a nudge pill
   if (!db) return;
   db.ref('countdowns').once('value', snap => {
     if (!snap.exists()) return;
@@ -5147,11 +5068,13 @@ function renderDashCountdown() {
       }
     });
     if (nearest) {
-      const togetherEl = document.getElementById('dash-together');
-      if (togetherEl) {
-        const existingText = togetherEl.textContent;
-        if (existingText) togetherEl.textContent = existingText + '  ·  ' + nearestDays + 'd to ' + nearest.title;
-        else togetherEl.textContent = nearestDays + ' days until ' + nearest.title;
+      const nudges = document.getElementById('dash-nudges');
+      if (nudges) {
+        const pill = document.createElement('div');
+        pill.style.cssText = 'padding:6px 14px;background:var(--tint);border-radius:20px;font-size:11px;color:var(--gold);white-space:nowrap;cursor:pointer';
+        pill.textContent = nearestDays + 'd to ' + nearest.title;
+        pill.onclick = () => go('story');
+        nudges.appendChild(pill);
       }
     }
   });
