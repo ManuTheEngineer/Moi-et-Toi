@@ -889,6 +889,50 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 .hl-chore-name{flex:1;font-size:13px}
 .hl-chore-who{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);background:var(--tint-xs);padding:2px 8px;border-radius:6px}
 
+/* ===== HUB ROW STATUS ===== */
+.hub-row{display:flex;align-items:center;padding:14px 18px;cursor:pointer;transition:background .15s}
+.hub-row:active{background:var(--tint-xs)}
+.hub-row-label{flex:1;font-size:13px;font-weight:500;color:var(--cream)}
+.hub-row-status{display:flex;align-items:center;gap:6px}
+.hub-badge{font-size:10px;letter-spacing:.5px;padding:2px 8px;border-radius:10px;font-weight:500;white-space:nowrap}
+.hub-badge.done{background:var(--tint);color:var(--gold)}
+.hub-badge.pending{background:var(--red-s);color:var(--red)}
+.hub-badge.count{background:var(--tint-xs);color:var(--t2)}
+.hub-badge.new{background:var(--gold);color:#fff;font-weight:600}
+.hub-badge.dot{width:6px;height:6px;border-radius:50%;padding:0;background:var(--gold)}
+.hub-chevron{color:var(--t3);font-size:13px;margin-left:4px}
+
+/* ===== MODULE STATUS STRIP ===== */
+.mod-status{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:2px 0}
+.mod-status::-webkit-scrollbar{display:none}
+.mod-stat{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:14px;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:11px;color:var(--t2)}
+.mod-stat-num{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--gold);line-height:1}
+.mod-stat-label{font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--t3)}
+
+/* ===== PROGRESS BAR (inline) ===== */
+.prog-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s ease}
+
+/* ===== DELETE BUTTON ===== */
+.item-delete{width:28px;height:28px;border-radius:50%;border:none;background:transparent;color:var(--t3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;opacity:0}
+.bl-item:hover .item-delete,.dr-card:hover .item-delete,.hl-chore-card:hover .item-delete,.fam-name-card:hover .item-delete,.sp-intent-card:hover .item-delete,.wl-item:hover .item-delete,.hl-meal-card:hover .item-delete{opacity:1}
+.item-delete:hover{background:var(--red-s);color:var(--red)}
+@media(hover:none){.item-delete{opacity:.4}}
+
+/* ===== CONFIRM DIALOG ===== */
+.confirm-overlay{position:fixed;inset:0;z-index:2000;background:var(--overlay-bg);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.confirm-overlay.on{opacity:1;pointer-events:all}
+.confirm-box{background:var(--sheet-bg);border-radius:24px;padding:28px 24px;max-width:320px;width:90%;text-align:center;box-shadow:var(--shadow-lg);transform:scale(.9);transition:transform .25s cubic-bezier(.2,.8,.3,1)}
+.confirm-overlay.on .confirm-box{transform:scale(1)}
+.confirm-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--cream);margin-bottom:6px}
+.confirm-msg{font-size:13px;color:var(--t2);margin-bottom:20px;line-height:1.5}
+.confirm-btns{display:flex;gap:10px}
+.confirm-btn{flex:1;padding:12px;border-radius:50px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.confirm-btn.cancel{background:var(--input-bg);color:var(--t2)}
+.confirm-btn.danger{background:var(--red);color:#fff}
+.confirm-btn.primary{background:var(--gold);color:#fff}
+.confirm-btn:active{transform:scale(.97)}
+
 /* ===== RESPONSIVE ===== */
 @media(max-width:400px){.ctn{padding:16px 16px 24px}.sg{grid-template-columns:repeat(2,1fr)}.hub-grid{grid-template-columns:1fr}.ll-pair{grid-template-columns:1fr;gap:16px}.ll-divider{display:none}}
 </style>
@@ -1019,12 +1063,24 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     </div>
   </div>
 
-  <!-- Quick nav — 4 compact links -->
+  <!-- Quick nav — 4 compact links with status -->
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
-    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('connect')"><div style="font-size:11px;font-weight:500;color:var(--cream)">Letters</div></div>
-    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('games')"><div style="font-size:11px;font-weight:500;color:var(--cream)">Games</div></div>
-    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('datenight')"><div style="font-size:11px;font-weight:500;color:var(--cream)">Date</div></div>
-    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('deeptalk')"><div style="font-size:11px;font-weight:500;color:var(--cream)">Talk</div></div>
+    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer;position:relative" onclick="go('connect')">
+      <div style="font-size:11px;font-weight:500;color:var(--cream)">Letters</div>
+      <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-letters">--</div>
+    </div>
+    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('games')">
+      <div style="font-size:11px;font-weight:500;color:var(--cream)">Games</div>
+      <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-compat">--</div>
+    </div>
+    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('datenight')">
+      <div style="font-size:11px;font-weight:500;color:var(--cream)">Date</div>
+      <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-dates">--</div>
+    </div>
+    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('deeptalk')">
+      <div style="font-size:11px;font-weight:500;color:var(--cream)">Talk</div>
+      <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-talks">--</div>
+    </div>
   </div>
 
 </div>
@@ -1192,81 +1248,83 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <div class="feat-card fc-love" onclick="go('datenight')" style="cursor:pointer;padding:16px;margin:0">
       <div class="fc-label">Tonight</div>
       <div style="font-size:14px;font-weight:500">Date Night</div>
+      <div style="font-size:10px;opacity:.7;margin-top:4px" id="hub-dn-status"></div>
     </div>
     <div class="feat-card fc-grow" onclick="go('deeptalk')" style="cursor:pointer;padding:16px;margin:0">
       <div class="fc-label">Deeper</div>
       <div style="font-size:14px;font-weight:500">Deep Talk</div>
+      <div style="font-size:10px;opacity:.7;margin-top:4px" id="hub-dt-status"></div>
     </div>
   </div>
 
   <!-- Relationship -->
   <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Relationship</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
-    <div onclick="go('lovelang')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Love Languages</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('lovelang')"><div class="hub-row-label">Love Languages</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ll-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('checkin')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Weekly Check-in</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('checkin')"><div class="hub-row-label">Weekly Check-in</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ci-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('culture')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Our Cultures</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('culture')"><div class="hub-row-label">Our Cultures</div><div class="hub-row-status"><span class="hub-badge count" id="hub-cx-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('foundation')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Our Foundation</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('foundation')"><div class="hub-row-label">Our Foundation</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fdn-status">--</span><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Life Building -->
   <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Life Building</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
-    <div onclick="go('family')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Future Family</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('family')"><div class="hub-row-label">Future Family</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fam-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('homelife')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Home Life</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('homelife')"><div class="hub-row-label">Home Life</div><div class="hub-row-status"><span class="hub-badge count" id="hub-hl-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('spiritual')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Our Spirit</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('spiritual')"><div class="hub-row-label">Our Spirit</div><div class="hub-row-status"><span class="hub-badge count" id="hub-sp-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('dreams')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Our Dreams</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('dreams')"><div class="hub-row-label">Our Dreams</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dr-status">--</span><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Personal -->
   <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Personal</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
-    <div onclick="go('herspace')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Taylor's Space</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('herspace')"><div class="hub-row-label">Taylor's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('hisspace')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Manu's Space</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('hisspace')"><div class="hub-row-label">Manu's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Activities -->
   <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Activities</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
-    <div onclick="go('games')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Games</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('games')"><div class="hub-row-label">Games</div><div class="hub-row-status"><span class="hub-badge count" id="hub-games-status">Play</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('bucket')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Bucket List</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('bucket')"><div class="hub-row-label">Bucket List</div><div class="hub-row-status"><span class="hub-badge count" id="hub-bl-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('wishlist')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Wishlists</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('wishlist')"><div class="hub-row-label">Wishlists</div><div class="hub-row-status"><span class="hub-badge count" id="hub-wl-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('gratitude')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Gratitude</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('gratitude')"><div class="hub-row-label">Gratitude</div><div class="hub-row-status"><span class="hub-badge count" id="hub-grat-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('question')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Daily Question</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('question')"><div class="hub-row-label">Daily Question</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dq-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('ai')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">AI Chat</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div class="hub-row" onclick="go('ai')"><div class="hub-row-label">AI Chat</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Fitness -->
   <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Fitness</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
-    <div onclick="go('w1')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Foundation</div><span style="font-size:11px;color:var(--t3)">Beginner</span></div>
+    <div class="hub-row" onclick="go('w1')"><div class="hub-row-label">Foundation</div><div class="hub-row-status"><span style="font-size:11px;color:var(--t3)">Beginner</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('w2')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Elevated</div><span style="font-size:11px;color:var(--t3)">Advanced</span></div>
+    <div class="hub-row" onclick="go('w2')"><div class="hub-row-label">Elevated</div><div class="hub-row-status"><span style="font-size:11px;color:var(--t3)">Advanced</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('w3')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Full Body</div><span style="font-size:11px;color:var(--t3)">Complete</span></div>
+    <div class="hub-row" onclick="go('w3')"><div class="hub-row-label">Full Body</div><div class="hub-row-status"><span style="font-size:11px;color:var(--t3)">Complete</span></div></div>
   </div>
 
   <!-- Settings -->
   <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Settings</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:18px">
-    <div onclick="toggleTheme()" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;color:var(--cream)">Theme</div><span style="font-size:12px;color:var(--t3)" id="more-theme-sub">Auto</span></div>
+    <div class="hub-row" onclick="toggleTheme()"><div style="flex:1;font-size:13px;color:var(--cream)">Theme</div><span style="font-size:12px;color:var(--t3)" id="more-theme-sub">Auto</span></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="updateApiKey()" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;color:var(--cream)">API Key</div></div>
+    <div class="hub-row" onclick="updateApiKey()"><div style="flex:1;font-size:13px;color:var(--cream)">API Key</div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="switchUser()" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;color:var(--cream)">Switch Profile</div></div>
+    <div class="hub-row" onclick="switchUser()"><div style="flex:1;font-size:13px;color:var(--cream)">Switch Profile</div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="logout()" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="font-size:13px;color:var(--red)">Log Out</div></div>
+    <div class="hub-row" onclick="logout()"><div style="font-size:13px;color:var(--red)">Log Out</div></div>
   </div>
 </div>
 </div>
@@ -1314,6 +1372,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="pg" id="pg-games">
 <div class="ctn">
   <div class="phd"><h1>Games</h1><p>You two vs. boredom</p></div>
+
+  <div class="mod-status" id="games-stats"></div>
 
   <!-- Would You Rather -->
   <div class="slbl">Would You Rather</div>
@@ -1391,6 +1451,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="pg" id="pg-bucket">
 <div class="ctn">
   <div class="phd"><h1>Bucket List</h1><p>Everything we'll do someday</p></div>
+
+  <div class="mod-status" id="bl-stats"></div>
 
   <div class="bl-form">
     <input type="text" id="bl-input" placeholder="Something we want to do...">
@@ -1545,6 +1607,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="ctn">
   <div class="phd"><h1>Date Night</h1><p>Where to next?</p></div>
 
+  <div class="mod-status" id="dn-stats"></div>
+
   <div class="dn-wheel" id="dn-wheel" onclick="spinDateNight()">
     <div class="dn-spinner" id="dn-spinner">
       <div class="dn-emoji" id="dn-emoji">🎲</div>
@@ -1651,6 +1715,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="pg" id="pg-dreams">
 <div class="ctn">
   <div class="phd"><h1>Our Dreams</h1><p>The life we're building</p></div>
+
+  <div class="mod-status" id="dr-stats"></div>
 
   <div class="dr-form">
     <input type="text" id="dr-title" placeholder="Something we're dreaming about...">
@@ -1789,6 +1855,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="ctn">
   <div class="phd"><h1>Our Cultures</h1><p>Togo meets Texas — roots we carry together</p></div>
 
+  <div class="mod-status" id="cx-stats"></div>
+
   <!-- Culture Cards -->
   <div class="cx-hero">
     <div class="cx-flag" onclick="go('culture')">🇹🇬<span>Togo</span></div>
@@ -1890,6 +1958,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="ctn">
   <div class="phd"><h1>Our Future Family</h1><p>When the time comes</p></div>
 
+  <div class="mod-status" id="fam-stats"></div>
+
   <!-- Life Stage -->
   <div class="fam-stage" id="fam-stage">
     <div class="fam-stage-label">Current Stage</div>
@@ -1938,6 +2008,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="ctn">
   <div class="phd"><h1>Our Foundation</h1><p>What we stand on together</p></div>
 
+  <div class="mod-status" id="fdn-stats"></div>
+
   <!-- Shared Values -->
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Our Values</div></div>
   <div class="fdn-values" id="fdn-values"></div>
@@ -1980,6 +2052,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="ctn">
   <div class="phd"><h1>Our Spirit</h1><p>Walking in faith, side by side</p></div>
 
+  <div class="mod-status" id="sp-stats"></div>
+
   <!-- Daily Devotional -->
   <div class="sp-devo" id="sp-devo" onclick="nextDevotional()">
     <div class="sp-devo-label">Daily Reflection</div>
@@ -2018,6 +2092,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="pg" id="pg-homelife">
 <div class="ctn">
   <div class="phd"><h1>Home Life</h1><p>Running our house</p></div>
+
+  <div class="mod-status" id="hl-stats"></div>
 
   <!-- Shared Budget -->
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Money Goals</div></div>
@@ -2094,6 +2170,18 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 
 <!-- Toast -->
 <div class="toast" id="toast"></div>
+
+<!-- Confirm Dialog -->
+<div class="confirm-overlay" id="confirm-dialog">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirm-title">Are you sure?</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="confirm-btn cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="confirm-btn danger" id="confirm-action" onclick="doConfirm()">Delete</button>
+    </div>
+  </div>
+</div>
 
 <!-- ===== JAVASCRIPT ===== -->
 <script>
@@ -2289,6 +2377,8 @@ function finishLogin() {
   renderDashHero();
   renderDashNudges();
   renderDashCountdown();
+  // Hub & module statuses
+  setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); }, 1500);
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
@@ -3362,7 +3452,9 @@ function renderBucketList(items) {
       <div class="bl-title">${i.title}</div>
       <div class="bl-meta">${i.addedBy === user ? 'You' : (i.addedByName || '?')} · ${i.category}</div>
     </div>
+    <button class="item-delete" onclick="event.stopPropagation();deleteBucketItem('${i._key}')">×</button>
   </div>`).join('');
+  updateBLStats();
 }
 
 async function toggleBucket(key, completed) {
@@ -3404,6 +3496,7 @@ function listenWishlists() {
         <span class="wl-priority ${i.priority}">${i.priority === 'love' ? '♡ Love it' : i.priority === 'want' ? '★ Want it' : '● Need it'}</span>
         ${i.link ? `<a class="wl-link" href="${i.link}" target="_blank">View →</a>` : ''}
       </div>
+      <button class="item-delete" onclick="event.stopPropagation();deleteWishItem('${user}','${i._key}')">×</button>
     </div>`).join('');
   });
   // Partner's wishlist
@@ -3519,6 +3612,7 @@ function listenDateNights() {
         <div class="dn-saved-emoji">${i.emoji}</div>
         <div class="dn-saved-info"><div class="dn-saved-title">${i.title}</div><div class="dn-saved-meta">${i.cat} · saved by ${who}</div></div>
         <button class="dn-done-btn" onclick="markDateDone('${i._key}')">Did it</button>
+        <button class="item-delete" style="opacity:.4" onclick="event.stopPropagation();deleteDateIdea('${i._key}')">×</button>
       </div>`;
       }).join('');
     }
@@ -3786,8 +3880,10 @@ function renderDreams(items) {
         ${i.description ? `<div class="dr-desc">${i.description.replace(/</g,'&lt;')}</div>` : ''}
         <div class="dr-meta">${who} · ${ts}</div>
       </div>
+      <button class="item-delete" onclick="event.stopPropagation();deleteDream('${i._key}')">×</button>
     </div>`;
   }).join('');
+  updateDRStats();
 }
 
 async function toggleDream(key, achieved) {
@@ -4022,6 +4118,7 @@ function listenPersonalGoals(who) {
         <div class="pg-goal-check" onclick="toggleGoal('${who}','${i._key}',${!i.done})">${i.done?'✓':''}</div>
         <div class="pg-goal-text">${i.title}</div>
         <div class="pg-goal-date">${ts}</div>
+        <button class="item-delete" onclick="event.stopPropagation();deletePersonalGoal('${who}','${i._key}')">×</button>
       </div>`;
     }).join('');
   });
@@ -4305,6 +4402,7 @@ function listenBabyNames() {
         <div class="fam-name-text">${i.name}</div>
         <div class="fam-name-gender">${genderEmoji[i.gender]||''} ${i.gender}</div>
         <div class="fam-name-heart ${isLoved?'loved':''}" onclick="toggleNameLove('${i._key}')">${isLoved?'♥':'♡'}</div>
+        <button class="item-delete" onclick="event.stopPropagation();deleteBabyName('${i._key}')">×</button>
       </div>`;
     }).join('');
   });
@@ -4336,6 +4434,7 @@ function listenFamilyGoals() {
     el.innerHTML = items.map(i => `<div class="pg-goal ${i.done?'done':''}">
       <div class="pg-goal-check" onclick="toggleFamGoal('${i._key}',${!i.done})">${i.done?'✓':''}</div>
       <div class="pg-goal-text">${i.title}</div>
+      <button class="item-delete" onclick="event.stopPropagation();deleteFamilyGoal('${i._key}')">×</button>
     </div>`).join('');
   });
 }
@@ -4526,13 +4625,13 @@ async function addIntention() {
 
 function listenIntentions() {
   db.ref('spiritual/intentions').orderByChild('timestamp').on('value', snap => {
-    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const items = []; snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); }); items.reverse();
     const el = document.getElementById('sp-intentions');
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Set spiritual intentions together</div>'; return; }
     el.innerHTML = items.map(i => {
       const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
-      return `<div class="sp-intent-card"><div class="sp-intent-text">${i.text}</div><div class="sp-intent-by">${who}</div></div>`;
+      return `<div class="sp-intent-card"><div class="sp-intent-text">${i.text}</div><div class="sp-intent-by">${who}</div><button class="item-delete" onclick="event.stopPropagation();deleteIntention('${i._key}')">×</button></div>`;
     }).join('');
   });
 }
@@ -4564,7 +4663,7 @@ function listenSavings() {
     el.innerHTML = items.map(i => {
       const pct = Math.min(100, Math.round((i.saved/i.target)*100));
       return `<div class="hl-savings-card">
-        <div class="hl-savings-name">${i.name}</div>
+        <div style="display:flex;align-items:center;gap:8px"><div class="hl-savings-name" style="flex:1">${i.name}</div><button class="item-delete" style="opacity:.4" onclick="event.stopPropagation();deleteSavingsGoal('${i._key}')">×</button></div>
         <div class="hl-savings-bar"><div class="hl-savings-fill" style="width:${pct}%"></div></div>
         <div class="hl-savings-meta"><span>$${i.saved.toLocaleString()} saved</span><span>$${i.target.toLocaleString()} goal · ${pct}%</span></div>
         <button class="hl-savings-update" onclick="updateSavings('${i._key}')">Update Amount</button>
@@ -4598,13 +4697,13 @@ async function addMeal() {
 
 function listenMeals() {
   db.ref('homelife/meals').orderByChild('timestamp').on('value', snap => {
-    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
+    const items = []; snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); }); items.reverse();
     const el = document.getElementById('hl-meals');
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Plan your meals together</div>'; return; }
     el.innerHTML = items.map(i => {
       const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
-      return `<div class="hl-meal-card"><div class="hl-meal-day">${i.day==='anytime'?'':i.day}</div><div class="hl-meal-name">${i.name}</div><div class="hl-meal-by">${who}</div></div>`;
+      return `<div class="hl-meal-card"><div class="hl-meal-day">${i.day==='anytime'?'':i.day}</div><div class="hl-meal-name">${i.name}</div><div class="hl-meal-by">${who}</div><button class="item-delete" onclick="event.stopPropagation();deleteMeal('${i._key}')">×</button></div>`;
     }).join('');
   });
 }
@@ -4635,6 +4734,7 @@ function listenChores() {
         <div class="hl-chore-check" onclick="toggleChore('${i._key}',${!i.done})">${i.done?'✓':''}</div>
         <div class="hl-chore-name">${i.name}</div>
         <div class="hl-chore-who">${whoLabels[i.assignedTo]||i.assignedTo}</div>
+        <button class="item-delete" onclick="event.stopPropagation();deleteChore('${i._key}')">×</button>
       </div>`
     ).join('');
   });
@@ -5171,6 +5271,489 @@ function renderDashCountdown() {
     }
   });
 }
+
+// ===== CONFIRM DIALOG =====
+let confirmCallback = null;
+function showConfirmDialog(title, msg, actionLabel, cb) {
+  const overlay = document.getElementById('confirm-dialog');
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  const actionBtn = document.getElementById('confirm-action');
+  actionBtn.textContent = actionLabel || 'Delete';
+  actionBtn.className = 'confirm-btn ' + (actionLabel === 'Delete' ? 'danger' : 'primary');
+  confirmCallback = cb;
+  overlay.classList.add('on');
+}
+function closeConfirm() { document.getElementById('confirm-dialog').classList.remove('on'); confirmCallback = null; }
+function doConfirm() { if (confirmCallback) confirmCallback(); closeConfirm(); }
+
+// ===== DELETE HELPERS =====
+function deleteBucketItem(key) {
+  showConfirmDialog('Remove item', 'Delete this from your bucket list?', 'Delete', () => {
+    db.ref('bucketList/' + key).remove();
+    toast('Removed');
+  });
+}
+function deleteDream(key) {
+  showConfirmDialog('Remove dream', 'Delete this dream?', 'Delete', () => {
+    db.ref('dreams/' + key).remove();
+    toast('Removed');
+  });
+}
+function deleteChore(key) {
+  showConfirmDialog('Remove task', 'Delete this household task?', 'Delete', () => {
+    db.ref('homelife/chores/' + key).remove();
+    toast('Removed');
+  });
+}
+function deleteMeal(key) {
+  db.ref('homelife/meals/' + key).remove();
+  toast('Removed');
+}
+function deleteSavingsGoal(key) {
+  showConfirmDialog('Remove goal', 'Delete this savings goal?', 'Delete', () => {
+    db.ref('homelife/savings/' + key).remove();
+    toast('Removed');
+  });
+}
+function deleteBabyName(key) {
+  db.ref('family/names/' + key).remove();
+  toast('Removed');
+}
+function deleteFamilyGoal(key) {
+  db.ref('family/goals/' + key).remove();
+  toast('Removed');
+}
+function deleteWishItem(owner, key) {
+  db.ref('wishlists/' + owner + '/' + key).remove();
+  toast('Removed');
+}
+function deleteIntention(key) {
+  db.ref('spiritual/intentions/' + key).remove();
+  toast('Removed');
+}
+function deletePersonalGoal(who, key) {
+  db.ref('personalGoals/' + who + '/' + key).remove();
+  toast('Removed');
+}
+function deleteDateIdea(key) {
+  db.ref('dateNights/' + key).remove();
+  toast('Removed');
+}
+
+// ===== HUB STATUS UPDATES =====
+function updateHubStatuses() {
+  if (!db) return;
+  updateHubCheckin();
+  updateHubBucket();
+  updateHubDreams();
+  updateHubWishlist();
+  updateHubGratitude();
+  updateHubDQ();
+  updateHubCulture();
+  updateHubFoundation();
+  updateHubFamily();
+  updateHubHomeLife();
+  updateHubSpiritual();
+  updateHubDateNight();
+  updateHubDeepTalk();
+  updateHubGames();
+  updateHubLL();
+}
+
+function updateHubCheckin() {
+  const el = document.getElementById('hub-ci-status');
+  if (!el || !db) return;
+  const week = getWeekId();
+  db.ref('checkins/' + week).once('value', snap => {
+    const data = snap.val();
+    if (!data) { el.textContent = 'Check in'; el.className = 'hub-badge pending'; }
+    else if (data[user] && data[partner]) { el.textContent = 'Both done'; el.className = 'hub-badge done'; }
+    else if (data[user]) { el.textContent = '1/2 done'; el.className = 'hub-badge count'; }
+    else { el.textContent = 'Your turn'; el.className = 'hub-badge pending'; }
+  });
+}
+
+function updateHubBucket() {
+  const el = document.getElementById('hub-bl-status');
+  if (!el || !db) return;
+  db.ref('bucketList').once('value', snap => {
+    if (!snap.exists()) { el.textContent = 'Start'; return; }
+    let total = 0, done = 0;
+    snap.forEach(c => { total++; if (c.val().completed) done++; });
+    el.textContent = done + '/' + total + ' done';
+    el.className = done === total && total > 0 ? 'hub-badge done' : 'hub-badge count';
+  });
+}
+
+function updateHubDreams() {
+  const el = document.getElementById('hub-dr-status');
+  if (!el || !db) return;
+  db.ref('dreams').once('value', snap => {
+    if (!snap.exists()) { el.textContent = 'Start'; return; }
+    let total = 0, done = 0;
+    snap.forEach(c => { total++; if (c.val().achieved) done++; });
+    el.textContent = done > 0 ? done + '/' + total : total + ' dreams';
+    el.className = 'hub-badge count';
+  });
+}
+
+function updateHubWishlist() {
+  const el = document.getElementById('hub-wl-status');
+  if (!el || !db) return;
+  db.ref('wishlists').once('value', snap => {
+    if (!snap.exists()) { el.textContent = 'Add items'; return; }
+    let total = 0;
+    snap.forEach(u => { u.forEach(() => total++); });
+    el.textContent = total + ' items';
+    el.className = 'hub-badge count';
+  });
+}
+
+function updateHubGratitude() {
+  const el = document.getElementById('hub-grat-status');
+  if (!el || !db) return;
+  const today = new Date().toISOString().split('T')[0];
+  db.ref('gratitude').orderByChild('date').equalTo(today).once('value', snap => {
+    if (!snap.exists()) { el.textContent = 'Share today'; el.className = 'hub-badge pending'; return; }
+    let count = 0; snap.forEach(() => count++);
+    el.textContent = count + ' today';
+    el.className = 'hub-badge done';
+  });
+}
+
+function updateHubDQ() {
+  const el = document.getElementById('hub-dq-status');
+  if (!el || !db) return;
+  const today = new Date().toISOString().split('T')[0];
+  db.ref('dailyAnswers/' + today).once('value', snap => {
+    const data = snap.val();
+    if (!data) { el.textContent = 'New'; el.className = 'hub-badge new'; }
+    else if (data[user] && data[partner]) { el.textContent = 'Both answered'; el.className = 'hub-badge done'; }
+    else if (data[user]) { el.textContent = 'Waiting'; el.className = 'hub-badge count'; }
+    else { el.textContent = 'Answer'; el.className = 'hub-badge pending'; }
+  });
+}
+
+function updateHubCulture() {
+  const el = document.getElementById('hub-cx-status');
+  if (!el || !db) return;
+  let total = 0;
+  const promises = [
+    db.ref('culture/phrases').once('value').then(s => { if (s.exists()) s.forEach(() => total++); }),
+    db.ref('culture/traditions').once('value').then(s => { if (s.exists()) s.forEach(() => total++); }),
+    db.ref('culture/recipes').once('value').then(s => { if (s.exists()) s.forEach(() => total++); })
+  ];
+  Promise.all(promises).then(() => {
+    el.textContent = total > 0 ? total + ' items' : 'Start';
+    el.className = 'hub-badge count';
+  });
+}
+
+function updateHubFoundation() {
+  const el = document.getElementById('hub-fdn-status');
+  if (!el || !db) return;
+  db.ref('foundation/values').once('value', snap => {
+    let count = 0;
+    if (snap.exists()) snap.forEach(() => count++);
+    el.textContent = count > 0 ? count + ' values' : 'Define';
+    el.className = 'hub-badge count';
+  });
+}
+
+function updateHubFamily() {
+  const el = document.getElementById('hub-fam-status');
+  if (!el || !db) return;
+  db.ref('family/names').once('value', snap => {
+    let count = 0;
+    if (snap.exists()) snap.forEach(() => count++);
+    el.textContent = count > 0 ? count + ' names' : 'Plan';
+    el.className = 'hub-badge count';
+  });
+}
+
+function updateHubHomeLife() {
+  const el = document.getElementById('hub-hl-status');
+  if (!el || !db) return;
+  db.ref('homelife/chores').once('value', snap => {
+    if (!snap.exists()) { el.textContent = 'Set up'; return; }
+    let total = 0, done = 0;
+    snap.forEach(c => { total++; if (c.val().done) done++; });
+    el.textContent = done + '/' + total + ' tasks';
+    el.className = done === total && total > 0 ? 'hub-badge done' : 'hub-badge count';
+  });
+}
+
+function updateHubSpiritual() {
+  const el = document.getElementById('hub-sp-status');
+  if (!el || !db) return;
+  db.ref('spiritual/prayers').orderByChild('timestamp').limitToLast(1).once('value', snap => {
+    if (!snap.exists()) { el.textContent = 'Reflect'; el.className = 'hub-badge count'; return; }
+    let latest = null;
+    snap.forEach(c => latest = c.val());
+    if (latest) {
+      const ago = timeAgo(new Date(latest.timestamp));
+      el.textContent = ago;
+      el.className = 'hub-badge count';
+    }
+  });
+}
+
+function updateHubDateNight() {
+  const el = document.getElementById('hub-dn-status');
+  if (!el || !db) return;
+  db.ref('dateNights').once('value', snap => {
+    if (!snap.exists()) { el.textContent = 'Spin the wheel'; return; }
+    let saved = 0, done = 0;
+    snap.forEach(c => { if (c.val().done) done++; else saved++; });
+    el.textContent = saved > 0 ? saved + ' saved' : done + ' completed';
+  });
+}
+
+function updateHubDeepTalk() {
+  const el = document.getElementById('hub-dt-status');
+  if (!el || !db) return;
+  db.ref('deepTalkJournal').once('value', snap => {
+    if (!snap.exists()) { el.textContent = 'Start a conversation'; return; }
+    let count = 0; snap.forEach(() => count++);
+    el.textContent = count + ' reflections';
+  });
+}
+
+function updateHubGames() {
+  const el = document.getElementById('hub-games-status');
+  if (!el) return;
+  const compatEl = document.getElementById('compat-pct');
+  if (compatEl && compatEl.textContent !== '--') {
+    el.textContent = compatEl.textContent + ' match';
+    el.className = 'hub-badge done';
+  } else {
+    el.textContent = 'Play';
+    el.className = 'hub-badge count';
+  }
+}
+
+function updateHubLL() {
+  const el = document.getElementById('hub-ll-status');
+  if (!el || !db) return;
+  db.ref('loveLang').once('value', snap => {
+    const data = snap.val();
+    if (!data) { el.textContent = 'Take quiz'; el.className = 'hub-badge pending'; return; }
+    if (data[user] && data[partner]) { el.textContent = 'Both done'; el.className = 'hub-badge done'; }
+    else if (data[user]) { el.textContent = 'You\'re done'; el.className = 'hub-badge count'; }
+    else { el.textContent = 'Take quiz'; el.className = 'hub-badge pending'; }
+  });
+}
+
+// ===== MODULE STATUS STRIPS =====
+function updateModuleStats() {
+  updateBLStats();
+  updateDRStats();
+  updateHLStats();
+  updateCXStats();
+  updateSPStats();
+  updateFDNStats();
+  updateFAMStats();
+  updateGamesStats();
+}
+
+function updateBLStats() {
+  const el = document.getElementById('bl-stats');
+  if (!el || !db) return;
+  db.ref('bucketList').once('value', snap => {
+    if (!snap.exists()) { el.innerHTML = ''; return; }
+    let total = 0, done = 0;
+    snap.forEach(c => { total++; if (c.val().completed) done++; });
+    const pct = total ? Math.round((done/total)*100) : 0;
+    el.innerHTML = `
+      <div class="mod-stat"><div class="mod-stat-num">${total}</div><div class="mod-stat-label">Total</div></div>
+      <div class="mod-stat"><div class="mod-stat-num">${done}</div><div class="mod-stat-label">Done</div></div>
+      <div class="mod-stat" style="flex:1;min-width:100px"><div style="font-size:11px;color:var(--t2);margin-bottom:4px">${pct}% complete</div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div></div>`;
+  });
+}
+
+function updateDRStats() {
+  const el = document.getElementById('dr-stats');
+  if (!el || !db) return;
+  db.ref('dreams').once('value', snap => {
+    if (!snap.exists()) { el.innerHTML = ''; return; }
+    let total = 0, done = 0;
+    const cats = {};
+    snap.forEach(c => { total++; const v = c.val(); if (v.achieved) done++; cats[v.category] = (cats[v.category]||0)+1; });
+    const topCat = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+    el.innerHTML = `
+      <div class="mod-stat"><div class="mod-stat-num">${total}</div><div class="mod-stat-label">Dreams</div></div>
+      <div class="mod-stat"><div class="mod-stat-num">${done}</div><div class="mod-stat-label">Achieved</div></div>
+      ${topCat ? `<div class="mod-stat"><div class="mod-stat-num">${topCat[1]}</div><div class="mod-stat-label">${topCat[0]}</div></div>` : ''}`;
+  });
+}
+
+function updateHLStats() {
+  const el = document.getElementById('hl-stats');
+  if (!el || !db) return;
+  let savings = 0, target = 0, choresTotal = 0, choresDone = 0, meals = 0;
+  Promise.all([
+    db.ref('homelife/savings').once('value').then(s => {
+      if (s.exists()) s.forEach(c => { const v = c.val(); savings += v.saved||0; target += v.target||0; });
+    }),
+    db.ref('homelife/chores').once('value').then(s => {
+      if (s.exists()) s.forEach(c => { choresTotal++; if (c.val().done) choresDone++; });
+    }),
+    db.ref('homelife/meals').once('value').then(s => {
+      if (s.exists()) s.forEach(() => meals++);
+    })
+  ]).then(() => {
+    const parts = [];
+    if (target > 0) parts.push(`<div class="mod-stat"><div class="mod-stat-num">$${Math.round(savings/1000)}k</div><div class="mod-stat-label">Saved</div></div>`);
+    if (choresTotal > 0) parts.push(`<div class="mod-stat"><div class="mod-stat-num">${choresDone}/${choresTotal}</div><div class="mod-stat-label">Tasks</div></div>`);
+    if (meals > 0) parts.push(`<div class="mod-stat"><div class="mod-stat-num">${meals}</div><div class="mod-stat-label">Meals</div></div>`);
+    el.innerHTML = parts.join('');
+  });
+}
+
+function updateCXStats() {
+  const el = document.getElementById('cx-stats');
+  if (!el || !db) return;
+  let phrases = 0, traditions = 0, recipes = 0;
+  Promise.all([
+    db.ref('culture/phrases').once('value').then(s => { if (s.exists()) s.forEach(() => phrases++); }),
+    db.ref('culture/traditions').once('value').then(s => { if (s.exists()) s.forEach(() => traditions++); }),
+    db.ref('culture/recipes').once('value').then(s => { if (s.exists()) s.forEach(() => recipes++); })
+  ]).then(() => {
+    if (phrases + traditions + recipes === 0) { el.innerHTML = ''; return; }
+    el.innerHTML = `
+      <div class="mod-stat"><div class="mod-stat-num">${phrases}</div><div class="mod-stat-label">Phrases</div></div>
+      <div class="mod-stat"><div class="mod-stat-num">${traditions}</div><div class="mod-stat-label">Traditions</div></div>
+      <div class="mod-stat"><div class="mod-stat-num">${recipes}</div><div class="mod-stat-label">Recipes</div></div>`;
+  });
+}
+
+function updateSPStats() {
+  const el = document.getElementById('sp-stats');
+  if (!el || !db) return;
+  let prayers = 0, blessings = 0, intentions = 0;
+  Promise.all([
+    db.ref('spiritual/prayers').once('value').then(s => { if (s.exists()) s.forEach(() => prayers++); }),
+    db.ref('spiritual/blessings').once('value').then(s => { if (s.exists()) s.forEach(() => blessings++); }),
+    db.ref('spiritual/intentions').once('value').then(s => { if (s.exists()) s.forEach(() => intentions++); })
+  ]).then(() => {
+    if (prayers + blessings + intentions === 0) { el.innerHTML = ''; return; }
+    el.innerHTML = `
+      <div class="mod-stat"><div class="mod-stat-num">${prayers}</div><div class="mod-stat-label">Prayers</div></div>
+      <div class="mod-stat"><div class="mod-stat-num">${blessings}</div><div class="mod-stat-label">Blessings</div></div>
+      <div class="mod-stat"><div class="mod-stat-num">${intentions}</div><div class="mod-stat-label">Intentions</div></div>`;
+  });
+}
+
+function updateFDNStats() {
+  const el = document.getElementById('fdn-stats');
+  if (!el || !db) return;
+  let values = 0, agrees = 0;
+  Promise.all([
+    db.ref('foundation/values').once('value').then(s => { if (s.exists()) s.forEach(() => values++); }),
+    db.ref('foundation/agreements/' + user).once('value').then(s => {
+      const data = s.val() || {};
+      agrees = Object.values(data).filter(Boolean).length;
+    })
+  ]).then(() => {
+    if (values === 0 && agrees === 0) { el.innerHTML = ''; return; }
+    el.innerHTML = `
+      <div class="mod-stat"><div class="mod-stat-num">${values}</div><div class="mod-stat-label">Values</div></div>
+      <div class="mod-stat"><div class="mod-stat-num">${agrees}/6</div><div class="mod-stat-label">Agreed</div></div>`;
+  });
+}
+
+function updateFAMStats() {
+  const el = document.getElementById('fam-stats');
+  if (!el || !db) return;
+  let names = 0, goals = 0;
+  Promise.all([
+    db.ref('family/names').once('value').then(s => { if (s.exists()) s.forEach(() => names++); }),
+    db.ref('family/goals').once('value').then(s => { if (s.exists()) s.forEach(() => goals++); })
+  ]).then(() => {
+    if (names === 0 && goals === 0) { el.innerHTML = ''; return; }
+    const parts = [];
+    if (names > 0) parts.push(`<div class="mod-stat"><div class="mod-stat-num">${names}</div><div class="mod-stat-label">Names</div></div>`);
+    if (goals > 0) parts.push(`<div class="mod-stat"><div class="mod-stat-num">${goals}</div><div class="mod-stat-label">Goals</div></div>`);
+    el.innerHTML = parts.join('');
+  });
+}
+
+function updateGamesStats() {
+  const el = document.getElementById('games-stats');
+  if (!el) return;
+  const compatEl = document.getElementById('compat-pct');
+  const pct = compatEl ? compatEl.textContent : '--';
+  el.innerHTML = `<div class="mod-stat"><div class="mod-stat-num">${pct}</div><div class="mod-stat-label">Match</div></div>`;
+}
+
+function updateDNStats() {
+  const el = document.getElementById('dn-stats');
+  if (!el || !db) return;
+  db.ref('dateNights').once('value', snap => {
+    if (!snap.exists()) { el.innerHTML = ''; return; }
+    let saved = 0, done = 0;
+    snap.forEach(c => { if (c.val().done) done++; else saved++; });
+    el.innerHTML = `
+      <div class="mod-stat"><div class="mod-stat-num">${saved}</div><div class="mod-stat-label">Saved</div></div>
+      <div class="mod-stat"><div class="mod-stat-num">${done}</div><div class="mod-stat-label">Done</div></div>
+      <div class="mod-stat"><div class="mod-stat-num">${saved + done}</div><div class="mod-stat-label">Total</div></div>`;
+  });
+}
+
+// ===== DASHBOARD QUICK NAV STATUS =====
+function updateDashQuickNav() {
+  if (!db) return;
+
+  // Letters count
+  db.ref('letters').orderByChild('timestamp').limitToLast(50).once('value', snap => {
+    let total = 0;
+    if (snap.exists()) snap.forEach(() => total++);
+    const el = document.getElementById('dash-qn-letters');
+    if (el) el.textContent = total > 0 ? total + ' total' : 'Write';
+  });
+
+  // Compat score
+  setTimeout(() => {
+    const compatEl = document.getElementById('compat-pct');
+    const el = document.getElementById('dash-qn-compat');
+    if (el) el.textContent = compatEl && compatEl.textContent !== '--' ? compatEl.textContent + ' match' : 'Play';
+  }, 2000);
+
+  // Date nights
+  db.ref('dateNights').once('value', snap => {
+    let saved = 0;
+    if (snap.exists()) snap.forEach(c => { if (!c.val().done) saved++; });
+    const el = document.getElementById('dash-qn-dates');
+    if (el) el.textContent = saved > 0 ? saved + ' saved' : 'Spin';
+  });
+
+  // Deep talk reflections
+  db.ref('deepTalkJournal').once('value', snap => {
+    let count = 0;
+    if (snap.exists()) snap.forEach(() => count++);
+    const el = document.getElementById('dash-qn-talks');
+    if (el) el.textContent = count > 0 ? count + ' notes' : 'Start';
+  });
+}
+
+// ===== WIRE UP STATUS UPDATES =====
+// Override go() to refresh statuses when navigating to More hub
+const _originalGo = go;
+go = function(p) {
+  _originalGo(p);
+  if (p === 'more') { updateHubStatuses(); }
+  if (p === 'bucket') updateBLStats();
+  if (p === 'dreams') updateDRStats();
+  if (p === 'homelife') updateHLStats();
+  if (p === 'culture') updateCXStats();
+  if (p === 'spiritual') updateSPStats();
+  if (p === 'foundation') updateFDNStats();
+  if (p === 'family') updateFAMStats();
+  if (p === 'games') updateGamesStats();
+  if (p === 'datenight') updateDNStats();
+  if (p === 'dash') updateDashQuickNav();
+};
 </script>
 </body>
 </html>
