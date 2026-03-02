@@ -511,6 +511,38 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .quiz-score .score-num{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold)}
 .quiz-score .score-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
 
+/* ===== BUCKET LIST & WISHLISTS ===== */
+.bl-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;margin-bottom:8px;transition:all .2s}
+.bl-item.completed{opacity:.5;text-decoration:line-through}
+.bl-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:11px;color:transparent}
+.bl-check:hover{border-color:var(--gold)}
+.bl-item.completed .bl-check{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.bl-info{flex:1}
+.bl-title{font-size:13px;font-weight:500;color:var(--cream)}
+.bl-meta{font-size:10px;color:var(--t3);margin-top:2px}
+.bl-emoji{font-size:18px;min-width:24px;text-align:center}
+.bl-form{display:flex;gap:8px;margin-bottom:16px}
+.bl-form input{flex:1;padding:10px 14px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;outline:none}
+.bl-form input:focus{border-color:var(--gold)}
+.bl-form input::placeholder{color:var(--t3)}
+.bl-form button{padding:10px 16px;border-radius:10px;border:1px solid var(--gold);background:var(--tint);color:var(--gold);cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;transition:all .2s}
+.bl-form button:active{transform:scale(0.97)}
+.bl-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.bl-cat{padding:5px 12px;border-radius:20px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bdr);color:var(--t3);cursor:pointer;transition:all .2s;background:transparent}
+.bl-cat.on{border-color:var(--gold);color:var(--gold);background:var(--tint-xs)}
+
+.wl-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;margin-bottom:8px}
+.wl-item.purchased{opacity:.5}
+.wl-info{flex:1}
+.wl-title{font-size:13px;font-weight:500;color:var(--cream)}
+.wl-priority{font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px}
+.wl-priority.love{background:var(--tint-xs);color:var(--gold);border:1px solid var(--tint)}
+.wl-priority.want{background:var(--red-s);color:var(--red);border:1px solid var(--red-b)}
+.wl-priority.need{background:var(--sec-bg);color:var(--amber);border:1px solid var(--sec-bd)}
+.wl-link{font-size:10px;color:var(--gold);text-decoration:none;margin-top:4px;display:inline-block}
+.wl-buy{padding:6px 12px;border-radius:8px;border:1px solid var(--gold);background:var(--tint-xs);color:var(--gold);font-size:10px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.wl-buy:active{transform:scale(0.95)}
+
 /* ===== HUB PAGES ===== */
 .hub-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
 .hub-card{padding:20px 14px;border-radius:14px;text-align:center;cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);transition:all .2s}
@@ -773,10 +805,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="slbl">Activities</div>
   <div class="hub-grid">
     <div class="hub-card" onclick="go('games')"><span class="hc-icon">🎮</span><div class="hc-title">Games</div><div class="hc-sub">Fun & quizzes</div></div>
-    <div class="hub-card soon"><span class="hc-icon">🪣</span><div class="hc-title">Bucket List</div><div class="hc-sub">Dream together</div></div>
+    <div class="hub-card" onclick="go('bucket')"><span class="hc-icon">🪣</span><div class="hc-title">Bucket List</div><div class="hc-sub">Dream together</div></div>
   </div>
   <div class="hub-grid">
-    <div class="hub-card soon"><span class="hc-icon">🎁</span><div class="hc-title">Wishlists</div><div class="hc-sub">Gift ideas</div></div>
+    <div class="hub-card" onclick="go('wishlist')"><span class="hc-icon">🎁</span><div class="hc-title">Wishlists</div><div class="hc-sub">Gift ideas</div></div>
     <div class="hub-card" onclick="go('gratitude')"><span class="hc-icon">🙏</span><div class="hc-title">Gratitude</div><div class="hc-sub">Daily thankfulness</div></div>
   </div>
 
@@ -866,6 +898,56 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="card-h"><span class="card-t"><span class="pname"></span>'s Quiz</span><span class="card-s">Test yourself</span></div>
     <div id="quiz-theirs"><div class="empty">No quiz questions from your partner yet.</div></div>
   </div>
+</div>
+</div>
+
+<!-- ===== BUCKET LIST ===== -->
+<div class="pg" id="pg-bucket">
+<div class="ctn">
+  <div class="phd"><h1>Bucket List</h1><p>Dream together</p></div>
+
+  <div class="bl-form">
+    <input type="text" id="bl-input" placeholder="Add a dream...">
+    <input type="text" id="bl-emoji" placeholder="🌍" maxlength="2" style="max-width:50px;text-align:center">
+    <button onclick="addBucketItem()">+</button>
+  </div>
+
+  <div class="bl-cats" id="bl-cats">
+    <span class="bl-cat on" onclick="filterBucket('all',this)">All</span>
+    <span class="bl-cat" onclick="filterBucket('travel',this)">Travel</span>
+    <span class="bl-cat" onclick="filterBucket('food',this)">Food</span>
+    <span class="bl-cat" onclick="filterBucket('adventure',this)">Adventure</span>
+    <span class="bl-cat" onclick="filterBucket('home',this)">Home</span>
+  </div>
+
+  <div id="bl-list"><div class="empty">No bucket list items yet. Dream big!</div></div>
+</div>
+</div>
+
+<!-- ===== WISHLISTS ===== -->
+<div class="pg" id="pg-wishlist">
+<div class="ctn">
+  <div class="phd"><h1>Wishlists</h1><p>Gift ideas for each other</p></div>
+
+  <!-- My wishlist -->
+  <div class="slbl">My Wishlist</div>
+  <div class="bl-form">
+    <input type="text" id="wl-input" placeholder="Add something you want...">
+    <button onclick="addWishItem()">+</button>
+  </div>
+  <div class="bl-form" style="margin-top:-8px">
+    <input type="url" id="wl-link" placeholder="Link (optional)" style="flex:2">
+    <select id="wl-priority" style="padding:10px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+      <option value="love">Love it</option>
+      <option value="want">Want it</option>
+      <option value="need">Need it</option>
+    </select>
+  </div>
+  <div id="wl-mine"><div class="empty">Add items to your wishlist</div></div>
+
+  <!-- Partner's wishlist -->
+  <div class="slbl" style="margin-top:24px"><span class="pname"></span>'s Wishlist</div>
+  <div id="wl-theirs"><div class="empty">No items from your partner yet</div></div>
 </div>
 </div>
 
@@ -1154,6 +1236,8 @@ function finishLogin() {
   loadDailyQuestion();
   loadWYR();
   listenQuiz();
+  listenBucketList();
+  listenWishlists();
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
@@ -1170,7 +1254,7 @@ function updateApiKey() {
 
 // ===== NAV =====
 // Map sub-pages to their parent tab
-const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more', 'question': 'more', 'gratitude': 'more', 'games': 'more' };
+const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more', 'question': 'more', 'gratitude': 'more', 'games': 'more', 'bucket': 'more', 'wishlist': 'more' };
 
 function go(p) {
   const current = document.querySelector('.pg.on');
@@ -1920,6 +2004,128 @@ function checkQuizAnswer(input, correct) {
   } else {
     toast('Not quite! Try again 🤔');
   }
+}
+
+// ===== BUCKET LIST =====
+let bucketFilter = 'all';
+const BUCKET_CATS = ['travel','food','adventure','home','other'];
+
+async function addBucketItem() {
+  if (!db || !user) return;
+  const title = document.getElementById('bl-input').value.trim();
+  const emoji = document.getElementById('bl-emoji').value.trim() || '✨';
+  if (!title) { toast('Enter a dream first'); return; }
+  // Detect category from keywords
+  let cat = 'other';
+  const lower = title.toLowerCase();
+  if (/visit|trip|travel|fly|country|city|island|japan|paris|italy/.test(lower)) cat = 'travel';
+  else if (/eat|cook|restaurant|food|recipe|bake|cafe|dinner/.test(lower)) cat = 'food';
+  else if (/try|climb|dive|jump|hike|run|swim|sky|bungee|surf/.test(lower)) cat = 'adventure';
+  else if (/house|apartment|decor|garden|furniture|move|build/.test(lower)) cat = 'home';
+
+  await db.ref('bucketList').push({
+    title, emoji, category: cat,
+    addedBy: user, addedByName: NAMES[user],
+    completed: false, timestamp: Date.now()
+  });
+  document.getElementById('bl-input').value = '';
+  document.getElementById('bl-emoji').value = '';
+  toast('Dream added! ✨');
+}
+
+function filterBucket(cat, el) {
+  bucketFilter = cat;
+  document.querySelectorAll('.bl-cat').forEach(e => e.classList.remove('on'));
+  if (el) el.classList.add('on');
+  listenBucketList();
+}
+
+function listenBucketList() {
+  db.ref('bucketList').orderByChild('timestamp').on('value', snap => {
+    const items = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+    items.reverse();
+    renderBucketList(items);
+  });
+}
+
+function renderBucketList(items) {
+  const el = document.getElementById('bl-list');
+  if (!el) return;
+  const filtered = bucketFilter === 'all' ? items : items.filter(i => i.category === bucketFilter);
+  if (!filtered.length) { el.innerHTML = '<div class="empty">No items in this category yet.</div>'; return; }
+  el.innerHTML = filtered.map(i => `<div class="bl-item ${i.completed ? 'completed' : ''}">
+    <div class="bl-check" onclick="toggleBucket('${i._key}',${!i.completed})">${i.completed ? '✓' : ''}</div>
+    <span class="bl-emoji">${i.emoji}</span>
+    <div class="bl-info">
+      <div class="bl-title">${i.title}</div>
+      <div class="bl-meta">${i.addedByName || 'Unknown'} · ${i.category}</div>
+    </div>
+  </div>`).join('');
+}
+
+async function toggleBucket(key, completed) {
+  if (!db) return;
+  await db.ref('bucketList/' + key + '/completed').set(completed);
+  if (completed) toast('Dream achieved! 🎉');
+}
+
+// ===== WISHLISTS =====
+async function addWishItem() {
+  if (!db || !user) return;
+  const title = document.getElementById('wl-input').value.trim();
+  const link = document.getElementById('wl-link').value.trim();
+  const priority = document.getElementById('wl-priority').value;
+  if (!title) { toast('Enter an item first'); return; }
+  await db.ref('wishlists/' + user).push({
+    title, link, priority,
+    purchased: false, timestamp: Date.now()
+  });
+  document.getElementById('wl-input').value = '';
+  document.getElementById('wl-link').value = '';
+  toast('Added to wishlist! 🎁');
+}
+
+function listenWishlists() {
+  // My wishlist
+  db.ref('wishlists/' + user).orderByChild('timestamp').on('value', snap => {
+    const items = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+    items.reverse();
+    const el = document.getElementById('wl-mine');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Add items to your wishlist</div>'; return; }
+    el.innerHTML = items.map(i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
+      <div class="wl-info">
+        <div class="wl-title">${i.title}</div>
+        <span class="wl-priority ${i.priority}">${i.priority === 'love' ? '♡ Love it' : i.priority === 'want' ? '★ Want it' : '● Need it'}</span>
+        ${i.link ? `<a class="wl-link" href="${i.link}" target="_blank">View →</a>` : ''}
+      </div>
+    </div>`).join('');
+  });
+  // Partner's wishlist
+  db.ref('wishlists/' + partner).orderByChild('timestamp').on('value', snap => {
+    const items = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+    items.reverse();
+    const el = document.getElementById('wl-theirs');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">No items from your partner yet</div>'; return; }
+    el.innerHTML = items.map(i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
+      <div class="wl-info">
+        <div class="wl-title">${i.title}</div>
+        <span class="wl-priority ${i.priority}">${i.priority === 'love' ? '♡ Love it' : i.priority === 'want' ? '★ Want it' : '● Need it'}</span>
+        ${i.link ? `<a class="wl-link" href="${i.link}" target="_blank">View →</a>` : ''}
+      </div>
+      ${!i.purchased ? `<button class="wl-buy" onclick="markPurchased('${i._key}')">Got it 🎁</button>` : '<span style="font-size:10px;color:var(--gold)">✓ Got</span>'}
+    </div>`).join('');
+  });
+}
+
+async function markPurchased(key) {
+  if (!db) return;
+  await db.ref('wishlists/' + partner + '/' + key + '/purchased').set(true);
+  toast('Marked as purchased! 🎁');
 }
 
 // ===== TOAST =====
