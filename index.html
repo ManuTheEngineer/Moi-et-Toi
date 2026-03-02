@@ -782,7 +782,10 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 .hs-care-emoji{font-size:22px}
 .hs-care-label{font-size:10px;color:var(--t2);font-weight:500}
 .hs-care-streak{font-size:11px;color:var(--t3);text-align:center;margin-bottom:16px}
+.him-clarity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
 .him-pr-form{padding:8px 0}
+.him-pr-form input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--tint);color:var(--cream);font-size:13px;box-sizing:border-box;margin-bottom:6px}
+.him-pr-form input::placeholder{color:var(--t3)}
 .him-pr-card{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card-bg);border:none;border-radius:14px;margin-bottom:6px;box-shadow:var(--card-shadow)}
 .him-pr-name{font-weight:500;font-size:13px;flex:1}
 .him-pr-val{font-size:12px;color:var(--gold);font-weight:500}
@@ -1166,11 +1169,11 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
   <!-- Quick Taps -->
   <div class="slbl">Quick tap</div>
   <div class="tap-bar">
-    <div class="tap-btn" onclick="sendTap('hug','🤗')"><span class="tap-emoji">🤗</span><span class="tap-label">Hug</span></div>
-    <div class="tap-btn" onclick="sendTap('kiss','💋')"><span class="tap-emoji">💋</span><span class="tap-label">Kiss</span></div>
-    <div class="tap-btn" onclick="sendTap('love','❤️')"><span class="tap-emoji">❤️</span><span class="tap-label">Love</span></div>
-    <div class="tap-btn" onclick="sendTap('miss','🥺')"><span class="tap-emoji">🥺</span><span class="tap-label">Miss</span></div>
-    <div class="tap-btn" onclick="sendTap('thinking','💭')"><span class="tap-emoji">💭</span><span class="tap-label">Think</span></div>
+    <div class="tap-btn" onclick="sendTap(event,'hug','🤗')"><span class="tap-emoji">🤗</span><span class="tap-label">Hug</span></div>
+    <div class="tap-btn" onclick="sendTap(event,'kiss','💋')"><span class="tap-emoji">💋</span><span class="tap-label">Kiss</span></div>
+    <div class="tap-btn" onclick="sendTap(event,'love','❤️')"><span class="tap-emoji">❤️</span><span class="tap-label">Love</span></div>
+    <div class="tap-btn" onclick="sendTap(event,'miss','🥺')"><span class="tap-emoji">🥺</span><span class="tap-label">Miss</span></div>
+    <div class="tap-btn" onclick="sendTap(event,'thinking','💭')"><span class="tap-emoji">💭</span><span class="tap-label">Think</span></div>
   </div>
 
   <!-- Recent Taps -->
@@ -2489,7 +2492,7 @@ function renderMoodFeed(moods) {
       <div class="mh-info">
         <div class="mh-name">${m.user === user ? 'You' : (m.userName || '?')}</div>
         <div class="mh-detail">${energyLbls[m.energy] || ''} energy</div>
-        ${m.note ? `<div class="mh-note">${m.note}</div>` : ''}
+        ${m.note ? `<div class="mh-note">${m.note.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>` : ''}
       </div>
       <div class="mh-time">${ts}</div>
     </div>`;
@@ -2858,8 +2861,9 @@ const TAP_MSGS = {
 };
 const TAP_EMOJIS = { hug:'🤗', kiss:'💋', love:'❤️', miss:'🥺', thinking:'💭' };
 
-async function sendTap(type, emoji) {
+async function sendTap(e, type, emoji) {
   if (!db || !user) return;
+  const btn = e.currentTarget;
   const entry = {
     type: type,
     from: user,
@@ -2870,8 +2874,7 @@ async function sendTap(type, emoji) {
   // Haptic feedback if available
   if (navigator.vibrate) navigator.vibrate(50);
   // Show sent animation on the button
-  event.currentTarget.classList.add('sent');
-  setTimeout(() => event.currentTarget.classList.remove('sent'), 500);
+  if (btn) { btn.classList.add('sent'); setTimeout(() => btn.classList.remove('sent'), 500); }
   toast(TAP_MSGS[type] + ' ♡');
 }
 
@@ -3387,7 +3390,7 @@ function checkQuizAnswer(input, correct) {
   const answer = correct.toLowerCase();
   const parent = input.closest('.quiz-item');
   if (guess === answer) {
-    parent.innerHTML += '<div class="quiz-item-a correct">Correct —' + correct + '</div>';
+    parent.innerHTML += '<div class="quiz-item-a correct">Correct — ' + correct.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
     input.remove();
     toast('Correct');
   } else {
@@ -3449,7 +3452,7 @@ function renderBucketList(items) {
     <div class="bl-check" onclick="toggleBucket('${i._key}',${!i.completed})">${i.completed ? '✓' : ''}</div>
     <span class="bl-emoji">${i.emoji}</span>
     <div class="bl-info">
-      <div class="bl-title">${i.title}</div>
+      <div class="bl-title">${i.title.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
       <div class="bl-meta">${i.addedBy === user ? 'You' : (i.addedByName || '?')} · ${i.category}</div>
     </div>
     <button class="item-delete" onclick="event.stopPropagation();deleteBucketItem('${i._key}')">×</button>
@@ -3492,9 +3495,9 @@ function listenWishlists() {
     if (!items.length) { el.innerHTML = '<div class="empty">Drop hints here</div>'; return; }
     el.innerHTML = items.map(i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
       <div class="wl-info">
-        <div class="wl-title">${i.title}</div>
+        <div class="wl-title">${esc(i.title)}</div>
         <span class="wl-priority ${i.priority}">${i.priority === 'love' ? '♡ Love it' : i.priority === 'want' ? '★ Want it' : '● Need it'}</span>
-        ${i.link ? `<a class="wl-link" href="${i.link}" target="_blank">View →</a>` : ''}
+        ${i.link && safeHref(i.link) ? `<a class="wl-link" href="${safeHref(i.link)}" target="_blank" rel="noopener">View →</a>` : ''}
       </div>
       <button class="item-delete" onclick="event.stopPropagation();deleteWishItem('${user}','${i._key}')">×</button>
     </div>`).join('');
@@ -3509,9 +3512,9 @@ function listenWishlists() {
     if (!items.length) { el.innerHTML = '<div class="empty">Nothing here yet — someone is being mysterious</div>'; return; }
     el.innerHTML = items.map(i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
       <div class="wl-info">
-        <div class="wl-title">${i.title}</div>
+        <div class="wl-title">${esc(i.title)}</div>
         <span class="wl-priority ${i.priority}">${i.priority === 'love' ? '♡ Love it' : i.priority === 'want' ? '★ Want it' : '● Need it'}</span>
-        ${i.link ? `<a class="wl-link" href="${i.link}" target="_blank">View →</a>` : ''}
+        ${i.link && safeHref(i.link) ? `<a class="wl-link" href="${safeHref(i.link)}" target="_blank" rel="noopener">View →</a>` : ''}
       </div>
       ${!i.purchased ? `<button class="wl-buy" onclick="markPurchased('${i._key}')">Got it</button>` : '<span style="font-size:10px;color:var(--gold)">✓ Got</span>'}
     </div>`).join('');
@@ -3852,6 +3855,7 @@ function filterDreams(cat, el) {
   dreamFilter = cat;
   document.querySelectorAll('#dr-cats .bl-cat').forEach(e => e.classList.remove('on'));
   if (el) el.classList.add('on');
+  listenDreams();
 }
 
 function listenDreams() {
@@ -4770,6 +4774,13 @@ function enforcePrivacy() {
 }
 
 // ===== TIME AGO =====
+function safeHref(url) {
+  if (!url) return '';
+  try { const u = new URL(url); return (u.protocol === 'http:' || u.protocol === 'https:') ? url : ''; } catch { return url.startsWith('/') ? url : ''; }
+}
+
+function esc(s) { return s ? s.replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+
 function timeAgo(date) {
   const now = Date.now();
   const diff = now - date.getTime();
@@ -5235,7 +5246,7 @@ function renderDashNudges() {
         }
 
         container.innerHTML = nudges.join('');
-        if (nudges.length === 0) container.style.display = 'none';
+        container.style.display = nudges.length === 0 ? 'none' : 'flex';
       });
     });
   });
@@ -5523,7 +5534,7 @@ function updateHubDeepTalk() {
 function updateHubGames() {
   const el = document.getElementById('hub-games-status');
   if (!el) return;
-  const compatEl = document.getElementById('compat-pct');
+  const compatEl = document.getElementById('compat-score');
   if (compatEl && compatEl.textContent !== '--') {
     el.textContent = compatEl.textContent + ' match';
     el.className = 'hub-badge done';
@@ -5682,7 +5693,7 @@ function updateFAMStats() {
 function updateGamesStats() {
   const el = document.getElementById('games-stats');
   if (!el) return;
-  const compatEl = document.getElementById('compat-pct');
+  const compatEl = document.getElementById('compat-score');
   const pct = compatEl ? compatEl.textContent : '--';
   el.innerHTML = `<div class="mod-stat"><div class="mod-stat-num">${pct}</div><div class="mod-stat-label">Match</div></div>`;
 }
@@ -5715,7 +5726,7 @@ function updateDashQuickNav() {
 
   // Compat score
   setTimeout(() => {
-    const compatEl = document.getElementById('compat-pct');
+    const compatEl = document.getElementById('compat-score');
     const el = document.getElementById('dash-qn-compat');
     if (el) el.textContent = compatEl && compatEl.textContent !== '--' ? compatEl.textContent + ' match' : 'Play';
   }, 2000);
