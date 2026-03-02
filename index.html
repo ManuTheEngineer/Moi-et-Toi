@@ -18,94 +18,117 @@
 <style>
 /* ===== VARIABLES — LIGHT MODE (default) ===== */
 :root {
-  --bg: #FAF8F5; --bg2: #F0EDE8; --bg3: #E6E2DC;
-  --bg-nav: rgba(250,248,245,.95);
-  --gold: #2D6A4F; --gold-l: #40916C; --amber: #6B5E50; --amber-s: #4A3F35;
-  --cream: #1A1A1A; --cream-d: #3D3830;
-  --t1: #1A1A1A; --t2: #5A5550; --t3: #8A8480;
-  --bdr: rgba(45,106,79,0.12); --bdr-s: rgba(45,106,79,0.06);
-  --red: #BC6C25; --red-s: rgba(188,108,37,0.1); --red-b: rgba(188,108,37,0.2);
-  --vio: #C9A84C; --vio-s: rgba(201,168,76,0.1); --vio-b: rgba(201,168,76,0.2);
-  --tint: rgba(45,106,79,0.1); --tint-s: rgba(45,106,79,0.06); --tint-xs: rgba(45,106,79,0.04);
-  --tint-b: rgba(45,106,79,0.12); --tint-bd: rgba(45,106,79,0.15);
-  --red-tag: #D4883C; --red-tag-s: #B8783C;
-  --vio-tag: #D4B84C; --vio-tag-s: #B8A044;
-  --glow-gold: rgba(45,106,79,.15); --glow-red: rgba(188,108,37,.15); --glow-vio: rgba(201,168,76,.15);
-  --grad-gold: rgba(45,106,79,.04); --grad-grey: rgba(107,94,80,.03);
-  --sec-bg: rgba(107,94,80,.12); --sec-bd: rgba(107,94,80,.2);
-  --amber-bg: rgba(45,106,79,.08); --amber-bd: rgba(45,106,79,.12);
-  --wg-gold: linear-gradient(135deg,rgba(45,106,79,.06),rgba(45,106,79,.03));
-  --wg-red: linear-gradient(135deg,rgba(188,108,37,.06),rgba(188,108,37,.03));
-  --wg-vio: linear-gradient(135deg,rgba(201,168,76,.06),rgba(201,168,76,.03));
-  --wg-dc: linear-gradient(135deg,rgba(45,106,79,.1),rgba(45,106,79,.05));
-  --wg-nxr: linear-gradient(135deg,rgba(188,108,37,.06),rgba(188,108,37,.02));
-  --wg-nxv: linear-gradient(135deg,rgba(201,168,76,.06),rgba(201,168,76,.02));
-  --ec-red: rgba(188,108,37,.12); --ec-vio: rgba(201,168,76,.12);
-  --tgr-bg: rgba(45,106,79,.05); --tgr-bd: rgba(45,106,79,.08); --tgr-c: var(--amber-s);
-  --trr-bg: rgba(188,108,37,.05); --trr-bd: rgba(188,108,37,.1);
-  --tvr-bg: rgba(201,168,76,.05); --tvr-bd: rgba(201,168,76,.1);
+  --bg: #FAFAF7; --bg2: #F2F0EB; --bg3: #E8E5DF;
+  --bg-nav: rgba(250,250,247,.92);
+  --gold: #1A6B4A; --gold-l: #22885E; --amber: #5C534A; --amber-s: #3D3530;
+  --cream: #1A1A1A; --cream-d: #3A3530;
+  --t1: #1A1A1A; --t2: #504A44; --t3: #8A8480;
+  --bdr: rgba(26,107,74,0.1); --bdr-s: rgba(26,107,74,0.05);
+  --red: #C06830; --red-s: rgba(192,104,48,0.1); --red-b: rgba(192,104,48,0.2);
+  --vio: #B8942C; --vio-s: rgba(184,148,44,0.1); --vio-b: rgba(184,148,44,0.2);
+  --tint: rgba(26,107,74,0.08); --tint-s: rgba(26,107,74,0.05); --tint-xs: rgba(26,107,74,0.03);
+  --tint-b: rgba(26,107,74,0.12); --tint-bd: rgba(26,107,74,0.14);
+  --red-tag: #D07838; --red-tag-s: #B07038;
+  --vio-tag: #C8A434; --vio-tag-s: #A89030;
+  --glow-gold: rgba(26,107,74,.18); --glow-red: rgba(192,104,48,.18); --glow-vio: rgba(184,148,44,.18);
+  --grad-gold: rgba(26,107,74,.04); --grad-grey: rgba(92,83,74,.03);
+  --sec-bg: rgba(92,83,74,.1); --sec-bd: rgba(92,83,74,.18);
+  --amber-bg: rgba(26,107,74,.06); --amber-bd: rgba(26,107,74,.1);
+  --wg-gold: linear-gradient(135deg,rgba(26,107,74,.06),rgba(26,107,74,.02));
+  --wg-red: linear-gradient(135deg,rgba(192,104,48,.06),rgba(192,104,48,.02));
+  --wg-vio: linear-gradient(135deg,rgba(184,148,44,.06),rgba(184,148,44,.02));
+  --wg-dc: linear-gradient(135deg,rgba(26,107,74,.1),rgba(26,107,74,.04));
+  --wg-nxr: linear-gradient(135deg,rgba(192,104,48,.06),rgba(192,104,48,.02));
+  --wg-nxv: linear-gradient(135deg,rgba(184,148,44,.06),rgba(184,148,44,.02));
+  --ec-red: rgba(192,104,48,.1); --ec-vio: rgba(184,148,44,.1);
+  --tgr-bg: rgba(26,107,74,.04); --tgr-bd: rgba(26,107,74,.07); --tgr-c: var(--amber-s);
+  --trr-bg: rgba(192,104,48,.04); --trr-bd: rgba(192,104,48,.08);
+  --tvr-bg: rgba(184,148,44,.04); --tvr-bd: rgba(184,148,44,.08);
+  /* Feature-specific gradients */
+  --grad-love: linear-gradient(135deg,#D4566A 0%,#E88A6A 100%);
+  --grad-mood: linear-gradient(135deg,#E8885A 0%,#E8C86A 100%);
+  --grad-story: linear-gradient(135deg,#C8942C 0%,#D4B860 100%);
+  --grad-grow: linear-gradient(135deg,#1A6B4A 0%,#34A070 100%);
+  --grad-games: linear-gradient(135deg,#6A4CA0 0%,#9A6AD4 100%);
+  --grad-connect: linear-gradient(135deg,#C44A6A 0%,#E87080 100%);
+  /* Chart colors */
+  --chart-1: #1A6B4A; --chart-2: #D4566A; --chart-3: #E8885A; --chart-4: #6A4CA0; --chart-5: #C8942C;
 }
 
 /* ===== DARK MODE — system auto (unless user forced light) ===== */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0C0F0D; --bg2: #151A17; --bg3: #1E2520;
-    --bg-nav: rgba(12,15,13,.95);
-    --gold: #52B788; --gold-l: #6FCF97; --amber: #A09A94; --amber-s: #7A7374;
-    --cream: #EDE8E2; --cream-d: #B5AFA8;
-    --t1: #EDE8E2; --t2: #A09A94; --t3: #6B6560;
-    --bdr: rgba(82,183,136,0.15); --bdr-s: rgba(82,183,136,0.08);
-    --red: #DDA15E; --red-s: rgba(221,161,94,0.12); --red-b: rgba(221,161,94,0.25);
-    --vio: #E9C46A; --vio-s: rgba(233,196,106,0.12); --vio-b: rgba(233,196,106,0.25);
-    --tint: rgba(82,183,136,0.12); --tint-s: rgba(82,183,136,0.08); --tint-xs: rgba(82,183,136,0.05);
-    --tint-b: rgba(82,183,136,0.15); --tint-bd: rgba(82,183,136,0.18);
-    --red-tag: #E8A868; --red-tag-s: #C89858;
-    --vio-tag: #EAD070; --vio-tag-s: #C8B060;
-    --glow-gold: rgba(82,183,136,.2); --glow-red: rgba(221,161,94,.2); --glow-vio: rgba(233,196,106,.2);
-    --grad-gold: rgba(82,183,136,.06); --grad-grey: rgba(160,154,148,.04);
-    --sec-bg: rgba(160,154,148,.12); --sec-bd: rgba(160,154,148,.2);
-    --amber-bg: rgba(82,183,136,.1); --amber-bd: rgba(82,183,136,.15);
-    --wg-gold: linear-gradient(135deg,rgba(82,183,136,.08),rgba(82,183,136,.04));
-    --wg-red: linear-gradient(135deg,rgba(221,161,94,.08),rgba(221,161,94,.04));
-    --wg-vio: linear-gradient(135deg,rgba(233,196,106,.08),rgba(233,196,106,.04));
-    --wg-dc: linear-gradient(135deg,rgba(82,183,136,.12),rgba(82,183,136,.06));
-    --wg-nxr: linear-gradient(135deg,rgba(221,161,94,.08),rgba(221,161,94,.03));
-    --wg-nxv: linear-gradient(135deg,rgba(233,196,106,.08),rgba(233,196,106,.03));
-    --ec-red: rgba(221,161,94,.15); --ec-vio: rgba(233,196,106,.15);
-    --tgr-bg: rgba(82,183,136,.06); --tgr-bd: rgba(82,183,136,.1); --tgr-c: var(--amber-s);
-    --trr-bg: rgba(221,161,94,.06); --trr-bd: rgba(221,161,94,.12);
-    --tvr-bg: rgba(233,196,106,.06); --tvr-bd: rgba(233,196,106,.12);
+    --bg: #0A0E0C; --bg2: #121816; --bg3: #1A2220;
+    --bg-nav: rgba(10,14,12,.92);
+    --gold: #3CD48A; --gold-l: #50E8A0; --amber: #A09A94; --amber-s: #807874;
+    --cream: #F0EBE5; --cream-d: #B8B0A8;
+    --t1: #F0EBE5; --t2: #A09A94; --t3: #686460;
+    --bdr: rgba(60,212,138,0.12); --bdr-s: rgba(60,212,138,0.06);
+    --red: #E8985A; --red-s: rgba(232,152,90,0.12); --red-b: rgba(232,152,90,0.22);
+    --vio: #E8C84A; --vio-s: rgba(232,200,74,0.12); --vio-b: rgba(232,200,74,0.22);
+    --tint: rgba(60,212,138,0.1); --tint-s: rgba(60,212,138,0.06); --tint-xs: rgba(60,212,138,0.04);
+    --tint-b: rgba(60,212,138,0.14); --tint-bd: rgba(60,212,138,0.16);
+    --red-tag: #E8A060; --red-tag-s: #C89050;
+    --vio-tag: #E8D060; --vio-tag-s: #C8B050;
+    --glow-gold: rgba(60,212,138,.22); --glow-red: rgba(232,152,90,.22); --glow-vio: rgba(232,200,74,.22);
+    --grad-gold: rgba(60,212,138,.06); --grad-grey: rgba(160,154,148,.04);
+    --sec-bg: rgba(160,154,148,.1); --sec-bd: rgba(160,154,148,.18);
+    --amber-bg: rgba(60,212,138,.08); --amber-bd: rgba(60,212,138,.12);
+    --wg-gold: linear-gradient(135deg,rgba(60,212,138,.08),rgba(60,212,138,.03));
+    --wg-red: linear-gradient(135deg,rgba(232,152,90,.08),rgba(232,152,90,.03));
+    --wg-vio: linear-gradient(135deg,rgba(232,200,74,.08),rgba(232,200,74,.03));
+    --wg-dc: linear-gradient(135deg,rgba(60,212,138,.12),rgba(60,212,138,.05));
+    --wg-nxr: linear-gradient(135deg,rgba(232,152,90,.08),rgba(232,152,90,.03));
+    --wg-nxv: linear-gradient(135deg,rgba(232,200,74,.08),rgba(232,200,74,.03));
+    --ec-red: rgba(232,152,90,.14); --ec-vio: rgba(232,200,74,.14);
+    --tgr-bg: rgba(60,212,138,.05); --tgr-bd: rgba(60,212,138,.08); --tgr-c: var(--amber-s);
+    --trr-bg: rgba(232,152,90,.05); --trr-bd: rgba(232,152,90,.1);
+    --tvr-bg: rgba(232,200,74,.05); --tvr-bd: rgba(232,200,74,.08);
+    --grad-love: linear-gradient(135deg,#D4566A 0%,#E88A6A 100%);
+    --grad-mood: linear-gradient(135deg,#E88058 0%,#E8C060 100%);
+    --grad-story: linear-gradient(135deg,#C8942C 0%,#D4B860 100%);
+    --grad-grow: linear-gradient(135deg,#28A068 0%,#3CD48A 100%);
+    --grad-games: linear-gradient(135deg,#7A58B8 0%,#A878E0 100%);
+    --grad-connect: linear-gradient(135deg,#D45070 0%,#E87888 100%);
+    --chart-1: #3CD48A; --chart-2: #E87080; --chart-3: #E8985A; --chart-4: #A878E0; --chart-5: #E8C84A;
   }
 }
 
 /* ===== DARK MODE — manual override ===== */
 :root[data-theme="dark"] {
-  --bg: #0C0F0D; --bg2: #151A17; --bg3: #1E2520;
-  --bg-nav: rgba(12,15,13,.95);
-  --gold: #52B788; --gold-l: #6FCF97; --amber: #A09A94; --amber-s: #7A7374;
-  --cream: #EDE8E2; --cream-d: #B5AFA8;
-  --t1: #EDE8E2; --t2: #A09A94; --t3: #6B6560;
-  --bdr: rgba(82,183,136,0.15); --bdr-s: rgba(82,183,136,0.08);
-  --red: #DDA15E; --red-s: rgba(221,161,94,0.12); --red-b: rgba(221,161,94,0.25);
-  --vio: #E9C46A; --vio-s: rgba(233,196,106,0.12); --vio-b: rgba(233,196,106,0.25);
-  --tint: rgba(82,183,136,0.12); --tint-s: rgba(82,183,136,0.08); --tint-xs: rgba(82,183,136,0.05);
-  --tint-b: rgba(82,183,136,0.15); --tint-bd: rgba(82,183,136,0.18);
-  --red-tag: #E8A868; --red-tag-s: #C89858;
-  --vio-tag: #EAD070; --vio-tag-s: #C8B060;
-  --glow-gold: rgba(82,183,136,.2); --glow-red: rgba(221,161,94,.2); --glow-vio: rgba(233,196,106,.2);
-  --grad-gold: rgba(82,183,136,.06); --grad-grey: rgba(160,154,148,.04);
-  --sec-bg: rgba(160,154,148,.12); --sec-bd: rgba(160,154,148,.2);
-  --amber-bg: rgba(82,183,136,.1); --amber-bd: rgba(82,183,136,.15);
-  --wg-gold: linear-gradient(135deg,rgba(82,183,136,.08),rgba(82,183,136,.04));
-  --wg-red: linear-gradient(135deg,rgba(221,161,94,.08),rgba(221,161,94,.04));
-  --wg-vio: linear-gradient(135deg,rgba(233,196,106,.08),rgba(233,196,106,.04));
-  --wg-dc: linear-gradient(135deg,rgba(82,183,136,.12),rgba(82,183,136,.06));
-  --wg-nxr: linear-gradient(135deg,rgba(221,161,94,.08),rgba(221,161,94,.03));
-  --wg-nxv: linear-gradient(135deg,rgba(233,196,106,.08),rgba(233,196,106,.03));
-  --ec-red: rgba(221,161,94,.15); --ec-vio: rgba(233,196,106,.15);
-  --tgr-bg: rgba(82,183,136,.06); --tgr-bd: rgba(82,183,136,.1); --tgr-c: var(--amber-s);
-  --trr-bg: rgba(221,161,94,.06); --trr-bd: rgba(221,161,94,.12);
-  --tvr-bg: rgba(233,196,106,.06); --tvr-bd: rgba(233,196,106,.12);
+  --bg: #0A0E0C; --bg2: #121816; --bg3: #1A2220;
+  --bg-nav: rgba(10,14,12,.92);
+  --gold: #3CD48A; --gold-l: #50E8A0; --amber: #A09A94; --amber-s: #807874;
+  --cream: #F0EBE5; --cream-d: #B8B0A8;
+  --t1: #F0EBE5; --t2: #A09A94; --t3: #686460;
+  --bdr: rgba(60,212,138,0.12); --bdr-s: rgba(60,212,138,0.06);
+  --red: #E8985A; --red-s: rgba(232,152,90,0.12); --red-b: rgba(232,152,90,0.22);
+  --vio: #E8C84A; --vio-s: rgba(232,200,74,0.12); --vio-b: rgba(232,200,74,0.22);
+  --tint: rgba(60,212,138,0.1); --tint-s: rgba(60,212,138,0.06); --tint-xs: rgba(60,212,138,0.04);
+  --tint-b: rgba(60,212,138,0.14); --tint-bd: rgba(60,212,138,0.16);
+  --red-tag: #E8A060; --red-tag-s: #C89050;
+  --vio-tag: #E8D060; --vio-tag-s: #C8B050;
+  --glow-gold: rgba(60,212,138,.22); --glow-red: rgba(232,152,90,.22); --glow-vio: rgba(232,200,74,.22);
+  --grad-gold: rgba(60,212,138,.06); --grad-grey: rgba(160,154,148,.04);
+  --sec-bg: rgba(160,154,148,.1); --sec-bd: rgba(160,154,148,.18);
+  --amber-bg: rgba(60,212,138,.08); --amber-bd: rgba(60,212,138,.12);
+  --wg-gold: linear-gradient(135deg,rgba(60,212,138,.08),rgba(60,212,138,.03));
+  --wg-red: linear-gradient(135deg,rgba(232,152,90,.08),rgba(232,152,90,.03));
+  --wg-vio: linear-gradient(135deg,rgba(232,200,74,.08),rgba(232,200,74,.03));
+  --wg-dc: linear-gradient(135deg,rgba(60,212,138,.12),rgba(60,212,138,.05));
+  --wg-nxr: linear-gradient(135deg,rgba(232,152,90,.08),rgba(232,152,90,.03));
+  --wg-nxv: linear-gradient(135deg,rgba(232,200,74,.08),rgba(232,200,74,.03));
+  --ec-red: rgba(232,152,90,.14); --ec-vio: rgba(232,200,74,.14);
+  --tgr-bg: rgba(60,212,138,.05); --tgr-bd: rgba(60,212,138,.08); --tgr-c: var(--amber-s);
+  --trr-bg: rgba(232,152,90,.05); --trr-bd: rgba(232,152,90,.1);
+  --tvr-bg: rgba(232,200,74,.05); --tvr-bd: rgba(232,200,74,.08);
+  --grad-love: linear-gradient(135deg,#D4566A 0%,#E88A6A 100%);
+  --grad-mood: linear-gradient(135deg,#E88058 0%,#E8C060 100%);
+  --grad-story: linear-gradient(135deg,#C8942C 0%,#D4B860 100%);
+  --grad-grow: linear-gradient(135deg,#28A068 0%,#3CD48A 100%);
+  --grad-games: linear-gradient(135deg,#7A58B8 0%,#A878E0 100%);
+  --grad-connect: linear-gradient(135deg,#D45070 0%,#E87888 100%);
+  --chart-1: #3CD48A; --chart-2: #E87080; --chart-3: #E8985A; --chart-4: #A878E0; --chart-5: #E8C84A;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px);overscroll-behavior-y:none}
@@ -563,6 +586,86 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .soon-features li{font-size:12px;color:var(--t2);padding:10px 0;border-bottom:1px solid var(--bdr-s);display:flex;align-items:center;gap:10px}
 .soon-features li span{font-size:16px}
 
+/* ===== GRADIENT FEATURE CARDS ===== */
+.feat-card{border-radius:16px;padding:20px;margin-bottom:14px;color:#fff;position:relative;overflow:hidden}
+.feat-card::after{content:'';position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.15));pointer-events:none}
+.feat-card.fc-love{background:var(--grad-love)}
+.feat-card.fc-mood{background:var(--grad-mood)}
+.feat-card.fc-story{background:var(--grad-story)}
+.feat-card.fc-grow{background:var(--grad-grow)}
+.feat-card.fc-games{background:var(--grad-games)}
+.feat-card.fc-connect{background:var(--grad-connect)}
+.feat-card .fc-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;opacity:.8;margin-bottom:6px}
+.feat-card .fc-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;letter-spacing:1px;position:relative;z-index:1}
+.feat-card .fc-sub{font-size:12px;opacity:.85;margin-top:4px;line-height:1.5;position:relative;z-index:1}
+.feat-card .fc-num{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;position:absolute;right:20px;top:50%;transform:translateY(-50%);opacity:.2}
+
+/* ===== SECTION HEADERS WITH COLOR ===== */
+.sec-head{display:flex;align-items:center;gap:10px;margin:24px 0 12px}
+.sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sec-dot.sd-green{background:var(--gold)}
+.sec-dot.sd-rose{background:#D4566A}
+.sec-dot.sd-amber{background:#C8942C}
+.sec-dot.sd-purple{background:#6A4CA0}
+.sec-head .sec-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t2);font-weight:500}
+
+/* ===== CELEBRATION ANIMATIONS ===== */
+@keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(-60px) rotate(360deg);opacity:0}}
+@keyframes heartBeat{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}45%{transform:scale(1.15)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:3000}
+.confetti-dot{position:absolute;width:8px;height:8px;border-radius:2px;animation:confetti 1.2s ease-out forwards}
+.heart-beat{animation:heartBeat .8s ease}
+
+/* ===== SVG CHARTS ===== */
+.chart-wrap{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;padding:18px;margin-bottom:14px}
+.chart-wrap .chart-title{font-size:13px;font-weight:500;color:var(--cream);margin-bottom:14px}
+.chart-svg{width:100%;overflow:visible}
+.chart-line{fill:none;stroke:var(--chart-1);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.chart-area{fill:url(#chartGrad);opacity:.3}
+.chart-dot{fill:var(--chart-1);r:4}
+.chart-grid{stroke:var(--bdr);stroke-width:.5;stroke-dasharray:4,4}
+.chart-label{font-family:'Outfit',sans-serif;font-size:10px;fill:var(--t3)}
+.donut-ring{fill:none;stroke-width:28;stroke-linecap:round}
+.donut-label{font-family:'Cormorant Garamond',serif;font-size:28px;fill:var(--cream);text-anchor:middle;dominant-baseline:central}
+.donut-sub{font-family:'Outfit',sans-serif;font-size:10px;fill:var(--t3);text-anchor:middle}
+.chart-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.chart-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2)}
+.chart-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* ===== STREAK CALENDAR ===== */
+.streak-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:12px}
+.streak-day{aspect-ratio:1;border-radius:4px;background:var(--bg3);position:relative;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--t3)}
+.streak-day.active{background:var(--gold);opacity:.3;color:#fff}
+.streak-day.active.both{opacity:1;color:#fff}
+.streak-day.today{outline:2px solid var(--gold);outline-offset:-1px}
+.streak-day-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
+.streak-day-labels span{text-align:center;font-size:9px;color:var(--t3);letter-spacing:.5px}
+
+/* ===== TRUTH OR DARE ===== */
+.tod-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;padding:24px;margin-bottom:14px;text-align:center;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.tod-type{display:inline-block;padding:4px 16px;border-radius:20px;font-size:10px;letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.tod-type.truth{background:rgba(26,107,74,.1);color:var(--gold);border:1px solid rgba(26,107,74,.2)}
+.tod-type.dare{background:rgba(212,86,106,.1);color:#D4566A;border:1px solid rgba(212,86,106,.2)}
+.tod-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--cream);line-height:1.5}
+.tod-btns{display:flex;gap:10px;margin-top:16px}
+.tod-btn{padding:10px 24px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;border:none}
+.tod-btn.truth-btn{background:var(--grad-grow);color:#fff}
+.tod-btn.dare-btn{background:var(--grad-love);color:#fff}
+.tod-btn:active{transform:scale(0.95);opacity:.9}
+
+/* ===== THIS OR THAT ===== */
+.tot-card{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:16px;overflow:hidden;margin-bottom:14px;min-height:120px}
+.tot-option{padding:24px 14px;text-align:center;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;border:none;font-family:'Outfit',sans-serif}
+.tot-option:first-child{background:var(--grad-grow);color:#fff;border-right:2px solid rgba(255,255,255,.2)}
+.tot-option:last-child{background:var(--grad-love);color:#fff}
+.tot-option:active{opacity:.8;transform:scale(0.97)}
+.tot-option.picked{opacity:1;outline:3px solid #fff;outline-offset:-3px}
+.tot-option.partner-picked{opacity:1;outline:3px dashed rgba(255,255,255,.6);outline-offset:-3px}
+.tot-option .tot-text{font-size:14px;font-weight:500;line-height:1.4}
+@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.tot-option .tot-or{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:1px;font-weight:600;z-index:2}
+
 /* ===== RESPONSIVE ===== */
 @media(max-width:400px){.ctn{padding:16px 16px 24px}.sg{grid-template-columns:repeat(2,1fr)}.hub-grid{grid-template-columns:1fr}}
 </style>
@@ -622,20 +725,28 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="ptr" id="ptr"><span class="ptr-spinner"></span><span class="ptr-text">Pull to refresh</span></div>
   <div class="phd"><h1>Moi et Toi</h1><p>Welcome home, <span class="uname"></span></p></div>
 
-  <!-- Quick Tap Bar -->
-  <div class="card" style="text-align:center;padding:14px 12px">
-    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:10px">Send a feeling</div>
-    <div class="tap-bar" style="margin-bottom:0">
-      <div class="tap-btn" onclick="sendTap('hug','🤗')"><span class="tap-emoji">🤗</span><span class="tap-label">Hug</span></div>
-      <div class="tap-btn" onclick="sendTap('kiss','💋')"><span class="tap-emoji">💋</span><span class="tap-label">Kiss</span></div>
-      <div class="tap-btn" onclick="sendTap('love','❤️')"><span class="tap-emoji">❤️</span><span class="tap-label">Love</span></div>
-      <div class="tap-btn" onclick="sendTap('miss','🥺')"><span class="tap-emoji">🥺</span><span class="tap-label">Miss</span></div>
-      <div class="tap-btn" onclick="sendTap('thinking','💭')"><span class="tap-emoji">💭</span><span class="tap-label">Think</span></div>
+  <!-- Streak + Quick Taps -->
+  <div class="feat-card fc-grow" onclick="go('connect')" style="cursor:pointer">
+    <div class="fc-label">Send a feeling</div>
+    <div class="tap-bar" style="margin-bottom:0" onclick="event.stopPropagation()">
+      <div class="tap-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="sendTap('hug','🤗')"><span class="tap-emoji" style="font-size:22px">🤗</span><span class="tap-label" style="color:rgba(255,255,255,.8)">Hug</span></div>
+      <div class="tap-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="sendTap('kiss','💋')"><span class="tap-emoji" style="font-size:22px">💋</span><span class="tap-label" style="color:rgba(255,255,255,.8)">Kiss</span></div>
+      <div class="tap-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="sendTap('love','❤️')"><span class="tap-emoji" style="font-size:22px">❤️</span><span class="tap-label" style="color:rgba(255,255,255,.8)">Love</span></div>
+      <div class="tap-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="sendTap('miss','🥺')"><span class="tap-emoji" style="font-size:22px">🥺</span><span class="tap-label" style="color:rgba(255,255,255,.8)">Miss</span></div>
+      <div class="tap-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:#fff" onclick="sendTap('thinking','💭')"><span class="tap-emoji" style="font-size:22px">💭</span><span class="tap-label" style="color:rgba(255,255,255,.8)">Think</span></div>
     </div>
   </div>
 
-  <!-- Today's Moods -->
-  <div class="slbl">Today's Vibes</div>
+  <!-- Streak Card -->
+  <div class="feat-card fc-mood" onclick="go('question')" style="cursor:pointer">
+    <div class="fc-label">Daily Streak</div>
+    <div class="fc-title" id="dash-streak">0 days strong</div>
+    <div class="fc-sub">Keep checking in together to build your streak</div>
+    <div class="fc-num" id="dash-streak-num">0</div>
+  </div>
+
+  <!-- Mood Cards -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Today's Vibes</div></div>
   <div class="card" id="today-mood">
     <div class="card-h"><span class="card-t">Your Vibe Today</span><span class="card-s">Mood Check-in</span></div>
     <div class="skel skel-block" style="margin:4px 0"></div>
@@ -646,12 +757,43 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="skel skel-block" style="margin:4px 0"></div>
   </div>
 
+  <!-- Mood Trend Chart -->
+  <div class="chart-wrap" id="dash-chart">
+    <div class="chart-title">Mood This Week</div>
+    <svg class="chart-svg" viewBox="0 0 320 120" id="mood-chart">
+      <defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-1)" stop-opacity=".3"/><stop offset="100%" stop-color="var(--chart-1)" stop-opacity="0"/></linearGradient></defs>
+      <text class="chart-label" x="4" y="16">5</text><text class="chart-label" x="4" y="56">3</text><text class="chart-label" x="4" y="96">1</text>
+      <line class="chart-grid" x1="20" y1="10" x2="315" y2="10"/><line class="chart-grid" x1="20" y1="50" x2="315" y2="50"/><line class="chart-grid" x1="20" y1="90" x2="315" y2="90"/>
+      <path class="chart-area" id="chart-area" d="M20,90 L315,90"/>
+      <path class="chart-line" id="chart-line" d="M20,50"/>
+    </svg>
+    <div class="chart-legend">
+      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-1)"></div>Your mood</div>
+      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-2)"></div>Partner's mood</div>
+    </div>
+  </div>
+
   <!-- Quick Actions -->
-  <div class="slbl">Quick Start</div>
-  <div class="qa-grid">
-    <div class="qa" onclick="go('mood')"><div class="qi">◎</div><div class="ql">Check In</div></div>
-    <div class="qa" onclick="go('connect')"><div class="qi">💌</div><div class="ql">Connect</div></div>
-    <div class="qa" onclick="go('ai')"><div class="qi">✧</div><div class="ql">AI Chat</div></div>
+  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Quick Start</div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="feat-card fc-connect" onclick="go('connect')" style="cursor:pointer;padding:16px;margin:0">
+      <div class="fc-label">Connect</div>
+      <div style="font-size:15px;font-weight:500">Love Letters</div>
+    </div>
+    <div class="feat-card fc-games" onclick="go('games')" style="cursor:pointer;padding:16px;margin:0">
+      <div class="fc-label">Play</div>
+      <div style="font-size:15px;font-weight:500">Games</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+    <div class="feat-card fc-story" onclick="go('story')" style="cursor:pointer;padding:16px;margin:0">
+      <div class="fc-label">Timeline</div>
+      <div style="font-size:15px;font-weight:500">Our Story</div>
+    </div>
+    <div class="feat-card fc-mood" onclick="go('mood')" style="cursor:pointer;padding:16px;margin:0">
+      <div class="fc-label">Check In</div>
+      <div style="font-size:15px;font-weight:500">Mood</div>
+    </div>
   </div>
 </div>
 </div>
@@ -682,8 +824,31 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <button class="mood-submit" onclick="submitMood()">Save Check-in ♡</button>
 
+  <!-- Mood Analytics -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Your Analytics</div></div>
+
+  <!-- Mood Distribution Donut -->
+  <div class="chart-wrap">
+    <div class="chart-title">Mood Distribution</div>
+    <div style="display:flex;align-items:center;gap:20px">
+      <svg class="chart-svg" viewBox="0 0 140 140" style="max-width:140px" id="mood-donut">
+        <circle cx="70" cy="70" r="52" fill="none" stroke="var(--bg3)" stroke-width="28"/>
+        <text class="donut-label" x="70" y="66" id="donut-avg">--</text>
+        <text class="donut-sub" x="70" y="84">avg mood</text>
+      </svg>
+      <div class="chart-legend" id="donut-legend" style="flex-direction:column;gap:6px"></div>
+    </div>
+  </div>
+
+  <!-- Streak Calendar -->
+  <div class="chart-wrap">
+    <div class="chart-title">Check-in Calendar (last 28 days)</div>
+    <div class="streak-day-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+    <div class="streak-cal" id="streak-cal"></div>
+  </div>
+
   <div class="mood-history">
-    <div class="slbl">Recent Check-ins</div>
+    <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Recent Check-ins</div></div>
     <div id="mood-feed"><div class="empty">No check-ins yet</div></div>
   </div>
 </div>
@@ -897,6 +1062,45 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="card" style="margin-top:12px">
     <div class="card-h"><span class="card-t"><span class="pname"></span>'s Quiz</span><span class="card-s">Test yourself</span></div>
     <div id="quiz-theirs"><div class="empty">No quiz questions from your partner yet.</div></div>
+  </div>
+
+  <!-- Truth or Dare -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Truth or Dare</div></div>
+  <div class="tod-card" id="tod-card">
+    <div class="tod-type" id="tod-type">truth</div>
+    <div class="tod-text" id="tod-text">Tap Truth or Dare to start</div>
+  </div>
+  <div class="tod-btns">
+    <button class="tod-btn truth-btn" onclick="drawTOD('truth')">Truth</button>
+    <button class="tod-btn dare-btn" onclick="drawTOD('dare')">Dare</button>
+  </div>
+
+  <!-- This or That -->
+  <div class="sec-head"><div class="sec-dot sd-purple"></div><div class="sec-title">This or That</div></div>
+  <div style="position:relative" id="tot-wrap">
+    <div class="tot-card" id="tot-card">
+      <button class="tot-option" onclick="pickTOT('A')"><div class="tot-text" id="tot-a">Loading...</div></button>
+      <button class="tot-option" onclick="pickTOT('B')"><div class="tot-text" id="tot-b">Loading...</div></button>
+    </div>
+    <div style="text-align:center;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2"><div style="width:32px;height:32px;border-radius:50%;background:var(--bg);color:var(--t3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;letter-spacing:1px;border:1px solid var(--bdr)">OR</div></div>
+  </div>
+  <div class="wyr-nav" style="margin-bottom:20px">
+    <button onclick="prevTOT()">Previous</button>
+    <button onclick="nextTOT()">Next</button>
+  </div>
+
+  <!-- Compatibility Score -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Compatibility</div></div>
+  <div class="chart-wrap" style="text-align:center">
+    <svg class="chart-svg" viewBox="0 0 140 140" style="max-width:140px;margin:0 auto">
+      <circle cx="70" cy="70" r="52" fill="none" stroke="var(--bg3)" stroke-width="12"/>
+      <circle cx="70" cy="70" r="52" fill="none" stroke="url(#compatGrad)" stroke-width="12" stroke-linecap="round"
+        stroke-dasharray="327" id="compat-ring" stroke-dashoffset="327" transform="rotate(-90 70 70)"/>
+      <defs><linearGradient id="compatGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1A6B4A"/><stop offset="100%" stop-color="#D4566A"/></linearGradient></defs>
+      <text class="donut-label" x="70" y="66" id="compat-score">--</text>
+      <text class="donut-sub" x="70" y="84">match</text>
+    </svg>
+    <div style="font-size:11px;color:var(--t3);margin-top:10px">Based on your Would You Rather + This or That answers</div>
   </div>
 </div>
 </div>
@@ -1238,6 +1442,9 @@ function finishLogin() {
   listenQuiz();
   listenBucketList();
   listenWishlists();
+  loadTOT();
+  renderStreakCalendar();
+  updateCompat();
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
@@ -1378,6 +1585,203 @@ function renderDashMoods(moods) {
       <div class="empty">Waiting for their check-in</div>`;
     document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
   }
+
+  // Render dashboard mood chart and mood page analytics
+  renderMoodChart(moods);
+  renderMoodDonut(moods);
+}
+
+// ===== SVG MOOD TREND CHART (Dashboard) =====
+function renderMoodChart(moods) {
+  const line = document.getElementById('chart-line');
+  const area = document.getElementById('chart-area');
+  if (!line || !area) return;
+
+  // Get last 7 days of mood data
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    days.push(d.toISOString().split('T')[0]);
+  }
+
+  const myMoods = days.map(d => {
+    const m = moods.find(x => x.user === user && x.date === d);
+    return m ? m.mood : null;
+  });
+  const partnerMoods = days.map(d => {
+    const m = moods.find(x => x.user === partner && x.date === d);
+    return m ? m.mood : null;
+  });
+
+  // Chart dimensions
+  const xStart = 25, xEnd = 310, yTop = 10, yBot = 90;
+  const xStep = (xEnd - xStart) / 6;
+
+  function moodToY(v) { return yBot - ((v - 1) / 4) * (yBot - yTop); }
+
+  // Build path for user's moods
+  let lineD = '', areaD = '', first = true;
+  myMoods.forEach((v, i) => {
+    if (v === null) return;
+    const x = xStart + i * xStep, y = moodToY(v);
+    if (first) { lineD = `M${x},${y}`; areaD = `M${x},${yBot} L${x},${y}`; first = false; }
+    else { lineD += ` L${x},${y}`; areaD += ` L${x},${y}`; }
+  });
+  if (!first) areaD += ` L${xStart + (myMoods.length - 1 - [...myMoods].reverse().findIndex(v => v !== null)) * xStep},${yBot} Z`;
+
+  line.setAttribute('d', lineD || `M${xStart},50`);
+  area.setAttribute('d', areaD || `M${xStart},${yBot} L${xEnd},${yBot}`);
+
+  // Add partner line if exists
+  const svg = document.getElementById('mood-chart');
+  let pLine = svg.querySelector('.chart-line-partner');
+  if (!pLine) {
+    pLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    pLine.classList.add('chart-line-partner');
+    pLine.setAttribute('fill', 'none');
+    pLine.setAttribute('stroke', 'var(--chart-2)');
+    pLine.setAttribute('stroke-width', '2');
+    pLine.setAttribute('stroke-dasharray', '4 3');
+    pLine.setAttribute('opacity', '0.7');
+    svg.appendChild(pLine);
+  }
+  let pLineD = '', pFirst = true;
+  partnerMoods.forEach((v, i) => {
+    if (v === null) return;
+    const x = xStart + i * xStep, y = moodToY(v);
+    if (pFirst) { pLineD = `M${x},${y}`; pFirst = false; }
+    else { pLineD += ` L${x},${y}`; }
+  });
+  pLine.setAttribute('d', pLineD || '');
+
+  // Add day labels
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let existingLabels = svg.querySelectorAll('.chart-day-label');
+  existingLabels.forEach(l => l.remove());
+  days.forEach((d, i) => {
+    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.classList.add('chart-day-label');
+    txt.setAttribute('x', xStart + i * xStep);
+    txt.setAttribute('y', 110);
+    txt.setAttribute('text-anchor', 'middle');
+    txt.setAttribute('fill', 'var(--t3)');
+    txt.setAttribute('font-size', '8');
+    txt.setAttribute('font-family', 'Outfit, sans-serif');
+    txt.textContent = dayNames[new Date(d + 'T12:00:00').getDay()];
+    svg.appendChild(txt);
+  });
+
+  // Add dots for user's data points
+  svg.querySelectorAll('.chart-dot').forEach(d => d.remove());
+  myMoods.forEach((v, i) => {
+    if (v === null) return;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.classList.add('chart-dot');
+    circle.setAttribute('cx', xStart + i * xStep);
+    circle.setAttribute('cy', moodToY(v));
+    circle.setAttribute('r', '3.5');
+    circle.setAttribute('fill', 'var(--chart-1)');
+    svg.appendChild(circle);
+  });
+}
+
+// ===== MOOD DISTRIBUTION DONUT (Mood Page) =====
+function renderMoodDonut(moods) {
+  const svg = document.getElementById('mood-donut');
+  const avgEl = document.getElementById('donut-avg');
+  const legendEl = document.getElementById('donut-legend');
+  if (!svg || !avgEl || !legendEl) return;
+
+  // Get user's moods from last 30 days
+  const cutoff = Date.now() - 30 * 86400000;
+  const myMoods = moods.filter(m => m.user === user && m.timestamp > cutoff);
+
+  if (!myMoods.length) {
+    avgEl.textContent = '--';
+    legendEl.innerHTML = '<div style="font-size:11px;color:var(--t3)">Check in to see your distribution</div>';
+    return;
+  }
+
+  // Count distribution
+  const counts = [0, 0, 0, 0, 0]; // moods 1-5
+  myMoods.forEach(m => { if (m.mood >= 1 && m.mood <= 5) counts[m.mood - 1]++; });
+  const total = myMoods.length;
+  const avg = (myMoods.reduce((s, m) => s + m.mood, 0) / total).toFixed(1);
+  avgEl.textContent = avg;
+
+  const moodLabels = ['Low', 'Meh', 'Good', 'Great', 'Amazing'];
+  const colors = ['var(--chart-3)', 'var(--chart-5)', 'var(--chart-1)', 'var(--chart-4)', 'var(--chart-2)'];
+
+  // Remove old segments
+  svg.querySelectorAll('.donut-seg').forEach(s => s.remove());
+
+  // Draw donut segments
+  const r = 52, circumference = 2 * Math.PI * r;
+  let offset = 0;
+  counts.forEach((count, i) => {
+    if (count === 0) return;
+    const pct = count / total;
+    const dash = pct * circumference;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.classList.add('donut-seg');
+    circle.setAttribute('cx', '70');
+    circle.setAttribute('cy', '70');
+    circle.setAttribute('r', String(r));
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', colors[i]);
+    circle.setAttribute('stroke-width', '28');
+    circle.setAttribute('stroke-dasharray', `${dash} ${circumference - dash}`);
+    circle.setAttribute('stroke-dashoffset', String(-offset));
+    circle.setAttribute('transform', 'rotate(-90 70 70)');
+    svg.appendChild(circle);
+    offset += dash;
+  });
+
+  // Build legend
+  legendEl.innerHTML = counts.map((c, i) => {
+    if (c === 0) return '';
+    const pct = Math.round(c / total * 100);
+    return `<div class="chart-legend-item"><div class="chart-legend-dot" style="background:${colors[i]}"></div>${moodLabels[i]} <span style="color:var(--t3);margin-left:4px">${pct}%</span></div>`;
+  }).filter(Boolean).join('');
+}
+
+// ===== STREAK CALENDAR (Mood Page) =====
+function renderStreakCalendar() {
+  const el = document.getElementById('streak-cal');
+  if (!el || !db) return;
+
+  db.ref('moods').orderByChild('timestamp').limitToLast(100).once('value', snap => {
+    const moods = [];
+    snap.forEach(c => moods.push(c.val()));
+
+    // Build a map of date -> which users checked in
+    const dayMap = {};
+    moods.forEach(m => {
+      if (!m.date) return;
+      if (!dayMap[m.date]) dayMap[m.date] = new Set();
+      dayMap[m.date].add(m.user);
+    });
+
+    // Generate last 28 days
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    let html = '';
+    for (let i = 27; i >= 0; i--) {
+      const d = new Date(); d.setDate(today.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const users = dayMap[dateStr];
+      const isToday = dateStr === todayStr;
+      const hasMe = users && users.has(user);
+      const hasBoth = users && users.has(user) && users.has(partner);
+
+      let cls = 'streak-day';
+      if (hasMe) cls += ' active';
+      if (hasBoth) cls += ' both';
+      if (isToday) cls += ' today';
+      html += `<div class="${cls}" title="${dateStr}">${d.getDate()}</div>`;
+    }
+    el.innerHTML = html;
+  });
 }
 
 // ===== AI CHAT =====
@@ -1815,6 +2219,7 @@ function listenStreak() {
     const data = snap.val() || { current: 0, longest: 0 };
     const countEl = document.getElementById('streak-count');
     if (countEl) countEl.textContent = data.current || 0;
+    updateDashStreak(data);
   });
 }
 
@@ -2294,6 +2699,220 @@ function saveConfig() {
   } catch(e) {
     document.getElementById('config-err').textContent = 'Invalid key. Try again.';
   }
+}
+
+// ===== TRUTH OR DARE =====
+const TOD_TRUTHS = [
+  "What's one thing you've never told me but want to?",
+  "What's the first thing you noticed about me?",
+  "What's a secret dream you haven't shared with anyone?",
+  "What's the most romantic thing you've ever imagined us doing?",
+  "What's something small I do that always makes you smile?",
+  "What's a fear you have about our future together?",
+  "What's the most attractive quality I have that isn't physical?",
+  "What song makes you think of me?",
+  "What's a moment with me you replay in your head?",
+  "What's something you want us to try together?",
+  "When did you realize you loved me?",
+  "What's something I do that you find adorable but haven't mentioned?",
+  "What's your favorite memory of us so far?",
+  "If you could change one thing about how we met, what would it be?",
+  "What's something you're grateful for about our relationship?",
+  "What does home feel like to you?",
+  "What's a compliment you've wanted to give me but felt shy about?",
+  "What's your ideal lazy Sunday with me?",
+  "What habit of mine do you secretly love?",
+  "What's the bravest thing you've done for love?"
+];
+
+const TOD_DARES = [
+  "Send me a voice note saying what you love about me",
+  "Write a 4-line poem about us right now",
+  "Text me three things you find attractive about me",
+  "Set a timer and tell me everything you appreciate for 60 seconds",
+  "Share the last photo you took of us",
+  "Send me a song that reminds you of us",
+  "Describe your perfect date with me in detail",
+  "Tell me something you want to do together this month",
+  "Close your eyes and describe my face from memory",
+  "Create a nickname for us as a couple",
+  "Share something from your camera roll that makes you think of me",
+  "Plan our next date and share it right now",
+  "Write me a short love letter in under 2 minutes",
+  "Record yourself saying 'I love you' in 3 different ways",
+  "Send me a list of 5 reasons I'm your person",
+  "Make up a handshake for just the two of us",
+  "Describe our love story in exactly 10 words",
+  "Name 3 things on your bucket list that include me",
+  "Send me your favorite photo of us and explain why",
+  "Tell me something new you want to learn together"
+];
+
+function drawTOD(type) {
+  const list = type === 'truth' ? TOD_TRUTHS : TOD_DARES;
+  const text = list[Math.floor(Math.random() * list.length)];
+  const typeEl = document.getElementById('tod-type');
+  const textEl = document.getElementById('tod-text');
+  if (typeEl) {
+    typeEl.textContent = type;
+    typeEl.className = 'tod-type ' + type;
+  }
+  if (textEl) {
+    textEl.style.opacity = '0';
+    textEl.style.transform = 'translateY(8px)';
+    setTimeout(() => {
+      textEl.textContent = text;
+      textEl.style.transition = 'all .3s ease';
+      textEl.style.opacity = '1';
+      textEl.style.transform = 'translateY(0)';
+    }, 100);
+  }
+}
+
+// ===== THIS OR THAT =====
+const TOT_QUESTIONS = [
+  {a: "Morning person", b: "Night owl"},
+  {a: "Beach vacation", b: "Mountain getaway"},
+  {a: "Cooking together", b: "Ordering takeout"},
+  {a: "Texting all day", b: "One long phone call"},
+  {a: "Rainy day inside", b: "Sunny day outside"},
+  {a: "Big wedding", b: "Intimate elopement"},
+  {a: "City apartment", b: "Country house"},
+  {a: "Road trip", b: "Flying there"},
+  {a: "Movie night", b: "Game night"},
+  {a: "Sweet breakfast", b: "Savory breakfast"},
+  {a: "Dancing together", b: "Singing together"},
+  {a: "Love letter", b: "Surprise gift"},
+  {a: "Matching outfits", b: "Coordinated colors"},
+  {a: "First to say sorry", b: "First to make them laugh"},
+  {a: "Sunset walks", b: "Stargazing nights"},
+  {a: "Adopt a cat", b: "Adopt a dog"},
+  {a: "Coffee date", b: "Wine night"},
+  {a: "Plan everything", b: "Be spontaneous"},
+  {a: "PDA everywhere", b: "Private affection"},
+  {a: "Classic romance", b: "Adventure love"}
+];
+
+let totIndex = 0;
+
+function loadTOT() {
+  const q = TOT_QUESTIONS[totIndex];
+  const aEl = document.getElementById('tot-a');
+  const bEl = document.getElementById('tot-b');
+  if (!aEl || !bEl) return;
+  aEl.textContent = q.a;
+  bEl.textContent = q.b;
+  // Reset styles
+  aEl.closest('.tot-option').classList.remove('picked', 'partner-picked');
+  bEl.closest('.tot-option').classList.remove('picked', 'partner-picked');
+  // Load saved answers
+  if (db) {
+    db.ref('games/tot/' + totIndex).once('value', snap => {
+      const data = snap.val();
+      if (data && data[user]) {
+        const pickedEl = data[user] === 'A' ? aEl : bEl;
+        pickedEl.closest('.tot-option').classList.add('picked');
+      }
+      if (data && data[partner]) {
+        const partnerEl = data[partner] === 'A' ? aEl : bEl;
+        partnerEl.closest('.tot-option').classList.add('partner-picked');
+      }
+    });
+  }
+}
+
+async function pickTOT(choice) {
+  if (!db || !user) return;
+  await db.ref('games/tot/' + totIndex + '/' + user).set(choice);
+  const aEl = document.getElementById('tot-a');
+  const bEl = document.getElementById('tot-b');
+  aEl.closest('.tot-option').classList.remove('picked');
+  bEl.closest('.tot-option').classList.remove('picked');
+  const pickedEl = choice === 'A' ? aEl : bEl;
+  pickedEl.closest('.tot-option').classList.add('picked');
+  // Check partner
+  const snap = await db.ref('games/tot/' + totIndex + '/' + partner).once('value');
+  if (snap.val()) {
+    const partnerEl = snap.val() === 'A' ? aEl : bEl;
+    partnerEl.closest('.tot-option').classList.add('partner-picked');
+    if (choice === snap.val()) toast('You both picked the same!');
+    else toast('Different picks! Interesting...');
+  } else {
+    toast('Waiting for ' + NAMES[partner] + '...');
+  }
+  updateCompat();
+}
+
+function nextTOT() { totIndex = (totIndex + 1) % TOT_QUESTIONS.length; loadTOT(); }
+function prevTOT() { totIndex = (totIndex - 1 + TOT_QUESTIONS.length) % TOT_QUESTIONS.length; loadTOT(); }
+
+// ===== COMPATIBILITY SCORE =====
+function updateCompat() {
+  if (!db) return;
+  let matches = 0, total = 0;
+
+  // Check WYR answers
+  const wyrChecks = WYR_QUESTIONS.map((_, i) => db.ref('games/wyr/' + i).once('value'));
+  const totChecks = TOT_QUESTIONS.map((_, i) => db.ref('games/tot/' + i).once('value'));
+
+  Promise.all([...wyrChecks, ...totChecks]).then(snaps => {
+    snaps.forEach(snap => {
+      const data = snap.val();
+      if (data && data[user] && data[partner]) {
+        total++;
+        if (data[user] === data[partner]) matches++;
+      }
+    });
+
+    const ring = document.getElementById('compat-ring');
+    const scoreEl = document.getElementById('compat-score');
+    if (!ring || !scoreEl) return;
+
+    if (total === 0) {
+      scoreEl.textContent = '--';
+      ring.setAttribute('stroke-dashoffset', '327');
+      return;
+    }
+
+    const pct = Math.round((matches / total) * 100);
+    scoreEl.textContent = pct + '%';
+    // Circumference = 2 * PI * 52 ≈ 327
+    const offset = 327 - (pct / 100) * 327;
+    ring.style.transition = 'stroke-dashoffset 1s ease';
+    ring.setAttribute('stroke-dashoffset', String(offset));
+
+    if (pct >= 80) showConfetti();
+  });
+}
+
+// ===== CONFETTI ANIMATION =====
+function showConfetti() {
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden';
+  document.body.appendChild(container);
+
+  const colors = ['#1A6B4A', '#D4566A', '#E8885A', '#6A4CA0', '#C8942C', '#3CD48A', '#E87080'];
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const left = Math.random() * 100;
+    const delay = Math.random() * 600;
+    const size = 4 + Math.random() * 6;
+    const rotation = Math.random() * 360;
+    piece.style.cssText = `position:absolute;top:-10px;left:${left}%;width:${size}px;height:${size * 0.6}px;background:${color};border-radius:1px;transform:rotate(${rotation}deg);animation:confettiFall ${1.5 + Math.random()}s ease-in ${delay}ms forwards`;
+    container.appendChild(piece);
+  }
+  setTimeout(() => container.remove(), 3000);
+}
+
+// ===== DASHBOARD STREAK WIRING =====
+function updateDashStreak(data) {
+  const streakEl = document.getElementById('dash-streak');
+  const numEl = document.getElementById('dash-streak-num');
+  if (!streakEl || !numEl) return;
+  const count = data.current || 0;
+  streakEl.textContent = count + (count === 1 ? ' day strong' : ' days strong');
+  numEl.textContent = count;
 }
 </script>
 </body>
