@@ -6,11 +6,11 @@
 <meta name="theme-color" content="#F8F6F3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Moi et Toi">
+<meta name="apple-mobile-web-app-title" content="M&T">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-<title>Moi et Toi</title>
+<title>Manu & Taylor</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -160,7 +160,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 /* ===== LOGIN ===== */
 .login{position:fixed;inset:0;z-index:2000;background:linear-gradient(160deg,#0C1220 0%,#1C2B4A 40%,#2A3D60 70%,#C4784A 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:calc(40px + env(safe-area-inset-top,0px)) 24px calc(40px + env(safe-area-inset-bottom,0px))}
 .login.h{display:none}
-.login-logo{width:80px;height:80px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:28px;color:#fff;margin-bottom:32px;animation:logoPulse 3s ease-in-out infinite;backdrop-filter:blur(8px)}
+.login-logo{width:80px;height:80px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:1px;color:#fff;margin-bottom:32px;animation:logoPulse 3s ease-in-out infinite;backdrop-filter:blur(8px)}
 @keyframes logoPulse{0%,100%{box-shadow:0 0 0 0 transparent;transform:scale(1)}50%{box-shadow:0 0 40px 8px rgba(212,149,106,.2);transform:scale(1.03)}}
 @keyframes glow{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 24px 3px var(--glow-gold)}}
 .login-input{width:100%;max-width:320px;padding:16px 20px;border-radius:50px;border:none;background:rgba(255,255,255,.12);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#fff;font-family:'Outfit',sans-serif;font-size:15px;text-align:center;outline:none;margin-bottom:12px;transition:all .3s}
@@ -897,13 +897,13 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 
 <!-- ===== LOGIN ===== -->
 <div class="login" id="login">
-  <div class="login-logo">M</div>
-  <h1>Moi et Toi</h1>
-  <div class="sub">Me and You</div>
+  <div class="login-logo">M&T</div>
+  <h1>Manu & Taylor</h1>
+  <div class="sub">Our place</div>
   <div class="lbl">Sign In</div>
   <input type="email" id="login-email" class="login-input" placeholder="Email">
   <input type="password" id="login-pass" class="login-input mb16" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
-  <button onclick="doLogin()" class="login-btn">Enter ♡</button>
+  <button onclick="doLogin()" class="login-btn">Come in</button>
   <div id="login-err" class="login-err"></div>
 </div>
 
@@ -916,23 +916,23 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="mpan">
   <div class="msl">Navigate</div>
   <div class="mi" onclick="go('dash')"><div class="mic g">⌂</div><div class="mt"><h4>Home</h4></div></div>
-  <div class="mi" onclick="go('connect')"><div class="mic g">♡</div><div class="mt"><h4>Connect</h4><p>Love Letters & Taps</p></div></div>
+  <div class="mi" onclick="go('connect')"><div class="mic g">♡</div><div class="mt"><h4>Connect</h4><p>Letters & taps</p></div></div>
   <div class="mi" onclick="go('mood')"><div class="mic g">◎</div><div class="mt"><h4>Mood Check-in</h4></div></div>
-  <div class="mi" onclick="go('story')"><div class="mic g">◇</div><div class="mt"><h4>Our Story</h4><p>Timeline & Milestones</p></div></div>
+  <div class="mi" onclick="go('story')"><div class="mic g">◇</div><div class="mt"><h4>Our Story</h4><p>The timeline</p></div></div>
   <div class="mi" onclick="go('ai')"><div class="mic a">✧</div><div class="mt"><h4>AI Assistant</h4></div></div>
   <div class="msl">Together</div>
-  <div class="mi" onclick="go('datenight')"><div class="mic g">🕯</div><div class="mt"><h4>Date Night</h4><p>Idea generator</p></div></div>
-  <div class="mi" onclick="go('deeptalk')"><div class="mic r">🗣</div><div class="mt"><h4>Deep Talk</h4><p>Real conversations</p></div></div>
+  <div class="mi" onclick="go('datenight')"><div class="mic g">🕯</div><div class="mt"><h4>Date Night</h4><p>Where to next?</p></div></div>
+  <div class="mi" onclick="go('deeptalk')"><div class="mic r">🗣</div><div class="mt"><h4>Deep Talk</h4><p>The real stuff</p></div></div>
   <div class="mi" onclick="go('culture')"><div class="mic v">🌍</div><div class="mt"><h4>Our Cultures</h4><p>Togo meets Texas</p></div></div>
-  <div class="mi" onclick="go('lovelang')"><div class="mic g">♡</div><div class="mt"><h4>Love Languages</h4><p>Know each other</p></div></div>
-  <div class="mi" onclick="go('foundation')"><div class="mic r">🏗</div><div class="mt"><h4>Our Foundation</h4><p>Values & agreements</p></div></div>
+  <div class="mi" onclick="go('lovelang')"><div class="mic g">♡</div><div class="mt"><h4>Love Languages</h4><p>How we love</p></div></div>
+  <div class="mi" onclick="go('foundation')"><div class="mic r">🏗</div><div class="mt"><h4>Our Foundation</h4><p>What we stand on</p></div></div>
   <div class="msl">Life Building</div>
-  <div class="mi" onclick="go('family')"><div class="mic g">👶</div><div class="mt"><h4>Future Family</h4><p>Plan & dream</p></div></div>
-  <div class="mi" onclick="go('homelife')"><div class="mic r">🏠</div><div class="mt"><h4>Home Life</h4><p>Budget, meals, tasks</p></div></div>
-  <div class="mi" onclick="go('spiritual')"><div class="mic v">🕊</div><div class="mt"><h4>Our Spirit</h4><p>Faith & prayer</p></div></div>
+  <div class="mi" onclick="go('family')"><div class="mic g">👶</div><div class="mt"><h4>Future Family</h4><p>When the time comes</p></div></div>
+  <div class="mi" onclick="go('homelife')"><div class="mic r">🏠</div><div class="mt"><h4>Home Life</h4><p>Running the house</p></div></div>
+  <div class="mi" onclick="go('spiritual')"><div class="mic v">🕊</div><div class="mt"><h4>Our Spirit</h4><p>Faith together</p></div></div>
   <div class="msl">Personal</div>
-  <div class="mi" onclick="go('herspace')"><div class="mic r">🌸</div><div class="mt"><h4>Her Space</h4><p>Wellness & goals</p></div></div>
-  <div class="mi" onclick="go('hisspace')"><div class="mic v">⚡</div><div class="mt"><h4>His Space</h4><p>Growth & strength</p></div></div>
+  <div class="mi" onclick="go('herspace')"><div class="mic r">🌸</div><div class="mt"><h4>Taylor's Space</h4><p>Just for Taylor</p></div></div>
+  <div class="mi" onclick="go('hisspace')"><div class="mic v">⚡</div><div class="mt"><h4>Manu's Space</h4><p>Just for Manu</p></div></div>
   <div class="msl">Waist Where?</div>
   <div class="mi" onclick="go('w1')"><div class="mic g">✦</div><div class="mt"><h4>Foundation</h4><p>Beginner</p></div></div>
   <div class="mi" onclick="go('w2')"><div class="mic r">◆</div><div class="mt"><h4>Elevated</h4><p>Advanced</p></div></div>
@@ -943,7 +943,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
   <div class="mi" onclick="switchUser()"><div class="mic a">↔</div><div class="mt"><h4>Switch Profile</h4></div></div>
   <div class="mi" onclick="updateApiKey()"><div class="mic a">🔑</div><div class="mt"><h4>API Key</h4></div></div>
   <div class="mi" onclick="logout()"><div class="mic a">←</div><div class="mt"><h4>Log Out</h4></div></div>
-  <div class="mfoot">Moi et Toi ✦</div>
+  <div class="mfoot">Manu & Taylor</div>
 </div>
 
 <!-- Bottom Nav -->
@@ -1033,7 +1033,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== MOOD CHECK-IN ===== -->
 <div class="pg" id="pg-mood">
 <div class="ctn">
-  <div class="phd"><h1>Mood Check-in</h1><p>How are you feeling?</p></div>
+  <div class="phd"><h1>Mood Check-in</h1><p>How's your heart today?</p></div>
 
   <div class="slbl">Your Mood</div>
   <div class="mood-grid" id="mood-grid">
@@ -1052,7 +1052,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
   </div>
 
   <div class="slbl">Note (optional)</div>
-  <textarea class="mood-note" id="mood-note" placeholder="What's on your mind..."></textarea>
+  <textarea class="mood-note" id="mood-note" placeholder="Anything on your mind?"></textarea>
 
   <button class="mood-submit" onclick="submitMood()">Save Check-in ♡</button>
 
@@ -1081,7 +1081,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 
   <div class="mood-history">
     <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Recent Check-ins</div></div>
-    <div id="mood-feed"><div class="empty">No check-ins yet</div></div>
+    <div id="mood-feed"><div class="empty">Check in and see how you're both feeling</div></div>
   </div>
 </div>
 </div>
@@ -1089,14 +1089,14 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== AI CHAT ===== -->
 <div class="pg" id="pg-ai">
 <div class="ctn">
-  <div class="phd"><h1>AI Assistant</h1><p>Powered by Claude</p></div>
+  <div class="phd"><h1>AI Assistant</h1><p>Your relationship sidekick</p></div>
 
   <div class="chat-messages" id="chat-messages">
     <div class="chat-msg ai"><div class="msg-from">Claude</div>Hey! I'm your shared AI assistant. Ask me anything, tell me to update your plans, or just talk. Both of you can chat with me and I'll remember context from this conversation.</div>
   </div>
   <div class="typing" id="typing">Claude is thinking...</div>
   <div class="chat-input-row">
-    <input class="chat-input" id="chat-input" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')sendAI()">
+    <input class="chat-input" id="chat-input" placeholder="Ask about your relationship, plans, anything..." onkeydown="if(event.key==='Enter')sendAI()">
     <button class="chat-send" onclick="sendAI()">Send</button>
   </div>
 </div>
@@ -1105,7 +1105,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== CONNECT ===== -->
 <div class="pg" id="pg-connect">
 <div class="ctn">
-  <div class="phd"><h1>Connect</h1><p>Send your love</p></div>
+  <div class="phd"><h1>Connect</h1><p>Say what you feel</p></div>
 
   <!-- Quick Taps -->
   <div class="slbl">Thinking of You</div>
@@ -1120,17 +1120,17 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
   <!-- Recent Taps -->
   <div class="card">
     <div class="card-h"><span class="card-t">Recent Taps</span><span class="card-s">History</span></div>
-    <div class="tap-feed" id="tap-feed"><div class="empty">No taps yet. Send the first one!</div></div>
+    <div class="tap-feed" id="tap-feed"><div class="empty">Send a quick tap to let them know you're thinking of them</div></div>
   </div>
 
   <!-- Love Letters -->
   <div class="slbl">Love Letters</div>
   <div class="letter-compose">
-    <textarea class="letter-textarea" id="letter-input" placeholder="Write a love letter..."></textarea>
+    <textarea class="letter-textarea" id="letter-input" placeholder="Say something real..."></textarea>
     <button class="letter-send" onclick="sendLetter()">Send Letter 💌</button>
   </div>
 
-  <div class="letter-feed" id="letter-feed"><div class="empty">No letters yet. Write the first one.</div></div>
+  <div class="letter-feed" id="letter-feed"><div class="empty">Write something only they will read</div></div>
 </div>
 </div>
 
@@ -1145,7 +1145,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== OUR STORY ===== -->
 <div class="pg" id="pg-story">
 <div class="ctn">
-  <div class="phd"><h1>Our Story</h1><p>Your journey together</p></div>
+  <div class="phd"><h1>Our Story</h1><p>Manu & Taylor, chapter by chapter</p></div>
 
   <!-- Countdowns -->
   <div class="slbl">Counting Down</div>
@@ -1175,7 +1175,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <button class="ms-save" onclick="saveMilestone()">Save Milestone</button>
     <div class="ms-cancel" onclick="toggleMsForm()">Cancel</div>
   </div>
-  <div class="timeline" id="timeline"><div class="empty">No milestones yet. Start your story!</div></div>
+  <div class="timeline" id="timeline"><div class="empty">Add your first milestone together</div></div>
 </div>
 </div>
 
@@ -1183,8 +1183,8 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="pg" id="pg-more">
 <div class="ctn">
   <div style="padding:32px 0 6px">
-    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)">Discover</div>
-    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;letter-spacing:2px;color:var(--cream);margin-top:4px">Everything</h1>
+    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)">Explore</div>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;letter-spacing:2px;color:var(--cream);margin-top:4px">Our World</h1>
   </div>
 
   <!-- Featured -->
@@ -1226,9 +1226,9 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
   <!-- Personal -->
   <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Personal</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
-    <div onclick="go('herspace')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Her Space</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div onclick="go('herspace')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Taylor's Space</div><span style="color:var(--t3);font-size:13px">›</span></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div onclick="go('hisspace')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">His Space</div><span style="color:var(--t3);font-size:13px">›</span></div>
+    <div onclick="go('hisspace')" style="display:flex;align-items:center;padding:14px 18px;cursor:pointer"><div style="flex:1;font-size:13px;font-weight:500;color:var(--cream)">Manu's Space</div><span style="color:var(--t3);font-size:13px">›</span></div>
   </div>
 
   <!-- Activities -->
@@ -1274,7 +1274,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== DAILY QUESTION ===== -->
 <div class="pg" id="pg-question">
 <div class="ctn">
-  <div class="phd"><h1>Question of the Day</h1><p>Answer together, reveal together</p></div>
+  <div class="phd"><h1>Question of the Day</h1><p>One question, both of you</p></div>
 
   <!-- Streak -->
   <div class="streak-bar" id="streak-bar">
@@ -1297,23 +1297,23 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== GRATITUDE ===== -->
 <div class="pg" id="pg-gratitude">
 <div class="ctn">
-  <div class="phd"><h1>Gratitude</h1><p>What you're thankful for</p></div>
+  <div class="phd"><h1>Gratitude</h1><p>The little things that matter</p></div>
 
   <div class="slbl">Today's Gratitude</div>
   <div class="grat-compose">
-    <textarea class="grat-textarea" id="grat-input" placeholder="One thing I'm grateful for about you today..."></textarea>
+    <textarea class="grat-textarea" id="grat-input" placeholder="Today I'm grateful for..."></textarea>
     <button class="dq-submit" onclick="submitGratitude()" style="margin-top:8px">Share Gratitude 🙏</button>
   </div>
 
   <div class="slbl">Gratitude Feed</div>
-  <div id="grat-feed"><div class="empty">No gratitude entries yet. Share the first one.</div></div>
+  <div id="grat-feed"><div class="empty">Tell them what you're grateful for today</div></div>
 </div>
 </div>
 
 <!-- ===== GAMES ===== -->
 <div class="pg" id="pg-games">
 <div class="ctn">
-  <div class="phd"><h1>Games</h1><p>Play together</p></div>
+  <div class="phd"><h1>Games</h1><p>You two vs. boredom</p></div>
 
   <!-- Would You Rather -->
   <div class="slbl">Would You Rather</div>
@@ -1343,7 +1343,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 
   <div class="card" style="margin-top:12px">
     <div class="card-h"><span class="card-t"><span class="pname"></span>'s Quiz</span><span class="card-s">Test yourself</span></div>
-    <div id="quiz-theirs"><div class="empty">No quiz questions from your partner yet.</div></div>
+    <div id="quiz-theirs"><div class="empty">Waiting for your partner to write some questions</div></div>
   </div>
 
   <!-- Truth or Dare -->
@@ -1390,10 +1390,10 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== BUCKET LIST ===== -->
 <div class="pg" id="pg-bucket">
 <div class="ctn">
-  <div class="phd"><h1>Bucket List</h1><p>Dream together</p></div>
+  <div class="phd"><h1>Bucket List</h1><p>Everything we'll do someday</p></div>
 
   <div class="bl-form">
-    <input type="text" id="bl-input" placeholder="Add a dream...">
+    <input type="text" id="bl-input" placeholder="Something we want to do...">
     <input type="text" id="bl-emoji" placeholder="🌍" maxlength="2" style="max-width:50px;text-align:center">
     <button onclick="addBucketItem()">+</button>
   </div>
@@ -1406,14 +1406,14 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <span class="bl-cat" onclick="filterBucket('home',this)">Home</span>
   </div>
 
-  <div id="bl-list"><div class="empty">No bucket list items yet. Dream big!</div></div>
+  <div id="bl-list"><div class="empty">What do you two want to do before you're old and gray?</div></div>
 </div>
 </div>
 
 <!-- ===== WISHLISTS ===== -->
 <div class="pg" id="pg-wishlist">
 <div class="ctn">
-  <div class="phd"><h1>Wishlists</h1><p>Gift ideas for each other</p></div>
+  <div class="phd"><h1>Wishlists</h1><p>Hint hint...</p></div>
 
   <!-- My wishlist -->
   <div class="slbl">My Wishlist</div>
@@ -1429,11 +1429,11 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
       <option value="need">Need it</option>
     </select>
   </div>
-  <div id="wl-mine"><div class="empty">Add items to your wishlist</div></div>
+  <div id="wl-mine"><div class="empty">Drop hints here</div></div>
 
   <!-- Partner's wishlist -->
   <div class="slbl" style="margin-top:24px"><span class="pname"></span>'s Wishlist</div>
-  <div id="wl-theirs"><div class="empty">No items from your partner yet</div></div>
+  <div id="wl-theirs"><div class="empty">Nothing here yet — they're being mysterious</div></div>
 </div>
 </div>
 
@@ -1470,7 +1470,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 
   <button class="lbtn" onclick="openLog('Foundation')">Log This Workout ✦</button>
   <div class="nxt nxr" onclick="go('w2')"><div class="nxe" style="color:var(--red)">When You're Ready</div><div class="nxt-t">The Elevated Program</div><div class="nxd">Harder moves. Shorter rest. Deeper definition.</div><div class="nxa" style="color:var(--red)">Enter ➔</div></div>
-  <div class="wft"><div class="wfq" style="color:var(--gold-l)">You are already becoming her.</div><div class="wfs">One day at a time</div></div>
+  <div class="wft"><div class="wfq" style="color:var(--gold-l)">You're already becoming who you want to be.</div><div class="wfs">One day at a time</div></div>
 </div>
 </div>
 
@@ -1503,7 +1503,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 
   <button class="lbtn lbr" onclick="openLog('Elevated')">Log This Workout ◆</button>
   <div class="nxt nxv" onclick="go('w3')"><div class="nxe" style="color:var(--vio)">The Complete Session</div><div class="nxt-t">Full Body Sculpt</div><div class="nxd">Every muscle group. One session. Total transformation.</div><div class="nxa" style="color:var(--vio)">Enter ➔</div></div>
-  <div class="wft"><div class="wfq" style="color:var(--red-tag)">She didn't just dream it. She built it.</div><div class="wfs">Every rep counts</div></div>
+  <div class="wft"><div class="wfq" style="color:var(--red-tag)">You didn't just dream it. You built it.</div><div class="wfs">Every rep counts</div></div>
 </div>
 </div>
 
@@ -1543,7 +1543,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== DATE NIGHT GENERATOR ===== -->
 <div class="pg" id="pg-datenight">
 <div class="ctn">
-  <div class="phd"><h1>Date Night</h1><p>Never run out of ideas</p></div>
+  <div class="phd"><h1>Date Night</h1><p>Where to next?</p></div>
 
   <div class="dn-wheel" id="dn-wheel" onclick="spinDateNight()">
     <div class="dn-spinner" id="dn-spinner">
@@ -1573,17 +1573,17 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
   </div>
 
   <div class="slbl">Saved Ideas</div>
-  <div id="dn-saved"><div class="empty">Spin the wheel to discover date ideas!</div></div>
+  <div id="dn-saved"><div class="empty">Spin for your next adventure together</div></div>
 
   <div class="slbl">Date History</div>
-  <div id="dn-history"><div class="empty">No dates logged yet. Make memories!</div></div>
+  <div id="dn-history"><div class="empty">Your date history starts here</div></div>
 </div>
 </div>
 
 <!-- ===== LOVE LANGUAGES ===== -->
 <div class="pg" id="pg-lovelang">
 <div class="ctn">
-  <div class="phd"><h1>Love Languages</h1><p>Understand how you love</p></div>
+  <div class="phd"><h1>Love Languages</h1><p>How we speak love</p></div>
 
   <div class="ll-results" id="ll-results" style="display:none">
     <div class="ll-pair">
@@ -1614,7 +1614,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== WEEKLY CHECK-IN ===== -->
 <div class="pg" id="pg-checkin">
 <div class="ctn">
-  <div class="phd"><h1>Weekly Check-in</h1><p>Nurture what matters</p></div>
+  <div class="phd"><h1>Weekly Check-in</h1><p>How are we really doing?</p></div>
 
   <div class="ci-status" id="ci-status"></div>
 
@@ -1622,17 +1622,17 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <div class="ci-section">
       <div class="ci-icon">✦</div>
       <div class="ci-label">What went well this week for us?</div>
-      <textarea class="mood-note" id="ci-well" placeholder="The good stuff..."></textarea>
+      <textarea class="mood-note" id="ci-well" placeholder="What went well this week..."></textarea>
     </div>
     <div class="ci-section">
       <div class="ci-icon">◇</div>
       <div class="ci-label">What could be better?</div>
-      <textarea class="mood-note" id="ci-better" placeholder="Be honest and kind..."></textarea>
+      <textarea class="mood-note" id="ci-better" placeholder="What could be better..."></textarea>
     </div>
     <div class="ci-section">
       <div class="ci-icon">♡</div>
       <div class="ci-label">What do you need from me this week?</div>
-      <textarea class="mood-note" id="ci-need" placeholder="I need..."></textarea>
+      <textarea class="mood-note" id="ci-need" placeholder="What I need from you..."></textarea>
     </div>
     <div class="ci-section">
       <div class="ci-icon">⚡</div>
@@ -1643,17 +1643,17 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
   </div>
 
   <div class="slbl">Past Check-ins</div>
-  <div id="ci-feed"><div class="empty">No check-ins yet. Start your first one!</div></div>
+  <div id="ci-feed"><div class="empty">Check in on how you're doing as a team</div></div>
 </div>
 </div>
 
 <!-- ===== DREAM BOARD ===== -->
 <div class="pg" id="pg-dreams">
 <div class="ctn">
-  <div class="phd"><h1>Our Dreams</h1><p>Build your future together</p></div>
+  <div class="phd"><h1>Our Dreams</h1><p>The life we're building</p></div>
 
   <div class="dr-form">
-    <input type="text" id="dr-title" placeholder="A dream for our future...">
+    <input type="text" id="dr-title" placeholder="Something we're dreaming about...">
     <div class="ms-row">
       <input type="text" id="dr-emoji" placeholder="🏡" maxlength="2" style="max-width:50px;text-align:center">
       <select id="dr-cat" style="padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;flex:1">
@@ -1678,14 +1678,14 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <span class="bl-cat" onclick="filterDreams('financial',this)">Financial</span>
   </div>
 
-  <div id="dr-list"><div class="empty">No dreams yet. Dream big together!</div></div>
+  <div id="dr-list"><div class="empty">Start mapping out the future you want</div></div>
 </div>
 </div>
 
 <!-- ===== HER SPACE ===== -->
 <div class="pg" id="pg-herspace">
 <div class="ctn">
-  <div class="phd"><h1>Her Space</h1><p>Your personal sanctuary</p></div>
+  <div class="phd"><h1>Taylor's Space</h1><p>Just yours, Tay</p></div>
 
   <!-- Daily Affirmation -->
   <div class="hs-affirm" id="hs-affirm" onclick="nextAffirmation()">
@@ -1731,14 +1731,14 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <input type="text" id="hs-goal-input" placeholder="Add a personal goal...">
     <button onclick="addPersonalGoal('her')">+</button>
   </div>
-  <div id="hs-goals"><div class="empty">Set goals just for you</div></div>
+  <div id="hs-goals"><div class="empty">What are you working towards?</div></div>
 </div>
 </div>
 
 <!-- ===== HIS SPACE ===== -->
 <div class="pg" id="pg-hisspace">
 <div class="ctn">
-  <div class="phd"><h1>His Space</h1><p>Your personal ground</p></div>
+  <div class="phd"><h1>Manu's Space</h1><p>Your corner, King</p></div>
 
   <!-- Daily Motivation -->
   <div class="hs-affirm him-affirm" id="him-affirm" onclick="nextMotivation()">
@@ -1759,7 +1759,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
       </div>
       <button class="dq-submit" onclick="logPR()" style="margin-top:8px">Log PR ⚡</button>
     </div>
-    <div id="him-pr-list"><div class="empty">No records yet. Start lifting!</div></div>
+    <div id="him-pr-list"><div class="empty">Log your first PR</div></div>
   </div>
 
   <!-- Mental Clarity -->
@@ -1780,14 +1780,14 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
     <input type="text" id="him-goal-input" placeholder="Add a personal goal...">
     <button onclick="addPersonalGoal('him')">+</button>
   </div>
-  <div id="him-goals"><div class="empty">Set goals just for you</div></div>
+  <div id="him-goals"><div class="empty">What are you working towards?</div></div>
 </div>
 </div>
 
 <!-- ===== CULTURE EXCHANGE ===== -->
 <div class="pg" id="pg-culture">
 <div class="ctn">
-  <div class="phd"><h1>Our Cultures</h1><p>Togo meets Texas — carry each other's roots</p></div>
+  <div class="phd"><h1>Our Cultures</h1><p>Togo meets Texas — roots we carry together</p></div>
 
   <!-- Culture Cards -->
   <div class="cx-hero">
@@ -1854,7 +1854,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== DEEP TALK ===== -->
 <div class="pg" id="pg-deeptalk">
 <div class="ctn">
-  <div class="phd"><h1>Deep Talk</h1><p>The conversations that build forever</p></div>
+  <div class="phd"><h1>Deep Talk</h1><p>The stuff that matters</p></div>
 
   <div class="dt-current" id="dt-current">
     <div class="dt-depth" id="dt-depth">Level 1</div>
@@ -1888,7 +1888,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== FAMILY PLANNING ===== -->
 <div class="pg" id="pg-family">
 <div class="ctn">
-  <div class="phd"><h1>Our Future Family</h1><p>From dreaming to building</p></div>
+  <div class="phd"><h1>Our Future Family</h1><p>When the time comes</p></div>
 
   <!-- Life Stage -->
   <div class="fam-stage" id="fam-stage">
@@ -1936,7 +1936,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== OUR FOUNDATION ===== -->
 <div class="pg" id="pg-foundation">
 <div class="ctn">
-  <div class="phd"><h1>Our Foundation</h1><p>The principles we build on</p></div>
+  <div class="phd"><h1>Our Foundation</h1><p>What we stand on together</p></div>
 
   <!-- Shared Values -->
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Our Values</div></div>
@@ -1978,7 +1978,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== SPIRITUAL SPACE ===== -->
 <div class="pg" id="pg-spiritual">
 <div class="ctn">
-  <div class="phd"><h1>Our Spirit</h1><p>Grow in faith together</p></div>
+  <div class="phd"><h1>Our Spirit</h1><p>Walking in faith, side by side</p></div>
 
   <!-- Daily Devotional -->
   <div class="sp-devo" id="sp-devo" onclick="nextDevotional()">
@@ -2017,7 +2017,7 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <!-- ===== HOME BUILDING ===== -->
 <div class="pg" id="pg-homelife">
 <div class="ctn">
-  <div class="phd"><h1>Home Life</h1><p>Build your household together</p></div>
+  <div class="phd"><h1>Home Life</h1><p>Running our house</p></div>
 
   <!-- Shared Budget -->
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Money Goals</div></div>
@@ -2108,7 +2108,7 @@ try { FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_fb_config')); } cat
 let CLAUDE_API_KEY = "";
 
 // Profile names - loaded from Firebase
-let NAMES = { her: "Her", him: "Him" };
+let NAMES = { her: "Taylor", him: "Manu" };
 
 // ==========================================
 
@@ -2165,7 +2165,7 @@ async function doLogin() {
     await loadProfiles();
     
     // Check if name is set
-    if (NAMES[user] === 'Her' || NAMES[user] === 'Him') {
+    if (!NAMES[user] || NAMES[user] === 'Her' || NAMES[user] === 'Him') {
       showNameSetup();
     } else {
       finishLogin();
@@ -2211,13 +2211,13 @@ async function loadProfiles() {
 
 function showNameSetup() {
   document.getElementById('login').innerHTML = `
-    <div class="login-logo">M</div>
-    <h1>Moi et Toi</h1>
-    <div class="sub">Set Up Your Profile</div>
+    <div class="login-logo">M&T</div>
+    <h1>Manu & Taylor</h1>
+    <div class="sub">Almost there</div>
     <div class="lbl">What should we call you?</div>
     <input type="text" id="name-input" class="login-input mb16" placeholder="Your name..."
            onkeydown="if(event.key==='Enter')saveName()">
-    <button onclick="saveName()" class="login-btn">Save & Enter ♡</button>
+    <button onclick="saveName()" class="login-btn">Let's go</button>
   `;
   setTimeout(() => document.getElementById('name-input').focus(), 300);
 }
@@ -2673,23 +2673,21 @@ async function sendAI() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1024,
-        system: `You are the AI assistant for "Moi et Toi", a private relationship app built for ${NAMES.him} and ${NAMES.her}.
+        system: `You are the AI inside Manu & Taylor's private relationship app. You know them.
 
-ABOUT THEM:
-- ${NAMES.him} is from Togo, West Africa. His culture includes Ewe, Mina, and French languages, Togolese traditions, food, and values.
-- ${NAMES.her} is from Texas, USA. Her culture includes Southern American traditions, Texan food, and American values.
-- They are an intercultural couple building a life together. Their differences are their strength.
-- They are young, ambitious, and building toward marriage, family, and a shared future.
+WHO THEY ARE:
+- Manu (${NAMES.him}) is from Togo, West Africa. Ewe, Mina, French. Togolese traditions, values, and food.
+- Taylor (${NAMES.her}) is from Texas. Southern roots, Texan culture, American traditions.
+- They're an intercultural couple — young, ambitious, building toward marriage and family.
 
-YOUR ROLE:
-- You are their private advisor, counselor, coach, and friend. You're part of their inner circle.
-- Help with: relationship advice, cultural understanding, meal planning, workout guidance, date ideas, financial planning, conflict resolution, parenting prep, spiritual growth, communication coaching, individual growth, household management, or just being someone to talk to.
-- Be warm, wise, direct, and concise. Speak with the honesty of a trusted friend, not a generic chatbot.
-- When they ask about cultural topics, draw on knowledge of both Togolese and Texan culture.
-- When relevant, reference the app's features: mood check-ins, love languages, weekly check-ins, deep talk prompts, date night generator, dream board, family planning, spiritual space, and their personal spaces.
-- You can suggest they use specific app features when appropriate.
+WHO YOU ARE:
+- Their trusted friend. Part of the inner circle. Not a chatbot.
+- You help with anything: relationship stuff, cultural questions, meal ideas, workouts, date plans, money, conflict, parenting prep, faith, communication, growth, household, or just listening.
+- Be warm, honest, and direct. Keep it concise. Talk like someone who actually knows them.
+- Draw on both Togolese and Texan culture when relevant.
+- You can reference features in the app (mood check-ins, love languages, check-ins, deep talks, date night, dreams, family planning, etc.)
 
-The current user talking to you is ${NAMES[user]} (${user === 'him' ? 'from Togo' : 'from Texas'}).`,
+Talking to you right now: ${NAMES[user]} (${user === 'him' ? 'Manu, from Togo' : 'Taylor, from Texas'}).`,
         messages: chatHistory
       })
     });
@@ -2801,7 +2799,7 @@ function listenTaps() {
 function renderTapFeed(taps) {
   const el = document.getElementById('tap-feed');
   if (!el) return;
-  if (!taps.length) { el.innerHTML = '<div class="empty">No taps yet. Send the first one!</div>'; return; }
+  if (!taps.length) { el.innerHTML = '<div class="empty">Send a quick tap to let them know you're thinking of them</div>'; return; }
   el.innerHTML = taps.slice(0, 15).map(t => {
     const time = new Date(t.timestamp);
     const ts = time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -3151,7 +3149,7 @@ function listenGratitude() {
 function renderGratitude(entries) {
   const el = document.getElementById('grat-feed');
   if (!el) return;
-  if (!entries.length) { el.innerHTML = '<div class="empty">No gratitude entries yet. Share the first one.</div>'; return; }
+  if (!entries.length) { el.innerHTML = '<div class="empty">Tell them what you're grateful for today</div>'; return; }
   el.innerHTML = entries.map(g => {
     const time = new Date(g.timestamp);
     const ts = time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -3262,7 +3260,7 @@ function listenQuiz() {
     if (!el) return;
     const qs = [];
     snap.forEach(c => { const v = c.val(); v._key = c.key; qs.push(v); });
-    if (!qs.length) { el.innerHTML = '<div class="empty">No quiz questions from your partner yet.</div>'; return; }
+    if (!qs.length) { el.innerHTML = '<div class="empty">Waiting for your partner to write some questions</div>'; return; }
     el.innerHTML = qs.map(q => {
       return `<div class="quiz-item">
         <div class="quiz-item-q">${q.question}</div>
@@ -3373,7 +3371,7 @@ function listenWishlists() {
     items.reverse();
     const el = document.getElementById('wl-mine');
     if (!el) return;
-    if (!items.length) { el.innerHTML = '<div class="empty">Add items to your wishlist</div>'; return; }
+    if (!items.length) { el.innerHTML = '<div class="empty">Drop hints here</div>'; return; }
     el.innerHTML = items.map(i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
       <div class="wl-info">
         <div class="wl-title">${i.title}</div>
@@ -3389,7 +3387,7 @@ function listenWishlists() {
     items.reverse();
     const el = document.getElementById('wl-theirs');
     if (!el) return;
-    if (!items.length) { el.innerHTML = '<div class="empty">No items from your partner yet</div>'; return; }
+    if (!items.length) { el.innerHTML = '<div class="empty">Nothing here yet — they're being mysterious</div>'; return; }
     el.innerHTML = items.map(i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
       <div class="wl-info">
         <div class="wl-title">${i.title}</div>
@@ -3930,7 +3928,7 @@ function listenPRs() {
     items.reverse();
     const el = document.getElementById('him-pr-list');
     if (!el) return;
-    if (!items.length) { el.innerHTML = '<div class="empty">No records yet. Start lifting!</div>'; return; }
+    if (!items.length) { el.innerHTML = '<div class="empty">Log your first PR</div>'; return; }
     el.innerHTML = items.map(i => {
       const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
       return `<div class="him-pr-card"><div class="him-pr-name">${i.exercise}</div><div class="him-pr-val">${i.weight}${i.weight!=='--'?' lbs':''} × ${i.reps}</div><div class="him-pr-date">${ts}</div></div>`;
@@ -3979,7 +3977,7 @@ function listenPersonalGoals(who) {
     items.reverse();
     const el = document.getElementById(listId);
     if (!el) return;
-    if (!items.length) { el.innerHTML = '<div class="empty">Set goals just for you</div>'; return; }
+    if (!items.length) { el.innerHTML = '<div class="empty">What are you working towards?</div>'; return; }
     el.innerHTML = items.map(i => {
       const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
       return `<div class="pg-goal ${i.done?'done':''}">
@@ -4580,15 +4578,15 @@ function enforcePrivacy() {
   document.querySelectorAll('.mi').forEach(mi => {
     const h4 = mi.querySelector('h4');
     if (!h4) return;
-    if (user === 'him' && h4.textContent === 'Her Space') mi.style.display = 'none';
-    if (user === 'her' && h4.textContent === 'His Space') mi.style.display = 'none';
+    if (user === 'him' && h4.textContent === 'Taylor's Space') mi.style.display = 'none';
+    if (user === 'her' && h4.textContent === 'Manu's Space') mi.style.display = 'none';
   });
   // Hide hub cards for the other person's space
   document.querySelectorAll('.hub-card').forEach(card => {
     const title = card.querySelector('.hc-title');
     if (!title) return;
-    if (user === 'him' && title.textContent === 'Her Space') card.style.display = 'none';
-    if (user === 'her' && title.textContent === 'His Space') card.style.display = 'none';
+    if (user === 'him' && title.textContent === 'Taylor's Space') card.style.display = 'none';
+    if (user === 'her' && title.textContent === 'Manu's Space') card.style.display = 'none';
   });
 }
 
@@ -4725,9 +4723,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function showConfigSetup() {
   document.getElementById('login').innerHTML = `
-    <div class="login-logo">M</div>
-    <h1>Moi et Toi</h1>
-    <div class="sub">One-Time Device Setup</div>
+    <div class="login-logo">M&T</div>
+    <h1>Manu & Taylor</h1>
+    <div class="sub">One-time setup</div>
     <div class="lbl" style="margin-bottom:14px">Paste your connection key</div>
     <input type="password" id="config-input" class="login-input mb16" placeholder="Paste key here..."
       onkeydown="if(event.key==='Enter')saveConfig()">
