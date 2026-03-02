@@ -454,6 +454,37 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .cd-form input:focus{border-color:var(--gold)}
 .cd-form input::placeholder{color:var(--t3)}
 
+/* ===== DAILY QUESTION & STREAKS & GRATITUDE ===== */
+.streak-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--tint-xs);border:1px solid var(--bdr);border-radius:12px;margin-bottom:16px}
+.streak-fire{font-size:22px}
+.streak-count{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--gold)}
+.streak-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)}
+
+.dq-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;padding:20px;margin-bottom:16px;text-align:center}
+.dq-category{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:500}
+.dq-question{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--cream);line-height:1.5;margin-bottom:16px}
+.dq-input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg3);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;outline:none;text-align:center}
+.dq-input:focus{border-color:var(--gold)}
+.dq-input::placeholder{color:var(--t3)}
+.dq-submit{width:100%;padding:11px;border-radius:10px;border:1px solid var(--gold);background:var(--tint);color:var(--gold);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;margin-top:8px}
+.dq-submit:hover{background:var(--tint-b)}
+.dq-submit:active{transform:scale(0.98)}
+.dq-answers{margin-top:16px;text-align:left}
+.dq-answer{padding:10px 14px;border-radius:10px;margin-bottom:8px;font-size:13px;line-height:1.5}
+.dq-answer.mine{background:var(--tint-xs);border:1px solid var(--tint);color:var(--cream)}
+.dq-answer.theirs{background:var(--bg3);border:1px solid var(--bdr);color:var(--cream-d)}
+.dq-answer-name{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.dq-waiting{font-size:12px;color:var(--t3);font-style:italic;padding:12px 0}
+
+.grat-compose{margin-bottom:16px}
+.grat-textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;outline:none;resize:none;min-height:60px;line-height:1.6}
+.grat-textarea:focus{border-color:var(--gold)}
+.grat-textarea::placeholder{color:var(--t3)}
+.grat-card{background:var(--tint-xs);border:1px solid var(--tint);border-radius:14px;padding:14px;margin-bottom:10px}
+.grat-card .grat-from{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.grat-card .grat-msg{font-size:13px;color:var(--cream);line-height:1.6}
+.grat-card .grat-time{font-size:10px;color:var(--t3);margin-top:6px}
+
 /* ===== HUB PAGES ===== */
 .hub-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
 .hub-card{padding:20px 14px;border-radius:14px;text-align:center;cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);transition:all .2s}
@@ -701,7 +732,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="slbl">Tools</div>
   <div class="hub-grid">
     <div class="hub-card" onclick="go('ai')"><span class="hc-icon">✧</span><div class="hc-title">AI Assistant</div><div class="hc-sub">Chat with Claude</div></div>
-    <div class="hub-card soon"><span class="hc-icon">❓</span><div class="hc-title">Daily Question</div><div class="hc-sub">Spark conversation</div></div>
+    <div class="hub-card" onclick="go('question')"><span class="hc-icon">❓</span><div class="hc-title">Daily Question</div><div class="hc-sub">Answer together</div></div>
   </div>
 
   <div class="slbl">Workouts</div>
@@ -720,7 +751,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
   <div class="hub-grid">
     <div class="hub-card soon"><span class="hc-icon">🎁</span><div class="hc-title">Wishlists</div><div class="hc-sub">Gift ideas</div></div>
-    <div class="hub-card soon"><span class="hc-icon">🙏</span><div class="hc-title">Gratitude</div><div class="hc-sub">Daily thankfulness</div></div>
+    <div class="hub-card" onclick="go('gratitude')"><span class="hc-icon">🙏</span><div class="hc-title">Gratitude</div><div class="hc-sub">Daily thankfulness</div></div>
   </div>
 
   <div class="slbl">Settings</div>
@@ -732,6 +763,45 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="hub-card" onclick="switchUser()"><span class="hc-icon">↔</span><div class="hc-title">Switch Profile</div><div class="hc-sub">Change account</div></div>
     <div class="hub-card" onclick="logout()"><span class="hc-icon">←</span><div class="hc-title">Log Out</div><div class="hc-sub">Sign out</div></div>
   </div>
+</div>
+</div>
+
+<!-- ===== DAILY QUESTION ===== -->
+<div class="pg" id="pg-question">
+<div class="ctn">
+  <div class="phd"><h1>Question of the Day</h1><p>Answer together, reveal together</p></div>
+
+  <!-- Streak -->
+  <div class="streak-bar" id="streak-bar">
+    <span class="streak-fire">🔥</span>
+    <span class="streak-count" id="streak-count">0</span>
+    <span class="streak-label">day streak</span>
+  </div>
+
+  <!-- Today's Question -->
+  <div class="dq-card" id="dq-card">
+    <div class="dq-category" id="dq-category">Loading...</div>
+    <div class="dq-question" id="dq-question">...</div>
+    <input class="dq-input" id="dq-answer" placeholder="Your answer..." onkeydown="if(event.key==='Enter')submitDailyAnswer()">
+    <button class="dq-submit" onclick="submitDailyAnswer()">Submit Answer</button>
+    <div class="dq-answers" id="dq-answers"></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== GRATITUDE ===== -->
+<div class="pg" id="pg-gratitude">
+<div class="ctn">
+  <div class="phd"><h1>Gratitude</h1><p>What you're thankful for</p></div>
+
+  <div class="slbl">Today's Gratitude</div>
+  <div class="grat-compose">
+    <textarea class="grat-textarea" id="grat-input" placeholder="One thing I'm grateful for about you today..."></textarea>
+    <button class="dq-submit" onclick="submitGratitude()" style="margin-top:8px">Share Gratitude 🙏</button>
+  </div>
+
+  <div class="slbl">Gratitude Feed</div>
+  <div id="grat-feed"><div class="empty">No gratitude entries yet. Share the first one.</div></div>
 </div>
 </div>
 
@@ -1014,6 +1084,10 @@ function finishLogin() {
   listenLetters();
   listenMilestones();
   listenCountdowns();
+  listenDailyAnswers();
+  listenStreak();
+  listenGratitude();
+  loadDailyQuestion();
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
@@ -1030,7 +1104,7 @@ function updateApiKey() {
 
 // ===== NAV =====
 // Map sub-pages to their parent tab
-const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more' };
+const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more', 'question': 'more', 'gratitude': 'more' };
 
 function go(p) {
   const current = document.querySelector('.pg.on');
@@ -1092,6 +1166,7 @@ async function submitMood() {
   document.getElementById('mood-note').value = '';
   selectedMood = 0;
   document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
+  updateStreak();
   toast('Check-in saved ♡');
 }
 
@@ -1477,6 +1552,185 @@ function renderCountdowns(countdowns) {
   </div>`).join('');
   html += '<div class="cd-add" onclick="toggleCdForm()"><span>+</span><div>Add Countdown</div></div>';
   el.innerHTML = html;
+}
+
+// ===== DAILY QUESTIONS =====
+const QUESTIONS = [
+  {q:"What's a memory of us you replay in your head?",c:"Memory"},
+  {q:"What's something small I do that makes your day?",c:"Deep"},
+  {q:"If we could teleport anywhere right now, where would you pick?",c:"Fun"},
+  {q:"What song makes you think of us?",c:"Memory"},
+  {q:"What's one thing you'd love for us to try together?",c:"Future"},
+  {q:"What was your first impression of me?",c:"Memory"},
+  {q:"What quality do you admire most in me?",c:"Deep"},
+  {q:"Describe your perfect lazy Sunday with me.",c:"Fun"},
+  {q:"What's a goal you want us to achieve together this year?",c:"Future"},
+  {q:"What's the funniest moment we've shared?",c:"Memory"},
+  {q:"What do you think makes our relationship unique?",c:"Deep"},
+  {q:"If you wrote a book about us, what would the title be?",c:"Fun"},
+  {q:"What's something new you've learned about yourself because of us?",c:"Deep"},
+  {q:"What's a place you've always wanted to visit with me?",c:"Future"},
+  {q:"What's one thing I do that always makes you smile?",c:"Deep"},
+  {q:"What's your favorite meal we've had together?",c:"Memory"},
+  {q:"If we had a whole week off together, what would we do?",c:"Future"},
+  {q:"What's a challenge we've overcome that made us stronger?",c:"Deep"},
+  {q:"What do you love most about how we communicate?",c:"Deep"},
+  {q:"What's a tradition you'd love for us to start?",c:"Future"},
+  {q:"What's the best surprise you've ever gotten from me?",c:"Memory"},
+  {q:"What does 'home' feel like to you?",c:"Deep"},
+  {q:"What would our couple superpower be?",c:"Fun"},
+  {q:"What's a lesson love has taught you?",c:"Deep"},
+  {q:"What's on your relationship bucket list?",c:"Future"},
+  {q:"What's a movie or show that reminds you of us?",c:"Fun"},
+  {q:"How do you know when I'm thinking about you?",c:"Deep"},
+  {q:"What's the bravest thing you've done for love?",c:"Deep"},
+  {q:"If you could relive one day with me, which would it be?",c:"Memory"},
+  {q:"What does your dream future with me look like?",c:"Future"},
+  {q:"What's something you've never told me but want to?",c:"Deep"},
+  {q:"What's your favorite inside joke we have?",c:"Fun"},
+  {q:"What do you need more of in our relationship?",c:"Deep"},
+  {q:"What's a skill you'd love for us to learn together?",c:"Future"},
+  {q:"What moment made you realize this was real?",c:"Memory"},
+  {q:"What does unconditional love mean to you?",c:"Deep"},
+  {q:"Beach vacation or mountain getaway with me?",c:"Fun"},
+  {q:"What's the hardest part about missing each other?",c:"Deep"},
+  {q:"What's a date idea you've been wanting to try?",c:"Future"},
+  {q:"What's the most thoughtful thing I've done for you?",c:"Memory"},
+];
+
+function getTodayQuestion() {
+  const today = new Date();
+  const dayOfYear = Math.floor((today - new Date(today.getFullYear(),0,0)) / (1000*60*60*24));
+  return QUESTIONS[dayOfYear % QUESTIONS.length];
+}
+
+function loadDailyQuestion() {
+  const q = getTodayQuestion();
+  const catEl = document.getElementById('dq-category');
+  const qEl = document.getElementById('dq-question');
+  if (catEl) catEl.textContent = q.c;
+  if (qEl) qEl.textContent = q.q;
+}
+
+async function submitDailyAnswer() {
+  if (!db || !user) return;
+  const input = document.getElementById('dq-answer');
+  const answer = input.value.trim();
+  if (!answer) { toast('Write an answer first'); return; }
+  const today = new Date().toISOString().split('T')[0];
+  await db.ref('dailyAnswers/' + today + '/' + user).set({
+    answer, userName: NAMES[user], timestamp: Date.now()
+  });
+  input.value = '';
+  toast('Answer saved! ✨');
+}
+
+function listenDailyAnswers() {
+  const today = new Date().toISOString().split('T')[0];
+  db.ref('dailyAnswers/' + today).on('value', snap => {
+    const data = snap.val() || {};
+    renderDailyAnswers(data);
+  });
+}
+
+function renderDailyAnswers(data) {
+  const el = document.getElementById('dq-answers');
+  const inputRow = document.getElementById('dq-answer');
+  const submitBtn = inputRow ? inputRow.nextElementSibling : null;
+  if (!el) return;
+
+  const myAnswer = data[user];
+  const theirAnswer = data[partner];
+
+  if (myAnswer && inputRow) {
+    inputRow.style.display = 'none';
+    if (submitBtn) submitBtn.style.display = 'none';
+  }
+
+  let html = '';
+  if (myAnswer) {
+    html += `<div class="dq-answer mine"><div class="dq-answer-name">${myAnswer.userName || 'You'}</div>${myAnswer.answer}</div>`;
+  }
+  if (theirAnswer) {
+    html += `<div class="dq-answer theirs"><div class="dq-answer-name">${theirAnswer.userName || NAMES[partner]}</div>${theirAnswer.answer}</div>`;
+  } else if (myAnswer) {
+    html += '<div class="dq-waiting">Waiting for ' + NAMES[partner] + ' to answer...</div>';
+  }
+  el.innerHTML = html;
+}
+
+// ===== STREAKS =====
+function listenStreak() {
+  db.ref('streaks').on('value', snap => {
+    const data = snap.val() || { current: 0, longest: 0 };
+    const countEl = document.getElementById('streak-count');
+    if (countEl) countEl.textContent = data.current || 0;
+  });
+}
+
+async function updateStreak() {
+  if (!db || !user) return;
+  const today = new Date().toISOString().split('T')[0];
+  const snap = await db.ref('streaks').once('value');
+  const data = snap.val() || { current: 0, longest: 0, lastCheckIn: {} };
+  if (!data.lastCheckIn) data.lastCheckIn = {};
+  data.lastCheckIn[user] = today;
+
+  // Check if both checked in today
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  const herToday = data.lastCheckIn.her === today;
+  const himToday = data.lastCheckIn.him === today;
+  const herYesterday = data.lastCheckIn.her === yesterday || data.lastCheckIn.her === today;
+  const himYesterday = data.lastCheckIn.him === yesterday || data.lastCheckIn.him === today;
+
+  if (herToday && himToday) {
+    if (!herYesterday || !himYesterday) data.current = 1;
+    else data.current = (data.current || 0) + 1;
+    if (data.current > (data.longest || 0)) data.longest = data.current;
+  }
+
+  await db.ref('streaks').set(data);
+}
+
+// ===== GRATITUDE =====
+async function submitGratitude() {
+  if (!db || !user) return;
+  const input = document.getElementById('grat-input');
+  const text = input.value.trim();
+  if (!text) { toast('Write something you\'re grateful for'); return; }
+  const entry = {
+    from: user,
+    fromName: NAMES[user],
+    message: text,
+    date: new Date().toISOString().split('T')[0],
+    timestamp: Date.now()
+  };
+  await db.ref('gratitude').push(entry);
+  input.value = '';
+  toast('Gratitude shared 🙏');
+}
+
+function listenGratitude() {
+  db.ref('gratitude').orderByChild('timestamp').limitToLast(20).on('value', snap => {
+    const entries = [];
+    snap.forEach(c => entries.push(c.val()));
+    entries.reverse();
+    renderGratitude(entries);
+  });
+}
+
+function renderGratitude(entries) {
+  const el = document.getElementById('grat-feed');
+  if (!el) return;
+  if (!entries.length) { el.innerHTML = '<div class="empty">No gratitude entries yet. Share the first one.</div>'; return; }
+  el.innerHTML = entries.map(g => {
+    const time = new Date(g.timestamp);
+    const ts = time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `<div class="grat-card">
+      <div class="grat-from">${g.fromName || 'Someone'} · ${ts}</div>
+      <div class="grat-msg">${g.message.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    </div>`;
+  }).join('');
 }
 
 // ===== TOAST =====
