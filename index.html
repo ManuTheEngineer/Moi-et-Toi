@@ -2397,7 +2397,7 @@ function renderMoodFeed(moods) {
     return `<div class="mh-item">
       <div class="mh-emoji">${emojis[m.mood]}</div>
       <div class="mh-info">
-        <div class="mh-name">${m.userName || 'Unknown'}</div>
+        <div class="mh-name">${m.user === user ? 'You' : (m.userName || '?')}</div>
         <div class="mh-detail">${energyLbls[m.energy] || ''} energy</div>
         ${m.note ? `<div class="mh-note">${m.note}</div>` : ''}
       </div>
@@ -2734,8 +2734,8 @@ function addEx() {
 }
 
 function updLogSliders() {
-  const eLabels = ['', '🌙 Rest Needed', '☁ Low', '☀ Steady', '✨ Strong', '⚡ On Fire'];
-  const mLabels = ['', '😴 Tough', '😐 Okay', '🙂 Good', '😊 Great', '🔥 Amazing'];
+  const eLabels = ['', 'Drained', 'Low', 'Steady', 'Strong', 'On fire'];
+  const mLabels = ['', 'Tough', 'Okay', 'Good', 'Great', 'Amazing'];
   document.getElementById('log-e').oninput = function() { document.getElementById('log-ev').textContent = eLabels[this.value]; };
   document.getElementById('log-m').oninput = function() { document.getElementById('log-mv').textContent = mLabels[this.value]; };
 }
@@ -2896,6 +2896,7 @@ async function saveMilestone() {
   const emoji = document.getElementById('ms-emoji').value.trim() || '✨';
   const desc = document.getElementById('ms-desc').value.trim();
   if (!title || !date) { toast('Title and date required'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   const entry = {
     title, date, emoji, description: desc,
     user: user, userName: NAMES[user], timestamp: Date.now()
@@ -2905,6 +2906,7 @@ async function saveMilestone() {
   document.getElementById('ms-date').value = '';
   document.getElementById('ms-emoji').value = '';
   document.getElementById('ms-desc').value = '';
+  if (btn) { btn.disabled = false; btn.textContent = 'Save milestone'; }
   toggleMsForm();
   toast('Milestone saved');
 }
@@ -2944,6 +2946,7 @@ async function saveCountdown() {
   const date = document.getElementById('cd-date').value;
   const emoji = document.getElementById('cd-emoji').value.trim() || '⏳';
   if (!title || !date) { toast('Title and date required'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   const entry = {
     title, date, emoji,
     createdBy: user, timestamp: Date.now()
@@ -2952,6 +2955,7 @@ async function saveCountdown() {
   document.getElementById('cd-title').value = '';
   document.getElementById('cd-date').value = '';
   document.getElementById('cd-emoji').value = '';
+  if (btn) { btn.disabled = false; btn.textContent = 'Add countdown'; }
   toggleCdForm();
   toast('Countdown added');
 }
@@ -3219,7 +3223,7 @@ function loadWYR() {
       if (data && data[partner]) {
         document.getElementById('wyr-' + data[partner].toLowerCase()).classList.add('partner-picked');
         const match = data[user] === data[partner];
-        document.getElementById('wyr-result').textContent = match ? 'You both picked the same! 🎉' : 'You picked differently! 🤔';
+        document.getElementById('wyr-result').textContent = match ? 'You both picked the same' : 'You picked differently';
       }
     });
   }
@@ -3236,11 +3240,11 @@ async function pickWYR(choice) {
   if (snap.val()) {
     document.getElementById('wyr-' + snap.val().toLowerCase()).classList.add('partner-picked');
     const match = choice === snap.val();
-    document.getElementById('wyr-result').textContent = match ? 'You both picked the same! 🎉' : 'You picked differently! 🤔';
+    document.getElementById('wyr-result').textContent = match ? 'You both picked the same' : 'You picked differently';
   } else {
     document.getElementById('wyr-result').textContent = 'Waiting for ' + NAMES[partner] + '...';
   }
-  toast('Answer saved!');
+  toast('Answer saved');
 }
 
 function nextWYR() { wyrIndex = (wyrIndex + 1) % WYR_QUESTIONS.length; loadWYR(); }
@@ -3252,12 +3256,14 @@ async function submitQuizQ() {
   const q = document.getElementById('quiz-q').value.trim();
   const a = document.getElementById('quiz-a').value.trim();
   if (!q || !a) { toast('Question and answer required'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('games/knowme/' + user).push({
     question: q, answer: a, timestamp: Date.now()
   });
   document.getElementById('quiz-q').value = '';
   document.getElementById('quiz-a').value = '';
-  toast('Question added! 🧠');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add question'; }, 1500); }
+  toast('Question added');
 }
 
 function listenQuiz() {
@@ -3291,11 +3297,11 @@ function checkQuizAnswer(input, correct) {
   const answer = correct.toLowerCase();
   const parent = input.closest('.quiz-item');
   if (guess === answer) {
-    parent.innerHTML += '<div class="quiz-item-a correct">Correct! ✅ ' + correct + '</div>';
+    parent.innerHTML += '<div class="quiz-item-a correct">Correct —' + correct + '</div>';
     input.remove();
-    toast('Correct!');
+    toast('Correct');
   } else {
-    toast('Not quite! Try again 🤔');
+    toast('Not quite, try again');
   }
 }
 
@@ -3308,6 +3314,7 @@ async function addBucketItem() {
   const title = document.getElementById('bl-input').value.trim();
   const emoji = document.getElementById('bl-emoji').value.trim() || '✨';
   if (!title) { toast('Enter a dream first'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   // Detect category from keywords
   let cat = 'other';
   const lower = title.toLowerCase();
@@ -3323,6 +3330,7 @@ async function addBucketItem() {
   });
   document.getElementById('bl-input').value = '';
   document.getElementById('bl-emoji').value = '';
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
   toast('Dream added');
 }
 
@@ -3352,7 +3360,7 @@ function renderBucketList(items) {
     <span class="bl-emoji">${i.emoji}</span>
     <div class="bl-info">
       <div class="bl-title">${i.title}</div>
-      <div class="bl-meta">${i.addedByName || 'Unknown'} · ${i.category}</div>
+      <div class="bl-meta">${i.addedBy === user ? 'You' : (i.addedByName || '?')} · ${i.category}</div>
     </div>
   </div>`).join('');
 }
@@ -3370,13 +3378,15 @@ async function addWishItem() {
   const link = document.getElementById('wl-link').value.trim();
   const priority = document.getElementById('wl-priority').value;
   if (!title) { toast('Enter an item first'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('wishlists/' + user).push({
     title, link, priority,
     purchased: false, timestamp: Date.now()
   });
   document.getElementById('wl-input').value = '';
   document.getElementById('wl-link').value = '';
-  toast('Added to wishlist! 🎁');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
+  toast('Added to wishlist');
 }
 
 function listenWishlists() {
@@ -3410,7 +3420,7 @@ function listenWishlists() {
         <span class="wl-priority ${i.priority}">${i.priority === 'love' ? '♡ Love it' : i.priority === 'want' ? '★ Want it' : '● Need it'}</span>
         ${i.link ? `<a class="wl-link" href="${i.link}" target="_blank">View →</a>` : ''}
       </div>
-      ${!i.purchased ? `<button class="wl-buy" onclick="markPurchased('${i._key}')">Got it 🎁</button>` : '<span style="font-size:10px;color:var(--gold)">✓ Got</span>'}
+      ${!i.purchased ? `<button class="wl-buy" onclick="markPurchased('${i._key}')">Got it</button>` : '<span style="font-size:10px;color:var(--gold)">✓ Got</span>'}
     </div>`).join('');
   });
 }
@@ -3418,7 +3428,7 @@ function listenWishlists() {
 async function markPurchased(key) {
   if (!db) return;
   await db.ref('wishlists/' + partner + '/' + key + '/purchased').set(true);
-  toast('Marked as purchased! 🎁');
+  toast('Marked as purchased');
 }
 
 // ===== DATE NIGHT GENERATOR =====
@@ -3489,7 +3499,7 @@ async function saveDateIdea() {
     ...currentDateIdea, savedBy: user, savedByName: NAMES[user],
     done: false, timestamp: Date.now()
   });
-  toast('Date idea saved!');
+  toast('Date idea saved');
 }
 
 function listenDateNights() {
@@ -3503,17 +3513,20 @@ function listenDateNights() {
     const hEl = document.getElementById('dn-history');
     if (sEl) {
       if (!saved.length) sEl.innerHTML = '<div class="empty">No saved ideas yet. Spin the wheel!</div>';
-      else sEl.innerHTML = saved.map(i => `<div class="dn-saved-card">
+      else sEl.innerHTML = saved.map(i => {
+        const who = i.savedBy === user ? 'you' : (i.savedByName||'?');
+        return `<div class="dn-saved-card">
         <div class="dn-saved-emoji">${i.emoji}</div>
-        <div class="dn-saved-info"><div class="dn-saved-title">${i.title}</div><div class="dn-saved-meta">${i.cat} · saved by ${i.savedByName||'?'}</div></div>
-        <button class="dn-done-btn" onclick="markDateDone('${i._key}')">Did it!</button>
-      </div>`).join('');
+        <div class="dn-saved-info"><div class="dn-saved-title">${i.title}</div><div class="dn-saved-meta">${i.cat} · saved by ${who}</div></div>
+        <button class="dn-done-btn" onclick="markDateDone('${i._key}')">Did it</button>
+      </div>`;
+      }).join('');
     }
     if (hEl) {
       if (!done.length) hEl.innerHTML = '<div class="empty">No dates done yet. Go on one!</div>';
       else hEl.innerHTML = done.map(i => {
-        const ts = new Date(i.doneAt||i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-        return `<div class="dn-saved-card" style="opacity:.7"><div class="dn-saved-emoji">${i.emoji}</div><div class="dn-saved-info"><div class="dn-saved-title">${i.title}</div><div class="dn-saved-meta">${ts} · ${i.rating?'★'.repeat(i.rating):''}</div></div></div>`;
+        const ts = timeAgo(new Date(i.doneAt||i.timestamp));
+        return `<div class="dn-saved-card" style="opacity:.7"><div class="dn-saved-emoji">${i.emoji}</div><div class="dn-saved-info"><div class="dn-saved-title">${i.title}</div><div class="dn-saved-meta">${ts}${i.rating?' · '+'★'.repeat(i.rating):''}</div></div></div>`;
       }).join('');
     }
   });
@@ -3523,7 +3536,7 @@ async function markDateDone(key) {
   if (!db) return;
   const rating = parseInt(prompt('Rate this date 1-5 stars:') || '0');
   await db.ref('dateNights/' + key).update({ done: true, doneAt: Date.now(), rating: Math.min(5, Math.max(0, rating)) });
-  toast('Date completed! Nice one!');
+  toast('Date completed');
 }
 
 // ===== LOVE LANGUAGES =====
@@ -3659,6 +3672,7 @@ async function submitCheckin() {
   const need = document.getElementById('ci-need').value.trim();
   const energy = parseInt(document.getElementById('ci-energy').value);
   if (!well && !better && !need) { toast('Share at least one thought'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   const week = getWeekId();
   await db.ref('checkins/' + week + '/' + user).set({
     well, better, need, energy,
@@ -3667,6 +3681,7 @@ async function submitCheckin() {
   document.getElementById('ci-well').value = '';
   document.getElementById('ci-better').value = '';
   document.getElementById('ci-need').value = '';
+  if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Submit'; }, 1500); }
   toast('Check-in saved');
 }
 
@@ -3706,7 +3721,7 @@ function renderCheckinFeed(weeks) {
     [user, partner].forEach(u => {
       const d = w.data[u];
       if (!d) return;
-      const name = u === user ? NAMES[user] : NAMES[partner];
+      const name = u === user ? 'You' : NAMES[partner];
       html += `<div class="ci-card-name">${name}</div>`;
       if (d.well) html += `<div class="ci-card-q">What went well:</div><div class="ci-card-a">${d.well.replace(/</g,'&lt;')}</div>`;
       if (d.better) html += `<div class="ci-card-q">Could be better:</div><div class="ci-card-a">${d.better.replace(/</g,'&lt;')}</div>`;
@@ -3726,6 +3741,7 @@ async function addDream() {
   const cat = document.getElementById('dr-cat').value;
   const desc = document.getElementById('dr-desc').value.trim();
   if (!title) { toast('Describe your dream'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('dreams').push({
     title, emoji, category: cat, description: desc,
     addedBy: user, addedByName: NAMES[user],
@@ -3734,7 +3750,8 @@ async function addDream() {
   document.getElementById('dr-title').value = '';
   document.getElementById('dr-emoji').value = '';
   document.getElementById('dr-desc').value = '';
-  toast('Dream added ✧');
+  if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add dream'; }, 1500); }
+  toast('Dream added');
 }
 
 function filterDreams(cat, el) {
@@ -3758,7 +3775,8 @@ function renderDreams(items) {
   const filtered = dreamFilter === 'all' ? items : items.filter(i => i.category === dreamFilter);
   if (!filtered.length) { el.innerHTML = '<div class="empty">No dreams in this category yet.</div>'; return; }
   el.innerHTML = filtered.map(i => {
-    const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const ts = timeAgo(new Date(i.timestamp));
+    const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
     return `<div class="dr-card ${i.achieved?'achieved':''}">
       <div class="dr-check" onclick="toggleDream('${i._key}',${!i.achieved})">${i.achieved?'✓':''}</div>
       <div class="dr-emoji">${i.emoji}</div>
@@ -3766,7 +3784,7 @@ function renderDreams(items) {
         <div class="dr-title">${i.title}</div>
         <div class="dr-cat-tag">${i.category}</div>
         ${i.description ? `<div class="dr-desc">${i.description.replace(/</g,'&lt;')}</div>` : ''}
-        <div class="dr-meta">${i.addedByName||'?'} · ${ts}</div>
+        <div class="dr-meta">${who} · ${ts}</div>
       </div>
     </div>`;
   }).join('');
@@ -3775,7 +3793,7 @@ function renderDreams(items) {
 async function toggleDream(key, achieved) {
   if (!db) return;
   await db.ref('dreams/' + key + '/achieved').set(achieved);
-  if (achieved) { toast('Dream achieved!'); showConfetti(); }
+  if (achieved) { toast('Dream achieved'); showConfetti(); }
 }
 
 // ===== HER SPACE =====
@@ -3927,6 +3945,7 @@ async function logPR() {
   const weight = document.getElementById('him-pr-weight').value.trim();
   const reps = document.getElementById('him-pr-reps').value.trim();
   if (!exercise) { toast('Enter an exercise'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('hisWellness/prs').push({
     exercise, weight: weight || '--', reps: reps || '--',
     timestamp: Date.now(), date: new Date().toISOString().split('T')[0]
@@ -3934,7 +3953,8 @@ async function logPR() {
   document.getElementById('him-pr-exercise').value = '';
   document.getElementById('him-pr-weight').value = '';
   document.getElementById('him-pr-reps').value = '';
-  toast('PR logged!');
+  if (btn) { btn.textContent = 'Logged'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Log PR'; }, 1500); }
+  toast('PR logged');
 }
 
 function listenPRs() {
@@ -3946,7 +3966,7 @@ function listenPRs() {
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Log your first PR</div>'; return; }
     el.innerHTML = items.map(i => {
-      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const ts = timeAgo(new Date(i.timestamp));
       return `<div class="him-pr-card"><div class="him-pr-name">${i.exercise}</div><div class="him-pr-val">${i.weight}${i.weight!=='--'?' lbs':''} × ${i.reps}</div><div class="him-pr-date">${ts}</div></div>`;
     }).join('');
   });
@@ -3978,11 +3998,13 @@ async function addPersonalGoal(who) {
   const inputId = who === 'her' ? 'hs-goal-input' : 'him-goal-input';
   const title = document.getElementById(inputId).value.trim();
   if (!title) { toast('Enter a goal'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('personalGoals/' + who).push({
     title, done: false, timestamp: Date.now()
   });
   document.getElementById(inputId).value = '';
-  toast('Goal added!');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add goal'; }, 1500); }
+  toast('Goal added');
 }
 
 function listenPersonalGoals(who) {
@@ -3995,7 +4017,7 @@ function listenPersonalGoals(who) {
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">What are you working towards?</div>'; return; }
     el.innerHTML = items.map(i => {
-      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const ts = timeAgo(new Date(i.timestamp));
       return `<div class="pg-goal ${i.done?'done':''}">
         <div class="pg-goal-check" onclick="toggleGoal('${who}','${i._key}',${!i.done})">${i.done?'✓':''}</div>
         <div class="pg-goal-text">${i.title}</div>
@@ -4008,7 +4030,7 @@ function listenPersonalGoals(who) {
 async function toggleGoal(who, key, done) {
   if (!db) return;
   await db.ref('personalGoals/' + who + '/' + key + '/done').set(done);
-  if (done) toast('Goal completed!');
+  if (done) toast('Goal completed');
 }
 
 // ===== CULTURE EXCHANGE =====
@@ -4018,12 +4040,14 @@ async function addPhrase() {
   const meaning = document.getElementById('cx-meaning').value.trim();
   const lang = document.getElementById('cx-lang').value;
   if (!word || !meaning) { toast('Word and meaning required'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('culture/phrases').push({
     word, meaning, lang, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('cx-word').value = '';
   document.getElementById('cx-meaning').value = '';
-  toast('Phrase added!');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add phrase'; }, 1500); }
+  toast('Phrase added');
 }
 
 function listenPhrases() {
@@ -4033,10 +4057,13 @@ function listenPhrases() {
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Teach each other your languages</div>'; return; }
     const langLabels = {ewe:'Ewe',french:'French',mina:'Mina',english:'English',slang:'Texas Slang'};
-    el.innerHTML = items.map(i => `<div class="cx-phrase">
+    el.innerHTML = items.map(i => {
+      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
+      return `<div class="cx-phrase">
       <div style="flex:1"><div class="cx-phrase-word">${i.word}</div><div class="cx-phrase-meaning">${i.meaning}</div></div>
-      <div style="text-align:right"><div class="cx-phrase-lang">${langLabels[i.lang]||i.lang}</div><div class="cx-phrase-by">${i.addedByName||'?'}</div></div>
-    </div>`).join('');
+      <div style="text-align:right"><div class="cx-phrase-lang">${langLabels[i.lang]||i.lang}</div><div class="cx-phrase-by">${who}</div></div>
+    </div>`;
+    }).join('');
   });
 }
 
@@ -4047,6 +4074,7 @@ async function addTradition() {
   const origin = document.getElementById('cx-trad-origin').value;
   const desc = document.getElementById('cx-trad-desc').value.trim();
   if (!title) { toast('Describe the tradition'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('culture/traditions').push({
     title, emoji, origin, description: desc,
     addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
@@ -4054,7 +4082,8 @@ async function addTradition() {
   document.getElementById('cx-trad-title').value = '';
   document.getElementById('cx-trad-emoji').value = '';
   document.getElementById('cx-trad-desc').value = '';
-  toast('Tradition saved!');
+  if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add tradition'; }, 1500); }
+  toast('Tradition saved');
 }
 
 function listenTraditions() {
@@ -4065,12 +4094,13 @@ function listenTraditions() {
     if (!items.length) { el.innerHTML = '<div class="empty">Share your cultural traditions</div>'; return; }
     const originLabels = {togo:'From Togo',texas:'From Texas',ours:'Our Tradition'};
     el.innerHTML = items.map(i => {
-      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const ts = timeAgo(new Date(i.timestamp));
+      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
       return `<div class="cx-trad-card">
         <div class="cx-trad-origin ${i.origin}">${originLabels[i.origin]||i.origin}</div>
         <div class="cx-trad-title">${i.emoji} ${i.title}</div>
         ${i.description ? `<div class="cx-trad-desc">${i.description.replace(/</g,'&lt;')}</div>` : ''}
-        <div class="cx-trad-meta">${i.addedByName||'?'} · ${ts}</div>
+        <div class="cx-trad-meta">${who} · ${ts}</div>
       </div>`;
     }).join('');
   });
@@ -4083,6 +4113,7 @@ async function addRecipe() {
   const origin = document.getElementById('cx-recipe-origin').value;
   const how = document.getElementById('cx-recipe-how').value.trim();
   if (!name) { toast('Name the dish'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('culture/recipes').push({
     name, emoji, origin, recipe: how,
     addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
@@ -4090,7 +4121,8 @@ async function addRecipe() {
   document.getElementById('cx-recipe-name').value = '';
   document.getElementById('cx-recipe-emoji').value = '';
   document.getElementById('cx-recipe-how').value = '';
-  toast('Recipe saved!');
+  if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add recipe'; }, 1500); }
+  toast('Recipe saved');
 }
 
 function listenRecipes() {
@@ -4101,11 +4133,12 @@ function listenRecipes() {
     if (!items.length) { el.innerHTML = '<div class="empty">Share recipes from your cultures</div>'; return; }
     const originLabels = {togo:'Togolese',texas:'Texan',fusion:'Fusion'};
     el.innerHTML = items.map(i => {
+      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
       return `<div class="cx-recipe-card">
         <div class="cx-trad-origin ${i.origin==='togo'?'togo':i.origin==='texas'?'texas':'ours'}">${originLabels[i.origin]||i.origin}</div>
         <div class="cx-trad-title">${i.emoji} ${i.name}</div>
         ${i.recipe ? `<div class="cx-trad-desc">${i.recipe.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>` : ''}
-        <div class="cx-trad-meta">${i.addedByName||'?'}</div>
+        <div class="cx-trad-meta">${who}</div>
       </div>`;
     }).join('');
   });
@@ -4179,11 +4212,13 @@ async function saveConvoNote() {
   if (!db || !user) return;
   const text = document.getElementById('dt-journal').value.trim();
   if (!text) { toast('Write a reflection first'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('deepTalkJournal').push({
     text, user, userName: NAMES[user], timestamp: Date.now(),
     date: new Date().toISOString().split('T')[0]
   });
   document.getElementById('dt-journal').value = '';
+  if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Save'; }, 1500); }
   toast('Reflection saved');
 }
 
@@ -4194,8 +4229,9 @@ function listenConvoNotes() {
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">After a deep conversation, write what you learned.</div>'; return; }
     el.innerHTML = items.map(i => {
-      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      return `<div class="dt-note-card"><div class="dt-note-meta">${i.userName||'?'} · ${ts}</div><div class="dt-note-text">${i.text.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div></div>`;
+      const ts = timeAgo(new Date(i.timestamp));
+      const who = i.user === user ? 'You' : (i.userName||'?');
+      return `<div class="dt-note-card"><div class="dt-note-meta">${who} · ${ts}</div><div class="dt-note-text">${i.text.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div></div>`;
     }).join('');
   });
 }
@@ -4246,12 +4282,14 @@ async function addBabyName() {
   const name = document.getElementById('fam-name-input').value.trim();
   const gender = document.getElementById('fam-name-gender').value;
   if (!name) { toast('Enter a name'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('family/names').push({
     name, gender, addedBy: user, addedByName: NAMES[user],
     loved: {}, timestamp: Date.now()
   });
   document.getElementById('fam-name-input').value = '';
-  toast('Name added!');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add name'; }, 1500); }
+  toast('Name added');
 }
 
 function listenBabyNames() {
@@ -4282,9 +4320,11 @@ async function addFamilyGoal() {
   if (!db || !user) return;
   const title = document.getElementById('fam-goal-input').value.trim();
   if (!title) { toast('Enter a goal'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('family/goals').push({ title, done: false, addedBy: user, timestamp: Date.now() });
   document.getElementById('fam-goal-input').value = '';
-  toast('Family goal added!');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add goal'; }, 1500); }
+  toast('Goal added');
 }
 
 function listenFamilyGoals() {
@@ -4310,11 +4350,13 @@ async function addValue() {
   if (!db || !user) return;
   const title = document.getElementById('fdn-value-input').value.trim();
   if (!title) { toast('Enter a value'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('foundation/values').push({
     title, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('fdn-value-input').value = '';
-  toast('Value added!');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add value'; }, 1500); }
+  toast('Value added');
 }
 
 function listenValues() {
@@ -4324,11 +4366,14 @@ function listenValues() {
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">What do you both stand for?</div>'; return; }
     const icons = ['◆','✦','♡','⬡','◇','✧','●','○'];
-    el.innerHTML = items.map((i,idx) => `<div class="fdn-value-card">
+    el.innerHTML = items.map((i,idx) => {
+      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
+      return `<div class="fdn-value-card">
       <div class="fdn-value-icon">${icons[idx%icons.length]}</div>
       <div class="fdn-value-text">${i.title}</div>
-      <div class="fdn-value-by">${i.addedByName||'?'}</div>
-    </div>`).join('');
+      <div class="fdn-value-by">${who}</div>
+    </div>`;
+    }).join('');
   });
 }
 
@@ -4351,11 +4396,13 @@ async function addAgreement() {
   if (!db || !user) return;
   const text = document.getElementById('fdn-agree-input').value.trim();
   if (!text) return;
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('foundation/customAgreements').push({
     text, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('fdn-agree-input').value = '';
-  toast('Agreement added!');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
+  toast('Agreement added');
 }
 
 function listenCustomAgreements() {
@@ -4403,10 +4450,12 @@ async function addPrayer() {
   if (!db || !user) return;
   const text = document.getElementById('sp-prayer-input').value.trim();
   if (!text) { toast('Share your prayer'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Sharing...'; }
   await db.ref('spiritual/prayers').push({
     text, user, userName: NAMES[user], timestamp: Date.now(), prayedFor: {}
   });
   document.getElementById('sp-prayer-input').value = '';
+  if (btn) { btn.textContent = 'Shared'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Share'; }, 1500); }
   toast('Prayer shared');
 }
 
@@ -4417,12 +4466,13 @@ function listenPrayers() {
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Share what you need prayer for</div>'; return; }
     el.innerHTML = items.map(i => {
-      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      const ts = timeAgo(new Date(i.timestamp));
+      const who = i.user === user ? 'You' : (i.userName||'?');
       const prayed = i.prayedFor && i.prayedFor[user];
       return `<div class="sp-prayer-card">
-        <div class="sp-prayer-from">${i.userName||'?'} · ${ts}</div>
+        <div class="sp-prayer-from">${who} · ${ts}</div>
         <div class="sp-prayer-text">${i.text.replace(/</g,'&lt;')}</div>
-        <div class="sp-prayer-pray" onclick="prayFor('${i._key}')">${prayed?'🙏 Prayed for':'Tap to pray for this'}</div>
+        <div class="sp-prayer-pray" onclick="prayFor('${i._key}')">${prayed?'Prayed for':'Tap to pray for this'}</div>
       </div>`;
     }).join('');
   });
@@ -4438,11 +4488,13 @@ async function addBlessing() {
   if (!db || !user) return;
   const text = document.getElementById('sp-bless-input').value.trim();
   if (!text) { toast('Share a blessing'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Sharing...'; }
   await db.ref('spiritual/blessings').push({
     text, user, userName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('sp-bless-input').value = '';
-  toast('Blessing added');
+  if (btn) { btn.textContent = 'Shared'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Share'; }, 1500); }
+  toast('Blessing shared');
 }
 
 function listenBlessings() {
@@ -4452,8 +4504,9 @@ function listenBlessings() {
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Count your blessings together</div>'; return; }
     el.innerHTML = items.map(i => {
-      const ts = new Date(i.timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      return `<div class="sp-bless-card"><div class="sp-prayer-from">${i.userName||'?'} · ${ts}</div><div class="sp-prayer-text">${i.text.replace(/</g,'&lt;')}</div></div>`;
+      const ts = timeAgo(new Date(i.timestamp));
+      const who = i.user === user ? 'You' : (i.userName||'?');
+      return `<div class="sp-bless-card"><div class="sp-prayer-from">${who} · ${ts}</div><div class="sp-prayer-text">${i.text.replace(/</g,'&lt;')}</div></div>`;
     }).join('');
   });
 }
@@ -4462,10 +4515,12 @@ async function addIntention() {
   if (!db || !user) return;
   const text = document.getElementById('sp-intent-input').value.trim();
   if (!text) return;
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('spiritual/intentions').push({
     text, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('sp-intent-input').value = '';
+  if (btn) { btn.textContent = 'Set'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
   toast('Intention set');
 }
 
@@ -4475,9 +4530,10 @@ function listenIntentions() {
     const el = document.getElementById('sp-intentions');
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Set spiritual intentions together</div>'; return; }
-    el.innerHTML = items.map(i =>
-      `<div class="sp-intent-card"><div class="sp-intent-text">${i.text}</div><div class="sp-intent-by">${i.addedByName||'?'}</div></div>`
-    ).join('');
+    el.innerHTML = items.map(i => {
+      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
+      return `<div class="sp-intent-card"><div class="sp-intent-text">${i.text}</div><div class="sp-intent-by">${who}</div></div>`;
+    }).join('');
   });
 }
 
@@ -4488,13 +4544,15 @@ async function addSavingsGoal() {
   const target = parseFloat(document.getElementById('hl-goal-target').value) || 0;
   const saved = parseFloat(document.getElementById('hl-goal-saved').value) || 0;
   if (!name || !target) { toast('Name and target required'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('homelife/savings').push({
     name, target, saved, addedBy: user, timestamp: Date.now()
   });
   document.getElementById('hl-goal-name').value = '';
   document.getElementById('hl-goal-target').value = '';
   document.getElementById('hl-goal-saved').value = '';
-  toast('Savings goal added!');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add goal'; }, 1500); }
+  toast('Savings goal added');
 }
 
 function listenSavings() {
@@ -4520,7 +4578,7 @@ async function updateSavings(key) {
   const amount = parseFloat(prompt('Enter new saved amount:') || '0');
   if (amount > 0) {
     await db.ref('homelife/savings/' + key + '/saved').set(amount);
-    toast('Updated!');
+    toast('Updated');
   }
 }
 
@@ -4529,11 +4587,13 @@ async function addMeal() {
   const name = document.getElementById('hl-meal-input').value.trim();
   const day = document.getElementById('hl-meal-day').value;
   if (!name) { toast('Name a meal'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('homelife/meals').push({
     name, day, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('hl-meal-input').value = '';
-  toast('Meal added!');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add meal'; }, 1500); }
+  toast('Meal added');
 }
 
 function listenMeals() {
@@ -4542,9 +4602,10 @@ function listenMeals() {
     const el = document.getElementById('hl-meals');
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Plan your meals together</div>'; return; }
-    el.innerHTML = items.map(i =>
-      `<div class="hl-meal-card"><div class="hl-meal-day">${i.day==='anytime'?'':i.day}</div><div class="hl-meal-name">${i.name}</div><div class="hl-meal-by">${i.addedByName||'?'}</div></div>`
-    ).join('');
+    el.innerHTML = items.map(i => {
+      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
+      return `<div class="hl-meal-card"><div class="hl-meal-day">${i.day==='anytime'?'':i.day}</div><div class="hl-meal-name">${i.name}</div><div class="hl-meal-by">${who}</div></div>`;
+    }).join('');
   });
 }
 
@@ -4553,11 +4614,13 @@ async function addChore() {
   const name = document.getElementById('hl-chore-input').value.trim();
   const who = document.getElementById('hl-chore-who').value;
   if (!name) { toast('Name the task'); return; }
+  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('homelife/chores').push({
     name, assignedTo: who, done: false, timestamp: Date.now()
   });
   document.getElementById('hl-chore-input').value = '';
-  toast('Task added!');
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add task'; }, 1500); }
+  toast('Task added');
 }
 
 function listenChores() {
@@ -4566,7 +4629,7 @@ function listenChores() {
     const el = document.getElementById('hl-chores');
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Divide and conquer household tasks</div>'; return; }
-    const whoLabels = {shared:'Shared',her:NAMES.her,him:NAMES.him,alternate:'Alternate'};
+    const whoLabels = {shared:'Shared',her:user==='her'?'You':NAMES.her,him:user==='him'?'You':NAMES.him,alternate:'Alternate'};
     el.innerHTML = items.map(i =>
       `<div class="hl-chore-card ${i.done?'done':''}">
         <div class="hl-chore-check" onclick="toggleChore('${i._key}',${!i.done})">${i.done?'✓':''}</div>
