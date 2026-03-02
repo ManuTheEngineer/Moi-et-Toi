@@ -485,6 +485,32 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .grat-card .grat-msg{font-size:13px;color:var(--cream);line-height:1.6}
 .grat-card .grat-time{font-size:10px;color:var(--t3);margin-top:6px}
 
+/* ===== GAMES ===== */
+.wyr-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;padding:20px;margin-bottom:16px;text-align:center}
+.wyr-vs{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin:12px 0}
+.wyr-option{width:100%;padding:14px;border-radius:12px;border:1px solid var(--bdr);background:var(--bg3);color:var(--cream);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;margin-bottom:8px;text-align:center}
+.wyr-option:hover{border-color:var(--gold);background:var(--tint-xs)}
+.wyr-option:active{transform:scale(0.97)}
+.wyr-option.picked{border-color:var(--gold);background:var(--tint);color:var(--gold);font-weight:500}
+.wyr-option.partner-picked{border-color:var(--red);background:var(--red-s)}
+.wyr-result{margin-top:12px;font-size:12px;color:var(--t2);font-style:italic}
+.wyr-nav{display:flex;justify-content:center;gap:12px;margin-top:16px}
+.wyr-nav button{padding:10px 20px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t2);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.wyr-nav button:hover{border-color:var(--gold);color:var(--gold)}
+.wyr-nav button:active{transform:scale(0.97)}
+
+.quiz-form{margin-bottom:16px}
+.quiz-q{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;outline:none;margin-bottom:8px}
+.quiz-q:focus{border-color:var(--gold)}
+.quiz-q::placeholder{color:var(--t3)}
+.quiz-item{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:14px;margin-bottom:10px}
+.quiz-item-q{font-size:13px;font-weight:500;color:var(--cream);margin-bottom:6px}
+.quiz-item-a{font-size:12px;color:var(--t2)}
+.quiz-item-a.correct{color:var(--gold)}
+.quiz-score{text-align:center;padding:16px;background:var(--tint-xs);border:1px solid var(--tint);border-radius:14px;margin-bottom:16px}
+.quiz-score .score-num{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold)}
+.quiz-score .score-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
+
 /* ===== HUB PAGES ===== */
 .hub-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
 .hub-card{padding:20px 14px;border-radius:14px;text-align:center;cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);transition:all .2s}
@@ -746,7 +772,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <div class="slbl">Activities</div>
   <div class="hub-grid">
-    <div class="hub-card soon"><span class="hc-icon">🎮</span><div class="hc-title">Games</div><div class="hc-sub">Fun & quizzes</div></div>
+    <div class="hub-card" onclick="go('games')"><span class="hc-icon">🎮</span><div class="hc-title">Games</div><div class="hc-sub">Fun & quizzes</div></div>
     <div class="hub-card soon"><span class="hc-icon">🪣</span><div class="hc-title">Bucket List</div><div class="hc-sub">Dream together</div></div>
   </div>
   <div class="hub-grid">
@@ -802,6 +828,44 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <div class="slbl">Gratitude Feed</div>
   <div id="grat-feed"><div class="empty">No gratitude entries yet. Share the first one.</div></div>
+</div>
+</div>
+
+<!-- ===== GAMES ===== -->
+<div class="pg" id="pg-games">
+<div class="ctn">
+  <div class="phd"><h1>Games</h1><p>Play together</p></div>
+
+  <!-- Would You Rather -->
+  <div class="slbl">Would You Rather</div>
+  <div class="wyr-card" id="wyr-card">
+    <div class="dq-category">Would You Rather</div>
+    <button class="wyr-option" id="wyr-a" onclick="pickWYR('A')"></button>
+    <div class="wyr-vs">— or —</div>
+    <button class="wyr-option" id="wyr-b" onclick="pickWYR('B')"></button>
+    <div class="wyr-result" id="wyr-result"></div>
+  </div>
+  <div class="wyr-nav">
+    <button onclick="prevWYR()">← Previous</button>
+    <button onclick="nextWYR()">Next →</button>
+  </div>
+
+  <!-- How Well Do You Know Me -->
+  <div class="slbl" style="margin-top:28px">How Well Do You Know Me?</div>
+  <div class="card">
+    <div class="card-h"><span class="card-t">Create a Quiz</span><span class="card-s">For your partner</span></div>
+    <div class="quiz-form">
+      <input class="quiz-q" id="quiz-q" placeholder="Write a question about yourself...">
+      <input class="quiz-q" id="quiz-a" placeholder="The correct answer...">
+      <button class="dq-submit" onclick="submitQuizQ()">Add Question</button>
+    </div>
+    <div id="quiz-mine"></div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <div class="card-h"><span class="card-t"><span class="pname"></span>'s Quiz</span><span class="card-s">Test yourself</span></div>
+    <div id="quiz-theirs"><div class="empty">No quiz questions from your partner yet.</div></div>
+  </div>
 </div>
 </div>
 
@@ -1088,6 +1152,8 @@ function finishLogin() {
   listenStreak();
   listenGratitude();
   loadDailyQuestion();
+  loadWYR();
+  listenQuiz();
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
@@ -1104,7 +1170,7 @@ function updateApiKey() {
 
 // ===== NAV =====
 // Map sub-pages to their parent tab
-const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more', 'question': 'more', 'gratitude': 'more' };
+const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more', 'question': 'more', 'gratitude': 'more', 'games': 'more' };
 
 function go(p) {
   const current = document.querySelector('.pg.on');
@@ -1731,6 +1797,129 @@ function renderGratitude(entries) {
       <div class="grat-msg">${g.message.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
     </div>`;
   }).join('');
+}
+
+// ===== WOULD YOU RATHER =====
+const WYR_QUESTIONS = [
+  {a:"Travel the world together for a year",b:"Have a dream home together right now"},
+  {a:"Always know what your partner is thinking",b:"Always know what your partner is feeling"},
+  {a:"Cook a fancy dinner together",b:"Order in and watch a movie together"},
+  {a:"Go on a spontaneous road trip",b:"Plan a perfect vacation in detail"},
+  {a:"Relive your first date",b:"Skip to your 50th anniversary"},
+  {a:"Have a partner who gives amazing gifts",b:"Have a partner who writes you love letters"},
+  {a:"Live in a cabin in the mountains",b:"Live in a beach house by the ocean"},
+  {a:"Always agree on everything",b:"Have passionate debates that make you grow"},
+  {a:"Have breakfast in bed every morning",b:"Have a slow dance in the kitchen every evening"},
+  {a:"Know your love language perfectly",b:"Know your partner's dream future perfectly"},
+  {a:"Take a cooking class together",b:"Take a dance class together"},
+  {a:"Have a picnic under the stars",b:"Have coffee watching the sunrise"},
+  {a:"Read each other's minds for a day",b:"Swap lives for a day"},
+  {a:"Have a movie night every week",b:"Have a date night out every week"},
+  {a:"Write a song together",b:"Paint a picture together"},
+  {a:"Live somewhere always warm",b:"Live somewhere with all four seasons"},
+  {a:"Have the ability to pause time together",b:"Have the ability to teleport to each other"},
+  {a:"Go to a couples spa retreat",b:"Go on an adventure like skydiving"},
+  {a:"Have a partner who always makes you laugh",b:"Have a partner who always makes you feel safe"},
+  {a:"Receive a handwritten letter",b:"Receive a surprise visit"},
+];
+
+let wyrIndex = 0;
+
+function loadWYR() {
+  const q = WYR_QUESTIONS[wyrIndex];
+  document.getElementById('wyr-a').textContent = q.a;
+  document.getElementById('wyr-b').textContent = q.b;
+  document.getElementById('wyr-a').className = 'wyr-option';
+  document.getElementById('wyr-b').className = 'wyr-option';
+  document.getElementById('wyr-result').textContent = '';
+  // Load saved answers
+  if (db) {
+    db.ref('games/wyr/' + wyrIndex).once('value', snap => {
+      const data = snap.val();
+      if (data && data[user]) {
+        document.getElementById('wyr-' + data[user].toLowerCase()).classList.add('picked');
+      }
+      if (data && data[partner]) {
+        document.getElementById('wyr-' + data[partner].toLowerCase()).classList.add('partner-picked');
+        const match = data[user] === data[partner];
+        document.getElementById('wyr-result').textContent = match ? 'You both picked the same! 🎉' : 'You picked differently! 🤔';
+      }
+    });
+  }
+}
+
+async function pickWYR(choice) {
+  if (!db || !user) return;
+  await db.ref('games/wyr/' + wyrIndex + '/' + user).set(choice);
+  document.getElementById('wyr-a').classList.remove('picked');
+  document.getElementById('wyr-b').classList.remove('picked');
+  document.getElementById('wyr-' + choice.toLowerCase()).classList.add('picked');
+  // Check partner answer
+  const snap = await db.ref('games/wyr/' + wyrIndex + '/' + partner).once('value');
+  if (snap.val()) {
+    document.getElementById('wyr-' + snap.val().toLowerCase()).classList.add('partner-picked');
+    const match = choice === snap.val();
+    document.getElementById('wyr-result').textContent = match ? 'You both picked the same! 🎉' : 'You picked differently! 🤔';
+  } else {
+    document.getElementById('wyr-result').textContent = 'Waiting for ' + NAMES[partner] + '...';
+  }
+  toast('Answer saved!');
+}
+
+function nextWYR() { wyrIndex = (wyrIndex + 1) % WYR_QUESTIONS.length; loadWYR(); }
+function prevWYR() { wyrIndex = (wyrIndex - 1 + WYR_QUESTIONS.length) % WYR_QUESTIONS.length; loadWYR(); }
+
+// ===== HOW WELL DO YOU KNOW ME =====
+async function submitQuizQ() {
+  if (!db || !user) return;
+  const q = document.getElementById('quiz-q').value.trim();
+  const a = document.getElementById('quiz-a').value.trim();
+  if (!q || !a) { toast('Question and answer required'); return; }
+  await db.ref('games/knowme/' + user).push({
+    question: q, answer: a, timestamp: Date.now()
+  });
+  document.getElementById('quiz-q').value = '';
+  document.getElementById('quiz-a').value = '';
+  toast('Question added! 🧠');
+}
+
+function listenQuiz() {
+  // My questions
+  db.ref('games/knowme/' + user).on('value', snap => {
+    const el = document.getElementById('quiz-mine');
+    if (!el) return;
+    const qs = [];
+    snap.forEach(c => qs.push(c.val()));
+    if (!qs.length) { el.innerHTML = '<div class="empty">Add questions about yourself for your partner to answer.</div>'; return; }
+    el.innerHTML = qs.map(q => `<div class="quiz-item"><div class="quiz-item-q">${q.question}</div><div class="quiz-item-a correct">Answer: ${q.answer}</div></div>`).join('');
+  });
+  // Partner's questions
+  db.ref('games/knowme/' + partner).on('value', snap => {
+    const el = document.getElementById('quiz-theirs');
+    if (!el) return;
+    const qs = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; qs.push(v); });
+    if (!qs.length) { el.innerHTML = '<div class="empty">No quiz questions from your partner yet.</div>'; return; }
+    el.innerHTML = qs.map(q => {
+      return `<div class="quiz-item">
+        <div class="quiz-item-q">${q.question}</div>
+        <input class="quiz-q" placeholder="Your guess..." onkeydown="if(event.key==='Enter')checkQuizAnswer(this,'${q.answer.replace(/'/g,"\\'")}')">
+      </div>`;
+    }).join('');
+  });
+}
+
+function checkQuizAnswer(input, correct) {
+  const guess = input.value.trim().toLowerCase();
+  const answer = correct.toLowerCase();
+  const parent = input.closest('.quiz-item');
+  if (guess === answer) {
+    parent.innerHTML += '<div class="quiz-item-a correct">Correct! ✅ ' + correct + '</div>';
+    input.remove();
+    toast('You got it! 🎉');
+  } else {
+    toast('Not quite! Try again 🤔');
+  }
 }
 
 // ===== TOAST =====
