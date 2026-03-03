@@ -1149,7 +1149,8 @@ function renderSmartNudges() {
     db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(1).once('value'),
     db.ref('games/wyr').once('value'),
     db.ref('dateNights').once('value'),
-  ]).then(([letters, moods, dq, checkin, deepTalk, games, dates]) => {
+    db.ref('countdowns').once('value'),
+  ]).then(([letters, moods, dq, checkin, deepTalk, games, dates, countdowns]) => {
     // Unread letters
     let unread = 0;
     if (letters.exists()) letters.forEach(c => { const l = c.val(); if (l.from === partner && !l.read) unread++; });
@@ -1176,8 +1177,24 @@ function renderSmartNudges() {
     if (dates.exists()) dates.forEach(c => { if (!c.val().done) savedDates++; });
     if (savedDates === 0) nudges.push({ text: 'Spin for a date', page: 'datenight' });
 
-    container.innerHTML = nudges.slice(0, 6).map(n =>
-      `<div onclick="go('${n.page}')" style="padding:7px 14px;border-radius:50px;background:${n.priority?'var(--gold)':'var(--card-bg)'};color:${n.priority?'#fff':'var(--cream)'};font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;box-shadow:var(--card-shadow);border:1px solid ${n.priority?'transparent':'var(--bdr-s)'}">${n.text}</div>`
+    // Upcoming countdown
+    if (countdowns.exists()) {
+      let nearest = null, nearestDays = Infinity;
+      countdowns.forEach(c => {
+        const cd = c.val();
+        if (!cd.date) return;
+        const diff = Math.ceil((new Date(cd.date + 'T00:00:00') - new Date()) / 86400000);
+        if (diff > 0 && diff < nearestDays) { nearestDays = diff; nearest = cd; }
+      });
+      if (nearest) nudges.push({ text: nearestDays + 'd to ' + nearest.title, page: 'story', countdown: true });
+    }
+
+    container.innerHTML = nudges.slice(0, 6).map(n => {
+      const bg = n.priority ? 'var(--gold)' : n.countdown ? 'var(--tint)' : 'var(--card-bg)';
+      const color = n.priority ? '#fff' : n.countdown ? 'var(--gold)' : 'var(--cream)';
+      const border = n.priority ? 'transparent' : 'var(--bdr-s)';
+      return `<div onclick="go('${n.page}')" style="padding:7px 14px;border-radius:50px;background:${bg};color:${color};font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;box-shadow:var(--card-shadow);border:1px solid ${border}">${n.text}</div>`;
+    }
     ).join('');
     container.style.display = nudges.length === 0 ? 'none' : 'flex';
   });

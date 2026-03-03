@@ -189,7 +189,6 @@ function finishLogin() {
   // Dashboard UX
   renderDashHero();
   renderSmartNudges();
-  renderDashCountdown();
   renderDashDailyQ();
   renderActivityFeed();
   renderDashMeGratitude();

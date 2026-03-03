@@ -1,4 +1,4 @@
-const CACHE_NAME = 'moiettoi-v27';
+const CACHE_NAME = 'moiettoi-v28';
 
 const ASSETS = [
   './',

@@ -33,6 +33,7 @@ async function submitMood() {
   document.getElementById('energy-val').textContent = 'Steady';
   updateStreak();
   if (typeof renderSmartNudges === 'function') renderSmartNudges();
+  if (typeof logActivity === 'function') logActivity('mood', 'checked in');
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Check in'; }, 1500); }
   toast('Checked in');
 }
@@ -419,6 +420,7 @@ async function submitLog() {
   const key = db.ref('workoutLogs').push().key;
   await db.ref('workoutLogs/' + key).set(entry);
   closeLog();
+  if (typeof logActivity === 'function') logActivity('fitness', 'logged a workout');
   toast('Workout logged');
 }
 
@@ -442,6 +444,7 @@ async function sendTap(e, type, emoji) {
     timestamp: Date.now()
   };
   await db.ref('taps').push(entry);
+  if (typeof logActivity === 'function') logActivity('taps', 'sent ' + type);
   // Haptic feedback if available
   if (navigator.vibrate) navigator.vibrate(50);
   // Show sent animation on the button
@@ -511,6 +514,7 @@ async function sendLetter() {
   };
   await db.ref('letters').push(entry);
   input.value = '';
+  if (typeof logActivity === 'function') logActivity('letters', 'sent a letter');
   if (btn) { btn.textContent = 'Sent'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Send'; }, 1500); }
   toast('Delivered');
 }
@@ -727,6 +731,7 @@ async function submitDailyAnswer() {
     answer, userName: NAMES[user], timestamp: Date.now()
   });
   input.value = '';
+  if (typeof logActivity === 'function') logActivity('daily-q', 'answered the daily question');
   if (btn) { btn.textContent = 'Saved'; }
   toast('Answer submitted');
 }
@@ -816,6 +821,7 @@ async function submitGratitude() {
   };
   await db.ref('gratitude').push(entry);
   input.value = '';
+  if (typeof logActivity === 'function') logActivity('gratitude', 'shared gratitude');
   if (btn) { btn.textContent = 'Shared'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Share'; }, 1500); }
   toast('Shared');
 }

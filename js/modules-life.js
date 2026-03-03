@@ -421,6 +421,7 @@ async function saveConvoNote() {
     date: localDate()
   });
   document.getElementById('dt-journal').value = '';
+  if (typeof logActivity === 'function') logActivity('deeptalk', 'saved a reflection');
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Save'; }, 1500); }
   toast('Reflection saved');
 }
