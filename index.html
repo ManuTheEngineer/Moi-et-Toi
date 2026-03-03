@@ -48,7 +48,7 @@
   </button>
   <div class="ph-title" id="ph-title"></div>
   <div class="ph-right">
-    <div class="ph-presence" id="ph-presence"><span class="ph-presence-dot" id="ph-presence-dot"></span></div>
+    <div class="ph-presence" id="ph-presence"><span class="ph-presence-dot" id="ph-presence-dot"></span><span class="ph-presence-name" id="ph-presence-name"></span></div>
     <div class="global-mode-pill" id="global-mode-pill">
       <button class="gmp-opt active" data-mode="us" onclick="setGlobalMode('us')">Us</button>
       <button class="gmp-opt" data-mode="me" onclick="setGlobalMode('me')">Me</button>
@@ -101,10 +101,23 @@
 <div class="ctn">
   <div class="ptr" id="ptr"><span class="ptr-spinner"></span><span class="ptr-text">Pull to refresh</span></div>
 
-  <!-- Greeting -->
-  <div style="padding:32px 0 6px">
-    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)" id="dash-time-label">Good morning</div>
-    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;letter-spacing:2px;color:var(--cream);margin-top:4px" id="dash-greeting">...</h1>
+  <!-- Greeting + Partner Row (merged) -->
+  <div style="padding:16px 0 6px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)" id="dash-time-label">Good morning</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:28px;letter-spacing:2px;color:var(--cream);margin-top:4px" id="dash-greeting">...</h1>
+    </div>
+    <div id="dash-partner-card" style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="go('connect')">
+      <div style="text-align:right">
+        <div style="font-size:12px;font-weight:500;color:var(--cream)" id="dash-partner-name">...</div>
+        <div style="font-size:10px;color:var(--t3)" id="dash-partner-status">...</div>
+      </div>
+      <div style="position:relative">
+        <div class="icon-badge ib-gold" id="dash-partner-avatar" style="font-size:16px;width:36px;height:36px">M</div>
+        <div class="presence-dot offline" id="dash-presence-dot" style="position:absolute;bottom:-1px;right:-1px;width:8px;height:8px"></div>
+      </div>
+      <div id="dash-partner-mood-emoji" style="font-size:20px"></div>
+    </div>
   </div>
 
   <!-- Us / Me Toggle -->
@@ -116,84 +129,51 @@
 
   <!-- ===== "US" DASHBOARD ===== -->
   <div id="dash-us">
-    <!-- Relationship Pulse -->
-    <div class="card-hero" onclick="go('checkin')" style="display:flex;align-items:center;gap:16px;padding:18px;background:linear-gradient(135deg, rgba(196,120,74,0.15), rgba(176,138,80,0.1));cursor:pointer;margin-bottom:14px">
-      <svg width="56" height="56" viewBox="0 0 120 120" id="dash-pulse-svg">
+    <!-- Today's Vibe (Pulse + Moods merged) -->
+    <div class="card-hero" onclick="go('checkin')" style="display:flex;align-items:center;gap:14px;padding:16px;background:linear-gradient(135deg, rgba(196,120,74,0.15), rgba(176,138,80,0.1));cursor:pointer;margin-bottom:12px">
+      <svg width="64" height="64" viewBox="0 0 120 120" id="dash-pulse-svg">
         <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg3)" stroke-width="8"/>
         <circle cx="60" cy="60" r="50" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round" stroke-dasharray="314" id="dash-pulse-ring" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s ease"/>
         <text x="60" y="64" text-anchor="middle" fill="var(--gold)" font-size="22" font-weight="600" font-family="Outfit" id="dash-pulse-score">--</text>
       </svg>
-      <div style="flex:1">
+      <div style="flex:1;min-width:0">
         <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)">Relationship Pulse</div>
         <div style="font-size:14px;font-weight:500;color:var(--cream);margin-top:2px" id="dash-pulse-label">Getting started</div>
         <div style="font-size:11px;color:var(--t3);margin-top:1px" id="dash-pulse-tip">Check in together to build your score</div>
+        <!-- Inline mood indicators -->
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <div id="today-mood" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--cream)">
+            <span class="skel" style="width:20px;height:20px;border-radius:50%;display:inline-block"></span>
+            <span>You</span>
+          </div>
+          <div id="partner-mood" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--cream)">
+            <span class="skel" style="width:20px;height:20px;border-radius:50%;display:inline-block"></span>
+            <span class="pname"></span>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <!-- Partner row -->
-    <div id="dash-partner-card" style="display:flex;align-items:center;gap:12px;padding:14px 0;margin-bottom:16px;cursor:pointer" onclick="go('connect')">
-      <div style="position:relative">
-        <div class="icon-badge ib-gold" id="dash-partner-avatar" style="font-size:16px">M</div>
-        <div class="presence-dot offline" id="dash-presence-dot" style="position:absolute;bottom:0;right:0"></div>
-      </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:14px;font-weight:500;color:var(--cream)" id="dash-partner-name">...</div>
-        <div style="font-size:11px;color:var(--t3);margin-top:1px" id="dash-partner-status">...</div>
-      </div>
-      <div id="dash-partner-mood-emoji" style="font-size:22px"></div>
     </div>
 
     <!-- Nudges -->
-    <div id="dash-nudges" style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none"></div>
+    <div id="dash-nudges" style="display:flex;gap:8px;margin-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none"></div>
 
-    <!-- Moods side-by-side -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      <div class="card-data" id="today-mood" style="margin-bottom:0;padding:14px">
-        <div class="cd-accent" style="background:var(--gold)"></div>
-        <div class="cd-info"><div class="cd-label">You</div><div class="cd-sub">Today</div></div>
-        <div class="skel skel-block" style="margin:4px 0"></div>
-      </div>
-      <div class="card-data" id="partner-mood" style="margin-bottom:0;padding:14px">
-        <div class="cd-accent" style="background:var(--rose)"></div>
-        <div class="cd-info"><div class="cd-label"><span class="pname"></span></div><div class="cd-sub">Today</div></div>
-        <div class="skel skel-block" style="margin:4px 0"></div>
-      </div>
-    </div>
-
-    <!-- Stats row -->
-    <div style="display:flex;gap:10px;margin-bottom:14px">
-      <div class="card-data" style="flex:1;cursor:pointer" onclick="go('question')">
+    <!-- Stats + Sparkline (merged) -->
+    <div style="display:flex;gap:10px;margin-bottom:12px">
+      <div class="card-data" style="flex:1;cursor:pointer;padding:14px" onclick="go('question')">
         <div class="cd-accent" style="background:var(--gold)"></div>
         <div class="cd-number" style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold)" id="dash-streak-num">0</div>
         <div class="cd-info"><div class="cd-label">Day Streak</div></div>
       </div>
-      <div class="card-data" id="dash-together-card" style="flex:1;cursor:pointer" onclick="go('story')">
+      <div class="card-data" id="dash-together-card" style="flex:1;cursor:pointer;padding:14px" onclick="go('story')">
         <div class="cd-accent" style="background:var(--rose)"></div>
         <div class="cd-number" style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold)" id="dash-together-num">--</div>
         <div class="cd-info"><div class="cd-label">Days Together</div></div>
       </div>
-    </div>
-
-    <!-- Chart -->
-    <div class="chart-wrap" id="dash-chart" style="padding:16px;margin-bottom:14px">
-      <div class="chart-title">This Week</div>
-      <svg class="chart-svg" viewBox="0 0 320 120" id="mood-chart">
-        <defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-1)" stop-opacity=".3"/><stop offset="100%" stop-color="var(--chart-1)" stop-opacity="0"/></linearGradient></defs>
-        <text class="chart-label" x="4" y="16">5</text><text class="chart-label" x="4" y="56">3</text><text class="chart-label" x="4" y="96">1</text>
-        <line class="chart-grid" x1="20" y1="10" x2="315" y2="10"/><line class="chart-grid" x1="20" y1="50" x2="315" y2="50"/><line class="chart-grid" x1="20" y1="90" x2="315" y2="90"/>
-        <path class="chart-area" id="chart-area" d="M20,90 L315,90"/>
-        <path class="chart-line" id="chart-line" d="M20,50"/>
-      </svg>
-      <div class="chart-legend">
-        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-1)"></div>You</div>
-        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-2)"></div><span class="pname"></span></div>
+      <div class="card-data" style="flex:1;padding:14px;cursor:pointer" onclick="go('mood')">
+        <div class="cd-accent" style="background:var(--teal)"></div>
+        <div class="cd-info"><div class="cd-label">This Week</div></div>
+        <div id="dash-sparkline" style="width:100%;height:28px;margin-top:4px"></div>
       </div>
-    </div>
-
-    <!-- Activity Feed -->
-    <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Recent Activity</div></div>
-    <div id="dash-activity-feed" style="margin-bottom:14px">
-      <div class="empty" style="padding:16px">Activity from both of you shows here</div>
     </div>
 
     <!-- Quick nav -->
@@ -223,68 +203,63 @@
 
   <!-- ===== "ME" DASHBOARD ===== -->
   <div id="dash-me" style="display:none">
-    <!-- Personal Pulse -->
-    <div class="card-hero" style="display:flex;align-items:center;gap:16px;padding:18px;background:linear-gradient(135deg, rgba(42,143,143,0.15), rgba(123,111,166,0.1));margin-bottom:14px">
-      <svg width="56" height="56" viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg3)" stroke-width="8"/>
-        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--teal)" stroke-width="8" stroke-linecap="round" stroke-dasharray="314" id="dash-me-ring" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s ease"/>
-        <text x="60" y="64" text-anchor="middle" fill="var(--teal)" font-size="22" font-weight="600" font-family="Outfit" id="dash-me-score">--</text>
-      </svg>
-      <div style="flex:1">
-        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)">Personal Growth</div>
-        <div style="font-size:14px;font-weight:500;color:var(--cream);margin-top:2px" id="dash-me-label">Your journey</div>
-        <div style="font-size:11px;color:var(--t3);margin-top:1px" id="dash-me-tip">Track your personal progress</div>
-      </div>
-    </div>
-
-    <!-- My Stats -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
-      <div class="card-data" style="flex-direction:column;text-align:center;padding:14px">
-        <div class="cd-accent" style="background:var(--gold)"></div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold)" id="dash-me-mood-avg">--</div>
-        <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:3px">Mood Avg</div>
-      </div>
-      <div class="card-data" style="flex-direction:column;text-align:center;padding:14px">
-        <div class="cd-accent" style="background:var(--rose)"></div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--rose)" id="dash-me-goals">0</div>
-        <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:3px">Goals Done</div>
-      </div>
-      <div class="card-data" style="flex-direction:column;text-align:center;padding:14px">
-        <div class="cd-accent" style="background:var(--lavender)"></div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--lavender)" id="dash-me-energy">--</div>
-        <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:3px">Energy Avg</div>
-      </div>
-    </div>
-
-    <!-- Today's Wellness -->
-    <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Today's Wellness</div></div>
-    <div id="dash-me-wellness" class="card" style="padding:18px">
-      <div id="dash-me-care-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center">
-        <div class="me-care-item" style="padding:12px 4px;border-radius:14px;background:var(--tint-xs)">
-          <div class="icon-badge ib-teal" style="margin:0 auto;width:36px;height:36px">&#x1F4A7;</div>
-          <div style="font-size:9px;color:var(--t3);margin-top:4px">Hydrate</div>
+    <!-- Growth Pulse + Stats (merged) -->
+    <div class="card-hero" style="padding:16px;background:linear-gradient(135deg, rgba(42,143,143,0.15), rgba(123,111,166,0.1));margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+        <svg width="56" height="56" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg3)" stroke-width="8"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="var(--teal)" stroke-width="8" stroke-linecap="round" stroke-dasharray="314" id="dash-me-ring" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s ease"/>
+          <text x="60" y="64" text-anchor="middle" fill="var(--teal)" font-size="22" font-weight="600" font-family="Outfit" id="dash-me-score">--</text>
+        </svg>
+        <div style="flex:1">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)">Personal Growth</div>
+          <div style="font-size:14px;font-weight:500;color:var(--cream);margin-top:2px" id="dash-me-label">Your journey</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:1px" id="dash-me-tip">Track your personal progress</div>
         </div>
-        <div class="me-care-item" style="padding:12px 4px;border-radius:14px;background:var(--tint-xs)">
-          <div class="icon-badge ib-emerald" style="margin:0 auto;width:36px;height:36px">&#x1F4AA;</div>
-          <div style="font-size:9px;color:var(--t3);margin-top:4px">Move</div>
+      </div>
+      <!-- Mini stats inline -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="text-align:center;padding:8px;background:rgba(255,255,255,0.06);border-radius:12px">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold)" id="dash-me-mood-avg">--</div>
+          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:2px">Mood</div>
         </div>
-        <div class="me-care-item" style="padding:12px 4px;border-radius:14px;background:var(--tint-xs)">
-          <div class="icon-badge ib-lavender" style="margin:0 auto;width:36px;height:36px">&#x1F4D6;</div>
-          <div style="font-size:9px;color:var(--t3);margin-top:4px">Journal</div>
+        <div style="text-align:center;padding:8px;background:rgba(255,255,255,0.06);border-radius:12px">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--rose)" id="dash-me-goals">0</div>
+          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:2px">Goals</div>
+        </div>
+        <div style="text-align:center;padding:8px;background:rgba(255,255,255,0.06);border-radius:12px">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--lavender)" id="dash-me-energy">--</div>
+          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:2px">Energy</div>
         </div>
       </div>
     </div>
 
-    <!-- Personal Goals -->
-    <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">My Goals</div></div>
-    <div id="dash-me-goals-list" style="margin-bottom:14px">
-      <div class="empty" style="padding:16px">Your personal goals appear here</div>
+    <!-- Today (Wellness + Goals merged) -->
+    <div class="sec-head"><div class="sec-dot" style="background:var(--teal)"></div><div class="sec-title">Today</div></div>
+    <div id="dash-me-wellness" class="card" style="padding:14px;margin-bottom:12px">
+      <div id="dash-me-care-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin-bottom:10px">
+        <div class="me-care-item" style="padding:10px 4px;border-radius:14px;background:var(--tint-xs)">
+          <div class="icon-badge ib-teal" style="margin:0 auto;width:32px;height:32px;font-size:16px">&#x1F4A7;</div>
+          <div style="font-size:9px;color:var(--t3);margin-top:3px">Hydrate</div>
+        </div>
+        <div class="me-care-item" style="padding:10px 4px;border-radius:14px;background:var(--tint-xs)">
+          <div class="icon-badge ib-emerald" style="margin:0 auto;width:32px;height:32px;font-size:16px">&#x1F4AA;</div>
+          <div style="font-size:9px;color:var(--t3);margin-top:3px">Move</div>
+        </div>
+        <div class="me-care-item" style="padding:10px 4px;border-radius:14px;background:var(--tint-xs)">
+          <div class="icon-badge ib-lavender" style="margin:0 auto;width:32px;height:32px;font-size:16px">&#x1F4D6;</div>
+          <div style="font-size:9px;color:var(--t3);margin-top:3px">Journal</div>
+        </div>
+      </div>
+      <div id="dash-me-goals-list">
+        <div class="empty" style="padding:10px;font-size:12px">Your personal goals appear here</div>
+      </div>
     </div>
 
-    <!-- My Mood Chart -->
-    <div class="chart-wrap" style="padding:16px;margin-bottom:14px">
+    <!-- My Mood Chart (compact) -->
+    <div class="chart-wrap" style="padding:12px;margin-bottom:10px">
       <div class="chart-title">My Mood This Week</div>
-      <svg class="chart-svg" viewBox="0 0 320 120" id="me-mood-chart">
+      <svg class="chart-svg" viewBox="0 0 320 100" id="me-mood-chart">
         <defs><linearGradient id="meChartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-2)" stop-opacity=".3"/><stop offset="100%" stop-color="var(--chart-2)" stop-opacity="0"/></linearGradient></defs>
         <text class="chart-label" x="4" y="16">5</text><text class="chart-label" x="4" y="56">3</text><text class="chart-label" x="4" y="96">1</text>
         <line class="chart-grid" x1="20" y1="10" x2="315" y2="10"/><line class="chart-grid" x1="20" y1="50" x2="315" y2="50"/><line class="chart-grid" x1="20" y1="90" x2="315" y2="90"/>
@@ -469,7 +444,7 @@
 <!-- ===== EXPLORE (destination page, not a menu) ===== -->
 <div class="pg" id="pg-explore">
 <div class="ctn">
-  <div style="padding:32px 0 6px">
+  <div style="padding:12px 0 6px">
     <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)">Discover</div>
     <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;letter-spacing:2px;color:var(--cream);margin-top:4px">Our World</h1>
   </div>

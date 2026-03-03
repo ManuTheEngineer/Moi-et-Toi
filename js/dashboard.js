@@ -924,6 +924,26 @@ function renderMeMoodChart(moods) {
   areaEl.setAttribute('d', areaPath);
 }
 
+// ===== DASHBOARD SPARKLINE (compact mood trend) =====
+function renderDashSparkline(moods) {
+  const el = document.getElementById('dash-sparkline');
+  if (!el) return;
+  const userMoods = moods.filter(m => m.user === user).slice(-7);
+  if (userMoods.length < 2) {
+    el.innerHTML = '<div style="font-size:9px;color:var(--t3);text-align:center;padding-top:8px">No data</div>';
+    return;
+  }
+  const w = el.clientWidth || 60, h = 28;
+  const stepX = w / (userMoods.length - 1);
+  let d = '';
+  userMoods.forEach((m, i) => {
+    const x = i * stepX;
+    const y = h - ((m.mood - 1) / 4) * h;
+    d += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1) + ' ';
+  });
+  el.innerHTML = '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" style="overflow:visible"><path d="' + d + '" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"/></svg>';
+}
+
 // ===== RELATIONSHIP HEALTH SCORE =====
 function calculateRelationshipPulse() {
   if (!db || !user) return;

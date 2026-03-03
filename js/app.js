@@ -188,8 +188,10 @@ function finishLogin() {
   enforcePrivacy();
   // Dashboard UX
   renderDashHero();
-  renderDashNudges();
+  renderSmartNudges();
   renderDashCountdown();
+  calculateRelationshipPulse();
+  initViewToggle();
   // New modules v3 - enhanced features
   listenFitnessData();
   listenNutritionData();

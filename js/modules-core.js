@@ -74,23 +74,23 @@ function renderDashMoods(moods) {
   const myToday = moods.find(m => m.user === user && m.date === today);
   const partnerToday = moods.find(m => m.user === partner && m.date === today);
 
-  // Compact side-by-side mood cards
+  // Compact inline mood indicators (inside pulse card)
   const myEl = document.getElementById('today-mood');
-  if (myToday) {
-    myEl.innerHTML = `<div class="card-h"><span class="card-t">You</span><span class="card-s">${labels[myToday.mood]}</span></div>
-      <div style="text-align:center;font-size:40px;padding:6px 0">${emojis[myToday.mood]}</div>`;
-  } else {
-    myEl.innerHTML = `<div class="card-h"><span class="card-t">You</span><span class="card-s">Today</span></div>
-      <div style="text-align:center;padding:12px 0;font-size:11px;color:var(--t3);cursor:pointer" onclick="go('mood')">Tap to check in</div>`;
+  if (myEl) {
+    if (myToday) {
+      myEl.innerHTML = `<span style="font-size:20px">${emojis[myToday.mood]}</span><span style="font-size:11px;color:var(--cream)">You: ${labels[myToday.mood]}</span>`;
+    } else {
+      myEl.innerHTML = `<span style="font-size:11px;color:var(--t3);cursor:pointer" onclick="event.stopPropagation();go('mood')">You: Tap to check in</span>`;
+    }
   }
 
   const pEl = document.getElementById('partner-mood');
-  if (partnerToday) {
-    pEl.innerHTML = `<div class="card-h"><span class="card-t">${NAMES[partner]}</span><span class="card-s">${labels[partnerToday.mood]}</span></div>
-      <div style="text-align:center;font-size:40px;padding:6px 0">${emojis[partnerToday.mood]}</div>`;
-  } else {
-    pEl.innerHTML = `<div class="card-h"><span class="card-t">${NAMES[partner]}</span><span class="card-s">Today</span></div>
-      <div style="text-align:center;padding:12px 0;font-size:11px;color:var(--t3)">Waiting...</div>`;
+  if (pEl) {
+    if (partnerToday) {
+      pEl.innerHTML = `<span style="font-size:20px">${emojis[partnerToday.mood]}</span><span style="font-size:11px;color:var(--cream)">${NAMES[partner]}: ${labels[partnerToday.mood]}</span>`;
+    } else {
+      pEl.innerHTML = `<span style="font-size:11px;color:var(--t3)">${NAMES[partner]}: Waiting...</span>`;
+    }
   }
 
   // Update partner status card on dashboard
@@ -116,6 +116,9 @@ function renderDashMoods(moods) {
 
 // ===== SVG MOOD TREND CHART (Dashboard) =====
 function renderMoodChart(moods) {
+  // Render sparkline for compact dashboard view
+  if (typeof renderDashSparkline === 'function') renderDashSparkline(moods);
+
   const line = document.getElementById('chart-line');
   const area = document.getElementById('chart-area');
   if (!line || !area) return;
