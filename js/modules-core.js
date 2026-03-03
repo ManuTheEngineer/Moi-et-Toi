@@ -95,18 +95,11 @@ function renderDashMoods(moods) {
     }
   }
 
-  // Update partner status card on dashboard
+  // Update partner name + avatar on dashboard (no check-in status here)
   const partnerNameEl = document.getElementById('dash-partner-name');
-  const partnerStatusEl = document.getElementById('dash-partner-status');
   const partnerAvatar = document.getElementById('dash-partner-avatar');
   if (partnerNameEl) partnerNameEl.textContent = NAMES[partner];
-  if (partnerToday) {
-    if (partnerStatusEl) partnerStatusEl.textContent = `Feeling ${labels[partnerToday.mood].toLowerCase()} today`;
-    if (partnerAvatar) partnerAvatar.textContent = emojis[partnerToday.mood];
-  } else {
-    if (partnerStatusEl) partnerStatusEl.textContent = 'Haven\'t checked in today yet';
-    if (partnerAvatar) partnerAvatar.textContent = (typeof NAMES !== 'undefined' && NAMES[partner]) ? NAMES[partner].charAt(0) : '?';
-  }
+  if (partnerAvatar) partnerAvatar.textContent = NAMES[partner] ? NAMES[partner].charAt(0) : '?';
 
   // Render dashboard mood chart and mood page analytics
   renderMoodChart(moods);
