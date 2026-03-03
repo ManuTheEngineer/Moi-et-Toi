@@ -1047,14 +1047,15 @@ function logActivity(module, description) {
 
 function renderActivityFeed() {
   if (!db) return;
-  db.ref('activity').orderByChild('timestamp').limitToLast(8).on('value', snap => {
+  db.ref('activity').orderByChild('timestamp').limitToLast(12).on('value', snap => {
     const el = document.getElementById('dash-activity-feed');
     if (!el) return;
     const items = [];
     snap.forEach(c => items.push(c.val()));
     items.reverse();
     if (!items.length) { el.innerHTML = '<div class="empty" style="padding:16px">Activity from both of you shows here</div>'; return; }
-    el.innerHTML = items.map(i => {
+
+    function renderItem(i) {
       const ts = timeAgo(new Date(i.timestamp));
       const isMe = i.user === user;
       return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card-bg);border-radius:14px;margin-bottom:6px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
@@ -1062,8 +1063,24 @@ function renderActivityFeed() {
         <div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--cream)">${isMe ? 'You' : i.userName} ${i.description}</div></div>
         <div style="font-size:9px;color:var(--t3);flex-shrink:0">${ts}</div>
       </div>`;
-    }).join('');
+    }
+
+    let html = items.slice(0, 3).map(renderItem).join('');
+    if (items.length > 3) {
+      html += `<div id="activity-extra" style="display:none">${items.slice(3).map(renderItem).join('')}</div>`;
+      html += `<div id="activity-toggle" onclick="toggleActivityFeed()" style="text-align:center;padding:8px;font-size:11px;color:var(--gold);cursor:pointer;font-weight:500">Show more</div>`;
+    }
+    el.innerHTML = html;
   });
+}
+
+function toggleActivityFeed() {
+  const extra = document.getElementById('activity-extra');
+  const toggle = document.getElementById('activity-toggle');
+  if (!extra || !toggle) return;
+  const hidden = extra.style.display === 'none';
+  extra.style.display = hidden ? 'block' : 'none';
+  toggle.textContent = hidden ? 'Show less' : 'Show more';
 }
 
 // ===== ME DASHBOARD: GRATITUDE + AFFIRMATION =====

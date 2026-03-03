@@ -202,6 +202,7 @@
   --shadow: 0 4px 24px rgba(0,0,0,.15); --shadow-lg: 0 8px 40px rgba(0,0,0,.25);
   --mode-us: var(--gold); --mode-me: var(--teal);
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;scrollbar-width:none}
+*::-webkit-scrollbar{display:none}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;min-height:100dvh;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px);overscroll-behavior-y:none;-webkit-font-smoothing:antialiased;position:relative}
