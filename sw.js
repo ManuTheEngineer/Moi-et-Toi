@@ -1,4 +1,4 @@
-const CACHE_NAME = 'moiettoi-v28';
+const CACHE_NAME = 'moiettoi-v29';
 
 const ASSETS = [
   './',
@@ -11,6 +11,7 @@ const ASSETS = [
   './js/app.js',
   './js/nav.js',
   './js/utils.js',
+  './js/metrics.js',
   './js/modules-core.js',
   './js/modules-social.js',
   './js/modules-life.js',

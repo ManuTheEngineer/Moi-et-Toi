@@ -131,7 +131,7 @@
   <div id="dash-us">
 
     <!-- Unified hero: Pulse + Stats in one card -->
-    <div class="card-hero" onclick="go('checkin')" style="padding:16px;background:linear-gradient(135deg, rgba(196,120,74,0.12), rgba(176,138,80,0.08));cursor:pointer;margin-bottom:8px">
+    <div class="card-hero" onclick="togglePulseBreakdown()" style="padding:16px;background:linear-gradient(135deg, rgba(196,120,74,0.12), rgba(176,138,80,0.08));cursor:pointer;margin-bottom:8px">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
         <svg width="56" height="56" viewBox="0 0 120 120" id="dash-pulse-svg">
           <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg3)" stroke-width="8"/>
@@ -169,6 +169,12 @@
           <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:1px">This Week</div>
         </div>
       </div>
+    </div>
+
+    <!-- Pulse breakdown (hidden by default, toggled by tapping pulse) -->
+    <div id="dash-pulse-breakdown" style="display:none;padding:12px 14px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:8px">
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px">Health Breakdown</div>
+      <div id="dash-pulse-bars"></div>
     </div>
 
     <!-- Nudges (wrapping grid — all visible) -->
@@ -379,6 +385,50 @@
     <div class="chart-title">Check-in Calendar (last 28 days)</div>
     <div class="streak-day-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
     <div class="streak-cal" id="streak-cal"></div>
+  </div>
+
+  <!-- Mood Analytics (Phase 15) -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Insights</div></div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+    <div class="chart-wrap" style="padding:10px 12px;margin-bottom:0">
+      <div class="chart-title">Mood by Day</div>
+      <div id="mood-dow-heatmap" style="display:flex;gap:3px"></div>
+    </div>
+    <div class="chart-wrap" style="padding:10px 12px;margin-bottom:0">
+      <div class="chart-title">Mood vs Energy</div>
+      <div id="mood-scatter"></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+    <div style="text-align:center;padding:12px 6px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold)" id="mood-avg-7d">--</div>
+      <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">7d Avg</div>
+    </div>
+    <div style="text-align:center;padding:12px 6px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--rose)" id="mood-avg-30d">--</div>
+      <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">30d Avg</div>
+    </div>
+    <div style="text-align:center;padding:12px 6px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px" id="mood-trend-dir">--</div>
+      <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">Trend</div>
+    </div>
+  </div>
+
+  <div style="padding:10px 14px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:10px;display:flex;align-items:center;gap:10px" id="mood-sync-card">
+    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);font-weight:600">Mood Sync</div>
+    <div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div id="mood-sync-bar" style="height:100%;background:var(--gold);border-radius:3px;width:0%;transition:width .8s ease"></div></div>
+    <div style="font-size:13px;font-weight:600;color:var(--gold)" id="mood-sync-pct">--</div>
+  </div>
+
+  <!-- Time Machine -->
+  <div class="chart-wrap" style="padding:10px 12px;margin-bottom:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div class="chart-title" style="margin:0">Time Machine</div>
+      <input type="date" id="tm-date" style="background:var(--input-bg);border:none;border-radius:8px;padding:4px 8px;font-size:11px;color:var(--cream);font-family:Outfit" onchange="document.getElementById('tm-result').dataset.custom='1';renderTimeMachine('tm-result',this.value)">
+    </div>
+    <div id="tm-result"></div>
   </div>
 
   <div class="mood-history">
@@ -2478,6 +2528,7 @@
 <script src="js/app.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/metrics.js"></script>
 <script src="js/modules-core.js"></script>
 <script src="js/modules-social.js"></script>
 <script src="js/modules-life.js"></script>
