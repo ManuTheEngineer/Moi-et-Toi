@@ -51,8 +51,20 @@
   --grad-grow: linear-gradient(135deg,#162240 0%,#253A5C 100%);
   --grad-games: linear-gradient(135deg,#3A2860 0%,#5C4888 100%);
   --grad-connect: linear-gradient(135deg,#8C4228 0%,#A8603E 100%);
-  /* Chart colors */
+  /* NEW — expanded palette */
+  --rose: #D4627A; --rose-s: rgba(212,98,122,.10); --rose-glow: rgba(212,98,122,.18);
+  --teal: #2A8F8F; --teal-s: rgba(42,143,143,.10); --teal-glow: rgba(42,143,143,.18);
+  --lavender: #7B6FA6; --lavender-s: rgba(123,111,166,.10); --lavender-glow: rgba(123,111,166,.18);
+  --emerald: #3D8B6E; --emerald-s: rgba(61,139,110,.10); --emerald-glow: rgba(61,139,110,.18);
+  --grad-fitness: linear-gradient(135deg,#3D8B6E 0%,#5BA88A 100%);
+  --grad-nutrition: linear-gradient(135deg,#D4627A 0%,#E08498 100%);
+  --grad-calendar: linear-gradient(135deg,#2A8F8F 0%,#48ACAC 100%);
+  --grad-finance: linear-gradient(135deg,#1C2B4A 0%,#2A8F8F 100%);
+  --grad-dreamhome: linear-gradient(135deg,#7B6FA6 0%,#9D94C0 100%);
+  --grad-know: linear-gradient(135deg,#D4627A 0%,#B08A50 100%);
+  /* Chart colors — expanded to 8 */
   --chart-1: #1C2B4A; --chart-2: #C4784A; --chart-3: #B08A50; --chart-4: #3A2860; --chart-5: #8C4228;
+  --chart-6: #2A8F8F; --chart-7: #D4627A; --chart-8: #3D8B6E;
   /* Elevation & surfaces */
   --card-bg: #fff; --card-shadow: 0 1px 3px rgba(28,43,74,.06), 0 8px 28px rgba(28,43,74,.04);
   --card-hover: 0 4px 12px rgba(28,43,74,.08), 0 16px 40px rgba(28,43,74,.06);
@@ -61,6 +73,8 @@
   --glass: rgba(255,255,255,.6); --glass-strong: rgba(255,255,255,.85);
   --overlay-bg: rgba(12,18,32,.5); --sheet-bg: #fff;
   --shadow: 0 4px 24px rgba(28,43,74,.06); --shadow-lg: 0 8px 40px rgba(28,43,74,.10);
+  /* Mode accents */
+  --mode-us: var(--gold); --mode-me: var(--teal);
 }
 
 /* ===== DARK MODE — system auto (unless user forced light) ===== */
@@ -98,14 +112,26 @@
     --grad-grow: linear-gradient(135deg,#0E1A30 0%,#1C2B4A 100%);
     --grad-games: linear-gradient(135deg,#2E1C50 0%,#4A3870 100%);
     --grad-connect: linear-gradient(135deg,#A84830 0%,#C86850 100%);
+    --rose: #F0889A; --rose-s: rgba(240,136,154,.12); --rose-glow: rgba(240,136,154,.22);
+    --teal: #48CCCC; --teal-s: rgba(72,204,204,.12); --teal-glow: rgba(72,204,204,.22);
+    --lavender: #A898D0; --lavender-s: rgba(168,152,208,.12); --lavender-glow: rgba(168,152,208,.22);
+    --emerald: #5BB898; --emerald-s: rgba(91,184,152,.12); --emerald-glow: rgba(91,184,152,.22);
+    --grad-fitness: linear-gradient(135deg,#3D8B6E 0%,#5BB898 100%);
+    --grad-nutrition: linear-gradient(135deg,#D4627A 0%,#F0889A 100%);
+    --grad-calendar: linear-gradient(135deg,#2A8F8F 0%,#48CCCC 100%);
+    --grad-finance: linear-gradient(135deg,#1C2B4A 0%,#2A8F8F 100%);
+    --grad-dreamhome: linear-gradient(135deg,#7B6FA6 0%,#A898D0 100%);
+    --grad-know: linear-gradient(135deg,#D4627A 0%,#B08A50 100%);
     --chart-1: #D4956A; --chart-2: #E0A882; --chart-3: #C9A84C; --chart-4: #8068B0; --chart-5: #C86850;
+    --chart-6: #48CCCC; --chart-7: #F0889A; --chart-8: #5BB898;
     --card-bg: #182436; --card-shadow: 0 1px 3px rgba(0,0,0,.2), 0 8px 28px rgba(0,0,0,.18);
     --card-hover: 0 4px 12px rgba(0,0,0,.25), 0 16px 40px rgba(0,0,0,.2);
     --input-bg: rgba(255,255,255,.06); --focus-ring: 0 0 0 3px rgba(212,149,106,.2);
-    --nav-bg: rgba(12,18,32,.88); --nav-shadow: 0 -1px 0 rgba(255,255,255,.04), 0 4px 24px rgba(0,0,0,.3);
+    --nav-bg: rgba(14,20,34,.90); --nav-shadow: 0 -1px 0 rgba(255,255,255,.04), 0 4px 24px rgba(0,0,0,.3);
     --glass: rgba(20,30,48,.6); --glass-strong: rgba(20,30,48,.85);
-    --overlay-bg: rgba(0,0,0,.6); --sheet-bg: #141E30;
+    --overlay-bg: rgba(0,0,0,.6); --sheet-bg: #141218;
     --shadow: 0 4px 24px rgba(0,0,0,.15); --shadow-lg: 0 8px 40px rgba(0,0,0,.25);
+    --mode-us: var(--gold); --mode-me: var(--teal);
   }
 }
 
@@ -143,50 +169,212 @@
   --grad-grow: linear-gradient(135deg,#0E1A30 0%,#1C2B4A 100%);
   --grad-games: linear-gradient(135deg,#2E1C50 0%,#4A3870 100%);
   --grad-connect: linear-gradient(135deg,#A84830 0%,#C86850 100%);
+  --rose: #F0889A; --rose-s: rgba(240,136,154,.12); --rose-glow: rgba(240,136,154,.22);
+  --teal: #48CCCC; --teal-s: rgba(72,204,204,.12); --teal-glow: rgba(72,204,204,.22);
+  --lavender: #A898D0; --lavender-s: rgba(168,152,208,.12); --lavender-glow: rgba(168,152,208,.22);
+  --emerald: #5BB898; --emerald-s: rgba(91,184,152,.12); --emerald-glow: rgba(91,184,152,.22);
+  --grad-fitness: linear-gradient(135deg,#3D8B6E 0%,#5BB898 100%);
+  --grad-nutrition: linear-gradient(135deg,#D4627A 0%,#F0889A 100%);
+  --grad-calendar: linear-gradient(135deg,#2A8F8F 0%,#48CCCC 100%);
+  --grad-finance: linear-gradient(135deg,#1C2B4A 0%,#2A8F8F 100%);
+  --grad-dreamhome: linear-gradient(135deg,#7B6FA6 0%,#A898D0 100%);
+  --grad-know: linear-gradient(135deg,#D4627A 0%,#B08A50 100%);
   --chart-1: #D4956A; --chart-2: #E0A882; --chart-3: #C9A84C; --chart-4: #8068B0; --chart-5: #C86850;
+  --chart-6: #48CCCC; --chart-7: #F0889A; --chart-8: #5BB898;
   --card-bg: #182436; --card-shadow: 0 1px 3px rgba(0,0,0,.2), 0 8px 28px rgba(0,0,0,.18);
   --card-hover: 0 4px 12px rgba(0,0,0,.25), 0 16px 40px rgba(0,0,0,.2);
   --input-bg: rgba(255,255,255,.06); --focus-ring: 0 0 0 3px rgba(212,149,106,.2);
-  --nav-bg: rgba(12,18,32,.88); --nav-shadow: 0 -1px 0 rgba(255,255,255,.04), 0 4px 24px rgba(0,0,0,.3);
+  --nav-bg: rgba(14,20,34,.90); --nav-shadow: 0 -1px 0 rgba(255,255,255,.04), 0 4px 24px rgba(0,0,0,.3);
   --glass: rgba(20,30,48,.6); --glass-strong: rgba(20,30,48,.85);
-  --overlay-bg: rgba(0,0,0,.6); --sheet-bg: #141E30;
+  --overlay-bg: rgba(0,0,0,.6); --sheet-bg: #141218;
   --shadow: 0 4px 24px rgba(0,0,0,.15); --shadow-lg: 0 8px 40px rgba(0,0,0,.25);
+  --mode-us: var(--gold); --mode-me: var(--teal);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px);overscroll-behavior-y:none;-webkit-font-smoothing:antialiased;position:relative}
-/* ===== LIVING BACKGROUND — animated gradient orbs ===== */
+/* ===== IMMERSIVE BACKGROUND — aurora + particles + noise ===== */
 body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:
-    radial-gradient(ellipse 600px 600px at 15% 25%, rgba(196,120,74,0.07) 0%, transparent 70%),
-    radial-gradient(ellipse 500px 500px at 85% 15%, rgba(28,43,74,0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 700px 700px at 50% 85%, rgba(176,138,80,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196,120,74,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(28,43,74,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(176,138,80,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(212,98,122,0.03) 0%, transparent 70%),
     var(--bg);
-  background-size:100% 100%;
-  animation:bgBreathe 25s ease-in-out infinite alternate;
-  transition:opacity .8s ease}
-body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.018;
+  background-size:200% 200%;
+  animation:auroraFlow 30s ease-in-out infinite alternate;
+  transition:all 1.2s ease}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.025;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:180px 180px}
-@keyframes bgBreathe{
-  0%{background-position:0% 0%,100% 0%,50% 100%}
-  33%{background-position:30% 20%,70% 30%,60% 70%}
-  66%{background-position:70% 50%,20% 60%,40% 30%}
-  100%{background-position:100% 100%,0% 100%,50% 0%}}
-/* Page-specific accent tints */
-body[data-page="mood"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(196,120,74,0.10) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(212,148,106,0.08) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(176,138,80,0.04) 0%, transparent 70%),var(--bg)}
-body[data-page="games"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(58,40,96,0.08) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(92,72,136,0.06) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(176,138,80,0.04) 0%, transparent 70%),var(--bg)}
-body[data-page="connect"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(140,66,40,0.08) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(168,96,62,0.06) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(196,120,74,0.05) 0%, transparent 70%),var(--bg)}
-body[data-page="story"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(176,138,80,0.08) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(200,164,104,0.06) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(28,43,74,0.04) 0%, transparent 70%),var(--bg)}
-body[data-page="ai"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(28,43,74,0.09) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(46,68,104,0.07) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(212,149,106,0.05) 0%, transparent 70%),var(--bg)}
-body[data-page="spiritual"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(28,43,74,0.08) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(176,138,80,0.07) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(212,149,106,0.06) 0%, transparent 70%),var(--bg)}
-body[data-page="homelife"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(22,34,64,0.08) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(37,58,92,0.06) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(176,138,80,0.05) 0%, transparent 70%),var(--bg)}
+@keyframes auroraFlow{
+  0%{background-position:0% 0%,100% 0%,50% 100%,30% 50%}
+  25%{background-position:30% 20%,70% 30%,60% 70%,50% 30%}
+  50%{background-position:70% 50%,20% 60%,40% 30%,70% 60%}
+  75%{background-position:50% 80%,60% 10%,20% 50%,40% 40%}
+  100%{background-position:100% 100%,0% 100%,50% 0%,60% 70%}}
+
+/* Floating particle layer */
+.particles{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.particle{position:absolute;border-radius:50%;opacity:0;animation:particleFloat linear infinite}
+@keyframes particleFloat{
+  0%{transform:translateY(100vh) scale(0);opacity:0}
+  10%{opacity:.4}
+  90%{opacity:.4}
+  100%{transform:translateY(-10vh) scale(1);opacity:0}}
+
+/* Page-specific ambient moods — richer aurora colors */
+body[data-page="mood"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(196,120,74,0.12) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(212,148,106,0.09) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(176,138,80,0.05) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(224,168,130,0.04) 0%,transparent 70%),var(--bg)}
+body[data-page="games"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(58,40,96,0.10) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(92,72,136,0.08) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(212,98,122,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(123,111,166,0.05) 0%,transparent 70%),var(--bg)}
+body[data-page="connect"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(212,98,122,0.08) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(196,120,74,0.08) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(176,138,80,0.05) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(140,66,40,0.04) 0%,transparent 70%),var(--bg)}
+body[data-page="story"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(176,138,80,0.10) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(200,164,104,0.08) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(28,43,74,0.05) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(212,149,106,0.04) 0%,transparent 70%),var(--bg)}
+body[data-page="ai"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(28,43,74,0.10) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(46,68,104,0.08) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(212,149,106,0.06) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(42,143,143,0.03) 0%,transparent 70%),var(--bg)}
+body[data-page="spiritual"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(123,111,166,0.09) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(176,138,80,0.07) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(28,43,74,0.05) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(168,152,208,0.04) 0%,transparent 70%),var(--bg)}
+body[data-page="homelife"]::before,body[data-page="finance"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(42,143,143,0.07) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(28,43,74,0.06) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(61,139,110,0.05) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(42,143,143,0.03) 0%,transparent 70%),var(--bg)}
+body[data-page="fitness"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(61,139,110,0.09) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(91,184,152,0.06) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(42,143,143,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(28,43,74,0.03) 0%,transparent 70%),var(--bg)}
+body[data-page="nutrition"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(212,98,122,0.08) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(240,136,154,0.05) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(61,139,110,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(196,120,74,0.03) 0%,transparent 70%),var(--bg)}
+body[data-page="calendar"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(42,143,143,0.09) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(72,204,204,0.05) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(28,43,74,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(42,143,143,0.03) 0%,transparent 70%),var(--bg)}
+body[data-page="dreamhome"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(123,111,166,0.09) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(168,152,208,0.06) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(176,138,80,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(212,98,122,0.03) 0%,transparent 70%),var(--bg)}
 /* Dark mode living background */
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body::before{background:radial-gradient(ellipse 600px 600px at 15% 25%,rgba(212,149,106,0.06) 0%,transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%,rgba(201,168,76,0.04) 0%,transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%,rgba(128,104,176,0.03) 0%,transparent 70%),var(--bg)}
-:root:not([data-theme="light"]) body::after{opacity:0.025}}
-:root[data-theme="dark"] body::before{background:radial-gradient(ellipse 600px 600px at 15% 25%,rgba(212,149,106,0.06) 0%,transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%,rgba(201,168,76,0.04) 0%,transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%,rgba(128,104,176,0.03) 0%,transparent 70%),var(--bg)}
-:root[data-theme="dark"] body::after{opacity:0.025}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(212,149,106,0.07) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(201,168,76,0.05) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(128,104,176,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(212,98,122,0.03) 0%,transparent 70%),var(--bg)}
+:root:not([data-theme="light"]) body::after{opacity:0.035}}
+:root[data-theme="dark"] body::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(212,149,106,0.07) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(201,168,76,0.05) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(128,104,176,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(212,98,122,0.03) 0%,transparent 70%),var(--bg)}
+:root[data-theme="dark"] body::after{opacity:0.035}
 ::selection{background:var(--gold);color:#fff}
+
+/* ===== GLOBAL US/ME MODE TOGGLE ===== */
+.global-mode-pill{position:fixed;top:calc(18px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:1001;display:flex;background:var(--card-bg);border-radius:50px;padding:3px;box-shadow:0 2px 16px rgba(0,0,0,.1);border:1px solid var(--bdr-s);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.gmp-opt{padding:7px 20px;border-radius:50px;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);color:var(--t3);border:none;background:none;font-family:'Outfit',sans-serif}
+.gmp-opt.active{background:var(--mode-us);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+body[data-mode="me"] .gmp-opt.active{background:var(--mode-me)}
+body[data-mode="me"] .us-only{display:none!important}
+body[data-mode="us"] .me-only{display:none!important}
+
+/* ===== ENHANCED CARD TYPES ===== */
+.card-data{background:var(--card-bg);border-radius:20px;padding:18px 20px;margin-bottom:12px;box-shadow:var(--card-shadow);border-left:3px solid var(--gold);position:relative;display:flex;align-items:center;gap:14px;transition:all .25s}
+.card-data:active{transform:scale(.985)}
+.card-data .cd-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--gold);line-height:1;min-width:44px}
+.card-data .cd-info{flex:1;min-width:0}
+.card-data .cd-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3)}
+.card-data .cd-value{font-size:13px;font-weight:500;color:var(--cream);margin-top:2px}
+.card-data .cd-spark{width:64px;height:28px;flex-shrink:0}
+.card-data.accent-rose{border-left-color:var(--rose)}
+.card-data.accent-teal{border-left-color:var(--teal)}
+.card-data.accent-emerald{border-left-color:var(--emerald)}
+.card-data.accent-lavender{border-left-color:var(--lavender)}
+
+.card-story{background:var(--card-bg);border-radius:24px;padding:28px;margin-bottom:16px;box-shadow:var(--card-shadow);position:relative;overflow:hidden}
+.card-story::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--red),var(--vio))}
+.card-story .cs-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--cream);margin-bottom:8px}
+.card-story .cs-body{font-size:13px;color:var(--t2);line-height:1.7}
+.card-story .cs-meta{font-size:10px;color:var(--t3);margin-top:10px;letter-spacing:1px;text-transform:uppercase}
+
+.card-action{background:var(--card-bg);border-radius:22px;padding:22px;margin-bottom:14px;box-shadow:var(--card-shadow);cursor:pointer;transition:all .25s;position:relative;overflow:hidden;border:1px solid transparent}
+.card-action:hover{border-color:var(--gold);box-shadow:var(--card-hover)}
+.card-action:active{transform:scale(.97)}
+.card-action .ca-hint{position:absolute;inset:0;background:linear-gradient(135deg,rgba(28,43,74,.02),transparent);pointer-events:none}
+
+.card-game{background:var(--card-bg);border-radius:22px;padding:22px;margin-bottom:14px;box-shadow:0 2px 8px rgba(58,40,96,.08),0 8px 28px rgba(0,0,0,.04);cursor:pointer;transition:all .3s cubic-bezier(.2,.8,.3,1);position:relative;overflow:hidden}
+.card-game:hover{transform:translateY(-3px) rotate(-0.5deg);box-shadow:0 8px 24px rgba(58,40,96,.12),0 16px 40px rgba(0,0,0,.06)}
+.card-game:active{transform:scale(.96) rotate(0deg)}
+.card-game .cg-badge{position:absolute;top:12px;right:12px;padding:3px 10px;border-radius:20px;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:600;background:var(--lavender-s);color:var(--lavender)}
+
+.card-hero{background:var(--grad-love);border-radius:26px;padding:32px 28px;margin-bottom:18px;color:#fff;position:relative;overflow:hidden}
+.card-hero::after{content:'';position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.12));pointer-events:none}
+.card-hero .ch-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;opacity:.7;position:relative;z-index:1}
+.card-hero .ch-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-top:6px;position:relative;z-index:1}
+.card-hero .ch-sub{font-size:13px;opacity:.85;margin-top:6px;line-height:1.5;position:relative;z-index:1}
+
+/* ===== ICON BADGES — styled emoji wrappers ===== */
+.icon-badge{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:14px;font-size:18px;flex-shrink:0;transition:transform .2s cubic-bezier(.2,.8,.3,1)}
+.icon-badge:active{transform:scale(1.1)}
+.icon-badge.ib-gold{background:linear-gradient(135deg,rgba(28,43,74,.08),rgba(28,43,74,.03));border:1px solid rgba(28,43,74,.06)}
+.icon-badge.ib-rose{background:linear-gradient(135deg,rgba(212,98,122,.10),rgba(212,98,122,.03));border:1px solid rgba(212,98,122,.08)}
+.icon-badge.ib-teal{background:linear-gradient(135deg,rgba(42,143,143,.10),rgba(42,143,143,.03));border:1px solid rgba(42,143,143,.08)}
+.icon-badge.ib-emerald{background:linear-gradient(135deg,rgba(61,139,110,.10),rgba(61,139,110,.03));border:1px solid rgba(61,139,110,.08)}
+.icon-badge.ib-lavender{background:linear-gradient(135deg,rgba(123,111,166,.10),rgba(123,111,166,.03));border:1px solid rgba(123,111,166,.08)}
+.icon-badge.ib-amber{background:linear-gradient(135deg,rgba(176,138,80,.10),rgba(176,138,80,.03));border:1px solid rgba(176,138,80,.08)}
+
+/* ===== STAGGERED CARD ENTRANCE ===== */
+.pg.on .card,.pg.on .card-data,.pg.on .card-story,.pg.on .card-action,.pg.on .card-game,.pg.on .card-hero,.pg.on .feat-card,.pg.on .chart-wrap,.pg.on .dq-card,.pg.on .wyr-card,.pg.on .bl-item,.pg.on .wl-item,.pg.on .dr-card{animation:cardEnter .5s cubic-bezier(.2,.8,.3,1) backwards}
+.pg.on > .ctn > :nth-child(2){animation-delay:.05s}
+.pg.on > .ctn > :nth-child(3){animation-delay:.1s}
+.pg.on > .ctn > :nth-child(4){animation-delay:.15s}
+.pg.on > .ctn > :nth-child(5){animation-delay:.2s}
+.pg.on > .ctn > :nth-child(6){animation-delay:.25s}
+.pg.on > .ctn > :nth-child(7){animation-delay:.3s}
+.pg.on > .ctn > :nth-child(8){animation-delay:.35s}
+@keyframes cardEnter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== MICRO-INTERACTIONS ===== */
+button:active,.dq-submit:active,.lbtn:active,.mood-submit:active,.letter-send:active,.chat-send:active,.wl-buy:active,.ms-save:active,.lsubmit:active,.dn-action:active{transform:scale(0.96)!important;transition:transform .1s cubic-bezier(.2,.8,.3,1)}
+input:focus,textarea:focus,select:focus{box-shadow:var(--focus-ring);animation:focusPulse .3s ease}
+@keyframes focusPulse{0%{box-shadow:0 0 0 0 rgba(28,43,74,.2)}50%{box-shadow:0 0 0 6px rgba(28,43,74,.08)}100%{box-shadow:var(--focus-ring)}}
+
+/* Enhanced page transitions */
+@keyframes pageIn{from{opacity:0;transform:translateY(18px) scale(.995)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes pageOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-10px)}}
+
+/* ===== ENHANCED TOAST ===== */
+.toast{position:fixed;bottom:calc(110px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:#fff;padding:14px 32px;border-radius:50px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.2,.8,.3,1);z-index:1200;box-shadow:0 8px 32px rgba(28,43,74,.2);letter-spacing:.5px}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);animation:toastBounce .5s cubic-bezier(.2,.8,.3,1)}
+@keyframes toastBounce{0%{transform:translateX(-50%) translateY(40px);opacity:0}60%{transform:translateX(-50%) translateY(-4px);opacity:1}100%{transform:translateX(-50%) translateY(0)}}
+
+/* ===== COMMAND CENTER (reimagined hamburger menu) ===== */
+.cmd-center{position:fixed;inset:0;z-index:900;background:var(--sheet-bg);opacity:0;pointer-events:none;transition:opacity .35s,transform .4s cubic-bezier(.4,0,.2,1);transform:scale(.98);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(80px + env(safe-area-inset-top,0px)) 24px calc(36px + env(safe-area-inset-bottom,0px))}
+.cmd-center.on{opacity:1;pointer-events:all;transform:scale(1)}
+.cmd-search{width:100%;padding:14px 20px;border-radius:50px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;outline:none;margin-bottom:20px;transition:box-shadow .2s}
+.cmd-search:focus{box-shadow:var(--focus-ring)}
+.cmd-search::placeholder{color:var(--t3)}
+.cmd-section{margin-bottom:20px}
+.cmd-section-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--tint)}
+.cmd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cmd-item{padding:16px 10px;border-radius:18px;text-align:center;cursor:pointer;background:var(--card-bg);box-shadow:var(--card-shadow);transition:all .2s;border:1px solid var(--bdr-s)}
+.cmd-item:hover{transform:translateY(-2px);box-shadow:var(--card-hover)}
+.cmd-item:active{transform:scale(.95)}
+.cmd-item .cmd-icon{font-size:22px;margin-bottom:6px;display:block}
+.cmd-item .cmd-label{font-size:10px;font-weight:500;color:var(--cream);letter-spacing:.3px}
+.cmd-item .cmd-sub{font-size:8px;color:var(--t3);margin-top:2px}
+.cmd-recent{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;margin-bottom:16px}
+.cmd-recent-item{flex-shrink:0;padding:8px 16px;border-radius:50px;font-size:11px;font-weight:500;color:var(--t2);background:var(--input-bg);cursor:pointer;transition:all .2s;white-space:nowrap}
+.cmd-recent-item:hover{background:var(--gold);color:#fff}
+
+/* ===== NOTIFICATION BADGES ===== */
+.bn .notif-dot{position:absolute;top:6px;right:14px;width:7px;height:7px;border-radius:50%;background:var(--rose);display:none;box-shadow:0 0 0 2px var(--nav-bg)}
+.bn .notif-dot.show{display:block;animation:notifPulse 2s ease infinite}
+@keyframes notifPulse{0%,100%{box-shadow:0 0 0 2px var(--nav-bg)}50%{box-shadow:0 0 0 2px var(--nav-bg),0 0 0 6px rgba(212,98,122,.15)}}
+
+/* ===== PRESENCE INDICATOR ===== */
+.presence-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.presence-dot.online{background:#4CAF50;box-shadow:0 0 0 2px rgba(76,175,80,.2);animation:presencePulse 2s ease infinite}
+.presence-dot.offline{background:var(--t3)}
+@keyframes presencePulse{0%,100%{box-shadow:0 0 0 2px rgba(76,175,80,.2)}50%{box-shadow:0 0 0 5px rgba(76,175,80,.08)}}
+
+/* ===== SPARKLINE MINI CHARTS ===== */
+.sparkline{display:inline-block;vertical-align:middle}
+.sparkline svg{overflow:visible}
+.sparkline .spark-line{fill:none;stroke:var(--gold);stroke-width:1.5;stroke-linecap:round}
+.sparkline .spark-area{fill:url(#sparkGrad);opacity:.2}
+
+/* ===== NUMBER COUNTER ANIMATION ===== */
+.count-up{transition:none}
+
+/* ===== GRADIENT TEXT for headings ===== */
+.grad-text{background:linear-gradient(135deg,var(--cream),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ===== EXPLORE PAGE (reimagined More tab) ===== */
+.explore-header{padding:28px 0 16px;text-align:center}
+.explore-featured{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.explore-feat{border-radius:22px;padding:20px 16px;color:#fff;position:relative;overflow:hidden;cursor:pointer;transition:all .25s;min-height:100px}
+.explore-feat:active{transform:scale(.97)}
+.explore-feat .ef-icon{font-size:28px;margin-bottom:8px}
+.explore-feat .ef-title{font-size:13px;font-weight:600;position:relative;z-index:1}
+.explore-feat .ef-sub{font-size:10px;opacity:.7;margin-top:3px;position:relative;z-index:1}
+.explore-directory{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.explore-dir-item{padding:14px 6px;border-radius:16px;text-align:center;cursor:pointer;background:var(--card-bg);box-shadow:var(--card-shadow);transition:all .2s;border:1px solid var(--bdr-s)}
+.explore-dir-item:active{transform:scale(.94)}
+.explore-dir-item .edi-icon{font-size:20px;margin-bottom:4px}
+.explore-dir-item .edi-label{font-size:9px;font-weight:500;color:var(--cream);letter-spacing:.3px}
 
 /* ===== LOGIN ===== */
 .login{position:fixed;inset:0;z-index:2000;background:linear-gradient(160deg,#0C1220 0%,#1C2B4A 40%,#2A3D60 70%,#C4784A 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:calc(40px + env(safe-area-inset-top,0px)) 24px calc(40px + env(safe-area-inset-bottom,0px))}
@@ -993,8 +1181,134 @@ body[data-page="homelife"]::before{background:radial-gradient(ellipse 600px 600p
 .confirm-btn.primary{background:var(--gold);color:#fff}
 .confirm-btn:active{transform:scale(.97)}
 
+/* ===== FITNESS HUB ===== */
+.fit-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.fit-stat{text-align:center;padding:16px 8px;background:var(--card-bg);border-radius:18px;box-shadow:var(--card-shadow)}
+.fit-stat .fs-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--emerald);line-height:1}
+.fit-stat .fs-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:4px}
+.fit-programs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.fit-prog{padding:18px 12px;border-radius:20px;text-align:center;cursor:pointer;transition:all .25s;background:var(--card-bg);box-shadow:var(--card-shadow);border:2px solid transparent}
+.fit-prog:hover{transform:translateY(-2px);border-color:var(--emerald)}
+.fit-prog:active{transform:scale(.95)}
+.fit-prog.active{border-color:var(--emerald);background:var(--emerald-s)}
+.fit-prog .fp-icon{font-size:24px;margin-bottom:6px}
+.fit-prog .fp-name{font-size:11px;font-weight:500;color:var(--cream)}
+.fit-prog .fp-level{font-size:9px;color:var(--t3);margin-top:2px}
+.workout-session{background:var(--card-bg);border-radius:24px;padding:24px;margin-bottom:16px;box-shadow:var(--card-shadow);border:1px solid var(--emerald-s)}
+.ws-progress{height:4px;background:var(--bg3);border-radius:2px;margin-bottom:16px;overflow:hidden}
+.ws-progress-bar{height:100%;background:var(--emerald);border-radius:2px;transition:width .4s ease}
+.ws-exercise{padding:14px 0;border-bottom:1px solid var(--bdr-s)}
+.ws-exercise:last-child{border-bottom:none}
+.ws-exercise.done{opacity:.5}
+.ws-exercise .wse-head{display:flex;align-items:center;gap:12px}
+.ws-exercise .wse-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:12px;color:transparent}
+.ws-exercise.done .wse-check{background:var(--emerald);border-color:var(--emerald);color:#fff}
+.ws-exercise .wse-name{font-size:13px;font-weight:500;color:var(--cream);flex:1}
+.ws-exercise .wse-prev{font-size:10px;color:var(--t3)}
+.ws-log{display:flex;gap:8px;margin-top:8px;padding-left:36px}
+.ws-log input{padding:8px 10px;border-radius:10px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;width:60px;text-align:center;outline:none}
+.ws-log input:focus{box-shadow:var(--focus-ring)}
+.ws-log span{font-size:10px;color:var(--t3);align-self:center}
+.rest-timer{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:var(--emerald-s);border-radius:16px;margin:12px 0}
+.rest-timer .rt-time{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--emerald);font-weight:600}
+.rest-timer .rt-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)}
+.pr-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;background:linear-gradient(135deg,rgba(212,149,106,.15),rgba(176,138,80,.15));color:var(--gold)}
+
+/* ===== NUTRITION / MEAL TRACKING ===== */
+.meal-sections{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.meal-section{background:var(--card-bg);border-radius:20px;padding:18px;box-shadow:var(--card-shadow);cursor:pointer;transition:all .2s}
+.meal-section:active{transform:scale(.97)}
+.meal-section .ms-icon{font-size:22px;margin-bottom:6px}
+.meal-section .ms-name{font-size:12px;font-weight:500;color:var(--cream)}
+.meal-section .ms-count{font-size:10px;color:var(--t3);margin-top:2px}
+.meal-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--input-bg);border-radius:12px;margin-bottom:6px;font-size:12px;color:var(--cream)}
+.meal-item .mi-cal{font-size:10px;color:var(--rose);margin-left:auto}
+.hydration-track{display:flex;gap:6px;align-items:center;padding:14px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);margin-bottom:16px}
+.hydration-glass{width:28px;height:28px;border-radius:8px;border:2px solid var(--teal-s);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s}
+.hydration-glass.filled{background:var(--teal);border-color:var(--teal);color:#fff}
+.hydration-label{font-size:11px;color:var(--t2);margin-left:8px}
+.recipe-card{background:var(--card-bg);border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:var(--card-shadow);display:flex;gap:12px}
+.recipe-card .rc-info{flex:1}
+.recipe-card .rc-name{font-size:13px;font-weight:500;color:var(--cream)}
+.recipe-card .rc-meta{font-size:10px;color:var(--t3);margin-top:4px}
+
+/* ===== CALENDAR ===== */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cal-month{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--cream)}
+.cal-nav{display:flex;gap:8px}
+.cal-nav button{width:36px;height:36px;border-radius:50%;border:none;background:var(--input-bg);color:var(--t2);cursor:pointer;font-size:14px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.cal-nav button:hover{background:var(--gold);color:#fff}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.cal-day-label{text-align:center;font-size:9px;color:var(--t3);letter-spacing:.5px;padding:4px 0;text-transform:uppercase}
+.cal-day{aspect-ratio:1;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--t2);position:relative}
+.cal-day:hover{background:var(--tint)}
+.cal-day.today{background:var(--gold);color:#fff;font-weight:600}
+.cal-day.has-event::after{content:'';position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(--rose)}
+.cal-day.selected{outline:2px solid var(--gold);outline-offset:-2px}
+.cal-day.other-month{opacity:.3}
+.cal-events{margin-top:12px}
+.cal-event{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card-bg);border-radius:14px;margin-bottom:6px;box-shadow:var(--card-shadow);border-left:3px solid var(--gold)}
+.cal-event.type-her{border-left-color:var(--rose)}
+.cal-event.type-his{border-left-color:var(--teal)}
+.cal-event.type-joint{border-left-color:var(--lavender)}
+.cal-event .ce-time{font-size:10px;color:var(--t3);min-width:44px}
+.cal-event .ce-title{font-size:12px;font-weight:500;color:var(--cream);flex:1}
+
+/* ===== DREAM HOME ===== */
+.dh-style-result{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.dh-style-card{text-align:center;padding:18px;background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow)}
+.dh-style-card .dhs-name{font-size:10px;color:var(--t3);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase}
+.dh-style-card .dhs-style{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--lavender);font-weight:600}
+.dh-rooms{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.dh-room{padding:20px 14px;border-radius:20px;text-align:center;cursor:pointer;background:var(--card-bg);box-shadow:var(--card-shadow);transition:all .25s;border:1px solid transparent}
+.dh-room:hover{border-color:var(--lavender)}
+.dh-room:active{transform:scale(.96)}
+.dh-room .dr-icon{font-size:28px;margin-bottom:8px}
+.dh-room .dr-name{font-size:12px;font-weight:500;color:var(--cream)}
+.dh-room .dr-notes{font-size:10px;color:var(--t3);margin-top:3px}
+.dh-room .dr-budget{font-size:10px;color:var(--lavender);margin-top:4px;font-weight:500}
+.dh-wishlist-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card-bg);border-radius:16px;margin-bottom:8px;box-shadow:var(--card-shadow)}
+.dh-wishlist-item .dwi-name{font-size:13px;font-weight:500;color:var(--cream);flex:1}
+.dh-wishlist-item .dwi-price{font-size:12px;color:var(--lavender);font-weight:500}
+.dh-wishlist-item .dwi-priority{font-size:9px;padding:2px 8px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase}
+
+/* ===== KNOW YOUR PERSON ===== */
+.kyp-section{margin-bottom:20px}
+.kyp-section-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--rose);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.kyp-section-title::before{content:'';width:3px;height:14px;background:var(--rose);border-radius:2px}
+.kyp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kyp-item{background:var(--card-bg);border-radius:16px;padding:14px;box-shadow:var(--card-shadow)}
+.kyp-item .ki-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.kyp-item .ki-value{font-size:13px;color:var(--cream);font-weight:500}
+.kyp-item .ki-icon{float:right;font-size:16px;opacity:.5}
+.kyp-note{background:var(--card-bg);border-radius:16px;padding:14px;margin-bottom:8px;box-shadow:var(--card-shadow);border-left:3px solid var(--rose)}
+.kyp-note .kn-text{font-size:12px;color:var(--cream);line-height:1.6;font-style:italic}
+.kyp-note .kn-time{font-size:10px;color:var(--t3);margin-top:6px}
+
+/* ===== PHOTO MEMORIES ===== */
+.mem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:16px}
+.mem-item{aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative;background:var(--bg3)}
+.mem-item:hover{transform:scale(1.02);z-index:1}
+.mem-item img{width:100%;height:100%;object-fit:cover}
+.mem-item .mem-caption{position:absolute;bottom:0;left:0;right:0;padding:8px;background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:9px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mem-upload{padding:40px 20px;border-radius:18px;border:2px dashed var(--tint-b);text-align:center;cursor:pointer;transition:all .2s;background:transparent;margin-bottom:16px}
+.mem-upload:hover{border-color:var(--gold);background:var(--tint-xs)}
+.mem-upload .mu-icon{font-size:32px;margin-bottom:8px;display:block;color:var(--t3)}
+.mem-upload .mu-text{font-size:12px;color:var(--t3)}
+
+/* ===== ACHIEVEMENTS ===== */
+.achievement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.achievement{text-align:center;padding:14px 8px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);transition:all .2s}
+.achievement.locked{opacity:.35}
+.achievement .ach-icon{font-size:28px;margin-bottom:6px;display:block}
+.achievement .ach-name{font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--cream);font-weight:500}
+.achievement.unlocked{border:1px solid var(--gold);background:linear-gradient(135deg,rgba(28,43,74,.04),rgba(212,149,106,.04))}
+.xp-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--red));border-radius:4px;transition:width .6s ease}
+.level-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;font-size:11px;font-weight:600;color:var(--gold);background:var(--tint);margin-bottom:16px}
+
 /* ===== RESPONSIVE ===== */
-@media(max-width:400px){.ctn{padding:16px 16px 24px}.sg{grid-template-columns:repeat(2,1fr)}.hub-grid{grid-template-columns:1fr}.ll-pair{grid-template-columns:1fr;gap:16px}.ll-divider{display:none}}
+@media(max-width:400px){.ctn{padding:16px 16px 24px}.sg{grid-template-columns:repeat(2,1fr)}.hub-grid{grid-template-columns:1fr}.ll-pair{grid-template-columns:1fr;gap:16px}.ll-divider{display:none}.fit-programs{grid-template-columns:1fr 1fr}.dh-rooms{grid-template-columns:1fr}.explore-directory{grid-template-columns:repeat(3,1fr)}.cmd-grid{grid-template-columns:repeat(2,1fr)}.achievement-grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
@@ -1014,56 +1328,91 @@ body[data-page="homelife"]::before{background:radial-gradient(ellipse 600px 600p
 <!-- ===== APP SHELL ===== -->
 <div class="shell" id="shell">
 
-<!-- Hamburger -->
-<div class="hbg" onclick="toggleMenu()"><span></span><span></span><span></span></div>
-<div class="mov" onclick="toggleMenu()"></div>
-<div class="mpan">
-  <div class="msl">Navigate</div>
-  <div class="mi" onclick="go('dash')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></div><div class="mt"><h4>Home</h4></div></div>
-  <div class="mi" onclick="go('connect')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></div><div class="mt"><h4>Connect</h4><p>Letters & taps</p></div></div>
-  <div class="mi" onclick="go('mood')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div><div class="mt"><h4>Mood Check-in</h4></div></div>
-  <div class="mi" onclick="go('story')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="mt"><h4>Our Story</h4><p>The timeline</p></div></div>
-  <div class="mi" onclick="go('ai')"><div class="mic a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 00-3 3v1a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10a7 7 0 01-14 0"/><path d="M12 17v4"/><path d="M8 21h8"/></svg></div><div class="mt"><h4>AI Assistant</h4></div></div>
-  <div class="msl">Together</div>
-  <div class="mi" onclick="go('question')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="mt"><h4>Daily Question</h4><p>Today's prompt</p></div></div>
-  <div class="mi" onclick="go('games')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11"/><line x1="18" y1="13" x2="18.01" y2="13"/></svg></div><div class="mt"><h4>Games</h4><p>Play together</p></div></div>
-  <div class="mi" onclick="go('datenight')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c.5 3-1.5 5.5-1 8.5.5 3 3 4.5 3 4.5s-2 .5-3.5 0-3-2-3.5-4.5c-.5-2.5.5-4 1-6S12 2 12 2z"/><path d="M10 22v-3a2 2 0 014 0v3"/></svg></div><div class="mt"><h4>Date Night</h4><p>Where to next?</p></div></div>
-  <div class="mi" onclick="go('deeptalk')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg></div><div class="mt"><h4>Deep Talk</h4><p>The real stuff</p></div></div>
-  <div class="mi" onclick="go('gratitude')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="mt"><h4>Gratitude</h4><p>What you're thankful for</p></div></div>
-  <div class="mi" onclick="go('culture')"><div class="mic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div><div class="mt"><h4>Our Cultures</h4><p>Togo meets Texas</p></div></div>
-  <div class="mi" onclick="go('lovelang')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/><path d="M12 5.67l3 3"/></svg></div><div class="mt"><h4>Love Languages</h4><p>How we love</p></div></div>
-  <div class="mi" onclick="go('checkin')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="mt"><h4>Weekly Check-in</h4><p>Our pulse</p></div></div>
-  <div class="mi" onclick="go('foundation')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M5 20V8l7-5 7 5v12"/><path d="M9 20v-4h6v4"/></svg></div><div class="mt"><h4>Our Foundation</h4><p>What we stand on</p></div></div>
-  <div class="msl">Life Building</div>
-  <div class="mi" onclick="go('bucket')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="mt"><h4>Bucket List</h4><p>Dreams to chase</p></div></div>
-  <div class="mi" onclick="go('dreams')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 010-14h.5"/><path d="M14 16l3 3 3-3"/></svg></div><div class="mt"><h4>Dream Board</h4><p>Our vision</p></div></div>
-  <div class="mi" onclick="go('wishlist')"><div class="mic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6"/><path d="M2 8h20v4H2z"/><path d="M12 20V8"/><path d="M12 8l-4-4"/><path d="M12 8l4-4"/></svg></div><div class="mt"><h4>Wishlists</h4><p>Drop hints</p></div></div>
-  <div class="mi" onclick="go('family')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><div class="mt"><h4>Future Family</h4><p>When the time comes</p></div></div>
-  <div class="mi" onclick="go('homelife')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="mt"><h4>Home Life</h4><p>Running the house</p></div></div>
-  <div class="mi" onclick="go('spiritual')"><div class="mic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div><div class="mt"><h4>Our Spirit</h4><p>Faith together</p></div></div>
-  <div class="msl">Personal</div>
-  <div class="mi" onclick="go('herspace')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div><div class="mt"><h4>Taylor's Space</h4><p>Just for Taylor</p></div></div>
-  <div class="mi" onclick="go('hisspace')"><div class="mic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="mt"><h4>Manu's Space</h4><p>Just for Manu</p></div></div>
-  <div class="msl">Fitness</div>
-  <div class="mi" onclick="go('w1')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11"/><path d="M21 3l-6.5 3.5L18 10l3-7z"/><path d="M3 21l6.5-3.5L6 14l-3 7z"/></svg></div><div class="mt"><h4>Foundation</h4><p>Beginner</p></div></div>
-  <div class="mi" onclick="go('w2')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><div class="mt"><h4>Elevated</h4><p>Advanced</p></div></div>
-  <div class="mi" onclick="go('w3')"><div class="mic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div><div class="mt"><h4>Full Body</h4><p>Complete</p></div></div>
-  <div class="msl">Appearance</div>
-  <div class="mi" onclick="toggleTheme()"><div class="mic a" id="theme-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div><div class="mt"><h4 id="theme-label">Theme: Auto</h4></div></div>
-  <div class="msl">Account</div>
-  <div class="mi" onclick="switchUser()"><div class="mic a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></div><div class="mt"><h4>Switch Profile</h4></div></div>
-  <div class="mi" onclick="updateApiKey()"><div class="mic a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div><div class="mt"><h4>API Key</h4></div></div>
-  <div class="mi" onclick="logout()"><div class="mic a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div><div class="mt"><h4>Log Out</h4></div></div>
-  <div class="mfoot">Manu & Taylor</div>
+<!-- Floating Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Global Us/Me Mode Pill -->
+<div class="global-mode-pill" id="global-mode-pill">
+  <button class="gmp-opt active" data-mode="us" onclick="setGlobalMode('us')">Us</button>
+  <button class="gmp-opt" data-mode="me" onclick="setGlobalMode('me')">Me</button>
 </div>
 
-<!-- Bottom Nav -->
+<!-- Hamburger → Command Center -->
+<div class="hbg" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+<div class="cmd-center" id="cmd-center">
+  <input class="cmd-search" id="cmd-search" placeholder="Search features..." oninput="filterCmdCenter(this.value)">
+
+  <div class="cmd-recent" id="cmd-recent"></div>
+
+  <div class="cmd-section">
+    <div class="cmd-section-title">Relationship</div>
+    <div class="cmd-grid">
+      <div class="cmd-item" onclick="goCmd('connect')"><span class="cmd-icon">💌</span><span class="cmd-label">Connect</span><span class="cmd-sub">Letters & taps</span></div>
+      <div class="cmd-item" onclick="goCmd('games')"><span class="cmd-icon">🎮</span><span class="cmd-label">Games</span><span class="cmd-sub">Play together</span></div>
+      <div class="cmd-item" onclick="goCmd('question')"><span class="cmd-icon">💬</span><span class="cmd-label">Daily Q</span><span class="cmd-sub">Today's prompt</span></div>
+      <div class="cmd-item" onclick="goCmd('deeptalk')"><span class="cmd-icon">🌊</span><span class="cmd-label">Deep Talk</span><span class="cmd-sub">Real stuff</span></div>
+      <div class="cmd-item" onclick="goCmd('datenight')"><span class="cmd-icon">🕯</span><span class="cmd-label">Date Night</span><span class="cmd-sub">Where to next?</span></div>
+      <div class="cmd-item" onclick="goCmd('lovelang')"><span class="cmd-icon">💕</span><span class="cmd-label">Love Lang</span><span class="cmd-sub">How we love</span></div>
+      <div class="cmd-item" onclick="goCmd('checkin')"><span class="cmd-icon">✅</span><span class="cmd-label">Check-in</span><span class="cmd-sub">Weekly pulse</span></div>
+      <div class="cmd-item" onclick="goCmd('gratitude')"><span class="cmd-icon">🙏</span><span class="cmd-label">Gratitude</span><span class="cmd-sub">Thankful for</span></div>
+      <div class="cmd-item" onclick="goCmd('knowyou')"><span class="cmd-icon">🔮</span><span class="cmd-label">Know You</span><span class="cmd-sub">Partner profile</span></div>
+    </div>
+  </div>
+
+  <div class="cmd-section">
+    <div class="cmd-section-title">Life Planning</div>
+    <div class="cmd-grid">
+      <div class="cmd-item" onclick="goCmd('dreams')"><span class="cmd-icon">✨</span><span class="cmd-label">Dreams</span><span class="cmd-sub">Our vision</span></div>
+      <div class="cmd-item" onclick="goCmd('dreamhome')"><span class="cmd-icon">🏡</span><span class="cmd-label">Dream Home</span><span class="cmd-sub">Design it</span></div>
+      <div class="cmd-item" onclick="goCmd('homelife')"><span class="cmd-icon">💰</span><span class="cmd-label">Finances</span><span class="cmd-sub">Budget & bills</span></div>
+      <div class="cmd-item" onclick="goCmd('family')"><span class="cmd-icon">👶</span><span class="cmd-label">Family</span><span class="cmd-sub">Future plans</span></div>
+      <div class="cmd-item" onclick="goCmd('bucket')"><span class="cmd-icon">⭐</span><span class="cmd-label">Bucket List</span><span class="cmd-sub">Adventures</span></div>
+      <div class="cmd-item" onclick="goCmd('calendar')"><span class="cmd-icon">📅</span><span class="cmd-label">Calendar</span><span class="cmd-sub">Our schedule</span></div>
+      <div class="cmd-item" onclick="goCmd('foundation')"><span class="cmd-icon">🏛</span><span class="cmd-label">Foundation</span><span class="cmd-sub">What we stand on</span></div>
+      <div class="cmd-item" onclick="goCmd('wishlist')"><span class="cmd-icon">🎁</span><span class="cmd-label">Wishlists</span><span class="cmd-sub">Hint hint</span></div>
+      <div class="cmd-item" onclick="goCmd('memories')"><span class="cmd-icon">📸</span><span class="cmd-label">Memories</span><span class="cmd-sub">Photo album</span></div>
+    </div>
+  </div>
+
+  <div class="cmd-section">
+    <div class="cmd-section-title">Growth & Wellness</div>
+    <div class="cmd-grid">
+      <div class="cmd-item" onclick="goCmd('mood')"><span class="cmd-icon">🌤</span><span class="cmd-label">Mood</span><span class="cmd-sub">How you feel</span></div>
+      <div class="cmd-item" onclick="goCmd('fitness')"><span class="cmd-icon">💪</span><span class="cmd-label">Fitness</span><span class="cmd-sub">Track workouts</span></div>
+      <div class="cmd-item" onclick="goCmd('nutrition')"><span class="cmd-icon">🥗</span><span class="cmd-label">Nutrition</span><span class="cmd-sub">Meals & food</span></div>
+      <div class="cmd-item" onclick="goCmd('spiritual')"><span class="cmd-icon">🕊</span><span class="cmd-label">Spirit</span><span class="cmd-sub">Faith together</span></div>
+      <div class="cmd-item" onclick="goCmd('herspace')"><span class="cmd-icon">🌸</span><span class="cmd-label">Her Space</span><span class="cmd-sub">Taylor's corner</span></div>
+      <div class="cmd-item" onclick="goCmd('hisspace')"><span class="cmd-icon">⚡</span><span class="cmd-label">His Space</span><span class="cmd-sub">Manu's corner</span></div>
+    </div>
+  </div>
+
+  <div class="cmd-section">
+    <div class="cmd-section-title">Our Story</div>
+    <div class="cmd-grid">
+      <div class="cmd-item" onclick="goCmd('story')"><span class="cmd-icon">📖</span><span class="cmd-label">Timeline</span><span class="cmd-sub">Our journey</span></div>
+      <div class="cmd-item" onclick="goCmd('culture')"><span class="cmd-icon">🌍</span><span class="cmd-label">Cultures</span><span class="cmd-sub">Togo & Texas</span></div>
+      <div class="cmd-item" onclick="goCmd('ai')"><span class="cmd-icon">🤖</span><span class="cmd-label">AI Chat</span><span class="cmd-sub">Ask anything</span></div>
+    </div>
+  </div>
+
+  <div class="cmd-section" style="margin-top:8px">
+    <div class="cmd-section-title">Account</div>
+    <div class="cmd-grid">
+      <div class="cmd-item" onclick="toggleTheme()"><span class="cmd-icon" id="cmd-theme-icon">🌙</span><span class="cmd-label" id="cmd-theme-label">Theme</span></div>
+      <div class="cmd-item" onclick="switchUser()"><span class="cmd-icon">🔄</span><span class="cmd-label">Switch</span></div>
+      <div class="cmd-item" onclick="logout()"><span class="cmd-icon">🚪</span><span class="cmd-label">Log Out</span></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:20px 0;font-family:'Cormorant Garamond',serif;font-size:15px;font-style:italic;color:var(--t3)">Manu & Taylor</div>
+</div>
+<!-- Bottom Nav — restructured with 5 new groups -->
 <nav class="bnav">
-  <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></span><span class="nl">Home</span></button>
-  <button class="bn" data-p="connect" onclick="go('connect')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></span><span class="nl">Connect</span></button>
-  <button class="bn" data-p="mood" onclick="go('mood')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></span><span class="nl">Mood</span></button>
-  <button class="bn" data-p="story" onclick="go('story')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v8"/><path d="M12 3v2"/><path d="M12 19v2"/><circle cx="12" cy="12" r="1.5"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg></span><span class="nl">Story</span></button>
-  <button class="bn" data-p="more" onclick="go('more')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span class="nl">More</span></button>
+  <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></span><span class="nl">Today</span><span class="notif-dot"></span></button>
+  <button class="bn" data-p="together" onclick="go('connect')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></span><span class="nl">Together</span><span class="notif-dot"></span></button>
+  <button class="bn" data-p="track" onclick="go('mood')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></span><span class="nl">Track</span><span class="notif-dot"></span></button>
+  <button class="bn" data-p="build" onclick="go('dreams')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="nl">Build</span><span class="notif-dot"></span></button>
+  <button class="bn" data-p="explore" onclick="go('explore')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span class="nl">Explore</span><span class="notif-dot"></span></button>
 </nav>
 
 <!-- ===== DASHBOARD ===== -->
@@ -1426,84 +1775,105 @@ body[data-page="homelife"]::before{background:radial-gradient(ellipse 600px 600p
 </div>
 </div>
 
-<!-- ===== MORE HUB ===== -->
-<div class="pg" id="pg-more">
+<!-- ===== EXPLORE (destination page, not a menu) ===== -->
+<div class="pg" id="pg-explore">
 <div class="ctn">
   <div style="padding:32px 0 6px">
-    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)">Explore</div>
+    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)">Discover</div>
     <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;letter-spacing:2px;color:var(--cream);margin-top:4px">Our World</h1>
   </div>
 
-  <!-- Featured -->
+  <!-- Featured cards -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
-    <div class="feat-card fc-love" onclick="go('datenight')" style="cursor:pointer;padding:16px;margin:0">
-      <div class="fc-label">Tonight</div>
-      <div style="font-size:14px;font-weight:500">Date Night</div>
-      <div style="font-size:10px;opacity:.7;margin-top:4px" id="hub-dn-status"></div>
+    <div class="card-hero" onclick="go('knowyou')" style="cursor:pointer;padding:18px;background:var(--grad-know);min-height:90px">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:4px">New</div>
+      <div style="font-size:15px;font-weight:600">Know Your Person</div>
+      <div style="font-size:11px;opacity:.7;margin-top:4px">Learn everything about each other</div>
     </div>
-    <div class="feat-card fc-grow" onclick="go('deeptalk')" style="cursor:pointer;padding:16px;margin:0">
-      <div class="fc-label">Deeper</div>
-      <div style="font-size:14px;font-weight:500">Deep Talk</div>
-      <div style="font-size:10px;opacity:.7;margin-top:4px" id="hub-dt-status"></div>
+    <div class="card-hero" onclick="go('dreamhome')" style="cursor:pointer;padding:18px;background:var(--grad-dreamhome);min-height:90px">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:4px">New</div>
+      <div style="font-size:15px;font-weight:600">Dream Home</div>
+      <div style="font-size:11px;opacity:.7;margin-top:4px">Design your future together</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+    <div class="card-action" onclick="go('fitness')" style="cursor:pointer;padding:14px;text-align:center">
+      <div class="icon-badge ib-emerald" style="margin:0 auto 8px">&#x1F4AA;</div>
+      <div style="font-size:12px;font-weight:500;color:var(--cream)">Fitness</div>
+    </div>
+    <div class="card-action" onclick="go('nutrition')" style="cursor:pointer;padding:14px;text-align:center">
+      <div class="icon-badge ib-rose" style="margin:0 auto 8px">&#x1F957;</div>
+      <div style="font-size:12px;font-weight:500;color:var(--cream)">Nutrition</div>
+    </div>
+    <div class="card-action" onclick="go('calendar')" style="cursor:pointer;padding:14px;text-align:center">
+      <div class="icon-badge ib-teal" style="margin:0 auto 8px">&#x1F4C5;</div>
+      <div style="font-size:12px;font-weight:500;color:var(--cream)">Calendar</div>
     </div>
   </div>
 
   <!-- Relationship -->
   <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Relationship</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+    <div class="hub-row" onclick="go('connect')"><div class="hub-row-label">Connect</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('games')"><div class="hub-row-label">Games</div><div class="hub-row-status"><span class="hub-badge count" id="hub-games-status">Play</span><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('lovelang')"><div class="hub-row-label">Love Languages</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ll-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('checkin')"><div class="hub-row-label">Weekly Check-in</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ci-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="go('culture')"><div class="hub-row-label">Our Cultures</div><div class="hub-row-status"><span class="hub-badge count" id="hub-cx-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('deeptalk')"><div class="hub-row-label">Deep Talk</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dt-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="go('foundation')"><div class="hub-row-label">Our Foundation</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fdn-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('datenight')"><div class="hub-row-label">Date Night</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dn-status">Plan</span><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('question')"><div class="hub-row-label">Daily Question</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dq-status">--</span><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Life Building -->
   <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Life Building</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
-    <div class="hub-row" onclick="go('family')"><div class="hub-row-label">Future Family</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fam-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('homelife')"><div class="hub-row-label">Home Life</div><div class="hub-row-status"><span class="hub-badge count" id="hub-hl-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="go('spiritual')"><div class="hub-row-label">Our Spirit</div><div class="hub-row-status"><span class="hub-badge count" id="hub-sp-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('dreams')"><div class="hub-row-label">Our Dreams</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dr-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('family')"><div class="hub-row-label">Future Family</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fam-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('foundation')"><div class="hub-row-label">Our Foundation</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fdn-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('culture')"><div class="hub-row-label">Our Cultures</div><div class="hub-row-status"><span class="hub-badge count" id="hub-cx-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('spiritual')"><div class="hub-row-label">Our Spirit</div><div class="hub-row-status"><span class="hub-badge count" id="hub-sp-status">--</span><span class="hub-chevron">›</span></div></div>
   </div>
 
-  <!-- Personal -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Personal</div>
+  <!-- Growth & Wellness -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Growth &amp; Wellness</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+    <div class="hub-row" onclick="go('fitness')"><div class="hub-row-label">Fitness Hub</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('nutrition')"><div class="hub-row-label">Nutrition</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('gratitude')"><div class="hub-row-label">Gratitude</div><div class="hub-row-status"><span class="hub-badge count" id="hub-grat-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('herspace')"><div class="hub-row-label">Taylor's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('hisspace')"><div class="hub-row-label">Manu's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
   </div>
 
-  <!-- Activities -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Activities</div>
+  <!-- Extras -->
+  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">More</div>
   <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
-    <div class="hub-row" onclick="go('games')"><div class="hub-row-label">Games</div><div class="hub-row-status"><span class="hub-badge count" id="hub-games-status">Play</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('memories')"><div class="hub-row-label">Photo Memories</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('achievements')"><div class="hub-row-label">Achievements</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('bucket')"><div class="hub-row-label">Bucket List</div><div class="hub-row-status"><span class="hub-badge count" id="hub-bl-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('wishlist')"><div class="hub-row-label">Wishlists</div><div class="hub-row-status"><span class="hub-badge count" id="hub-wl-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="go('gratitude')"><div class="hub-row-label">Gratitude</div><div class="hub-row-status"><span class="hub-badge count" id="hub-grat-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="go('question')"><div class="hub-row-label">Daily Question</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dq-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('story')"><div class="hub-row-label">Our Story</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('ai')"><div class="hub-row-label">AI Chat</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-  </div>
-
-  <!-- Fitness -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Fitness</div>
-  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
-    <div class="hub-row" onclick="go('w1')"><div class="hub-row-label">Foundation</div><div class="hub-row-status"><span style="font-size:11px;color:var(--t3)">Beginner</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="go('w2')"><div class="hub-row-label">Elevated</div><div class="hub-row-status"><span style="font-size:11px;color:var(--t3)">Advanced</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="go('w3')"><div class="hub-row-label">Full Body</div><div class="hub-row-status"><span style="font-size:11px;color:var(--t3)">Complete</span></div></div>
   </div>
 
   <!-- Settings -->
@@ -2332,6 +2702,605 @@ body[data-page="homelife"]::before{background:radial-gradient(ellipse 600px 600p
 </div>
 </div>
 
+<!-- ===== FITNESS HUB ===== -->
+<div class="pg" id="pg-fitness">
+<div class="ctn">
+  <div class="phd"><h1>Fitness Hub</h1><p>Track, improve, grow stronger</p></div>
+
+  <!-- Weekly Summary -->
+  <div class="fit-summary" id="fit-summary">
+    <div class="fit-stat"><div class="fit-stat-num" id="fit-sessions">0</div><div class="fit-stat-label">Sessions</div></div>
+    <div class="fit-stat"><div class="fit-stat-num" id="fit-volume">0</div><div class="fit-stat-label">Total Vol</div></div>
+    <div class="fit-stat"><div class="fit-stat-num" id="fit-streak">0</div><div class="fit-stat-label">Streak</div></div>
+    <div class="fit-stat"><div class="fit-stat-num" id="fit-prs">0</div><div class="fit-stat-label">PRs</div></div>
+  </div>
+
+  <!-- Couple Fitness (Us mode) -->
+  <div class="us-only">
+    <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Partner Activity</div></div>
+    <div class="card" id="fit-partner-status">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="presence-dot" id="fit-partner-dot"></div>
+        <div><div style="font-size:13px;color:var(--cream)" id="fit-partner-name">Partner</div>
+        <div style="font-size:11px;color:var(--t3)" id="fit-partner-last">No workouts yet</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Workout Session -->
+  <div class="workout-session" id="ws-active" style="display:none">
+    <div class="ws-header">
+      <div style="font-size:14px;font-weight:600;color:var(--cream)" id="ws-title">Foundation Workout</div>
+      <div style="font-size:11px;color:var(--t3)" id="ws-timer">00:00</div>
+    </div>
+    <div class="ws-progress"><div class="ws-progress-bar" id="ws-bar" style="width:0%"></div></div>
+    <div id="ws-exercises"></div>
+    <div class="rest-timer" id="rest-timer" style="display:none">
+      <div style="font-size:12px;color:var(--t3)">Rest</div>
+      <div style="font-size:28px;font-weight:700;color:var(--emerald)" id="rest-countdown">60</div>
+      <button class="btn-sm" onclick="skipRest()">Skip</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="dq-submit" onclick="finishWorkout()" style="flex:1;background:var(--grad-fitness)">Finish Workout</button>
+      <button class="btn-sm" onclick="cancelWorkout()" style="color:var(--red)">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Workout Programs -->
+  <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Programs</div></div>
+  <div class="fit-programs">
+    <div class="fit-prog card-action" onclick="startWorkout('foundation')">
+      <div class="icon-badge ib-emerald">&#x1F331;</div>
+      <div><div style="font-size:14px;font-weight:600;color:var(--cream)">Foundation</div>
+      <div style="font-size:11px;color:var(--t3)">Beginner &bull; Full Body</div></div>
+    </div>
+    <div class="fit-prog card-action" onclick="startWorkout('elevated')">
+      <div class="icon-badge ib-teal">&#x26A1;</div>
+      <div><div style="font-size:14px;font-weight:600;color:var(--cream)">Elevated</div>
+      <div style="font-size:11px;color:var(--t3)">Advanced &bull; Split</div></div>
+    </div>
+    <div class="fit-prog card-action" onclick="startWorkout('fullbody')">
+      <div class="icon-badge ib-lavender">&#x1F525;</div>
+      <div><div style="font-size:14px;font-weight:600;color:var(--cream)">Full Body</div>
+      <div style="font-size:11px;color:var(--t3)">Complete &bull; All Levels</div></div>
+    </div>
+    <div class="fit-prog card-action" onclick="startCustomWorkout()">
+      <div class="icon-badge ib-amber">&#x2795;</div>
+      <div><div style="font-size:14px;font-weight:600;color:var(--cream)">Custom</div>
+      <div style="font-size:11px;color:var(--t3)">Build your own</div></div>
+    </div>
+  </div>
+
+  <!-- Quick Log -->
+  <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Quick Log</div></div>
+  <div class="card">
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <input type="text" id="fit-ex-name" placeholder="Exercise" style="flex:2">
+      <input type="number" id="fit-ex-sets" placeholder="Sets" style="flex:1">
+      <input type="number" id="fit-ex-reps" placeholder="Reps" style="flex:1">
+      <input type="number" id="fit-ex-weight" placeholder="lbs" style="flex:1">
+    </div>
+    <button class="dq-submit" onclick="quickLogExercise()">Log Exercise</button>
+  </div>
+
+  <!-- Exercise History -->
+  <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Recent Workouts</div></div>
+  <div id="fit-history"><div class="empty">Start your first workout to see history</div></div>
+
+  <!-- Body Metrics -->
+  <div class="me-only">
+    <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Body Metrics</div></div>
+    <div class="card">
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input type="number" id="fit-weight" placeholder="Weight (lbs)" style="flex:1">
+        <button class="dq-submit" onclick="logBodyWeight()" style="flex:0 0 auto">Log</button>
+      </div>
+      <div id="fit-weight-trend" style="font-size:12px;color:var(--t3)"></div>
+    </div>
+  </div>
+
+  <!-- PRs -->
+  <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Personal Records</div></div>
+  <div id="fit-prs-list"><div class="empty">Set some PRs by logging workouts</div></div>
+</div>
+</div>
+
+<!-- ===== NUTRITION ===== -->
+<div class="pg" id="pg-nutrition">
+<div class="ctn">
+  <div class="phd"><h1>Nutrition</h1><p>Fuel your day together</p></div>
+
+  <!-- Daily Summary -->
+  <div class="fit-summary" id="nutr-summary">
+    <div class="fit-stat"><div class="fit-stat-num" id="nutr-meals">0</div><div class="fit-stat-label">Meals</div></div>
+    <div class="fit-stat"><div class="fit-stat-num" id="nutr-cals">0</div><div class="fit-stat-label">Calories</div></div>
+    <div class="fit-stat"><div class="fit-stat-num" id="nutr-water">0</div><div class="fit-stat-label">Water</div></div>
+    <div class="fit-stat"><div class="fit-stat-num" id="nutr-score">--</div><div class="fit-stat-label">Score</div></div>
+  </div>
+
+  <!-- Hydration -->
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Hydration</div></div>
+  <div class="card" style="text-align:center">
+    <div class="hydration-track" id="hydration-track">
+      <div class="hydration-glass" onclick="logWater(1)">&#x1F4A7;</div>
+      <div class="hydration-glass" onclick="logWater(2)">&#x1F4A7;</div>
+      <div class="hydration-glass" onclick="logWater(3)">&#x1F4A7;</div>
+      <div class="hydration-glass" onclick="logWater(4)">&#x1F4A7;</div>
+      <div class="hydration-glass" onclick="logWater(5)">&#x1F4A7;</div>
+      <div class="hydration-glass" onclick="logWater(6)">&#x1F4A7;</div>
+      <div class="hydration-glass" onclick="logWater(7)">&#x1F4A7;</div>
+      <div class="hydration-glass" onclick="logWater(8)">&#x1F4A7;</div>
+    </div>
+    <div style="font-size:12px;color:var(--t3);margin-top:8px"><span id="water-count">0</span>/8 glasses</div>
+  </div>
+
+  <!-- Meal Log -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Today's Meals</div></div>
+  <div class="meal-sections">
+    <div class="meal-section">
+      <div class="meal-section-head" onclick="toggleMealSection('breakfast')">
+        <span>&#x1F305; Breakfast</span><span class="meal-count" id="meal-breakfast-ct">0</span>
+      </div>
+      <div class="meal-section-body" id="meal-breakfast"></div>
+      <div class="meal-add">
+        <input type="text" id="meal-breakfast-input" placeholder="What did you eat?">
+        <input type="number" id="meal-breakfast-cal" placeholder="Cal" style="width:70px">
+        <button onclick="addMealItem('breakfast')">+</button>
+      </div>
+    </div>
+    <div class="meal-section">
+      <div class="meal-section-head" onclick="toggleMealSection('lunch')">
+        <span>&#x2600;&#xFE0F; Lunch</span><span class="meal-count" id="meal-lunch-ct">0</span>
+      </div>
+      <div class="meal-section-body" id="meal-lunch"></div>
+      <div class="meal-add">
+        <input type="text" id="meal-lunch-input" placeholder="What did you eat?">
+        <input type="number" id="meal-lunch-cal" placeholder="Cal" style="width:70px">
+        <button onclick="addMealItem('lunch')">+</button>
+      </div>
+    </div>
+    <div class="meal-section">
+      <div class="meal-section-head" onclick="toggleMealSection('dinner')">
+        <span>&#x1F319; Dinner</span><span class="meal-count" id="meal-dinner-ct">0</span>
+      </div>
+      <div class="meal-section-body" id="meal-dinner"></div>
+      <div class="meal-add">
+        <input type="text" id="meal-dinner-input" placeholder="What did you eat?">
+        <input type="number" id="meal-dinner-cal" placeholder="Cal" style="width:70px">
+        <button onclick="addMealItem('dinner')">+</button>
+      </div>
+    </div>
+    <div class="meal-section">
+      <div class="meal-section-head" onclick="toggleMealSection('snacks')">
+        <span>&#x1F36A; Snacks</span><span class="meal-count" id="meal-snacks-ct">0</span>
+      </div>
+      <div class="meal-section-body" id="meal-snacks"></div>
+      <div class="meal-add">
+        <input type="text" id="meal-snacks-input" placeholder="Snack item">
+        <input type="number" id="meal-snacks-cal" placeholder="Cal" style="width:70px">
+        <button onclick="addMealItem('snacks')">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Meal Planning (Us mode) -->
+  <div class="us-only">
+    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Meal Planning</div></div>
+    <div class="card">
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input type="text" id="mealplan-name" placeholder="Meal name" style="flex:2">
+        <select id="mealplan-day" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+          <option value="mon">Mon</option><option value="tue">Tue</option><option value="wed">Wed</option>
+          <option value="thu">Thu</option><option value="fri">Fri</option><option value="sat">Sat</option><option value="sun">Sun</option>
+        </select>
+      </div>
+      <button class="dq-submit" onclick="addMealPlan()">Add to Plan</button>
+    </div>
+    <div id="mealplan-list"><div class="empty">Plan meals for the week</div></div>
+  </div>
+
+  <!-- Shared Grocery List -->
+  <div class="us-only">
+    <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Grocery List</div></div>
+    <div class="bl-form">
+      <input type="text" id="grocery-input" placeholder="Add item...">
+      <button onclick="addGroceryItem()">+</button>
+    </div>
+    <div id="grocery-list"><div class="empty">Build your shared grocery list</div></div>
+  </div>
+
+  <!-- Recipes -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Saved Recipes</div></div>
+  <div class="card">
+    <input type="text" id="recipe-name" placeholder="Recipe name" style="margin-bottom:8px">
+    <textarea id="recipe-desc" placeholder="Ingredients & instructions..." style="margin-bottom:8px;min-height:60px;width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical"></textarea>
+    <button class="dq-submit" onclick="saveRecipe()">Save Recipe</button>
+  </div>
+  <div id="recipe-list"><div class="empty">Save your favorite recipes</div></div>
+</div>
+</div>
+
+<!-- ===== CALENDAR ===== -->
+<div class="pg" id="pg-calendar">
+<div class="ctn">
+  <div class="phd"><h1>Our Calendar</h1><p>Everything happening in our world</p></div>
+
+  <!-- Month Navigation -->
+  <div class="cal-header">
+    <button class="cal-nav" onclick="calNav(-1)">&#x2190;</button>
+    <div class="cal-month" id="cal-month-label">March 2026</div>
+    <button class="cal-nav" onclick="calNav(1)">&#x2192;</button>
+  </div>
+
+  <!-- Day Labels -->
+  <div class="cal-grid" style="margin-bottom:4px">
+    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">S</div>
+    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">M</div>
+    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">T</div>
+    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">W</div>
+    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">T</div>
+    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">F</div>
+    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">S</div>
+  </div>
+
+  <!-- Calendar Grid -->
+  <div class="cal-grid" id="cal-grid"></div>
+
+  <!-- Selected Day Events -->
+  <div class="sec-head" style="margin-top:20px"><div class="sec-dot sd-teal"></div><div class="sec-title" id="cal-day-label">Today</div></div>
+  <div id="cal-events"><div class="empty">No events for this day</div></div>
+
+  <!-- Add Event -->
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Add Event</div></div>
+  <div class="card">
+    <input type="text" id="cal-event-title" placeholder="Event title" style="margin-bottom:8px">
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <input type="date" id="cal-event-date" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+      <input type="time" id="cal-event-time" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <select id="cal-event-type" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+        <option value="joint">Joint</option>
+        <option value="her">Her</option>
+        <option value="him">Him</option>
+        <option value="recurring">Recurring</option>
+        <option value="countdown">Countdown</option>
+      </select>
+    </div>
+    <textarea id="cal-event-notes" placeholder="Notes..." style="margin-bottom:8px;min-height:40px;width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical"></textarea>
+    <button class="dq-submit" onclick="addCalEvent()">Add Event</button>
+  </div>
+
+  <!-- Upcoming -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Upcoming</div></div>
+  <div id="cal-upcoming"><div class="empty">No upcoming events</div></div>
+</div>
+</div>
+
+<!-- ===== DREAM HOME ===== -->
+<div class="pg" id="pg-dreamhome">
+<div class="ctn">
+  <div class="phd"><h1>Dream Home</h1><p>Design your future together</p></div>
+
+  <!-- Style Quiz -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Your Style</div></div>
+  <div class="card" id="dh-style-quiz">
+    <div style="font-size:13px;color:var(--cream);margin-bottom:12px">What is your home style?</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px" id="dh-style-options">
+      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('modern')">Modern</button>
+      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('rustic')">Rustic</button>
+      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('minimalist')">Minimalist</button>
+      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('cozy')">Cozy</button>
+      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('industrial')">Industrial</button>
+      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('bohemian')">Bohemian</button>
+      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('scandinavian')">Scandinavian</button>
+      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('traditional')">Traditional</button>
+    </div>
+    <div id="dh-style-result" style="margin-top:12px"></div>
+  </div>
+
+  <!-- Room Planner -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Room by Room</div></div>
+  <div class="dh-rooms" id="dh-rooms">
+    <div class="dh-room card-action" onclick="openRoom('living')">
+      <div class="icon-badge ib-lavender">&#x1F6CB;&#xFE0F;</div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Living Room</div>
+      <div style="font-size:11px;color:var(--t3)" id="dh-living-ct">0 ideas</div></div>
+    </div>
+    <div class="dh-room card-action" onclick="openRoom('bedroom')">
+      <div class="icon-badge ib-rose">&#x1F6CF;&#xFE0F;</div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Bedroom</div>
+      <div style="font-size:11px;color:var(--t3)" id="dh-bedroom-ct">0 ideas</div></div>
+    </div>
+    <div class="dh-room card-action" onclick="openRoom('kitchen')">
+      <div class="icon-badge ib-amber">&#x1F373;</div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Kitchen</div>
+      <div style="font-size:11px;color:var(--t3)" id="dh-kitchen-ct">0 ideas</div></div>
+    </div>
+    <div class="dh-room card-action" onclick="openRoom('bathroom')">
+      <div class="icon-badge ib-teal">&#x1F6C1;</div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Bathroom</div>
+      <div style="font-size:11px;color:var(--t3)" id="dh-bathroom-ct">0 ideas</div></div>
+    </div>
+    <div class="dh-room card-action" onclick="openRoom('outdoor')">
+      <div class="icon-badge ib-emerald">&#x1F333;</div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Outdoor</div>
+      <div style="font-size:11px;color:var(--t3)" id="dh-outdoor-ct">0 ideas</div></div>
+    </div>
+    <div class="dh-room card-action" onclick="openRoom('office')">
+      <div class="icon-badge ib-gold">&#x1F4BB;</div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Office</div>
+      <div style="font-size:11px;color:var(--t3)" id="dh-office-ct">0 ideas</div></div>
+    </div>
+  </div>
+
+  <!-- Room Detail (shown when a room is selected) -->
+  <div id="dh-room-detail" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <button class="btn-sm" onclick="closeRoomDetail()">&#x2190; Back</button>
+      <div style="font-size:16px;font-weight:600;color:var(--cream)" id="dh-room-title">Room</div>
+    </div>
+    <div class="card">
+      <textarea id="dh-room-notes" placeholder="Style notes for this room..." style="margin-bottom:8px;min-height:60px;width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical"></textarea>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input type="text" id="dh-room-link" placeholder="Inspiration URL" style="flex:2">
+        <input type="number" id="dh-room-budget" placeholder="Budget $" style="flex:1">
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <select id="dh-room-priority" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+          <option value="must">Must-have</option>
+          <option value="nice">Nice-to-have</option>
+          <option value="dream">Dream</option>
+        </select>
+        <select id="dh-room-timeline" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+          <option value="now">Now</option>
+          <option value="1y">1 Year</option>
+          <option value="3y">3 Years</option>
+          <option value="5y">5+ Years</option>
+        </select>
+      </div>
+      <button class="dq-submit" onclick="addRoomIdea()">Add Idea</button>
+    </div>
+    <div id="dh-room-ideas"><div class="empty">Add ideas for this room</div></div>
+  </div>
+
+  <!-- Wishlist -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Home Wishlist</div></div>
+  <div class="bl-form">
+    <input type="text" id="dh-wish-name" placeholder="Item name" style="flex:2">
+    <input type="number" id="dh-wish-price" placeholder="$" style="flex:1">
+    <button onclick="addHomeWish()">+</button>
+  </div>
+  <div id="dh-wishlist"><div class="empty">Add items to your home wishlist</div></div>
+
+  <!-- Budget Overview -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Budget Overview</div></div>
+  <div class="card" id="dh-budget-overview">
+    <div style="text-align:center;color:var(--t3);font-size:12px">Add room ideas to see budget summary</div>
+  </div>
+</div>
+</div>
+
+<!-- ===== KNOW YOUR PERSON ===== -->
+<div class="pg" id="pg-knowyou">
+<div class="ctn">
+  <div class="phd"><h1>Know Your Person</h1><p>A living guide to each other</p></div>
+
+  <!-- Favorites -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Favorites</div></div>
+  <div class="kyp-grid" id="kyp-favorites">
+    <div class="kyp-item card" onclick="editKYP('food')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Food</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-food">Tap to add</div>
+    </div>
+    <div class="kyp-item card" onclick="editKYP('color')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Color</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-color">Tap to add</div>
+    </div>
+    <div class="kyp-item card" onclick="editKYP('movie')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Movie</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-movie">Tap to add</div>
+    </div>
+    <div class="kyp-item card" onclick="editKYP('song')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Song</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-song">Tap to add</div>
+    </div>
+    <div class="kyp-item card" onclick="editKYP('book')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Book</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-book">Tap to add</div>
+    </div>
+    <div class="kyp-item card" onclick="editKYP('place')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Place</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-place">Tap to add</div>
+    </div>
+    <div class="kyp-item card" onclick="editKYP('season')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Season</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-season">Tap to add</div>
+    </div>
+    <div class="kyp-item card" onclick="editKYP('coffee')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Coffee Order</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-coffee">Tap to add</div>
+    </div>
+  </div>
+
+  <!-- Important Dates -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Important Dates</div></div>
+  <div class="card">
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <input type="text" id="kyp-date-label" placeholder="What is this date?" style="flex:2">
+      <input type="date" id="kyp-date-val" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+    </div>
+    <button class="dq-submit" onclick="addKYPDate()">Save Date</button>
+  </div>
+  <div id="kyp-dates"><div class="empty">Add birthdays, anniversaries, and special dates</div></div>
+
+  <!-- Sizes & Preferences -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Sizes &amp; Preferences</div></div>
+  <div class="kyp-grid" id="kyp-sizes">
+    <div class="kyp-item card" onclick="editKYP('shirt')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Shirt</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-shirt">Tap to add</div>
+    </div>
+    <div class="kyp-item card" onclick="editKYP('pants')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Pants</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-pants">Tap to add</div>
+    </div>
+    <div class="kyp-item card" onclick="editKYP('shoe')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Shoe</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-shoe">Tap to add</div>
+    </div>
+    <div class="kyp-item card" onclick="editKYP('ring')">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Ring</div>
+      <div style="font-size:13px;color:var(--cream)" id="kyp-ring">Tap to add</div>
+    </div>
+  </div>
+
+  <!-- Remember This -->
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Remember This</div></div>
+  <div class="bl-form">
+    <input type="text" id="kyp-note-input" placeholder="Something to remember about them...">
+    <button onclick="addKYPNote()">+</button>
+  </div>
+  <div id="kyp-notes"><div class="empty">Jot down things to remember</div></div>
+
+  <!-- Love Notes (private) -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Private Love Notes</div></div>
+  <div class="card">
+    <textarea id="kyp-love-note" placeholder="Things that make them light up..." style="margin-bottom:8px;min-height:60px;width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical"></textarea>
+    <button class="dq-submit" onclick="addLoveNote()">Save Note</button>
+  </div>
+  <div id="kyp-love-notes"><div class="empty">Your private notes about what they love</div></div>
+</div>
+</div>
+
+<!-- ===== PHOTO MEMORIES ===== -->
+<div class="pg" id="pg-memories">
+<div class="ctn">
+  <div class="phd"><h1>Memories</h1><p>Our shared photo album</p></div>
+
+  <!-- On This Day -->
+  <div id="mem-onthisday" style="display:none">
+    <div class="card-story">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">On This Day</div>
+      <div id="mem-otd-content"></div>
+    </div>
+  </div>
+
+  <!-- Upload -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Add Memory</div></div>
+  <div class="card">
+    <div class="mem-upload" onclick="document.getElementById('mem-file').click()">
+      <div style="font-size:24px;margin-bottom:4px">&#x1F4F7;</div>
+      <div style="font-size:12px;color:var(--t3)">Tap to upload a photo</div>
+    </div>
+    <input type="file" id="mem-file" accept="image/*" style="display:none" onchange="previewMemory(this)">
+    <div id="mem-preview" style="display:none;margin:10px 0">
+      <img id="mem-preview-img" style="width:100%;border-radius:14px;max-height:200px;object-fit:cover">
+    </div>
+    <input type="text" id="mem-caption" placeholder="Caption this moment..." style="margin-bottom:8px">
+    <input type="date" id="mem-date" style="margin-bottom:8px;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;width:100%">
+    <button class="dq-submit" onclick="saveMemory()">Save Memory</button>
+  </div>
+
+  <!-- Memory Grid -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">All Memories</div></div>
+  <div class="mem-grid" id="mem-grid"><div class="empty">Upload your first photo together</div></div>
+</div>
+</div>
+
+<!-- ===== ACHIEVEMENTS ===== -->
+<div class="pg" id="pg-achievements">
+<div class="ctn">
+  <div class="phd"><h1>Achievements</h1><p>Celebrating your journey together</p></div>
+
+  <!-- Level & XP -->
+  <div class="card" style="text-align:center;margin-bottom:20px">
+    <div class="level-badge" id="ach-level">1</div>
+    <div style="font-size:11px;color:var(--t3);margin:8px 0 4px">Couple Level</div>
+    <div class="xp-bar"><div class="xp-fill" id="ach-xp-bar" style="width:0%"></div></div>
+    <div style="font-size:11px;color:var(--t3);margin-top:4px"><span id="ach-xp">0</span> / <span id="ach-xp-next">100</span> XP</div>
+  </div>
+
+  <!-- Badge Grid -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Badges</div></div>
+  <div class="achievement-grid" id="ach-grid">
+    <div class="achievement locked" id="ach-first-letter">
+      <div style="font-size:24px">&#x1F48C;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">First Letter</div>
+      <div style="font-size:10px;color:var(--t3)">Send your first love letter</div>
+    </div>
+    <div class="achievement locked" id="ach-week-streak">
+      <div style="font-size:24px">&#x1F525;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Week Streak</div>
+      <div style="font-size:10px;color:var(--t3)">7-day check-in streak</div>
+    </div>
+    <div class="achievement locked" id="ach-game-champs">
+      <div style="font-size:24px">&#x1F3AE;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Game Night</div>
+      <div style="font-size:10px;color:var(--t3)">Play 10 games together</div>
+    </div>
+    <div class="achievement locked" id="ach-money-smart">
+      <div style="font-size:24px">&#x1F4B0;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Money Smart</div>
+      <div style="font-size:10px;color:var(--t3)">Hit your first savings goal</div>
+    </div>
+    <div class="achievement locked" id="ach-deep-divers">
+      <div style="font-size:24px">&#x1F30A;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Deep Divers</div>
+      <div style="font-size:10px;color:var(--t3)">Complete all soul-level talks</div>
+    </div>
+    <div class="achievement locked" id="ach-culture-bridge">
+      <div style="font-size:24px">&#x1F30D;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Culture Bridge</div>
+      <div style="font-size:10px;color:var(--t3)">Share 10 cultural exchanges</div>
+    </div>
+    <div class="achievement locked" id="ach-dream-big">
+      <div style="font-size:24px">&#x2B50;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Dream Big</div>
+      <div style="font-size:10px;color:var(--t3)">Add 20 dreams together</div>
+    </div>
+    <div class="achievement locked" id="ach-fit-couple">
+      <div style="font-size:24px">&#x1F4AA;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Fit Couple</div>
+      <div style="font-size:10px;color:var(--t3)">Both workout in same week</div>
+    </div>
+    <div class="achievement locked" id="ach-home-dreamers">
+      <div style="font-size:24px">&#x1F3E0;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Home Dreamers</div>
+      <div style="font-size:10px;color:var(--t3)">Plan 3 rooms together</div>
+    </div>
+    <div class="achievement locked" id="ach-memory-makers">
+      <div style="font-size:24px">&#x1F4F8;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Memory Makers</div>
+      <div style="font-size:10px;color:var(--t3)">Upload 10 photos</div>
+    </div>
+    <div class="achievement locked" id="ach-know-it-all">
+      <div style="font-size:24px">&#x1F9E0;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Know It All</div>
+      <div style="font-size:10px;color:var(--t3)">Fill all partner favorites</div>
+    </div>
+    <div class="achievement locked" id="ach-month-strong">
+      <div style="font-size:24px">&#x1F48E;</div>
+      <div style="font-size:11px;font-weight:600;color:var(--cream)">Month Strong</div>
+      <div style="font-size:10px;color:var(--t3)">30-day check-in streak</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Journey Stats</div></div>
+  <div class="card" id="ach-stats">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px">
+      <div><span style="color:var(--t3)">Letters sent</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-letters">0</div></div>
+      <div><span style="color:var(--t3)">Games played</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-games">0</div></div>
+      <div><span style="color:var(--t3)">Moods logged</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-moods">0</div></div>
+      <div><span style="color:var(--t3)">Dreams shared</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-dreams">0</div></div>
+      <div><span style="color:var(--t3)">Workouts done</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-workouts">0</div></div>
+      <div><span style="color:var(--t3)">Memories saved</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-memories">0</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
 <!-- ===== LOG MODAL ===== -->
 <div class="lmod" id="lmod">
 <div class="lsht">
@@ -2568,8 +3537,20 @@ function finishLogin() {
   renderDashHero();
   renderDashNudges();
   renderDashCountdown();
+  // New modules v3 - enhanced features
+  listenFitnessData();
+  listenNutritionData();
+  listenCalendarEvents();
+  listenDreamHome();
+  listenKnowYou();
+  listenMemories();
+  listenAchievements();
+  // Particles, global mode, presence
+  initParticles();
+  setGlobalMode(localStorage.getItem('met_global_mode') || 'us');
+  initPresence();
   // Hub & module statuses
-  setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); }, 1500);
+  setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); checkAchievements(); }, 1500);
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
@@ -2586,9 +3567,17 @@ function updateApiKey() {
 
 // ===== NAV =====
 // Map sub-pages to their parent tab
-const TAB_MAP = { 'ai': 'more', 'w1': 'more', 'w2': 'more', 'w3': 'more', 'question': 'more', 'gratitude': 'more', 'games': 'more', 'bucket': 'more', 'wishlist': 'more', 'datenight': 'more', 'lovelang': 'more', 'checkin': 'more', 'dreams': 'more', 'herspace': 'more', 'hisspace': 'more', 'culture': 'more', 'deeptalk': 'more', 'family': 'more', 'foundation': 'more', 'spiritual': 'more', 'homelife': 'more' };
+const TAB_MAP = {
+  'dash': 'dash',
+  'connect': 'together', 'games': 'together', 'deeptalk': 'together', 'question': 'together', 'datenight': 'together', 'lovelang': 'together', 'checkin': 'together',
+  'mood': 'track', 'fitness': 'track', 'gratitude': 'track', 'w1': 'track', 'w2': 'track', 'w3': 'track',
+  'dreams': 'build', 'homelife': 'build', 'family': 'build', 'foundation': 'build', 'culture': 'build', 'spiritual': 'build', 'dreamhome': 'build', 'calendar': 'build',
+  'explore': 'explore', 'more': 'explore', 'ai': 'explore', 'bucket': 'explore', 'wishlist': 'explore', 'herspace': 'explore', 'hisspace': 'explore', 'story': 'explore',
+  'knowyou': 'explore', 'nutrition': 'explore', 'memories': 'explore', 'achievements': 'explore'
+};
 
 function go(p) {
+  if (p === 'more') p = 'explore';
   const current = document.querySelector('.pg.on');
   const next = document.getElementById('pg-' + p);
   if (current === next) { closeMenu(); return; }
@@ -2612,14 +3601,57 @@ function go(p) {
 }
 
 function toggleMenu() {
-  document.querySelector('.hbg').classList.toggle('on');
-  document.querySelector('.mov').classList.toggle('on');
-  document.querySelector('.mpan').classList.toggle('on');
+  const cmd = document.getElementById('cmd-center');
+  if (cmd) cmd.classList.toggle('on');
 }
 function closeMenu() {
-  document.querySelector('.hbg').classList.remove('on');
-  document.querySelector('.mov').classList.remove('on');
-  document.querySelector('.mpan').classList.remove('on');
+  const cmd = document.getElementById('cmd-center');
+  if (cmd) cmd.classList.remove('on');
+}
+
+// ===== GLOBAL MODE (Us/Me) =====
+function setGlobalMode(mode) {
+  document.body.dataset.mode = mode;
+  const pill = document.getElementById('global-mode-pill');
+  if (pill) pill.querySelectorAll('.gmp-opt').forEach(o => {
+    o.classList.toggle('active', o.dataset.mode === mode);
+  });
+  localStorage.setItem('met_global_mode', mode);
+}
+
+// ===== COMMAND CENTER =====
+function filterCmdCenter(val) {
+  const q = val.toLowerCase().trim();
+  document.querySelectorAll('.cmd-item').forEach(item => {
+    const label = (item.querySelector('.cmd-label') || item).textContent.toLowerCase();
+    item.style.display = label.includes(q) || !q ? '' : 'none';
+  });
+  document.querySelectorAll('.cmd-section').forEach(sec => {
+    const visible = sec.querySelectorAll('.cmd-item[style=""], .cmd-item:not([style])');
+    sec.style.display = visible.length || !q ? '' : 'none';
+  });
+}
+
+function goCmd(page) {
+  closeMenu();
+  go(page);
+}
+
+// ===== PARTICLES =====
+function initParticles() {
+  const container = document.getElementById('particles');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+    p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.opacity = Math.random() * 0.3 + 0.1;
+    container.appendChild(p);
+  }
 }
 
 // ===== MOOD =====
@@ -6196,11 +7228,11 @@ function renderSmartNudges() {
 }
 
 // ===== WIRE UP STATUS UPDATES =====
-// Override go() to refresh statuses when navigating to More hub
+// Override go() to refresh statuses when navigating
 const _originalGo = go;
 go = function(p) {
   _originalGo(p);
-  if (p === 'more') { updateHubStatuses(); }
+  if (p === 'explore' || p === 'more') { updateHubStatuses(); }
   if (p === 'bucket') updateBLStats();
   if (p === 'dreams') updateDRStats();
   if (p === 'homelife') updateHLStats();
@@ -6211,7 +7243,1089 @@ go = function(p) {
   if (p === 'games') updateGamesStats();
   if (p === 'datenight') updateDNStats();
   if (p === 'dash') updateDashQuickNav();
+  if (p === 'fitness') renderFitnessHub();
+  if (p === 'nutrition') renderNutritionDay();
+  if (p === 'calendar') renderCalendar();
+  if (p === 'dreamhome') renderDreamHome();
+  if (p === 'knowyou') renderKnowYou();
+  if (p === 'memories') renderMemories();
+  if (p === 'achievements') { renderAchievements(); checkAchievements(); }
+  // Update presence
+  if (db && user) db.ref('presence/' + user + '/currentPage').set(p);
 };
+
+// ========================================
+// ===== FITNESS MODULE =====
+// ========================================
+let fitnessData = {}, fitPRs = {}, activeWorkout = null, wsTimer = null, restInterval = null;
+
+const WORKOUT_PROGRAMS = {
+  foundation: { name: 'Foundation', exercises: [
+    { name: 'Goblet Squat', sets: 3, reps: 12, category: 'legs' },
+    { name: 'Push-ups', sets: 3, reps: 10, category: 'chest' },
+    { name: 'Dumbbell Row', sets: 3, reps: 12, category: 'back' },
+    { name: 'Lunges', sets: 3, reps: 10, category: 'legs' },
+    { name: 'Plank', sets: 3, reps: 30, category: 'core', unit: 'sec' },
+    { name: 'Shoulder Press', sets: 3, reps: 10, category: 'shoulders' }
+  ]},
+  elevated: { name: 'Elevated', exercises: [
+    { name: 'Barbell Squat', sets: 4, reps: 8, category: 'legs' },
+    { name: 'Bench Press', sets: 4, reps: 8, category: 'chest' },
+    { name: 'Deadlift', sets: 3, reps: 6, category: 'back' },
+    { name: 'Pull-ups', sets: 3, reps: 8, category: 'back' },
+    { name: 'Overhead Press', sets: 3, reps: 10, category: 'shoulders' },
+    { name: 'Barbell Row', sets: 3, reps: 10, category: 'back' },
+    { name: 'Leg Press', sets: 3, reps: 12, category: 'legs' },
+    { name: 'Tricep Dips', sets: 3, reps: 12, category: 'arms' }
+  ]},
+  fullbody: { name: 'Full Body', exercises: [
+    { name: 'Squat', sets: 4, reps: 10, category: 'legs' },
+    { name: 'Bench Press', sets: 4, reps: 10, category: 'chest' },
+    { name: 'Bent Over Row', sets: 4, reps: 10, category: 'back' },
+    { name: 'Overhead Press', sets: 3, reps: 10, category: 'shoulders' },
+    { name: 'Romanian Deadlift', sets: 3, reps: 10, category: 'legs' },
+    { name: 'Bicep Curls', sets: 3, reps: 12, category: 'arms' },
+    { name: 'Tricep Pushdowns', sets: 3, reps: 12, category: 'arms' },
+    { name: 'Leg Raises', sets: 3, reps: 15, category: 'core' },
+    { name: 'Face Pulls', sets: 3, reps: 15, category: 'shoulders' }
+  ]}
+};
+
+function listenFitnessData() {
+  if (!db) return;
+  const today = new Date().toISOString().split('T')[0];
+  db.ref('fitness/' + user + '/workouts').orderByChild('date').limitToLast(30).on('value', snap => {
+    fitnessData = snap.val() || {};
+    renderFitnessHub();
+  });
+  db.ref('fitness/' + user + '/prs').on('value', snap => {
+    fitPRs = snap.val() || {};
+  });
+}
+
+function renderFitnessHub() {
+  const workouts = Object.values(fitnessData);
+  const thisWeek = workouts.filter(w => {
+    const d = new Date(w.date);
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 86400000);
+    return d >= weekAgo;
+  });
+  const el = id => document.getElementById(id);
+  if (el('fit-sessions')) el('fit-sessions').textContent = thisWeek.length;
+  if (el('fit-volume')) {
+    const vol = thisWeek.reduce((s, w) => s + (w.totalVolume || 0), 0);
+    el('fit-volume').textContent = vol > 1000 ? (vol / 1000).toFixed(1) + 'k' : vol;
+  }
+  if (el('fit-prs')) el('fit-prs').textContent = Object.keys(fitPRs).length;
+  // Streak
+  let streak = 0;
+  const dates = workouts.map(w => w.date).sort().reverse();
+  const today = new Date().toISOString().split('T')[0];
+  let check = today;
+  for (let i = 0; i < 60; i++) {
+    if (dates.includes(check)) { streak++; } else if (i > 0) break;
+    const d = new Date(check); d.setDate(d.getDate() - 1); check = d.toISOString().split('T')[0];
+  }
+  if (el('fit-streak')) el('fit-streak').textContent = streak;
+
+  // Recent workouts
+  const hist = el('fit-history');
+  if (hist) {
+    if (!workouts.length) { hist.innerHTML = '<div class="empty">Start your first workout to see history</div>'; return; }
+    hist.innerHTML = workouts.sort((a, b) => b.timestamp - a.timestamp).slice(0, 10).map(w => `
+      <div class="card-data" style="margin-bottom:8px">
+        <div class="cd-accent" style="background:var(--emerald)"></div>
+        <div class="cd-number">${w.exercises ? w.exercises.length : 0}</div>
+        <div class="cd-info"><div class="cd-label">${esc(w.program || 'Custom')}</div><div class="cd-sub">${w.date} &bull; ${w.duration || '--'}min</div></div>
+      </div>`).join('');
+  }
+
+  // PRs
+  const prsList = el('fit-prs-list');
+  if (prsList) {
+    const prs = Object.entries(fitPRs);
+    if (!prs.length) { prsList.innerHTML = '<div class="empty">Set some PRs by logging workouts</div>'; return; }
+    prsList.innerHTML = prs.map(([name, pr]) => `
+      <div class="card-data" style="margin-bottom:8px">
+        <div class="cd-accent" style="background:var(--gold)"></div>
+        <div class="cd-number" style="color:var(--gold)">${pr.weight || pr.reps}${pr.weight ? 'lbs' : 'r'}</div>
+        <div class="cd-info"><div class="cd-label">${esc(name)}</div><div class="cd-sub">${pr.sets}x${pr.reps}${pr.weight ? ' @ ' + pr.weight + 'lbs' : ''} &bull; ${pr.date}</div></div>
+        <div class="pr-badge">PR</div>
+      </div>`).join('');
+  }
+}
+
+function startWorkout(program) {
+  const prog = WORKOUT_PROGRAMS[program];
+  if (!prog) return;
+  activeWorkout = {
+    program: prog.name,
+    programKey: program,
+    exercises: prog.exercises.map(e => ({ ...e, completed: false, logged: { sets: e.sets, reps: e.reps, weight: 0 } })),
+    startTime: Date.now(),
+    currentIndex: 0
+  };
+  renderWorkoutSession();
+  const wsEl = document.getElementById('ws-active');
+  if (wsEl) wsEl.style.display = '';
+  document.getElementById('ws-title').textContent = prog.name + ' Workout';
+  startWorkoutTimer();
+}
+
+function startCustomWorkout() {
+  activeWorkout = {
+    program: 'Custom',
+    programKey: 'custom',
+    exercises: [],
+    startTime: Date.now(),
+    currentIndex: 0
+  };
+  const name = prompt('Exercise name:');
+  if (!name) return;
+  activeWorkout.exercises.push({ name, sets: 3, reps: 10, completed: false, logged: { sets: 3, reps: 10, weight: 0 } });
+  renderWorkoutSession();
+  const wsEl = document.getElementById('ws-active');
+  if (wsEl) wsEl.style.display = '';
+  document.getElementById('ws-title').textContent = 'Custom Workout';
+  startWorkoutTimer();
+}
+
+function startWorkoutTimer() {
+  if (wsTimer) clearInterval(wsTimer);
+  wsTimer = setInterval(() => {
+    if (!activeWorkout) return;
+    const elapsed = Math.floor((Date.now() - activeWorkout.startTime) / 1000);
+    const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
+    const s = (elapsed % 60).toString().padStart(2, '0');
+    const el = document.getElementById('ws-timer');
+    if (el) el.textContent = m + ':' + s;
+  }, 1000);
+}
+
+function renderWorkoutSession() {
+  if (!activeWorkout) return;
+  const container = document.getElementById('ws-exercises');
+  if (!container) return;
+  const total = activeWorkout.exercises.length;
+  const done = activeWorkout.exercises.filter(e => e.completed).length;
+  const bar = document.getElementById('ws-bar');
+  if (bar) bar.style.width = (total ? (done / total * 100) : 0) + '%';
+  container.innerHTML = activeWorkout.exercises.map((ex, i) => `
+    <div class="ws-exercise ${ex.completed ? 'done' : ''}" id="ws-ex-${i}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <input type="checkbox" ${ex.completed ? 'checked' : ''} onchange="toggleExercise(${i}, this.checked)">
+        <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--cream)">${esc(ex.name)}</div>
+        <div style="font-size:11px;color:var(--t3)">${ex.sets}x${ex.reps}${ex.unit === 'sec' ? 's' : ''}</div></div>
+      </div>
+      ${!ex.completed ? `<div class="ws-log" style="display:flex;gap:6px;align-items:center">
+        <input type="number" value="${ex.logged.sets}" onchange="updateExLog(${i},'sets',this.value)" style="width:50px" placeholder="Sets">
+        <span style="color:var(--t3)">x</span>
+        <input type="number" value="${ex.logged.reps}" onchange="updateExLog(${i},'reps',this.value)" style="width:50px" placeholder="Reps">
+        <span style="color:var(--t3)">@</span>
+        <input type="number" value="${ex.logged.weight || ''}" onchange="updateExLog(${i},'weight',this.value)" style="width:60px" placeholder="lbs">
+      </div>` : ''}
+    </div>`).join('');
+}
+
+function toggleExercise(i, checked) {
+  if (!activeWorkout || !activeWorkout.exercises[i]) return;
+  activeWorkout.exercises[i].completed = checked;
+  if (checked) startRest(60);
+  renderWorkoutSession();
+}
+
+function updateExLog(i, field, val) {
+  if (!activeWorkout || !activeWorkout.exercises[i]) return;
+  activeWorkout.exercises[i].logged[field] = parseInt(val) || 0;
+}
+
+function startRest(seconds) {
+  if (restInterval) clearInterval(restInterval);
+  let remaining = seconds;
+  const timer = document.getElementById('rest-timer');
+  const countdown = document.getElementById('rest-countdown');
+  if (timer) timer.style.display = '';
+  const update = () => {
+    if (countdown) countdown.textContent = remaining;
+    if (remaining <= 0) { skipRest(); return; }
+    remaining--;
+  };
+  update();
+  restInterval = setInterval(update, 1000);
+}
+
+function skipRest() {
+  if (restInterval) clearInterval(restInterval);
+  const timer = document.getElementById('rest-timer');
+  if (timer) timer.style.display = 'none';
+}
+
+async function finishWorkout() {
+  if (!activeWorkout) return;
+  const duration = Math.floor((Date.now() - activeWorkout.startTime) / 60000);
+  const exercises = activeWorkout.exercises.filter(e => e.completed);
+  const totalVolume = exercises.reduce((s, e) => s + (e.logged.sets * e.logged.reps * (e.logged.weight || 1)), 0);
+  const entry = {
+    program: activeWorkout.program,
+    date: new Date().toISOString().split('T')[0],
+    timestamp: Date.now(),
+    duration,
+    totalVolume,
+    exercises: exercises.map(e => ({ name: e.name, ...e.logged })),
+    user
+  };
+  await db.ref('fitness/' + user + '/workouts').push(entry);
+  // Check PRs
+  for (const ex of exercises) {
+    const key = ex.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+    const current = fitPRs[key];
+    const newWeight = ex.logged.weight || 0;
+    if (!current || newWeight > (current.weight || 0)) {
+      await db.ref('fitness/' + user + '/prs/' + key).set({
+        weight: newWeight, sets: ex.logged.sets, reps: ex.logged.reps,
+        date: entry.date
+      });
+    }
+  }
+  if (wsTimer) clearInterval(wsTimer);
+  skipRest();
+  activeWorkout = null;
+  const wsEl = document.getElementById('ws-active');
+  if (wsEl) wsEl.style.display = 'none';
+  toast('Workout saved! ' + exercises.length + ' exercises, ' + duration + ' min');
+  awardXP(50);
+}
+
+function cancelWorkout() {
+  if (wsTimer) clearInterval(wsTimer);
+  skipRest();
+  activeWorkout = null;
+  const wsEl = document.getElementById('ws-active');
+  if (wsEl) wsEl.style.display = 'none';
+}
+
+async function quickLogExercise() {
+  const name = document.getElementById('fit-ex-name').value.trim();
+  const sets = parseInt(document.getElementById('fit-ex-sets').value) || 0;
+  const reps = parseInt(document.getElementById('fit-ex-reps').value) || 0;
+  const weight = parseInt(document.getElementById('fit-ex-weight').value) || 0;
+  if (!name) { toast('Enter exercise name'); return; }
+  const today = new Date().toISOString().split('T')[0];
+  await db.ref('fitness/' + user + '/workouts').push({
+    program: 'Quick Log', date: today, timestamp: Date.now(),
+    duration: 0, totalVolume: sets * reps * (weight || 1),
+    exercises: [{ name, sets, reps, weight }], user
+  });
+  const key = name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+  const current = fitPRs[key];
+  if (!current || weight > (current.weight || 0)) {
+    await db.ref('fitness/' + user + '/prs/' + key).set({ weight, sets, reps, date: today });
+  }
+  document.getElementById('fit-ex-name').value = '';
+  document.getElementById('fit-ex-sets').value = '';
+  document.getElementById('fit-ex-reps').value = '';
+  document.getElementById('fit-ex-weight').value = '';
+  toast('Exercise logged');
+  awardXP(10);
+}
+
+async function logBodyWeight() {
+  const w = parseFloat(document.getElementById('fit-weight').value);
+  if (!w) { toast('Enter weight'); return; }
+  const today = new Date().toISOString().split('T')[0];
+  await db.ref('fitness/' + user + '/body/' + today).set({ weight: w, timestamp: Date.now() });
+  document.getElementById('fit-weight').value = '';
+  toast('Weight logged: ' + w + ' lbs');
+}
+
+// ========================================
+// ===== NUTRITION MODULE =====
+// ========================================
+let nutritionData = {}, groceryData = {}, recipeData = {}, mealPlanData = {};
+
+function listenNutritionData() {
+  if (!db) return;
+  const today = new Date().toISOString().split('T')[0];
+  db.ref('nutrition/' + user + '/meals/' + today).on('value', snap => {
+    nutritionData = snap.val() || {};
+    renderNutritionDay();
+  });
+  db.ref('nutrition/groceryList').on('value', snap => {
+    groceryData = snap.val() || {};
+    renderGroceryList();
+  });
+  db.ref('nutrition/recipes').on('value', snap => {
+    recipeData = snap.val() || {};
+    renderRecipeList();
+  });
+  db.ref('nutrition/mealPlans').on('value', snap => {
+    mealPlanData = snap.val() || {};
+    renderMealPlan();
+  });
+}
+
+function renderNutritionDay() {
+  const meals = nutritionData;
+  let totalCals = 0, mealCount = 0;
+  ['breakfast', 'lunch', 'dinner', 'snacks'].forEach(type => {
+    const items = meals[type] ? Object.values(meals[type]) : [];
+    mealCount += items.length;
+    totalCals += items.reduce((s, i) => s + (i.calories || 0), 0);
+    const ct = document.getElementById('meal-' + type + '-ct');
+    if (ct) ct.textContent = items.length;
+    const container = document.getElementById('meal-' + type);
+    if (container) {
+      container.innerHTML = items.length ? items.map(i => `
+        <div class="meal-item"><span>${esc(i.name)}</span><span style="color:var(--t3)">${i.calories ? i.calories + ' cal' : ''}</span></div>
+      `).join('') : '';
+    }
+  });
+  const el = id => document.getElementById(id);
+  if (el('nutr-meals')) el('nutr-meals').textContent = mealCount;
+  if (el('nutr-cals')) el('nutr-cals').textContent = totalCals;
+  // Water
+  const waterData = meals.water || 0;
+  if (el('water-count')) el('water-count').textContent = waterData;
+  if (el('nutr-water')) el('nutr-water').textContent = waterData;
+  document.querySelectorAll('.hydration-glass').forEach((g, i) => {
+    g.classList.toggle('filled', i < waterData);
+  });
+  // Score
+  const score = mealCount >= 3 ? (waterData >= 6 ? 'A' : waterData >= 4 ? 'B' : 'C') : (mealCount >= 1 ? 'C' : '--');
+  if (el('nutr-score')) el('nutr-score').textContent = score;
+}
+
+async function addMealItem(type) {
+  const input = document.getElementById('meal-' + type + '-input');
+  const calInput = document.getElementById('meal-' + type + '-cal');
+  const name = input.value.trim();
+  if (!name) { toast('Enter a food item'); return; }
+  const calories = parseInt(calInput.value) || 0;
+  const today = new Date().toISOString().split('T')[0];
+  await db.ref('nutrition/' + user + '/meals/' + today + '/' + type).push({
+    name, calories, timestamp: Date.now()
+  });
+  input.value = '';
+  calInput.value = '';
+  toast('Added to ' + type);
+  awardXP(5);
+}
+
+function toggleMealSection(type) {
+  const body = document.getElementById('meal-' + type);
+  if (body) body.classList.toggle('open');
+}
+
+async function logWater(count) {
+  const today = new Date().toISOString().split('T')[0];
+  await db.ref('nutrition/' + user + '/meals/' + today + '/water').set(count);
+}
+
+async function addMealPlan() {
+  const name = document.getElementById('mealplan-name').value.trim();
+  const day = document.getElementById('mealplan-day').value;
+  if (!name) { toast('Enter meal name'); return; }
+  const weekKey = getWeekKey();
+  await db.ref('nutrition/mealPlans/' + weekKey).push({ name, day, user, timestamp: Date.now() });
+  document.getElementById('mealplan-name').value = '';
+  toast('Added to meal plan');
+}
+
+function getWeekKey() {
+  const now = new Date();
+  const start = new Date(now);
+  start.setDate(start.getDate() - start.getDay());
+  return start.toISOString().split('T')[0];
+}
+
+function renderMealPlan() {
+  const container = document.getElementById('mealplan-list');
+  if (!container) return;
+  const plans = Object.entries(mealPlanData);
+  if (!plans.length) { container.innerHTML = '<div class="empty">Plan meals for the week</div>'; return; }
+  const dayOrder = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6, sun: 7 };
+  const items = [];
+  plans.forEach(([wk, meals]) => { Object.entries(meals).forEach(([k, m]) => items.push({ ...m, key: wk + '/' + k })); });
+  items.sort((a, b) => (dayOrder[a.day] || 0) - (dayOrder[b.day] || 0));
+  container.innerHTML = items.map(m => `
+    <div class="card-data" style="margin-bottom:6px">
+      <div class="cd-accent" style="background:var(--rose)"></div>
+      <div class="cd-number" style="font-size:10px;text-transform:uppercase;color:var(--t3);min-width:30px">${m.day}</div>
+      <div class="cd-info"><div class="cd-label">${esc(m.name)}</div></div>
+    </div>`).join('');
+}
+
+async function addGroceryItem() {
+  const input = document.getElementById('grocery-input');
+  const name = input.value.trim();
+  if (!name) return;
+  await db.ref('nutrition/groceryList').push({ name, checked: false, user, timestamp: Date.now() });
+  input.value = '';
+}
+
+function renderGroceryList() {
+  const container = document.getElementById('grocery-list');
+  if (!container) return;
+  const items = Object.entries(groceryData);
+  if (!items.length) { container.innerHTML = '<div class="empty">Build your shared grocery list</div>'; return; }
+  container.innerHTML = items.map(([k, i]) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--tint)">
+      <input type="checkbox" ${i.checked ? 'checked' : ''} onchange="toggleGrocery('${k}', this.checked)">
+      <span style="flex:1;font-size:13px;color:var(--cream);${i.checked ? 'text-decoration:line-through;opacity:.5' : ''}">${esc(i.name)}</span>
+      <button onclick="deleteGrocery('${k}')" style="background:none;border:none;color:var(--red);font-size:16px;cursor:pointer">&times;</button>
+    </div>`).join('');
+}
+
+async function toggleGrocery(key, checked) {
+  await db.ref('nutrition/groceryList/' + key + '/checked').set(checked);
+}
+async function deleteGrocery(key) {
+  await db.ref('nutrition/groceryList/' + key).remove();
+}
+
+async function saveRecipe() {
+  const name = document.getElementById('recipe-name').value.trim();
+  const desc = document.getElementById('recipe-desc').value.trim();
+  if (!name) { toast('Enter recipe name'); return; }
+  await db.ref('nutrition/recipes').push({ name, description: desc, user, timestamp: Date.now() });
+  document.getElementById('recipe-name').value = '';
+  document.getElementById('recipe-desc').value = '';
+  toast('Recipe saved');
+}
+
+function renderRecipeList() {
+  const container = document.getElementById('recipe-list');
+  if (!container) return;
+  const items = Object.entries(recipeData);
+  if (!items.length) { container.innerHTML = '<div class="empty">Save your favorite recipes</div>'; return; }
+  container.innerHTML = items.map(([k, r]) => `
+    <div class="recipe-card card" style="margin-bottom:8px">
+      <div style="font-size:14px;font-weight:600;color:var(--cream)">${esc(r.name)}</div>
+      ${r.description ? `<div style="font-size:12px;color:var(--t3);margin-top:4px;white-space:pre-wrap">${esc(r.description)}</div>` : ''}
+      <div style="font-size:10px;color:var(--t3);margin-top:6px">by ${NAMES[r.user] || 'Unknown'}</div>
+    </div>`).join('');
+}
+
+// ========================================
+// ===== CALENDAR MODULE =====
+// ========================================
+let calendarEvents = {}, calMonth = new Date().getMonth(), calYear = new Date().getFullYear(), calSelectedDate = new Date().toISOString().split('T')[0];
+
+function listenCalendarEvents() {
+  if (!db) return;
+  db.ref('calendar').on('value', snap => {
+    calendarEvents = snap.val() || {};
+    renderCalendar();
+  });
+}
+
+function renderCalendar() {
+  const el = id => document.getElementById(id);
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  if (el('cal-month-label')) el('cal-month-label').textContent = months[calMonth] + ' ' + calYear;
+
+  const grid = el('cal-grid');
+  if (!grid) return;
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = new Date().toISOString().split('T')[0];
+  const events = Object.values(calendarEvents);
+
+  let html = '';
+  for (let i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    const isToday = dateStr === today;
+    const isSelected = dateStr === calSelectedDate;
+    const dayEvents = events.filter(e => e.date === dateStr);
+    const dots = dayEvents.map(e => {
+      const colors = { joint: 'var(--lavender)', her: 'var(--rose)', him: 'var(--teal)', recurring: 'var(--gold)', countdown: 'var(--gold)' };
+      return `<div style="width:4px;height:4px;border-radius:50%;background:${colors[e.type] || 'var(--gold)'}"></div>`;
+    }).join('');
+    html += `<div class="cal-day${isToday ? ' today' : ''}${isSelected ? ' selected' : ''}" onclick="selectCalDay('${dateStr}')">
+      <span>${d}</span>${dots ? `<div style="display:flex;gap:2px;justify-content:center;margin-top:2px">${dots}</div>` : ''}
+    </div>`;
+  }
+  grid.innerHTML = html;
+  renderCalDayEvents();
+  renderUpcoming();
+}
+
+function calNav(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function selectCalDay(dateStr) {
+  calSelectedDate = dateStr;
+  renderCalendar();
+}
+
+function renderCalDayEvents() {
+  const container = document.getElementById('cal-events');
+  const label = document.getElementById('cal-day-label');
+  if (!container) return;
+  if (label) label.textContent = calSelectedDate;
+  const events = Object.entries(calendarEvents).filter(([k, e]) => e.date === calSelectedDate);
+  if (!events.length) { container.innerHTML = '<div class="empty">No events for this day</div>'; return; }
+  const colors = { joint: 'var(--lavender)', her: 'var(--rose)', him: 'var(--teal)', recurring: 'var(--gold)', countdown: 'var(--gold)' };
+  container.innerHTML = events.map(([k, e]) => `
+    <div class="cal-event" style="border-left:3px solid ${colors[e.type] || 'var(--gold)'};padding:10px 14px;background:var(--card-bg);border-radius:0 14px 14px 0;margin-bottom:8px">
+      <div style="font-size:13px;font-weight:600;color:var(--cream)">${esc(e.title)}</div>
+      ${e.time ? `<div style="font-size:11px;color:var(--t3)">${e.time}</div>` : ''}
+      ${e.notes ? `<div style="font-size:11px;color:var(--t3);margin-top:4px">${esc(e.notes)}</div>` : ''}
+      <button onclick="deleteCalEvent('${k}')" style="background:none;border:none;color:var(--red);font-size:11px;cursor:pointer;margin-top:4px">Remove</button>
+    </div>`).join('');
+}
+
+function renderUpcoming() {
+  const container = document.getElementById('cal-upcoming');
+  if (!container) return;
+  const today = new Date().toISOString().split('T')[0];
+  const upcoming = Object.entries(calendarEvents)
+    .filter(([k, e]) => e.date >= today)
+    .sort((a, b) => a[1].date.localeCompare(b[1].date))
+    .slice(0, 5);
+  if (!upcoming.length) { container.innerHTML = '<div class="empty">No upcoming events</div>'; return; }
+  container.innerHTML = upcoming.map(([k, e]) => `
+    <div class="card-data" style="margin-bottom:6px">
+      <div class="cd-accent" style="background:var(--teal)"></div>
+      <div class="cd-number" style="font-size:11px;color:var(--teal)">${e.date.slice(5)}</div>
+      <div class="cd-info"><div class="cd-label">${esc(e.title)}</div><div class="cd-sub">${e.type}</div></div>
+    </div>`).join('');
+}
+
+async function addCalEvent() {
+  const title = document.getElementById('cal-event-title').value.trim();
+  const date = document.getElementById('cal-event-date').value;
+  const time = document.getElementById('cal-event-time').value;
+  const type = document.getElementById('cal-event-type').value;
+  const notes = document.getElementById('cal-event-notes').value.trim();
+  if (!title || !date) { toast('Enter title and date'); return; }
+  await db.ref('calendar').push({ title, date, time, type, notes, createdBy: user, timestamp: Date.now() });
+  document.getElementById('cal-event-title').value = '';
+  document.getElementById('cal-event-notes').value = '';
+  toast('Event added');
+  awardXP(5);
+}
+
+async function deleteCalEvent(key) {
+  await db.ref('calendar/' + key).remove();
+}
+
+// ========================================
+// ===== DREAM HOME MODULE =====
+// ========================================
+let dreamHomeData = {}, dhWishlist = {}, currentRoom = null;
+
+function listenDreamHome() {
+  if (!db) return;
+  db.ref('dreamHome').on('value', snap => {
+    const data = snap.val() || {};
+    dreamHomeData = data.rooms || {};
+    dhWishlist = data.wishlist || {};
+    renderDreamHome();
+  });
+}
+
+function renderDreamHome() {
+  const rooms = ['living', 'bedroom', 'kitchen', 'bathroom', 'outdoor', 'office'];
+  rooms.forEach(r => {
+    const ct = document.getElementById('dh-' + r + '-ct');
+    if (ct) {
+      const ideas = dreamHomeData[r] ? Object.keys(dreamHomeData[r]).length : 0;
+      ct.textContent = ideas + ' idea' + (ideas !== 1 ? 's' : '');
+    }
+  });
+
+  // Style results
+  const styleEl = document.getElementById('dh-style-result');
+  if (styleEl) {
+    db.ref('dreamHome/style').once('value').then(snap => {
+      const styles = snap.val() || {};
+      const myStyle = styles[user];
+      const partnerStyle = styles[partner];
+      if (myStyle || partnerStyle) {
+        styleEl.innerHTML = `
+          <div style="display:flex;gap:16px;margin-top:8px">
+            ${myStyle ? `<div class="card-data" style="flex:1"><div class="cd-accent" style="background:var(--lavender)"></div><div class="cd-info"><div class="cd-sub">${NAMES[user]}</div><div class="cd-label">${esc(myStyle)}</div></div></div>` : ''}
+            ${partnerStyle ? `<div class="card-data" style="flex:1"><div class="cd-accent" style="background:var(--rose)"></div><div class="cd-info"><div class="cd-sub">${NAMES[partner]}</div><div class="cd-label">${esc(partnerStyle)}</div></div></div>` : ''}
+          </div>
+          ${myStyle && partnerStyle && myStyle === partnerStyle ? '<div style="font-size:12px;color:var(--gold);text-align:center;margin-top:8px">You both chose the same style!</div>' : ''}`;
+      }
+    });
+  }
+
+  // Wishlist
+  const wlContainer = document.getElementById('dh-wishlist');
+  if (wlContainer) {
+    const items = Object.entries(dhWishlist);
+    if (!items.length) { wlContainer.innerHTML = '<div class="empty">Add items to your home wishlist</div>'; return; }
+    wlContainer.innerHTML = items.map(([k, i]) => `
+      <div class="dh-wishlist-item" style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--tint)">
+        <span style="flex:1;font-size:13px;color:var(--cream)">${esc(i.name)}</span>
+        ${i.price ? `<span style="font-size:12px;color:var(--gold)">$${i.price}</span>` : ''}
+        <button onclick="deleteHomeWish('${k}')" style="background:none;border:none;color:var(--red);font-size:16px;cursor:pointer">&times;</button>
+      </div>`).join('');
+  }
+
+  // Budget overview
+  const budgetEl = document.getElementById('dh-budget-overview');
+  if (budgetEl) {
+    let total = Object.values(dhWishlist).reduce((s, i) => s + (i.price || 0), 0);
+    Object.values(dreamHomeData).forEach(room => {
+      Object.values(room).forEach(idea => { total += idea.budget || 0; });
+    });
+    if (total > 0) {
+      budgetEl.innerHTML = `<div style="text-align:center"><div style="font-size:24px;font-weight:700;color:var(--gold)">$${total.toLocaleString()}</div><div style="font-size:11px;color:var(--t3);margin-top:4px">Estimated total</div></div>`;
+    }
+  }
+}
+
+async function selectHomeStyle(style) {
+  document.querySelectorAll('.dh-style-btn').forEach(b => b.classList.remove('sel'));
+  event.target.classList.add('sel');
+  await db.ref('dreamHome/style/' + user).set(style);
+  toast('Style saved: ' + style);
+  renderDreamHome();
+}
+
+function openRoom(room) {
+  currentRoom = room;
+  const names = { living: 'Living Room', bedroom: 'Bedroom', kitchen: 'Kitchen', bathroom: 'Bathroom', outdoor: 'Outdoor', office: 'Office' };
+  document.getElementById('dh-room-title').textContent = names[room] || room;
+  document.getElementById('dh-room-detail').style.display = '';
+  document.getElementById('dh-rooms').style.display = 'none';
+  renderRoomIdeas();
+}
+
+function closeRoomDetail() {
+  document.getElementById('dh-room-detail').style.display = 'none';
+  document.getElementById('dh-rooms').style.display = '';
+  currentRoom = null;
+}
+
+function renderRoomIdeas() {
+  const container = document.getElementById('dh-room-ideas');
+  if (!container || !currentRoom) return;
+  const ideas = dreamHomeData[currentRoom] ? Object.entries(dreamHomeData[currentRoom]) : [];
+  if (!ideas.length) { container.innerHTML = '<div class="empty">Add ideas for this room</div>'; return; }
+  container.innerHTML = ideas.map(([k, i]) => `
+    <div class="card" style="margin-bottom:8px">
+      <div style="font-size:13px;color:var(--cream);white-space:pre-wrap">${esc(i.notes || '')}</div>
+      ${i.link ? `<a href="${esc(i.link)}" target="_blank" style="font-size:11px;color:var(--teal)">Inspiration link</a>` : ''}
+      <div style="display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--t3)">
+        ${i.budget ? `<span>$${i.budget}</span>` : ''}
+        <span>${i.priority || 'nice'}</span>
+        <span>${i.timeline || 'now'}</span>
+        <span>${NAMES[i.user] || ''}</span>
+      </div>
+      <button onclick="deleteRoomIdea('${k}')" style="background:none;border:none;color:var(--red);font-size:11px;cursor:pointer;margin-top:4px">Remove</button>
+    </div>`).join('');
+}
+
+async function addRoomIdea() {
+  if (!currentRoom) return;
+  const notes = document.getElementById('dh-room-notes').value.trim();
+  const link = document.getElementById('dh-room-link').value.trim();
+  const budget = parseInt(document.getElementById('dh-room-budget').value) || 0;
+  const priority = document.getElementById('dh-room-priority').value;
+  const timeline = document.getElementById('dh-room-timeline').value;
+  if (!notes && !link) { toast('Add notes or a link'); return; }
+  await db.ref('dreamHome/rooms/' + currentRoom).push({ notes, link, budget, priority, timeline, user, timestamp: Date.now() });
+  document.getElementById('dh-room-notes').value = '';
+  document.getElementById('dh-room-link').value = '';
+  document.getElementById('dh-room-budget').value = '';
+  toast('Idea added');
+  awardXP(10);
+}
+
+async function deleteRoomIdea(key) {
+  if (!currentRoom) return;
+  await db.ref('dreamHome/rooms/' + currentRoom + '/' + key).remove();
+}
+
+async function addHomeWish() {
+  const name = document.getElementById('dh-wish-name').value.trim();
+  const price = parseInt(document.getElementById('dh-wish-price').value) || 0;
+  if (!name) return;
+  await db.ref('dreamHome/wishlist').push({ name, price, user, timestamp: Date.now() });
+  document.getElementById('dh-wish-name').value = '';
+  document.getElementById('dh-wish-price').value = '';
+  toast('Added to wishlist');
+}
+
+async function deleteHomeWish(key) {
+  await db.ref('dreamHome/wishlist/' + key).remove();
+}
+
+// ========================================
+// ===== KNOW YOUR PERSON MODULE =====
+// ========================================
+let kypData = {}, kypNotes = {}, kypDates = {}, kypLoveNotes = {};
+
+function listenKnowYou() {
+  if (!db) return;
+  // Listen to partner's data (what they share about themselves)
+  db.ref('knowYou/' + partner + '/favorites').on('value', snap => {
+    kypData = snap.val() || {};
+    renderKnowYou();
+  });
+  db.ref('knowYou/' + user + '/notes').on('value', snap => {
+    kypNotes = snap.val() || {};
+    renderKYPNotes();
+  });
+  db.ref('knowYou/dates').on('value', snap => {
+    kypDates = snap.val() || {};
+    renderKYPDates();
+  });
+  db.ref('knowYou/' + user + '/loveNotes').on('value', snap => {
+    kypLoveNotes = snap.val() || {};
+    renderKYPLoveNotes();
+  });
+}
+
+function renderKnowYou() {
+  const fields = ['food', 'color', 'movie', 'song', 'book', 'place', 'season', 'coffee', 'shirt', 'pants', 'shoe', 'ring'];
+  fields.forEach(f => {
+    const el = document.getElementById('kyp-' + f);
+    if (el) el.textContent = kypData[f] || 'Tap to add';
+  });
+}
+
+function editKYP(field) {
+  const current = kypData[field] || '';
+  const val = prompt('Enter your ' + field + ':', current);
+  if (val !== null) {
+    db.ref('knowYou/' + user + '/favorites/' + field).set(val.trim());
+    // Also update display immediately for own data
+    const el = document.getElementById('kyp-' + field);
+    if (el) el.textContent = val.trim() || 'Tap to add';
+    awardXP(5);
+  }
+}
+
+async function addKYPDate() {
+  const label = document.getElementById('kyp-date-label').value.trim();
+  const date = document.getElementById('kyp-date-val').value;
+  if (!label || !date) { toast('Enter label and date'); return; }
+  await db.ref('knowYou/dates').push({ label, date, user, timestamp: Date.now() });
+  document.getElementById('kyp-date-label').value = '';
+  toast('Date saved');
+  // Auto-add to calendar
+  await db.ref('calendar').push({ title: label, date, type: 'recurring', notes: 'From Know Your Person', createdBy: user, timestamp: Date.now() });
+  awardXP(5);
+}
+
+function renderKYPDates() {
+  const container = document.getElementById('kyp-dates');
+  if (!container) return;
+  const items = Object.entries(kypDates);
+  if (!items.length) { container.innerHTML = '<div class="empty">Add birthdays, anniversaries, and special dates</div>'; return; }
+  container.innerHTML = items.map(([k, d]) => `
+    <div class="card-data" style="margin-bottom:6px">
+      <div class="cd-accent" style="background:var(--gold)"></div>
+      <div class="cd-number" style="font-size:11px;color:var(--gold)">${d.date.slice(5)}</div>
+      <div class="cd-info"><div class="cd-label">${esc(d.label)}</div></div>
+    </div>`).join('');
+}
+
+async function addKYPNote() {
+  const input = document.getElementById('kyp-note-input');
+  const text = input.value.trim();
+  if (!text) return;
+  await db.ref('knowYou/' + user + '/notes').push({ text, timestamp: Date.now() });
+  input.value = '';
+  toast('Note saved');
+  awardXP(5);
+}
+
+function renderKYPNotes() {
+  const container = document.getElementById('kyp-notes');
+  if (!container) return;
+  const items = Object.entries(kypNotes);
+  if (!items.length) { container.innerHTML = '<div class="empty">Jot down things to remember</div>'; return; }
+  container.innerHTML = items.sort((a, b) => b[1].timestamp - a[1].timestamp).map(([k, n]) => `
+    <div class="kyp-note" style="padding:10px 0;border-bottom:1px solid var(--tint);display:flex;align-items:center;gap:10px">
+      <span style="flex:1;font-size:13px;color:var(--cream)">${esc(n.text)}</span>
+      <span style="font-size:10px;color:var(--t3)">${timeAgo(n.timestamp)}</span>
+      <button onclick="db.ref('knowYou/${user}/notes/${k}').remove()" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
+    </div>`).join('');
+}
+
+async function addLoveNote() {
+  const text = document.getElementById('kyp-love-note').value.trim();
+  if (!text) { toast('Write a note first'); return; }
+  await db.ref('knowYou/' + user + '/loveNotes').push({ text, timestamp: Date.now() });
+  document.getElementById('kyp-love-note').value = '';
+  toast('Love note saved');
+  awardXP(10);
+}
+
+function renderKYPLoveNotes() {
+  const container = document.getElementById('kyp-love-notes');
+  if (!container) return;
+  const items = Object.entries(kypLoveNotes);
+  if (!items.length) { container.innerHTML = '<div class="empty">Your private notes about what they love</div>'; return; }
+  container.innerHTML = items.sort((a, b) => b[1].timestamp - a[1].timestamp).map(([k, n]) => `
+    <div class="card-story" style="margin-bottom:8px">
+      <div style="font-size:13px;color:var(--cream);white-space:pre-wrap">${esc(n.text)}</div>
+      <div style="font-size:10px;color:var(--t3);margin-top:6px">${timeAgo(n.timestamp)}</div>
+    </div>`).join('');
+}
+
+// ========================================
+// ===== PHOTO MEMORIES MODULE =====
+// ========================================
+let memoriesData = {};
+
+function listenMemories() {
+  if (!db) return;
+  db.ref('memories').orderByChild('timestamp').on('value', snap => {
+    memoriesData = snap.val() || {};
+    renderMemories();
+    checkOnThisDay();
+  });
+}
+
+function renderMemories() {
+  const container = document.getElementById('mem-grid');
+  if (!container) return;
+  const items = Object.entries(memoriesData);
+  if (!items.length) { container.innerHTML = '<div class="empty">Upload your first photo together</div>'; return; }
+  container.innerHTML = items.sort((a, b) => b[1].timestamp - a[1].timestamp).map(([k, m]) => `
+    <div class="mem-item">
+      <img src="${m.imageData}" alt="${esc(m.caption || '')}" loading="lazy">
+      <div class="mem-caption">
+        <div style="font-size:12px;font-weight:500">${esc(m.caption || '')}</div>
+        <div style="font-size:10px;opacity:.7">${m.date || ''} &bull; ${NAMES[m.uploadedBy] || ''}</div>
+      </div>
+    </div>`).join('');
+}
+
+function previewMemory(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    // Compress image
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const maxSize = 400;
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } }
+      else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL('image/jpeg', 0.6);
+      document.getElementById('mem-preview-img').src = compressed;
+      document.getElementById('mem-preview').style.display = '';
+      document.getElementById('mem-preview-img').dataset.data = compressed;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveMemory() {
+  const imgEl = document.getElementById('mem-preview-img');
+  const imageData = imgEl ? imgEl.dataset.data : '';
+  if (!imageData) { toast('Upload a photo first'); return; }
+  const caption = document.getElementById('mem-caption').value.trim();
+  const date = document.getElementById('mem-date').value || new Date().toISOString().split('T')[0];
+  await db.ref('memories').push({ imageData, caption, date, uploadedBy: user, timestamp: Date.now() });
+  document.getElementById('mem-caption').value = '';
+  document.getElementById('mem-date').value = '';
+  document.getElementById('mem-preview').style.display = 'none';
+  document.getElementById('mem-file').value = '';
+  toast('Memory saved');
+  awardXP(15);
+}
+
+function checkOnThisDay() {
+  const today = new Date();
+  const monthDay = String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  const matches = Object.values(memoriesData).filter(m => m.date && m.date.slice(5) === monthDay && m.date.slice(0, 4) !== String(today.getFullYear()));
+  const container = document.getElementById('mem-onthisday');
+  const content = document.getElementById('mem-otd-content');
+  if (matches.length && container && content) {
+    container.style.display = '';
+    content.innerHTML = matches.map(m => `
+      <div style="margin-bottom:8px">
+        <img src="${m.imageData}" style="width:100%;border-radius:12px;max-height:150px;object-fit:cover">
+        <div style="font-size:12px;color:var(--cream);margin-top:4px">${esc(m.caption || '')} &bull; ${m.date}</div>
+      </div>`).join('');
+  } else if (container) {
+    container.style.display = 'none';
+  }
+}
+
+// ========================================
+// ===== ACHIEVEMENTS MODULE =====
+// ========================================
+let achievementsData = { badges: {}, xp: 0, level: 1 };
+
+function listenAchievements() {
+  if (!db) return;
+  db.ref('achievements').on('value', snap => {
+    achievementsData = snap.val() || { badges: {}, xp: 0, level: 1 };
+    renderAchievements();
+  });
+}
+
+function renderAchievements() {
+  const el = id => document.getElementById(id);
+  const data = achievementsData;
+  const level = data.level || 1;
+  const xp = data.xp || 0;
+  const xpForNext = level * 100;
+
+  if (el('ach-level')) el('ach-level').textContent = level;
+  if (el('ach-xp')) el('ach-xp').textContent = xp;
+  if (el('ach-xp-next')) el('ach-xp-next').textContent = xpForNext;
+  if (el('ach-xp-bar')) el('ach-xp-bar').style.width = Math.min(100, (xp % (level * 100)) / (level * 100) * 100) + '%';
+
+  // Unlock badges
+  const badges = data.badges || {};
+  document.querySelectorAll('.achievement').forEach(badge => {
+    const id = badge.id.replace('ach-', '');
+    if (badges[id]) {
+      badge.classList.remove('locked');
+      badge.classList.add('unlocked');
+    }
+  });
+}
+
+async function awardXP(amount) {
+  if (!db) return;
+  const snap = await db.ref('achievements/xp').once('value');
+  const currentXP = snap.val() || 0;
+  const newXP = currentXP + amount;
+  const snap2 = await db.ref('achievements/level').once('value');
+  const currentLevel = snap2.val() || 1;
+  const xpForNext = currentLevel * 100;
+  if (newXP >= xpForNext) {
+    await db.ref('achievements/level').set(currentLevel + 1);
+    await db.ref('achievements/xp').set(newXP - xpForNext);
+    toast('Level up! Now level ' + (currentLevel + 1));
+  } else {
+    await db.ref('achievements/xp').set(newXP);
+  }
+}
+
+async function unlockBadge(badgeId, badgeName) {
+  const snap = await db.ref('achievements/badges/' + badgeId).once('value');
+  if (snap.val()) return;
+  await db.ref('achievements/badges/' + badgeId).set({ unlockedAt: Date.now() });
+  toast('Badge unlocked: ' + badgeName);
+  awardXP(25);
+}
+
+async function checkAchievements() {
+  if (!db) return;
+  // Check letter count
+  const letters = await db.ref('letters').once('value');
+  const letterCount = letters.val() ? Object.keys(letters.val()).length : 0;
+  if (letterCount >= 1) unlockBadge('first-letter', 'First Letter');
+  const el = id => document.getElementById(id);
+  if (el('ach-stat-letters')) el('ach-stat-letters').textContent = letterCount;
+
+  // Check games
+  const gamesSnap = await db.ref('games/history').once('value');
+  const gameCount = gamesSnap.val() ? Object.keys(gamesSnap.val()).length : 0;
+  if (gameCount >= 10) unlockBadge('game-champs', 'Game Night Champions');
+  if (el('ach-stat-games')) el('ach-stat-games').textContent = gameCount;
+
+  // Check moods
+  const moodSnap = await db.ref('moods').once('value');
+  const moodCount = moodSnap.val() ? Object.keys(moodSnap.val()).length : 0;
+  if (el('ach-stat-moods')) el('ach-stat-moods').textContent = moodCount;
+
+  // Check dreams
+  const dreamSnap = await db.ref('dreams').once('value');
+  const dreamCount = dreamSnap.val() ? Object.keys(dreamSnap.val()).length : 0;
+  if (dreamCount >= 20) unlockBadge('dream-big', 'Dream Big');
+  if (el('ach-stat-dreams')) el('ach-stat-dreams').textContent = dreamCount;
+
+  // Check workouts
+  const fitSnap = await db.ref('fitness/' + user + '/workouts').once('value');
+  const workoutCount = fitSnap.val() ? Object.keys(fitSnap.val()).length : 0;
+  if (el('ach-stat-workouts')) el('ach-stat-workouts').textContent = workoutCount;
+
+  // Check memories
+  const memCount = Object.keys(memoriesData).length;
+  if (memCount >= 10) unlockBadge('memory-makers', 'Memory Makers');
+  if (el('ach-stat-memories')) el('ach-stat-memories').textContent = memCount;
+
+  // Check culture
+  const cultureSnap = await db.ref('culture/phrases').once('value');
+  const cultureCount = cultureSnap.val() ? Object.keys(cultureSnap.val()).length : 0;
+  if (cultureCount >= 10) unlockBadge('culture-bridge', 'Culture Bridge');
+
+  // Check KYP favorites
+  const kypSnap = await db.ref('knowYou/' + user + '/favorites').once('value');
+  const kypFav = kypSnap.val() || {};
+  const fields = ['food', 'color', 'movie', 'song', 'book', 'place', 'season', 'coffee'];
+  if (fields.every(f => kypFav[f])) unlockBadge('know-it-all', 'Know It All');
+
+  // Check dream home rooms
+  const dhRooms = Object.keys(dreamHomeData).filter(r => dreamHomeData[r] && Object.keys(dreamHomeData[r]).length > 0);
+  if (dhRooms.length >= 3) unlockBadge('home-dreamers', 'Home Dreamers');
+
+  // Check streak for week and month badges
+  const streakEl = document.getElementById('fit-streak');
+  const currentStreak = streakEl ? parseInt(streakEl.textContent) : 0;
+  if (currentStreak >= 7) unlockBadge('week-streak', 'Week Streak');
+  if (currentStreak >= 30) unlockBadge('month-strong', 'Month Strong');
+
+  // Check fit couple - both worked out this week
+  const partnerFitSnap = await db.ref('fitness/' + partner + '/workouts').orderByChild('date').limitToLast(7).once('value');
+  const partnerWorkouts = partnerFitSnap.val() ? Object.values(partnerFitSnap.val()) : [];
+  const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+  const myWeek = Object.values(fitnessData).some(w => w.date >= weekAgo);
+  const partnerWeek = partnerWorkouts.some(w => w.date >= weekAgo);
+  if (myWeek && partnerWeek) unlockBadge('fit-couple', 'Fit Couple');
+
+  // Check savings goals
+  const savingsSnap = await db.ref('homelife/savings').once('value');
+  const savings = savingsSnap.val() ? Object.values(savingsSnap.val()) : [];
+  if (savings.some(s => s.saved >= s.target && s.target > 0)) unlockBadge('money-smart', 'Money Smart');
+
+  // Deep talk check
+  const dtSnap = await db.ref('deepTalk/completed').once('value');
+  const dtCompleted = dtSnap.val() ? Object.keys(dtSnap.val()).length : 0;
+  if (dtCompleted >= 10) unlockBadge('deep-divers', 'Deep Divers');
+}
+
+// ========================================
+// ===== PRESENCE SYSTEM =====
+// ========================================
+function initPresence() {
+  if (!db || !user) return;
+  const presRef = db.ref('presence/' + user);
+  const connRef = db.ref('.info/connected');
+  connRef.on('value', snap => {
+    if (snap.val() === true) {
+      presRef.onDisconnect().set({ online: false, lastSeen: firebase.database.ServerValue.TIMESTAMP });
+      presRef.set({ online: true, currentPage: document.body.dataset.page || 'dash', lastSeen: firebase.database.ServerValue.TIMESTAMP });
+    }
+  });
+  // Listen to partner presence
+  db.ref('presence/' + partner).on('value', snap => {
+    const p = snap.val() || {};
+    const dot = document.getElementById('fit-partner-dot');
+    if (dot) dot.className = 'presence-dot ' + (p.online ? 'online' : 'offline');
+    const nameEl = document.getElementById('fit-partner-name');
+    if (nameEl) nameEl.textContent = NAMES[partner];
+    const lastEl = document.getElementById('fit-partner-last');
+    if (lastEl) lastEl.textContent = p.online ? 'Online now' : (p.lastSeen ? 'Last seen ' + timeAgo(p.lastSeen) : 'Offline');
+  });
+}
+
 </script>
 </body>
 </html>
