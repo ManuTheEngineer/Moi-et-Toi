@@ -48,7 +48,7 @@ body[data-page="dreamhome"]::before{background:radial-gradient(ellipse 70% 50% a
 ::selection{background:var(--gold);color:#fff}
 
 /* ===== GLOBAL US/ME MODE TOGGLE ===== */
-.global-mode-pill{position:fixed;top:calc(18px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:1001;display:flex;background:var(--card-bg);border-radius:50px;padding:3px;box-shadow:0 2px 16px rgba(0,0,0,.1);border:1px solid var(--bdr-s);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.global-mode-pill{display:flex;background:var(--card-bg);border-radius:50px;padding:3px;border:1px solid var(--bdr-s);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .gmp-opt{padding:7px 20px;border-radius:50px;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);color:var(--t3);border:none;background:none;font-family:'Outfit',sans-serif}
 .gmp-opt.active{background:var(--mode-us);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 body[data-mode="me"] .gmp-opt.active{background:var(--mode-me)}
@@ -116,6 +116,4 @@ button:active,.dq-submit:active,.lbtn:active,.mood-submit:active,.letter-send:ac
 input:focus,textarea:focus,select:focus{box-shadow:var(--focus-ring);animation:focusPulse .3s ease}
 @keyframes focusPulse{0%{box-shadow:0 0 0 0 rgba(28,43,74,.2)}50%{box-shadow:0 0 0 6px rgba(28,43,74,.08)}100%{box-shadow:var(--focus-ring)}}
 
-/* Enhanced page transitions */
-@keyframes pageIn{from{opacity:0;transform:translateY(18px) scale(.995)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes pageOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-10px)}}
+/* Enhanced page transitions — overridden by directional transitions in nav.css */

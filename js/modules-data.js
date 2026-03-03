@@ -703,6 +703,9 @@ function initPresence() {
     const p = snap.val() || {};
     const dot = document.getElementById('fit-partner-dot');
     if (dot) dot.className = 'presence-dot ' + (p.online ? 'online' : 'offline');
+    // Update page header presence dot
+    const phDot = document.getElementById('ph-presence-dot');
+    if (phDot) phDot.classList.toggle('offline', !p.online);
     const nameEl = document.getElementById('fit-partner-name');
     if (nameEl) nameEl.textContent = NAMES[partner];
     const lastEl = document.getElementById('fit-partner-last');

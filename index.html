@@ -41,14 +41,21 @@
 <!-- Floating Particles -->
 <div class="particles" id="particles"></div>
 
-<!-- Global Us/Me Mode Pill -->
-<div class="global-mode-pill" id="global-mode-pill">
-  <button class="gmp-opt active" data-mode="us" onclick="setGlobalMode('us')">Us</button>
-  <button class="gmp-opt" data-mode="me" onclick="setGlobalMode('me')">Me</button>
-</div>
-
-<!-- Hamburger → Quick Action Sheet -->
-<div class="hbg" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+<!-- Page Header Bar -->
+<header class="page-header hidden" id="page-header">
+  <button class="ph-back" id="ph-back" onclick="goBack()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="ph-title" id="ph-title"></div>
+  <div class="ph-right">
+    <div class="ph-presence" id="ph-presence"><span class="ph-presence-dot" id="ph-presence-dot"></span></div>
+    <div class="global-mode-pill" id="global-mode-pill">
+      <button class="gmp-opt active" data-mode="us" onclick="setGlobalMode('us')">Us</button>
+      <button class="gmp-opt" data-mode="me" onclick="setGlobalMode('me')">Me</button>
+    </div>
+    <div class="hbg" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+  </div>
+</header>
 <div class="cmd-backdrop" id="cmd-backdrop" onclick="closeMenu()"></div>
 <div class="cmd-center" id="cmd-center">
   <div class="cmd-handle"></div>
@@ -56,6 +63,10 @@
 
   <!-- Search results (hidden by default) -->
   <div id="cmd-search-results" style="display:none"></div>
+
+  <!-- Favorites -->
+  <div class="cmd-section-label">Favorites</div>
+  <div class="cmd-ctx-row" id="cmd-favorites"></div>
 
   <!-- Recent pages -->
   <div class="cmd-section-label">Recent</div>
@@ -77,11 +88,12 @@
 </div>
 <!-- Bottom Nav — restructured with 5 new groups -->
 <nav class="bnav">
-  <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></span><span class="nl">Today</span><span class="notif-dot"></span></button>
-  <button class="bn" data-p="together" onclick="go('connect')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></span><span class="nl">Together</span><span class="notif-dot"></span></button>
-  <button class="bn" data-p="track" onclick="go('mood')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></span><span class="nl">Track</span><span class="notif-dot"></span></button>
-  <button class="bn" data-p="build" onclick="go('dreams')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="nl">Build</span><span class="notif-dot"></span></button>
-  <button class="bn" data-p="explore" onclick="go('explore')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span class="nl">Explore</span><span class="notif-dot"></span></button>
+  <div class="bnav-indicator" id="bnav-indicator"></div>
+  <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></span><span class="nl">Today</span><span class="bn-badge" id="badge-dash"></span></button>
+  <button class="bn" data-p="together" onclick="go('connect')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></span><span class="nl">Together</span><span class="bn-badge" id="badge-together"></span></button>
+  <button class="bn" data-p="track" onclick="go('mood')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></span><span class="nl">Track</span><span class="bn-badge" id="badge-track"></span></button>
+  <button class="bn" data-p="build" onclick="go('dreams')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="nl">Build</span><span class="bn-badge" id="badge-build"></span></button>
+  <button class="bn" data-p="explore" onclick="go('explore')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span class="nl">Explore</span><span class="bn-badge" id="badge-explore"></span></button>
 </nav>
 
 <!-- ===== DASHBOARD ===== -->

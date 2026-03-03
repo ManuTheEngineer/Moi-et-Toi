@@ -10,18 +10,38 @@ const TAB_MAP = {
   'grow': 'track'
 };
 
+// Tab ordering for directional transitions and swipe nav
+const TAB_ORDER = ['dash', 'together', 'track', 'build', 'explore'];
+const TAB_LANDINGS = { dash:'dash', together:'connect', track:'mood', build:'dreams', explore:'explore' };
+
 function go(p) {
   if (p === 'more') p = 'explore';
   const current = document.querySelector('.pg.on');
   const next = document.getElementById('pg-' + p);
   if (current === next) { closeMenu(); return; }
 
+  // Determine direction for transition
+  const prevPage = document.body.dataset.page || 'dash';
+  const prevTab = TAB_MAP[prevPage] || prevPage;
+  const nextTab = TAB_MAP[p] || p;
+  const prevIdx = TAB_ORDER.indexOf(prevTab);
+  const nextIdx = TAB_ORDER.indexOf(nextTab);
+  const isTabSwitch = prevIdx !== -1 && nextIdx !== -1 && prevIdx !== nextIdx;
+  const slideDir = isTabSwitch ? (nextIdx > prevIdx ? 'slide-right' : 'slide-left') : '';
+
   if (current) {
     current.classList.add('out');
+    if (slideDir) current.classList.add(slideDir);
     current.classList.remove('on');
-    setTimeout(() => current.classList.remove('out'), 180);
+    setTimeout(() => { current.classList.remove('out', 'slide-right', 'slide-left'); }, 300);
   }
-  if (next) next.classList.add('on');
+  if (next) {
+    next.classList.add('on');
+    if (slideDir) {
+      next.classList.add(slideDir);
+      setTimeout(() => next.classList.remove('slide-right', 'slide-left'), 500);
+    }
+  }
 
   // Set page-specific background accent
   document.body.dataset.page = p;
@@ -29,17 +49,77 @@ function go(p) {
   // Track for recent pages in quick action sheet
   trackRecentPage(p);
 
+  // Update bottom nav active state
   document.querySelectorAll('.bn').forEach(e => e.classList.remove('on'));
   const tabId = TAB_MAP[p] || p;
-  const bn = document.querySelector(`[data-p="${tabId}"]`);
+  const bn = document.querySelector('[data-p="' + tabId + '"]');
   if (bn) bn.classList.add('on');
+
+  // Update sliding indicator
+  updateNavIndicator();
+
+  // Update page header
+  updatePageHeader(p);
+
   closeMenu();
   window.scrollTo({ top: 0 });
+}
+
+// ===== SLIDING TAB INDICATOR =====
+function updateNavIndicator() {
+  const indicator = document.getElementById('bnav-indicator');
+  const activeBtn = document.querySelector('.bn.on');
+  const nav = document.querySelector('.bnav');
+  if (!indicator || !activeBtn || !nav) return;
+  const navRect = nav.getBoundingClientRect();
+  const btnRect = activeBtn.getBoundingClientRect();
+  indicator.style.left = (btnRect.left - navRect.left) + 'px';
+  indicator.style.width = btnRect.width + 'px';
+}
+window.addEventListener('resize', updateNavIndicator);
+
+// ===== PAGE HEADER =====
+function updatePageHeader(p) {
+  const header = document.getElementById('page-header');
+  const titleEl = document.getElementById('ph-title');
+  const backEl = document.getElementById('ph-back');
+  if (!header) return;
+
+  // Hide header on dashboard (has its own greeting)
+  header.classList.toggle('hidden', p === 'dash');
+
+  // Animate title change
+  if (titleEl) {
+    titleEl.classList.add('changing');
+    setTimeout(() => {
+      const meta = PAGE_META[p];
+      titleEl.textContent = meta ? meta.label : '';
+      titleEl.classList.remove('changing');
+    }, 150);
+  }
+
+  // Show back button for sub-pages (not landing pages of tabs)
+  if (backEl) {
+    const parentTab = TAB_MAP[p];
+    const isSubPage = parentTab && TAB_LANDINGS[parentTab] !== p && p !== 'dash';
+    backEl.classList.toggle('show', isSubPage);
+  }
+}
+
+function goBack() {
+  const currentPage = document.body.dataset.page;
+  const parentTab = TAB_MAP[currentPage];
+  if (parentTab && parentTab !== currentPage) {
+    go(TAB_LANDINGS[parentTab] || 'dash');
+  } else {
+    go('dash');
+  }
 }
 
 // ===== QUICK ACTION SHEET =====
 let recentPages = JSON.parse(localStorage.getItem('met_recent_pages') || '[]');
 let currentPageId = 'dash';
+let favPages = JSON.parse(localStorage.getItem('met_fav_pages') || '["mood","fitness","connect","datenight"]');
 
 const PAGE_META = {
   dash:{icon:'🏠',label:'Home'},connect:{icon:'💌',label:'Connect'},games:{icon:'🎮',label:'Games'},
@@ -102,6 +182,14 @@ function closeMenu() {
 }
 
 function populateQuickSheet() {
+  // Favorites
+  const favEl = document.getElementById('cmd-favorites');
+  if (favEl) {
+    favEl.innerHTML = favPages.map(p => {
+      const m = PAGE_META[p] || {icon:'📄',label:p};
+      return '<div class="cmd-ctx-item" onclick="closeMenu();go(\''+p+'\')"><span class="cmd-ctx-icon">'+m.icon+'</span><span class="cmd-ctx-label">'+m.label+'</span></div>';
+    }).join('');
+  }
   // Recent
   const recentEl = document.getElementById('cmd-recent');
   if (recentEl) {
@@ -143,6 +231,74 @@ function filterQuickSheet(val) {
 
 function goCmd(page) { closeMenu(); go(page); }
 
+// ===== SWIPE GESTURE NAVIGATION =====
+let _swipeStartX = 0, _swipeStartY = 0, _swipeStartTime = 0;
+
+function initSwipeNav() {
+  const shell = document.getElementById('shell');
+  if (!shell) return;
+
+  shell.addEventListener('touchstart', function(e) {
+    _swipeStartX = e.touches[0].clientX;
+    _swipeStartY = e.touches[0].clientY;
+    _swipeStartTime = Date.now();
+  }, { passive: true });
+
+  shell.addEventListener('touchend', function(e) {
+    const dx = e.changedTouches[0].clientX - _swipeStartX;
+    const dy = e.changedTouches[0].clientY - _swipeStartY;
+    const dt = Date.now() - _swipeStartTime;
+
+    // Must be horizontal swipe: |dx|>60px, more horizontal than vertical, <400ms
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5 || dt > 400) return;
+
+    // Don't swipe if cmd sheet is open
+    const cmd = document.getElementById('cmd-center');
+    if (cmd && cmd.classList.contains('on')) return;
+
+    const currentTab = TAB_MAP[document.body.dataset.page] || document.body.dataset.page;
+    const idx = TAB_ORDER.indexOf(currentTab);
+    if (idx === -1) return;
+
+    if (dx < 0 && idx < TAB_ORDER.length - 1) {
+      go(TAB_LANDINGS[TAB_ORDER[idx + 1]]);
+    } else if (dx > 0 && idx > 0) {
+      go(TAB_LANDINGS[TAB_ORDER[idx - 1]]);
+    }
+  }, { passive: true });
+}
+
+// ===== NAV BADGES =====
+function updateNavBadges() {
+  if (typeof db === 'undefined' || !db) return;
+
+  // Together tab: check for recent letters
+  db.ref('letters').orderByChild('timestamp').limitToLast(5).once('value', function(snap) {
+    const badge = document.getElementById('badge-together');
+    if (!badge) return;
+    let unread = 0;
+    const now = Date.now();
+    if (snap.exists()) snap.forEach(function(c) {
+      const v = c.val();
+      if (v.timestamp && (now - v.timestamp) < 86400000) unread++;
+    });
+    if (unread > 0) { badge.textContent = unread; badge.classList.add('show'); }
+    else { badge.classList.remove('show'); }
+  });
+
+  // Track tab: check if mood logged today
+  var today = new Date().toISOString().split('T')[0];
+  var u = typeof user !== 'undefined' ? user : null;
+  if (u) {
+    db.ref('moods/' + u + '/' + today).once('value', function(snap) {
+      const badge = document.getElementById('badge-track');
+      if (!badge) return;
+      if (!snap.exists()) { badge.textContent = '!'; badge.classList.add('show'); }
+      else { badge.classList.remove('show'); }
+    });
+  }
+}
+
 // ===== GLOBAL MODE (Us/Me) =====
 function setGlobalMode(mode) {
   document.body.dataset.mode = mode;
@@ -169,4 +325,3 @@ function initParticles() {
     container.appendChild(p);
   }
 }
-
