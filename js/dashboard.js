@@ -272,11 +272,11 @@ function renderDashHero() {
   const greeting = document.getElementById('dash-greeting');
   if (timeLabel && greeting) {
     let timeText, greetText;
-    if (h < 6) { timeText = 'Late night'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
-    else if (h < 12) { timeText = 'Good morning'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
-    else if (h < 17) { timeText = 'Good afternoon'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
-    else if (h < 21) { timeText = 'Good evening'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
-    else { timeText = 'Good night'; greetText = NAMES[user] + ' + ' + NAMES[partner]; }
+    if (h < 6) { timeText = 'Late night'; greetText = NAMES[user]; }
+    else if (h < 12) { timeText = 'Good morning'; greetText = NAMES[user]; }
+    else if (h < 17) { timeText = 'Good afternoon'; greetText = NAMES[user]; }
+    else if (h < 21) { timeText = 'Good evening'; greetText = NAMES[user]; }
+    else { timeText = 'Good night'; greetText = NAMES[user]; }
     timeLabel.textContent = timeText;
     greeting.textContent = greetText;
   }
