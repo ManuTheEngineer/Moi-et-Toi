@@ -170,11 +170,11 @@
       </div>
     </div>
 
-    <!-- Nudges -->
-    <div id="dash-nudges" style="display:flex;gap:8px;margin-bottom:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none"></div>
+    <!-- Nudges (wrapping grid — all visible) -->
+    <div id="dash-nudges" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
 
     <!-- Quick actions — compact row -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px">
       <div class="card-action" onclick="go('connect')" style="cursor:pointer;padding:12px 6px;text-align:center">
         <div class="icon-badge ib-rose" style="margin:0 auto 5px;width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></div>
         <div style="font-size:10px;font-weight:500;color:var(--cream)">Letters</div>
@@ -194,6 +194,25 @@
         <div class="icon-badge ib-lavender" style="margin:0 auto 5px;width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
         <div style="font-size:10px;font-weight:500;color:var(--cream)">Talk</div>
         <div style="font-size:9px;color:var(--t3);margin-top:1px" id="dash-qn-talks"></div>
+      </div>
+    </div>
+
+    <!-- Daily Question preview -->
+    <div id="dash-daily-q" onclick="go('question')" style="cursor:pointer;padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:10px;display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600">Daily Question</div>
+        <div style="font-size:9px;color:var(--t3)" id="dash-dq-status"></div>
+      </div>
+      <div style="font-size:13px;color:var(--cream);line-height:1.4" id="dash-dq-text"></div>
+    </div>
+
+    <!-- Recent activity feed -->
+    <div style="margin-bottom:6px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);font-weight:600">Recent Activity</div>
+      </div>
+      <div id="dash-activity-feed">
+        <div style="padding:12px 14px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);font-size:12px;color:var(--t3)">Activity from both of you shows here</div>
       </div>
     </div>
   </div>

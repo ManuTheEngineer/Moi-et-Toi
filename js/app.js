@@ -190,6 +190,8 @@ function finishLogin() {
   renderDashHero();
   renderSmartNudges();
   renderDashCountdown();
+  renderDashDailyQ();
+  renderActivityFeed();
   calculateRelationshipPulse();
   initViewToggle();
   // New modules v3 - enhanced features

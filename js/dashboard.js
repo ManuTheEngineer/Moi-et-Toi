@@ -1065,6 +1065,35 @@ function renderActivityFeed() {
   });
 }
 
+// ===== DAILY QUESTION PREVIEW ON DASHBOARD =====
+function renderDashDailyQ() {
+  if (!db) return;
+  const card = document.getElementById('dash-daily-q');
+  const textEl = document.getElementById('dash-dq-text');
+  const statusEl = document.getElementById('dash-dq-status');
+  if (!card || !textEl) return;
+  const today = new Date().toISOString().split('T')[0];
+
+  db.ref('dailyQuestion').once('value', snap => {
+    const q = snap.val();
+    if (!q || !q.text) return;
+    textEl.textContent = q.text;
+    card.style.display = 'block';
+
+    // Check who answered
+    db.ref('dailyAnswers/' + today).once('value', aSnap => {
+      const answers = aSnap.val() || {};
+      const youDone = !!answers[user];
+      const partnerDone = !!answers[partner];
+      if (statusEl) {
+        if (youDone && partnerDone) statusEl.textContent = 'Both answered';
+        else if (youDone) statusEl.textContent = 'Waiting for ' + NAMES[partner];
+        else statusEl.textContent = 'Tap to answer';
+      }
+    });
+  });
+}
+
 // ===== SMART NUDGES (ENHANCED) =====
 function renderSmartNudges() {
   const container = document.getElementById('dash-nudges');
@@ -1109,8 +1138,8 @@ function renderSmartNudges() {
     if (dates.exists()) dates.forEach(c => { if (!c.val().done) savedDates++; });
     if (savedDates === 0) nudges.push({ text: 'Spin for a date', page: 'datenight' });
 
-    container.innerHTML = nudges.slice(0, 5).map(n =>
-      `<div onclick="go('${n.page}')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:${n.priority?'var(--gold)':'var(--card-bg)'};color:${n.priority?'#fff':'var(--cream)'};font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;box-shadow:var(--card-shadow);border:1px solid ${n.priority?'transparent':'var(--bdr-s)'}">${n.text}</div>`
+    container.innerHTML = nudges.slice(0, 6).map(n =>
+      `<div onclick="go('${n.page}')" style="padding:7px 14px;border-radius:50px;background:${n.priority?'var(--gold)':'var(--card-bg)'};color:${n.priority?'#fff':'var(--cream)'};font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;box-shadow:var(--card-shadow);border:1px solid ${n.priority?'transparent':'var(--bdr-s)'}">${n.text}</div>`
     ).join('');
     container.style.display = nudges.length === 0 ? 'none' : 'flex';
   });
