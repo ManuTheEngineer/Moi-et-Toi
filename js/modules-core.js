@@ -33,6 +33,7 @@ async function submitMood() {
   document.getElementById('energy-val').textContent = 'Steady';
   updateStreak();
   if (typeof renderSmartNudges === 'function') renderSmartNudges();
+  if (typeof updateActionDots === 'function') updateActionDots();
   if (typeof logActivity === 'function') logActivity('mood', 'checked in');
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Check in'; }, 1500); }
   toast('Checked in');
@@ -95,11 +96,9 @@ function renderDashMoods(moods) {
     }
   }
 
-  // Update partner name + avatar on dashboard (no check-in status here)
+  // Update partner name on dashboard
   const partnerNameEl = document.getElementById('dash-partner-name');
-  const partnerAvatar = document.getElementById('dash-partner-avatar');
   if (partnerNameEl) partnerNameEl.textContent = NAMES[partner];
-  if (partnerAvatar) partnerAvatar.textContent = NAMES[partner] ? NAMES[partner].charAt(0) : '?';
 
   // Render dashboard mood chart and mood page analytics
   renderMoodChart(moods);
