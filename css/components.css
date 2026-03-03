@@ -31,9 +31,8 @@
 .bn .notif-dot.show{display:block;animation:notifPulse 2s ease infinite}
 @keyframes notifPulse{0%,100%{box-shadow:0 0 0 2px var(--nav-bg)}50%{box-shadow:0 0 0 2px var(--nav-bg),0 0 0 6px rgba(212,98,122,.15)}}
 
-/* ===== ACTION BUTTON DOTS ===== */
-.action-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--rose);display:none;box-shadow:0 0 0 2px var(--bg1)}
-.action-dot.show{display:block;animation:notifPulse 2s ease infinite}
+/* ===== NUDGE PILL DOTS ===== */
+.nudge-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--rose);margin-right:6px;vertical-align:middle;animation:notifPulse 2s ease infinite}
 
 /* ===== PRESENCE INDICATOR ===== */
 .presence-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}

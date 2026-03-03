@@ -104,6 +104,13 @@ function updatePageHeader(p) {
     const isSubPage = parentTab && TAB_LANDINGS[parentTab] !== p && p !== 'dash';
     backEl.classList.toggle('show', isSubPage);
   }
+
+  // Only show Us/Me pill on pages that actually use it
+  const modePill = document.getElementById('global-mode-pill');
+  if (modePill) {
+    const modePages = ['fitness', 'nutrition'];
+    modePill.style.display = modePages.includes(p) ? '' : 'none';
+  }
 }
 
 function goBack() {

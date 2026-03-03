@@ -197,7 +197,6 @@ function finishLogin() {
   initMetricsEngine(); // Phase 15: data engine replaces calculateRelationshipPulse
   listenMoodUpdates(); // incremental mood index updates
   initViewToggle();
-  updateActionDots();
   // New modules v3 - enhanced features
   listenFitnessData();
   listenNutritionData();

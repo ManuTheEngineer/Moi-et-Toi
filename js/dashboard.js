@@ -840,27 +840,6 @@ function updateDashQuickNav() {
   });
 }
 
-// ===== ACTION BUTTON NOTIFICATION DOTS =====
-function updateActionDots() {
-  if (!db) return;
-  const today = localDate();
-
-  // Mood check-in dot (Me dashboard)
-  db.ref('moods').orderByChild('timestamp').limitToLast(20).once('value', snap => {
-    let checkedIn = false;
-    if (snap.exists()) snap.forEach(c => { if (c.val().user === user && c.val().date === today) checkedIn = true; });
-    const dot = document.getElementById('dot-mood');
-    if (dot) dot.classList.toggle('show', !checkedIn);
-  });
-
-  // Unread letters dot (Us dashboard)
-  db.ref('letters').orderByChild('timestamp').limitToLast(50).once('value', snap => {
-    let unread = 0;
-    if (snap.exists()) snap.forEach(c => { const l = c.val(); if (l.from === partner && !l.read) unread++; });
-    const dot = document.getElementById('dot-letters');
-    if (dot) dot.classList.toggle('show', unread > 0);
-  });
-}
 
 // ===== US/ME VIEW TOGGLE =====
 let viewMode = localStorage.getItem('met_viewMode') || 'us';
@@ -1215,7 +1194,8 @@ function renderSmartNudges() {
       const bg = n.priority ? 'var(--gold)' : n.countdown ? 'var(--tint)' : 'var(--card-bg)';
       const color = n.priority ? '#fff' : n.countdown ? 'var(--gold)' : 'var(--cream)';
       const border = n.priority ? 'transparent' : 'var(--bdr-s)';
-      return `<div onclick="go('${n.page}')" style="padding:7px 14px;border-radius:50px;background:${bg};color:${color};font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;box-shadow:var(--card-shadow);border:1px solid ${border}">${n.text}</div>`;
+      const dot = (!n.countdown && !n.priority) ? '<span class="nudge-dot"></span>' : '';
+      return `<div onclick="go('${n.page}')" style="position:relative;padding:7px 14px;border-radius:50px;background:${bg};color:${color};font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;box-shadow:var(--card-shadow);border:1px solid ${border}">${dot}${n.text}</div>`;
     }
     ).join('');
     container.style.display = nudges.length === 0 ? 'none' : 'flex';
@@ -1237,7 +1217,7 @@ go = function(p) {
   if (p === 'family') updateFAMStats();
   if (p === 'games') updateGamesStats();
   if (p === 'datenight') updateDNStats();
-  if (p === 'dash') { updateDashQuickNav(); updateActionDots(); }
+  if (p === 'dash') updateDashQuickNav();
   if (p === 'fitness') renderFitnessHub();
   if (p === 'nutrition') renderNutritionDay();
   if (p === 'calendar') renderCalendar();

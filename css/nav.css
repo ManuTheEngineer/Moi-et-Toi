@@ -100,20 +100,20 @@
 
 /* ===== PAGES ===== */
 .pg{display:none}
-/* Default transition: vertical slide up (for sub-pages) */
-.pg.on{display:block;animation:pgSlideUp .4s cubic-bezier(.2,.8,.3,1) forwards}
-.pg.out{display:block;animation:pgFadeOut .25s ease forwards}
-@keyframes pgSlideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+/* Default transition: fade in/out */
+.pg.on{display:block;animation:pgFadeIn .25s ease forwards}
+.pg.out{display:block;animation:pgFadeOut .2s ease forwards}
+@keyframes pgFadeIn{from{opacity:0}to{opacity:1}}
 @keyframes pgFadeOut{from{opacity:1}to{opacity:0}}
 /* Directional transitions: horizontal for tab-to-tab */
-.pg.on.slide-right{animation:pgSlideRight .4s cubic-bezier(.2,.8,.3,1) forwards}
-.pg.on.slide-left{animation:pgSlideLeft .4s cubic-bezier(.2,.8,.3,1) forwards}
-.pg.out.slide-right{animation:pgSlideOutLeft .25s ease forwards}
-.pg.out.slide-left{animation:pgSlideOutRight .25s ease forwards}
-@keyframes pgSlideRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
-@keyframes pgSlideLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
-@keyframes pgSlideOutLeft{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-30px)}}
-@keyframes pgSlideOutRight{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(30px)}}
+.pg.on.slide-right{animation:pgSlideRight .3s cubic-bezier(.2,.8,.3,1) forwards}
+.pg.on.slide-left{animation:pgSlideLeft .3s cubic-bezier(.2,.8,.3,1) forwards}
+.pg.out.slide-right{animation:pgSlideOutLeft .2s ease forwards}
+.pg.out.slide-left{animation:pgSlideOutRight .2s ease forwards}
+@keyframes pgSlideRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pgSlideLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pgSlideOutLeft{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-20px)}}
+@keyframes pgSlideOutRight{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(20px)}}
 
 .phd{padding:16px 0 20px;text-align:center}
 .phd h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;letter-spacing:5px;text-transform:uppercase;background:linear-gradient(135deg,var(--cream) 0%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}

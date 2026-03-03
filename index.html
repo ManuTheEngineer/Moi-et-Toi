@@ -176,31 +176,22 @@
     <!-- Quick actions — compact row -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px">
       <div class="card-action" onclick="go('connect')" style="cursor:pointer;padding:12px 6px;text-align:center">
-        <div style="position:relative;width:34px;height:34px;margin:0 auto 5px">
-          <div class="icon-badge ib-rose" style="width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></div>
-          <div class="action-dot" id="dot-letters"></div>
-        </div>
+        <div class="icon-badge ib-rose" style="margin:0 auto 5px;width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></div>
         <div style="font-size:10px;font-weight:500;color:var(--cream)">Letters</div>
         <div style="font-size:9px;color:var(--t3);margin-top:1px" id="dash-qn-letters"></div>
       </div>
       <div class="card-action" onclick="go('games')" style="cursor:pointer;padding:12px 6px;text-align:center">
-        <div style="position:relative;width:34px;height:34px;margin:0 auto 5px">
-          <div class="icon-badge ib-teal" style="width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="16" cy="11" r=".5" fill="currentColor"/><circle cx="18" cy="13" r=".5" fill="currentColor"/></svg></div>
-        </div>
+        <div class="icon-badge ib-teal" style="margin:0 auto 5px;width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="16" cy="11" r=".5" fill="currentColor"/><circle cx="18" cy="13" r=".5" fill="currentColor"/></svg></div>
         <div style="font-size:10px;font-weight:500;color:var(--cream)">Games</div>
         <div style="font-size:9px;color:var(--t3);margin-top:1px" id="dash-qn-compat"></div>
       </div>
       <div class="card-action" onclick="go('datenight')" style="cursor:pointer;padding:12px 6px;text-align:center">
-        <div style="position:relative;width:34px;height:34px;margin:0 auto 5px">
-          <div class="icon-badge ib-amber" style="width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></div>
-        </div>
+        <div class="icon-badge ib-amber" style="margin:0 auto 5px;width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></div>
         <div style="font-size:10px;font-weight:500;color:var(--cream)">Date</div>
         <div style="font-size:9px;color:var(--t3);margin-top:1px" id="dash-qn-dates"></div>
       </div>
       <div class="card-action" onclick="go('deeptalk')" style="cursor:pointer;padding:12px 6px;text-align:center">
-        <div style="position:relative;width:34px;height:34px;margin:0 auto 5px">
-          <div class="icon-badge ib-lavender" style="width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-        </div>
+        <div class="icon-badge ib-lavender" style="margin:0 auto 5px;width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
         <div style="font-size:10px;font-weight:500;color:var(--cream)">Talk</div>
         <div style="font-size:9px;color:var(--t3);margin-top:1px" id="dash-qn-talks"></div>
       </div>
@@ -296,28 +287,19 @@
     <!-- Quick actions — compact -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px">
       <div class="card-action" onclick="go('mood')" style="cursor:pointer;padding:12px 6px;text-align:center">
-        <div style="position:relative;width:34px;height:34px;margin:0 auto 5px">
-          <div class="icon-badge ib-amber" style="width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg></div>
-          <div class="action-dot" id="dot-mood"></div>
-        </div>
+        <div class="icon-badge ib-amber" style="margin:0 auto 5px;width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg></div>
         <div style="font-size:10px;font-weight:500;color:var(--cream)">Mood</div>
       </div>
       <div class="card-action" onclick="go('gratitude')" style="cursor:pointer;padding:12px 6px;text-align:center">
-        <div style="position:relative;width:34px;height:34px;margin:0 auto 5px">
-          <div class="icon-badge ib-gold" style="width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-        </div>
+        <div class="icon-badge ib-gold" style="margin:0 auto 5px;width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
         <div style="font-size:10px;font-weight:500;color:var(--cream)">Gratitude</div>
       </div>
       <div class="card-action" onclick="go(user==='her'?'herspace':'hisspace')" style="cursor:pointer;padding:12px 6px;text-align:center">
-        <div style="position:relative;width:34px;height:34px;margin:0 auto 5px">
-          <div class="icon-badge ib-teal" style="width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg></div>
-        </div>
+        <div class="icon-badge ib-teal" style="margin:0 auto 5px;width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg></div>
         <div style="font-size:10px;font-weight:500;color:var(--cream)">My Space</div>
       </div>
       <div class="card-action" onclick="go('fitness')" style="cursor:pointer;padding:12px 6px;text-align:center">
-        <div style="position:relative;width:34px;height:34px;margin:0 auto 5px">
-          <div class="icon-badge ib-emerald" style="width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/></svg></div>
-        </div>
+        <div class="icon-badge ib-emerald" style="margin:0 auto 5px;width:34px;height:34px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/></svg></div>
         <div style="font-size:10px;font-weight:500;color:var(--cream)">Fitness</div>
       </div>
     </div>

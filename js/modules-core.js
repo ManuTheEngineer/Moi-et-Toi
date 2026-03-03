@@ -33,7 +33,6 @@ async function submitMood() {
   document.getElementById('energy-val').textContent = 'Steady';
   updateStreak();
   if (typeof renderSmartNudges === 'function') renderSmartNudges();
-  if (typeof updateActionDots === 'function') updateActionDots();
   if (typeof logActivity === 'function') logActivity('mood', 'checked in');
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Check in'; }, 1500); }
   toast('Checked in');
@@ -721,6 +720,7 @@ async function submitDailyAnswer() {
   });
   input.value = '';
   if (typeof logActivity === 'function') logActivity('daily-q', 'answered the daily question');
+  if (typeof renderSmartNudges === 'function') renderSmartNudges();
   if (btn) { btn.textContent = 'Saved'; }
   toast('Answer submitted');
 }

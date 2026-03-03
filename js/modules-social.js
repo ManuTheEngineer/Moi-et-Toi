@@ -504,6 +504,7 @@ async function submitCheckin() {
   document.getElementById('ci-better').value = '';
   document.getElementById('ci-need').value = '';
   if (typeof logActivity === 'function') logActivity('checkin', 'completed weekly check-in');
+  if (typeof renderSmartNudges === 'function') renderSmartNudges();
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Submit'; }, 1500); }
   toast('Check-in saved');
 }
