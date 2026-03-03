@@ -194,7 +194,7 @@ async function pickTOT(choice) {
   } else {
     toast('Waiting for ' + NAMES[partner] + '...');
   }
-  updateCompat();
+  updateEnhancedCompat();
 }
 
 function nextTOT() { totIndex = (totIndex + 1) % TOT_QUESTIONS.length; loadTOT(); }

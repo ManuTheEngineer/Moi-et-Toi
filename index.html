@@ -116,7 +116,6 @@
         <div class="icon-badge ib-gold" id="dash-partner-avatar" style="font-size:16px;width:36px;height:36px">M</div>
         <div class="presence-dot offline" id="dash-presence-dot" style="position:absolute;bottom:-1px;right:-1px;width:8px;height:8px"></div>
       </div>
-      <div id="dash-partner-mood-emoji" style="font-size:20px"></div>
     </div>
   </div>
 
@@ -577,6 +576,8 @@
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('lovelang')"><div class="hub-row-label">Love Languages</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ll-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('attachment')"><div class="hub-row-label">Attachment Style</div><div class="hub-row-status"><span class="hub-badge count" id="hub-as-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('checkin')"><div class="hub-row-label">Weekly Check-in</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ci-status">--</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('deeptalk')"><div class="hub-row-label">Deep Talk</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dt-status">--</span><span class="hub-chevron">›</span></div></div>
@@ -761,7 +762,8 @@
       <text class="donut-label" x="70" y="66" id="compat-score">--</text>
       <text class="donut-sub" x="70" y="84">match</text>
     </svg>
-    <div style="font-size:11px;color:var(--t3);margin-top:10px">Based on your Would You Rather + This or That answers</div>
+    <div style="font-size:11px;color:var(--t3);margin-top:10px">Games + Love Languages + Attachment Style</div>
+    <div id="compat-breakdown" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px"></div>
   </div>
 </div>
 </div>
@@ -990,6 +992,41 @@
     <div class="ll-progress" id="ll-progress">Question 1 of 10</div>
     <div class="ll-question" id="ll-q-text"></div>
     <div class="ll-options" id="ll-options"></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== ATTACHMENT STYLE ===== -->
+<div class="pg" id="pg-attachment">
+<div class="ctn">
+  <div class="phd"><h1>Attachment Style</h1><p>How we connect and cope</p></div>
+
+  <div class="ll-results" id="as-results" style="display:none">
+    <div class="ll-pair">
+      <div class="ll-profile">
+        <div class="ll-name"><span class="uname"></span></div>
+        <div id="as-my-result"></div>
+      </div>
+      <div class="ll-divider"></div>
+      <div class="ll-profile">
+        <div class="ll-name"><span class="pname"></span></div>
+        <div id="as-partner-result"></div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin:16px 0">
+      <div id="as-radar"></div>
+    </div>
+
+    <div class="chart-wrap" style="padding:14px" id="as-combo-tips"></div>
+
+    <button class="dq-submit" onclick="retakeASQuiz()" style="margin-top:16px">Retake Quiz</button>
+  </div>
+
+  <div id="as-quiz">
+    <div class="ll-progress" id="as-progress">Question 1 of 10</div>
+    <div class="ll-question" id="as-q-text"></div>
+    <div class="ll-options" id="as-options"></div>
   </div>
 </div>
 </div>

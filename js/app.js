@@ -152,10 +152,11 @@ function finishLogin() {
   listenWishlists();
   loadTOT();
   renderStreakCalendar();
-  updateCompat();
+  updateEnhancedCompat();
   // New modules
   listenDateNights();
   loadLLQuiz();
+  loadASQuiz();
   listenCheckins();
   listenDreams();
   loadAffirmation();

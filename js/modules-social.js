@@ -622,3 +622,249 @@ async function toggleDream(key, achieved) {
   if (achieved) { toast('Dream achieved'); showConfetti(); }
 }
 
+// ===== ATTACHMENT STYLE QUIZ =====
+const AS_NAMES = ['Secure', 'Anxious', 'Avoidant', 'Fearful-Avoidant'];
+const AS_COLORS = ['var(--emerald)', 'var(--rose)', 'var(--teal)', 'var(--amber)'];
+const AS_ICONS = ['🛡️', '💗', '🏔️', '🌊'];
+const AS_DESCRIPTIONS = {
+  'Secure': 'You feel comfortable with closeness and independence. You trust your partner and communicate openly.',
+  'Anxious': 'You crave closeness and can worry about your partner\'s feelings. You\'re deeply attuned to relationship cues.',
+  'Avoidant': 'You value independence and may need more space. You\'re self-reliant and process emotions internally.',
+  'Fearful-Avoidant': 'You desire closeness but sometimes pull back. You\'re learning to balance vulnerability and independence.'
+};
+const AS_QUIZ = [
+  {q:'When my partner is away, I usually...', a:['Feel fine and trust them','Worry about what they\'re doing','Enjoy the alone time','Alternate between missing them and feeling relieved'], s:[0,1,2,3]},
+  {q:'When we have a conflict, I tend to...', a:['Talk it through calmly','Need reassurance things are ok','Withdraw and process alone','Shut down or get overwhelmed'], s:[0,1,2,3]},
+  {q:'How do you feel about sharing deep emotions?', a:['I\'m comfortable being vulnerable','I want to share everything, maybe too much','I prefer to keep things to myself','I want to but it feels risky'], s:[0,1,2,3]},
+  {q:'When your partner needs space, you...', a:['Respect it without worrying','Feel anxious about why','Understand completely — I need it too','Feel confused — do they still care?'], s:[0,1,2,3]},
+  {q:'How do you handle relationship uncertainty?', a:['Stay grounded and communicate','Seek constant reassurance','Act like it doesn\'t bother me','Swing between clinging and pulling away'], s:[0,1,2,3]},
+  {q:'Your partner says "we need to talk." You feel...', a:['Curious and open','Immediately worried','Slightly annoyed','Panicked but try to hide it'], s:[0,1,2,3]},
+  {q:'After a fight, you usually...', a:['Reach out to reconnect when ready','Apologize quickly, even if not my fault','Need time alone before talking','Want to reconnect but don\'t know how'], s:[0,1,2,3]},
+  {q:'How comfortable are you depending on your partner?', a:['Very — we\'re a team','I lean on them a lot','I prefer self-reliance','I want to but it feels unsafe'], s:[0,1,2,3]},
+  {q:'When things are going well in your relationship...', a:['I feel content and grateful','I worry it won\'t last','I start creating distance','I enjoy it but brace for the other shoe'], s:[0,1,2,3]},
+  {q:'What best describes your relationship ideal?', a:['Close, balanced partnership','Deep emotional fusion','Respectful independence','Intimacy without losing myself'], s:[0,1,2,3]},
+];
+let asStep = 0;
+let asScores = [0, 0, 0, 0];
+
+function loadASQuiz() {
+  if (!db || !user) return;
+  db.ref('attachmentStyle/' + user).once('value', snap => {
+    const data = snap.val();
+    if (data && data.scores) {
+      showASResults();
+    } else {
+      asStep = 0; asScores = [0, 0, 0, 0];
+      renderASQuestion();
+      document.getElementById('as-quiz').style.display = 'block';
+      document.getElementById('as-results').style.display = 'none';
+    }
+  });
+}
+
+function renderASQuestion() {
+  if (asStep >= AS_QUIZ.length) { submitASResults(); return; }
+  const q = AS_QUIZ[asStep];
+  document.getElementById('as-progress').textContent = `Question ${asStep + 1} of ${AS_QUIZ.length}`;
+  document.getElementById('as-q-text').textContent = q.q;
+  document.getElementById('as-options').innerHTML = q.a.map((a, i) =>
+    `<button class="ll-option" onclick="pickAS(${i})">${a}</button>`
+  ).join('');
+}
+
+function pickAS(choice) {
+  const q = AS_QUIZ[asStep];
+  asScores[q.s[choice]] += 3;
+  // Give secondary points to adjacent styles
+  q.s.forEach((s, i) => { if (i !== choice) asScores[s] += 1; });
+  asStep++;
+  renderASQuestion();
+}
+
+async function submitASResults() {
+  if (!db || !user) return;
+  await db.ref('attachmentStyle/' + user).set({ scores: asScores, timestamp: Date.now() });
+  showASResults();
+  // Recalculate enhanced compatibility
+  updateEnhancedCompat();
+}
+
+function showASResults() {
+  document.getElementById('as-quiz').style.display = 'none';
+  document.getElementById('as-results').style.display = 'block';
+  db.ref('attachmentStyle').on('value', snap => {
+    const data = snap.val() || {};
+    renderASProfile('as-my-result', data[user]);
+    renderASProfile('as-partner-result', data[partner]);
+    renderASCombo(data[user], data[partner]);
+    renderASRadar(data[user], data[partner]);
+    document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
+    document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
+  });
+}
+
+function renderASProfile(containerId, data) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!data || !data.scores) { el.innerHTML = '<div style="font-size:12px;color:var(--t3)">Not taken yet</div>'; return; }
+  const scores = data.scores;
+  const max = Math.max(...scores);
+  const primary = scores.indexOf(max);
+  const total = scores.reduce((s, v) => s + v, 0);
+  el.innerHTML = `<div style="font-size:24px;margin-bottom:4px">${AS_ICONS[primary]}</div>
+    <div style="font-size:14px;color:var(--cream);font-weight:600;margin-bottom:4px">${AS_NAMES[primary]}</div>
+    <div style="font-size:10px;color:var(--t3);margin-bottom:8px;line-height:1.4">${AS_DESCRIPTIONS[AS_NAMES[primary]]}</div>
+    ${scores.map((s, i) => {
+      const pct = total ? Math.round(s / total * 100) : 0;
+      return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+        <span style="font-size:9px;min-width:55px;color:var(--t3)">${AS_NAMES[i]}</span>
+        <div style="flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${AS_COLORS[i]};border-radius:2px;transition:width .6s ease"></div>
+        </div>
+        <span style="font-size:9px;color:var(--t3);min-width:25px;text-align:right">${pct}%</span>
+      </div>`;
+    }).join('')}`;
+}
+
+function renderASCombo(myData, theirData) {
+  const el = document.getElementById('as-combo-tips');
+  if (!el) return;
+  if (!myData?.scores || !theirData?.scores) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--t3)">Both partners need to complete the quiz for combo insights.</div>';
+    return;
+  }
+  const myPrimary = AS_NAMES[myData.scores.indexOf(Math.max(...myData.scores))];
+  const theirPrimary = AS_NAMES[theirData.scores.indexOf(Math.max(...theirData.scores))];
+
+  const comboTips = getComboTips(myPrimary, theirPrimary);
+  el.innerHTML = `<div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px">Your Dynamic</div>
+    <div style="font-size:13px;color:var(--cream);margin-bottom:8px;font-weight:500">${myPrimary} + ${theirPrimary}</div>
+    <div style="font-size:11px;color:var(--t3);line-height:1.5">${comboTips.summary}</div>
+    <div style="margin-top:10px">
+      ${comboTips.tips.map(t => `<div style="font-size:11px;color:var(--cream);padding:6px 0;border-top:1px solid var(--bdr-s)">• ${t}</div>`).join('')}
+    </div>`;
+}
+
+function getComboTips(a, b) {
+  // Normalize order for symmetric lookup
+  const key = [a, b].sort().join('+');
+  const combos = {
+    'Secure+Secure': { summary: 'The golden pair. You both bring stability, trust, and open communication.', tips: ['Keep nurturing what you have — don\'t take it for granted', 'Push each other to grow even when comfortable', 'Model healthy conflict resolution together'] },
+    'Anxious+Secure': { summary: 'The secure partner anchors the relationship. With patience, the anxious partner feels safe to relax.', tips: ['Secure: offer reassurance proactively, not just when asked', 'Anxious: trust actions over your worries', 'Set check-in rituals to build predictable closeness'] },
+    'Avoidant+Secure': { summary: 'The secure partner creates space for connection without pressure. The avoidant partner can slowly open up.', tips: ['Secure: respect their need for space without taking it personally', 'Avoidant: practice sharing one vulnerable thing per week', 'Find activities you both enjoy doing together in parallel'] },
+    'Fearful-Avoidant+Secure': { summary: 'The secure partner provides a stable base. The FA partner is learning that closeness is safe.', tips: ['Secure: be consistent — your predictability is their medicine', 'FA: notice when you push-pull and name it', 'Build trust through small, repeated positive experiences'] },
+    'Anxious+Anxious': { summary: 'Deep emotional connection but can spiral into mutual worry. You understand each other\'s needs deeply.', tips: ['Create rituals of reassurance for both of you', 'When both anxious, take a breath before reacting', 'Build individual hobbies to avoid codependency'] },
+    'Anxious+Avoidant': { summary: 'The classic push-pull dynamic. Different needs, but understanding the pattern is the first step.', tips: ['Anxious: give space without interpreting it as rejection', 'Avoidant: small gestures of connection go a huge distance', 'Agree on a signal for "I need space" vs "I need closeness"'] },
+    'Anxious+Fearful-Avoidant': { summary: 'Both crave connection but express it differently. Communication is key.', tips: ['Be explicit about needs — don\'t assume the other knows', 'When triggered, say "I need a moment" instead of reacting', 'Celebrate the small moments of vulnerability together'] },
+    'Avoidant+Avoidant': { summary: 'You respect each other\'s independence. The challenge is building deeper emotional intimacy.', tips: ['Schedule intentional connection time — it won\'t happen organically', 'Practice sharing one feeling per day, even small ones', 'Physical proximity (cooking together, walks) builds closeness without pressure'] },
+    'Avoidant+Fearful-Avoidant': { summary: 'Both tend to withdraw but for different reasons. Building trust happens through small consistent gestures.', tips: ['Create low-pressure ways to be close (side-by-side activities)', 'FA: your need for closeness is valid — voice it', 'Avoidant: lean into connection when it feels uncomfortable'] },
+    'Fearful-Avoidant+Fearful-Avoidant': { summary: 'You deeply understand each other\'s push-pull. Together, you can build the safety you both need.', tips: ['Name the pattern when you see it: "I\'m pulling away because I\'m scared"', 'Create a safe word for when either feels overwhelmed', 'Celebrate every moment of vulnerability — it\'s brave'] },
+  };
+  return combos[key] || { summary: 'Your unique combination brings growth opportunities.', tips: ['Practice open communication daily', 'Be patient with different emotional speeds', 'Remember you\'re on the same team'] };
+}
+
+function renderASRadar(myData, theirData) {
+  if (!myData?.scores || !theirData?.scores) return;
+  const total1 = myData.scores.reduce((s, v) => s + v, 0) || 1;
+  const total2 = theirData.scores.reduce((s, v) => s + v, 0) || 1;
+  const dimensions = AS_NAMES.map((name, i) => ({
+    label: name.substring(0, 7),
+    her: user === 'her' ? (myData.scores[i] / total1 * 5) : (theirData.scores[i] / total2 * 5),
+    him: user === 'him' ? (myData.scores[i] / total1 * 5) : (theirData.scores[i] / total2 * 5),
+  }));
+  if (typeof renderRadarChart === 'function') renderRadarChart('as-radar', dimensions);
+}
+
+function retakeASQuiz() {
+  asStep = 0; asScores = [0, 0, 0, 0];
+  document.getElementById('as-quiz').style.display = 'block';
+  document.getElementById('as-results').style.display = 'none';
+  renderASQuestion();
+}
+
+// ===== ENHANCED COMPATIBILITY SCORE =====
+// Incorporates: WYR/TOT matches (40%), Love Languages alignment (30%), Attachment compatibility (30%)
+function updateEnhancedCompat() {
+  if (!db) return;
+  Promise.all([
+    db.ref('games/wyr').once('value'),
+    db.ref('games/tot').once('value'),
+    db.ref('loveLang').once('value'),
+    db.ref('attachmentStyle').once('value'),
+  ]).then(([wyrSnap, totSnap, llSnap, asSnap]) => {
+    let gameMatches = 0, gameTotal = 0;
+
+    // WYR matches
+    if (wyrSnap.exists()) wyrSnap.forEach(c => {
+      const d = c.val();
+      if (d && d.her && d.him) { gameTotal++; if (d.her === d.him) gameMatches++; }
+    });
+    // TOT matches
+    if (totSnap.exists()) totSnap.forEach(c => {
+      const d = c.val();
+      if (d && d.her && d.him) { gameTotal++; if (d.her === d.him) gameMatches++; }
+    });
+    const gamePct = gameTotal ? gameMatches / gameTotal : 0;
+
+    // Love Language alignment (cosine similarity)
+    let llPct = 0;
+    const llData = llSnap.val() || {};
+    if (llData.her?.scores && llData.him?.scores) {
+      const a = llData.her.scores, b = llData.him.scores;
+      let dot = 0, magA = 0, magB = 0;
+      for (let i = 0; i < 5; i++) { dot += a[i] * b[i]; magA += a[i] * a[i]; magB += b[i] * b[i]; }
+      llPct = (magA && magB) ? dot / (Math.sqrt(magA) * Math.sqrt(magB)) : 0;
+    }
+
+    // Attachment compatibility score
+    let asPct = 0;
+    const asData = asSnap.val() || {};
+    if (asData.her?.scores && asData.him?.scores) {
+      const herPrimary = asData.her.scores.indexOf(Math.max(...asData.her.scores));
+      const himPrimary = asData.him.scores.indexOf(Math.max(...asData.him.scores));
+      // Secure-Secure = best, Anxious-Avoidant = challenging, etc.
+      const compatMatrix = [
+        [1.0, 0.8, 0.7, 0.65],  // Secure with...
+        [0.8, 0.6, 0.45, 0.5],  // Anxious with...
+        [0.7, 0.45, 0.55, 0.5], // Avoidant with...
+        [0.65, 0.5, 0.5, 0.45], // Fearful-Avoidant with...
+      ];
+      asPct = compatMatrix[herPrimary][himPrimary];
+    }
+
+    // Weighted composite
+    const weights = { game: 0.4, ll: 0.3, as: 0.3 };
+    let totalW = 0, totalS = 0;
+    if (gameTotal > 0) { totalW += weights.game; totalS += gamePct * weights.game; }
+    if (llData.her?.scores && llData.him?.scores) { totalW += weights.ll; totalS += llPct * weights.ll; }
+    if (asData.her?.scores && asData.him?.scores) { totalW += weights.as; totalS += asPct * weights.as; }
+
+    const pct = totalW ? Math.round((totalS / totalW) * 100) : 0;
+
+    // Update UI
+    const ring = document.getElementById('compat-ring');
+    const score = document.getElementById('compat-score');
+    if (ring) ring.setAttribute('stroke-dashoffset', String(327 - (pct / 100) * 327));
+    if (score) score.textContent = pct + '%';
+
+    // Update subtitle
+    const sub = document.querySelector('#compat-ring + text + text') ||
+      document.querySelector('.donut-sub');
+
+    // Show breakdown if element exists
+    const bd = document.getElementById('compat-breakdown');
+    if (bd) {
+      const items = [];
+      if (gameTotal > 0) items.push(`Games: ${Math.round(gamePct * 100)}%`);
+      if (llData.her?.scores && llData.him?.scores) items.push(`Love Lang: ${Math.round(llPct * 100)}%`);
+      if (asData.her?.scores && asData.him?.scores) items.push(`Attachment: ${Math.round(asPct * 100)}%`);
+      bd.innerHTML = items.map(t => `<span style="font-size:9px;padding:2px 8px;background:var(--bg3);border-radius:8px;color:var(--t3)">${t}</span>`).join('');
+    }
+
+    // Dashboard quick note
+    const dashQn = document.getElementById('dash-qn-compat');
+    if (dashQn) dashQn.textContent = pct ? pct + '% compatible' : '';
+  });
+}
+
+
