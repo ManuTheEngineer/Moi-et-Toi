@@ -152,6 +152,16 @@ function initPullToRefresh() {
 
 // ===== SERVICE WORKER =====
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      // Check for updates every 30 minutes
+      setInterval(() => reg.update(), 30 * 60 * 1000);
+    }).catch(() => {});
+    // Reload when new SW takes control
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) { refreshing = true; location.reload(); }
+    });
+  });
 }
 
