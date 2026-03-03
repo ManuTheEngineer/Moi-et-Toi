@@ -154,7 +154,38 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px);overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px);overscroll-behavior-y:none;-webkit-font-smoothing:antialiased;position:relative}
+/* ===== LIVING BACKGROUND — animated gradient orbs ===== */
+body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(ellipse 600px 600px at 15% 25%, rgba(196,120,74,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 500px at 85% 15%, rgba(28,43,74,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 700px 700px at 50% 85%, rgba(176,138,80,0.05) 0%, transparent 70%),
+    var(--bg);
+  background-size:100% 100%;
+  animation:bgBreathe 25s ease-in-out infinite alternate;
+  transition:opacity .8s ease}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.018;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px 180px}
+@keyframes bgBreathe{
+  0%{background-position:0% 0%,100% 0%,50% 100%}
+  33%{background-position:30% 20%,70% 30%,60% 70%}
+  66%{background-position:70% 50%,20% 60%,40% 30%}
+  100%{background-position:100% 100%,0% 100%,50% 0%}}
+/* Page-specific accent tints */
+body[data-page="mood"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(196,120,74,0.10) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(212,148,106,0.08) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(176,138,80,0.04) 0%, transparent 70%),var(--bg)}
+body[data-page="games"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(58,40,96,0.08) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(92,72,136,0.06) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(176,138,80,0.04) 0%, transparent 70%),var(--bg)}
+body[data-page="connect"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(140,66,40,0.08) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(168,96,62,0.06) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(196,120,74,0.05) 0%, transparent 70%),var(--bg)}
+body[data-page="story"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(176,138,80,0.08) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(200,164,104,0.06) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(28,43,74,0.04) 0%, transparent 70%),var(--bg)}
+body[data-page="ai"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(28,43,74,0.09) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(46,68,104,0.07) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(212,149,106,0.05) 0%, transparent 70%),var(--bg)}
+body[data-page="spiritual"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(28,43,74,0.08) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(176,138,80,0.07) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(212,149,106,0.06) 0%, transparent 70%),var(--bg)}
+body[data-page="homelife"]::before{background:radial-gradient(ellipse 600px 600px at 15% 25%, rgba(22,34,64,0.08) 0%, transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%, rgba(37,58,92,0.06) 0%, transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%, rgba(176,138,80,0.05) 0%, transparent 70%),var(--bg)}
+/* Dark mode living background */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body::before{background:radial-gradient(ellipse 600px 600px at 15% 25%,rgba(212,149,106,0.06) 0%,transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%,rgba(201,168,76,0.04) 0%,transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%,rgba(128,104,176,0.03) 0%,transparent 70%),var(--bg)}
+:root:not([data-theme="light"]) body::after{opacity:0.025}}
+:root[data-theme="dark"] body::before{background:radial-gradient(ellipse 600px 600px at 15% 25%,rgba(212,149,106,0.06) 0%,transparent 70%),radial-gradient(ellipse 500px 500px at 85% 15%,rgba(201,168,76,0.04) 0%,transparent 70%),radial-gradient(ellipse 700px 700px at 50% 85%,rgba(128,104,176,0.03) 0%,transparent 70%),var(--bg)}
+:root[data-theme="dark"] body::after{opacity:0.025}
 ::selection{background:var(--gold);color:#fff}
 
 /* ===== LOGIN ===== */
@@ -194,7 +225,9 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 /* ===== BOTTOM NAV (floating pill) ===== */
 .bnav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:800;background:var(--nav-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:none;border-radius:28px;display:flex;gap:4px;padding:6px 8px calc(env(safe-area-inset-bottom,6px) + 4px);box-shadow:var(--nav-shadow);width:auto;max-width:calc(100% - 48px)}
 .bn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 18px;cursor:pointer;border:none;background:none;transition:all .3s cubic-bezier(.2,.8,.3,1);border-radius:20px;position:relative}
-.bn .ni{font-size:20px;color:var(--t3);transition:all .3s}
+.bn .ni{font-size:20px;color:var(--t3);transition:all .3s;display:flex;align-items:center;justify-content:center}
+.bn .ni svg{width:22px;height:22px}
+.mic svg{width:18px;height:18px}
 .bn .nl{font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--t3);font-family:'Outfit',sans-serif;font-weight:400;transition:all .3s}
 .bn.on{background:var(--gold)}
 .bn.on .ni,.bn.on .nl{color:#fff}
@@ -233,16 +266,40 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 @keyframes pageIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pageOut{from{opacity:1}to{opacity:0;transform:translateY(-8px)}}
 .phd{padding:44px 0 28px;text-align:center}
-.phd h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;letter-spacing:5px;text-transform:uppercase;color:var(--cream)}
+.phd h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;letter-spacing:5px;text-transform:uppercase;background:linear-gradient(135deg,var(--cream),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .phd p{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t3);margin-top:6px}
 
-/* ===== CARDS (borderless elevation) ===== */
-.card{background:var(--card-bg);border:none;border-radius:24px;padding:26px;margin-bottom:18px;transition:transform .25s,box-shadow .25s;box-shadow:var(--card-shadow)}
+/* ===== CARDS (glass elevation) ===== */
+.card{background:var(--card-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bdr-s);border-radius:24px;padding:26px;margin-bottom:18px;transition:transform .25s,box-shadow .25s,border-color .3s;box-shadow:var(--card-shadow);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--bdr),transparent);opacity:0.5}
 .card:active{transform:scale(.985);box-shadow:var(--card-hover)}
 .card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .card-t{font-size:15px;font-weight:500;color:var(--cream)}
 .card-s{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
-.slbl{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:28px 0 14px}
+.card-accent{border-left:3px solid var(--gold);padding-left:23px}
+.card-accent.mood{border-left-color:var(--red)}
+.card-accent.story{border-left-color:var(--vio)}
+.card-accent.games{border-left-color:#5C4888}
+.card-glow{transition:box-shadow .3s}.card-glow:hover{box-shadow:var(--card-hover),0 0 20px var(--glow-gold)}
+.slbl{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:28px 0 14px;display:flex;align-items:center;gap:8px}
+.slbl::before{content:'';width:3px;height:14px;background:var(--gold);border-radius:2px;flex-shrink:0}
+/* ===== SECTION DIVIDERS ===== */
+.sec-divider{height:1px;margin:32px 0;background:linear-gradient(90deg,transparent,var(--bdr),transparent)}
+/* ===== EMPTY STATES ===== */
+.empty{text-align:center;padding:32px 20px;color:var(--t3);font-size:13px;position:relative}
+.empty::before{content:'';display:block;width:48px;height:48px;margin:0 auto 14px;border-radius:50%;background:var(--tint);opacity:0.6}
+
+/* ===== VIEW TOGGLE (Us/Me) ===== */
+.view-toggle{display:flex;position:relative;background:var(--card-bg);border-radius:50px;padding:4px;margin-bottom:18px;cursor:pointer;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)}
+.vt-option{flex:1;text-align:center;padding:10px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);z-index:1;transition:color .3s;cursor:pointer;border-radius:50px}
+.vt-option.active{color:#fff}
+.vt-slider{position:absolute;top:4px;left:4px;width:calc(50% - 4px);height:calc(100% - 8px);background:var(--gold);border-radius:50px;transition:transform .35s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.vt-slider.me{transform:translateX(100%)}
+/* ===== QUICK NAV CARDS ===== */
+.dash-qn-card{background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer;border:1px solid var(--bdr-s);transition:all .25s;color:var(--gold)}
+.dash-qn-card:hover{transform:translateY(-2px);box-shadow:var(--card-hover)}
+.dash-qn-card:active{transform:scale(.95)}
+.dash-qn-card svg{margin:0 auto;display:block}
 
 /* ===== STAT GRID ===== */
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
@@ -962,44 +1019,51 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="mov" onclick="toggleMenu()"></div>
 <div class="mpan">
   <div class="msl">Navigate</div>
-  <div class="mi" onclick="go('dash')"><div class="mic g">⌂</div><div class="mt"><h4>Home</h4></div></div>
-  <div class="mi" onclick="go('connect')"><div class="mic g">♡</div><div class="mt"><h4>Connect</h4><p>Letters & taps</p></div></div>
-  <div class="mi" onclick="go('mood')"><div class="mic g">◎</div><div class="mt"><h4>Mood Check-in</h4></div></div>
-  <div class="mi" onclick="go('story')"><div class="mic g">◇</div><div class="mt"><h4>Our Story</h4><p>The timeline</p></div></div>
-  <div class="mi" onclick="go('ai')"><div class="mic a">✧</div><div class="mt"><h4>AI Assistant</h4></div></div>
+  <div class="mi" onclick="go('dash')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></div><div class="mt"><h4>Home</h4></div></div>
+  <div class="mi" onclick="go('connect')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></div><div class="mt"><h4>Connect</h4><p>Letters & taps</p></div></div>
+  <div class="mi" onclick="go('mood')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div><div class="mt"><h4>Mood Check-in</h4></div></div>
+  <div class="mi" onclick="go('story')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="mt"><h4>Our Story</h4><p>The timeline</p></div></div>
+  <div class="mi" onclick="go('ai')"><div class="mic a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 00-3 3v1a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10a7 7 0 01-14 0"/><path d="M12 17v4"/><path d="M8 21h8"/></svg></div><div class="mt"><h4>AI Assistant</h4></div></div>
   <div class="msl">Together</div>
-  <div class="mi" onclick="go('datenight')"><div class="mic g">🕯</div><div class="mt"><h4>Date Night</h4><p>Where to next?</p></div></div>
-  <div class="mi" onclick="go('deeptalk')"><div class="mic r">🗣</div><div class="mt"><h4>Deep Talk</h4><p>The real stuff</p></div></div>
-  <div class="mi" onclick="go('culture')"><div class="mic v">🌍</div><div class="mt"><h4>Our Cultures</h4><p>Togo meets Texas</p></div></div>
-  <div class="mi" onclick="go('lovelang')"><div class="mic g">♡</div><div class="mt"><h4>Love Languages</h4><p>How we love</p></div></div>
-  <div class="mi" onclick="go('foundation')"><div class="mic r">🏗</div><div class="mt"><h4>Our Foundation</h4><p>What we stand on</p></div></div>
+  <div class="mi" onclick="go('question')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="mt"><h4>Daily Question</h4><p>Today's prompt</p></div></div>
+  <div class="mi" onclick="go('games')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11"/><line x1="18" y1="13" x2="18.01" y2="13"/></svg></div><div class="mt"><h4>Games</h4><p>Play together</p></div></div>
+  <div class="mi" onclick="go('datenight')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c.5 3-1.5 5.5-1 8.5.5 3 3 4.5 3 4.5s-2 .5-3.5 0-3-2-3.5-4.5c-.5-2.5.5-4 1-6S12 2 12 2z"/><path d="M10 22v-3a2 2 0 014 0v3"/></svg></div><div class="mt"><h4>Date Night</h4><p>Where to next?</p></div></div>
+  <div class="mi" onclick="go('deeptalk')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg></div><div class="mt"><h4>Deep Talk</h4><p>The real stuff</p></div></div>
+  <div class="mi" onclick="go('gratitude')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="mt"><h4>Gratitude</h4><p>What you're thankful for</p></div></div>
+  <div class="mi" onclick="go('culture')"><div class="mic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div><div class="mt"><h4>Our Cultures</h4><p>Togo meets Texas</p></div></div>
+  <div class="mi" onclick="go('lovelang')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/><path d="M12 5.67l3 3"/></svg></div><div class="mt"><h4>Love Languages</h4><p>How we love</p></div></div>
+  <div class="mi" onclick="go('checkin')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="mt"><h4>Weekly Check-in</h4><p>Our pulse</p></div></div>
+  <div class="mi" onclick="go('foundation')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M5 20V8l7-5 7 5v12"/><path d="M9 20v-4h6v4"/></svg></div><div class="mt"><h4>Our Foundation</h4><p>What we stand on</p></div></div>
   <div class="msl">Life Building</div>
-  <div class="mi" onclick="go('family')"><div class="mic g">👶</div><div class="mt"><h4>Future Family</h4><p>When the time comes</p></div></div>
-  <div class="mi" onclick="go('homelife')"><div class="mic r">🏠</div><div class="mt"><h4>Home Life</h4><p>Running the house</p></div></div>
-  <div class="mi" onclick="go('spiritual')"><div class="mic v">🕊</div><div class="mt"><h4>Our Spirit</h4><p>Faith together</p></div></div>
+  <div class="mi" onclick="go('bucket')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="mt"><h4>Bucket List</h4><p>Dreams to chase</p></div></div>
+  <div class="mi" onclick="go('dreams')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 010-14h.5"/><path d="M14 16l3 3 3-3"/></svg></div><div class="mt"><h4>Dream Board</h4><p>Our vision</p></div></div>
+  <div class="mi" onclick="go('wishlist')"><div class="mic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6"/><path d="M2 8h20v4H2z"/><path d="M12 20V8"/><path d="M12 8l-4-4"/><path d="M12 8l4-4"/></svg></div><div class="mt"><h4>Wishlists</h4><p>Drop hints</p></div></div>
+  <div class="mi" onclick="go('family')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div><div class="mt"><h4>Future Family</h4><p>When the time comes</p></div></div>
+  <div class="mi" onclick="go('homelife')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="mt"><h4>Home Life</h4><p>Running the house</p></div></div>
+  <div class="mi" onclick="go('spiritual')"><div class="mic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div><div class="mt"><h4>Our Spirit</h4><p>Faith together</p></div></div>
   <div class="msl">Personal</div>
-  <div class="mi" onclick="go('herspace')"><div class="mic r">🌸</div><div class="mt"><h4>Taylor's Space</h4><p>Just for Taylor</p></div></div>
-  <div class="mi" onclick="go('hisspace')"><div class="mic v">⚡</div><div class="mt"><h4>Manu's Space</h4><p>Just for Manu</p></div></div>
-  <div class="msl">Waist Where?</div>
-  <div class="mi" onclick="go('w1')"><div class="mic g">✦</div><div class="mt"><h4>Foundation</h4><p>Beginner</p></div></div>
-  <div class="mi" onclick="go('w2')"><div class="mic r">◆</div><div class="mt"><h4>Elevated</h4><p>Advanced</p></div></div>
-  <div class="mi" onclick="go('w3')"><div class="mic v">⬡</div><div class="mt"><h4>Full Body</h4><p>Complete</p></div></div>
+  <div class="mi" onclick="go('herspace')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div><div class="mt"><h4>Taylor's Space</h4><p>Just for Taylor</p></div></div>
+  <div class="mi" onclick="go('hisspace')"><div class="mic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="mt"><h4>Manu's Space</h4><p>Just for Manu</p></div></div>
+  <div class="msl">Fitness</div>
+  <div class="mi" onclick="go('w1')"><div class="mic g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11"/><path d="M21 3l-6.5 3.5L18 10l3-7z"/><path d="M3 21l6.5-3.5L6 14l-3 7z"/></svg></div><div class="mt"><h4>Foundation</h4><p>Beginner</p></div></div>
+  <div class="mi" onclick="go('w2')"><div class="mic r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><div class="mt"><h4>Elevated</h4><p>Advanced</p></div></div>
+  <div class="mi" onclick="go('w3')"><div class="mic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div><div class="mt"><h4>Full Body</h4><p>Complete</p></div></div>
   <div class="msl">Appearance</div>
-  <div class="mi" onclick="toggleTheme()"><div class="mic a" id="theme-icon">◐</div><div class="mt"><h4 id="theme-label">Theme: Auto</h4></div></div>
+  <div class="mi" onclick="toggleTheme()"><div class="mic a" id="theme-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div><div class="mt"><h4 id="theme-label">Theme: Auto</h4></div></div>
   <div class="msl">Account</div>
-  <div class="mi" onclick="switchUser()"><div class="mic a">↔</div><div class="mt"><h4>Switch Profile</h4></div></div>
-  <div class="mi" onclick="updateApiKey()"><div class="mic a">🔑</div><div class="mt"><h4>API Key</h4></div></div>
-  <div class="mi" onclick="logout()"><div class="mic a">←</div><div class="mt"><h4>Log Out</h4></div></div>
+  <div class="mi" onclick="switchUser()"><div class="mic a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></div><div class="mt"><h4>Switch Profile</h4></div></div>
+  <div class="mi" onclick="updateApiKey()"><div class="mic a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div><div class="mt"><h4>API Key</h4></div></div>
+  <div class="mi" onclick="logout()"><div class="mic a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div><div class="mt"><h4>Log Out</h4></div></div>
   <div class="mfoot">Manu & Taylor</div>
 </div>
 
 <!-- Bottom Nav -->
 <nav class="bnav">
-  <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni">⌂</span><span class="nl">Home</span></button>
-  <button class="bn" data-p="connect" onclick="go('connect')"><span class="ni">♡</span><span class="nl">Connect</span></button>
-  <button class="bn" data-p="mood" onclick="go('mood')"><span class="ni">◎</span><span class="nl">Mood</span></button>
-  <button class="bn" data-p="story" onclick="go('story')"><span class="ni">◇</span><span class="nl">Story</span></button>
-  <button class="bn" data-p="more" onclick="go('more')"><span class="ni">⋯</span><span class="nl">More</span></button>
+  <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></span><span class="nl">Home</span></button>
+  <button class="bn" data-p="connect" onclick="go('connect')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></span><span class="nl">Connect</span></button>
+  <button class="bn" data-p="mood" onclick="go('mood')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></span><span class="nl">Mood</span></button>
+  <button class="bn" data-p="story" onclick="go('story')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v8"/><path d="M12 3v2"/><path d="M12 19v2"/><circle cx="12" cy="12" r="1.5"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg></span><span class="nl">Story</span></button>
+  <button class="bn" data-p="more" onclick="go('more')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span class="nl">More</span></button>
 </nav>
 
 <!-- ===== DASHBOARD ===== -->
@@ -1007,82 +1071,206 @@ body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-w
 <div class="ctn">
   <div class="ptr" id="ptr"><span class="ptr-spinner"></span><span class="ptr-text">Pull to refresh</span></div>
 
-  <!-- Greeting — tight -->
+  <!-- Greeting -->
   <div style="padding:32px 0 6px">
     <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)" id="dash-time-label">Good morning</div>
     <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;letter-spacing:2px;color:var(--cream);margin-top:4px" id="dash-greeting">...</h1>
   </div>
 
-  <!-- Partner row — compact inline -->
-  <div id="dash-partner-card" style="display:flex;align-items:center;gap:12px;padding:14px 0;margin-bottom:16px;cursor:pointer" onclick="go('connect')">
-    <div id="dash-partner-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--tint);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:var(--gold)">M</div>
-    <div style="flex:1;min-width:0">
-      <div style="font-size:14px;font-weight:500;color:var(--cream)" id="dash-partner-name">...</div>
-      <div style="font-size:11px;color:var(--t3);margin-top:1px" id="dash-partner-status">...</div>
-    </div>
-    <div id="dash-partner-mood-emoji" style="font-size:22px"></div>
+  <!-- Us / Me Toggle -->
+  <div class="view-toggle" id="view-toggle">
+    <div class="vt-option active" data-mode="us" onclick="setViewMode('us')">Us</div>
+    <div class="vt-option" data-mode="me" onclick="setViewMode('me')">Me</div>
+    <div class="vt-slider" id="vt-slider"></div>
   </div>
 
-  <!-- Nudges — only if something needs attention -->
-  <div id="dash-nudges" style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none"></div>
-
-  <!-- Moods side-by-side — compact -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-    <div class="card" id="today-mood" style="margin-bottom:0;padding:18px">
-      <div class="card-h"><span class="card-t">You</span><span class="card-s">Today</span></div>
-      <div class="skel skel-block" style="margin:4px 0"></div>
+  <!-- ===== "US" DASHBOARD ===== -->
+  <div id="dash-us">
+    <!-- Relationship Pulse -->
+    <div class="dash-pulse" onclick="go('checkin')" style="display:flex;align-items:center;gap:16px;padding:18px;background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);margin-bottom:14px;cursor:pointer;border:1px solid var(--bdr-s)">
+      <svg width="56" height="56" viewBox="0 0 120 120" id="dash-pulse-svg">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg3)" stroke-width="8"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round" stroke-dasharray="314" id="dash-pulse-ring" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s ease"/>
+        <text x="60" y="64" text-anchor="middle" fill="var(--gold)" font-size="22" font-weight="600" font-family="Outfit" id="dash-pulse-score">--</text>
+      </svg>
+      <div style="flex:1">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)">Relationship Pulse</div>
+        <div style="font-size:14px;font-weight:500;color:var(--cream);margin-top:2px" id="dash-pulse-label">Getting started</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:1px" id="dash-pulse-tip">Check in together to build your score</div>
+      </div>
     </div>
-    <div class="card" id="partner-mood" style="margin-bottom:0;padding:18px">
-      <div class="card-h"><span class="card-t"><span class="pname"></span></span><span class="card-s">Today</span></div>
-      <div class="skel skel-block" style="margin:4px 0"></div>
+
+    <!-- Partner row -->
+    <div id="dash-partner-card" style="display:flex;align-items:center;gap:12px;padding:14px 0;margin-bottom:16px;cursor:pointer" onclick="go('connect')">
+      <div id="dash-partner-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--tint);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:var(--gold)">M</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:500;color:var(--cream)" id="dash-partner-name">...</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:1px" id="dash-partner-status">...</div>
+      </div>
+      <div id="dash-partner-mood-emoji" style="font-size:22px"></div>
+    </div>
+
+    <!-- Nudges -->
+    <div id="dash-nudges" style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none"></div>
+
+    <!-- Moods side-by-side -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="card" id="today-mood" style="margin-bottom:0;padding:18px">
+        <div class="card-h"><span class="card-t">You</span><span class="card-s">Today</span></div>
+        <div class="skel skel-block" style="margin:4px 0"></div>
+      </div>
+      <div class="card" id="partner-mood" style="margin-bottom:0;padding:18px">
+        <div class="card-h"><span class="card-t"><span class="pname"></span></span><span class="card-s">Today</span></div>
+        <div class="skel skel-block" style="margin:4px 0"></div>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div style="flex:1;background:var(--card-bg);border-radius:16px;padding:14px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid var(--bdr-s)" onclick="go('question')">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);line-height:1;min-width:28px" id="dash-streak-num">0</div>
+        <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">day streak</div>
+      </div>
+      <div id="dash-together-card" style="flex:1;background:var(--card-bg);border-radius:16px;padding:14px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid var(--bdr-s)" onclick="go('story')">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);line-height:1;min-width:28px" id="dash-together-num">--</div>
+        <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">days together</div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-wrap" id="dash-chart" style="padding:16px;margin-bottom:14px">
+      <div class="chart-title">This Week</div>
+      <svg class="chart-svg" viewBox="0 0 320 120" id="mood-chart">
+        <defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-1)" stop-opacity=".3"/><stop offset="100%" stop-color="var(--chart-1)" stop-opacity="0"/></linearGradient></defs>
+        <text class="chart-label" x="4" y="16">5</text><text class="chart-label" x="4" y="56">3</text><text class="chart-label" x="4" y="96">1</text>
+        <line class="chart-grid" x1="20" y1="10" x2="315" y2="10"/><line class="chart-grid" x1="20" y1="50" x2="315" y2="50"/><line class="chart-grid" x1="20" y1="90" x2="315" y2="90"/>
+        <path class="chart-area" id="chart-area" d="M20,90 L315,90"/>
+        <path class="chart-line" id="chart-line" d="M20,50"/>
+      </svg>
+      <div class="chart-legend">
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-1)"></div>You</div>
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-2)"></div><span class="pname"></span></div>
+      </div>
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="slbl">Recent Activity</div>
+    <div id="dash-activity-feed" style="margin-bottom:14px">
+      <div class="empty" style="padding:16px">Activity from both of you shows here</div>
+    </div>
+
+    <!-- Quick nav -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
+      <div class="dash-qn-card" onclick="go('connect')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+        <div style="font-size:11px;font-weight:500;color:var(--cream);margin-top:4px">Letters</div>
+        <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-letters">--</div>
+      </div>
+      <div class="dash-qn-card" onclick="go('games')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/></svg>
+        <div style="font-size:11px;font-weight:500;color:var(--cream);margin-top:4px">Games</div>
+        <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-compat">--</div>
+      </div>
+      <div class="dash-qn-card" onclick="go('datenight')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c.5 3-1.5 5.5-1 8.5.5 3 3 4.5 3 4.5s-2 .5-3.5 0-3-2-3.5-4.5c-.5-2.5.5-4 1-6S12 2 12 2z"/></svg>
+        <div style="font-size:11px;font-weight:500;color:var(--cream);margin-top:4px">Date</div>
+        <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-dates">--</div>
+      </div>
+      <div class="dash-qn-card" onclick="go('deeptalk')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <div style="font-size:11px;font-weight:500;color:var(--cream);margin-top:4px">Talk</div>
+        <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-talks">--</div>
+      </div>
     </div>
   </div>
 
-  <!-- Stats row — streak + together counter -->
-  <div style="display:flex;gap:10px;margin-bottom:14px">
-    <div style="flex:1;background:var(--card-bg);border-radius:16px;padding:14px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:10px;cursor:pointer" onclick="go('question')">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);line-height:1;min-width:28px" id="dash-streak-num">0</div>
-      <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">day streak</div>
+  <!-- ===== "ME" DASHBOARD ===== -->
+  <div id="dash-me" style="display:none">
+    <!-- Personal Pulse -->
+    <div style="display:flex;align-items:center;gap:16px;padding:18px;background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);margin-bottom:14px;border:1px solid var(--bdr-s)">
+      <svg width="56" height="56" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg3)" stroke-width="8"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--red)" stroke-width="8" stroke-linecap="round" stroke-dasharray="314" id="dash-me-ring" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s ease"/>
+        <text x="60" y="64" text-anchor="middle" fill="var(--red)" font-size="22" font-weight="600" font-family="Outfit" id="dash-me-score">--</text>
+      </svg>
+      <div style="flex:1">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)">Personal Growth</div>
+        <div style="font-size:14px;font-weight:500;color:var(--cream);margin-top:2px" id="dash-me-label">Your journey</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:1px" id="dash-me-tip">Track your personal progress</div>
+      </div>
     </div>
-    <div id="dash-together-card" style="flex:1;background:var(--card-bg);border-radius:16px;padding:14px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:10px;cursor:pointer" onclick="go('story')">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);line-height:1;min-width:28px" id="dash-together-num">--</div>
-      <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">days together</div>
-    </div>
-  </div>
 
-  <!-- Chart — kept but tighter -->
-  <div class="chart-wrap" id="dash-chart" style="padding:16px;margin-bottom:14px">
-    <div class="chart-title">This Week</div>
-    <svg class="chart-svg" viewBox="0 0 320 120" id="mood-chart">
-      <defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-1)" stop-opacity=".3"/><stop offset="100%" stop-color="var(--chart-1)" stop-opacity="0"/></linearGradient></defs>
-      <text class="chart-label" x="4" y="16">5</text><text class="chart-label" x="4" y="56">3</text><text class="chart-label" x="4" y="96">1</text>
-      <line class="chart-grid" x1="20" y1="10" x2="315" y2="10"/><line class="chart-grid" x1="20" y1="50" x2="315" y2="50"/><line class="chart-grid" x1="20" y1="90" x2="315" y2="90"/>
-      <path class="chart-area" id="chart-area" d="M20,90 L315,90"/>
-      <path class="chart-line" id="chart-line" d="M20,50"/>
-    </svg>
-    <div class="chart-legend">
-      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-1)"></div>You</div>
-      <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--chart-2)"></div><span class="pname"></span></div>
+    <!-- My Stats -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="background:var(--card-bg);border-radius:16px;padding:14px;text-align:center;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold)" id="dash-me-mood-avg">--</div>
+        <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:3px">Mood Avg</div>
+      </div>
+      <div style="background:var(--card-bg);border-radius:16px;padding:14px;text-align:center;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--red)" id="dash-me-goals">0</div>
+        <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:3px">Goals Done</div>
+      </div>
+      <div style="background:var(--card-bg);border-radius:16px;padding:14px;text-align:center;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--vio)" id="dash-me-energy">--</div>
+        <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:3px">Energy Avg</div>
+      </div>
     </div>
-  </div>
 
-  <!-- Quick nav — 4 compact links with status -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
-    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer;position:relative" onclick="go('connect')">
-      <div style="font-size:11px;font-weight:500;color:var(--cream)">Letters</div>
-      <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-letters">--</div>
+    <!-- Today's Wellness -->
+    <div class="slbl">Today's Wellness</div>
+    <div id="dash-me-wellness" class="card" style="padding:18px">
+      <div id="dash-me-care-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center">
+        <div class="me-care-item" style="padding:12px 4px;border-radius:14px;background:var(--tint-xs)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
+          <div style="font-size:9px;color:var(--t3);margin-top:4px">Hydrate</div>
+        </div>
+        <div class="me-care-item" style="padding:12px 4px;border-radius:14px;background:var(--tint-xs)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+          <div style="font-size:9px;color:var(--t3);margin-top:4px">Move</div>
+        </div>
+        <div class="me-care-item" style="padding:12px 4px;border-radius:14px;background:var(--tint-xs)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--vio)" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          <div style="font-size:9px;color:var(--t3);margin-top:4px">Journal</div>
+        </div>
+      </div>
     </div>
-    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('games')">
-      <div style="font-size:11px;font-weight:500;color:var(--cream)">Games</div>
-      <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-compat">--</div>
+
+    <!-- Personal Goals -->
+    <div class="slbl">My Goals</div>
+    <div id="dash-me-goals-list" style="margin-bottom:14px">
+      <div class="empty" style="padding:16px">Your personal goals appear here</div>
     </div>
-    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('datenight')">
-      <div style="font-size:11px;font-weight:500;color:var(--cream)">Date</div>
-      <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-dates">--</div>
+
+    <!-- My Mood Chart -->
+    <div class="chart-wrap" style="padding:16px;margin-bottom:14px">
+      <div class="chart-title">My Mood This Week</div>
+      <svg class="chart-svg" viewBox="0 0 320 120" id="me-mood-chart">
+        <defs><linearGradient id="meChartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-2)" stop-opacity=".3"/><stop offset="100%" stop-color="var(--chart-2)" stop-opacity="0"/></linearGradient></defs>
+        <text class="chart-label" x="4" y="16">5</text><text class="chart-label" x="4" y="56">3</text><text class="chart-label" x="4" y="96">1</text>
+        <line class="chart-grid" x1="20" y1="10" x2="315" y2="10"/><line class="chart-grid" x1="20" y1="50" x2="315" y2="50"/><line class="chart-grid" x1="20" y1="90" x2="315" y2="90"/>
+        <path class="chart-area" id="me-chart-area" d="M20,90 L315,90" fill="url(#meChartGrad)"/>
+        <path class="chart-line" id="me-chart-line" d="M20,50" stroke="var(--chart-2)"/>
+      </svg>
     </div>
-    <div style="background:var(--card-bg);border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer" onclick="go('deeptalk')">
-      <div style="font-size:11px;font-weight:500;color:var(--cream)">Talk</div>
-      <div style="font-size:9px;color:var(--t3);margin-top:2px" id="dash-qn-talks">--</div>
+
+    <!-- Quick actions for Me -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
+      <div class="dash-qn-card" onclick="go('mood')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>
+        <div style="font-size:11px;font-weight:500;color:var(--cream);margin-top:4px">Mood</div>
+      </div>
+      <div class="dash-qn-card" onclick="go('gratitude')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div style="font-size:11px;font-weight:500;color:var(--cream);margin-top:4px">Gratitude</div>
+      </div>
+      <div class="dash-qn-card" onclick="go(user==='her'?'herspace':'hisspace')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div style="font-size:11px;font-weight:500;color:var(--cream);margin-top:4px">My Space</div>
+      </div>
+      <div class="dash-qn-card" onclick="go('w1')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        <div style="font-size:11px;font-weight:500;color:var(--cream);margin-top:4px">Fitness</div>
+      </div>
     </div>
   </div>
 
@@ -2411,6 +2599,9 @@ function go(p) {
     setTimeout(() => current.classList.remove('out'), 180);
   }
   if (next) next.classList.add('on');
+
+  // Set page-specific background accent
+  document.body.dataset.page = p;
 
   document.querySelectorAll('.bn').forEach(e => e.classList.remove('on'));
   const tabId = TAB_MAP[p] || p;
@@ -5745,6 +5936,262 @@ function updateDashQuickNav() {
     if (snap.exists()) snap.forEach(() => count++);
     const el = document.getElementById('dash-qn-talks');
     if (el) el.textContent = count > 0 ? count + ' notes' : 'Start';
+  });
+}
+
+// ===== US/ME VIEW TOGGLE =====
+let viewMode = localStorage.getItem('met_viewMode') || 'us';
+
+function setViewMode(mode) {
+  viewMode = mode;
+  localStorage.setItem('met_viewMode', mode);
+  document.querySelectorAll('.vt-option').forEach(e => e.classList.toggle('active', e.dataset.mode === mode));
+  const slider = document.getElementById('vt-slider');
+  if (slider) slider.classList.toggle('me', mode === 'me');
+  document.getElementById('dash-us').style.display = mode === 'us' ? 'block' : 'none';
+  document.getElementById('dash-me').style.display = mode === 'me' ? 'block' : 'none';
+  if (mode === 'me') renderMeDashboard();
+}
+
+function initViewToggle() {
+  setViewMode(viewMode);
+}
+
+function renderMeDashboard() {
+  if (!db || !user) return;
+  // Personal mood average
+  db.ref('moods').orderByChild('timestamp').limitToLast(30).once('value', snap => {
+    const moods = [];
+    snap.forEach(c => { const m = c.val(); if (m.user === user) moods.push(m); });
+    if (moods.length > 0) {
+      const avgMood = (moods.reduce((s,m) => s + m.mood, 0) / moods.length).toFixed(1);
+      const avgEnergy = (moods.reduce((s,m) => s + (m.energy||3), 0) / moods.length).toFixed(1);
+      const el = document.getElementById('dash-me-mood-avg');
+      if (el) el.textContent = avgMood;
+      const eEl = document.getElementById('dash-me-energy');
+      if (eEl) eEl.textContent = avgEnergy;
+    }
+    // Render personal mood chart
+    renderMeMoodChart(moods.slice(-7));
+  });
+  // Personal goals count
+  const who = user;
+  db.ref('personalGoals/' + who).once('value', snap => {
+    let done = 0, total = 0;
+    if (snap.exists()) snap.forEach(c => { total++; if (c.val().done) done++; });
+    const el = document.getElementById('dash-me-goals');
+    if (el) el.textContent = done;
+    // Personal growth score
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const ring = document.getElementById('dash-me-ring');
+    if (ring) ring.setAttribute('stroke-dashoffset', String(314 - (pct / 100) * 314));
+    const scoreEl = document.getElementById('dash-me-score');
+    if (scoreEl) scoreEl.textContent = pct + '%';
+    // Goals list
+    const listEl = document.getElementById('dash-me-goals-list');
+    if (listEl && snap.exists()) {
+      const items = [];
+      snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+      items.reverse();
+      if (items.length > 0) {
+        listEl.innerHTML = items.slice(0, 5).map(i =>
+          `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card-bg);border-radius:14px;margin-bottom:6px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid ${i.done?'var(--gold)':'var(--t3)'};display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);flex-shrink:0">${i.done?'✓':''}</div>
+            <div style="font-size:13px;color:var(--cream);flex:1;${i.done?'text-decoration:line-through;opacity:.5':''}">${i.title}</div>
+          </div>`
+        ).join('');
+      }
+    }
+  });
+}
+
+function renderMeMoodChart(moods) {
+  const chartEl = document.getElementById('me-chart-line');
+  const areaEl = document.getElementById('me-chart-area');
+  if (!chartEl || !areaEl || moods.length < 2) return;
+  const w = 295, h = 80, startX = 20, startY = 10;
+  const stepX = w / (moods.length - 1);
+  let linePath = '', areaPath = `M${startX},${startY + h} `;
+  moods.forEach((m, i) => {
+    const x = startX + i * stepX;
+    const y = startY + h - ((m.mood - 1) / 4) * h;
+    linePath += (i === 0 ? 'M' : 'L') + x + ',' + y + ' ';
+    areaPath += (i === 0 ? 'L' : 'L') + x + ',' + y + ' ';
+  });
+  areaPath += `L${startX + (moods.length - 1) * stepX},${startY + h} Z`;
+  chartEl.setAttribute('d', linePath);
+  areaEl.setAttribute('d', areaPath);
+}
+
+// ===== RELATIONSHIP HEALTH SCORE =====
+function calculateRelationshipPulse() {
+  if (!db || !user) return;
+  const today = new Date().toISOString().split('T')[0];
+  const week = getWeekId();
+  let score = 0, maxScore = 0;
+
+  Promise.all([
+    // Communication: taps + letters in last 7 days
+    db.ref('taps').orderByChild('timestamp').limitToLast(20).once('value'),
+    db.ref('letters').orderByChild('timestamp').limitToLast(10).once('value'),
+    // Mood: both checked in today
+    db.ref('moods').orderByChild('date').equalTo(today).once('value'),
+    // Weekly check-in
+    db.ref('checkins/' + week).once('value'),
+    // Games played
+    db.ref('games/wyr').once('value'),
+    db.ref('games/tot').once('value'),
+    // Gratitude
+    db.ref('gratitude').orderByChild('timestamp').limitToLast(10).once('value'),
+    // Deep talk
+    db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(5).once('value'),
+  ]).then(([taps, letters, todayMoods, checkin, wyr, tot, gratitude, deepTalk]) => {
+    const now = Date.now();
+    const weekMs = 7 * 86400000;
+
+    // Communication score (max 25)
+    maxScore += 25;
+    let recentTaps = 0, recentLetters = 0;
+    if (taps.exists()) taps.forEach(c => { if (now - c.val().timestamp < weekMs) recentTaps++; });
+    if (letters.exists()) letters.forEach(c => { if (now - c.val().timestamp < weekMs) recentLetters++; });
+    score += Math.min(25, (recentTaps * 2) + (recentLetters * 5));
+
+    // Mood score (max 20)
+    maxScore += 20;
+    let bothMood = false;
+    if (todayMoods.exists()) {
+      let userMood = false, partnerMood = false;
+      todayMoods.forEach(c => {
+        const m = c.val();
+        if (m.user === user) userMood = true;
+        if (m.user === partner) partnerMood = true;
+      });
+      bothMood = userMood && partnerMood;
+    }
+    if (bothMood) score += 20;
+
+    // Check-in score (max 20)
+    maxScore += 20;
+    if (checkin.exists()) {
+      const data = checkin.val();
+      if (data && data[user] && data[partner]) score += 20;
+      else if (data && (data[user] || data[partner])) score += 10;
+    }
+
+    // Games score (max 15)
+    maxScore += 15;
+    let gamesPlayed = 0;
+    if (wyr.exists()) wyr.forEach(c => { const d = c.val(); if (d && d[user] && d[partner]) gamesPlayed++; });
+    if (tot.exists()) tot.forEach(c => { const d = c.val(); if (d && d[user] && d[partner]) gamesPlayed++; });
+    score += Math.min(15, gamesPlayed * 2);
+
+    // Gratitude score (max 10)
+    maxScore += 10;
+    let recentGrat = 0;
+    if (gratitude.exists()) gratitude.forEach(c => { if (now - c.val().timestamp < weekMs) recentGrat++; });
+    score += Math.min(10, recentGrat * 3);
+
+    // Deep talk score (max 10)
+    maxScore += 10;
+    let recentDeep = 0;
+    if (deepTalk.exists()) deepTalk.forEach(c => { if (now - c.val().timestamp < weekMs * 2) recentDeep++; });
+    score += Math.min(10, recentDeep * 5);
+
+    const pct = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+
+    // Update pulse ring
+    const ring = document.getElementById('dash-pulse-ring');
+    const scoreEl = document.getElementById('dash-pulse-score');
+    const labelEl = document.getElementById('dash-pulse-label');
+    const tipEl = document.getElementById('dash-pulse-tip');
+    if (ring) ring.setAttribute('stroke-dashoffset', String(314 - (pct / 100) * 314));
+    if (scoreEl) scoreEl.textContent = pct;
+
+    if (pct >= 80) { if (labelEl) labelEl.textContent = 'Thriving'; if (tipEl) tipEl.textContent = 'You two are on fire together'; }
+    else if (pct >= 60) { if (labelEl) labelEl.textContent = 'Strong'; if (tipEl) tipEl.textContent = 'Keep the momentum going'; }
+    else if (pct >= 40) { if (labelEl) labelEl.textContent = 'Growing'; if (tipEl) tipEl.textContent = 'Try a game or deep talk together'; }
+    else if (pct >= 20) { if (labelEl) labelEl.textContent = 'Warming up'; if (tipEl) tipEl.textContent = 'Check in with each other today'; }
+    else { if (labelEl) labelEl.textContent = 'Getting started'; if (tipEl) tipEl.textContent = 'Start with a mood check-in'; }
+  });
+}
+
+// ===== ACTIVITY FEED =====
+function logActivity(module, description) {
+  if (!db || !user) return;
+  db.ref('activity').push({
+    module, description, user, userName: NAMES[user], timestamp: Date.now()
+  });
+}
+
+function renderActivityFeed() {
+  if (!db) return;
+  db.ref('activity').orderByChild('timestamp').limitToLast(8).on('value', snap => {
+    const el = document.getElementById('dash-activity-feed');
+    if (!el) return;
+    const items = [];
+    snap.forEach(c => items.push(c.val()));
+    items.reverse();
+    if (!items.length) { el.innerHTML = '<div class="empty" style="padding:16px">Activity from both of you shows here</div>'; return; }
+    el.innerHTML = items.map(i => {
+      const ts = timeAgo(new Date(i.timestamp));
+      const isMe = i.user === user;
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card-bg);border-radius:14px;margin-bottom:6px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
+        <div style="width:28px;height:28px;border-radius:50%;background:${isMe?'var(--tint)':'var(--red-s)'};display:flex;align-items:center;justify-content:center;font-size:11px;color:${isMe?'var(--gold)':'var(--red)'};flex-shrink:0">${(isMe ? 'You' : i.userName).charAt(0)}</div>
+        <div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--cream)">${isMe ? 'You' : i.userName} ${i.description}</div></div>
+        <div style="font-size:9px;color:var(--t3);flex-shrink:0">${ts}</div>
+      </div>`;
+    }).join('');
+  });
+}
+
+// ===== SMART NUDGES (ENHANCED) =====
+function renderSmartNudges() {
+  const container = document.getElementById('dash-nudges');
+  if (!container || !db) return;
+  const nudges = [];
+  const today = new Date().toISOString().split('T')[0];
+  const now = Date.now();
+  const week = getWeekId();
+
+  Promise.all([
+    db.ref('letters').orderByChild('timestamp').limitToLast(10).once('value'),
+    db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value'),
+    db.ref('dailyAnswers/' + today + '/' + user).once('value'),
+    db.ref('checkins/' + week + '/' + user).once('value'),
+    db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(1).once('value'),
+    db.ref('games/wyr').once('value'),
+    db.ref('dateNights').once('value'),
+  ]).then(([letters, moods, dq, checkin, deepTalk, games, dates]) => {
+    // Unread letters
+    let unread = 0;
+    if (letters.exists()) letters.forEach(c => { const l = c.val(); if (l.from === partner && !l.read) unread++; });
+    if (unread > 0) nudges.push({ text: unread + ' unread letter' + (unread>1?'s':'') + ' 💌', page: 'connect', priority: true });
+
+    // Mood
+    let checkedIn = false;
+    if (moods.exists()) moods.forEach(c => { if (c.val().user === user && c.val().date === today) checkedIn = true; });
+    if (!checkedIn) nudges.push({ text: 'Check in today', page: 'mood' });
+
+    // Daily question
+    if (!dq.exists()) nudges.push({ text: 'Answer today\'s question', page: 'question' });
+
+    // Weekly check-in
+    if (!checkin.exists()) nudges.push({ text: 'Weekly check-in', page: 'checkin' });
+
+    // Deep talk (if older than 2 weeks)
+    let lastDeep = 0;
+    if (deepTalk.exists()) deepTalk.forEach(c => { lastDeep = Math.max(lastDeep, c.val().timestamp); });
+    if (now - lastDeep > 14 * 86400000) nudges.push({ text: 'Deep talk time', page: 'deeptalk' });
+
+    // Date night
+    let savedDates = 0;
+    if (dates.exists()) dates.forEach(c => { if (!c.val().done) savedDates++; });
+    if (savedDates === 0) nudges.push({ text: 'Spin for a date', page: 'datenight' });
+
+    container.innerHTML = nudges.slice(0, 5).map(n =>
+      `<div onclick="go('${n.page}')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:${n.priority?'var(--gold)':'var(--card-bg)'};color:${n.priority?'#fff':'var(--cream)'};font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;box-shadow:var(--card-shadow);border:1px solid ${n.priority?'transparent':'var(--bdr-s)'}">${n.text}</div>`
+    ).join('');
+    container.style.display = nudges.length === 0 ? 'none' : 'flex';
   });
 }
 
