@@ -762,5 +762,37 @@
 .grow-lesson-item.completed .gli-title{color:var(--t3)}
 
 /* ===== RESPONSIVE ===== */
-@media(max-width:400px){.ctn{padding:16px 16px 24px}.sg{grid-template-columns:repeat(2,1fr)}.hub-grid{grid-template-columns:1fr}.ll-pair{grid-template-columns:1fr;gap:16px}.ll-divider{display:none}.fit-programs{grid-template-columns:1fr 1fr}.dh-rooms{grid-template-columns:1fr}.explore-directory{grid-template-columns:repeat(3,1fr)}.cmd-ctx-row{grid-template-columns:repeat(3,1fr)}.achievement-grid{grid-template-columns:repeat(3,1fr)}}
-</style>
+
+/* iPhone 16 Pro (393pt) and similar — comfortable spacing, full layouts */
+@media(max-width:430px){
+  .ctn{padding:20px 20px 28px}
+  .mood-grid{gap:8px}
+  .mood-btn{padding:14px 4px}
+  .mood-emoji{font-size:24px}
+  .tap-bar{gap:5px}
+  .tap-btn{padding:14px 4px}
+  .tap-btn .tap-emoji{font-size:22px}
+  .countdown-grid{gap:8px}
+  .fit-summary{gap:8px}
+  .fit-programs{gap:8px}
+  .fit-prog{padding:14px 10px}
+  .meal-sections{gap:8px}
+  .achievement-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .explore-featured{gap:10px}
+}
+
+/* Small phones (375pt and below: iPhone SE, iPhone 13 mini) */
+@media(max-width:375px){
+  .ctn{padding:16px 16px 24px}
+  .sg{grid-template-columns:repeat(2,1fr)}
+  .hub-grid{grid-template-columns:1fr}
+  .ll-pair{grid-template-columns:1fr;gap:16px}
+  .ll-divider{display:none}
+  .fit-programs{grid-template-columns:1fr 1fr}
+  .dh-rooms{grid-template-columns:1fr}
+  .explore-directory{grid-template-columns:repeat(3,1fr)}
+  .cmd-ctx-row{grid-template-columns:repeat(3,1fr)}
+  .achievement-grid{grid-template-columns:repeat(3,1fr)}
+  .mood-grid{grid-template-columns:repeat(4,1fr)}
+  .tap-bar{grid-template-columns:repeat(4,1fr)}
+}

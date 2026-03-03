@@ -13,7 +13,7 @@
 .explore-dir-item .edi-label{font-size:9px;font-weight:500;color:var(--cream);letter-spacing:.3px}
 
 /* ===== LOGIN ===== */
-.login{position:fixed;inset:0;z-index:2000;background:linear-gradient(160deg,#0C1220 0%,#1C2B4A 40%,#2A3D60 70%,#C4784A 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:calc(40px + env(safe-area-inset-top,0px)) 24px calc(40px + env(safe-area-inset-bottom,0px))}
+.login{position:fixed;inset:0;z-index:2000;background:linear-gradient(160deg,#0C1220 0%,#1C2B4A 40%,#2A3D60 70%,#C4784A 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:calc(40px + env(safe-area-inset-top,0px)) 24px calc(40px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh}
 .login.h{display:none}
 .login-logo{width:80px;height:80px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:1px;color:#fff;margin-bottom:32px;animation:logoPulse 3s ease-in-out infinite;backdrop-filter:blur(8px)}
 @keyframes logoPulse{0%,100%{box-shadow:0 0 0 0 transparent;transform:scale(1)}50%{box-shadow:0 0 40px 8px rgba(212,149,106,.2);transform:scale(1.03)}}
@@ -42,7 +42,7 @@
 .pcard p{font-size:11px;color:rgba(255,255,255,.5)}
 
 /* ===== SHELL ===== */
-.shell{display:none;padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+.shell{display:none;padding-bottom:calc(100px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh}
 .shell.on{display:block}
 .ctn{max-width:480px;margin:0 auto;padding:28px 24px 36px;position:relative;z-index:1}
 
@@ -118,3 +118,37 @@
 .phd{padding:16px 0 20px;text-align:center}
 .phd h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;letter-spacing:5px;text-transform:uppercase;background:linear-gradient(135deg,var(--cream) 0%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .phd p{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t3);margin-top:6px}
+
+/* ===== iPhone 16 Pro+ RESPONSIVE (393-440pt viewports) ===== */
+
+/* Ensure proper safe-area spacing for Dynamic Island devices */
+@supports(padding-top:env(safe-area-inset-top)){
+  .page-header{padding-top:env(safe-area-inset-top,0px)}
+  .shell{padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
+  .bnav{bottom:max(10px,env(safe-area-inset-bottom,10px));padding-bottom:8px}
+}
+
+/* iPhone 16 Pro (393pt) — optimize nav tab sizing for 5 tabs */
+@media(max-width:430px){
+  .bn{padding:8px 12px}
+  .bn .ni svg{width:20px;height:20px}
+  .bn .nl{font-size:8px;letter-spacing:.3px}
+  .bnav{gap:2px;padding:6px 6px calc(env(safe-area-inset-bottom,6px) + 4px);max-width:calc(100% - 32px);border-radius:24px}
+  .page-header .gmp-opt{padding:5px 10px;font-size:8px}
+  .page-header .global-mode-pill{border-radius:40px}
+  .ph-back{width:40px;height:40px;left:8px}
+  .ph-presence-name{display:none}
+  .ph-right{gap:6px;right:8px}
+  .page-header .hbg{width:34px;height:34px}
+  .page-header .hbg span{width:14px}
+  .cmd-center{max-height:65vh}
+}
+
+/* Small phones (375pt and below) — further compact nav */
+@media(max-width:375px){
+  .bn{padding:8px 8px}
+  .bn .nl{font-size:7px;letter-spacing:0}
+  .bnav{max-width:calc(100% - 24px);border-radius:22px}
+  .phd h1{font-size:28px;letter-spacing:3px}
+  .phd p{font-size:10px;letter-spacing:1.5px}
+}
