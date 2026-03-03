@@ -1,0 +1,207 @@
+/* ===== VARIABLES — LIGHT MODE (default) ===== */
+:root {
+  --bg: #F8F6F3; --bg2: #EFECE8; --bg3: #E5E1DC;
+  --bg-nav: rgba(248,246,243,.78);
+  --gold: #1C2B4A; --gold-l: #2A3D60; --amber: #7A6B5C; --amber-s: #5E5044;
+  --cream: #1C1C2E; --cream-d: #3C3C50;
+  --t1: #1C1C2E; --t2: #5C5C6E; --t3: #9C968F;
+  --bdr: rgba(28,43,74,0.10); --bdr-s: rgba(28,43,74,0.05);
+  --red: #C4784A; --red-s: rgba(196,120,74,0.10); --red-b: rgba(196,120,74,0.20);
+  --vio: #B08A50; --vio-s: rgba(176,138,80,0.10); --vio-b: rgba(176,138,80,0.20);
+  --tint: rgba(28,43,74,0.06); --tint-s: rgba(28,43,74,0.04); --tint-xs: rgba(28,43,74,0.02);
+  --tint-b: rgba(28,43,74,0.12); --tint-bd: rgba(28,43,74,0.14);
+  --red-tag: #C4784A; --red-tag-s: #A86438;
+  --vio-tag: #B08A50; --vio-tag-s: #987640;
+  --glow-gold: rgba(28,43,74,.18); --glow-red: rgba(196,120,74,.18); --glow-vio: rgba(176,138,80,.18);
+  --grad-gold: rgba(28,43,74,.04); --grad-grey: rgba(122,107,92,.03);
+  --sec-bg: rgba(122,107,92,.08); --sec-bd: rgba(122,107,92,.16);
+  --amber-bg: rgba(28,43,74,.05); --amber-bd: rgba(28,43,74,.09);
+  --wg-gold: linear-gradient(135deg,rgba(28,43,74,.06),rgba(28,43,74,.02));
+  --wg-red: linear-gradient(135deg,rgba(196,120,74,.06),rgba(196,120,74,.02));
+  --wg-vio: linear-gradient(135deg,rgba(176,138,80,.06),rgba(176,138,80,.02));
+  --wg-dc: linear-gradient(135deg,rgba(28,43,74,.08),rgba(28,43,74,.03));
+  --wg-nxr: linear-gradient(135deg,rgba(196,120,74,.06),rgba(196,120,74,.02));
+  --wg-nxv: linear-gradient(135deg,rgba(176,138,80,.06),rgba(176,138,80,.02));
+  --ec-red: rgba(196,120,74,.10); --ec-vio: rgba(176,138,80,.10);
+  --tgr-bg: rgba(28,43,74,.03); --tgr-bd: rgba(28,43,74,.07); --tgr-c: var(--amber-s);
+  --trr-bg: rgba(196,120,74,.04); --trr-bd: rgba(196,120,74,.09);
+  --tvr-bg: rgba(176,138,80,.04); --tvr-bd: rgba(176,138,80,.07);
+  /* Feature-specific gradients */
+  --grad-love: linear-gradient(135deg,#1C2B4A 0%,#2E4468 100%);
+  --grad-mood: linear-gradient(135deg,#C4784A 0%,#D4946A 100%);
+  --grad-story: linear-gradient(135deg,#B08A50 0%,#C8A468 100%);
+  --grad-grow: linear-gradient(135deg,#162240 0%,#253A5C 100%);
+  --grad-games: linear-gradient(135deg,#3A2860 0%,#5C4888 100%);
+  --grad-connect: linear-gradient(135deg,#8C4228 0%,#A8603E 100%);
+  /* NEW — expanded palette */
+  --rose: #D4627A; --rose-s: rgba(212,98,122,.10); --rose-glow: rgba(212,98,122,.18);
+  --teal: #2A8F8F; --teal-s: rgba(42,143,143,.10); --teal-glow: rgba(42,143,143,.18);
+  --lavender: #7B6FA6; --lavender-s: rgba(123,111,166,.10); --lavender-glow: rgba(123,111,166,.18);
+  --emerald: #3D8B6E; --emerald-s: rgba(61,139,110,.10); --emerald-glow: rgba(61,139,110,.18);
+  --grad-fitness: linear-gradient(135deg,#3D8B6E 0%,#5BA88A 100%);
+  --grad-nutrition: linear-gradient(135deg,#D4627A 0%,#E08498 100%);
+  --grad-calendar: linear-gradient(135deg,#2A8F8F 0%,#48ACAC 100%);
+  --grad-finance: linear-gradient(135deg,#1C2B4A 0%,#2A8F8F 100%);
+  --grad-dreamhome: linear-gradient(135deg,#7B6FA6 0%,#9D94C0 100%);
+  --grad-know: linear-gradient(135deg,#D4627A 0%,#B08A50 100%);
+  /* Chart colors — expanded to 8 */
+  --chart-1: #1C2B4A; --chart-2: #C4784A; --chart-3: #B08A50; --chart-4: #3A2860; --chart-5: #8C4228;
+  --chart-6: #2A8F8F; --chart-7: #D4627A; --chart-8: #3D8B6E;
+  /* Elevation & surfaces */
+  --card-bg: #fff; --card-shadow: 0 1px 3px rgba(28,43,74,.06), 0 8px 28px rgba(28,43,74,.04);
+  --card-hover: 0 4px 12px rgba(28,43,74,.08), 0 16px 40px rgba(28,43,74,.06);
+  --input-bg: rgba(28,43,74,.04); --focus-ring: 0 0 0 3px rgba(28,43,74,.12);
+  --nav-bg: rgba(255,255,255,.82); --nav-shadow: 0 -1px 0 rgba(28,43,74,.04), 0 4px 24px rgba(28,43,74,.08);
+  --glass: rgba(255,255,255,.6); --glass-strong: rgba(255,255,255,.85);
+  --overlay-bg: rgba(12,18,32,.5); --sheet-bg: #fff;
+  --shadow: 0 4px 24px rgba(28,43,74,.06); --shadow-lg: 0 8px 40px rgba(28,43,74,.10);
+  /* Mode accents */
+  --mode-us: var(--gold); --mode-me: var(--teal);
+  /* ===== SEMANTIC ALIASES (Phase 0.2) ===== */
+  --brand-primary: var(--gold);
+  --brand-accent: var(--rose);
+  --brand-warm: var(--red);
+  --brand-muted: var(--amber);
+  --surface-base: var(--bg);
+  --surface-raised: var(--bg2);
+  --surface-overlay: var(--bg3);
+  --surface-card: var(--card-bg);
+  --text-primary: var(--t1);
+  --text-secondary: var(--t2);
+  --text-tertiary: var(--t3);
+  --border-default: var(--bdr);
+  --border-subtle: var(--bdr-s);
+  --success: var(--emerald);
+  --warning: var(--amber);
+  --error: var(--red);
+  --info: var(--teal);
+  --shadow-sm: var(--card-shadow);
+  --shadow-md: var(--shadow);
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+}
+
+/* ===== DARK MODE — system auto (unless user forced light) ===== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1220; --bg2: #141E30; --bg3: #1C2840;
+    --bg-nav: rgba(12,18,32,.82);
+    --gold: #D4956A; --gold-l: #E0A87E; --amber: #A89888; --amber-s: #887868;
+    --cream: #F0ECE6; --cream-d: #C0B8AE;
+    --t1: #F0ECE6; --t2: #A89888; --t3: #6A6260;
+    --bdr: rgba(212,149,106,0.12); --bdr-s: rgba(212,149,106,0.06);
+    --red: #E0A882; --red-s: rgba(224,168,130,0.12); --red-b: rgba(224,168,130,0.22);
+    --vio: #C9A84C; --vio-s: rgba(201,168,76,0.12); --vio-b: rgba(201,168,76,0.22);
+    --tint: rgba(212,149,106,0.08); --tint-s: rgba(212,149,106,0.05); --tint-xs: rgba(212,149,106,0.03);
+    --tint-b: rgba(212,149,106,0.14); --tint-bd: rgba(212,149,106,0.16);
+    --red-tag: #E0A882; --red-tag-s: #C89870;
+    --vio-tag: #C9A84C; --vio-tag-s: #B0923C;
+    --glow-gold: rgba(212,149,106,.22); --glow-red: rgba(224,168,130,.22); --glow-vio: rgba(201,168,76,.22);
+    --grad-gold: rgba(212,149,106,.06); --grad-grey: rgba(168,152,136,.04);
+    --sec-bg: rgba(168,152,136,.08); --sec-bd: rgba(168,152,136,.16);
+    --amber-bg: rgba(212,149,106,.07); --amber-bd: rgba(212,149,106,.11);
+    --wg-gold: linear-gradient(135deg,rgba(212,149,106,.08),rgba(212,149,106,.02));
+    --wg-red: linear-gradient(135deg,rgba(224,168,130,.08),rgba(224,168,130,.02));
+    --wg-vio: linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));
+    --wg-dc: linear-gradient(135deg,rgba(212,149,106,.12),rgba(212,149,106,.04));
+    --wg-nxr: linear-gradient(135deg,rgba(224,168,130,.08),rgba(224,168,130,.02));
+    --wg-nxv: linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));
+    --ec-red: rgba(224,168,130,.14); --ec-vio: rgba(201,168,76,.14);
+    --tgr-bg: rgba(212,149,106,.05); --tgr-bd: rgba(212,149,106,.09); --tgr-c: var(--amber-s);
+    --trr-bg: rgba(224,168,130,.05); --trr-bd: rgba(224,168,130,.10);
+    --tvr-bg: rgba(201,168,76,.05); --tvr-bd: rgba(201,168,76,.08);
+    --grad-love: linear-gradient(135deg,#1C2B4A 0%,#2E4468 100%);
+    --grad-mood: linear-gradient(135deg,#C47850 0%,#D49870 100%);
+    --grad-story: linear-gradient(135deg,#B89848 0%,#C8B060 100%);
+    --grad-grow: linear-gradient(135deg,#0E1A30 0%,#1C2B4A 100%);
+    --grad-games: linear-gradient(135deg,#2E1C50 0%,#4A3870 100%);
+    --grad-connect: linear-gradient(135deg,#A84830 0%,#C86850 100%);
+    --rose: #F0889A; --rose-s: rgba(240,136,154,.12); --rose-glow: rgba(240,136,154,.22);
+    --teal: #48CCCC; --teal-s: rgba(72,204,204,.12); --teal-glow: rgba(72,204,204,.22);
+    --lavender: #A898D0; --lavender-s: rgba(168,152,208,.12); --lavender-glow: rgba(168,152,208,.22);
+    --emerald: #5BB898; --emerald-s: rgba(91,184,152,.12); --emerald-glow: rgba(91,184,152,.22);
+    --grad-fitness: linear-gradient(135deg,#3D8B6E 0%,#5BB898 100%);
+    --grad-nutrition: linear-gradient(135deg,#D4627A 0%,#F0889A 100%);
+    --grad-calendar: linear-gradient(135deg,#2A8F8F 0%,#48CCCC 100%);
+    --grad-finance: linear-gradient(135deg,#1C2B4A 0%,#2A8F8F 100%);
+    --grad-dreamhome: linear-gradient(135deg,#7B6FA6 0%,#A898D0 100%);
+    --grad-know: linear-gradient(135deg,#D4627A 0%,#B08A50 100%);
+    --chart-1: #D4956A; --chart-2: #E0A882; --chart-3: #C9A84C; --chart-4: #8068B0; --chart-5: #C86850;
+    --chart-6: #48CCCC; --chart-7: #F0889A; --chart-8: #5BB898;
+    --card-bg: #182436; --card-shadow: 0 1px 3px rgba(0,0,0,.2), 0 8px 28px rgba(0,0,0,.18);
+    --card-hover: 0 4px 12px rgba(0,0,0,.25), 0 16px 40px rgba(0,0,0,.2);
+    --input-bg: rgba(255,255,255,.06); --focus-ring: 0 0 0 3px rgba(212,149,106,.2);
+    --nav-bg: rgba(14,20,34,.90); --nav-shadow: 0 -1px 0 rgba(255,255,255,.04), 0 4px 24px rgba(0,0,0,.3);
+    --glass: rgba(20,30,48,.6); --glass-strong: rgba(20,30,48,.85);
+    --overlay-bg: rgba(0,0,0,.6); --sheet-bg: #141218;
+    --shadow: 0 4px 24px rgba(0,0,0,.15); --shadow-lg: 0 8px 40px rgba(0,0,0,.25);
+    --mode-us: var(--gold); --mode-me: var(--teal);
+  }
+}
+
+/* ===== DARK MODE — manual override ===== */
+:root[data-theme="dark"] {
+  --bg: #0C1220; --bg2: #141E30; --bg3: #1C2840;
+  --bg-nav: rgba(12,18,32,.82);
+  --gold: #D4956A; --gold-l: #E0A87E; --amber: #A89888; --amber-s: #887868;
+  --cream: #F0ECE6; --cream-d: #C0B8AE;
+  --t1: #F0ECE6; --t2: #A89888; --t3: #6A6260;
+  --bdr: rgba(212,149,106,0.12); --bdr-s: rgba(212,149,106,0.06);
+  --red: #E0A882; --red-s: rgba(224,168,130,0.12); --red-b: rgba(224,168,130,0.22);
+  --vio: #C9A84C; --vio-s: rgba(201,168,76,0.12); --vio-b: rgba(201,168,76,0.22);
+  --tint: rgba(212,149,106,0.08); --tint-s: rgba(212,149,106,0.05); --tint-xs: rgba(212,149,106,0.03);
+  --tint-b: rgba(212,149,106,0.14); --tint-bd: rgba(212,149,106,0.16);
+  --red-tag: #E0A882; --red-tag-s: #C89870;
+  --vio-tag: #C9A84C; --vio-tag-s: #B0923C;
+  --glow-gold: rgba(212,149,106,.22); --glow-red: rgba(224,168,130,.22); --glow-vio: rgba(201,168,76,.22);
+  --grad-gold: rgba(212,149,106,.06); --grad-grey: rgba(168,152,136,.04);
+  --sec-bg: rgba(168,152,136,.08); --sec-bd: rgba(168,152,136,.16);
+  --amber-bg: rgba(212,149,106,.07); --amber-bd: rgba(212,149,106,.11);
+  --wg-gold: linear-gradient(135deg,rgba(212,149,106,.08),rgba(212,149,106,.02));
+  --wg-red: linear-gradient(135deg,rgba(224,168,130,.08),rgba(224,168,130,.02));
+  --wg-vio: linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));
+  --wg-dc: linear-gradient(135deg,rgba(212,149,106,.12),rgba(212,149,106,.04));
+  --wg-nxr: linear-gradient(135deg,rgba(224,168,130,.08),rgba(224,168,130,.02));
+  --wg-nxv: linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02));
+  --ec-red: rgba(224,168,130,.14); --ec-vio: rgba(201,168,76,.14);
+  --tgr-bg: rgba(212,149,106,.05); --tgr-bd: rgba(212,149,106,.09); --tgr-c: var(--amber-s);
+  --trr-bg: rgba(224,168,130,.05); --trr-bd: rgba(224,168,130,.10);
+  --tvr-bg: rgba(201,168,76,.05); --tvr-bd: rgba(201,168,76,.08);
+  --grad-love: linear-gradient(135deg,#1C2B4A 0%,#2E4468 100%);
+  --grad-mood: linear-gradient(135deg,#C47850 0%,#D49870 100%);
+  --grad-story: linear-gradient(135deg,#B89848 0%,#C8B060 100%);
+  --grad-grow: linear-gradient(135deg,#0E1A30 0%,#1C2B4A 100%);
+  --grad-games: linear-gradient(135deg,#2E1C50 0%,#4A3870 100%);
+  --grad-connect: linear-gradient(135deg,#A84830 0%,#C86850 100%);
+  --rose: #F0889A; --rose-s: rgba(240,136,154,.12); --rose-glow: rgba(240,136,154,.22);
+  --teal: #48CCCC; --teal-s: rgba(72,204,204,.12); --teal-glow: rgba(72,204,204,.22);
+  --lavender: #A898D0; --lavender-s: rgba(168,152,208,.12); --lavender-glow: rgba(168,152,208,.22);
+  --emerald: #5BB898; --emerald-s: rgba(91,184,152,.12); --emerald-glow: rgba(91,184,152,.22);
+  --grad-fitness: linear-gradient(135deg,#3D8B6E 0%,#5BB898 100%);
+  --grad-nutrition: linear-gradient(135deg,#D4627A 0%,#F0889A 100%);
+  --grad-calendar: linear-gradient(135deg,#2A8F8F 0%,#48CCCC 100%);
+  --grad-finance: linear-gradient(135deg,#1C2B4A 0%,#2A8F8F 100%);
+  --grad-dreamhome: linear-gradient(135deg,#7B6FA6 0%,#A898D0 100%);
+  --grad-know: linear-gradient(135deg,#D4627A 0%,#B08A50 100%);
+  --chart-1: #D4956A; --chart-2: #E0A882; --chart-3: #C9A84C; --chart-4: #8068B0; --chart-5: #C86850;
+  --chart-6: #48CCCC; --chart-7: #F0889A; --chart-8: #5BB898;
+  --card-bg: #182436; --card-shadow: 0 1px 3px rgba(0,0,0,.2), 0 8px 28px rgba(0,0,0,.18);
+  --card-hover: 0 4px 12px rgba(0,0,0,.25), 0 16px 40px rgba(0,0,0,.2);
+  --input-bg: rgba(255,255,255,.06); --focus-ring: 0 0 0 3px rgba(212,149,106,.2);
+  --nav-bg: rgba(14,20,34,.90); --nav-shadow: 0 -1px 0 rgba(255,255,255,.04), 0 4px 24px rgba(0,0,0,.3);
+  --glass: rgba(20,30,48,.6); --glass-strong: rgba(20,30,48,.85);
+  --overlay-bg: rgba(0,0,0,.6); --sheet-bg: #141218;
+  --shadow: 0 4px 24px rgba(0,0,0,.15); --shadow-lg: 0 8px 40px rgba(0,0,0,.25);
+  --mode-us: var(--gold); --mode-me: var(--teal);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;padding-top:env(safe-area-inset-top,0px);overscroll-behavior-y:none;-webkit-font-smoothing:antialiased;position:relative}

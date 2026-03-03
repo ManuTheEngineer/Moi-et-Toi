@@ -1,12 +1,35 @@
-const CACHE_NAME = 'moiettoi-v18';
+const CACHE_NAME = 'moiettoi-v19';
+
+const ASSETS = [
+  './',
+  './index.html',
+  './css/variables.css',
+  './css/base.css',
+  './css/components.css',
+  './css/nav.css',
+  './css/modules.css',
+  './js/app.js',
+  './js/nav.js',
+  './js/utils.js',
+  './js/modules-core.js',
+  './js/modules-social.js',
+  './js/modules-life.js',
+  './js/dashboard.js',
+  './js/modules-track.js',
+  './js/modules-data.js',
+  './manifest.json'
+];
 
 self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(names => Promise.all(names.map(n => caches.delete(n))))
+    caches.keys().then(names => Promise.all(names.filter(n => n !== CACHE_NAME).map(n => caches.delete(n))))
     .then(() => self.clients.claim())
   );
 });
