@@ -22,6 +22,12 @@ function enforcePrivacy() {
   });
 }
 
+// ===== LOCAL DATE HELPER (avoids UTC timezone bugs) =====
+function localDate(d) {
+  d = d || new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
 // ===== TIME AGO =====
 function safeHref(url) {
   if (!url) return '';

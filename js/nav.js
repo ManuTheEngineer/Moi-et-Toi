@@ -320,13 +320,15 @@ function updateNavBadges() {
   });
 
   // Track tab: check if mood logged today
-  var today = new Date().toISOString().split('T')[0];
+  var today = localDate();
   var u = typeof user !== 'undefined' ? user : null;
   if (u) {
-    db.ref('moods/' + u + '/' + today).once('value', function(snap) {
+    db.ref('moods').orderByChild('date').equalTo(today).once('value', function(snap) {
       const badge = document.getElementById('badge-track');
       if (!badge) return;
-      if (!snap.exists()) { badge.textContent = '!'; badge.classList.add('show'); }
+      var found = false;
+      if (snap.exists()) snap.forEach(function(c) { if (c.val().user === u) found = true; });
+      if (!found) { badge.textContent = '!'; badge.classList.add('show'); }
       else { badge.classList.remove('show'); }
     });
   }

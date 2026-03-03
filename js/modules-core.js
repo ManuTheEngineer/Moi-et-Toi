@@ -22,7 +22,7 @@ async function submitMood() {
     user: user,
     userName: NAMES[user],
     timestamp: Date.now(),
-    date: new Date().toISOString().split('T')[0]
+    date: localDate()
   };
   const key = db.ref('moods').push().key;
   await db.ref('moods/' + key).set(entry);
@@ -32,12 +32,13 @@ async function submitMood() {
   document.getElementById('energy-slider').value = 3;
   document.getElementById('energy-val').textContent = 'Steady';
   updateStreak();
+  if (typeof renderSmartNudges === 'function') renderSmartNudges();
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Check in'; }, 1500); }
   toast('Checked in');
 }
 
 function listenMoods() {
-  db.ref('moods').orderByChild('timestamp').limitToLast(20).on('value', snap => {
+  db.ref('moods').orderByChild('timestamp').limitToLast(50).on('value', snap => {
     const moods = [];
     snap.forEach(c => moods.push(c.val()));
     moods.reverse();
@@ -69,7 +70,7 @@ function renderMoodFeed(moods) {
 function renderDashMoods(moods) {
   const emojis = ['', '😴', '😐', '🙂', '😊', '🔥'];
   const labels = ['', 'Low', 'Meh', 'Good', 'Great', 'Amazing'];
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
 
   const myToday = moods.find(m => m.user === user && m.date === today);
   const partnerToday = moods.find(m => m.user === partner && m.date === today);
@@ -127,7 +128,7 @@ function renderMoodChart(moods) {
   const days = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date(); d.setDate(d.getDate() - i);
-    days.push(d.toISOString().split('T')[0]);
+    days.push(localDate(d));
   }
 
   const myMoods = days.map(d => {
@@ -290,11 +291,11 @@ function renderStreakCalendar() {
 
     // Generate last 28 days
     const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
+    const todayStr = localDate(today);
     let html = '';
     for (let i = 27; i >= 0; i--) {
       const d = new Date(); d.setDate(today.getDate() - i);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = localDate(d);
       const users = dayMap[dateStr];
       const isToday = dateStr === todayStr;
       const hasMe = users && users.has(user);
@@ -413,7 +414,7 @@ async function submitLog() {
     user: user,
     userName: NAMES[user],
     timestamp: Date.now(),
-    date: new Date().toISOString().split('T')[0]
+    date: localDate()
   };
   const key = db.ref('workoutLogs').push().key;
   await db.ref('workoutLogs/' + key).set(entry);
@@ -721,7 +722,7 @@ async function submitDailyAnswer() {
   const answer = input.value.trim();
   if (!answer) { toast('Write an answer first'); return; }
   if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   await db.ref('dailyAnswers/' + today + '/' + user).set({
     answer, userName: NAMES[user], timestamp: Date.now()
   });
@@ -731,7 +732,7 @@ async function submitDailyAnswer() {
 }
 
 function listenDailyAnswers() {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   db.ref('dailyAnswers/' + today).on('value', snap => {
     const data = snap.val() || {};
     renderDailyAnswers(data);
@@ -776,14 +777,14 @@ function listenStreak() {
 
 async function updateStreak() {
   if (!db || !user) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   const snap = await db.ref('streaks').once('value');
   const data = snap.val() || { current: 0, longest: 0, lastCheckIn: {} };
   if (!data.lastCheckIn) data.lastCheckIn = {};
   data.lastCheckIn[user] = today;
 
   // Check if both checked in today
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  const yesterday = localDate(new Date(Date.now() - 86400000));
   const herToday = data.lastCheckIn.her === today;
   const himToday = data.lastCheckIn.him === today;
   const herYesterday = data.lastCheckIn.her === yesterday || data.lastCheckIn.her === today;
@@ -810,7 +811,7 @@ async function submitGratitude() {
     from: user,
     fromName: NAMES[user],
     message: text,
-    date: new Date().toISOString().split('T')[0],
+    date: localDate(),
     timestamp: Date.now()
   };
   await db.ref('gratitude').push(entry);

@@ -192,6 +192,8 @@ function finishLogin() {
   renderDashCountdown();
   renderDashDailyQ();
   renderActivityFeed();
+  renderDashMeGratitude();
+  renderDashMeAffirmation();
   calculateRelationshipPulse();
   initViewToggle();
   // New modules v3 - enhanced features

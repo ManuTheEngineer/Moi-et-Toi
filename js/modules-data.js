@@ -325,7 +325,7 @@ async function saveMemory() {
   const imageData = imgEl ? imgEl.dataset.data : '';
   if (!imageData) { toast('Upload a photo first'); return; }
   const caption = document.getElementById('mem-caption').value.trim();
-  const date = document.getElementById('mem-date').value || new Date().toISOString().split('T')[0];
+  const date = document.getElementById('mem-date').value || localDate();
   const albumSel = document.getElementById('mem-album');
   const album = albumSel ? albumSel.value : '';
   await db.ref('memories').push({ imageData, caption, date, album, uploadedBy: user, timestamp: Date.now() });
@@ -669,7 +669,7 @@ async function checkAchievements() {
   // Check fit couple - both worked out this week
   const partnerFitSnap = await db.ref('fitness/' + partner + '/workouts').orderByChild('date').limitToLast(7).once('value');
   const partnerWorkouts = partnerFitSnap.val() ? Object.values(partnerFitSnap.val()) : [];
-  const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+  const weekAgo = localDate(new Date(Date.now() - 7 * 86400000));
   const myWeek = Object.values(fitnessData).some(w => w.date >= weekAgo);
   const partnerWeek = partnerWorkouts.some(w => w.date >= weekAgo);
   if (myWeek && partnerWeek) unlockBadge('fit-couple', 'Fit Couple');

@@ -305,7 +305,7 @@ function renderDashNudges() {
   if (!container || !db) return;
 
   const nudges = [];
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
 
   // Check for unread letters
   db.ref('letters').orderByChild('timestamp').limitToLast(10).once('value', snap => {
@@ -516,7 +516,7 @@ function updateHubWishlist() {
 function updateHubGratitude() {
   const el = document.getElementById('hub-grat-status');
   if (!el || !db) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   db.ref('gratitude').orderByChild('date').equalTo(today).once('value', snap => {
     if (!snap.exists()) { el.textContent = 'Share today'; el.className = 'hub-badge pending'; return; }
     let count = 0; snap.forEach(() => count++);
@@ -528,7 +528,7 @@ function updateHubGratitude() {
 function updateHubDQ() {
   const el = document.getElementById('hub-dq-status');
   if (!el || !db) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   db.ref('dailyAnswers/' + today).once('value', snap => {
     const data = snap.val();
     if (!data) { el.textContent = 'New'; el.className = 'hub-badge new'; }
@@ -947,7 +947,7 @@ function renderDashSparkline(moods) {
 // ===== RELATIONSHIP HEALTH SCORE =====
 function calculateRelationshipPulse() {
   if (!db || !user) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   const week = getWeekId();
   let score = 0, maxScore = 0;
 
@@ -1065,6 +1065,44 @@ function renderActivityFeed() {
   });
 }
 
+// ===== ME DASHBOARD: GRATITUDE + AFFIRMATION =====
+function renderDashMeGratitude() {
+  if (!db) return;
+  const card = document.getElementById('dash-me-gratitude');
+  const list = document.getElementById('dash-me-grat-list');
+  if (!card || !list) return;
+  db.ref('gratitude').orderByChild('timestamp').limitToLast(5).once('value', snap => {
+    if (!snap.exists()) return;
+    const items = [];
+    snap.forEach(c => { const v = c.val(); if (v.from === user) items.push(v); });
+    if (!items.length) return;
+    items.reverse();
+    list.innerHTML = items.slice(0, 3).map(i =>
+      `<div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px"><span style="color:var(--gold);font-size:10px">&#9679;</span><span>${esc(i.message || '')}</span></div>`
+    ).join('');
+    card.style.display = 'block';
+  });
+}
+
+function renderDashMeAffirmation() {
+  const card = document.getElementById('dash-me-affirmation');
+  const text = document.getElementById('dash-me-affirm-text');
+  if (!card || !text) return;
+  const affirmations = [
+    "I am worthy of love and kindness, starting with myself.",
+    "Today I choose progress over perfection.",
+    "My feelings are valid. I honor them without judgment.",
+    "I am building a life I'm proud of, one step at a time.",
+    "I bring value to my relationship and to the world.",
+    "I am growing stronger and wiser every day.",
+    "I deserve rest, joy, and peace.",
+    "I trust my journey, even when I can't see the full path."
+  ];
+  const idx = Math.floor(Date.now() / 86400000) % affirmations.length;
+  text.textContent = affirmations[idx];
+  card.style.display = 'block';
+}
+
 // ===== DAILY QUESTION PREVIEW ON DASHBOARD =====
 function renderDashDailyQ() {
   if (!db) return;
@@ -1072,7 +1110,7 @@ function renderDashDailyQ() {
   const textEl = document.getElementById('dash-dq-text');
   const statusEl = document.getElementById('dash-dq-status');
   if (!card || !textEl) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
 
   db.ref('dailyQuestion').once('value', snap => {
     const q = snap.val();
@@ -1099,7 +1137,7 @@ function renderSmartNudges() {
   const container = document.getElementById('dash-nudges');
   if (!container || !db) return;
   const nudges = [];
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   const now = Date.now();
   const week = getWeekId();
 

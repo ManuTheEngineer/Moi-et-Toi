@@ -147,11 +147,11 @@ function renderFitnessHub() {
   // Streak
   let streak = 0;
   const dates = workouts.map(w => w.date).sort().reverse();
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   let check = today;
   for (let i = 0; i < 60; i++) {
     if (dates.includes(check)) { streak++; } else if (i > 0) break;
-    const d = new Date(check); d.setDate(d.getDate() - 1); check = d.toISOString().split('T')[0];
+    const d = new Date(check); d.setDate(d.getDate() - 1); check = localDate(d);
   }
   if (el('fit-streak')) el('fit-streak').textContent = streak;
 
@@ -226,7 +226,7 @@ function guessCategory(name) {
 function renderMuscleMap(weekWorkouts) {
   const el = document.getElementById('fit-body-map');
   if (!el) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   const todayMuscles = new Set();
   const weekMuscles = new Set();
   (weekWorkouts || []).forEach(w => {
@@ -285,7 +285,7 @@ function renderFitnessCharts(workouts) {
     start.setDate(start.getDate() - 27 - ((start.getDay() + 6) % 7));
     for (let i = 0; i < 28; i++) {
       const d = new Date(start.getTime() + i * 86400000);
-      const ds = d.toISOString().split('T')[0];
+      const ds = localDate(d);
       const count = dates.filter(dd => dd === ds).length;
       const level = count >= 2 ? 'l3' : count === 1 ? 'l2' : '';
       cells.push(`<div class="fit-heat-cell ${level}" title="${ds}: ${count} workout${count!==1?'s':''}"></div>`);
@@ -626,7 +626,7 @@ async function finishWorkout() {
   const totalVolume = calcLiveVolume();
   const entry = {
     program: activeWorkout.program,
-    date: new Date().toISOString().split('T')[0],
+    date: localDate(),
     timestamp: Date.now(),
     duration, totalVolume,
     exercises: exercises.map(e => {
@@ -670,7 +670,7 @@ async function quickLogExercise() {
   const reps = parseInt(document.getElementById('fit-ex-reps').value) || 0;
   const weight = parseInt(document.getElementById('fit-ex-weight').value) || 0;
   if (!name) { toast('Enter exercise name'); return; }
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   const cat = guessCategory(name);
   await db.ref('fitness/' + user + '/workouts').push({
     program: 'Quick Log', date: today, timestamp: Date.now(),
@@ -711,7 +711,7 @@ async function logBodyMetrics() {
     const heightIn = 70;
     data.bmi = Math.round((data.weight / (heightIn * heightIn)) * 703 * 10) / 10;
   }
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   await db.ref('fitness/' + user + '/body/' + today).set(data);
   // Update trends
   Object.keys(fields).forEach(k => { const el = document.getElementById(fields[k]); if (el) el.value = ''; });
@@ -990,7 +990,7 @@ function prevGrowLesson() {
 async function saveGrowReflection() {
   const text = document.getElementById('grow-reflection-input').value.trim();
   if (!text) { toast('Write something first'); return; }
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   await db.ref('grow/' + user + '/dailyReflections/' + today).set({ text, path: growPath, timestamp: Date.now() });
   document.getElementById('grow-reflection-input').value = '';
   toast('Reflection saved!');
@@ -1004,7 +1004,7 @@ let nutritionData = {}, groceryData = {}, recipeData = {}, mealPlanData = {};
 
 function listenNutritionData() {
   if (!db) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   db.ref('nutrition/' + user + '/meals/' + today).on('value', snap => {
     nutritionData = snap.val() || {};
     renderNutritionDay();
@@ -1081,7 +1081,7 @@ async function addMealItem(type) {
   const protein = parseInt(proteinInput?.value) || 0;
   const carbs = parseInt(carbsInput?.value) || 0;
   const fats = parseInt(fatsInput?.value) || 0;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   await db.ref('nutrition/' + user + '/meals/' + today + '/' + type).push({
     name, calories, protein, carbs, fats, timestamp: Date.now()
   });
@@ -1095,7 +1095,7 @@ async function addMealItem(type) {
 }
 
 async function quickAddFood(name, cal, protein, carbs, fats) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   // Determine meal type by time of day
   const hour = new Date().getHours();
   const type = hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 20 ? 'dinner' : 'snacks';
@@ -1112,7 +1112,7 @@ function toggleMealSection(type) {
 }
 
 async function logWater(count) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   await db.ref('nutrition/' + user + '/meals/' + today + '/water').set(count);
 }
 
@@ -1130,7 +1130,7 @@ function getWeekKey() {
   const now = new Date();
   const start = new Date(now);
   start.setDate(start.getDate() - start.getDay());
-  return start.toISOString().split('T')[0];
+  return localDate(start);
 }
 
 function renderMealPlan() {
@@ -1204,7 +1204,7 @@ function renderRecipeList() {
 // ========================================
 // ===== CALENDAR MODULE =====
 // ========================================
-let calendarEvents = {}, calMonth = new Date().getMonth(), calYear = new Date().getFullYear(), calSelectedDate = new Date().toISOString().split('T')[0];
+let calendarEvents = {}, calMonth = new Date().getMonth(), calYear = new Date().getFullYear(), calSelectedDate = localDate();
 
 function listenCalendarEvents() {
   if (!db) return;
@@ -1223,7 +1223,7 @@ function renderCalendar() {
   if (!grid) return;
   const firstDay = new Date(calYear, calMonth, 1).getDay();
   const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   const events = Object.values(calendarEvents);
 
   let html = '';
@@ -1278,7 +1278,7 @@ function renderCalDayEvents() {
 function renderUpcoming() {
   const container = document.getElementById('cal-upcoming');
   if (!container) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   const upcoming = Object.entries(calendarEvents)
     .filter(([k, e]) => e.date >= today)
     .sort((a, b) => a[1].date.localeCompare(b[1].date))

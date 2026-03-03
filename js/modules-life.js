@@ -36,7 +36,7 @@ function nextAffirmation() {
 
 function logPeriodStart() {
   if (!db || !user) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   db.ref('herWellness/cycle').push({ type: 'start', date: today, timestamp: Date.now() });
   toast('Period start logged');
   loadCycleData();
@@ -44,7 +44,7 @@ function logPeriodStart() {
 
 function logPeriodEnd() {
   if (!db || !user) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   db.ref('herWellness/cycle').push({ type: 'end', date: today, timestamp: Date.now() });
   toast('Period end logged');
   loadCycleData();
@@ -88,14 +88,14 @@ function loadCycleData() {
 function toggleCare(el, type) {
   if (!db || !user) return;
   el.classList.toggle('done');
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   const done = el.classList.contains('done');
   db.ref('herWellness/selfcare/' + today + '/' + type).set(done ? true : null);
 }
 
 function loadSelfCare() {
   if (!db) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   db.ref('herWellness/selfcare/' + today).once('value', snap => {
     const data = snap.val() || {};
     document.querySelectorAll('#hs-care-grid .hs-care-item').forEach(el => {
@@ -150,7 +150,7 @@ async function logPR() {
   const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('hisWellness/prs').push({
     exercise, weight: weight || '--', reps: reps || '--',
-    timestamp: Date.now(), date: new Date().toISOString().split('T')[0]
+    timestamp: Date.now(), date: localDate()
   });
   document.getElementById('him-pr-exercise').value = '';
   document.getElementById('him-pr-weight').value = '';
@@ -177,14 +177,14 @@ function listenPRs() {
 function toggleClarity(el, type) {
   if (!db || !user) return;
   el.classList.toggle('done');
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   const done = el.classList.contains('done');
   db.ref('hisWellness/clarity/' + today + '/' + type).set(done ? true : null);
 }
 
 function loadClarity() {
   if (!db) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDate();
   db.ref('hisWellness/clarity/' + today).once('value', snap => {
     const data = snap.val() || {};
     document.querySelectorAll('#him-clarity-grid .hs-care-item').forEach(el => {
@@ -418,7 +418,7 @@ async function saveConvoNote() {
   const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('deepTalkJournal').push({
     text, user, userName: NAMES[user], timestamp: Date.now(),
-    date: new Date().toISOString().split('T')[0]
+    date: localDate()
   });
   document.getElementById('dt-journal').value = '';
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Save'; }, 1500); }
