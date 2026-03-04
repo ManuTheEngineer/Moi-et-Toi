@@ -146,6 +146,7 @@ function showWelcomeGate() {
 function finishLogin() {
   document.getElementById('login').classList.add('h');
   document.getElementById('shell').classList.add('on');
+  document.body.classList.remove('login-active');
   document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
   document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
   go('dash');
