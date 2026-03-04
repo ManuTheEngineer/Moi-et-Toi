@@ -20,25 +20,8 @@ function go(p) {
   const next = document.getElementById('pg-' + p);
   if (current === next) { closeMenu(); return; }
 
-  // Determine direction for transition
-  const prevPage = document.body.dataset.page || 'dash';
-  const prevTab = TAB_MAP[prevPage] || prevPage;
-  const nextTab = TAB_MAP[p] || p;
-  const prevIdx = TAB_ORDER.indexOf(prevTab);
-  const nextIdx = TAB_ORDER.indexOf(nextTab);
-  const isTabSwitch = prevIdx !== -1 && nextIdx !== -1 && prevIdx !== nextIdx;
-  const slideDir = isTabSwitch ? (nextIdx > prevIdx ? 'slide-right' : 'slide-left') : '';
-
-  if (current) {
-    current.classList.remove('on', 'slide-right', 'slide-left');
-  }
-  if (next) {
-    next.classList.add('on');
-    if (slideDir) {
-      next.classList.add(slideDir);
-      setTimeout(() => next.classList.remove('slide-right', 'slide-left'), 300);
-    }
-  }
+  if (current) current.classList.remove('on');
+  if (next) next.classList.add('on');
 
   // Set page-specific background accent
   document.body.dataset.page = p;
