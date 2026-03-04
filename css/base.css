@@ -1,5 +1,5 @@
-html{background:#0C1220}
-body{margin:0;padding:0;background:#0C1220}
+html{height:100%;background:#0C1220}
+body{margin:0;padding:0;height:100%;background:#0C1220}
 /* ===== IMMERSIVE BACKGROUND — aurora + particles + noise ===== */
 body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:
