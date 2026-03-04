@@ -299,18 +299,20 @@
 
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">How Are You?</div></div>
   <div class="mood-grid" id="mood-grid">
-    <div class="mood-btn" onclick="selMood(1,this)"><div class="icon-badge ib-lavender" style="width:44px;height:44px"><span style="font-size:22px">😴</span></div><span class="mood-label">Low</span></div>
-    <div class="mood-btn" onclick="selMood(2,this)"><div class="icon-badge ib-teal" style="width:44px;height:44px"><span style="font-size:22px">😐</span></div><span class="mood-label">Meh</span></div>
-    <div class="mood-btn" onclick="selMood(3,this)"><div class="icon-badge ib-amber" style="width:44px;height:44px"><span style="font-size:22px">🙂</span></div><span class="mood-label">Good</span></div>
-    <div class="mood-btn" onclick="selMood(4,this)"><div class="icon-badge ib-gold" style="width:44px;height:44px"><span style="font-size:22px">😊</span></div><span class="mood-label">Great</span></div>
-    <div class="mood-btn" onclick="selMood(5,this)"><div class="icon-badge ib-rose" style="width:44px;height:44px"><span style="font-size:22px">🔥</span></div><span class="mood-label">On top</span></div>
+    <div class="mood-btn" onclick="selMood(1,this)"><div class="icon-badge ib-lavender" style="width:44px;height:44px"><span style="font-size:22px">😮‍💨</span></div><span class="mood-label">Rough</span></div>
+    <div class="mood-btn" onclick="selMood(2,this)"><div class="icon-badge ib-teal" style="width:44px;height:44px"><span style="font-size:22px">😕</span></div><span class="mood-label">Off</span></div>
+    <div class="mood-btn" onclick="selMood(3,this)"><div class="icon-badge ib-amber" style="width:44px;height:44px"><span style="font-size:22px">😌</span></div><span class="mood-label">Okay</span></div>
+    <div class="mood-btn" onclick="selMood(4,this)"><div class="icon-badge ib-gold" style="width:44px;height:44px"><span style="font-size:22px">😄</span></div><span class="mood-label">Good</span></div>
+    <div class="mood-btn" onclick="selMood(5,this)"><div class="icon-badge ib-rose" style="width:44px;height:44px"><span style="font-size:22px">🤩</span></div><span class="mood-label">Amazing</span></div>
   </div>
 
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Energy</div></div>
-  <div class="energy-row">
-    <label>Level</label>
-    <input type="range" id="energy-slider" min="1" max="5" step="1" value="3" oninput="updEnergy()">
-    <span class="energy-val" id="energy-val">Steady</span>
+  <div class="mood-grid" id="energy-grid">
+    <div class="mood-btn" onclick="selEnergy(1,this)"><div class="icon-badge ib-lavender" style="width:44px;height:44px"><span style="font-size:22px">🪫</span></div><span class="mood-label">Dead</span></div>
+    <div class="mood-btn" onclick="selEnergy(2,this)"><div class="icon-badge ib-teal" style="width:44px;height:44px"><span style="font-size:22px">🥱</span></div><span class="mood-label">Low</span></div>
+    <div class="mood-btn" onclick="selEnergy(3,this)"><div class="icon-badge ib-amber" style="width:44px;height:44px"><span style="font-size:22px">🙆</span></div><span class="mood-label">Steady</span></div>
+    <div class="mood-btn" onclick="selEnergy(4,this)"><div class="icon-badge ib-gold" style="width:44px;height:44px"><span style="font-size:22px">💪</span></div><span class="mood-label">Strong</span></div>
+    <div class="mood-btn" onclick="selEnergy(5,this)"><div class="icon-badge ib-rose" style="width:44px;height:44px"><span style="font-size:22px">⚡</span></div><span class="mood-label">Wired</span></div>
   </div>
 
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Add a Note</div></div>
@@ -426,11 +428,11 @@
   <!-- Quick Taps -->
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Quick tap</div></div>
   <div class="tap-bar">
-    <div class="tap-btn" onclick="sendTap(event,'hug','🤗')"><div class="icon-badge ib-rose" style="width:36px;height:36px"><span style="font-size:18px">🤗</span></div><span class="tap-label">Hug</span></div>
-    <div class="tap-btn" onclick="sendTap(event,'kiss','💋')"><div class="icon-badge ib-rose" style="width:36px;height:36px"><span style="font-size:18px">💋</span></div><span class="tap-label">Kiss</span></div>
-    <div class="tap-btn" onclick="sendTap(event,'love','❤️')"><div class="icon-badge ib-rose" style="width:36px;height:36px"><span style="font-size:18px">❤️</span></div><span class="tap-label">Love</span></div>
-    <div class="tap-btn" onclick="sendTap(event,'miss','🥺')"><div class="icon-badge ib-lavender" style="width:36px;height:36px"><span style="font-size:18px">🥺</span></div><span class="tap-label">Miss</span></div>
-    <div class="tap-btn" onclick="sendTap(event,'thinking','💭')"><div class="icon-badge ib-teal" style="width:36px;height:36px"><span style="font-size:18px">💭</span></div><span class="tap-label">Think</span></div>
+    <div class="tap-btn" onclick="sendTap(event,'hug','🫂')"><div class="icon-badge ib-rose" style="width:36px;height:36px"><span style="font-size:18px">🫂</span></div><span class="tap-label">Hug</span></div>
+    <div class="tap-btn" onclick="sendTap(event,'kiss','😘')"><div class="icon-badge ib-rose" style="width:36px;height:36px"><span style="font-size:18px">😘</span></div><span class="tap-label">Kiss</span></div>
+    <div class="tap-btn" onclick="sendTap(event,'love','🖤')"><div class="icon-badge ib-gold" style="width:36px;height:36px"><span style="font-size:18px">🖤</span></div><span class="tap-label">Love</span></div>
+    <div class="tap-btn" onclick="sendTap(event,'miss','🫠')"><div class="icon-badge ib-lavender" style="width:36px;height:36px"><span style="font-size:18px">🫠</span></div><span class="tap-label">Miss u</span></div>
+    <div class="tap-btn" onclick="sendTap(event,'thinking','🧠')"><div class="icon-badge ib-teal" style="width:36px;height:36px"><span style="font-size:18px">🧠</span></div><span class="tap-label">On my mind</span></div>
   </div>
 
   <!-- Recent Taps -->

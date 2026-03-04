@@ -1,14 +1,16 @@
 // ===== MOOD =====
+let selectedEnergy = 3;
+
 function selMood(val, el) {
   selectedMood = val;
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
+  document.querySelectorAll('#mood-grid .mood-btn').forEach(b => b.classList.remove('sel'));
   el.classList.add('sel');
 }
 
-function updEnergy() {
-  const v = document.getElementById('energy-slider').value;
-  const labels = ['', 'Drained', 'Low', 'Steady', 'Strong', 'On fire'];
-  document.getElementById('energy-val').textContent = labels[v];
+function selEnergy(val, el) {
+  selectedEnergy = val;
+  document.querySelectorAll('#energy-grid .mood-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
 }
 
 async function submitMood() {
@@ -17,7 +19,7 @@ async function submitMood() {
   if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   const entry = {
     mood: selectedMood,
-    energy: parseInt(document.getElementById('energy-slider').value),
+    energy: selectedEnergy,
     note: document.getElementById('mood-note').value.trim(),
     user: user,
     userName: NAMES[user],
@@ -28,11 +30,9 @@ async function submitMood() {
   await db.ref('moods/' + key).set(entry);
   document.getElementById('mood-note').value = '';
   selectedMood = 0;
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
-  document.getElementById('energy-slider').value = 3;
-  document.getElementById('energy-val').textContent = 'Steady';
+  selectedEnergy = 3;
+  document.querySelectorAll('#mood-grid .mood-btn, #energy-grid .mood-btn').forEach(b => b.classList.remove('sel'));
   updateStreak();
-  if (typeof renderSmartNudges === 'function') renderSmartNudges();
   if (typeof logActivity === 'function') logActivity('mood', 'checked in');
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Check in'; }, 1500); }
   toast('Checked in');

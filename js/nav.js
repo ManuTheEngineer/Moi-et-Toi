@@ -235,7 +235,7 @@ function filterQuickSheet(val) {
 function goCmd(page) { closeMenu(); go(page); }
 
 // ===== SWIPE GESTURE NAVIGATION =====
-let _swipeStartX = 0, _swipeStartY = 0, _swipeStartTime = 0;
+let _swipeStartX = 0, _swipeStartY = 0, _swipeStartTime = 0, _swipeOnInteractive = false;
 
 function initSwipeNav() {
   const shell = document.getElementById('shell');
@@ -245,6 +245,9 @@ function initSwipeNav() {
     _swipeStartX = e.touches[0].clientX;
     _swipeStartY = e.touches[0].clientY;
     _swipeStartTime = Date.now();
+    // Tag whether swipe started on an interactive element
+    const tag = e.target.tagName;
+    _swipeOnInteractive = (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'SELECT' || e.target.closest('.mood-grid, .tap-bar, .energy-row'));
   }, { passive: true });
 
   shell.addEventListener('touchend', function(e) {
@@ -254,6 +257,9 @@ function initSwipeNav() {
 
     // Must be horizontal swipe: |dx|>60px, more horizontal than vertical, <400ms
     if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5 || dt > 400) return;
+
+    // Don't swipe if started on an interactive element
+    if (_swipeOnInteractive) return;
 
     // Don't swipe if cmd sheet is open
     const cmd = document.getElementById('cmd-center');
