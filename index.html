@@ -29,14 +29,14 @@
   <h1>Manu & Taylor</h1>
   <div class="sub">Our place</div>
   <!-- Sign-in form (shown when not authenticated) -->
-  <div id="login-form">
+  <div id="login-form" class="login-inner">
     <div class="lbl">Sign In</div>
     <input type="email" id="login-email" class="login-input" placeholder="Email">
     <input type="password" id="login-pass" class="login-input mb16" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
     <button onclick="doLogin()" class="login-btn">Come in</button>
   </div>
   <!-- Welcome gate (shown when already authenticated) -->
-  <div id="welcome-gate" style="display:none;width:100%;max-width:320px;text-align:center">
+  <div id="welcome-gate" class="login-inner" style="display:none">
     <div class="lbl" id="welcome-greeting"></div>
     <button onclick="finishLogin()" class="login-btn">Enter</button>
   </div>
