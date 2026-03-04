@@ -3,13 +3,13 @@ let selectedEnergy = 3;
 
 function selMood(val, el) {
   selectedMood = val;
-  document.querySelectorAll('#mood-grid .mood-btn').forEach(b => b.classList.remove('sel'));
+  document.querySelectorAll('#mood-grid .pill-btn').forEach(b => b.classList.remove('sel'));
   el.classList.add('sel');
 }
 
 function selEnergy(val, el) {
   selectedEnergy = val;
-  document.querySelectorAll('#energy-grid .mood-btn').forEach(b => b.classList.remove('sel'));
+  document.querySelectorAll('#energy-grid .pill-btn').forEach(b => b.classList.remove('sel'));
   el.classList.add('sel');
 }
 
@@ -31,7 +31,7 @@ async function submitMood() {
   document.getElementById('mood-note').value = '';
   selectedMood = 0;
   selectedEnergy = 3;
-  document.querySelectorAll('#mood-grid .mood-btn, #energy-grid .mood-btn').forEach(b => b.classList.remove('sel'));
+  document.querySelectorAll('#mood-grid .pill-btn, #energy-grid .pill-btn').forEach(b => b.classList.remove('sel'));
   updateStreak();
   if (typeof logActivity === 'function') logActivity('mood', 'checked in');
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Check in'; }, 1500); }

@@ -247,7 +247,7 @@ function initSwipeNav() {
     _swipeStartTime = Date.now();
     // Tag whether swipe started on an interactive element
     const tag = e.target.tagName;
-    _swipeOnInteractive = (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'SELECT' || e.target.closest('.mood-grid, .tap-bar, .energy-row'));
+    _swipeOnInteractive = (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'SELECT' || e.target.closest('.pill-row'));
   }, { passive: true });
 
   shell.addEventListener('touchend', function(e) {
