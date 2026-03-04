@@ -47,7 +47,7 @@
 .ctn{max-width:480px;margin:0 auto;padding:12px 20px 32px;position:relative;z-index:1}
 
 /* ===== PAGE HEADER BAR (inline, same layer as content) ===== */
-.page-header{display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 20px 6px;position:relative;z-index:2;background:transparent}
+.page-header{display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 20px 0;position:relative;z-index:2;background:transparent}
 .page-header.hidden{display:none}
 .ph-left{display:flex;align-items:center;gap:4px;min-width:0}
 .ph-back{width:32px;height:32px;border:none;background:none;color:var(--gold);cursor:pointer;display:none;align-items:center;justify-content:center;border-radius:50%;transition:all .2s;flex-shrink:0}
@@ -58,9 +58,9 @@
 .ph-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .page-header .hbg{position:static;width:32px;height:32px;box-shadow:none;background:none}
 .page-header .hbg span{width:16px}
-/* All pages use same top padding since header is inline now */
-.pg .ctn{padding-top:8px}
-#pg-dash .ctn{padding-top:16px}
+/* Non-dash pages: header provides top spacing, ctn needs none */
+.pg .ctn{padding-top:0}
+#pg-dash .ctn{padding-top:12px}
 
 /* ===== BOTTOM NAV (full-width docked tab bar) ===== */
 .bnav{position:fixed;bottom:0;left:0;right:0;z-index:800;background:var(--nav-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-top:1px solid var(--bdr-s);display:flex;justify-content:space-around;padding:8px 0 0;padding-bottom:env(safe-area-inset-bottom,8px)}
