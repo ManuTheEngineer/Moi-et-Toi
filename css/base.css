@@ -96,16 +96,7 @@ body[data-mode="us"] .me-only{display:none!important}
 .icon-badge.ib-lavender{background:linear-gradient(135deg,rgba(123,111,166,.10),rgba(123,111,166,.03));border:1px solid rgba(123,111,166,.08)}
 .icon-badge.ib-amber{background:linear-gradient(135deg,rgba(176,138,80,.10),rgba(176,138,80,.03));border:1px solid rgba(176,138,80,.08)}
 
-/* ===== STAGGERED CARD ENTRANCE ===== */
-.pg.on .card,.pg.on .card-data,.pg.on .card-story,.pg.on .card-action,.pg.on .card-game,.pg.on .card-hero,.pg.on .feat-card,.pg.on .chart-wrap,.pg.on .dq-card,.pg.on .wyr-card,.pg.on .bl-item,.pg.on .wl-item,.pg.on .dr-card{animation:cardEnter .3s ease backwards}
-.pg.on > .ctn > :nth-child(2){animation-delay:.03s}
-.pg.on > .ctn > :nth-child(3){animation-delay:.06s}
-.pg.on > .ctn > :nth-child(4){animation-delay:.09s}
-.pg.on > .ctn > :nth-child(5){animation-delay:.12s}
-.pg.on > .ctn > :nth-child(6){animation-delay:.15s}
-.pg.on > .ctn > :nth-child(7){animation-delay:.18s}
-.pg.on > .ctn > :nth-child(8){animation-delay:.21s}
-@keyframes cardEnter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* Card entrance removed — was causing twitching on page switch */
 
 /* ===== MICRO-INTERACTIONS ===== */
 button:active,.dq-submit:active,.lbtn:active,.mood-submit:active,.letter-send:active,.chat-send:active,.wl-buy:active,.ms-save:active,.lsubmit:active,.dn-action:active{transform:scale(0.96)!important;transition:transform .1s cubic-bezier(.2,.8,.3,1)}

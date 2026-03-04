@@ -6,7 +6,7 @@ const TAB_MAP = {
   'mood': 'track', 'fitness': 'track', 'gratitude': 'track', 'w1': 'track', 'w2': 'track', 'w3': 'track',
   'dreams': 'build', 'homelife': 'build', 'family': 'build', 'foundation': 'build', 'culture': 'build', 'spiritual': 'build', 'dreamhome': 'build', 'calendar': 'build',
   'explore': 'explore', 'more': 'explore', 'ai': 'explore', 'bucket': 'explore', 'wishlist': 'explore', 'herspace': 'explore', 'hisspace': 'explore', 'story': 'explore',
-  'knowyou': 'explore', 'nutrition': 'explore', 'memories': 'explore', 'achievements': 'explore',
+  'knowyou': 'explore', 'nutrition': 'explore', 'memories': 'explore', 'achievements': 'explore', 'settings': 'explore',
   'grow': 'track'
 };
 
@@ -163,7 +163,8 @@ const PAGE_META = {
   nutrition:{icon:_IC.apple,label:'Nutrition'},spiritual:{icon:_IC.feather,label:'Spirit'},herspace:{icon:_IC.heart,label:'Her Space'},
   hisspace:{icon:_IC.zap,label:'His Space'},story:{icon:_IC.book,label:'Timeline'},culture:{icon:_IC.globe,label:'Cultures'},
   ai:{icon:_IC.cpu,label:'AI Chat'},achievements:{icon:_IC.award,label:'Achievements'},explore:{icon:_IC.compass,label:'Explore'},
-  grow:{icon:_IC.trend,label:'Growth'}
+  grow:{icon:_IC.trend,label:'Growth'},
+  settings:{icon:_IC.list,label:'Settings'}
 };
 
 const CTX_ACTIONS = {

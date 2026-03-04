@@ -281,19 +281,18 @@ function renderDashHero() {
     greeting.textContent = greetText;
   }
 
-  // Calculate "together since" from first milestone
+  // Calculate "together since" from settings/anniversary
   const togetherNum = document.getElementById('dash-together-num');
   if (togetherNum && db) {
-    db.ref('milestones').orderByChild('date').limitToFirst(1).once('value', snap => {
-      if (snap.exists()) {
-        let firstDate = null;
-        snap.forEach(c => { firstDate = c.val().date; });
-        if (firstDate) {
-          const start = new Date(firstDate + 'T00:00:00');
-          const now = new Date();
-          const days = Math.floor((now - start) / 86400000);
-          if (days > 0) togetherNum.textContent = days;
-        }
+    db.ref('settings/anniversary').once('value', snap => {
+      const dateStr = snap.val();
+      if (dateStr) {
+        const start = new Date(dateStr + 'T00:00:00');
+        const now = new Date();
+        const days = Math.floor((now - start) / 86400000);
+        if (days >= 0) togetherNum.textContent = days;
+      } else {
+        togetherNum.textContent = '--';
       }
     });
   }
@@ -931,7 +930,7 @@ function renderDashSparkline(moods) {
   if (!el) return;
   const userMoods = moods.filter(m => m.user === user).slice(-7);
   if (userMoods.length < 2) {
-    el.innerHTML = '<div style="font-size:9px;color:var(--t3);text-align:center;padding-top:8px">No data</div>';
+    el.innerHTML = '<div style="font-size:18px;color:var(--t3);text-align:center;line-height:24px">--</div>';
     return;
   }
   const w = el.clientWidth || 60, h = 28;
@@ -1385,6 +1384,7 @@ go = function(p) {
   if (p === 'games') updateGamesStats();
   if (p === 'datenight') updateDNStats();
   if (p === 'dash') { renderDailyTasks(); }
+  if (p === 'settings') { loadSettings(); }
   if (p === 'fitness') renderFitnessHub();
   if (p === 'nutrition') renderNutritionDay();
   if (p === 'calendar') renderCalendar();
@@ -1395,4 +1395,37 @@ go = function(p) {
   // Update presence
   if (db && user) db.ref('presence/' + user + '/currentPage').set(p);
 };
+
+// ===== SETTINGS =====
+function loadSettings() {
+  const nameEl = document.getElementById('set-name');
+  const annivEl = document.getElementById('set-anniversary');
+  const partnerEl = document.getElementById('set-partner-name');
+  if (nameEl) nameEl.value = NAMES[user] || '';
+  if (partnerEl) partnerEl.value = NAMES[partner] || '';
+  if (annivEl && db) {
+    db.ref('settings/anniversary').once('value', snap => {
+      if (snap.val()) annivEl.value = snap.val();
+    });
+  }
+}
+
+async function saveSettings() {
+  if (!db || !user) return;
+  const nameEl = document.getElementById('set-name');
+  const annivEl = document.getElementById('set-anniversary');
+  const newName = nameEl ? nameEl.value.trim() : '';
+  const newAnniv = annivEl ? annivEl.value : '';
+
+  if (newName && newName !== NAMES[user]) {
+    NAMES[user] = newName;
+    await db.ref('profiles/' + user).set(newName);
+    document.querySelectorAll('.uname').forEach(e => e.textContent = newName);
+  }
+  if (newAnniv) {
+    await db.ref('settings/anniversary').set(newAnniv);
+  }
+  toast('Settings saved');
+  renderDashHero();
+}
 

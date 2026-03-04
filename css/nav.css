@@ -13,7 +13,7 @@
 .explore-dir-item .edi-label{font-size:9px;font-weight:500;color:var(--cream);letter-spacing:.3px}
 
 /* ===== LOGIN ===== */
-.login{position:fixed;inset:0;z-index:2000;background:linear-gradient(160deg,#0C1220 0%,#1C2B4A 40%,#2A3D60 70%,#C4784A 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:calc(24px + env(safe-area-inset-top,0px)) 24px calc(24px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh}
+.login{position:fixed;inset:0;z-index:2000;background:linear-gradient(160deg,#0C1220 0%,#1C2B4A 40%,#2A3D60 70%,#C4784A 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:env(safe-area-inset-top,0px) 24px env(safe-area-inset-bottom,0px);overflow:hidden}
 .login.h{display:none}
 .login-logo{width:56px;height:56px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:1px;color:#fff;margin-bottom:16px;animation:logoPulse 3s ease-in-out infinite;backdrop-filter:blur(8px)}
 @keyframes logoPulse{0%,100%{box-shadow:0 0 0 0 transparent;transform:scale(1)}50%{box-shadow:0 0 40px 8px rgba(212,149,106,.2);transform:scale(1.03)}}
@@ -91,15 +91,9 @@
 
 /* ===== PAGES ===== */
 .pg{display:none;position:relative}
-/* Default transition: instant switch, no overlap */
-.pg.on{display:block;animation:pgFadeIn .2s ease forwards}
+/* Instant page switch — no animations to avoid twitching */
+.pg.on{display:block}
 .pg.out{display:none}
-@keyframes pgFadeIn{from{opacity:0}to{opacity:1}}
-/* Directional transitions: horizontal for tab-to-tab */
-.pg.on.slide-right{animation:pgSlideRight .25s cubic-bezier(.2,.8,.3,1) forwards}
-.pg.on.slide-left{animation:pgSlideLeft .25s cubic-bezier(.2,.8,.3,1) forwards}
-@keyframes pgSlideRight{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-@keyframes pgSlideLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
 
 .phd{display:none}
 
