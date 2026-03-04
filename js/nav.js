@@ -30,16 +30,13 @@ function go(p) {
   const slideDir = isTabSwitch ? (nextIdx > prevIdx ? 'slide-right' : 'slide-left') : '';
 
   if (current) {
-    current.classList.add('out');
-    if (slideDir) current.classList.add(slideDir);
-    current.classList.remove('on');
-    setTimeout(() => { current.classList.remove('out', 'slide-right', 'slide-left'); }, 300);
+    current.classList.remove('on', 'slide-right', 'slide-left');
   }
   if (next) {
     next.classList.add('on');
     if (slideDir) {
       next.classList.add(slideDir);
-      setTimeout(() => next.classList.remove('slide-right', 'slide-left'), 500);
+      setTimeout(() => next.classList.remove('slide-right', 'slide-left'), 300);
     }
   }
 
