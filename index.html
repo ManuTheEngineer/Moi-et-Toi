@@ -43,16 +43,13 @@
 
 <!-- Page Header Bar -->
 <header class="page-header hidden" id="page-header">
-  <button class="ph-back" id="ph-back" onclick="goBack()">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-  </button>
-  <div class="ph-title" id="ph-title"></div>
+  <div class="ph-left">
+    <button class="ph-back" id="ph-back" onclick="goBack()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="ph-title" id="ph-title"></div>
+  </div>
   <div class="ph-right">
-    <div class="ph-presence" id="ph-presence"><span class="ph-presence-name" id="ph-presence-name"></span></div>
-    <div class="global-mode-pill" id="global-mode-pill">
-      <button class="gmp-opt active" data-mode="us" onclick="setGlobalMode('us')">Us</button>
-      <button class="gmp-opt" data-mode="me" onclick="setGlobalMode('me')">Me</button>
-    </div>
     <div class="hbg" onclick="toggleMenu()"><span></span><span></span><span></span></div>
   </div>
 </header>
@@ -67,10 +64,6 @@
   <!-- Favorites -->
   <div class="cmd-section-label">Favorites</div>
   <div class="cmd-ctx-row" id="cmd-favorites"></div>
-
-  <!-- Recent pages -->
-  <div class="cmd-section-label">Recent</div>
-  <div class="cmd-recent" id="cmd-recent"></div>
 
   <!-- Context-aware quick actions -->
   <div class="cmd-section-label">Quick Actions</div>

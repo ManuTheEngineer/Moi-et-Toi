@@ -19,10 +19,6 @@
 .cmd-ctx-item .cmd-ctx-icon{font-size:20px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;height:24px}
 .cmd-ctx-item .cmd-ctx-icon svg{color:var(--gold)}
 .cmd-ctx-item .cmd-ctx-label{font-size:9px;font-weight:500;color:var(--cream);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cmd-recent{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;margin-bottom:4px}
-.cmd-recent::-webkit-scrollbar{display:none}
-.cmd-recent-item{flex-shrink:0;padding:7px 14px;border-radius:50px;font-size:11px;font-weight:500;color:var(--t2);background:var(--input-bg);cursor:pointer;transition:all .2s;white-space:nowrap}
-.cmd-recent-item:hover{background:var(--gold);color:#fff}
 .cmd-see-all{display:block;text-align:center;padding:12px;font-size:12px;font-weight:500;color:var(--gold);cursor:pointer;border-top:1px solid var(--tint);margin-top:8px;transition:color .2s}
 .cmd-see-all:hover{color:var(--cream)}
 

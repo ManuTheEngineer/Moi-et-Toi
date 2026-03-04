@@ -47,22 +47,17 @@
 .ctn{max-width:480px;margin:0 auto;padding:12px 20px 32px;position:relative;z-index:1}
 
 /* ===== PAGE HEADER BAR (inline, same layer as content) ===== */
-.page-header{position:relative;z-index:2;height:auto;padding:env(safe-area-inset-top,0px) 0 0;display:flex;align-items:center;justify-content:center;background:transparent;max-width:480px;margin:0 auto;padding-left:24px;padding-right:24px;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:8px}
+.page-header{display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 20px 6px;position:relative;z-index:2;background:transparent}
 .page-header.hidden{display:none}
-.ph-back{position:absolute;left:24px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:none;background:none;color:var(--gold);cursor:pointer;display:none;align-items:center;justify-content:center;border-radius:50%;transition:all .2s}
+.ph-left{display:flex;align-items:center;gap:4px;min-width:0}
+.ph-back{width:32px;height:32px;border:none;background:none;color:var(--gold);cursor:pointer;display:none;align-items:center;justify-content:center;border-radius:50%;transition:all .2s;flex-shrink:0}
 .ph-back.show{display:flex}
-.ph-back:active{background:var(--tint);transform:translateY(-50%) scale(.88)}
-.ph-title{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--t1)}
+.ph-back:active{background:var(--tint);transform:scale(.88)}
+.ph-title{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ph-title.changing{opacity:0}
-.ph-right{position:absolute;right:24px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:8px}
-.ph-presence{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3)}
-.ph-presence-name{font-size:10px;color:var(--t3);letter-spacing:.5px}
-
-/* Header adjustments for hamburger + mode pill inside header */
-.page-header .hbg{position:static;width:36px;height:36px;box-shadow:none;background:var(--tint)}
+.ph-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.page-header .hbg{position:static;width:32px;height:32px;box-shadow:none;background:none}
 .page-header .hbg span{width:16px}
-.page-header .global-mode-pill{position:static;transform:none;box-shadow:none;border:none;background:var(--tint)}
-.page-header .gmp-opt{padding:5px 14px;font-size:9px}
 /* All pages use same top padding since header is inline now */
 .pg .ctn{padding-top:8px}
 #pg-dash .ctn{padding-top:16px}
@@ -113,9 +108,6 @@
 /* Phones (up to 430px — iPhone 16 Pro is 393pt, Pro Max is 430pt) */
 @media(max-width:430px){
   .bn .nl{font-size:8px;letter-spacing:.3px}
-  .page-header .gmp-opt{padding:5px 12px;font-size:8px}
-  .ph-presence-name{display:none}
-  .ph-right{gap:6px;right:20px}
   .cmd-center{max-height:65vh}
 }
 

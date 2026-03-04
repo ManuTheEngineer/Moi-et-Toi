@@ -102,12 +102,6 @@ function updatePageHeader(p) {
     backEl.classList.toggle('show', isSubPage);
   }
 
-  // Only show Us/Me pill on pages that actually use it
-  const modePill = document.getElementById('global-mode-pill');
-  if (modePill) {
-    const modePages = ['fitness', 'nutrition'];
-    modePill.style.display = modePages.includes(p) ? '' : 'none';
-  }
 }
 
 function goBack() {
@@ -226,18 +220,6 @@ function populateQuickSheet() {
       const m = PAGE_META[p] || {icon:'📄',label:p};
       return '<div class="cmd-ctx-item" onclick="closeMenu();go(\''+p+'\')"><span class="cmd-ctx-icon">'+m.icon+'</span><span class="cmd-ctx-label">'+m.label+'</span></div>';
     }).join('');
-  }
-  // Recent
-  const recentEl = document.getElementById('cmd-recent');
-  if (recentEl) {
-    if (recentPages.length === 0) {
-      recentEl.innerHTML = '<span style="font-size:11px;color:var(--t3);padding:4px 0">No recent pages yet</span>';
-    } else {
-      recentEl.innerHTML = recentPages.slice(0, 4).map(p => {
-        const m = PAGE_META[p] || {icon:'📄',label:p};
-        return '<div class="cmd-recent-item" onclick="closeMenu();go(\''+p+'\')">'+m.icon+' '+m.label+'</div>';
-      }).join('');
-    }
   }
   // Context actions
   const ctxEl = document.getElementById('cmd-ctx-actions');
