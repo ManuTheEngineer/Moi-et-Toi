@@ -56,10 +56,7 @@
 .ph-title.changing{opacity:0;transform:translateY(-4px)}
 .ph-right{position:absolute;right:12px;bottom:6px;display:flex;align-items:center;gap:8px}
 .ph-presence{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3)}
-.ph-presence-dot{width:9px;height:9px;border-radius:50%;background:var(--emerald);box-shadow:0 0 0 2px rgba(61,139,110,.25);animation:presencePulse 2s ease-in-out infinite}
-.ph-presence-dot.offline{background:var(--t3);box-shadow:none;animation:none}
 .ph-presence-name{font-size:10px;color:var(--t3);letter-spacing:.5px}
-@keyframes presencePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
 
 /* Header adjustments for hamburger + mode pill inside header */
 .page-header .hbg{position:static;width:36px;height:36px;box-shadow:none;background:var(--tint)}

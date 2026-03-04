@@ -698,19 +698,11 @@ function initPresence() {
       presRef.set({ online: true, currentPage: document.body.dataset.page || 'dash', lastSeen: firebase.database.ServerValue.TIMESTAMP });
     }
   });
-  // Listen to partner presence
+  // Listen to partner presence (name only, no colored dots)
   db.ref('presence/' + partner).on('value', snap => {
     const p = snap.val() || {};
-    const dot = document.getElementById('fit-partner-dot');
-    if (dot) dot.className = 'presence-dot ' + (p.online ? 'online' : 'offline');
-    // Update page header presence dot + name
-    const phDot = document.getElementById('ph-presence-dot');
-    if (phDot) phDot.classList.toggle('offline', !p.online);
     const phName = document.getElementById('ph-presence-name');
     if (phName) phName.textContent = NAMES[partner];
-    // Update dashboard presence dot
-    const dashDot = document.getElementById('dash-presence-dot');
-    if (dashDot) dashDot.classList.toggle('offline', !p.online);
     const nameEl = document.getElementById('fit-partner-name');
     if (nameEl) nameEl.textContent = NAMES[partner];
     const lastEl = document.getElementById('fit-partner-last');

@@ -48,7 +48,7 @@
   </button>
   <div class="ph-title" id="ph-title"></div>
   <div class="ph-right">
-    <div class="ph-presence" id="ph-presence"><span class="ph-presence-dot" id="ph-presence-dot"></span><span class="ph-presence-name" id="ph-presence-name"></span></div>
+    <div class="ph-presence" id="ph-presence"><span class="ph-presence-name" id="ph-presence-name"></span></div>
     <div class="global-mode-pill" id="global-mode-pill">
       <button class="gmp-opt active" data-mode="us" onclick="setGlobalMode('us')">Us</button>
       <button class="gmp-opt" data-mode="me" onclick="setGlobalMode('me')">Me</button>
@@ -109,7 +109,6 @@
     </div>
     <div id="dash-partner-card" style="display:flex;align-items:center;gap:6px;cursor:pointer" onclick="go('connect')">
       <div style="font-size:12px;font-weight:500;color:var(--cream)" id="dash-partner-name">...</div>
-      <div class="presence-dot offline" id="dash-presence-dot" style="width:7px;height:7px"></div>
     </div>
   </div>
 
@@ -168,6 +167,15 @@
     <div id="dash-pulse-breakdown" style="display:none;padding:12px 14px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:8px">
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px">Health Breakdown</div>
       <div id="dash-pulse-bars"></div>
+    </div>
+
+    <!-- Daily Tasks checklist -->
+    <div id="dash-daily-tasks" style="display:none;padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:8px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600">Today's Tasks</div>
+        <div id="dash-tasks-count" style="font-size:9px;color:var(--t3)"></div>
+      </div>
+      <div id="dash-tasks-list"></div>
     </div>
 
     <!-- Nudges (wrapping grid — all visible) -->
@@ -249,6 +257,15 @@
           <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:1px">Energy</div>
         </div>
       </div>
+    </div>
+
+    <!-- Daily Tasks checklist (Me view) -->
+    <div id="dash-me-daily-tasks" style="display:none;padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:8px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:600">Today's Tasks</div>
+        <div id="dash-me-tasks-count" style="font-size:9px;color:var(--t3)"></div>
+      </div>
+      <div id="dash-me-tasks-list"></div>
     </div>
 
     <!-- Wellness quick-track + Goals (merged, no section header) -->

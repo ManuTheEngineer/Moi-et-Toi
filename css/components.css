@@ -34,11 +34,7 @@
 /* ===== NUDGE PILL DOTS ===== */
 .nudge-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--rose);margin-right:6px;vertical-align:middle;animation:notifPulse 2s ease infinite}
 
-/* ===== PRESENCE INDICATOR ===== */
-.presence-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
-.presence-dot.online{background:#4CAF50;box-shadow:0 0 0 2px rgba(76,175,80,.2);animation:presencePulse 2s ease infinite}
-.presence-dot.offline{background:var(--t3)}
-@keyframes presencePulse{0%,100%{box-shadow:0 0 0 2px rgba(76,175,80,.2)}50%{box-shadow:0 0 0 5px rgba(76,175,80,.08)}}
+/* ===== PRESENCE (dots removed — name only) ===== */
 
 /* ===== SPARKLINE MINI CHARTS ===== */
 .sparkline{display:inline-block;vertical-align:middle}

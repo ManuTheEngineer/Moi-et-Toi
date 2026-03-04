@@ -191,6 +191,7 @@ function finishLogin() {
   renderDashHero();
   renderSmartNudges();
   renderDashDailyQ();
+  renderDailyTasks();
   renderActivityFeed();
   renderDashMeGratitude();
   renderDashMeAffirmation();

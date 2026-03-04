@@ -1219,6 +1219,156 @@ function renderSmartNudges() {
   });
 }
 
+// ===== DAILY TASKS CHECKLIST =====
+function renderDailyTasks() {
+  if (!db || !user) return;
+  const today = localDate();
+  const week = getWeekId();
+
+  Promise.all([
+    db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value'),
+    db.ref('dailyAnswers/' + today + '/' + user).once('value'),
+    db.ref('checkins/' + week + '/' + user).once('value'),
+    db.ref('gratitude').orderByChild('timestamp').limitToLast(5).once('value'),
+  ]).then(([moods, dq, checkin, gratitude]) => {
+    // Check mood
+    let moodDone = false;
+    if (moods.exists()) moods.forEach(c => { if (c.val().user === user && c.val().date === today) moodDone = true; });
+
+    // Check daily question
+    const dqDone = dq.exists();
+
+    // Check weekly check-in
+    const checkinDone = checkin.exists();
+
+    // Check gratitude today
+    let gratDone = false;
+    if (gratitude.exists()) gratitude.forEach(c => { const v = c.val(); if (v.from === user && v.timestamp && localDate(new Date(v.timestamp)) === today) gratDone = true; });
+
+    const tasks = [
+      { label: 'Mood check-in', done: moodDone, page: 'mood', desc: 'How are you feeling today?' },
+      { label: 'Daily question', done: dqDone, page: 'question', desc: 'Answer & see your partner\'s answer' },
+      { label: 'Share gratitude', done: gratDone, page: 'gratitude', desc: 'What are you grateful for?' },
+      { label: 'Weekly check-in', done: checkinDone, page: 'checkin', desc: 'Reflect on the week together' },
+    ];
+
+    const doneCount = tasks.filter(t => t.done).length;
+
+    // Render for both Us and Me dashboards
+    renderTaskList('dash-daily-tasks', 'dash-tasks-list', 'dash-tasks-count', tasks, doneCount);
+    renderTaskList('dash-me-daily-tasks', 'dash-me-tasks-list', 'dash-me-tasks-count', tasks, doneCount);
+
+    // Trigger daily notification check
+    checkDailyNotification(tasks, doneCount);
+  });
+}
+
+function renderTaskList(containerId, listId, countId, tasks, doneCount) {
+  const container = document.getElementById(containerId);
+  const list = document.getElementById(listId);
+  const count = document.getElementById(countId);
+  if (!container || !list) return;
+
+  count.textContent = doneCount + '/' + tasks.length + ' done';
+  list.innerHTML = tasks.map(t => {
+    const checkColor = t.done ? 'var(--gold)' : 'var(--bg3)';
+    const checkIcon = t.done
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>'
+      : '<div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--t3)"></div>';
+    const textColor = t.done ? 'var(--t3)' : 'var(--cream)';
+    const textDecor = t.done ? 'line-through' : 'none';
+    return `<div onclick="go('${t.page}')" style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;border-bottom:1px solid var(--bdr-s)">
+      <div style="width:22px;height:22px;border-radius:50%;background:${t.done ? 'var(--tint)' : 'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0">${checkIcon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500;color:${textColor};text-decoration:${textDecor}">${t.label}</div>
+        ${!t.done ? '<div style="font-size:10px;color:var(--t3);margin-top:1px">' + t.desc + '</div>' : ''}
+      </div>
+      ${!t.done ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>' : ''}
+    </div>`;
+  }).join('');
+  // Remove border from last item
+  if (list.lastElementChild) list.lastElementChild.style.borderBottom = 'none';
+  container.style.display = 'block';
+}
+
+// ===== PUSH NOTIFICATIONS FOR DAILY TASKS =====
+function initNotifications() {
+  if (!('Notification' in window)) return;
+  // Request permission on first app load (after login)
+  if (Notification.permission === 'default') {
+    // Delay request so it's not jarring on first load
+    setTimeout(() => {
+      Notification.requestPermission().then(perm => {
+        if (perm === 'granted') scheduleDailyReminder();
+      });
+    }, 5000);
+  } else if (Notification.permission === 'granted') {
+    scheduleDailyReminder();
+  }
+}
+
+function scheduleDailyReminder() {
+  // Check every 30 minutes if user has pending tasks and hasn't been notified today
+  const REMINDER_KEY = 'met_last_reminder';
+  const CHECK_INTERVAL = 30 * 60 * 1000; // 30 min
+
+  function check() {
+    if (!db || !user) return;
+    const today = localDate();
+    const lastReminder = localStorage.getItem(REMINDER_KEY);
+    if (lastReminder === today) return; // Already reminded today
+
+    const now = new Date();
+    const hour = now.getHours();
+    // Only remind between 9am and 9pm
+    if (hour < 9 || hour > 21) return;
+
+    // Check if there are pending daily tasks
+    Promise.all([
+      db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value'),
+      db.ref('dailyAnswers/' + today + '/' + user).once('value'),
+    ]).then(([moods, dq]) => {
+      let moodDone = false;
+      if (moods.exists()) moods.forEach(c => { if (c.val().user === user && c.val().date === today) moodDone = true; });
+      const dqDone = dq.exists();
+
+      if (!moodDone || !dqDone) {
+        const pending = [];
+        if (!moodDone) pending.push('mood check-in');
+        if (!dqDone) pending.push('daily question');
+        sendNotification(pending);
+        localStorage.setItem(REMINDER_KEY, today);
+      }
+    });
+  }
+
+  // Initial check after a short delay
+  setTimeout(check, 10000);
+  // Then check periodically
+  setInterval(check, CHECK_INTERVAL);
+}
+
+function sendNotification(pendingTasks) {
+  if (Notification.permission !== 'granted') return;
+  const body = pendingTasks.length === 1
+    ? 'You still need to do your ' + pendingTasks[0] + ' today'
+    : 'You still need to do your ' + pendingTasks.join(' & ') + ' today';
+  try {
+    new Notification('Moi & Toi', {
+      body: body,
+      icon: 'icons/icon-192x192.png',
+      badge: 'icons/icon-96x96.png',
+      tag: 'daily-reminder',
+      renotify: false,
+    });
+  } catch(e) { /* SW notification fallback not needed for now */ }
+}
+
+function checkDailyNotification(tasks, doneCount) {
+  // If not all tasks done and user hasn't been notified, check
+  if (doneCount < tasks.length) initNotifications();
+}
+
 // ===== WIRE UP STATUS UPDATES =====
 // Override go() to refresh statuses when navigating
 const _originalGo = go;
@@ -1234,7 +1384,7 @@ go = function(p) {
   if (p === 'family') updateFAMStats();
   if (p === 'games') updateGamesStats();
   if (p === 'datenight') updateDNStats();
-  if (p === 'dash') updateDashQuickNav();
+  if (p === 'dash') { updateDashQuickNav(); renderDailyTasks(); }
   if (p === 'fitness') renderFitnessHub();
   if (p === 'nutrition') renderNutritionDay();
   if (p === 'calendar') renderCalendar();
