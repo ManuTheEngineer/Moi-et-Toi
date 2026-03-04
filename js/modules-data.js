@@ -698,9 +698,12 @@ function initPresence() {
       presRef.set({ online: true, currentPage: document.body.dataset.page || 'dash', lastSeen: firebase.database.ServerValue.TIMESTAMP });
     }
   });
-  // Listen to partner presence (name only, no colored dots)
+  // Listen to partner presence (green dot only when online, hidden when offline)
   db.ref('presence/' + partner).on('value', snap => {
     const p = snap.val() || {};
+    // Dashboard dot — green when online, hidden when offline
+    const dashDot = document.getElementById('dash-presence-dot');
+    if (dashDot) dashDot.classList.toggle('online', !!p.online);
     const phName = document.getElementById('ph-presence-name');
     if (phName) phName.textContent = NAMES[partner];
     const nameEl = document.getElementById('fit-partner-name');

@@ -189,7 +189,6 @@ function finishLogin() {
   enforcePrivacy();
   // Dashboard UX
   renderDashHero();
-  renderSmartNudges();
   renderDashDailyQ();
   renderDailyTasks();
   renderActivityFeed();

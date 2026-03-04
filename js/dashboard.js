@@ -1384,7 +1384,7 @@ go = function(p) {
   if (p === 'family') updateFAMStats();
   if (p === 'games') updateGamesStats();
   if (p === 'datenight') updateDNStats();
-  if (p === 'dash') { updateDashQuickNav(); renderDailyTasks(); }
+  if (p === 'dash') { renderDailyTasks(); }
   if (p === 'fitness') renderFitnessHub();
   if (p === 'nutrition') renderNutritionDay();
   if (p === 'calendar') renderCalendar();

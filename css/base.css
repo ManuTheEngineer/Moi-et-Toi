@@ -84,7 +84,7 @@ body[data-mode="us"] .me-only{display:none!important}
 .card-game:active{transform:scale(.96) rotate(0deg)}
 .card-game .cg-badge{position:absolute;top:12px;right:12px;padding:3px 10px;border-radius:20px;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:600;background:var(--lavender-s);color:var(--lavender)}
 
-.card-hero{background:var(--grad-love);border-radius:26px;padding:32px 28px;margin-bottom:18px;color:#fff;position:relative;overflow:hidden}
+.card-hero{background:var(--grad-love);border-radius:22px;padding:24px 20px;margin-bottom:10px;color:#fff;position:relative;overflow:hidden}
 .card-hero::after{content:'';position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.12));pointer-events:none}
 .card-hero .ch-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;opacity:.7;position:relative;z-index:1}
 .card-hero .ch-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-top:6px;position:relative;z-index:1}

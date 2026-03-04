@@ -44,7 +44,7 @@
 /* ===== SHELL ===== */
 .shell{display:none;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh}
 .shell.on{display:block}
-.ctn{max-width:480px;margin:0 auto;padding:28px 24px 36px;position:relative;z-index:1}
+.ctn{max-width:480px;margin:0 auto;padding:12px 20px 32px;position:relative;z-index:1}
 
 /* ===== PAGE HEADER BAR (inline, same layer as content) ===== */
 .page-header{position:relative;z-index:2;height:auto;padding:env(safe-area-inset-top,0px) 0 0;display:flex;align-items:center;justify-content:center;background:transparent;max-width:480px;margin:0 auto;padding-left:24px;padding-right:24px;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:8px}
@@ -106,9 +106,7 @@
 @keyframes pgSlideRight{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
 @keyframes pgSlideLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
 
-.phd{padding:16px 0 20px;text-align:center}
-.phd h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;letter-spacing:5px;text-transform:uppercase;background:linear-gradient(135deg,var(--cream) 0%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.phd p{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t3);margin-top:6px}
+.phd{display:none}
 
 /* ===== MOBILE RESPONSIVE ===== */
 
