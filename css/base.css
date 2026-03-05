@@ -1,7 +1,4 @@
-html{overscroll-behavior:none;background-color:#0C1220;background-image:linear-gradient(160deg,#0C1220 0%,#1C2B4A 40%,#2A3D60 70%,#C4784A 100%);background-repeat:no-repeat;background-attachment:fixed;background-size:cover;min-height:100%;-webkit-text-size-adjust:100%}
-html.app-ready{background:#0C1220}
-body{margin:0;padding:0;background:transparent;touch-action:manipulation}
-body.app-ready{background:var(--bg)}
+html{overscroll-behavior:none;background-color:#0C1220;-webkit-text-size-adjust:100%}
 /* ===== IMMERSIVE BACKGROUND — aurora + particles + noise ===== */
 body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:

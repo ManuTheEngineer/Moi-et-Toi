@@ -164,15 +164,6 @@ function initPullToRefresh() {
   });
 }
 
-// CSS vh is unreliable on iOS — use visualViewport when available
-function setAppHeight() {
-  var h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-  document.documentElement.style.setProperty('--app-height', h + 'px');
-}
-setAppHeight();
-window.addEventListener('resize', setAppHeight);
-if (window.visualViewport) window.visualViewport.addEventListener('resize', setAppHeight);
-
 // ===== SERVICE WORKER =====
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
