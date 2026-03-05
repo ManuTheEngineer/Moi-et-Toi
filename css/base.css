@@ -1,7 +1,7 @@
-html{overscroll-behavior:none;height:100%;height:-webkit-fill-available;background:#0C1220;background:var(--bg)}
-body{margin:0;padding:0;min-height:100%;min-height:100dvh;min-height:-webkit-fill-available;background:#0C1220;background:var(--bg)}
+html{overscroll-behavior:none;background:#0C1220;background:var(--bg);-webkit-text-size-adjust:100%}
+body{margin:0;padding:0;background:#0C1220;background:var(--bg);touch-action:manipulation}
 /* ===== IMMERSIVE BACKGROUND — aurora + particles + noise ===== */
-body::before{content:'';position:fixed;top:-50px;left:0;right:0;bottom:-50px;z-index:-2;pointer-events:none;
+body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:
     radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196,120,74,0.08) 0%, transparent 70%),
     radial-gradient(ellipse 60% 60% at 80% 15%, rgba(28,43,74,0.07) 0%, transparent 70%),
@@ -11,7 +11,7 @@ body::before{content:'';position:fixed;top:-50px;left:0;right:0;bottom:-50px;z-i
   background-size:200% 200%;
   animation:auroraFlow 30s ease-in-out infinite alternate;
   transition:all 1.2s ease}
-body::after{content:'';position:fixed;top:-50px;left:0;right:0;bottom:-50px;z-index:-1;pointer-events:none;opacity:0.025;
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.025;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:180px 180px}
 @keyframes auroraFlow{

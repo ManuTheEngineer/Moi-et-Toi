@@ -156,6 +156,14 @@ function initPullToRefresh() {
   });
 }
 
+// ===== iOS VIEWPORT HEIGHT FIX =====
+// CSS 100vh is unreliable on iOS — use window.innerHeight instead
+function setAppHeight() {
+  document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
+}
+setAppHeight();
+window.addEventListener('resize', setAppHeight);
+
 // ===== SERVICE WORKER =====
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
