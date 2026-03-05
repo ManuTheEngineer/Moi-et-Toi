@@ -22,6 +22,35 @@
 <link rel="stylesheet" href="css/modules.css">
 </head>
 <body>
+<script>
+// Force iOS standalone to apply viewport-fit=cover on cold start
+(function(){
+  if(!window.navigator.standalone)return;
+  var v=document.querySelector('meta[name="viewport"]');
+  if(!v)return;
+  var c=v.content;
+  // Technique 1: toggle viewport-fit off/on to force re-parse
+  function toggleViewport(){
+    v.content=c.replace(', viewport-fit=cover','');
+    requestAnimationFrame(function(){v.content=c;});
+  }
+  // Technique 2: force layout recalculation
+  function forceReflow(){
+    document.documentElement.style.height='100.1%';
+    requestAnimationFrame(function(){document.documentElement.style.height='';});
+  }
+  // Technique 3: dispatch resize
+  function fireResize(){window.dispatchEvent(new Event('resize'));}
+  // Fire immediately
+  toggleViewport();
+  // Fire again after paint
+  requestAnimationFrame(function(){forceReflow();fireResize();});
+  // Fire after short delays (catches late iOS rendering)
+  setTimeout(function(){toggleViewport();forceReflow();fireResize();},50);
+  setTimeout(function(){toggleViewport();forceReflow();fireResize();},200);
+  setTimeout(function(){toggleViewport();forceReflow();fireResize();},500);
+})();
+</script>
 
 <!-- ===== LOGIN / WELCOME GATE ===== -->
 <div class="login" id="login">
