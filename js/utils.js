@@ -165,32 +165,40 @@ function initPullToRefresh() {
 }
 
 // ===== iOS PWA VIEWPORT FIX =====
-// In standalone PWA mode, iOS initially miscalculates the viewport height,
-// leaving a gap at the bottom. Toggling the viewport meta tag forces iOS to
-// recalculate the layout viewport to the correct full-screen size.
-// This replicates what happens when the user double-taps to zoom.
+// In standalone PWA mode, iOS miscalculates the viewport height on cold start,
+// leaving a ~34px gap at the bottom. The double-tap zoom triggers a viewport
+// recalculation that fixes it. We replicate this by:
+// 1. Injecting a tall spacer so the page actually has scrollable content
+// 2. Scrolling to trigger iOS viewport recalculation
+// 3. Removing the spacer
 function fixIOSViewport() {
   var isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
   if (!isStandalone) return;
-  var meta = document.querySelector('meta[name="viewport"]');
-  if (!meta) return;
-  var original = meta.getAttribute('content');
-  // Briefly change initial-scale to trigger a viewport recalculation
-  meta.setAttribute('content', 'width=device-width, initial-scale=0.99, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-  setTimeout(function() {
-    meta.setAttribute('content', original);
-    // Also nudge scroll position as a secondary trigger
-    window.scrollTo(0, 1);
+
+  // Create a tall spacer to make the document scrollable
+  var spacer = document.createElement('div');
+  spacer.style.cssText = 'height:calc(100vh + 50px);width:1px;position:absolute;top:0;left:0;pointer-events:none;opacity:0;z-index:-9999';
+  document.body.appendChild(spacer);
+
+  // Force layout recalculation
+  void document.body.offsetHeight;
+
+  // Scroll down then back — this triggers iOS viewport recalculation
+  window.scrollTo(0, 1);
+  requestAnimationFrame(function() {
+    window.scrollTo(0, 0);
+    // Remove spacer after scroll settles
     requestAnimationFrame(function() {
-      window.scrollTo(0, 0);
+      if (spacer.parentNode) spacer.parentNode.removeChild(spacer);
     });
-  }, 50);
+  });
 }
-// Run after a short delay to let iOS finish its initial layout
+// Retry at multiple timings — iOS cold start timing is unpredictable
+setTimeout(fixIOSViewport, 0);
 setTimeout(fixIOSViewport, 100);
-// Also run on orientation change and resize
+setTimeout(fixIOSViewport, 300);
+setTimeout(fixIOSViewport, 800);
 window.addEventListener('orientationchange', function() { setTimeout(fixIOSViewport, 200); });
-window.addEventListener('resize', function() { setTimeout(fixIOSViewport, 100); });
 
 // CSS vh is unreliable on iOS — use window.innerHeight instead
 function setAppHeight() {
