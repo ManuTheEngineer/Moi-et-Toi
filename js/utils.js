@@ -166,21 +166,31 @@ function initPullToRefresh() {
 
 // ===== iOS PWA VIEWPORT FIX =====
 // In standalone PWA mode, iOS initially miscalculates the viewport height,
-// leaving a gap at the bottom. A scroll forces iOS to recalculate to full screen.
-// This replicates what happens when the user double-taps.
+// leaving a gap at the bottom. Toggling the viewport meta tag forces iOS to
+// recalculate the layout viewport to the correct full-screen size.
+// This replicates what happens when the user double-taps to zoom.
 function fixIOSViewport() {
   var isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-  if (isStandalone) {
+  if (!isStandalone) return;
+  var meta = document.querySelector('meta[name="viewport"]');
+  if (!meta) return;
+  var original = meta.getAttribute('content');
+  // Briefly change initial-scale to trigger a viewport recalculation
+  meta.setAttribute('content', 'width=device-width, initial-scale=0.99, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+  setTimeout(function() {
+    meta.setAttribute('content', original);
+    // Also nudge scroll position as a secondary trigger
+    window.scrollTo(0, 1);
     requestAnimationFrame(function() {
-      window.scrollTo(0, 1);
-      requestAnimationFrame(function() {
-        window.scrollTo(0, 0);
-      });
+      window.scrollTo(0, 0);
     });
-  }
+  }, 50);
 }
-fixIOSViewport();
-window.addEventListener('orientationchange', function() { setTimeout(fixIOSViewport, 100); });
+// Run after a short delay to let iOS finish its initial layout
+setTimeout(fixIOSViewport, 100);
+// Also run on orientation change and resize
+window.addEventListener('orientationchange', function() { setTimeout(fixIOSViewport, 200); });
+window.addEventListener('resize', function() { setTimeout(fixIOSViewport, 100); });
 
 // CSS vh is unreliable on iOS — use window.innerHeight instead
 function setAppHeight() {
