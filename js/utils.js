@@ -166,11 +166,10 @@ function initPullToRefresh() {
 
 // ===== iOS PWA VIEWPORT FIX =====
 // In standalone PWA mode, iOS miscalculates the viewport height on cold start,
-// leaving a ~34px gap at the bottom. The double-tap zoom triggers a viewport
-// recalculation that fixes it. We replicate this by:
-// 1. Injecting a tall spacer so the page actually has scrollable content
-// 2. Scrolling to trigger iOS viewport recalculation
-// 3. Removing the spacer
+// leaving a ~34px gap at the bottom. We fix this by injecting a tall spacer
+// and scrolling to trigger viewport recalculation. The page is hidden (opacity:0)
+// via an inline script in <head> so the user never sees the glitch.
+var _iosFixDone = false;
 function fixIOSViewport() {
   var isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
   if (!isStandalone) return;
@@ -187,17 +186,41 @@ function fixIOSViewport() {
   window.scrollTo(0, 1);
   requestAnimationFrame(function() {
     window.scrollTo(0, 0);
-    // Remove spacer after scroll settles
     requestAnimationFrame(function() {
       if (spacer.parentNode) spacer.parentNode.removeChild(spacer);
     });
   });
 }
-// Retry at multiple timings — iOS cold start timing is unpredictable
-setTimeout(fixIOSViewport, 0);
-setTimeout(fixIOSViewport, 100);
-setTimeout(fixIOSViewport, 300);
-setTimeout(fixIOSViewport, 800);
+
+function revealApp() {
+  if (_iosFixDone) return;
+  _iosFixDone = true;
+  // Fade in smoothly from the hidden state set in <head>
+  document.documentElement.style.transition = 'opacity .2s ease';
+  document.documentElement.style.opacity = '1';
+}
+
+(function initIOSFix() {
+  var isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+  if (!isStandalone) {
+    // Not PWA — make sure page is visible (in case inline script ran)
+    document.documentElement.style.opacity = '1';
+    return;
+  }
+  // Run the fix at multiple timings, reveal after the last one
+  setTimeout(fixIOSViewport, 0);
+  setTimeout(fixIOSViewport, 100);
+  setTimeout(fixIOSViewport, 300);
+  setTimeout(function() {
+    fixIOSViewport();
+    // Reveal after the final fix attempt settles
+    requestAnimationFrame(function() {
+      requestAnimationFrame(revealApp);
+    });
+  }, 500);
+  // Safety: always reveal by 1.2s even if something goes wrong
+  setTimeout(revealApp, 1200);
+})();
 window.addEventListener('orientationchange', function() { setTimeout(fixIOSViewport, 200); });
 
 // CSS vh is unreliable on iOS — use window.innerHeight instead

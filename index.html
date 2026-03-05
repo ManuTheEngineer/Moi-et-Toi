@@ -20,6 +20,17 @@
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/nav.css">
 <link rel="stylesheet" href="css/modules.css">
+<script>
+// Render-blocking: hide page before first paint on iOS PWA cold start
+// so the viewport fix scroll trick happens invisibly behind a dark screen
+(function(){
+  var s = navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  if (s) {
+    document.documentElement.style.opacity = '0';
+    document.documentElement.style.background = '#0C1220';
+  }
+})();
+</script>
 </head>
 <body>
 
