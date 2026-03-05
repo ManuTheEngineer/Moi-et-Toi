@@ -173,33 +173,6 @@ setAppHeight();
 window.addEventListener('resize', setAppHeight);
 if (window.visualViewport) window.visualViewport.addEventListener('resize', setAppHeight);
 
-// ===== iOS PWA VIEWPORT FIX =====
-// iOS standalone PWA may not apply viewport-fit=cover on cold start (~34px gap).
-// Strategy: remove viewport-fit=cover then re-add it to force WebKit to
-// re-evaluate the viewport geometry. Try at multiple timings.
-(function fixIOSViewport() {
-  if (!window.navigator.standalone) return;
-  var meta = document.querySelector('meta[name="viewport"]');
-  if (!meta) return;
-  var original = meta.getAttribute('content');
-  var without = original.replace(', viewport-fit=cover', '').replace(',viewport-fit=cover', '');
-
-  function tryFix() {
-    if (window.screen.height - window.innerHeight < 20) return; // already correct
-    meta.setAttribute('content', without);
-    requestAnimationFrame(function() {
-      meta.setAttribute('content', original);
-      requestAnimationFrame(function() { setAppHeight(); });
-    });
-  }
-
-  // Try at multiple timings — iOS may finalize layout at different points
-  setTimeout(tryFix, 0);
-  setTimeout(tryFix, 200);
-  setTimeout(tryFix, 500);
-  setTimeout(tryFix, 1000);
-})();
-
 // ===== SERVICE WORKER =====
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

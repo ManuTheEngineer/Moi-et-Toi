@@ -2,16 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0C1220">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <script>
-// iOS standalone viewport fix: reload once on cold start if viewport is broken.
-// With viewport-fit=cover + black-translucent, innerHeight should ≈ screen.height.
-// A gap > 20px means iOS didn't apply viewport-fit=cover on this load.
-if(navigator.standalone&&!sessionStorage._vp&&screen.height-innerHeight>20){
-sessionStorage._vp=1;location.reload()}else{delete sessionStorage._vp}
+// iOS standalone PWA: viewport-fit=cover must be added AFTER first paint.
+// Adding it in HTML causes iOS to miscalculate the viewport on cold start.
+// Adding it dynamically after paint forces a correct viewport expansion.
+// Non-standalone browsers get it immediately (no bug there).
+!function(){var m=document.querySelector('meta[name=viewport]');
+if(navigator.standalone){requestAnimationFrame(function(){
+m.content+=', viewport-fit=cover'})}
+else{m.content+=', viewport-fit=cover'}}()
 </script>
 <meta name="apple-mobile-web-app-title" content="M&T">
 <meta name="mobile-web-app-capable" content="yes">
