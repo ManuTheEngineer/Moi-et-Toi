@@ -1,22 +1,7 @@
-// ===== VIEWPORT HEIGHT FIX (PWA mobile gap) =====
-(function(){
-  function forceViewportRecalc(){
-    // Force the browser to recalculate layout by toggling a tiny scroll
-    window.scrollTo(0,0);
-    document.documentElement.style.height='100%';
-    void document.documentElement.offsetHeight; // force reflow
-  }
-  forceViewportRecalc();
-  window.addEventListener('resize',forceViewportRecalc);
-  window.addEventListener('orientationchange',function(){setTimeout(forceViewportRecalc,120);});
-  document.addEventListener('visibilitychange',function(){if(!document.hidden){forceViewportRecalc();setTimeout(forceViewportRecalc,80);}});
-  window.addEventListener('focus',forceViewportRecalc);
-  window.addEventListener('load',function(){
-    forceViewportRecalc();
-    setTimeout(forceViewportRecalc,100);
-    setTimeout(forceViewportRecalc,300);
-  });
-})();
+// ===== VIEWPORT FIX (PWA resume reflow) =====
+document.addEventListener('visibilitychange',function(){
+  if(!document.hidden){void document.documentElement.offsetHeight;}
+});
 
 // ===== INDIVIDUAL SPACE PRIVACY =====
 function enforcePrivacy() {
@@ -133,7 +118,7 @@ function initPullToRefresh() {
   if (!dash) return;
 
   dash.addEventListener('touchstart', (e) => {
-    if (window.scrollY === 0) {
+    if (document.body.scrollTop === 0) {
       pullStartY = e.touches[0].clientY;
       pulling = true;
     }

@@ -42,7 +42,7 @@ function go(p) {
   updatePageHeader(p);
 
   closeMenu();
-  window.scrollTo({ top: 0 });
+  document.body.scrollTo({ top: 0 });
 }
 
 // ===== SLIDING TAB INDICATOR =====
