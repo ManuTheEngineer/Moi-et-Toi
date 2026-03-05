@@ -164,33 +164,6 @@ function initPullToRefresh() {
   });
 }
 
-// ===== iOS PWA VIEWPORT FIX =====
-// iOS standalone PWA miscalculates viewport height on cold start (~34px gap).
-// Injecting a tall spacer and scrolling forces iOS to recalculate.
-// The html element has the login gradient so the gap is invisible while
-// waiting for the fix to kick in — the shift is imperceptible.
-function fixIOSViewport() {
-  var isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-  if (!isStandalone) return;
-  var s = document.createElement('div');
-  s.style.height = '200vh';
-  s.style.position = 'absolute';
-  document.body.appendChild(s);
-  void s.offsetHeight;
-  window.scrollTo(0, 2);
-  requestAnimationFrame(function() {
-    window.scrollTo(0, 0);
-    requestAnimationFrame(function() {
-      if (s.parentNode) s.remove();
-    });
-  });
-}
-// Run after iOS has finished its initial (incorrect) layout
-setTimeout(fixIOSViewport, 100);
-setTimeout(fixIOSViewport, 400);
-setTimeout(fixIOSViewport, 800);
-window.addEventListener('orientationchange', function() { setTimeout(fixIOSViewport, 200); });
-
 // CSS vh is unreliable on iOS — use window.innerHeight instead
 function setAppHeight() {
   document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
