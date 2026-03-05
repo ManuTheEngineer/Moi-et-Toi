@@ -65,7 +65,7 @@
 
 /* ===== BOTTOM NAV (full-width docked tab bar) ===== */
 .bnav{position:fixed;bottom:0;left:0;right:0;z-index:800;background:var(--nav-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-top:1px solid var(--bdr-s);display:flex;justify-content:space-around;padding:8px 0 0;padding-bottom:env(safe-area-inset-bottom,8px)}
-.bnav::after{content:'';position:absolute;top:0;left:0;right:0;bottom:-50px;background:var(--nav-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);z-index:-1}
+.bnav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:env(safe-area-inset-bottom,0px);background:var(--nav-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);z-index:-1}
 .bn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;flex:1;cursor:pointer;border:none;background:none;transition:transform .4s cubic-bezier(.175,.885,.32,1.275),color .3s;position:relative;z-index:1}
 .bn .ni{font-size:20px;color:var(--t3);transition:all .3s cubic-bezier(.2,.8,.3,1);display:flex;align-items:center;justify-content:center}
 .bn .ni svg{width:22px;height:22px}
