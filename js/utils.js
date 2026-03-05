@@ -165,8 +165,10 @@ function initPullToRefresh() {
 }
 
 // ===== iOS PWA VIEWPORT FIX =====
-// Main fix runs as inline <script> in index.html right after <body>, before first paint.
-// This function handles orientation changes after the app is already running.
+// iOS standalone PWA miscalculates viewport height on cold start (~34px gap).
+// Injecting a tall spacer and scrolling forces iOS to recalculate.
+// The html element has the login gradient so the gap is invisible while
+// waiting for the fix to kick in — the shift is imperceptible.
 function fixIOSViewport() {
   var isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
   if (!isStandalone) return;
@@ -176,10 +178,17 @@ function fixIOSViewport() {
   document.body.appendChild(s);
   void s.offsetHeight;
   window.scrollTo(0, 2);
-  void s.offsetHeight;
-  window.scrollTo(0, 0);
-  s.remove();
+  requestAnimationFrame(function() {
+    window.scrollTo(0, 0);
+    requestAnimationFrame(function() {
+      if (s.parentNode) s.remove();
+    });
+  });
 }
+// Run after iOS has finished its initial (incorrect) layout
+setTimeout(fixIOSViewport, 100);
+setTimeout(fixIOSViewport, 400);
+setTimeout(fixIOSViewport, 800);
 window.addEventListener('orientationchange', function() { setTimeout(fixIOSViewport, 200); });
 
 // CSS vh is unreliable on iOS — use window.innerHeight instead
