@@ -146,6 +146,8 @@ function showWelcomeGate() {
 function finishLogin() {
   document.getElementById('login').classList.add('h');
   document.getElementById('shell').classList.add('on');
+  // Switch body from dark login background to themed app background
+  document.body.classList.add('app-ready');
   // Now that login is hidden, update theme-color for the app shell theme
   updateThemeColor();
   document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
