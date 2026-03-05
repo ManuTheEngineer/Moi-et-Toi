@@ -164,8 +164,25 @@ function initPullToRefresh() {
   });
 }
 
-// ===== iOS VIEWPORT HEIGHT FIX =====
-// CSS 100vh is unreliable on iOS — use window.innerHeight instead
+// ===== iOS PWA VIEWPORT FIX =====
+// In standalone PWA mode, iOS initially miscalculates the viewport height,
+// leaving a gap at the bottom. A scroll forces iOS to recalculate to full screen.
+// This replicates what happens when the user double-taps.
+function fixIOSViewport() {
+  var isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+  if (isStandalone) {
+    requestAnimationFrame(function() {
+      window.scrollTo(0, 1);
+      requestAnimationFrame(function() {
+        window.scrollTo(0, 0);
+      });
+    });
+  }
+}
+fixIOSViewport();
+window.addEventListener('orientationchange', function() { setTimeout(fixIOSViewport, 100); });
+
+// CSS vh is unreliable on iOS — use window.innerHeight instead
 function setAppHeight() {
   document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
 }
