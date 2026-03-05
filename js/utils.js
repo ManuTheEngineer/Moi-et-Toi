@@ -175,47 +175,22 @@ if (window.visualViewport) window.visualViewport.addEventListener('resize', setA
 
 // ===== iOS PWA VIEWPORT FIX =====
 // iOS standalone PWA miscalculates viewport height on cold start (~34px gap).
-// Double-tapping fixes it because it triggers a viewport recalculation.
-// We replicate this by toggling the viewport meta tag scale.
+// A single reload fixes it — WebKit gets the viewport right on second load.
+// sessionStorage flag prevents infinite loops; iOS clears it on app kill.
 (function fixIOSViewport() {
-  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  if (!isIOS || !window.navigator.standalone) return;
-
-  var meta = document.querySelector('meta[name="viewport"]');
-  if (!meta) return;
-  var original = meta.getAttribute('content');
-
-  function toggleScale() {
-    // Briefly set scale to 0.999999 (imperceptible) to force viewport recalculation
-    meta.setAttribute('content', original.replace('initial-scale=1.0', 'initial-scale=0.999999'));
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        meta.setAttribute('content', original);
-        setAppHeight();
-      });
-    });
+  if (!window.navigator.standalone) return;
+  var key = '_vpfix';
+  if (sessionStorage.getItem(key)) {
+    sessionStorage.removeItem(key);
+    return;
   }
-
-  function toggleViewportFit() {
-    // Fallback: remove viewport-fit=cover then re-add to force safe area recalculation
-    meta.setAttribute('content', original.replace(', viewport-fit=cover', ''));
-    setTimeout(function() {
-      meta.setAttribute('content', original);
-      setAppHeight();
-    }, 50);
+  // Detect broken viewport: in standalone with viewport-fit=cover,
+  // innerHeight should be close to screen.height. A large gap means broken.
+  if (window.screen.height - window.innerHeight > 60) {
+    sessionStorage.setItem(key, '1');
+    location.reload();
+    return;
   }
-
-  // Try scale toggle at multiple timings to catch different iOS load states
-  requestAnimationFrame(toggleScale);
-  setTimeout(toggleScale, 300);
-
-  // Fallback: if gap still detected after 600ms, try viewport-fit toggle
-  setTimeout(function() {
-    if (window.screen.height - window.innerHeight > 50) {
-      toggleViewportFit();
-    }
-  }, 600);
 })();
 
 // ===== SERVICE WORKER =====
