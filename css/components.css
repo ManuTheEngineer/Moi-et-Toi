@@ -87,9 +87,9 @@
 .mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}
 /* Pill-based selectors (mood, energy, quick taps) */
 .pill-row{display:flex;flex-wrap:nowrap;gap:6px;margin:10px 0 14px}
-.pill-btn{flex:1 1 0;min-width:0;padding:8px 0 6px;border-radius:16px;border:1px solid var(--bdr-s);background:var(--card-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;letter-spacing:.3px;cursor:pointer;transition:all .2s;white-space:nowrap;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
-.pill-ico{font-size:22px;line-height:1}
-.pill-lbl{font-size:10px;opacity:.7;letter-spacing:.2px}
+.pill-btn{flex:1 1 0;min-width:0;padding:10px 0;border-radius:50px;border:1px solid var(--bdr-s);background:var(--card-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;letter-spacing:.3px;cursor:pointer;transition:all .2s;white-space:nowrap;text-align:center}
+.pill-ico{font-size:22px;line-height:1;display:block}
+.pill-lbl{font-size:10px;opacity:.7;letter-spacing:.2px;display:block;margin-top:2px}
 .pill-btn:active{transform:scale(.95)}
 .pill-btn.sel{background:var(--gold);color:#fff;border-color:var(--gold);box-shadow:0 2px 12px rgba(196,120,74,.25)}
 .pill-btn.sel .pill-lbl{opacity:1}
