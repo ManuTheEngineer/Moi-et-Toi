@@ -166,6 +166,8 @@ function finishLogin() {
   loadTOT();
   renderStreakCalendar();
   updateEnhancedCompat();
+  listenGameInvites();
+  renderAllGameStats();
   // New modules
   listenDateNights();
   loadLLQuiz();

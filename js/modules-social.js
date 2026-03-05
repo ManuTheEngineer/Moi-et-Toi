@@ -869,3 +869,680 @@ function updateEnhancedCompat() {
 }
 
 
+// ===== GAME FRAMEWORK =====
+let activeGameKey = null;
+let activeGameListener = null;
+
+async function startGame(type, initialState) {
+  if (!db || !user) return null;
+  const ref = db.ref('games/sessions').push();
+  const session = {
+    type,
+    ...initialState,
+    startedBy: user,
+    startedAt: Date.now(),
+    endedAt: null,
+    winner: null,
+    status: 'active'
+  };
+  await ref.set(session);
+  return ref.key;
+}
+
+function listenGame(key, renderFn) {
+  if (activeGameListener) { db.ref('games/sessions/' + activeGameListener).off(); }
+  activeGameKey = key;
+  activeGameListener = key;
+  db.ref('games/sessions/' + key).on('value', snap => {
+    const data = snap.val();
+    if (data) renderFn(data, key);
+  });
+}
+
+function stopListeningGame() {
+  if (activeGameListener) {
+    db.ref('games/sessions/' + activeGameListener).off();
+    activeGameListener = null;
+    activeGameKey = null;
+  }
+}
+
+async function endGame(key, type, winner) {
+  if (!db) return;
+  await db.ref('games/sessions/' + key).update({ winner, status: 'finished', endedAt: Date.now() });
+  // Update stats
+  const myResult = winner === 'draw' ? 'd' : winner === user ? 'w' : 'l';
+  const partnerResult = winner === 'draw' ? 'd' : winner === partner ? 'w' : 'l';
+  const myStatsRef = db.ref('games/stats/' + user + '/' + type + '/' + myResult);
+  const partnerStatsRef = db.ref('games/stats/' + partner + '/' + type + '/' + partnerResult);
+  myStatsRef.transaction(v => (v || 0) + 1);
+  partnerStatsRef.transaction(v => (v || 0) + 1);
+  // Total games
+  db.ref('games/stats/' + user + '/totalGames').transaction(v => (v || 0) + 1);
+  db.ref('games/stats/' + partner + '/totalGames').transaction(v => (v || 0) + 1);
+  // Win streak for winner
+  if (winner !== 'draw' && winner) {
+    db.ref('games/stats/' + winner + '/streak').transaction(v => (v || 0) + 1);
+    const loser = winner === 'him' ? 'her' : 'him';
+    db.ref('games/stats/' + loser + '/streak').set(0);
+  }
+  // Celebrate
+  if (winner === user) {
+    toast('You won! 🎉');
+    if (typeof showConfetti === 'function') showConfetti();
+    if (typeof awardXP === 'function') awardXP(15);
+  } else if (winner === 'draw') {
+    toast("It's a draw!");
+  } else {
+    toast(NAMES[partner] + ' won this round!');
+  }
+}
+
+function renderAllGameStats() {
+  const el = document.getElementById('game-stats-board');
+  if (!el || !db) return;
+  Promise.all([
+    db.ref('games/stats/' + user).once('value'),
+    db.ref('games/stats/' + partner).once('value')
+  ]).then(([mySnap, theirSnap]) => {
+    const my = mySnap.val() || {};
+    const their = theirSnap.val() || {};
+    const types = [
+      { key: 'ttt', name: 'Tic-Tac-Toe', icon: '⊞' },
+      { key: 'c4', name: 'Connect 4', icon: '⊚' },
+      { key: 'memory', name: 'Memory', icon: '🃏' },
+      { key: 'rps', name: 'Rock Paper Scissors', icon: '✊' },
+      { key: 'emoji', name: 'Emoji Guess', icon: '🎭' }
+    ];
+    const myTotal = my.totalGames || 0;
+    const myWins = types.reduce((s, t) => s + ((my[t.key]?.w) || 0), 0);
+    const theirWins = types.reduce((s, t) => s + ((their[t.key]?.w) || 0), 0);
+    let html = `<div class="gs-summary">
+      <div class="gs-total"><span class="gs-num">${myTotal}</span><span class="gs-label">Games Played</span></div>
+      <div class="gs-vs">
+        <span class="gs-me">${NAMES[user]}: ${myWins}</span>
+        <span class="gs-vstext">vs</span>
+        <span class="gs-them">${NAMES[partner]}: ${theirWins}</span>
+      </div>
+      ${my.streak ? `<div class="gs-streak">🔥 ${my.streak} win streak</div>` : ''}
+    </div>`;
+    html += '<div class="gs-grid">';
+    types.forEach(t => {
+      const m = my[t.key] || {};
+      const total = (m.w || 0) + (m.l || 0) + (m.d || 0);
+      if (total === 0) return;
+      const winPct = total ? Math.round(((m.w || 0) / total) * 100) : 0;
+      html += `<div class="gs-item">
+        <div class="gs-icon">${t.icon}</div>
+        <div class="gs-name">${t.name}</div>
+        <div class="gs-bar"><div class="gs-bar-fill" style="width:${winPct}%"></div></div>
+        <div class="gs-record">${m.w || 0}W ${m.l || 0}L ${m.d || 0}D</div>
+      </div>`;
+    });
+    html += '</div>';
+    el.innerHTML = html;
+  });
+}
+
+// Check for active game invite from partner
+function listenGameInvites() {
+  if (!db) return;
+  db.ref('games/sessions').orderByChild('status').equalTo('active').on('value', snap => {
+    snap.forEach(c => {
+      const g = c.val();
+      if (g.startedBy === partner && g.status === 'active') {
+        const el = document.getElementById('game-invite');
+        if (el) {
+          const names = { ttt: 'Tic-Tac-Toe', c4: 'Connect Four', memory: 'Memory Match', rps: 'Rock Paper Scissors', emoji: 'Emoji Guess' };
+          el.innerHTML = `<div class="game-invite-card">
+            <span>${NAMES[partner]} wants to play <strong>${names[g.type] || g.type}</strong>!</span>
+            <button class="gi-join" onclick="joinGame('${c.key}','${g.type}')">Join</button>
+          </div>`;
+          el.style.display = 'block';
+        }
+      }
+    });
+  });
+}
+
+function joinGame(key, type) {
+  const el = document.getElementById('game-invite');
+  if (el) { el.style.display = 'none'; el.innerHTML = ''; }
+  if (type === 'ttt') { listenGame(key, renderTTT); showGameView('ttt'); }
+  else if (type === 'c4') { listenGame(key, renderC4); showGameView('c4'); }
+  else if (type === 'memory') { listenGame(key, renderMemory); showGameView('memory'); }
+  else if (type === 'rps') { listenGame(key, renderRPS); showGameView('rps'); }
+  else if (type === 'emoji') { listenGame(key, renderEmoji); showGameView('emoji'); }
+}
+
+function showGameView(game) {
+  document.querySelectorAll('.game-view').forEach(el => el.style.display = 'none');
+  const el = document.getElementById('gv-' + game);
+  if (el) el.style.display = 'block';
+  document.getElementById('game-lobby')?.style && (document.getElementById('game-lobby').style.display = 'none');
+}
+
+function showGameLobby() {
+  stopListeningGame();
+  document.querySelectorAll('.game-view').forEach(el => el.style.display = 'none');
+  const lobby = document.getElementById('game-lobby');
+  if (lobby) lobby.style.display = 'block';
+  renderAllGameStats();
+}
+
+// ===== TIC-TAC-TOE =====
+async function newTTT() {
+  const board = Array(9).fill(null);
+  const key = await startGame('ttt', { board, turn: user });
+  if (key) { listenGame(key, renderTTT); showGameView('ttt'); }
+}
+
+async function playTTT(idx) {
+  if (!activeGameKey || !db) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const g = snap.val();
+  if (!g || g.status !== 'active' || g.turn !== user || g.board[idx]) return;
+  g.board[idx] = user;
+  const winner = checkTTTWinner(g.board);
+  const isDraw = !winner && g.board.every(c => c !== null);
+  const updates = { board: g.board, turn: partner };
+  if (winner) { updates.winner = winner; updates.status = 'finished'; updates.endedAt = Date.now(); }
+  else if (isDraw) { updates.winner = 'draw'; updates.status = 'finished'; updates.endedAt = Date.now(); }
+  await db.ref('games/sessions/' + activeGameKey).update(updates);
+  if (winner) endGame(activeGameKey, 'ttt', winner);
+  else if (isDraw) endGame(activeGameKey, 'ttt', 'draw');
+}
+
+function checkTTTWinner(b) {
+  const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for (const [a,c,d] of lines) {
+    if (b[a] && b[a] === b[c] && b[a] === b[d]) return b[a];
+  }
+  return null;
+}
+
+function getTTTWinLine(b) {
+  const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for (const line of lines) {
+    const [a,c,d] = line;
+    if (b[a] && b[a] === b[c] && b[a] === b[d]) return line;
+  }
+  return null;
+}
+
+function renderTTT(data, key) {
+  const el = document.getElementById('ttt-board');
+  if (!el) return;
+  const winLine = data.winner && data.winner !== 'draw' ? getTTTWinLine(data.board) : null;
+  const isMyTurn = data.turn === user && data.status === 'active';
+  const marker = data.startedBy; // starter is X
+
+  let html = '<div class="ttt-grid">';
+  data.board.forEach((cell, i) => {
+    const isWin = winLine && winLine.includes(i);
+    const cls = cell === marker ? 'x' : cell ? 'o' : '';
+    const winCls = isWin ? ' win' : '';
+    const canTap = !cell && isMyTurn ? ` onclick="playTTT(${i})"` : '';
+    html += `<div class="ttt-cell ${cls}${winCls}"${canTap}></div>`;
+  });
+  html += '</div>';
+
+  // Status
+  if (data.status === 'finished') {
+    const msg = data.winner === 'draw' ? "It's a draw!" : data.winner === user ? 'You won! 🎉' : NAMES[partner] + ' won!';
+    html += `<div class="game-status">${msg}</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newTTT()">Rematch</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  } else {
+    html += `<div class="game-status turn">${isMyTurn ? 'Your turn' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
+  }
+  el.innerHTML = html;
+}
+
+
+// ===== CONNECT FOUR =====
+const C4_ROWS = 6, C4_COLS = 7;
+
+async function newC4() {
+  const board = Array(C4_ROWS).fill(null).map(() => Array(C4_COLS).fill(null));
+  const key = await startGame('c4', { board, turn: user });
+  if (key) { listenGame(key, renderC4); showGameView('c4'); }
+}
+
+async function playC4(col) {
+  if (!activeGameKey || !db) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const g = snap.val();
+  if (!g || g.status !== 'active' || g.turn !== user) return;
+  // Find lowest empty row in column
+  let row = -1;
+  for (let r = C4_ROWS - 1; r >= 0; r--) {
+    if (!g.board[r][col]) { row = r; break; }
+  }
+  if (row === -1) return; // Column full
+  g.board[row][col] = user;
+  const winner = checkC4Winner(g.board);
+  const isDraw = !winner && g.board[0].every(c => c !== null);
+  const updates = { board: g.board, turn: partner, lastMove: { row, col } };
+  if (winner) { updates.winner = winner; updates.status = 'finished'; updates.endedAt = Date.now(); }
+  else if (isDraw) { updates.winner = 'draw'; updates.status = 'finished'; updates.endedAt = Date.now(); }
+  await db.ref('games/sessions/' + activeGameKey).update(updates);
+  if (winner) endGame(activeGameKey, 'c4', winner);
+  else if (isDraw) endGame(activeGameKey, 'c4', 'draw');
+}
+
+function checkC4Winner(b) {
+  // Horizontal, vertical, diagonal checks
+  for (let r = 0; r < C4_ROWS; r++) {
+    for (let c = 0; c < C4_COLS; c++) {
+      if (!b[r][c]) continue;
+      const p = b[r][c];
+      // Right
+      if (c + 3 < C4_COLS && b[r][c+1] === p && b[r][c+2] === p && b[r][c+3] === p) return p;
+      // Down
+      if (r + 3 < C4_ROWS && b[r+1][c] === p && b[r+2][c] === p && b[r+3][c] === p) return p;
+      // Diagonal down-right
+      if (r + 3 < C4_ROWS && c + 3 < C4_COLS && b[r+1][c+1] === p && b[r+2][c+2] === p && b[r+3][c+3] === p) return p;
+      // Diagonal down-left
+      if (r + 3 < C4_ROWS && c - 3 >= 0 && b[r+1][c-1] === p && b[r+2][c-2] === p && b[r+3][c-3] === p) return p;
+    }
+  }
+  return null;
+}
+
+function getC4WinCells(b) {
+  for (let r = 0; r < C4_ROWS; r++) {
+    for (let c = 0; c < C4_COLS; c++) {
+      if (!b[r][c]) continue;
+      const p = b[r][c];
+      if (c + 3 < C4_COLS && b[r][c+1] === p && b[r][c+2] === p && b[r][c+3] === p)
+        return [[r,c],[r,c+1],[r,c+2],[r,c+3]];
+      if (r + 3 < C4_ROWS && b[r+1][c] === p && b[r+2][c] === p && b[r+3][c] === p)
+        return [[r,c],[r+1,c],[r+2,c],[r+3,c]];
+      if (r + 3 < C4_ROWS && c + 3 < C4_COLS && b[r+1][c+1] === p && b[r+2][c+2] === p && b[r+3][c+3] === p)
+        return [[r,c],[r+1,c+1],[r+2,c+2],[r+3,c+3]];
+      if (r + 3 < C4_ROWS && c - 3 >= 0 && b[r+1][c-1] === p && b[r+2][c-2] === p && b[r+3][c-3] === p)
+        return [[r,c],[r+1,c-1],[r+2,c-2],[r+3,c-3]];
+    }
+  }
+  return null;
+}
+
+function renderC4(data, key) {
+  const el = document.getElementById('c4-board');
+  if (!el) return;
+  const winCells = data.winner && data.winner !== 'draw' ? getC4WinCells(data.board) : null;
+  const isMyTurn = data.turn === user && data.status === 'active';
+  const isNew = data.lastMove;
+
+  let html = '<div class="c4-grid">';
+  for (let r = 0; r < C4_ROWS; r++) {
+    for (let c = 0; c < C4_COLS; c++) {
+      const cell = data.board[r][c];
+      const isWin = winCells && winCells.some(([wr, wc]) => wr === r && wc === c);
+      const isDrop = isNew && isNew.row === r && isNew.col === c;
+      const colorCls = cell === data.startedBy ? 'gold' : cell ? 'rose' : '';
+      const winCls = isWin ? ' win' : '';
+      const dropCls = isDrop ? ' drop' : '';
+      const tap = !cell && isMyTurn ? ` onclick="playC4(${c})"` : '';
+      html += `<div class="c4-cell${winCls}"${tap}>${cell ? `<div class="c4-piece ${colorCls}${dropCls}" style="${isDrop ? '--drop-rows:' + (r + 1) : ''}"></div>` : ''}</div>`;
+    }
+  }
+  html += '</div>';
+
+  if (data.status === 'finished') {
+    const msg = data.winner === 'draw' ? "It's a draw!" : data.winner === user ? 'You won! 🎉' : NAMES[partner] + ' won!';
+    html += `<div class="game-status">${msg}</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newC4()">Rematch</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  } else {
+    html += `<div class="game-status turn">${isMyTurn ? 'Your turn — tap a column' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
+  }
+  el.innerHTML = html;
+}
+
+
+// ===== MEMORY MATCH =====
+const MEM_EMOJIS = ['🌹','🦋','🌙','💎','🔥','🌊','⭐','🍒','🎭','🦊','🌻','🎪','🐙','🎵','🍄','🦜'];
+let memFlipped = [];
+let memProcessing = false;
+
+async function newMemory() {
+  const emojis = MEM_EMOJIS.slice(0, 8);
+  const deck = [...emojis, ...emojis];
+  // Shuffle
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  const key = await startGame('memory', {
+    deck,
+    revealed: Array(16).fill(false),
+    matched: Array(16).fill(false),
+    turn: user,
+    scores: { him: 0, her: 0 },
+    flipped: []
+  });
+  if (key) { memFlipped = []; memProcessing = false; listenGame(key, renderMemory); showGameView('memory'); }
+}
+
+async function flipMemCard(idx) {
+  if (!activeGameKey || !db || memProcessing) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const g = snap.val();
+  if (!g || g.status !== 'active' || g.turn !== user || g.matched[idx] || g.revealed[idx]) return;
+
+  const flipped = g.flipped || [];
+  if (flipped.length >= 2) return;
+
+  flipped.push(idx);
+  g.revealed[idx] = true;
+
+  if (flipped.length === 2) {
+    memProcessing = true;
+    const [a, b] = flipped;
+    await db.ref('games/sessions/' + activeGameKey).update({ revealed: g.revealed, flipped });
+
+    // Check match after a delay
+    setTimeout(async () => {
+      const freshSnap = await db.ref('games/sessions/' + activeGameKey).once('value');
+      const fg = freshSnap.val();
+      if (!fg) { memProcessing = false; return; }
+
+      if (fg.deck[a] === fg.deck[b]) {
+        // Match found
+        fg.matched[a] = true;
+        fg.matched[b] = true;
+        fg.scores[user] = (fg.scores[user] || 0) + 1;
+        const allMatched = fg.matched.every(Boolean);
+        const updates = { matched: fg.matched, scores: fg.scores, flipped: [], revealed: fg.revealed };
+        if (allMatched) {
+          updates.status = 'finished';
+          updates.endedAt = Date.now();
+          const winner = fg.scores.him > fg.scores.her ? 'him' : fg.scores.her > fg.scores.him ? 'her' : 'draw';
+          updates.winner = winner;
+          await db.ref('games/sessions/' + activeGameKey).update(updates);
+          endGame(activeGameKey, 'memory', winner);
+        } else {
+          // Same player goes again on match
+          await db.ref('games/sessions/' + activeGameKey).update(updates);
+        }
+      } else {
+        // No match — flip back, switch turns
+        fg.revealed[a] = false;
+        fg.revealed[b] = false;
+        await db.ref('games/sessions/' + activeGameKey).update({
+          revealed: fg.revealed, flipped: [], turn: partner
+        });
+      }
+      memProcessing = false;
+    }, 1000);
+  } else {
+    await db.ref('games/sessions/' + activeGameKey).update({ revealed: g.revealed, flipped });
+  }
+}
+
+function renderMemory(data, key) {
+  const el = document.getElementById('mem-board');
+  if (!el) return;
+  const isMyTurn = data.turn === user && data.status === 'active';
+
+  let html = `<div class="mem-scores">
+    <span class="${user === 'him' ? 'me' : ''}">${NAMES.him}: ${data.scores?.him || 0}</span>
+    <span class="${user === 'her' ? 'me' : ''}">${NAMES.her}: ${data.scores?.her || 0}</span>
+  </div>`;
+  html += '<div class="mem-grid">';
+  for (let i = 0; i < 16; i++) {
+    const shown = data.revealed[i] || data.matched[i];
+    const matched = data.matched[i];
+    const canTap = isMyTurn && !shown && !memProcessing;
+    html += `<div class="mem-card ${shown ? 'flipped' : ''} ${matched ? 'matched' : ''}" ${canTap ? `onclick="flipMemCard(${i})"` : ''}>
+      <div class="mem-card-inner">
+        <div class="mem-card-back"></div>
+        <div class="mem-card-front">${data.deck[i]}</div>
+      </div>
+    </div>`;
+  }
+  html += '</div>';
+
+  if (data.status === 'finished') {
+    const msg = data.winner === 'draw' ? "It's a draw!" : data.winner === user ? 'You won! 🎉' : NAMES[partner] + ' won!';
+    html += `<div class="game-status">${msg}</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newMemory()">Rematch</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  } else {
+    html += `<div class="game-status turn">${isMyTurn ? 'Your turn — find a pair!' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
+  }
+  el.innerHTML = html;
+}
+
+
+// ===== ROCK PAPER SCISSORS =====
+async function newRPS() {
+  const key = await startGame('rps', {
+    choices: { him: null, her: null },
+    round: 1,
+    totalScores: { him: 0, her: 0 },
+    bestOf: 5,
+    roundHistory: []
+  });
+  if (key) { listenGame(key, renderRPS); showGameView('rps'); }
+}
+
+async function pickRPS(choice) {
+  if (!activeGameKey || !db) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const g = snap.val();
+  if (!g || g.status !== 'active' || g.choices[user]) return;
+  await db.ref('games/sessions/' + activeGameKey + '/choices/' + user).set(choice);
+
+  // Check if both have chosen
+  const fresh = (await db.ref('games/sessions/' + activeGameKey).once('value')).val();
+  if (fresh.choices.him && fresh.choices.her) {
+    // Resolve round
+    const result = resolveRPS(fresh.choices.him, fresh.choices.her);
+    const roundResult = { him: fresh.choices.him, her: fresh.choices.her, winner: result };
+    const history = fresh.roundHistory || [];
+    history.push(roundResult);
+    const scores = fresh.totalScores || { him: 0, her: 0 };
+    if (result !== 'draw') scores[result]++;
+    const bestOf = fresh.bestOf || 5;
+    const winsNeeded = Math.ceil(bestOf / 2);
+
+    if (scores.him >= winsNeeded || scores.her >= winsNeeded) {
+      const winner = scores.him >= winsNeeded ? 'him' : 'her';
+      await db.ref('games/sessions/' + activeGameKey).update({
+        roundHistory: history, totalScores: scores, choices: { him: null, her: null },
+        winner, status: 'finished', endedAt: Date.now(), lastResult: roundResult
+      });
+      endGame(activeGameKey, 'rps', winner);
+    } else {
+      await db.ref('games/sessions/' + activeGameKey).update({
+        roundHistory: history, totalScores: scores, choices: { him: null, her: null },
+        round: (fresh.round || 1) + 1, lastResult: roundResult
+      });
+    }
+  }
+}
+
+function resolveRPS(a, b) {
+  if (a === b) return 'draw';
+  const wins = { rock: 'scissors', scissors: 'paper', paper: 'rock' };
+  return wins[a] === b ? 'him' : 'her';
+}
+
+const RPS_ICONS = { rock: '✊', paper: '✋', scissors: '✌️' };
+
+function renderRPS(data, key) {
+  const el = document.getElementById('rps-board');
+  if (!el) return;
+  const hasChosen = data.choices && data.choices[user];
+  const bestOf = data.bestOf || 5;
+  const winsNeeded = Math.ceil(bestOf / 2);
+
+  let html = `<div class="rps-scorebar">
+    <span class="${user === 'him' ? 'me' : ''}">${NAMES.him}: ${data.totalScores?.him || 0}</span>
+    <span class="rps-round">Round ${data.round || 1} · Best of ${bestOf}</span>
+    <span class="${user === 'her' ? 'me' : ''}">${NAMES.her}: ${data.totalScores?.her || 0}</span>
+  </div>`;
+
+  // Show last result
+  if (data.lastResult) {
+    const lr = data.lastResult;
+    const msg = lr.winner === 'draw' ? 'Draw!' : lr.winner === user ? 'You won!' : NAMES[partner] + ' won!';
+    html += `<div class="rps-last">
+      <span>${RPS_ICONS[lr.him]}</span> vs <span>${RPS_ICONS[lr.her]}</span> — ${msg}
+    </div>`;
+  }
+
+  if (data.status === 'active') {
+    if (hasChosen) {
+      html += `<div class="rps-waiting">
+        <div class="rps-chosen">${RPS_ICONS[data.choices[user]]}</div>
+        <div class="game-status turn">Waiting for ${NAMES[partner]}...</div>
+      </div>`;
+    } else {
+      html += `<div class="rps-choices">
+        <button class="rps-btn" onclick="pickRPS('rock')">${RPS_ICONS.rock}<span>Rock</span></button>
+        <button class="rps-btn" onclick="pickRPS('paper')">${RPS_ICONS.paper}<span>Paper</span></button>
+        <button class="rps-btn" onclick="pickRPS('scissors')">${RPS_ICONS.scissors}<span>Scissors</span></button>
+      </div>`;
+    }
+  } else {
+    const msg = data.winner === user ? 'You won the match! 🎉' : NAMES[partner] + ' won the match!';
+    html += `<div class="game-status">${msg}</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newRPS()">Rematch</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+
+// ===== EMOJI GUESSING GAME =====
+const EMOJI_PROMPTS = [
+  { word: 'Pizza', hint: '🍕🧀🔥🇮🇹', cat: 'food' },
+  { word: 'Beach', hint: '🏖️🌊☀️🐚', cat: 'places' },
+  { word: 'Movie Night', hint: '🎬🍿🛋️🌙', cat: 'activities' },
+  { word: 'Camping', hint: '⛺🔥🌲🏕️', cat: 'activities' },
+  { word: 'Birthday', hint: '🎂🎈🎁🕯️', cat: 'events' },
+  { word: 'Rainy Day', hint: '🌧️☔💧🌫️', cat: 'weather' },
+  { word: 'Road Trip', hint: '🚗🗺️🎵🌅', cat: 'activities' },
+  { word: 'Sushi', hint: '🍣🥢🐟🇯🇵', cat: 'food' },
+  { word: 'Wedding', hint: '💒💍👰🤵', cat: 'events' },
+  { word: 'Gym', hint: '🏋️💪🏃😤', cat: 'activities' },
+  { word: 'Coffee', hint: '☕🫘😴→😊', cat: 'food' },
+  { word: 'Snow Day', hint: '❄️⛄🧣☕', cat: 'weather' },
+  { word: 'Dance', hint: '💃🕺🎵✨', cat: 'activities' },
+  { word: 'Halloween', hint: '🎃👻🍬🦇', cat: 'events' },
+  { word: 'Breakfast', hint: '🥞🍳☀️😋', cat: 'food' },
+  { word: 'Sunset', hint: '🌅🧡💜🌊', cat: 'nature' },
+  { word: 'Cat', hint: '🐱😺🐟🧶', cat: 'animals' },
+  { word: 'Hiking', hint: '🥾⛰️🌲🏞️', cat: 'activities' },
+  { word: 'Ice Cream', hint: '🍦🍨❄️😍', cat: 'food' },
+  { word: 'Space', hint: '🚀🌌⭐🛸', cat: 'science' },
+  { word: 'Cooking', hint: '👨‍🍳🍳🔪🧅', cat: 'activities' },
+  { word: 'Puppy', hint: '🐶🐾🦴❤️', cat: 'animals' },
+  { word: 'Music Festival', hint: '🎤🎸🎪🤘', cat: 'events' },
+  { word: 'Garden', hint: '🌷🌻🦋🧑‍🌾', cat: 'nature' },
+];
+
+async function newEmojiGame() {
+  // Pick a random prompt
+  const prompt = EMOJI_PROMPTS[Math.floor(Math.random() * EMOJI_PROMPTS.length)];
+  const key = await startGame('emoji', {
+    answer: prompt.word,
+    hint: prompt.hint,
+    category: prompt.cat,
+    clueGiver: user,
+    guesser: partner,
+    guesses: [],
+    maxGuesses: 3,
+    customClue: null
+  });
+  if (key) { listenGame(key, renderEmoji); showGameView('emoji'); }
+}
+
+async function submitEmojiGuess() {
+  if (!activeGameKey || !db) return;
+  const input = document.getElementById('emoji-guess-input');
+  if (!input) return;
+  const guess = input.value.trim();
+  if (!guess) return;
+  input.value = '';
+
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const g = snap.val();
+  if (!g || g.status !== 'active' || g.guesser !== user) return;
+
+  const guesses = g.guesses || [];
+  const isCorrect = guess.toLowerCase() === g.answer.toLowerCase();
+  guesses.push({ text: guess, correct: isCorrect, timestamp: Date.now() });
+
+  if (isCorrect) {
+    await db.ref('games/sessions/' + activeGameKey).update({
+      guesses, winner: user, status: 'finished', endedAt: Date.now()
+    });
+    endGame(activeGameKey, 'emoji', user);
+  } else if (guesses.length >= (g.maxGuesses || 3)) {
+    await db.ref('games/sessions/' + activeGameKey).update({
+      guesses, winner: g.clueGiver, status: 'finished', endedAt: Date.now()
+    });
+    endGame(activeGameKey, 'emoji', g.clueGiver);
+  } else {
+    await db.ref('games/sessions/' + activeGameKey).update({ guesses });
+    toast(`Not quite! ${(g.maxGuesses || 3) - guesses.length} guesses left`);
+  }
+}
+
+async function sendCustomEmoji() {
+  if (!activeGameKey || !db) return;
+  const input = document.getElementById('emoji-custom-clue');
+  if (!input) return;
+  const clue = input.value.trim();
+  if (!clue) return;
+  await db.ref('games/sessions/' + activeGameKey + '/customClue').set(clue);
+  toast('Extra clue sent!');
+  input.value = '';
+}
+
+function renderEmoji(data, key) {
+  const el = document.getElementById('emoji-board');
+  if (!el) return;
+  const isGuesser = data.guesser === user;
+  const guesses = data.guesses || [];
+
+  let html = `<div class="emoji-category">${data.category || 'general'}</div>`;
+  html += `<div class="emoji-clue-display">${data.hint}</div>`;
+
+  if (data.customClue) {
+    html += `<div class="emoji-extra-clue">Bonus clue: ${esc(data.customClue)}</div>`;
+  }
+
+  // Show guesses
+  if (guesses.length) {
+    html += '<div class="emoji-guesses">';
+    guesses.forEach(g => {
+      html += `<div class="emoji-guess ${g.correct ? 'correct' : 'wrong'}">${esc(g.text)} ${g.correct ? '✓' : '✗'}</div>`;
+    });
+    html += '</div>';
+  }
+
+  if (data.status === 'active') {
+    if (isGuesser) {
+      html += `<div class="emoji-guess-form">
+        <input id="emoji-guess-input" class="quiz-q" placeholder="What's the answer?" onkeydown="if(event.key==='Enter')submitEmojiGuess()">
+        <button class="game-btn" onclick="submitEmojiGuess()">Guess</button>
+        <div class="emoji-remaining">${(data.maxGuesses || 3) - guesses.length} guesses left</div>
+      </div>`;
+    } else {
+      html += `<div class="emoji-clue-giver">
+        <div class="game-status turn">The answer is: <strong>${data.answer}</strong></div>
+        <div style="font-size:12px;color:var(--t3);margin:8px 0">Waiting for ${NAMES[partner]} to guess...</div>
+        <input id="emoji-custom-clue" class="quiz-q" placeholder="Send an extra emoji clue...">
+        <button class="game-btn secondary" onclick="sendCustomEmoji()">Send Hint</button>
+      </div>`;
+    }
+  } else {
+    const msg = data.winner === user ? 'You won! 🎉' : NAMES[partner] + ' won!';
+    html += `<div class="game-status">${msg}</div>`;
+    html += `<div class="emoji-answer">The answer was: <strong>${data.answer}</strong></div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newEmojiGame()">New Round</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}

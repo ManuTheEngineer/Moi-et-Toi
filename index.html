@@ -714,6 +714,79 @@
     <button onclick="nextTOT()">Next</button>
   </div>
 
+  <!-- Game Invite Banner -->
+  <div id="game-invite" style="display:none"></div>
+
+  <!-- Competitive Games -->
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Competitive Games</div></div>
+
+  <!-- Game Lobby -->
+  <div id="game-lobby">
+    <div class="game-picker">
+      <button class="game-pick-btn" onclick="newTTT()">
+        <span class="gpb-icon">⊞</span><span class="gpb-name">Tic-Tac-Toe</span>
+      </button>
+      <button class="game-pick-btn" onclick="newC4()">
+        <span class="gpb-icon">⊚</span><span class="gpb-name">Connect 4</span>
+      </button>
+      <button class="game-pick-btn" onclick="newMemory()">
+        <span class="gpb-icon">🃏</span><span class="gpb-name">Memory</span>
+      </button>
+      <button class="game-pick-btn" onclick="newRPS()">
+        <span class="gpb-icon">✊</span><span class="gpb-name">RPS</span>
+      </button>
+      <button class="game-pick-btn" onclick="newEmojiGame()">
+        <span class="gpb-icon">🎭</span><span class="gpb-name">Emoji Guess</span>
+      </button>
+    </div>
+    <div id="game-stats-board"></div>
+  </div>
+
+  <!-- Tic-Tac-Toe View -->
+  <div class="game-view" id="gv-ttt" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Tic-Tac-Toe</span>
+    </div>
+    <div id="ttt-board"></div>
+  </div>
+
+  <!-- Connect Four View -->
+  <div class="game-view" id="gv-c4" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Connect Four</span>
+    </div>
+    <div id="c4-board"></div>
+  </div>
+
+  <!-- Memory Match View -->
+  <div class="game-view" id="gv-memory" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Memory Match</span>
+    </div>
+    <div id="mem-board"></div>
+  </div>
+
+  <!-- Rock Paper Scissors View -->
+  <div class="game-view" id="gv-rps" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Rock Paper Scissors</span>
+    </div>
+    <div id="rps-board"></div>
+  </div>
+
+  <!-- Emoji Guessing View -->
+  <div class="game-view" id="gv-emoji" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Emoji Guess</span>
+    </div>
+    <div id="emoji-board"></div>
+  </div>
+
   <!-- Compatibility Score -->
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Compatibility</div></div>
   <div class="chart-wrap" style="text-align:center">
