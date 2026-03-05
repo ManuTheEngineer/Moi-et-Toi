@@ -148,6 +148,7 @@ function finishLogin() {
   document.getElementById('shell').classList.add('on');
   document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
   document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
+  if(user==='him'){var ki=document.querySelector('[onclick*="sendTap(event,\'kiss\'"]');if(ki){var ic=ki.querySelector('.pill-ico');if(ic)ic.textContent='😘';}}
   go('dash');
   listenMoods();
   listenTaps();
