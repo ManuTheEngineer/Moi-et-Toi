@@ -150,8 +150,6 @@ function finishLogin() {
   document.body.classList.add('app-ready');
   // Now that login is hidden, update theme-color for the app shell theme
   updateThemeColor();
-  // Re-trigger iOS viewport fix now that layout has changed from fixed login to shell
-  if (typeof fixIOSViewport === 'function') setTimeout(fixIOSViewport, 150);
   document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
   document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
   go('dash');

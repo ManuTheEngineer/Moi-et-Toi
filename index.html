@@ -20,19 +20,26 @@
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/nav.css">
 <link rel="stylesheet" href="css/modules.css">
-<script>
-// Render-blocking: hide page before first paint on iOS PWA cold start
-// so the viewport fix scroll trick happens invisibly behind a dark screen
-(function(){
-  var s = navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
-  if (s) {
-    document.documentElement.style.opacity = '0';
-    document.documentElement.style.background = '#0C1220';
-  }
-})();
-</script>
 </head>
 <body>
+<script>
+// iOS PWA viewport fix — runs synchronously before first paint.
+// iOS standalone mode miscalculates viewport height on cold start.
+// Injecting scrollable content and scrolling forces a recalculation
+// before the browser has painted anything, so no visible glitch.
+(function(){
+  if (!(navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches))) return;
+  var s = document.createElement('div');
+  s.style.height = '200vh';
+  s.style.position = 'absolute';
+  document.body.appendChild(s);
+  void s.offsetHeight;
+  window.scrollTo(0, 2);
+  void s.offsetHeight;
+  window.scrollTo(0, 0);
+  s.remove();
+})();
+</script>
 
 <!-- ===== LOGIN / WELCOME GATE ===== -->
 <div class="login" id="login">
