@@ -1,19 +1,20 @@
 // ===== VIEWPORT HEIGHT FIX (PWA mobile gap) =====
 (function(){
-  function setAppHeight(){
-    document.documentElement.style.setProperty('--app-h',window.innerHeight+'px');
+  function forceViewportRecalc(){
+    // Force the browser to recalculate layout by toggling a tiny scroll
+    window.scrollTo(0,0);
+    document.documentElement.style.height='100%';
+    void document.documentElement.offsetHeight; // force reflow
   }
-  setAppHeight();
-  window.addEventListener('resize',setAppHeight);
-  window.addEventListener('orientationchange',function(){setTimeout(setAppHeight,120);});
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)setAppHeight();});
-  window.addEventListener('focus',setAppHeight);
-  // Re-check a few times on load to catch late PWA viewport adjustments
+  forceViewportRecalc();
+  window.addEventListener('resize',forceViewportRecalc);
+  window.addEventListener('orientationchange',function(){setTimeout(forceViewportRecalc,120);});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){forceViewportRecalc();setTimeout(forceViewportRecalc,80);}});
+  window.addEventListener('focus',forceViewportRecalc);
   window.addEventListener('load',function(){
-    setAppHeight();
-    setTimeout(setAppHeight,50);
-    setTimeout(setAppHeight,150);
-    setTimeout(setAppHeight,300);
+    forceViewportRecalc();
+    setTimeout(forceViewportRecalc,100);
+    setTimeout(forceViewportRecalc,300);
   });
 })();
 
