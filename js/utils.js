@@ -1,3 +1,22 @@
+// ===== VIEWPORT HEIGHT FIX (PWA mobile gap) =====
+(function(){
+  function setAppHeight(){
+    document.documentElement.style.setProperty('--app-h',window.innerHeight+'px');
+  }
+  setAppHeight();
+  window.addEventListener('resize',setAppHeight);
+  window.addEventListener('orientationchange',function(){setTimeout(setAppHeight,120);});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)setAppHeight();});
+  window.addEventListener('focus',setAppHeight);
+  // Re-check a few times on load to catch late PWA viewport adjustments
+  window.addEventListener('load',function(){
+    setAppHeight();
+    setTimeout(setAppHeight,50);
+    setTimeout(setAppHeight,150);
+    setTimeout(setAppHeight,300);
+  });
+})();
+
 // ===== INDIVIDUAL SPACE PRIVACY =====
 function enforcePrivacy() {
   // Hide the other person's individual space from More hub and menu

@@ -43,7 +43,7 @@
 .pcard p{font-size:11px;color:rgba(255,255,255,.5)}
 
 /* ===== SHELL ===== */
-.shell{display:none;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh}
+.shell{display:none;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh;min-height:var(--app-h,100dvh)}
 .shell.on{display:block}
 .ctn{max-width:480px;margin:0 auto;padding:4px 20px 32px;position:relative;z-index:1}
 
