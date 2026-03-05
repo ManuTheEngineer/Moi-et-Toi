@@ -146,6 +146,8 @@ function showWelcomeGate() {
 function finishLogin() {
   document.getElementById('login').classList.add('h');
   document.getElementById('shell').classList.add('on');
+  // Now that login is hidden, update theme-color for the app shell theme
+  updateThemeColor();
   document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
   document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
   go('dash');

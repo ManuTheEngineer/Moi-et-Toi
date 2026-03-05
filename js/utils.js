@@ -86,9 +86,17 @@ function toggleTheme() {
 
 function updateThemeColor() {
   const pref = getThemePref();
-  const isDark = pref === 'dark' || (pref === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = isDark ? '#0C1220' : '#F8F6F3';
+  if (!meta) return;
+  // Keep dark theme-color while login/setup screen is visible
+  // (login gradient is always dark regardless of theme)
+  const login = document.getElementById('login');
+  if (login && !login.classList.contains('h')) {
+    meta.content = '#0C1220';
+    return;
+  }
+  const isDark = pref === 'dark' || (pref === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  meta.content = isDark ? '#0C1220' : '#F8F6F3';
   // Update More page theme label if visible
   const mts = document.getElementById('more-theme-sub');
   if (mts) { const labels = { auto: 'Auto', dark: 'Dark', light: 'Light' }; mts.textContent = labels[pref]; }
