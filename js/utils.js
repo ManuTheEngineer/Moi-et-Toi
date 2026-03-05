@@ -1,7 +1,13 @@
-// ===== VIEWPORT FIX (PWA resume reflow) =====
-document.addEventListener('visibilitychange',function(){
-  if(!document.hidden){void document.documentElement.offsetHeight;}
-});
+// ===== VIEWPORT FIX (PWA full-screen coverage) =====
+(function(){
+  function fillScreen(){
+    var h = Math.max(window.screen.height, window.innerHeight, document.documentElement.clientHeight);
+    document.documentElement.style.setProperty('--real-h', h + 'px');
+  }
+  fillScreen();
+  window.addEventListener('resize', fillScreen);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) fillScreen(); });
+})();
 
 // ===== INDIVIDUAL SPACE PRIVACY =====
 function enforcePrivacy() {
