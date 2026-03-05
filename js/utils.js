@@ -118,7 +118,7 @@ function initPullToRefresh() {
   if (!dash) return;
 
   dash.addEventListener('touchstart', (e) => {
-    if (document.body.scrollTop === 0) {
+    if (window.scrollY === 0) {
       pullStartY = e.touches[0].clientY;
       pulling = true;
     }
