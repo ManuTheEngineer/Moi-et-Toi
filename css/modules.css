@@ -1091,8 +1091,10 @@
 .fin-cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .fin-cat{padding:6px 12px;border-radius:16px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;transition:all .2s}
 .fin-cat.active{background:var(--gold);color:#fff;font-weight:600}
-.fin-note-row{display:flex;gap:8px}
+.fin-note-row{display:flex;gap:8px;align-items:center}
 .fin-note-row .quiz-q{flex:1;margin-bottom:0}
+.fin-receipt-btn{width:40px;height:40px;border-radius:12px;background:var(--input-bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0}
+.fin-receipt-btn:hover{background:var(--gold);transform:scale(1.05)}
 
 .fin-overview{display:flex;align-items:center;justify-content:space-between;background:var(--card-bg);border-radius:20px;padding:20px;box-shadow:var(--card-shadow);margin-bottom:16px}
 .fin-ov-total{text-align:center}

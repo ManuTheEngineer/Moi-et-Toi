@@ -1722,7 +1722,15 @@
     </div>
     <div class="fin-note-row">
       <input type="text" id="fin-note" placeholder="What was it for?" class="quiz-q">
+      <label class="fin-receipt-btn" title="Attach receipt">
+        <input type="file" accept="image/*" capture="environment" id="fin-receipt-input" onchange="previewReceipt(this)" style="display:none">
+        📷
+      </label>
       <button class="dq-submit" onclick="addExpense()">Add</button>
+    </div>
+    <div id="fin-receipt-preview" style="display:none;margin-top:8px;position:relative">
+      <img id="fin-receipt-img" style="max-height:100px;border-radius:10px;border:1px solid var(--bdr-s)">
+      <button onclick="clearReceipt()" style="position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:none;background:var(--red);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center">&times;</button>
     </div>
   </div>
 

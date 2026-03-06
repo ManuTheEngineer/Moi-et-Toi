@@ -932,6 +932,32 @@ function selectFinCat(el, cat) {
   el.classList.add('active');
 }
 
+let pendingReceiptData = null;
+
+function previewReceipt(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  if (file.size > 5 * 1024 * 1024) { toast('Photo too large (max 5MB)'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    compressImage(e.target.result, 500, 0.5).then(dataUrl => {
+      pendingReceiptData = dataUrl;
+      const prev = document.getElementById('fin-receipt-preview');
+      const img = document.getElementById('fin-receipt-img');
+      if (prev && img) { img.src = dataUrl; prev.style.display = 'block'; }
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearReceipt() {
+  pendingReceiptData = null;
+  const prev = document.getElementById('fin-receipt-preview');
+  const input = document.getElementById('fin-receipt-input');
+  if (prev) prev.style.display = 'none';
+  if (input) input.value = '';
+}
+
 async function addExpense() {
   if (!db || !user) return;
   const amount = parseFloat(document.getElementById('fin-amount').value);
@@ -940,12 +966,15 @@ async function addExpense() {
   const today = new Date().toISOString().split('T')[0];
   const btn = event?.target;
   if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-  await db.ref('finances/expenses').push({
+  const data = {
     amount, category: selectedFinCat, note,
     paidBy: user, date: today, timestamp: Date.now()
-  });
+  };
+  if (pendingReceiptData) data.receipt = pendingReceiptData;
+  await db.ref('finances/expenses').push(data);
   document.getElementById('fin-amount').value = '';
   document.getElementById('fin-note').value = '';
+  clearReceipt();
   if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
   toast('$' + amount.toFixed(2) + ' logged');
 }
@@ -992,11 +1021,26 @@ function renderFinRecent(expenses) {
       <div class="fin-item-icon">${icon}</div>
       <div class="fin-item-info">
         <div class="fin-item-note">${esc(e.note || e.category)}</div>
-        <div class="fin-item-meta">${who} · ${ago}</div>
+        <div class="fin-item-meta">${who} · ${ago}${e.receipt ? ' · <span onclick="viewReceipt(\''+e._key+'\')" style="color:var(--gold);cursor:pointer">📷 receipt</span>' : ''}</div>
       </div>
       <div class="fin-item-amount">$${e.amount.toFixed(2)}</div>
     </div>`;
   }).join('');
+}
+
+function viewReceipt(key) {
+  if (!db) return;
+  db.ref('finances/expenses/' + key).once('value', snap => {
+    const e = snap.val();
+    if (!e || !e.receipt) { toast('No receipt found'); return; }
+    openModal(`
+      <div style="text-align:center">
+        <div style="font-size:14px;font-weight:600;color:var(--cream);margin-bottom:10px">${esc(e.note || e.category)} · $${e.amount.toFixed(2)}</div>
+        <img src="${e.receipt}" style="max-width:100%;border-radius:14px;margin-bottom:10px">
+        <div style="font-size:11px;color:var(--t3)">${e.date}</div>
+      </div>
+    `);
+  });
 }
 
 function renderFinCatChart(expenses) {
