@@ -7,6 +7,21 @@
   fillScreen();
   window.addEventListener('resize', fillScreen);
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) fillScreen(); });
+
+  // Dismiss keyboard on scroll (mobile UX)
+  var scrollTick = false;
+  window.addEventListener('scroll', function() {
+    if (!scrollTick) {
+      scrollTick = true;
+      requestAnimationFrame(function() {
+        var active = document.activeElement;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') && !active.closest('.chat-input-wrap')) {
+          if (window.scrollY > 60) active.blur();
+        }
+        scrollTick = false;
+      });
+    }
+  }, { passive: true });
 })();
 
 // ===== DYNAMIC TIME-OF-DAY SYSTEM =====
@@ -163,8 +178,15 @@ function timeAgo(date) {
 // ===== TOAST =====
 function toast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('on');
-  setTimeout(() => t.classList.remove('on'), 2500);
+  // Add checkmark icon for positive messages
+  const positive = /added|saved|shared|logged|set|sent|completed|achieved|noted|updated|removed/i.test(msg);
+  t.innerHTML = (positive ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> ' : '') + msg;
+  t.classList.remove('on');
+  // Force reflow for re-triggering animation
+  void t.offsetWidth;
+  t.classList.add('on');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('on'), 2500);
 }
 
 function openModal(html) {

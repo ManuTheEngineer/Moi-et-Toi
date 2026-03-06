@@ -250,6 +250,7 @@ async function addSharedGoal() {
     createdBy: user, createdAt: Date.now(), completedAt: null
   });
   document.getElementById('shared-goal-input').value = '';
+  document.getElementById('shared-goal-input').focus();
   if (btn) { btn.disabled = false; btn.textContent = '+'; }
   toast('Shared goal added');
 }
@@ -320,6 +321,7 @@ async function addHabit() {
     createdAt: Date.now()
   });
   document.getElementById('habit-input').value = '';
+  document.getElementById('habit-input').focus();
   if (btn) { btn.disabled = false; btn.textContent = '+'; }
   toast('Habit added');
 }
@@ -429,7 +431,8 @@ async function addPhrase() {
   });
   document.getElementById('cx-word').value = '';
   document.getElementById('cx-meaning').value = '';
-  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add phrase'; }, 1500); }
+  document.getElementById('cx-word').focus();
+  if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add phrase'; }, 1500); }
   toast('Phrase added');
 }
 
@@ -465,7 +468,8 @@ async function addTradition() {
   document.getElementById('cx-trad-title').value = '';
   document.getElementById('cx-trad-emoji').value = '';
   document.getElementById('cx-trad-desc').value = '';
-  if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add tradition'; }, 1500); }
+  document.getElementById('cx-trad-title').focus();
+  if (btn) { btn.textContent = '\u2713 Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add tradition'; }, 1500); }
   toast('Tradition saved');
 }
 
@@ -504,7 +508,8 @@ async function addRecipe() {
   document.getElementById('cx-recipe-name').value = '';
   document.getElementById('cx-recipe-emoji').value = '';
   document.getElementById('cx-recipe-how').value = '';
-  if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add recipe'; }, 1500); }
+  document.getElementById('cx-recipe-name').focus();
+  if (btn) { btn.textContent = '\u2713 Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add recipe'; }, 1500); }
   toast('Recipe saved');
 }
 
@@ -672,7 +677,8 @@ async function addBabyName() {
     loved: {}, timestamp: Date.now()
   });
   document.getElementById('fam-name-input').value = '';
-  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add name'; }, 1500); }
+  document.getElementById('fam-name-input').focus();
+  if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add name'; }, 1500); }
   toast('Name added');
 }
 
@@ -708,7 +714,8 @@ async function addFamilyGoal() {
   const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('family/goals').push({ title, done: false, addedBy: user, timestamp: Date.now() });
   document.getElementById('fam-goal-input').value = '';
-  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add goal'; }, 1500); }
+  document.getElementById('fam-goal-input').focus();
+  if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add goal'; }, 1500); }
   toast('Goal added');
 }
 
@@ -741,7 +748,8 @@ async function addValue() {
     title, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('fdn-value-input').value = '';
-  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add value'; }, 1500); }
+  document.getElementById('fdn-value-input').focus();
+  if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add value'; }, 1500); }
   toast('Value added');
 }
 
@@ -787,7 +795,8 @@ async function addAgreement() {
     text, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('fdn-agree-input').value = '';
-  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
+  document.getElementById('fdn-agree-input').focus();
+  if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
   toast('Agreement added');
 }
 
@@ -841,7 +850,7 @@ async function addPrayer() {
     text, user, userName: NAMES[user], timestamp: Date.now(), prayedFor: {}
   });
   document.getElementById('sp-prayer-input').value = '';
-  if (btn) { btn.textContent = 'Shared'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Share'; }, 1500); }
+  if (btn) { btn.textContent = '\u2713 Shared'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Share'; }, 1500); }
   toast('Prayer shared');
 }
 
@@ -879,7 +888,8 @@ async function addBlessing() {
     text, user, userName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('sp-bless-input').value = '';
-  if (btn) { btn.textContent = 'Shared'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Share'; }, 1500); }
+  document.getElementById('sp-bless-input').focus();
+  if (btn) { btn.textContent = '\u2713 Shared'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Share'; }, 1500); }
   toast('Blessing shared');
 }
 
@@ -906,7 +916,8 @@ async function addIntention() {
     text, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
   });
   document.getElementById('sp-intent-input').value = '';
-  if (btn) { btn.textContent = 'Set'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
+  document.getElementById('sp-intent-input').focus();
+  if (btn) { btn.textContent = '\u2713 Set'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
   toast('Intention set');
 }
 
@@ -976,7 +987,8 @@ async function addExpense() {
   document.getElementById('fin-amount').value = '';
   document.getElementById('fin-note').value = '';
   clearReceipt();
-  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
+  document.getElementById('fin-amount').focus();
+  if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
   toast('$' + amount.toFixed(2) + ' logged');
 }
 

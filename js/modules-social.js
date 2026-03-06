@@ -148,8 +148,9 @@ async function addBucketItem() {
   });
   document.getElementById('bl-input').value = '';
   document.getElementById('bl-emoji').value = '';
-  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
-  toast('Dream added');
+  document.getElementById('bl-input').focus();
+  if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
+  toast('Added to bucket list');
 }
 
 function filterBucket(cat, el) {
@@ -205,7 +206,8 @@ async function addWishItem() {
   });
   document.getElementById('wl-input').value = '';
   document.getElementById('wl-link').value = '';
-  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
+  document.getElementById('wl-input').focus();
+  if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
   toast('Added to wishlist');
 }
 
@@ -574,7 +576,8 @@ async function addDream() {
   document.getElementById('dr-title').value = '';
   document.getElementById('dr-emoji').value = '';
   document.getElementById('dr-desc').value = '';
-  if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add dream'; }, 1500); }
+  document.getElementById('dr-title').focus();
+  if (btn) { btn.textContent = '\u2713 Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add dream'; }, 1500); }
   toast('Dream added');
 }
 

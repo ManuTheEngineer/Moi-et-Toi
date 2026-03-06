@@ -153,7 +153,7 @@
 .typing.on{display:block}
 
 /* AI Context Selector */
-.ai-ctx-bar{display:flex;gap:6px;overflow-x:auto;padding:4px 0 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.ai-ctx-bar{display:flex;gap:6px;overflow-x:auto;padding:4px 0 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-type:x proximity}
 .ai-ctx-bar::-webkit-scrollbar{display:none}
 .ai-ctx-pill{padding:8px 14px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:12px;white-space:nowrap;cursor:pointer;transition:all .2s;flex-shrink:0;display:inline-flex;align-items:center;gap:5px}
 .ai-ctx-pill svg{vertical-align:middle;flex-shrink:0}
@@ -259,8 +259,10 @@
 .lcancel{text-align:center;margin-top:12px;font-size:12px;color:var(--t3);cursor:pointer;font-weight:500}
 
 /* ===== TOAST ===== */
-.toast{position:fixed;bottom:calc(110px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:#fff;padding:14px 32px;border-radius:50px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.2,.8,.3,1);z-index:1200;box-shadow:0 8px 32px rgba(28,43,74,.2);letter-spacing:.5px}
+.toast{position:fixed;bottom:calc(110px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:#fff;padding:14px 32px;border-radius:50px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.2,.8,.3,1);z-index:1200;box-shadow:0 8px 32px rgba(28,43,74,.2);letter-spacing:.5px;display:flex;align-items:center;gap:6px}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@keyframes toastBounce{0%{transform:translateX(-50%) translateY(20px) scale(.8)}60%{transform:translateX(-50%) translateY(-4px) scale(1.02)}100%{transform:translateX(-50%) translateY(0) scale(1)}}
+.toast.on{animation:toastBounce .4s cubic-bezier(.2,.8,.3,1)}
 
 /* ===== EMPTY ===== */
 .empty{text-align:center;padding:32px 20px;font-size:12px;color:var(--t3);line-height:1.8}

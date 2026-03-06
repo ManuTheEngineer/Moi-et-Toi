@@ -1493,8 +1493,8 @@
 .nutr-cal-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:4px}
 .nutr-cal-fill{height:100%;background:linear-gradient(90deg,var(--emerald),var(--gold));border-radius:3px;transition:width .4s}
 .nutr-targets-label{font-size:11px;font-weight:600;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-.nutr-quick-scroll{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:8px;margin-bottom:12px}
-.nutr-quick-item{flex-shrink:0;padding:8px 12px}
+.nutr-quick-scroll{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:8px;margin-bottom:12px;scroll-snap-type:x proximity}
+.nutr-quick-item{flex-shrink:0;padding:8px 12px;scroll-snap-align:start}
 
 /* --- Meal input widths --- */
 .meal-cal-input{width:55px}.meal-macro-input{width:40px}
