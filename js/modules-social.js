@@ -387,8 +387,8 @@ function loadLLQuiz() {
     } else {
       llStep = 0; llScores = [0,0,0,0,0];
       renderLLQuestion();
-      document.getElementById('ll-quiz').style.display = 'block';
-      document.getElementById('ll-results').style.display = 'none';
+      showEl('ll-quiz');
+      hideEl('ll-results');
     }
   });
 }
@@ -419,8 +419,8 @@ async function submitLLResults() {
 }
 
 function showLLResults() {
-  document.getElementById('ll-quiz').style.display = 'none';
-  document.getElementById('ll-results').style.display = 'block';
+  hideEl('ll-quiz');
+  showEl('ll-results');
   db.ref('loveLang').on('value', snap => {
     const data = snap.val() || {};
     renderLLProfile('ll-my-primary', 'll-my-bars', data[user]);
@@ -468,8 +468,8 @@ function renderLLTips(myData, theirData) {
 
 function retakeLLQuiz() {
   llStep = 0; llScores = [0,0,0,0,0];
-  document.getElementById('ll-quiz').style.display = 'block';
-  document.getElementById('ll-results').style.display = 'none';
+  showEl('ll-quiz');
+  hideEl('ll-results');
   renderLLQuestion();
 }
 
@@ -657,8 +657,8 @@ function loadASQuiz() {
     } else {
       asStep = 0; asScores = [0, 0, 0, 0];
       renderASQuestion();
-      document.getElementById('as-quiz').style.display = 'block';
-      document.getElementById('as-results').style.display = 'none';
+      showEl('as-quiz');
+      hideEl('as-results');
     }
   });
 }
@@ -691,8 +691,8 @@ async function submitASResults() {
 }
 
 function showASResults() {
-  document.getElementById('as-quiz').style.display = 'none';
-  document.getElementById('as-results').style.display = 'block';
+  hideEl('as-quiz');
+  showEl('as-results');
   db.ref('attachmentStyle').on('value', snap => {
     const data = snap.val() || {};
     renderASProfile('as-my-result', data[user]);
@@ -778,8 +778,8 @@ function renderASRadar(myData, theirData) {
 
 function retakeASQuiz() {
   asStep = 0; asScores = [0, 0, 0, 0];
-  document.getElementById('as-quiz').style.display = 'block';
-  document.getElementById('as-results').style.display = 'none';
+  showEl('as-quiz');
+  hideEl('as-results');
   renderASQuestion();
 }
 

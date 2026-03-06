@@ -139,7 +139,7 @@ function startKYPQuiz() {
   if (ans) { ans.value = ''; ans.focus(); }
   const res = document.getElementById('kyp-quiz-result');
   if (res) res.innerHTML = '';
-  document.getElementById('kyp-quiz').style.display = '';
+  showEl('kyp-quiz');
   // Load stats
   if (db) db.ref('knowYou/' + user + '/quizStats').once('value', snap => {
     kypQuizStats = snap.val() || { correct: 0, total: 0 };
@@ -312,7 +312,7 @@ function previewMemory(input) {
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       const compressed = canvas.toDataURL('image/jpeg', 0.6);
       document.getElementById('mem-preview-img').src = compressed;
-      document.getElementById('mem-preview').style.display = '';
+      showEl('mem-preview');
       document.getElementById('mem-preview-img').dataset.data = compressed;
     };
     img.src = e.target.result;
@@ -332,7 +332,7 @@ async function saveMemory() {
   document.getElementById('mem-caption').value = '';
   document.getElementById('mem-date').value = '';
   if (albumSel) albumSel.value = '';
-  document.getElementById('mem-preview').style.display = 'none';
+  hideEl('mem-preview');
   document.getElementById('mem-file').value = '';
   toast('Memory saved');
   awardXP(15);
@@ -345,14 +345,14 @@ function checkOnThisDay() {
   const container = document.getElementById('mem-onthisday');
   const content = document.getElementById('mem-otd-content');
   if (matches.length && container && content) {
-    container.style.display = '';
+    showEl(container);
     content.innerHTML = matches.map(m => `
-      <div style="margin-bottom:8px">
+      <div class="mb-8">
         <img src="${m.imageData}" style="width:100%;border-radius:12px;max-height:150px;object-fit:cover">
-        <div style="font-size:12px;color:var(--cream);margin-top:4px">${esc(m.caption || '')} &bull; ${m.date}</div>
+        <div class="t-sm c-cream mt-4">${esc(m.caption || '')} &bull; ${m.date}</div>
       </div>`).join('');
   } else if (container) {
-    container.style.display = 'none';
+    hideEl(container);
   }
 }
 
@@ -418,13 +418,13 @@ function toggleMemoryView(view) {
   const gridBtn = document.getElementById('mem-view-grid-btn');
   const tlBtn = document.getElementById('mem-view-tl-btn');
   if (view === 'grid') {
-    if (gridEl) gridEl.style.display = '';
-    if (tlEl) tlEl.style.display = 'none';
+    showEl(gridEl);
+    hideEl(tlEl);
     if (gridBtn) gridBtn.classList.add('active');
     if (tlBtn) tlBtn.classList.remove('active');
   } else {
-    if (gridEl) gridEl.style.display = 'none';
-    if (tlEl) tlEl.style.display = '';
+    hideEl(gridEl);
+    showEl(tlEl);
     if (gridBtn) gridBtn.classList.remove('active');
     if (tlBtn) tlBtn.classList.add('active');
     renderMemoryTimeline();
@@ -767,9 +767,9 @@ function startIdentityQuiz() {
   idQuizIdx = 0;
   idQuizAnswers = {};
   const startEl = document.getElementById('id-quiz-start');
-  if (startEl) startEl.style.display = 'none';
+  if (startEl) hideEl(startEl);
   const el = document.getElementById('id-quiz-active');
-  if (el) el.style.display = 'block';
+  if (el) showEl(el);
   renderIdQuizQuestion();
 }
 
@@ -837,7 +837,7 @@ async function saveIdentityQuiz() {
   if (!db || !user) return;
   await db.ref('identityQuiz/' + user).set({ answers: idQuizAnswers, completedAt: Date.now() });
   const el = document.getElementById('id-quiz-active');
-  if (el) el.style.display = 'none';
+  if (el) hideEl(el);
   toast('Identity profile saved!');
   if (typeof awardXP === 'function') awardXP(25);
   loadIdentityProfiles();

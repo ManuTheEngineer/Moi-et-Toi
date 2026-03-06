@@ -1512,13 +1512,13 @@ function openRoom(room) {
   currentRoom = room;
   const names = { living: 'Living Room', bedroom: 'Bedroom', kitchen: 'Kitchen', bathroom: 'Bathroom', outdoor: 'Outdoor', office: 'Office' };
   document.getElementById('dh-room-title').textContent = names[room] || room;
-  document.getElementById('dh-room-detail').style.display = '';
+  showEl('dh-room-detail');
   document.getElementById('dh-rooms').style.display = 'none';
   renderRoomIdeas();
 }
 
 function closeRoomDetail() {
-  document.getElementById('dh-room-detail').style.display = 'none';
+  hideEl('dh-room-detail');
   document.getElementById('dh-rooms').style.display = '';
   currentRoom = null;
 }

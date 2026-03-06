@@ -1449,3 +1449,165 @@
 .rest-label{font-size:12px;color:var(--t3)}
 .rest-num{font-size:28px;font-weight:700;color:var(--emerald)}
 .rest-label-sm{font-size:10px;color:var(--t3);align-self:center;margin-right:4px}
+
+/* --- Additional spacing --- */
+.mt-20{margin-top:20px}.mt-24{margin-top:24px}.mt-28{margin-top:28px}
+.mb-24{margin-bottom:24px}.mt-neg8{margin-top:-8px}
+.mt-14{margin-top:14px}
+
+/* --- Achievement badges --- */
+.ach-emoji{font-size:24px}
+.ach-name{font-size:11px;font-weight:600;color:var(--cream)}
+.ach-desc{font-size:10px;color:var(--t3)}
+.ach-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px}
+.ach-stat-label{color:var(--t3)}
+.ach-stat-val{font-size:18px;font-weight:600;color:var(--cream)}
+
+/* --- KYP (Know Your Person) favorites --- */
+.kyp-fav-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+.kyp-fav-val{font-size:13px;color:var(--cream)}
+
+/* --- Calendar day labels --- */
+.cal-day-label{font-size:10px;text-align:center;color:var(--t3);font-weight:600}
+
+/* --- Form textarea shared --- */
+.form-textarea{width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;box-sizing:border-box}
+.form-textarea-sm{width:100%;padding:10px 14px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;box-sizing:border-box}
+.form-textarea-min{min-height:60px}
+
+/* --- Form inline input (date/time/select common pattern) --- */
+.form-input-inline{flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px}
+
+/* --- Nutrition macro bar --- */
+.nutr-macro-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.nutr-macro-item{text-align:center}
+.nutr-macro-label{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+.nutr-macro-val{font-size:18px;font-weight:700}
+.nutr-bar-wrap{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:4px}
+.nutr-bar-fill{height:100%;border-radius:2px;transition:width .4s}
+.nutr-cal-summary{font-size:10px;color:var(--t3);text-align:center;margin-top:8px}
+.nutr-cal-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:4px}
+.nutr-cal-fill{height:100%;background:linear-gradient(90deg,var(--emerald),var(--gold));border-radius:3px;transition:width .4s}
+.nutr-targets-label{font-size:11px;font-weight:600;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.nutr-quick-scroll{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:8px;margin-bottom:12px}
+.nutr-quick-item{flex-shrink:0;padding:8px 12px}
+
+/* --- Meal input widths --- */
+.meal-cal-input{width:55px}.meal-macro-input{width:40px}
+
+/* --- DH room card labels --- */
+.dh-room-name{font-size:13px;font-weight:600;color:var(--cream)}
+.dh-room-ct{font-size:11px;color:var(--t3)}
+.dh-section-label{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+
+/* --- Memory prompt labels --- */
+.mem-prompt-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);margin-bottom:6px}
+.mem-prompt-text{font-size:14px;color:var(--cream);font-weight:500;margin-bottom:10px}
+.mem-upload-icon{font-size:24px;margin-bottom:4px}
+.mem-upload-text{font-size:12px;color:var(--t3)}
+
+/* --- Grow progress card --- */
+.grow-progress-card{padding:14px 18px;margin-bottom:16px;background:linear-gradient(135deg, rgba(123,111,166,0.15), rgba(196,120,74,0.1))}
+.grow-progress-label{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+.grow-progress-val{font-size:22px;font-weight:700;color:var(--cream)}
+.grow-lessons-label{font-size:11px;color:var(--t3)}
+.grow-lessons-count{font-size:16px;font-weight:600;color:var(--gold)}
+
+/* --- KYP hero card --- */
+.kyp-hero{padding:14px 18px;margin-bottom:16px;background:linear-gradient(135deg, rgba(199,113,131,0.15), rgba(176,138,80,0.1))}
+
+/* --- Settings about card --- */
+.settings-about{padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:20px;text-align:center}
+
+/* --- Compat breakdown --- */
+.compat-desc{font-size:11px;color:var(--t3);margin-top:10px}
+.compat-breakdown{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+
+/* --- Icon badge sizes --- */
+.ib-sz-32{width:32px;height:32px}.ib-sz-36{width:36px;height:36px}
+
+/* --- Body metrics inline --- */
+.fit-bmi-row{display:flex;gap:8px;margin-top:12px;align-items:center}
+.fit-bmi-label{flex:1;font-size:11px;color:var(--t3)}
+.fit-bmi-val{color:var(--cream);font-weight:600}
+.fit-weight-note{font-size:11px;color:var(--t3);margin-top:8px}
+
+/* --- Photo progress --- */
+.prog-photo-upload{flex:1;text-align:center;cursor:pointer;background:var(--grad-fitness);margin:0}
+
+/* --- OTD label --- */
+.otd-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+
+/* --- Hub badge New --- */
+.hub-badge-new{background:rgba(123,111,166,0.15);color:var(--lavender)}
+
+/* --- Explore icon badge center --- */
+.ib-center{margin:0 auto 8px}
+
+/* --- Flex-2 --- */
+.flex-2{flex:2}
+
+/* --- Water count label --- */
+.hydration-label{font-size:12px;color:var(--t3);margin-top:8px}
+
+/* --- DH color swatch (inline bg stays, but shared styling) --- */
+
+/* --- Game view buttons with specific bg --- */
+.btn-gold{background:var(--gold);color:#fff;border-color:var(--gold)}
+.btn-emerald{background:var(--emerald);color:#fff}
+.btn-rose{background:var(--rose);color:#fff}
+.btn-lavender{background:var(--lavender);color:#fff}
+
+/* --- This or That OR badge --- */
+.tot-or-badge{width:32px;height:32px;border-radius:50%;background:var(--card-bg);color:var(--t3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;letter-spacing:1px;box-shadow:var(--card-shadow)}
+
+/* --- Streak fire --- */
+.streak-fire-icon{color:var(--gold)}
+
+/* --- Fit summary grid-4 --- */
+.fit-summary-4{grid-template-columns:repeat(4,1fr)}
+
+/* --- KYP quiz card --- */
+.kyp-quiz-label{font-size:11px;color:var(--rose);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.kyp-quiz-q{font-size:15px;color:var(--cream);font-weight:500;margin-bottom:12px}
+.kyp-quiz-result{font-size:12px;margin-top:8px}
+.kyp-quiz-stats{font-size:11px;color:var(--t3);margin-top:6px;text-align:center}
+
+/* --- ID quiz start card --- */
+.id-quiz-emoji{font-size:36px;margin-bottom:12px}
+.id-quiz-title{font-size:15px;font-weight:500;color:var(--cream);margin-bottom:8px}
+.id-quiz-desc{font-size:12px;color:var(--t3);margin-bottom:16px;line-height:1.6}
+
+/* --- DH style quiz --- */
+.dh-quiz-prompt{font-size:13px;color:var(--cream);margin-bottom:12px}
+.dh-style-options{display:flex;flex-wrap:wrap;gap:8px}
+
+/* --- Memory detail modal labels --- */
+.mem-detail-caption{font-size:15px;color:#fff;font-weight:500}
+.mem-detail-meta{font-size:11px;color:rgba(255,255,255,.6);margin-top:4px}
+
+/* --- DH budget text --- */
+.dh-budget-text{text-align:center;color:var(--t3);font-size:12px}
+
+/* --- Grow lesson modal --- */
+.grow-lesson-spacer{width:36px}
+.grow-lesson-title-h2{color:var(--cream);margin-bottom:20px}
+
+/* --- Memory detail modal (additional) --- */
+.mem-detail-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;z-index:5}
+.mem-fav-btn{background:var(--card-bg);color:var(--gold)}
+.mem-album-dashed{border-style:dashed}
+.ws-bar-init{width:0%}
+.btn-fitness{background:var(--grad-fitness)}
+.fit-prog-dashed{border-style:dashed}
+.form-input-sm{font-size:12px;padding:8px 14px}
+.ls-1{letter-spacing:1px}
+.mb-0{margin-bottom:0}
+.mb-14{margin-bottom:14px}
+.p-8-14{padding:8px 14px}
+.btn-rose{background:var(--rose);color:#fff}
+.mb-12{margin-bottom:12px}
+.t-lg{font-size:15px}
+.tot-or-wrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2}
+.c-vio{color:var(--vio)}
+.mt-neg8{margin-top:-8px}

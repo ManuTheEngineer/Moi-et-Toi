@@ -37,7 +37,7 @@
     <button onclick="doLogin()" class="login-btn">Come in</button>
   </div>
   <!-- Welcome gate (shown when already authenticated) -->
-  <div id="welcome-gate" class="login-inner" style="display:none">
+  <div id="welcome-gate" class="login-inner d-none">
     <div class="lbl" id="welcome-greeting"></div>
     <button onclick="finishLogin()" class="login-btn">Enter</button>
   </div>
@@ -68,7 +68,7 @@
   <input class="cmd-search" id="cmd-search" placeholder="Search features..." oninput="filterQuickSheet(this.value)" aria-label="Search features">
 
   <!-- Search results (hidden by default) -->
-  <div id="cmd-search-results" style="display:none"></div>
+  <div id="cmd-search-results" class="d-none"></div>
 
   <!-- Favorites -->
   <div class="cmd-section-label">Favorites</div>
@@ -80,7 +80,7 @@
 
   <!-- Account row -->
   <div class="cmd-section-label">Account</div>
-  <div class="cmd-ctx-row" style="grid-template-columns:repeat(2,1fr)">
+  <div class="cmd-ctx-row grid-2">
     <div class="cmd-ctx-item" onclick="closeMenu();go('settings')"><span class="cmd-ctx-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span><span class="cmd-ctx-label">Settings</span></div>
     <div class="cmd-ctx-item" onclick="toggleTheme();closeMenu()"><span class="cmd-ctx-icon" id="cmd-theme-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></span><span class="cmd-ctx-label" id="cmd-theme-label">Theme</span></div>
   </div>
@@ -501,7 +501,7 @@
       <label class="ow-label">
         <input type="checkbox" id="ow-check" onchange="toggleOpenWhen()"> "Open when..." letter
       </label>
-      <select id="ow-tag" class="ow-select" style="display:none">
+      <select id="ow-tag" class="ow-select d-none">
         <option value="">Choose a moment...</option>
         <option value="sad">Open when you're sad</option>
         <option value="miss">Open when you miss me</option>
@@ -529,7 +529,7 @@
 
 <!-- Tap Overlay (full-screen animation) -->
 <div class="tap-overlay" id="tap-overlay">
-  <div style="text-align:center">
+  <div class="text-center">
     <div class="tap-big" id="tap-big-emoji"></div>
     <div class="tap-msg" id="tap-big-msg"></div>
   </div>
@@ -556,7 +556,7 @@
 
   <!-- Timeline -->
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Milestones</div></div>
-  <button class="mood-submit" onclick="toggleMsForm()" style="margin-bottom:16px">+ Add Milestone</button>
+  <button class="mood-submit mb-16" onclick="toggleMsForm()">+ Add Milestone</button>
   <div class="ms-form" id="ms-form">
     <input type="text" id="ms-title" placeholder="Milestone title (e.g. First Date)">
     <div class="ms-row">
@@ -595,15 +595,15 @@
 
   <div class="explore-grid-3">
     <div class="explore-icon-card card-action" onclick="go('fitness')">
-      <div class="icon-badge ib-emerald" style="margin:0 auto 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/></svg></div>
+      <div class="icon-badge ib-emerald ib-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/></svg></div>
       <div class="explore-icon-label">Fitness</div>
     </div>
     <div class="explore-icon-card card-action" onclick="go('nutrition')">
-      <div class="icon-badge ib-rose" style="margin:0 auto 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+      <div class="icon-badge ib-rose ib-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
       <div class="explore-icon-label">Nutrition</div>
     </div>
     <div class="explore-icon-card card-action" onclick="go('calendar')">
-      <div class="icon-badge ib-teal" style="margin:0 auto 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="icon-badge ib-teal ib-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
       <div class="explore-icon-label">Calendar</div>
     </div>
   </div>
@@ -627,7 +627,7 @@
     <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('question')"><div class="hub-row-label">Daily Question</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dq-status">--</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('challenges')"><div class="hub-row-label">Couple Challenges</div><div class="hub-row-status"><span class="hub-badge" style="background:rgba(123,111,166,0.15);color:var(--lavender)">New</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('challenges')"><div class="hub-row-label">Couple Challenges</div><div class="hub-row-status"><span class="hub-badge hub-badge-new">New</span><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Life Building -->
@@ -659,7 +659,7 @@
     <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('hisspace')"><div class="hub-row-label">Manu's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('grow')"><div class="hub-row-label">Grow Together</div><div class="hub-row-status"><span class="hub-badge" style="background:rgba(123,111,166,0.15);color:var(--lavender)">New</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('grow')"><div class="hub-row-label">Grow Together</div><div class="hub-row-status"><span class="hub-badge hub-badge-new">New</span><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Extras -->
@@ -698,7 +698,7 @@
 
   <!-- Streak -->
   <div class="streak-bar" id="streak-bar">
-    <span class="streak-fire" style="color:var(--gold)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1012 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z"/></svg></span>
+    <span class="streak-fire streak-fire-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1012 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z"/></svg></span>
     <span class="streak-count" id="streak-count">0</span>
     <span class="streak-label">day streak</span>
   </div>
@@ -721,7 +721,7 @@
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Today</div></div>
   <div class="grat-compose">
     <textarea class="grat-textarea" id="grat-input" placeholder="Today I'm grateful for..."></textarea>
-    <button class="dq-submit" id="grat-submit-btn" onclick="submitGratitude()" style="margin-top:8px">Share</button>
+    <button class="dq-submit" id="grat-submit-btn" onclick="submitGratitude()" class="mt-8">Share</button>
   </div>
 
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Feed</div></div>
@@ -750,7 +750,7 @@
   </div>
 
   <!-- How Well Do You Know Me -->
-  <div class="sec-head" style="margin-top:28px"><div class="sec-dot sd-gold"></div><div class="sec-title">How Well Do You Know Me?</div></div>
+  <div class="sec-head mt-28"><div class="sec-dot sd-gold"></div><div class="sec-title">How Well Do You Know Me?</div></div>
   <div class="card-game">
     <div class="card-h"><span class="card-t">Your questions</span><span class="card-s">For <span class="pname"></span></span></div>
     <div class="quiz-form">
@@ -761,7 +761,7 @@
     <div id="quiz-mine"></div>
   </div>
 
-  <div class="card-game" style="margin-top:12px">
+  <div class="card-game mt-12">
     <div class="card-h"><span class="card-t"><span class="pname"></span>'s questions</span><span class="card-s">Test yourself</span></div>
     <div id="quiz-theirs"><div class="empty">Waiting for your partner to write some questions</div></div>
   </div>
@@ -779,20 +779,20 @@
 
   <!-- This or That -->
   <div class="sec-head"><div class="sec-dot sd-purple"></div><div class="sec-title">This or That</div></div>
-  <div style="position:relative" id="tot-wrap">
+  <div class="relative" id="tot-wrap">
     <div class="tot-card" id="tot-card">
       <button class="tot-option" onclick="pickTOT('A')"><div class="tot-text" id="tot-a">Loading...</div></button>
       <button class="tot-option" onclick="pickTOT('B')"><div class="tot-text" id="tot-b">Loading...</div></button>
     </div>
-    <div class="tot-option .tot-or" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2"><div style="width:32px;height:32px;border-radius:50%;background:var(--card-bg);color:var(--t3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;letter-spacing:1px;box-shadow:var(--card-shadow)">OR</div></div>
+    <div class="tot-or-wrap"><div class="tot-or-badge">OR</div></div>
   </div>
-  <div class="wyr-nav" style="margin-bottom:20px">
+  <div class="wyr-nav mb-20">
     <button onclick="prevTOT()">Previous</button>
     <button onclick="nextTOT()">Next</button>
   </div>
 
   <!-- Game Invite Banner -->
-  <div id="game-invite" style="display:none"></div>
+  <div id="game-invite" class="d-none"></div>
 
   <!-- Competitive Games -->
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Competitive Games</div></div>
@@ -847,7 +847,7 @@
   </div>
 
   <!-- Tic-Tac-Toe View -->
-  <div class="game-view" id="gv-ttt" style="display:none">
+  <div class="game-view d-none" id="gv-ttt">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Tic-Tac-Toe</span>
@@ -856,7 +856,7 @@
   </div>
 
   <!-- Connect Four View -->
-  <div class="game-view" id="gv-c4" style="display:none">
+  <div class="game-view d-none" id="gv-c4">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Connect Four</span>
@@ -865,7 +865,7 @@
   </div>
 
   <!-- Memory Match View -->
-  <div class="game-view" id="gv-memory" style="display:none">
+  <div class="game-view d-none" id="gv-memory">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Memory Match</span>
@@ -874,7 +874,7 @@
   </div>
 
   <!-- Rock Paper Scissors View -->
-  <div class="game-view" id="gv-rps" style="display:none">
+  <div class="game-view d-none" id="gv-rps">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Rock Paper Scissors</span>
@@ -883,7 +883,7 @@
   </div>
 
   <!-- Emoji Guessing View -->
-  <div class="game-view" id="gv-emoji" style="display:none">
+  <div class="game-view d-none" id="gv-emoji">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Emoji Guess</span>
@@ -892,7 +892,7 @@
   </div>
 
   <!-- 21 Questions View -->
-  <div class="game-view" id="gv-21q" style="display:none">
+  <div class="game-view d-none" id="gv-21q">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">21 Questions</span>
@@ -901,7 +901,7 @@
   </div>
 
   <!-- Two Truths and a Lie View -->
-  <div class="game-view" id="gv-ttal" style="display:none">
+  <div class="game-view d-none" id="gv-ttal">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Two Truths & a Lie</span>
@@ -910,7 +910,7 @@
   </div>
 
   <!-- Word Chain View -->
-  <div class="game-view" id="gv-wordchain" style="display:none">
+  <div class="game-view d-none" id="gv-wordchain">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Word Chain</span>
@@ -919,7 +919,7 @@
   </div>
 
   <!-- Trivia View -->
-  <div class="game-view" id="gv-trivia" style="display:none">
+  <div class="game-view d-none" id="gv-trivia">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Trivia</span>
@@ -928,7 +928,7 @@
   </div>
 
   <!-- War View -->
-  <div class="game-view" id="gv-war" style="display:none">
+  <div class="game-view d-none" id="gv-war">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">War</span>
@@ -937,7 +937,7 @@
   </div>
 
   <!-- Checkers View -->
-  <div class="game-view" id="gv-checkers" style="display:none">
+  <div class="game-view d-none" id="gv-checkers">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Checkers</span>
@@ -946,7 +946,7 @@
   </div>
 
   <!-- Go Fish View -->
-  <div class="game-view" id="gv-gofish" style="display:none">
+  <div class="game-view d-none" id="gv-gofish">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Go Fish</span>
@@ -955,7 +955,7 @@
   </div>
 
   <!-- Hangman View -->
-  <div class="game-view" id="gv-hangman" style="display:none">
+  <div class="game-view d-none" id="gv-hangman">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Hangman</span>
@@ -964,7 +964,7 @@
   </div>
 
   <!-- Battleship View -->
-  <div class="game-view" id="gv-battleship" style="display:none">
+  <div class="game-view d-none" id="gv-battleship">
     <div class="gv-header">
       <button class="gv-back" onclick="showGameLobby()">← Back</button>
       <span class="gv-title">Battleship</span>
@@ -974,8 +974,8 @@
 
   <!-- Compatibility Score -->
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Compatibility</div></div>
-  <div class="chart-wrap" style="text-align:center">
-    <svg class="chart-svg" viewBox="0 0 140 140" style="max-width:140px;margin:0 auto">
+  <div class="chart-wrap text-center">
+    <svg class="chart-svg" viewBox="0 0 140 140" style="max-width:140px">
       <circle cx="70" cy="70" r="52" fill="none" stroke="var(--bg3)" stroke-width="12"/>
       <circle cx="70" cy="70" r="52" fill="none" stroke="url(#compatGrad)" stroke-width="12" stroke-linecap="round"
         stroke-dasharray="327" id="compat-ring" stroke-dashoffset="327" transform="rotate(-90 70 70)"/>
@@ -983,8 +983,8 @@
       <text class="donut-label" x="70" y="66" id="compat-score">--</text>
       <text class="donut-sub" x="70" y="84">match</text>
     </svg>
-    <div style="font-size:11px;color:var(--t3);margin-top:10px">Games + Love Languages + Attachment Style</div>
-    <div id="compat-breakdown" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px"></div>
+    <div class="compat-desc">Games + Love Languages + Attachment Style</div>
+    <div id="compat-breakdown" class="compat-breakdown"></div>
   </div>
 </div>
 </div>
@@ -1023,8 +1023,8 @@
     <input type="text" id="wl-input" placeholder="Add something you want...">
     <button onclick="addWishItem()">+</button>
   </div>
-  <div class="bl-form" style="margin-top:-8px">
-    <input type="url" id="wl-link" placeholder="Link (optional)" style="flex:2">
+  <div class="bl-form mt-neg8">
+    <input type="url" id="wl-link" placeholder="Link (optional)" class="flex-2">
     <select id="wl-priority" class="select-field">
       <option value="love">Love it</option>
       <option value="want">Want it</option>
@@ -1034,7 +1034,7 @@
   <div id="wl-mine"><div class="empty">Drop hints here</div></div>
 
   <!-- Partner's wishlist -->
-  <div class="sec-head" style="margin-top:24px"><div class="sec-dot sd-gold"></div><div class="sec-title"><span class="pname"></span>'s Wishlist</div></div>
+  <div class="sec-head mt-24"><div class="sec-dot sd-gold"></div><div class="sec-title"><span class="pname"></span>'s Wishlist</div></div>
   <div id="wl-theirs"><div class="empty">Nothing here yet — they're being mysterious</div></div>
 </div>
 </div>
@@ -1071,7 +1071,7 @@
   </div>
 
   <button class="lbtn" onclick="openLog('Foundation')">Log workout</button>
-  <div class="nxt nxr" onclick="go('w2')"><div class="nxe" style="color:var(--red)">When You're Ready</div><div class="nxt-t">The Elevated Program</div><div class="nxd">Harder moves. Shorter rest. Deeper definition.</div><div class="nxa" style="color:var(--red)">Enter ➔</div></div>
+  <div class="nxt nxr" onclick="go('w2')"><div class="nxe c-red">When You're Ready</div><div class="nxt-t">The Elevated Program</div><div class="nxd">Harder moves. Shorter rest. Deeper definition.</div><div class="nxa c-red">Enter ➔</div></div>
   <div class="wft"><div class="wfq" style="color:var(--gold-l)">You're already becoming who you want to be.</div><div class="wfs">One day at a time</div></div>
 </div>
 </div>
@@ -1104,7 +1104,7 @@
   </div>
 
   <button class="lbtn lbr" onclick="openLog('Elevated')">Log workout</button>
-  <div class="nxt nxv" onclick="go('w3')"><div class="nxe" style="color:var(--vio)">The Complete Session</div><div class="nxt-t">Full Body Sculpt</div><div class="nxd">Every muscle group. One session. Total transformation.</div><div class="nxa" style="color:var(--vio)">Enter ➔</div></div>
+  <div class="nxt nxv" onclick="go('w3')"><div class="nxe c-vio">The Complete Session</div><div class="nxt-t">Full Body Sculpt</div><div class="nxd">Every muscle group. One session. Total transformation.</div><div class="nxa c-vio">Enter ➔</div></div>
   <div class="wft"><div class="wfq" style="color:var(--red-tag)">You didn't just dream it. You built it.</div><div class="wfs">Every rep counts</div></div>
 </div>
 </div>
@@ -1248,7 +1248,7 @@
 <div class="pg" id="pg-lovelang">
 <div class="ctn">
 
-  <div class="ll-results" id="ll-results" style="display:none">
+  <div class="ll-results" id="ll-results" class="d-none">
     <div class="ll-pair">
       <div class="ll-profile">
         <div class="ll-name"><span class="uname"></span></div>
@@ -1263,7 +1263,7 @@
       </div>
     </div>
     <div class="ll-tips" id="ll-tips"></div>
-    <button class="dq-submit" onclick="retakeLLQuiz()" style="margin-top:16px">Retake Quiz</button>
+    <button class="dq-submit" onclick="retakeLLQuiz()" class="mt-16">Retake Quiz</button>
   </div>
 
   <div id="ll-quiz">
@@ -1278,7 +1278,7 @@
 <div class="pg" id="pg-attachment">
 <div class="ctn">
 
-  <div class="ll-results" id="as-results" style="display:none">
+  <div class="ll-results" id="as-results" class="d-none">
     <div class="ll-pair">
       <div class="ll-profile">
         <div class="ll-name"><span class="uname"></span></div>
@@ -1297,7 +1297,7 @@
 
     <div class="chart-wrap p-14" id="as-combo-tips"></div>
 
-    <button class="dq-submit" onclick="retakeASQuiz()" style="margin-top:16px">Retake Quiz</button>
+    <button class="dq-submit" onclick="retakeASQuiz()" class="mt-16">Retake Quiz</button>
   </div>
 
   <div id="as-quiz">
@@ -1424,7 +1424,7 @@
   <!-- Growth Module Link -->
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Growth</div></div>
   <div class="card-action grow-link" onclick="setGrowPath('her');go('grow')">
-    <div class="icon-badge ib-lavender" style="width:36px;height:36px">🌱</div>
+    <div class="icon-badge ib-lavender ib-sz-36">🌱</div>
     <div class="grow-link-info">
       <div class="grow-link-title">Her Path — Values & Growth</div>
       <div class="grow-link-desc">Timeless values, modern love</div>
@@ -1460,10 +1460,10 @@
     <div class="him-pr-form">
       <input type="text" id="him-pr-exercise" placeholder="Exercise name...">
       <div class="ms-row">
-        <input type="number" id="him-pr-weight" placeholder="Weight" style="flex:1">
-        <input type="number" id="him-pr-reps" placeholder="Reps" style="flex:1">
+        <input type="number" id="him-pr-weight" placeholder="Weight" class="flex-1">
+        <input type="number" id="him-pr-reps" placeholder="Reps" class="flex-1">
       </div>
-      <button class="dq-submit" onclick="logPR()" style="margin-top:8px">Log PR</button>
+      <button class="dq-submit" onclick="logPR()" class="mt-8">Log PR</button>
     </div>
     <div id="him-pr-list"><div class="empty">Log your first PR</div></div>
   </div>
@@ -1483,7 +1483,7 @@
   <!-- Growth Module Link -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Growth</div></div>
   <div class="card-action grow-link" onclick="setGrowPath('him');go('grow')">
-    <div class="icon-badge ib-gold" style="width:36px;height:36px">🌱</div>
+    <div class="icon-badge ib-gold ib-sz-36">🌱</div>
     <div class="grow-link-info">
       <div class="grow-link-title">His Path — Values & Growth</div>
       <div class="grow-link-desc">Timeless values, modern love</div>
@@ -1528,7 +1528,7 @@
         <option value="english">Southern English</option>
         <option value="slang">Texas Slang</option>
       </select>
-      <button class="dq-submit" onclick="addPhrase()" style="margin-top:8px">Add Phrase</button>
+      <button class="dq-submit" onclick="addPhrase()" class="mt-8">Add Phrase</button>
     </div>
     <div id="cx-phrases"><div class="empty">Teach each other your languages</div></div>
   </div>
@@ -1581,7 +1581,7 @@
 
   <div class="dt-controls">
     <button class="dn-action" onclick="prevDeepTalk()">Previous</button>
-    <button class="dn-action" onclick="nextDeepTalk()" style="background:var(--gold);color:#fff;border-color:var(--gold)">Next Prompt</button>
+    <button class="dn-action" onclick="nextDeepTalk()" class="btn-gold">Next Prompt</button>
   </div>
 
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Choose Depth</div></div>
@@ -1704,7 +1704,7 @@
     <div class="fdn-agree-item" onclick="toggleAgreement(this,4)"><span class="fdn-check"></span>We never bring up past resolved issues</div>
     <div class="fdn-agree-item" onclick="toggleAgreement(this,5)"><span class="fdn-check"></span>We choose understanding over winning</div>
   </div>
-  <div class="bl-form" style="margin-top:12px">
+  <div class="bl-form mt-12">
     <input type="text" id="fdn-agree-input" placeholder="Add your own agreement...">
     <button onclick="addAgreement()">+</button>
   </div>
@@ -1788,7 +1788,7 @@
     <div class="fin-note-row">
       <input type="text" id="fin-note" placeholder="What was it for?" class="quiz-q">
       <label class="fin-receipt-btn" title="Attach receipt">
-        <input type="file" accept="image/*" capture="environment" id="fin-receipt-input" onchange="previewReceipt(this)" style="display:none">
+        <input type="file" accept="image/*" capture="environment" id="fin-receipt-input" onchange="previewReceipt(this)" class="d-none">
         📷
       </label>
       <button class="dq-submit" onclick="addExpense()">Add</button>
@@ -1819,8 +1819,8 @@
   <div class="hl-budget-form">
     <input type="text" id="hl-goal-name" placeholder="Saving for...">
     <div class="ms-row">
-      <input type="number" id="hl-goal-target" placeholder="Target $" style="flex:1">
-      <input type="number" id="hl-goal-saved" placeholder="Saved $" style="flex:1">
+      <input type="number" id="hl-goal-target" placeholder="Target $" class="flex-1">
+      <input type="number" id="hl-goal-saved" placeholder="Saved $" class="flex-1">
     </div>
     <button class="dq-submit" onclick="addSavingsGoal()">Add Goal</button>
   </div>
@@ -1865,7 +1865,7 @@
 <div class="ctn">
 
   <!-- Weekly Summary -->
-  <div class="fit-summary" id="fit-summary" style="grid-template-columns:repeat(4,1fr)">
+  <div class="fit-summary fit-summary-4" id="fit-summary">
     <div class="fit-stat"><div class="fit-stat-num" id="fit-sessions">0</div><div class="fit-stat-label">Sessions</div></div>
     <div class="fit-stat"><div class="fit-stat-num" id="fit-volume">0</div><div class="fit-stat-label">Volume</div></div>
     <div class="fit-stat"><div class="fit-stat-num" id="fit-streak">0</div><div class="fit-stat-label">Streak</div></div>
@@ -1902,7 +1902,7 @@
         <div class="ws-vol-label">Volume</div>
       </div>
     </div>
-    <div class="ws-progress"><div class="ws-progress-bar" id="ws-bar" style="width:0%"></div></div>
+    <div class="ws-progress"><div class="ws-progress-bar" id="ws-bar" class="ws-bar-init"></div></div>
     <div class="rest-config" id="rest-config">
       <span class="rest-label-sm">Rest:</span>
       <button class="rest-opt" onclick="setRestDuration(30)">30s</button>
@@ -1925,7 +1925,7 @@
       <div class="mt-4" id="ws-add-results"></div>
     </div>
     <div class="ws-actions">
-      <button class="dq-submit flex-1" onclick="finishWorkout()" style="background:var(--grad-fitness)">Finish Workout</button>
+      <button class="dq-submit flex-1" onclick="finishWorkout()" class="btn-fitness">Finish Workout</button>
       <button class="btn-sm c-red" onclick="cancelWorkout()">Cancel</button>
     </div>
   </div>
@@ -1934,22 +1934,22 @@
   <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Programs</div></div>
   <div class="fit-programs grid-2">
     <div class="fit-prog card-action" onclick="startWorkout('foundation')">
-      <div class="icon-badge ib-emerald" style="width:32px;height:32px">&#x1F331;</div>
+      <div class="icon-badge ib-emerald ib-sz-32">&#x1F331;</div>
       <div><div class="t-body fw-600 c-cream">Foundation</div>
       <div class="t-xs c-t3">Beginner &bull; Full Body</div></div>
     </div>
     <div class="fit-prog card-action" onclick="startWorkout('elevated')">
-      <div class="icon-badge ib-teal" style="width:32px;height:32px">&#x26A1;</div>
+      <div class="icon-badge ib-teal ib-sz-32">&#x26A1;</div>
       <div><div class="t-body fw-600 c-cream">Elevated</div>
       <div class="t-xs c-t3">Advanced &bull; Split</div></div>
     </div>
     <div class="fit-prog card-action" onclick="startWorkout('fullbody')">
-      <div class="icon-badge ib-lavender" style="width:32px;height:32px">&#x1F525;</div>
+      <div class="icon-badge ib-lavender ib-sz-32">&#x1F525;</div>
       <div><div class="t-body fw-600 c-cream">Full Body</div>
       <div class="t-xs c-t3">Complete &bull; All Levels</div></div>
     </div>
-    <div class="fit-prog card-action" onclick="openWorkoutBuilder()" style="border-style:dashed">
-      <div class="icon-badge ib-amber" style="width:32px;height:32px">&#x2795;</div>
+    <div class="fit-prog card-action" onclick="openWorkoutBuilder()" class="fit-prog-dashed">
+      <div class="icon-badge ib-amber ib-sz-32">&#x2795;</div>
       <div><div class="t-body fw-600 c-cream">Create Workout</div>
       <div class="t-xs c-t3">Build your own</div></div>
     </div>
@@ -1976,7 +1976,7 @@
       <button class="fit-mg-tab" onclick="filterExercises('core')">Core</button>
     </div>
     <!-- Exercise search -->
-    <input type="text" id="fit-builder-search" placeholder="Search exercises..." oninput="searchExercises(this.value)" class="form-input mb-8" style="font-size:12px;padding:8px 14px">
+    <input type="text" id="fit-builder-search" placeholder="Search exercises..." oninput="searchExercises(this.value)" class="form-input mb-8 form-input-sm">
     <!-- Exercise list -->
     <div class="fit-ex-list" id="fit-ex-list"></div>
     <!-- Selected exercises -->
@@ -1985,8 +1985,8 @@
       <div id="fit-sel-list"></div>
     </div>
     <div class="d-flex gap-8 mt-16">
-      <button class="dq-submit flex-1" onclick="saveCustomProgram()" style="background:var(--emerald)">Save Program</button>
-      <button class="dq-submit flex-1" onclick="startBuilderWorkout()" style="background:var(--grad-fitness)">Start Now</button>
+      <button class="dq-submit flex-1" onclick="saveCustomProgram()" class="btn-emerald">Save Program</button>
+      <button class="dq-submit flex-1" onclick="startBuilderWorkout()" class="btn-fitness">Start Now</button>
     </div>
   </div>
 
@@ -1994,7 +1994,7 @@
   <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Quick Log</div></div>
   <div class="card" id="fit-quick-log-section">
     <div class="d-flex gap-8 mb-10">
-      <input type="text" id="fit-ex-name" placeholder="Exercise" class="flex-1" style="flex:2" list="fit-ex-datalist">
+      <input type="text" id="fit-ex-name" placeholder="Exercise" class="flex-2" list="fit-ex-datalist">
       <datalist id="fit-ex-datalist"></datalist>
       <input type="number" id="fit-ex-sets" placeholder="Sets" class="flex-1">
       <input type="number" id="fit-ex-reps" placeholder="Reps" class="flex-1">
@@ -2057,31 +2057,31 @@
         <input type="number" id="fit-thighs" placeholder="--" step="0.5">
         <span class="fmr-trend" id="fit-thighs-trend"></span>
       </div>
-      <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
-        <div style="flex:1;font-size:11px;color:var(--t3)">BMI: <span id="fit-bmi" style="color:var(--cream);font-weight:600">--</span></div>
-        <button class="dq-submit" onclick="logBodyMetrics()" style="flex:0 0 auto;padding:8px 20px">Save</button>
+      <div class="fit-bmi-row">
+        <div class="fit-bmi-label">BMI: <span id="fit-bmi" class="fit-bmi-val">--</span></div>
+        <button class="dq-submit flex-shrink-0" onclick="logBodyMetrics()" style="padding:8px 20px">Save</button>
       </div>
-      <div id="fit-weight-trend" style="font-size:11px;color:var(--t3);margin-top:8px"></div>
+      <div id="fit-weight-trend" class="fit-weight-note"></div>
     </div>
   </div>
 
   <!-- Progress Photos -->
   <div class="me-only">
     <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Progress Photos</div></div>
-    <div class="card" style="margin-bottom:12px">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
-        <label class="dq-submit" style="flex:1;text-align:center;cursor:pointer;background:var(--grad-fitness);margin:0">
-          <input type="file" accept="image/*" capture="environment" id="prog-photo-input" onchange="handleProgressPhoto(this)" style="display:none">
+    <div class="card mb-12">
+      <div class="d-flex gap-8 items-center mb-12">
+        <label class="dq-submit prog-photo-upload">
+          <input type="file" accept="image/*" capture="environment" id="prog-photo-input" onchange="handleProgressPhoto(this)" class="d-none">
           📸 Take Progress Photo
         </label>
       </div>
-      <select id="prog-photo-type" style="width:100%;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;margin-bottom:8px">
+      <select id="prog-photo-type" class="form-input-inline w-full mb-8">
         <option value="front">Front</option>
         <option value="side">Side</option>
         <option value="back">Back</option>
         <option value="flex">Flex / Pose</option>
       </select>
-      <textarea id="prog-photo-note" placeholder="Optional note..." style="width:100%;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-size:12px;font-family:'Outfit',sans-serif;min-height:36px;resize:none;box-sizing:border-box"></textarea>
+      <textarea id="prog-photo-note" placeholder="Optional note..." class="form-textarea" style="min-height:36px;resize:none;font-size:12px"></textarea>
     </div>
     <div id="prog-photos-gallery"></div>
   </div>
@@ -2097,7 +2097,7 @@
 <div class="ctn">
 
   <!-- Daily Summary -->
-  <div class="fit-summary" id="nutr-summary" style="grid-template-columns:repeat(4,1fr)">
+  <div class="fit-summary fit-summary-4" id="nutr-summary">
     <div class="fit-stat"><div class="fit-stat-num" id="nutr-meals">0</div><div class="fit-stat-label">Meals</div></div>
     <div class="fit-stat"><div class="fit-stat-num" id="nutr-cals">0</div><div class="fit-stat-label">Calories</div></div>
     <div class="fit-stat"><div class="fit-stat-num" id="nutr-water">0</div><div class="fit-stat-label">Water</div></div>
@@ -2105,47 +2105,47 @@
   </div>
 
   <!-- Macro Targets -->
-  <div class="card" style="margin-bottom:14px">
-    <div style="font-size:11px;font-weight:600;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Daily Targets</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-      <div style="text-align:center">
-        <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Protein</div>
-        <div style="font-size:18px;font-weight:700;color:var(--emerald)" id="nutr-protein">0g</div>
-        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:4px"><div style="height:100%;background:var(--emerald);border-radius:2px;transition:width .4s" id="nutr-protein-bar"></div></div>
+  <div class="card mb-14">
+    <div class="nutr-targets-label mb-8">Daily Targets</div>
+    <div class="nutr-macro-grid">
+      <div class="nutr-macro-item">
+        <div class="nutr-macro-label">Protein</div>
+        <div class="nutr-macro-val c-emerald" id="nutr-protein">0g</div>
+        <div class="nutr-bar-wrap mt-4"><div class="nutr-bar-fill" style="background:var(--emerald)" id="nutr-protein-bar"></div></div>
       </div>
-      <div style="text-align:center">
-        <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Carbs</div>
-        <div style="font-size:18px;font-weight:700;color:var(--gold)" id="nutr-carbs">0g</div>
-        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:4px"><div style="height:100%;background:var(--gold);border-radius:2px;transition:width .4s" id="nutr-carbs-bar"></div></div>
+      <div class="nutr-macro-item">
+        <div class="nutr-macro-label">Carbs</div>
+        <div class="nutr-macro-val c-gold" id="nutr-carbs">0g</div>
+        <div class="nutr-bar-wrap mt-4"><div class="nutr-bar-fill" style="background:var(--gold)" id="nutr-carbs-bar"></div></div>
       </div>
-      <div style="text-align:center">
-        <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Fats</div>
-        <div style="font-size:18px;font-weight:700;color:var(--rose)" id="nutr-fats">0g</div>
-        <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:4px"><div style="height:100%;background:var(--rose);border-radius:2px;transition:width .4s" id="nutr-fats-bar"></div></div>
+      <div class="nutr-macro-item">
+        <div class="nutr-macro-label">Fats</div>
+        <div class="nutr-macro-val c-rose" id="nutr-fats">0g</div>
+        <div class="nutr-bar-wrap mt-4"><div class="nutr-bar-fill" style="background:var(--rose)" id="nutr-fats-bar"></div></div>
       </div>
     </div>
-    <div style="font-size:10px;color:var(--t3);text-align:center;margin-top:8px"><span id="nutr-cal-total">0</span> / <span id="nutr-cal-target">2000</span> cal</div>
-    <div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:4px"><div style="height:100%;background:linear-gradient(90deg,var(--emerald),var(--gold));border-radius:3px;transition:width .4s" id="nutr-cal-bar"></div></div>
+    <div class="nutr-cal-summary mt-8"><span id="nutr-cal-total">0</span> / <span id="nutr-cal-target">2000</span> cal</div>
+    <div class="nutr-cal-bar mt-4"><div class="nutr-cal-fill" id="nutr-cal-bar"></div></div>
   </div>
 
   <!-- Quick Add Common Foods -->
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Quick Add</div></div>
-  <div style="display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:8px;margin-bottom:12px" id="nutr-quick-add">
-    <div class="cmd-ctx-item" onclick="quickAddFood('Chicken Breast',165,31,0,3.6)" style="flex-shrink:0;padding:8px 12px"><span class="cmd-ctx-icon">🍗</span><span class="cmd-ctx-label">Chicken</span></div>
-    <div class="cmd-ctx-item" onclick="quickAddFood('Rice (1 cup)',206,4,45,0.4)" style="flex-shrink:0;padding:8px 12px"><span class="cmd-ctx-icon">🍚</span><span class="cmd-ctx-label">Rice</span></div>
-    <div class="cmd-ctx-item" onclick="quickAddFood('Eggs (2)',143,13,1,10)" style="flex-shrink:0;padding:8px 12px"><span class="cmd-ctx-icon">🥚</span><span class="cmd-ctx-label">Eggs</span></div>
-    <div class="cmd-ctx-item" onclick="quickAddFood('Banana',105,1,27,0.4)" style="flex-shrink:0;padding:8px 12px"><span class="cmd-ctx-icon">🍌</span><span class="cmd-ctx-label">Banana</span></div>
-    <div class="cmd-ctx-item" onclick="quickAddFood('Oatmeal',150,5,27,3)" style="flex-shrink:0;padding:8px 12px"><span class="cmd-ctx-icon">🥣</span><span class="cmd-ctx-label">Oatmeal</span></div>
-    <div class="cmd-ctx-item" onclick="quickAddFood('Greek Yogurt',100,17,6,0.7)" style="flex-shrink:0;padding:8px 12px"><span class="cmd-ctx-icon">🥛</span><span class="cmd-ctx-label">Yogurt</span></div>
-    <div class="cmd-ctx-item" onclick="quickAddFood('Salmon',208,20,0,13)" style="flex-shrink:0;padding:8px 12px"><span class="cmd-ctx-icon">🐟</span><span class="cmd-ctx-label">Salmon</span></div>
-    <div class="cmd-ctx-item" onclick="quickAddFood('Sweet Potato',103,2,24,0.1)" style="flex-shrink:0;padding:8px 12px"><span class="cmd-ctx-icon">🍠</span><span class="cmd-ctx-label">Sw. Potato</span></div>
-    <div class="cmd-ctx-item" onclick="quickAddFood('Avocado',240,3,12,22)" style="flex-shrink:0;padding:8px 12px"><span class="cmd-ctx-icon">🥑</span><span class="cmd-ctx-label">Avocado</span></div>
-    <div class="cmd-ctx-item" onclick="quickAddFood('Protein Shake',120,25,3,1)" style="flex-shrink:0;padding:8px 12px"><span class="cmd-ctx-icon">🥤</span><span class="cmd-ctx-label">Shake</span></div>
+  <div class="nutr-quick-scroll" id="nutr-quick-add">
+    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Chicken Breast',165,31,0,3.6)"><span class="cmd-ctx-icon">🍗</span><span class="cmd-ctx-label">Chicken</span></div>
+    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Rice (1 cup)',206,4,45,0.4)"><span class="cmd-ctx-icon">🍚</span><span class="cmd-ctx-label">Rice</span></div>
+    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Eggs (2)',143,13,1,10)"><span class="cmd-ctx-icon">🥚</span><span class="cmd-ctx-label">Eggs</span></div>
+    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Banana',105,1,27,0.4)"><span class="cmd-ctx-icon">🍌</span><span class="cmd-ctx-label">Banana</span></div>
+    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Oatmeal',150,5,27,3)"><span class="cmd-ctx-icon">🥣</span><span class="cmd-ctx-label">Oatmeal</span></div>
+    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Greek Yogurt',100,17,6,0.7)"><span class="cmd-ctx-icon">🥛</span><span class="cmd-ctx-label">Yogurt</span></div>
+    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Salmon',208,20,0,13)"><span class="cmd-ctx-icon">🐟</span><span class="cmd-ctx-label">Salmon</span></div>
+    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Sweet Potato',103,2,24,0.1)"><span class="cmd-ctx-icon">🍠</span><span class="cmd-ctx-label">Sw. Potato</span></div>
+    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Avocado',240,3,12,22)"><span class="cmd-ctx-icon">🥑</span><span class="cmd-ctx-label">Avocado</span></div>
+    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Protein Shake',120,25,3,1)"><span class="cmd-ctx-icon">🥤</span><span class="cmd-ctx-label">Shake</span></div>
   </div>
 
   <!-- Hydration -->
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Hydration</div></div>
-  <div class="card" style="text-align:center">
+  <div class="card text-center">
     <div class="hydration-track" id="hydration-track">
       <div class="hydration-glass" onclick="logWater(1)">&#x1F4A7;</div>
       <div class="hydration-glass" onclick="logWater(2)">&#x1F4A7;</div>
@@ -2156,7 +2156,7 @@
       <div class="hydration-glass" onclick="logWater(7)">&#x1F4A7;</div>
       <div class="hydration-glass" onclick="logWater(8)">&#x1F4A7;</div>
     </div>
-    <div style="font-size:12px;color:var(--t3);margin-top:8px"><span id="water-count">0</span>/8 glasses</div>
+    <div class="hydration-label"><span id="water-count">0</span>/8 glasses</div>
   </div>
 
   <!-- Meal Log -->
@@ -2169,10 +2169,10 @@
       <div class="meal-section-body" id="meal-breakfast"></div>
       <div class="meal-add">
         <input type="text" id="meal-breakfast-input" placeholder="What did you eat?">
-        <input type="number" id="meal-breakfast-cal" placeholder="Cal" style="width:55px">
-        <input type="number" id="meal-breakfast-protein" placeholder="P" style="width:40px" title="Protein (g)">
-        <input type="number" id="meal-breakfast-carbs" placeholder="C" style="width:40px" title="Carbs (g)">
-        <input type="number" id="meal-breakfast-fats" placeholder="F" style="width:40px" title="Fats (g)">
+        <input type="number" id="meal-breakfast-cal" placeholder="Cal" class="meal-cal-input">
+        <input type="number" id="meal-breakfast-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
+        <input type="number" id="meal-breakfast-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
+        <input type="number" id="meal-breakfast-fats" placeholder="F" class="meal-macro-input" title="Fats (g)">
         <button onclick="addMealItem('breakfast')">+</button>
       </div>
     </div>
@@ -2183,10 +2183,10 @@
       <div class="meal-section-body" id="meal-lunch"></div>
       <div class="meal-add">
         <input type="text" id="meal-lunch-input" placeholder="What did you eat?">
-        <input type="number" id="meal-lunch-cal" placeholder="Cal" style="width:55px">
-        <input type="number" id="meal-lunch-protein" placeholder="P" style="width:40px" title="Protein (g)">
-        <input type="number" id="meal-lunch-carbs" placeholder="C" style="width:40px" title="Carbs (g)">
-        <input type="number" id="meal-lunch-fats" placeholder="F" style="width:40px" title="Fats (g)">
+        <input type="number" id="meal-lunch-cal" placeholder="Cal" class="meal-cal-input">
+        <input type="number" id="meal-lunch-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
+        <input type="number" id="meal-lunch-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
+        <input type="number" id="meal-lunch-fats" placeholder="F" class="meal-macro-input" title="Fats (g)">
         <button onclick="addMealItem('lunch')">+</button>
       </div>
     </div>
@@ -2197,10 +2197,10 @@
       <div class="meal-section-body" id="meal-dinner"></div>
       <div class="meal-add">
         <input type="text" id="meal-dinner-input" placeholder="What did you eat?">
-        <input type="number" id="meal-dinner-cal" placeholder="Cal" style="width:55px">
-        <input type="number" id="meal-dinner-protein" placeholder="P" style="width:40px" title="Protein (g)">
-        <input type="number" id="meal-dinner-carbs" placeholder="C" style="width:40px" title="Carbs (g)">
-        <input type="number" id="meal-dinner-fats" placeholder="F" style="width:40px" title="Fats (g)">
+        <input type="number" id="meal-dinner-cal" placeholder="Cal" class="meal-cal-input">
+        <input type="number" id="meal-dinner-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
+        <input type="number" id="meal-dinner-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
+        <input type="number" id="meal-dinner-fats" placeholder="F" class="meal-macro-input" title="Fats (g)">
         <button onclick="addMealItem('dinner')">+</button>
       </div>
     </div>
@@ -2211,10 +2211,10 @@
       <div class="meal-section-body" id="meal-snacks"></div>
       <div class="meal-add">
         <input type="text" id="meal-snacks-input" placeholder="Snack item">
-        <input type="number" id="meal-snacks-cal" placeholder="Cal" style="width:55px">
-        <input type="number" id="meal-snacks-protein" placeholder="P" style="width:40px" title="Protein (g)">
-        <input type="number" id="meal-snacks-carbs" placeholder="C" style="width:40px" title="Carbs (g)">
-        <input type="number" id="meal-snacks-fats" placeholder="F" style="width:40px" title="Fats (g)">
+        <input type="number" id="meal-snacks-cal" placeholder="Cal" class="meal-cal-input">
+        <input type="number" id="meal-snacks-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
+        <input type="number" id="meal-snacks-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
+        <input type="number" id="meal-snacks-fats" placeholder="F" class="meal-macro-input" title="Fats (g)">
         <button onclick="addMealItem('snacks')">+</button>
       </div>
     </div>
@@ -2224,9 +2224,9 @@
   <div class="us-only">
     <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Meal Planning</div></div>
     <div class="card">
-      <div style="display:flex;gap:8px;margin-bottom:10px">
-        <input type="text" id="mealplan-name" placeholder="Meal name" style="flex:2">
-        <select id="mealplan-day" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+      <div class="d-flex gap-8 mb-10">
+        <input type="text" id="mealplan-name" placeholder="Meal name" class="flex-2">
+        <select id="mealplan-day" class="form-input-inline">
           <option value="mon">Mon</option><option value="tue">Tue</option><option value="wed">Wed</option>
           <option value="thu">Thu</option><option value="fri">Fri</option><option value="sat">Sat</option><option value="sun">Sun</option>
         </select>
@@ -2249,8 +2249,8 @@
   <!-- Recipes -->
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Saved Recipes</div></div>
   <div class="card">
-    <input type="text" id="recipe-name" placeholder="Recipe name" style="margin-bottom:8px">
-    <textarea id="recipe-desc" placeholder="Ingredients & instructions..." style="margin-bottom:8px;min-height:60px;width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical"></textarea>
+    <input type="text" id="recipe-name" placeholder="Recipe name" class="mb-8">
+    <textarea id="recipe-desc" placeholder="Ingredients &amp; instructions..." class="form-textarea form-textarea-min mb-8"></textarea>
     <button class="dq-submit" onclick="saveRecipe()">Save Recipe</button>
   </div>
   <div id="recipe-list"><div class="empty">Save your favorite recipes</div></div>
@@ -2269,33 +2269,33 @@
   </div>
 
   <!-- Day Labels -->
-  <div class="cal-grid" style="margin-bottom:4px">
-    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">S</div>
-    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">M</div>
-    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">T</div>
-    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">W</div>
-    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">T</div>
-    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">F</div>
-    <div style="font-size:10px;text-align:center;color:var(--t3);font-weight:600">S</div>
+  <div class="cal-grid mb-4">
+    <div class="cal-day-label">S</div>
+    <div class="cal-day-label">M</div>
+    <div class="cal-day-label">T</div>
+    <div class="cal-day-label">W</div>
+    <div class="cal-day-label">T</div>
+    <div class="cal-day-label">F</div>
+    <div class="cal-day-label">S</div>
   </div>
 
   <!-- Calendar Grid -->
   <div class="cal-grid" id="cal-grid"></div>
 
   <!-- Selected Day Events -->
-  <div class="sec-head" style="margin-top:20px"><div class="sec-dot sd-teal"></div><div class="sec-title" id="cal-day-label">Today</div></div>
+  <div class="sec-head mt-20"><div class="sec-dot sd-teal"></div><div class="sec-title" id="cal-day-label">Today</div></div>
   <div id="cal-events"><div class="empty">No events for this day</div></div>
 
   <!-- Add Event -->
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Add Event</div></div>
   <div class="card">
-    <input type="text" id="cal-event-title" placeholder="Event title" style="margin-bottom:8px">
-    <div style="display:flex;gap:8px;margin-bottom:8px">
-      <input type="date" id="cal-event-date" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
-      <input type="time" id="cal-event-time" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+    <input type="text" id="cal-event-title" placeholder="Event title" class="mb-8">
+    <div class="d-flex gap-8 mb-8">
+      <input type="date" id="cal-event-date" class="form-input-inline">
+      <input type="time" id="cal-event-time" class="form-input-inline">
     </div>
-    <div style="display:flex;gap:8px;margin-bottom:8px">
-      <select id="cal-event-type" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+    <div class="d-flex gap-8 mb-8">
+      <select id="cal-event-type" class="form-input-inline">
         <option value="joint">Joint</option>
         <option value="her">Her</option>
         <option value="him">Him</option>
@@ -2303,7 +2303,7 @@
         <option value="countdown">Countdown</option>
       </select>
     </div>
-    <textarea id="cal-event-notes" placeholder="Notes..." style="margin-bottom:8px;min-height:40px;width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical"></textarea>
+    <textarea id="cal-event-notes" placeholder="Notes..." class="form-textarea mb-8" style="min-height:40px"></textarea>
     <button class="dq-submit" onclick="addCalEvent()">Add Event</button>
   </div>
 
@@ -2336,8 +2336,8 @@
   <!-- Style Quiz -->
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Your Style</div></div>
   <div class="card" id="dh-style-quiz">
-    <div style="font-size:13px;color:var(--cream);margin-bottom:12px">What is your home style?</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px" id="dh-style-options">
+    <div class="dh-quiz-prompt">What is your home style?</div>
+    <div class="dh-style-options" id="dh-style-options">
       <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('modern')">Modern</button>
       <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('rustic')">Rustic</button>
       <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('minimalist')">Minimalist</button>
@@ -2347,13 +2347,13 @@
       <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('scandinavian')">Scandinavian</button>
       <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('traditional')">Traditional</button>
     </div>
-    <div id="dh-style-result" style="margin-top:12px"></div>
+    <div id="dh-style-result" class="mt-12"></div>
   </div>
 
   <!-- Vision Board -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Home Vision Board</div></div>
-  <div class="card" style="margin-bottom:16px">
-    <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Color Palette</div>
+  <div class="card mb-16">
+    <div class="dh-section-label mb-10">Color Palette</div>
     <div class="dh-palette" id="dh-palette">
       <div class="dh-color" style="background:#F5E6D3" onclick="toggleDHColor('#F5E6D3',this)"></div>
       <div class="dh-color" style="background:#D4946A" onclick="toggleDHColor('#D4946A',this)"></div>
@@ -2366,7 +2366,7 @@
       <div class="dh-color" style="background:#C9B1FF" onclick="toggleDHColor('#C9B1FF',this)"></div>
       <div class="dh-color" style="background:#FFFFFF" onclick="toggleDHColor('#FFFFFF',this)"></div>
     </div>
-    <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px">Must-Haves</div>
+    <div class="dh-section-label" style="margin:14px 0 8px">Must-Haves</div>
     <div class="dh-musthaves" id="dh-musthaves">
       <button class="dh-mh-btn" onclick="toggleDHMust('garden',this)">Garden</button>
       <button class="dh-mh-btn" onclick="toggleDHMust('garage',this)">Garage</button>
@@ -2379,7 +2379,7 @@
       <button class="dh-mh-btn" onclick="toggleDHMust('bathtub',this)">Bathtub</button>
       <button class="dh-mh-btn" onclick="toggleDHMust('island',this)">Kitchen Island</button>
     </div>
-    <button class="dq-submit" onclick="saveDHVision()" style="margin-top:14px;background:var(--lavender)">Save Vision</button>
+    <button class="dq-submit" onclick="saveDHVision()" class="mt-14 btn-lavender">Save Vision</button>
   </div>
   <div id="dh-vision-compare"></div>
 
@@ -2388,55 +2388,55 @@
   <div class="dh-rooms" id="dh-rooms">
     <div class="dh-room card-action" onclick="openRoom('living')">
       <div class="icon-badge ib-lavender">&#x1F6CB;&#xFE0F;</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Living Room</div>
-      <div style="font-size:11px;color:var(--t3)" id="dh-living-ct">0 ideas</div></div>
+      <div><div class="dh-room-name">Living Room</div>
+      <div class="dh-room-ct" id="dh-living-ct">0 ideas</div></div>
     </div>
     <div class="dh-room card-action" onclick="openRoom('bedroom')">
       <div class="icon-badge ib-rose">&#x1F6CF;&#xFE0F;</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Bedroom</div>
-      <div style="font-size:11px;color:var(--t3)" id="dh-bedroom-ct">0 ideas</div></div>
+      <div><div class="dh-room-name">Bedroom</div>
+      <div class="dh-room-ct" id="dh-bedroom-ct">0 ideas</div></div>
     </div>
     <div class="dh-room card-action" onclick="openRoom('kitchen')">
       <div class="icon-badge ib-amber">&#x1F373;</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Kitchen</div>
-      <div style="font-size:11px;color:var(--t3)" id="dh-kitchen-ct">0 ideas</div></div>
+      <div><div class="dh-room-name">Kitchen</div>
+      <div class="dh-room-ct" id="dh-kitchen-ct">0 ideas</div></div>
     </div>
     <div class="dh-room card-action" onclick="openRoom('bathroom')">
       <div class="icon-badge ib-teal">&#x1F6C1;</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Bathroom</div>
-      <div style="font-size:11px;color:var(--t3)" id="dh-bathroom-ct">0 ideas</div></div>
+      <div><div class="dh-room-name">Bathroom</div>
+      <div class="dh-room-ct" id="dh-bathroom-ct">0 ideas</div></div>
     </div>
     <div class="dh-room card-action" onclick="openRoom('outdoor')">
       <div class="icon-badge ib-emerald">&#x1F333;</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Outdoor</div>
-      <div style="font-size:11px;color:var(--t3)" id="dh-outdoor-ct">0 ideas</div></div>
+      <div><div class="dh-room-name">Outdoor</div>
+      <div class="dh-room-ct" id="dh-outdoor-ct">0 ideas</div></div>
     </div>
     <div class="dh-room card-action" onclick="openRoom('office')">
       <div class="icon-badge ib-gold">&#x1F4BB;</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Office</div>
-      <div style="font-size:11px;color:var(--t3)" id="dh-office-ct">0 ideas</div></div>
+      <div><div class="dh-room-name">Office</div>
+      <div class="dh-room-ct" id="dh-office-ct">0 ideas</div></div>
     </div>
   </div>
 
   <!-- Room Detail (shown when a room is selected) -->
-  <div id="dh-room-detail" style="display:none">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+  <div id="dh-room-detail" class="d-none">
+    <div class="d-flex items-center gap-10 mb-16">
       <button class="btn-sm" onclick="closeRoomDetail()">&#x2190; Back</button>
-      <div style="font-size:16px;font-weight:600;color:var(--cream)" id="dh-room-title">Room</div>
+      <div class="t-lg fw-600 c-cream" id="dh-room-title">Room</div>
     </div>
     <div class="card">
-      <textarea id="dh-room-notes" placeholder="Style notes for this room..." style="margin-bottom:8px;min-height:60px;width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical"></textarea>
-      <div style="display:flex;gap:8px;margin-bottom:8px">
-        <input type="text" id="dh-room-link" placeholder="Inspiration URL" style="flex:2">
-        <input type="number" id="dh-room-budget" placeholder="Budget $" style="flex:1">
+      <textarea id="dh-room-notes" placeholder="Style notes for this room..." class="form-textarea form-textarea-min mb-8"></textarea>
+      <div class="d-flex gap-8 mb-8">
+        <input type="text" id="dh-room-link" placeholder="Inspiration URL" class="flex-2">
+        <input type="number" id="dh-room-budget" placeholder="Budget $" class="flex-1">
       </div>
-      <div style="display:flex;gap:8px;margin-bottom:8px">
-        <select id="dh-room-priority" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+      <div class="d-flex gap-8 mb-8">
+        <select id="dh-room-priority" class="form-input-inline">
           <option value="must">Must-have</option>
           <option value="nice">Nice-to-have</option>
           <option value="dream">Dream</option>
         </select>
-        <select id="dh-room-timeline" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+        <select id="dh-room-timeline" class="form-input-inline">
           <option value="now">Now</option>
           <option value="1y">1 Year</option>
           <option value="3y">3 Years</option>
@@ -2451,8 +2451,8 @@
   <!-- Wishlist -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Home Wishlist</div></div>
   <div class="bl-form">
-    <input type="text" id="dh-wish-name" placeholder="Item name" style="flex:2">
-    <input type="number" id="dh-wish-price" placeholder="$" style="flex:1">
+    <input type="text" id="dh-wish-name" placeholder="Item name" class="flex-2">
+    <input type="number" id="dh-wish-price" placeholder="$" class="flex-1">
     <button onclick="addHomeWish()">+</button>
   </div>
   <div id="dh-wishlist"><div class="empty">Add items to your home wishlist</div></div>
@@ -2460,7 +2460,7 @@
   <!-- Budget Overview -->
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Budget Overview</div></div>
   <div class="card" id="dh-budget-overview">
-    <div style="text-align:center;color:var(--t3);font-size:12px">Add room ideas to see budget summary</div>
+    <div class="dh-budget-text">Add room ideas to see budget summary</div>
   </div>
 </div>
 </div>
@@ -2470,41 +2470,41 @@
 <div class="ctn">
 
   <!-- Love Map Score -->
-  <div class="card-hero" style="padding:14px 18px;margin-bottom:16px;background:linear-gradient(135deg, rgba(199,113,131,0.15), rgba(176,138,80,0.1))">
-    <div style="display:flex;align-items:center;justify-content:space-between">
+  <div class="card-hero kyp-hero">
+    <div class="d-flex items-center justify-between">
       <div>
-        <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Love Map Score</div>
-        <div style="font-size:22px;font-weight:700;color:var(--cream)" id="kyp-score">0%</div>
+        <div class="grow-progress-label">Love Map Score</div>
+        <div class="grow-progress-val" id="kyp-score">0%</div>
       </div>
-      <button class="dq-submit" onclick="startKYPQuiz()" style="padding:8px 16px;font-size:11px;background:var(--rose)">Quiz Me!</button>
+      <button class="dq-submit btn-rose" onclick="startKYPQuiz()" style="padding:8px 16px;font-size:11px">Quiz Me!</button>
     </div>
   </div>
 
   <!-- Identity Profile -->
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Identity Profile</div></div>
   <div id="id-quiz-start">
-    <div class="card" style="text-align:center;padding:24px">
-      <div style="font-size:36px;margin-bottom:12px">🪞</div>
-      <div style="font-size:15px;font-weight:500;color:var(--cream);margin-bottom:8px">Discover Your Identity</div>
-      <div style="font-size:12px;color:var(--t3);margin-bottom:16px;line-height:1.6">Take a quick quiz about your personality, values, and preferences. Your partner will see your results!</div>
-      <button class="dq-submit" onclick="startIdentityQuiz()" style="background:var(--lavender)">Start Quiz</button>
+    <div class="card text-center p-20" style="padding:24px">
+      <div class="id-quiz-emoji">🪞</div>
+      <div class="id-quiz-title">Discover Your Identity</div>
+      <div class="id-quiz-desc">Take a quick quiz about your personality, values, and preferences. Your partner will see your results!</div>
+      <button class="dq-submit" onclick="startIdentityQuiz()" class="btn-lavender">Start Quiz</button>
     </div>
   </div>
-  <div id="id-quiz-active" style="display:none"></div>
+  <div id="id-quiz-active" class="d-none"></div>
   <div id="id-quiz-results"></div>
 
   <!-- "Do You Know?" Quiz (hidden by default) -->
-  <div id="kyp-quiz" style="display:none">
-    <div class="card" style="margin-bottom:16px;border:1px solid var(--rose)">
-      <div style="font-size:11px;color:var(--rose);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Do You Know?</div>
-      <div style="font-size:15px;color:var(--cream);font-weight:500;margin-bottom:12px" id="kyp-quiz-q"></div>
-      <input type="text" id="kyp-quiz-answer" placeholder="Your answer..." style="margin-bottom:8px">
-      <div style="display:flex;gap:8px">
-        <button class="dq-submit" onclick="checkKYPQuiz()" style="flex:1;background:var(--rose)">Check</button>
+  <div id="kyp-quiz" class="d-none">
+    <div class="card mb-16" style="border-color:var(--rose)">
+      <div class="kyp-quiz-label">Do You Know?</div>
+      <div class="kyp-quiz-q" id="kyp-quiz-q"></div>
+      <input type="text" id="kyp-quiz-answer" placeholder="Your answer..." class="mb-8">
+      <div class="d-flex gap-8">
+        <button class="dq-submit" onclick="checkKYPQuiz()" class="flex-1 btn-rose">Check</button>
         <button class="btn-sm" onclick="skipKYPQuiz()">Skip</button>
       </div>
-      <div id="kyp-quiz-result" style="font-size:12px;margin-top:8px"></div>
-      <div id="kyp-quiz-stats" style="font-size:11px;color:var(--t3);margin-top:6px;text-align:center"></div>
+      <div id="kyp-quiz-result" class="kyp-quiz-result"></div>
+      <div id="kyp-quiz-stats" class="kyp-quiz-stats"></div>
     </div>
   </div>
 
@@ -2512,93 +2512,93 @@
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Favorites</div></div>
   <div class="kyp-grid" id="kyp-favorites">
     <div class="kyp-item card" onclick="editKYP('food')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Food</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-food">Tap to add</div>
+      <div class="kyp-fav-label">Food</div>
+      <div class="kyp-fav-val" id="kyp-food">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('color')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Color</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-color">Tap to add</div>
+      <div class="kyp-fav-label">Color</div>
+      <div class="kyp-fav-val" id="kyp-color">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('movie')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Movie</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-movie">Tap to add</div>
+      <div class="kyp-fav-label">Movie</div>
+      <div class="kyp-fav-val" id="kyp-movie">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('song')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Song</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-song">Tap to add</div>
+      <div class="kyp-fav-label">Song</div>
+      <div class="kyp-fav-val" id="kyp-song">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('book')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Book</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-book">Tap to add</div>
+      <div class="kyp-fav-label">Book</div>
+      <div class="kyp-fav-val" id="kyp-book">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('place')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Place</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-place">Tap to add</div>
+      <div class="kyp-fav-label">Place</div>
+      <div class="kyp-fav-val" id="kyp-place">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('season')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Season</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-season">Tap to add</div>
+      <div class="kyp-fav-label">Season</div>
+      <div class="kyp-fav-val" id="kyp-season">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('coffee')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Coffee Order</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-coffee">Tap to add</div>
+      <div class="kyp-fav-label">Coffee Order</div>
+      <div class="kyp-fav-val" id="kyp-coffee">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('drink')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Drink</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-drink">Tap to add</div>
+      <div class="kyp-fav-label">Drink</div>
+      <div class="kyp-fav-val" id="kyp-drink">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('flower')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Flower</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-flower">Tap to add</div>
+      <div class="kyp-fav-label">Flower</div>
+      <div class="kyp-fav-val" id="kyp-flower">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('hobby')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Hobby</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-hobby">Tap to add</div>
+      <div class="kyp-fav-label">Hobby</div>
+      <div class="kyp-fav-val" id="kyp-hobby">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('sport')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Sport</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-sport">Tap to add</div>
+      <div class="kyp-fav-label">Sport</div>
+      <div class="kyp-fav-val" id="kyp-sport">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('restaurant')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Restaurant</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-restaurant">Tap to add</div>
+      <div class="kyp-fav-label">Restaurant</div>
+      <div class="kyp-fav-val" id="kyp-restaurant">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('vacationspot')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Vacation Spot</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-vacationspot">Tap to add</div>
+      <div class="kyp-fav-label">Vacation Spot</div>
+      <div class="kyp-fav-val" id="kyp-vacationspot">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('scent')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Scent</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-scent">Tap to add</div>
+      <div class="kyp-fav-label">Scent</div>
+      <div class="kyp-fav-val" id="kyp-scent">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('tvshow')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">TV Show</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-tvshow">Tap to add</div>
+      <div class="kyp-fav-label">TV Show</div>
+      <div class="kyp-fav-val" id="kyp-tvshow">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('dessert')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Dessert</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-dessert">Tap to add</div>
+      <div class="kyp-fav-label">Dessert</div>
+      <div class="kyp-fav-val" id="kyp-dessert">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('comfortfood')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Comfort Food</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-comfortfood">Tap to add</div>
+      <div class="kyp-fav-label">Comfort Food</div>
+      <div class="kyp-fav-val" id="kyp-comfortfood">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('quote')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Fav Quote</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-quote">Tap to add</div>
+      <div class="kyp-fav-label">Fav Quote</div>
+      <div class="kyp-fav-val" id="kyp-quote">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('fear')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Biggest Fear</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-fear">Tap to add</div>
+      <div class="kyp-fav-label">Biggest Fear</div>
+      <div class="kyp-fav-val" id="kyp-fear">Tap to add</div>
     </div>
   </div>
 
   <!-- Important Dates -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Important Dates</div></div>
   <div class="card">
-    <div style="display:flex;gap:8px;margin-bottom:10px">
-      <input type="text" id="kyp-date-label" placeholder="What is this date?" style="flex:2">
-      <input type="date" id="kyp-date-val" style="flex:1;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px">
+    <div class="d-flex gap-8 mb-10">
+      <input type="text" id="kyp-date-label" placeholder="What is this date?" class="flex-2">
+      <input type="date" id="kyp-date-val" class="form-input-inline">
     </div>
     <button class="dq-submit" onclick="addKYPDate()">Save Date</button>
   </div>
@@ -2608,20 +2608,20 @@
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Sizes &amp; Preferences</div></div>
   <div class="kyp-grid" id="kyp-sizes">
     <div class="kyp-item card" onclick="editKYP('shirt')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Shirt</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-shirt">Tap to add</div>
+      <div class="kyp-fav-label">Shirt</div>
+      <div class="kyp-fav-val" id="kyp-shirt">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('pants')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Pants</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-pants">Tap to add</div>
+      <div class="kyp-fav-label">Pants</div>
+      <div class="kyp-fav-val" id="kyp-pants">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('shoe')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Shoe</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-shoe">Tap to add</div>
+      <div class="kyp-fav-label">Shoe</div>
+      <div class="kyp-fav-val" id="kyp-shoe">Tap to add</div>
     </div>
     <div class="kyp-item card" onclick="editKYP('ring')">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Ring</div>
-      <div style="font-size:13px;color:var(--cream)" id="kyp-ring">Tap to add</div>
+      <div class="kyp-fav-label">Ring</div>
+      <div class="kyp-fav-val" id="kyp-ring">Tap to add</div>
     </div>
   </div>
 
@@ -2636,47 +2636,47 @@
   <!-- Love Notes (private) -->
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Private Love Notes</div></div>
   <div class="card">
-    <textarea id="kyp-love-note" placeholder="Things that make them light up..." style="margin-bottom:8px;min-height:60px;width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical"></textarea>
+    <textarea id="kyp-love-note" placeholder="Things that make them light up..." class="form-textarea form-textarea-min mb-8"></textarea>
     <button class="dq-submit" onclick="addLoveNote()">Save Note</button>
   </div>
   <div id="kyp-love-notes"><div class="empty">Your private notes about what they love</div></div>
 
   <!-- Note Categories -->
   <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Things That Make Them Happy</div></div>
-  <div class="card" style="margin-bottom:4px">
-    <div style="display:flex;gap:8px">
-      <input type="text" id="kyp-cat-happy" placeholder="Something that makes them light up..." style="flex:1">
-      <button class="dq-submit" onclick="saveKYPCategory('happy')" style="padding:8px 14px">+</button>
+  <div class="card mb-4">
+    <div class="d-flex gap-8">
+      <input type="text" id="kyp-cat-happy" placeholder="Something that makes them light up..." class="flex-1">
+      <button class="dq-submit" onclick="saveKYPCategory('happy')" class="p-8-14">+</button>
     </div>
   </div>
-  <div id="kyp-cat-list-happy"><div class="empty" style="font-size:12px">Nothing added yet</div></div>
+  <div id="kyp-cat-list-happy"><div class="empty t-sm">Nothing added yet</div></div>
 
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Pet Peeves</div></div>
-  <div class="card" style="margin-bottom:4px">
-    <div style="display:flex;gap:8px">
-      <input type="text" id="kyp-cat-petpeeves" placeholder="Things they can't stand..." style="flex:1">
-      <button class="dq-submit" onclick="saveKYPCategory('petpeeves')" style="padding:8px 14px">+</button>
+  <div class="card mb-4">
+    <div class="d-flex gap-8">
+      <input type="text" id="kyp-cat-petpeeves" placeholder="Things they can't stand..." class="flex-1">
+      <button class="dq-submit" onclick="saveKYPCategory('petpeeves')" class="p-8-14">+</button>
     </div>
   </div>
-  <div id="kyp-cat-list-petpeeves"><div class="empty" style="font-size:12px">Nothing added yet</div></div>
+  <div id="kyp-cat-list-petpeeves"><div class="empty t-sm">Nothing added yet</div></div>
 
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Their Dreams</div></div>
-  <div class="card" style="margin-bottom:4px">
-    <div style="display:flex;gap:8px">
-      <input type="text" id="kyp-cat-dreams" placeholder="Big dreams and aspirations..." style="flex:1">
-      <button class="dq-submit" onclick="saveKYPCategory('dreams')" style="padding:8px 14px">+</button>
+  <div class="card mb-4">
+    <div class="d-flex gap-8">
+      <input type="text" id="kyp-cat-dreams" placeholder="Big dreams and aspirations..." class="flex-1">
+      <button class="dq-submit" onclick="saveKYPCategory('dreams')" class="p-8-14">+</button>
     </div>
   </div>
-  <div id="kyp-cat-list-dreams"><div class="empty" style="font-size:12px">Nothing added yet</div></div>
+  <div id="kyp-cat-list-dreams"><div class="empty t-sm">Nothing added yet</div></div>
 
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Their Fears</div></div>
-  <div class="card" style="margin-bottom:4px">
-    <div style="display:flex;gap:8px">
-      <input type="text" id="kyp-cat-fears" placeholder="Things that worry or scare them..." style="flex:1">
-      <button class="dq-submit" onclick="saveKYPCategory('fears')" style="padding:8px 14px">+</button>
+  <div class="card mb-4">
+    <div class="d-flex gap-8">
+      <input type="text" id="kyp-cat-fears" placeholder="Things that worry or scare them..." class="flex-1">
+      <button class="dq-submit" onclick="saveKYPCategory('fears')" class="p-8-14">+</button>
     </div>
   </div>
-  <div id="kyp-cat-list-fears"><div class="empty" style="font-size:12px">Nothing added yet</div></div>
+  <div id="kyp-cat-list-fears"><div class="empty t-sm">Nothing added yet</div></div>
 </div>
 </div>
 
@@ -2685,18 +2685,18 @@
 <div class="ctn">
 
   <!-- On This Day -->
-  <div id="mem-onthisday" style="display:none">
+  <div id="mem-onthisday" class="d-none">
     <div class="card-story">
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">On This Day</div>
+      <div class="otd-label">On This Day</div>
       <div id="mem-otd-content"></div>
     </div>
   </div>
 
   <!-- Memory Prompt -->
   <div class="mem-prompt-card" id="mem-prompt">
-    <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);margin-bottom:6px">Memory Prompt</div>
-    <div style="font-size:14px;color:var(--cream);font-weight:500;margin-bottom:10px" id="mem-prompt-text"></div>
-    <button class="btn-sm" onclick="useMemoryPrompt()" style="font-size:11px;padding:6px 14px;background:var(--rose);color:#fff;border:none;border-radius:12px;cursor:pointer">Add Memory</button>
+    <div class="mem-prompt-label">Memory Prompt</div>
+    <div class="mem-prompt-text" id="mem-prompt-text"></div>
+    <button class="btn-sm" onclick="useMemoryPrompt()" class="btn-rose btn-sm">Add Memory</button>
   </div>
 
   <!-- View Toggle -->
@@ -2713,23 +2713,23 @@
     <button class="mem-album-pill" onclick="filterMemAlbum('Trips')">Trips</button>
     <button class="mem-album-pill" onclick="filterMemAlbum('Home')">Home</button>
     <button class="mem-album-pill" onclick="filterMemAlbum('Milestones')">Milestones</button>
-    <button class="mem-album-pill" onclick="addCustomAlbum()" style="border-style:dashed">+ New</button>
+    <button class="mem-album-pill" onclick="addCustomAlbum()" class="mem-album-dashed">+ New</button>
   </div>
 
   <!-- Upload -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Add Memory</div></div>
   <div class="card">
     <div class="mem-upload" onclick="document.getElementById('mem-file').click()">
-      <div style="font-size:24px;margin-bottom:4px">&#x1F4F7;</div>
-      <div style="font-size:12px;color:var(--t3)">Tap to upload a photo</div>
+      <div class="mem-upload-icon">&#x1F4F7;</div>
+      <div class="mem-upload-text">Tap to upload a photo</div>
     </div>
-    <input type="file" id="mem-file" accept="image/*" style="display:none" onchange="previewMemory(this)">
-    <div id="mem-preview" style="display:none;margin:10px 0">
+    <input type="file" id="mem-file" accept="image/*" class="d-none" onchange="previewMemory(this)">
+    <div id="mem-preview" class="d-none" style="margin:10px 0">
       <img id="mem-preview-img" style="width:100%;border-radius:14px;max-height:200px;object-fit:cover">
     </div>
-    <input type="text" id="mem-caption" placeholder="Caption this moment..." style="margin-bottom:8px">
-    <input type="date" id="mem-date" style="margin-bottom:8px;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;width:100%">
-    <select id="mem-album" style="margin-bottom:8px;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;width:100%">
+    <input type="text" id="mem-caption" placeholder="Caption this moment..." class="mb-8">
+    <input type="date" id="mem-date" class="form-input-inline w-full mb-8">
+    <select id="mem-album" class="form-input-inline w-full mb-8">
       <option value="">No album</option>
       <option value="Dates">Dates</option>
       <option value="Trips">Trips</option>
@@ -2744,28 +2744,28 @@
   <div class="mem-grid" id="mem-grid"><div class="empty">Upload your first photo together</div></div>
 
   <!-- Memory Timeline (hidden by default) -->
-  <div class="mem-timeline" id="mem-timeline" style="display:none"></div>
+  <div class="mem-timeline" id="mem-timeline" class="d-none"></div>
 </div>
 </div>
 
 <!-- Memory Detail Modal -->
 <div class="mem-detail-modal" id="mem-detail-modal">
-  <button onclick="closeMemoryDetail()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;z-index:5">&times;</button>
+  <button class="mem-detail-close" onclick="closeMemoryDetail()">&times;</button>
   <img id="mem-detail-img" src="" alt="">
-  <div style="text-align:center;max-width:90%">
-    <div style="font-size:15px;color:#fff;font-weight:500" id="mem-detail-caption"></div>
-    <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px" id="mem-detail-meta"></div>
+  <div class="text-center" style="max-width:90%">
+    <div class="mem-detail-caption" id="mem-detail-caption"></div>
+    <div class="mem-detail-meta" id="mem-detail-meta"></div>
   </div>
   <div class="mem-detail-actions">
-    <button id="mem-detail-fav-btn" onclick="toggleMemDetailFav()" style="background:var(--card-bg);color:var(--gold)">Favorite</button>
-    <select id="mem-detail-album" onchange="setMemDetailAlbum(this.value)" style="padding:8px 16px;border-radius:12px;font-size:12px;font-family:'Outfit',sans-serif;border:none;background:var(--card-bg);color:var(--t1);cursor:pointer">
+    <button id="mem-detail-fav-btn" onclick="toggleMemDetailFav()" class="mem-fav-btn">Favorite</button>
+    <select id="mem-detail-album" onchange="setMemDetailAlbum(this.value)" class="form-input-inline cursor-pointer">
       <option value="">No album</option>
       <option value="Dates">Dates</option>
       <option value="Trips">Trips</option>
       <option value="Home">Home</option>
       <option value="Milestones">Milestones</option>
     </select>
-    <button onclick="deleteMemory()" style="background:var(--red);color:#fff">Delete</button>
+    <button onclick="deleteMemory()" class="btn-sm" style="background:var(--red);color:#fff">Delete</button>
   </div>
 </div>
 
@@ -2774,128 +2774,128 @@
 <div class="ctn">
 
   <!-- Level & XP -->
-  <div class="card" style="text-align:center;margin-bottom:20px">
+  <div class="card text-center mb-20">
     <div class="level-badge" id="ach-level">1</div>
-    <div style="font-size:11px;color:var(--t3);margin:8px 0 4px">Couple Level</div>
-    <div class="xp-bar"><div class="xp-fill" id="ach-xp-bar" style="width:0%"></div></div>
-    <div style="font-size:11px;color:var(--t3);margin-top:4px"><span id="ach-xp">0</span> / <span id="ach-xp-next">100</span> XP</div>
+    <div class="t-sm c-t3" style="margin:8px 0 4px">Couple Level</div>
+    <div class="xp-bar"><div class="xp-fill" id="ach-xp-bar" class="ws-bar-init"></div></div>
+    <div class="t-sm c-t3 mt-4"><span id="ach-xp">0</span> / <span id="ach-xp-next">100</span> XP</div>
   </div>
 
   <!-- Badge Grid -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Badges</div></div>
   <div class="achievement-grid" id="ach-grid">
     <div class="achievement locked" id="ach-first-letter">
-      <div style="font-size:24px">&#x1F48C;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">First Letter</div>
-      <div style="font-size:10px;color:var(--t3)">Send your first love letter</div>
+      <div class="ach-emoji">&#x1F48C;</div>
+      <div class="ach-name">First Letter</div>
+      <div class="ach-desc">Send your first love letter</div>
     </div>
     <div class="achievement locked" id="ach-week-streak">
-      <div style="font-size:24px">&#x1F525;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Week Streak</div>
-      <div style="font-size:10px;color:var(--t3)">7-day check-in streak</div>
+      <div class="ach-emoji">&#x1F525;</div>
+      <div class="ach-name">Week Streak</div>
+      <div class="ach-desc">7-day check-in streak</div>
     </div>
     <div class="achievement locked" id="ach-game-champs">
-      <div style="font-size:24px">&#x1F3AE;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Game Night</div>
-      <div style="font-size:10px;color:var(--t3)">Play 10 games together</div>
+      <div class="ach-emoji">&#x1F3AE;</div>
+      <div class="ach-name">Game Night</div>
+      <div class="ach-desc">Play 10 games together</div>
     </div>
     <div class="achievement locked" id="ach-money-smart">
-      <div style="font-size:24px">&#x1F4B0;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Money Smart</div>
-      <div style="font-size:10px;color:var(--t3)">Hit your first savings goal</div>
+      <div class="ach-emoji">&#x1F4B0;</div>
+      <div class="ach-name">Money Smart</div>
+      <div class="ach-desc">Hit your first savings goal</div>
     </div>
     <div class="achievement locked" id="ach-deep-divers">
-      <div style="font-size:24px">&#x1F30A;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Deep Divers</div>
-      <div style="font-size:10px;color:var(--t3)">Complete all soul-level talks</div>
+      <div class="ach-emoji">&#x1F30A;</div>
+      <div class="ach-name">Deep Divers</div>
+      <div class="ach-desc">Complete all soul-level talks</div>
     </div>
     <div class="achievement locked" id="ach-culture-bridge">
-      <div style="font-size:24px">&#x1F30D;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Culture Bridge</div>
-      <div style="font-size:10px;color:var(--t3)">Share 10 cultural exchanges</div>
+      <div class="ach-emoji">&#x1F30D;</div>
+      <div class="ach-name">Culture Bridge</div>
+      <div class="ach-desc">Share 10 cultural exchanges</div>
     </div>
     <div class="achievement locked" id="ach-dream-big">
-      <div style="font-size:24px">&#x2B50;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Dream Big</div>
-      <div style="font-size:10px;color:var(--t3)">Add 20 dreams together</div>
+      <div class="ach-emoji">&#x2B50;</div>
+      <div class="ach-name">Dream Big</div>
+      <div class="ach-desc">Add 20 dreams together</div>
     </div>
     <div class="achievement locked" id="ach-fit-couple">
-      <div style="font-size:24px">&#x1F4AA;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Fit Couple</div>
-      <div style="font-size:10px;color:var(--t3)">Both workout in same week</div>
+      <div class="ach-emoji">&#x1F4AA;</div>
+      <div class="ach-name">Fit Couple</div>
+      <div class="ach-desc">Both workout in same week</div>
     </div>
     <div class="achievement locked" id="ach-home-dreamers">
-      <div style="font-size:24px">&#x1F3E0;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Home Dreamers</div>
-      <div style="font-size:10px;color:var(--t3)">Plan 3 rooms together</div>
+      <div class="ach-emoji">&#x1F3E0;</div>
+      <div class="ach-name">Home Dreamers</div>
+      <div class="ach-desc">Plan 3 rooms together</div>
     </div>
     <div class="achievement locked" id="ach-memory-makers">
-      <div style="font-size:24px">&#x1F4F8;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Memory Makers</div>
-      <div style="font-size:10px;color:var(--t3)">Upload 10 photos</div>
+      <div class="ach-emoji">&#x1F4F8;</div>
+      <div class="ach-name">Memory Makers</div>
+      <div class="ach-desc">Upload 10 photos</div>
     </div>
     <div class="achievement locked" id="ach-know-it-all">
-      <div style="font-size:24px">&#x1F9E0;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Know It All</div>
-      <div style="font-size:10px;color:var(--t3)">Fill all partner favorites</div>
+      <div class="ach-emoji">&#x1F9E0;</div>
+      <div class="ach-name">Know It All</div>
+      <div class="ach-desc">Fill all partner favorites</div>
     </div>
     <div class="achievement locked" id="ach-month-strong">
-      <div style="font-size:24px">&#x1F48E;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Month Strong</div>
-      <div style="font-size:10px;color:var(--t3)">30-day check-in streak</div>
+      <div class="ach-emoji">&#x1F48E;</div>
+      <div class="ach-name">Month Strong</div>
+      <div class="ach-desc">30-day check-in streak</div>
     </div>
     <div class="achievement locked" id="ach-love-letters5">
-      <div style="font-size:24px">&#x1F48C;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Pen Pals</div>
-      <div style="font-size:10px;color:var(--t3)">Send 5 love letters</div>
+      <div class="ach-emoji">&#x1F48C;</div>
+      <div class="ach-name">Pen Pals</div>
+      <div class="ach-desc">Send 5 love letters</div>
       <div class="ach-progress" id="ach-prog-letters5"></div>
     </div>
     <div class="achievement locked" id="ach-love-letters25">
-      <div style="font-size:24px">&#x1F4DD;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Love Novelist</div>
-      <div style="font-size:10px;color:var(--t3)">Send 25 love letters</div>
+      <div class="ach-emoji">&#x1F4DD;</div>
+      <div class="ach-name">Love Novelist</div>
+      <div class="ach-desc">Send 25 love letters</div>
       <div class="ach-progress" id="ach-prog-letters25"></div>
     </div>
     <div class="achievement locked" id="ach-challenge-first">
-      <div style="font-size:24px">&#x1F3C6;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Challenger</div>
-      <div style="font-size:10px;color:var(--t3)">Complete your first challenge</div>
+      <div class="ach-emoji">&#x1F3C6;</div>
+      <div class="ach-name">Challenger</div>
+      <div class="ach-desc">Complete your first challenge</div>
     </div>
     <div class="achievement locked" id="ach-challenge-three">
-      <div style="font-size:24px">&#x1F451;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Challenge Royalty</div>
-      <div style="font-size:10px;color:var(--t3)">Complete 3 challenge packs</div>
+      <div class="ach-emoji">&#x1F451;</div>
+      <div class="ach-name">Challenge Royalty</div>
+      <div class="ach-desc">Complete 3 challenge packs</div>
       <div class="ach-progress" id="ach-prog-challenges"></div>
     </div>
     <div class="achievement locked" id="ach-game-master">
-      <div style="font-size:24px">&#x1F3B2;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Game Master</div>
-      <div style="font-size:10px;color:var(--t3)">Play 50 games together</div>
+      <div class="ach-emoji">&#x1F3B2;</div>
+      <div class="ach-name">Game Master</div>
+      <div class="ach-desc">Play 50 games together</div>
       <div class="ach-progress" id="ach-prog-games50"></div>
     </div>
     <div class="achievement locked" id="ach-gratitude-guru">
-      <div style="font-size:24px">&#x1F64F;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Gratitude Guru</div>
-      <div style="font-size:10px;color:var(--t3)">Log 30 gratitude entries</div>
+      <div class="ach-emoji">&#x1F64F;</div>
+      <div class="ach-name">Gratitude Guru</div>
+      <div class="ach-desc">Log 30 gratitude entries</div>
       <div class="ach-progress" id="ach-prog-gratitude"></div>
     </div>
     <div class="achievement locked" id="ach-century">
-      <div style="font-size:24px">&#x1F4AF;</div>
-      <div style="font-size:11px;font-weight:600;color:var(--cream)">Century Club</div>
-      <div style="font-size:10px;color:var(--t3)">100-day check-in streak</div>
+      <div class="ach-emoji">&#x1F4AF;</div>
+      <div class="ach-name">Century Club</div>
+      <div class="ach-desc">100-day check-in streak</div>
     </div>
   </div>
 
   <!-- Stats -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Journey Stats</div></div>
   <div class="card" id="ach-stats">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px">
-      <div><span style="color:var(--t3)">Letters sent</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-letters">0</div></div>
-      <div><span style="color:var(--t3)">Games played</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-games">0</div></div>
-      <div><span style="color:var(--t3)">Moods logged</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-moods">0</div></div>
-      <div><span style="color:var(--t3)">Dreams shared</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-dreams">0</div></div>
-      <div><span style="color:var(--t3)">Workouts done</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-workouts">0</div></div>
-      <div><span style="color:var(--t3)">Memories saved</span><div style="font-size:18px;font-weight:600;color:var(--cream)" id="ach-stat-memories">0</div></div>
+    <div class="ach-stat-grid">
+      <div><span class="ach-stat-label">Letters sent</span><div class="ach-stat-val" id="ach-stat-letters">0</div></div>
+      <div><span class="ach-stat-label">Games played</span><div class="ach-stat-val" id="ach-stat-games">0</div></div>
+      <div><span class="ach-stat-label">Moods logged</span><div class="ach-stat-val" id="ach-stat-moods">0</div></div>
+      <div><span class="ach-stat-label">Dreams shared</span><div class="ach-stat-val" id="ach-stat-dreams">0</div></div>
+      <div><span class="ach-stat-label">Workouts done</span><div class="ach-stat-val" id="ach-stat-workouts">0</div></div>
+      <div><span class="ach-stat-label">Memories saved</span><div class="ach-stat-val" id="ach-stat-memories">0</div></div>
     </div>
   </div>
 </div>
@@ -2906,7 +2906,7 @@
 <div class="ctn">
 
   <!-- Path Toggle -->
-  <div class="view-toggle" id="grow-toggle" style="margin-bottom:16px">
+  <div class="view-toggle" id="grow-toggle" class="view-toggle mb-16">
     <div class="vt-option active" data-path="her" onclick="setGrowPath('her')">Her Path</div>
     <div class="vt-option" data-path="his" onclick="setGrowPath('his')">His Path</div>
     <div class="vt-option" data-path="us" onclick="setGrowPath('us')">Our Path</div>
@@ -2914,15 +2914,15 @@
   </div>
 
   <!-- Progress summary -->
-  <div class="card-hero" style="padding:14px 18px;margin-bottom:16px;background:linear-gradient(135deg, rgba(123,111,166,0.15), rgba(196,120,74,0.1))">
-    <div style="display:flex;align-items:center;justify-content:space-between">
+  <div class="card-hero grow-progress-card">
+    <div class="d-flex items-center justify-between">
       <div>
-        <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Your Progress</div>
-        <div style="font-size:22px;font-weight:700;color:var(--cream)" id="grow-progress-pct">0%</div>
+        <div class="grow-progress-label">Your Progress</div>
+        <div class="grow-progress-val" id="grow-progress-pct">0%</div>
       </div>
-      <div style="text-align:right">
-        <div style="font-size:11px;color:var(--t3)">Lessons complete</div>
-        <div style="font-size:16px;font-weight:600;color:var(--gold)" id="grow-progress-count">0 / 0</div>
+      <div class="text-right">
+        <div class="grow-lessons-label">Lessons complete</div>
+        <div class="grow-lessons-count" id="grow-progress-count">0 / 0</div>
       </div>
     </div>
   </div>
@@ -2931,11 +2931,11 @@
   <div id="grow-modules"></div>
 
   <!-- Daily reflection -->
-  <div class="sec-head" style="margin-top:16px"><div class="sec-dot sd-lavender"></div><div class="sec-title" id="grow-reflection-title">Daily Reflection</div></div>
+  <div class="sec-head mt-16"><div class="sec-dot sd-lavender"></div><div class="sec-title" id="grow-reflection-title">Daily Reflection</div></div>
   <div class="card">
-    <div style="font-size:12px;color:var(--t3);margin-bottom:8px" id="grow-reflection-prompt">What is one thing you can do today to strengthen your relationship?</div>
-    <textarea id="grow-reflection-input" rows="3" placeholder="Write your reflection..." style="width:100%;padding:10px 14px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
-    <button class="dq-submit" onclick="saveGrowReflection()" style="margin-top:8px">Save Reflection</button>
+    <div class="t-sm c-t3 mb-8" id="grow-reflection-prompt">What is one thing you can do today to strengthen your relationship?</div>
+    <textarea id="grow-reflection-input" rows="3" placeholder="Write your reflection..." class="form-textarea-sm"></textarea>
+    <button class="dq-submit" onclick="saveGrowReflection()" class="mt-8">Save Reflection</button>
   </div>
 </div>
 </div>
@@ -2944,14 +2944,14 @@
 <div class="modal-full" id="grow-lesson-modal">
 <div class="modal-header">
   <button class="modal-close" onclick="closeGrowLesson()">&larr;</button>
-  <div class="form-label" style="margin:0" id="grow-lesson-progress">Lesson 1 of 4</div>
-  <div style="width:36px"></div>
+  <div class="form-label mb-0" id="grow-lesson-progress">Lesson 1 of 4</div>
+  <div class="grow-lesson-spacer"></div>
 </div>
 <div class="modal-body">
-  <div class="ch-progress-bar" style="margin-bottom:20px">
+  <div class="ch-progress-bar mb-20">
     <div class="ch-progress-fill" id="grow-lesson-bar"></div>
   </div>
-  <h2 class="feat-header-title" style="color:var(--cream);margin-bottom:20px" id="grow-lesson-title"></h2>
+  <h2 class="feat-header-title grow-lesson-title-h2" id="grow-lesson-title"></h2>
 
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Introduction</div></div>
   <div class="grow-text" id="grow-lesson-intro"></div>
@@ -2969,10 +2969,10 @@
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">This Week's Action</div></div>
   <div class="grow-action-box" id="grow-lesson-action"></div>
 
-  <div class="form-row" style="margin-top:14px">
-    <button class="dq-submit" onclick="prevGrowLesson()" id="grow-prev-btn" style="flex:1;background:var(--input-bg);color:var(--t2)" disabled>&larr; Previous</button>
-    <button class="dq-submit" onclick="completeGrowLesson()" id="grow-complete-btn" style="flex:1;background:var(--gold)">Mark Complete</button>
-    <button class="dq-submit" onclick="nextGrowLesson()" id="grow-next-btn" style="flex:1">&rarr; Next</button>
+  <div class="form-row mt-14">
+    <button class="dq-submit flex-1" onclick="prevGrowLesson()" id="grow-prev-btn" style="background:var(--input-bg);color:var(--t2)" disabled>&larr; Previous</button>
+    <button class="dq-submit flex-1" onclick="completeGrowLesson()" id="grow-complete-btn" style="background:var(--gold)">Mark Complete</button>
+    <button class="dq-submit flex-1" onclick="nextGrowLesson()" id="grow-next-btn">&rarr; Next</button>
   </div>
 </div>
 </div>
@@ -3000,7 +3000,7 @@
     <div class="form-hint">Only your partner can change their name</div>
   </div>
 
-  <button onclick="saveSettings()" class="dq-submit" style="width:100%;margin-top:8px;margin-bottom:20px">Save Changes</button>
+  <button onclick="saveSettings()" class="dq-submit w-full mt-8 mb-20">Save Changes</button>
 
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Account</div></div>
   <div class="form-card">
@@ -3012,7 +3012,7 @@
       <span class="settings-label">Switch User</span>
       <button onclick="switchUser()" class="settings-btn">Switch</button>
     </div>
-    <div class="settings-row" style="margin-bottom:0">
+    <div class="settings-row mb-0">
       <span class="settings-label">Log Out</span>
       <button onclick="logout()" class="settings-btn settings-btn-danger">Log Out</button>
     </div>
@@ -3022,17 +3022,17 @@
   <div class="form-card">
     <div class="settings-row">
       <span class="settings-label">Export All Data</span>
-      <button onclick="exportAllData()" class="settings-btn" style="background:var(--lavender);color:#fff">Export</button>
+      <button onclick="exportAllData()" class="settings-btn btn-lavender">Export</button>
     </div>
     <div class="form-hint">Download all your shared data as a JSON file for backup</div>
   </div>
 
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">About</div></div>
-  <div style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:20px;text-align:center">
-    <div style="font-size:20px;margin-bottom:4px">💍</div>
-    <div style="font-size:16px;font-weight:700;color:var(--cream);letter-spacing:1px">Moi et Toi</div>
-    <div style="font-size:11px;color:var(--t3);margin-top:4px">A shared space for the two of you</div>
-    <div style="font-size:10px;color:var(--t3);margin-top:12px;opacity:.6">Built with love</div>
+  <div class="settings-about">
+    <div class="t-xl mb-4">💍</div>
+    <div class="t-lg fw-700 c-cream ls-1">Moi et Toi</div>
+    <div class="t-sm c-t3 mt-4">A shared space for the two of you</div>
+    <div class="t-xs c-t3 mt-12" style="opacity:.6">Built with love</div>
   </div>
 </div>
 </div>

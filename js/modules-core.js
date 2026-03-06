@@ -871,7 +871,7 @@ function formatLetterText(text) {
 function toggleOpenWhen() {
   const check = document.getElementById('ow-check');
   const select = document.getElementById('ow-tag');
-  if (select) select.style.display = check.checked ? 'block' : 'none';
+  if (select) { if (check.checked) showEl(select); else hideEl(select); }
 }
 
 async function sendLetter() {
