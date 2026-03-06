@@ -628,6 +628,8 @@
     <div class="hub-row" onclick="go('datenight')"><div class="hub-row-label">Date Night</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dn-status">Plan</span><span class="hub-chevron">›</span></div></div>
     <div style="height:1px;background:var(--tint);margin:0 18px"></div>
     <div class="hub-row" onclick="go('question')"><div class="hub-row-label">Daily Question</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dq-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="hub-row" onclick="go('challenges')"><div class="hub-row-label">Couple Challenges</div><div class="hub-row-status"><span class="hub-badge count" style="background:rgba(123,111,166,0.15);color:var(--lavender)">New</span><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Life Building -->
@@ -1139,6 +1141,67 @@
 
   <button class="lbtn lbv" onclick="openLog('Full Body')">Log workout</button>
   <div class="wft"><div class="wfq" style="color:var(--vio-tag)">The whole body. The whole vision. The whole her.</div><div class="wfs">Complete</div></div>
+</div>
+</div>
+
+<!-- ===== COUPLE CHALLENGES ===== -->
+<div class="pg" id="pg-challenges">
+<div class="ctn">
+
+  <!-- Active Challenge -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Active Challenge</div></div>
+  <div id="ch-active"><div class="empty">No active challenge — start one below!</div></div>
+
+  <!-- Challenge Packs -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Challenge Packs</div></div>
+  <div class="ch-packs">
+    <div class="ch-pack card-action" onclick="startChallenge('love7')">
+      <div class="ch-pack-emoji">💕</div>
+      <div class="ch-pack-info">
+        <div class="ch-pack-name">7 Days of Love</div>
+        <div class="ch-pack-desc">One loving action every day for a week</div>
+      </div>
+    </div>
+    <div class="ch-pack card-action" onclick="startChallenge('comm14')">
+      <div class="ch-pack-emoji">💬</div>
+      <div class="ch-pack-info">
+        <div class="ch-pack-name">14-Day Communication</div>
+        <div class="ch-pack-desc">Strengthen how you talk & listen</div>
+      </div>
+    </div>
+    <div class="ch-pack card-action" onclick="startChallenge('adventure21')">
+      <div class="ch-pack-emoji">🌟</div>
+      <div class="ch-pack-info">
+        <div class="ch-pack-name">21-Day Adventure</div>
+        <div class="ch-pack-desc">Try something new together every day</div>
+      </div>
+    </div>
+    <div class="ch-pack card-action" onclick="startChallenge('intimacy30')">
+      <div class="ch-pack-emoji">🔥</div>
+      <div class="ch-pack-info">
+        <div class="ch-pack-name">30-Day Intimacy</div>
+        <div class="ch-pack-desc">Deepen your emotional & physical bond</div>
+      </div>
+    </div>
+    <div class="ch-pack card-action" onclick="startChallenge('gratitude7')">
+      <div class="ch-pack-emoji">🙏</div>
+      <div class="ch-pack-info">
+        <div class="ch-pack-name">7 Days of Gratitude</div>
+        <div class="ch-pack-desc">Express appreciation in new ways</div>
+      </div>
+    </div>
+    <div class="ch-pack card-action" onclick="startChallenge('fun14')">
+      <div class="ch-pack-emoji">🎉</div>
+      <div class="ch-pack-info">
+        <div class="ch-pack-name">14-Day Fun Factor</div>
+        <div class="ch-pack-desc">Bring more laughter & play into your life</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completed Challenges -->
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Completed</div></div>
+  <div id="ch-completed"><div class="empty">Complete a challenge pack to see it here</div></div>
 </div>
 </div>
 

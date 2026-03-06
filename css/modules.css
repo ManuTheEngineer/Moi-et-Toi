@@ -1204,3 +1204,20 @@
 .ow-card.opened{border-left:3px solid var(--lavender)}
 .ow-card.sent{opacity:.7}
 .ow-status{font-size:10px;color:var(--t3)}
+/* ===== COUPLE CHALLENGES ===== */
+.ch-packs{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.ch-pack{display:flex;align-items:center;gap:14px;padding:16px}
+.ch-pack-emoji{font-size:28px}
+.ch-pack-name{font-size:13px;font-weight:600;color:var(--cream)}
+.ch-pack-desc{font-size:11px;color:var(--t3);margin-top:2px}
+.ch-active-card{padding:20px;background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)}
+.ch-active-header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.ch-active-emoji{font-size:32px}
+.ch-active-name{font-size:15px;font-weight:700;color:var(--cream)}
+.ch-active-progress{font-size:11px;color:var(--t3);margin-top:2px}
+.ch-progress-bar{height:8px;border-radius:10px;background:var(--input-bg);overflow:hidden;margin-bottom:16px}
+.ch-progress-fill{height:100%;border-radius:10px;background:var(--grad-fitness);transition:width .5s ease}
+.ch-today-task{padding:16px;background:var(--tint);border-radius:14px}
+.ch-today-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;font-weight:600}
+.ch-today-text{font-size:14px;color:var(--cream);line-height:1.6}
+.ch-done-badge{font-size:12px;color:var(--emerald);font-weight:600;margin-top:8px}

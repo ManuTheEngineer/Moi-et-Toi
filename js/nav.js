@@ -2,7 +2,7 @@
 // Map sub-pages to their parent tab
 const TAB_MAP = {
   'dash': 'dash',
-  'connect': 'together', 'games': 'together', 'deeptalk': 'together', 'question': 'together', 'datenight': 'together', 'lovelang': 'together', 'checkin': 'together',
+  'connect': 'together', 'games': 'together', 'deeptalk': 'together', 'question': 'together', 'datenight': 'together', 'lovelang': 'together', 'checkin': 'together', 'challenges': 'together',
   'mood': 'track', 'fitness': 'track', 'gratitude': 'track', 'w1': 'track', 'w2': 'track', 'w3': 'track',
   'dreams': 'build', 'homelife': 'build', 'family': 'build', 'foundation': 'build', 'culture': 'build', 'spiritual': 'build', 'dreamhome': 'build', 'calendar': 'build',
   'explore': 'explore', 'more': 'explore', 'ai': 'explore', 'bucket': 'explore', 'wishlist': 'explore', 'herspace': 'explore', 'hisspace': 'explore', 'story': 'explore',
@@ -137,7 +137,7 @@ const _IC = {
 };
 const PAGE_META = {
   dash:{icon:_IC.home,label:'Home'},connect:{icon:_IC.mail,label:'Connect'},games:{icon:_IC.game,label:'Games'},
-  question:{icon:_IC.chat,label:'Daily Q'},deeptalk:{icon:_IC.wave,label:'Deep Talk'},datenight:{icon:_IC.heart,label:'Date Night'},
+  question:{icon:_IC.chat,label:'Daily Q'},deeptalk:{icon:_IC.wave,label:'Deep Talk'},datenight:{icon:_IC.heart,label:'Date Night'},challenges:{icon:_IC.star,label:'Challenges'},
   lovelang:{icon:_IC.heart,label:'Love Lang'},checkin:{icon:_IC.check,label:'Check-in'},gratitude:{icon:_IC.star,label:'Gratitude'},
   knowyou:{icon:_IC.users,label:'Know You'},dreams:{icon:_IC.sparkle,label:'Dreams'},dreamhome:{icon:_IC.house,label:'Dream Home'},
   homelife:{icon:_IC.dollar,label:'Finances'},family:{icon:_IC.users,label:'Family'},bucket:{icon:_IC.list,label:'Bucket List'},

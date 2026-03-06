@@ -2690,3 +2690,227 @@ function renderBattleship(data, key) {
   }
   el.innerHTML = html;
 }
+
+// ========================================
+// ===== COUPLE CHALLENGES =====
+// ========================================
+
+const CHALLENGE_PACKS = {
+  love7: {
+    name: '7 Days of Love', emoji: '💕', days: 7,
+    tasks: [
+      'Write 3 things you love about your partner and share them',
+      'Give your partner a surprise hug from behind',
+      'Cook or order their favorite meal',
+      'Send a sweet text in the middle of the day',
+      'Look into each other\'s eyes for 2 minutes without talking',
+      'Create a playlist of songs that remind you of them',
+      'Write a short love note and hide it somewhere they\'ll find'
+    ]
+  },
+  comm14: {
+    name: '14-Day Communication', emoji: '💬', days: 14,
+    tasks: [
+      'Share your high and low of the day — listen without fixing',
+      'Ask "What can I do to make your day better?"',
+      'Share a childhood memory you\'ve never told them',
+      'Practice active listening: repeat back what they said',
+      'Write down 3 things you appreciate about how they communicate',
+      'Have a 10-minute phone-free conversation',
+      'Share one fear you have about the future',
+      'Tell them something they do that makes you feel safe',
+      'Ask what their ideal Sunday looks like',
+      'Share your love language and ask about theirs',
+      'Discuss a goal you want to achieve together this year',
+      'Ask "What\'s something you wish I knew about you?"',
+      'Share a dream you haven\'t told anyone',
+      'Tell them your favorite memory together and why'
+    ]
+  },
+  adventure21: {
+    name: '21-Day Adventure', emoji: '🌟', days: 21,
+    tasks: [
+      'Try a food neither of you has eaten before',
+      'Take a walk in a neighborhood you\'ve never explored',
+      'Watch a movie in a genre you normally avoid',
+      'Learn 5 words in a language neither of you speaks',
+      'Do a random act of kindness together',
+      'Take silly photos together in public',
+      'Try a new workout or stretch routine together',
+      'Visit a local shop you\'ve never been to',
+      'Cook a dish from a country you want to visit',
+      'Have a picnic — even if it\'s indoors',
+      'Stargaze or watch the sunset together',
+      'Draw portraits of each other (no skill required!)',
+      'Create a time capsule with items from today',
+      'Have a tech-free evening with board games or cards',
+      'Write a short story together, alternating sentences',
+      'Create a bucket list for the next 12 months',
+      'Try to build something with your hands',
+      'Rearrange a room in your home together',
+      'Learn a TikTok dance or song together',
+      'Do each other\'s morning routine for a day',
+      'Plan your dream trip — no budget limits!'
+    ]
+  },
+  intimacy30: {
+    name: '30-Day Intimacy', emoji: '🔥', days: 30,
+    tasks: [
+      'Hold hands for an entire walk', 'Give a 10-minute massage',
+      'Slow dance in the kitchen to a love song', 'Share your favorite physical touch',
+      'Fall asleep holding each other', 'Express one thing that attracts you to them',
+      'Create a "date jar" with ideas for just the two of you', 'Kiss for 30 seconds — slowly',
+      'Shower or bath together', 'Write a letter about what intimacy means to you',
+      'Share a fantasy or dream you have', 'Touch foreheads and breathe together for 2 min',
+      'Try a new form of affection you haven\'t tried', 'Tell them 3 things about their body you love',
+      'Have a candlelit evening', 'Give each other a foot rub',
+      'Share your idea of a perfect romantic evening', 'Cuddle for 20 minutes with no screens',
+      'Whisper something sweet in their ear', 'Leave a love note on the bathroom mirror',
+      'Plan a surprise romantic gesture', 'Share what makes you feel most desired',
+      'Recreate your first kiss', 'Stare into each other\'s eyes for 4 minutes',
+      'Share one way to deepen your connection', 'Do something flirty in public',
+      'Share a dream about your future intimacy', 'Create a "no phones in bed" ritual',
+      'Express gratitude for your physical connection', 'Celebrate completing this together!'
+    ]
+  },
+  gratitude7: {
+    name: '7 Days of Gratitude', emoji: '🙏', days: 7,
+    tasks: [
+      'Write 5 things about your partner you\'re grateful for',
+      'Thank them for something small they did recently',
+      'Tell their family or friend something great about them',
+      'Express gratitude for a challenge you overcame together',
+      'Write a thank-you letter for something they did long ago',
+      'Share what you\'re most grateful for in your relationship',
+      'Create a "gratitude jar" and add your first notes'
+    ]
+  },
+  fun14: {
+    name: '14-Day Fun Factor', emoji: '🎉', days: 14,
+    tasks: [
+      'Have a pillow fight', 'Build a blanket fort and watch a movie in it',
+      'Play a video game or board game together', 'Do karaoke at home',
+      'Have a water balloon fight or splash fight', 'Do impersonations of each other',
+      'Create a TikTok or silly video together', 'Have a themed dinner night',
+      'Go on a scavenger hunt around your neighborhood', 'Play truth or dare',
+      'Have a bake-off challenge', 'Learn a magic trick and perform for each other',
+      'Have a photo shoot — dress up fancy!', 'Write and perform a 2-person skit'
+    ]
+  }
+};
+
+function listenChallenges() {
+  if (!db) return;
+  db.ref('challenges').on('value', snap => {
+    renderChallenges(snap.val() || {});
+  });
+}
+
+function renderChallenges(data) {
+  const activeEl = document.getElementById('ch-active');
+  const completedEl = document.getElementById('ch-completed');
+  if (!activeEl) return;
+
+  const active = data.active;
+  if (!active) {
+    activeEl.innerHTML = '<div class="empty">No active challenge — start one below!</div>';
+  } else {
+    const pack = CHALLENGE_PACKS[active.packId];
+    if (!pack) { activeEl.innerHTML = ''; return; }
+    const completedDays = active.completed || {};
+    const completedCount = Object.keys(completedDays).length;
+    const progress = Math.round((completedCount / pack.days) * 100);
+    const today = new Date().toISOString().split('T')[0];
+    const todayDone = completedDays[today];
+
+    let html = `<div class="ch-active-card">
+      <div class="ch-active-header">
+        <span class="ch-active-emoji">${pack.emoji}</span>
+        <div>
+          <div class="ch-active-name">${pack.name}</div>
+          <div class="ch-active-progress">${completedCount}/${pack.days} days complete</div>
+        </div>
+      </div>
+      <div class="ch-progress-bar"><div class="ch-progress-fill" style="width:${progress}%"></div></div>`;
+
+    const dayIndex = Math.min(completedCount, pack.days - 1);
+    if (completedCount < pack.days) {
+      html += `<div class="ch-today-task">
+        <div class="ch-today-label">Day ${dayIndex + 1} Challenge</div>
+        <div class="ch-today-text">${pack.tasks[dayIndex]}</div>
+        ${todayDone ? '<div class="ch-done-badge">Done today ✓</div>' :
+          `<button class="dq-submit" onclick="completeChallenge()" style="margin-top:10px;width:100%;background:var(--grad-fitness)">Mark Complete ✓</button>`}
+      </div>`;
+    } else {
+      html += `<div class="ch-today-task"><div class="ch-done-badge" style="font-size:14px">Challenge Complete! 🎉</div></div>`;
+    }
+
+    html += `<button class="btn-sm" onclick="abandonChallenge()" style="color:var(--t3);margin-top:8px;font-size:11px">Abandon Challenge</button>
+    </div>`;
+    activeEl.innerHTML = html;
+  }
+
+  const history = data.history ? Object.values(data.history).sort((a, b) => (b.completedAt || 0) - (a.completedAt || 0)) : [];
+  if (completedEl) {
+    if (!history.length) {
+      completedEl.innerHTML = '<div class="empty">Complete a challenge pack to see it here</div>';
+    } else {
+      completedEl.innerHTML = history.map(h => {
+        const pack = CHALLENGE_PACKS[h.packId];
+        if (!pack) return '';
+        return `<div class="card" style="margin-bottom:8px;display:flex;align-items:center;gap:12px">
+          <div style="font-size:24px">${pack.emoji}</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:var(--cream)">${pack.name}</div>
+            <div style="font-size:11px;color:var(--t3)">${new Date(h.completedAt).toLocaleDateString()} · ${h.daysCompleted || pack.days} days</div>
+          </div>
+          <div style="font-size:18px">🏆</div>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+async function startChallenge(packId) {
+  if (!db) return;
+  const pack = CHALLENGE_PACKS[packId];
+  if (!pack) return;
+  const snap = await db.ref('challenges/active').once('value');
+  if (snap.val()) {
+    if (!confirm('You already have an active challenge. Replace it?')) return;
+  }
+  await db.ref('challenges/active').set({
+    packId, startedAt: Date.now(), startedBy: user, completed: {}
+  });
+  toast(pack.name + ' started! 💪');
+}
+
+async function completeChallenge() {
+  if (!db) return;
+  const today = new Date().toISOString().split('T')[0];
+  await db.ref('challenges/active/completed/' + today).set({
+    by: user, at: Date.now()
+  });
+  toast('Day completed! 🎉');
+  const snap = await db.ref('challenges/active').once('value');
+  const active = snap.val();
+  if (active) {
+    const pack = CHALLENGE_PACKS[active.packId];
+    const completedCount = active.completed ? Object.keys(active.completed).length : 0;
+    if (pack && completedCount >= pack.days) {
+      await db.ref('challenges/history').push({
+        packId: active.packId, startedAt: active.startedAt,
+        completedAt: Date.now(), daysCompleted: completedCount
+      });
+      await db.ref('challenges/active').remove();
+      toast('Challenge COMPLETE! 🏆🎉');
+    }
+  }
+}
+
+async function abandonChallenge() {
+  if (!db) return;
+  if (!confirm('Abandon this challenge? Progress will be lost.')) return;
+  await db.ref('challenges/active').remove();
+  toast('Challenge abandoned');
+}

@@ -171,6 +171,7 @@ function finishLogin() {
   renderAllGameStats();
   // New modules
   listenDateNights();
+  listenChallenges();
   loadLLQuiz();
   loadASQuiz();
   listenCheckins();
