@@ -1500,6 +1500,44 @@
 
   <div class="mod-status" id="hl-stats"></div>
 
+  <!-- Expense Quick Add -->
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Expenses</div></div>
+  <div class="fin-quick-add">
+    <div class="fin-input-row">
+      <span class="fin-dollar">$</span>
+      <input type="number" id="fin-amount" placeholder="0.00" step="0.01" class="fin-amount-input">
+    </div>
+    <div class="fin-cats" id="fin-cats">
+      <button class="fin-cat active" data-cat="food" onclick="selectFinCat(this,'food')">🍕 Food</button>
+      <button class="fin-cat" data-cat="transport" onclick="selectFinCat(this,'transport')">🚗 Transport</button>
+      <button class="fin-cat" data-cat="housing" onclick="selectFinCat(this,'housing')">🏠 Housing</button>
+      <button class="fin-cat" data-cat="entertainment" onclick="selectFinCat(this,'entertainment')">🎬 Fun</button>
+      <button class="fin-cat" data-cat="shopping" onclick="selectFinCat(this,'shopping')">🛍️ Shopping</button>
+      <button class="fin-cat" data-cat="health" onclick="selectFinCat(this,'health')">💊 Health</button>
+      <button class="fin-cat" data-cat="subscriptions" onclick="selectFinCat(this,'subscriptions')">📱 Subs</button>
+      <button class="fin-cat" data-cat="other" onclick="selectFinCat(this,'other')">📦 Other</button>
+    </div>
+    <div class="fin-note-row">
+      <input type="text" id="fin-note" placeholder="What was it for?" class="quiz-q">
+      <button class="dq-submit" onclick="addExpense()">Add</button>
+    </div>
+  </div>
+
+  <!-- Monthly Spending Overview -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">This Month</div></div>
+  <div class="fin-overview" id="fin-overview">
+    <div class="fin-ov-total"><span class="fin-ov-num" id="fin-total">$0</span><span class="fin-ov-label">spent</span></div>
+    <div class="fin-ov-split">
+      <div><span id="fin-my-total">$0</span><span class="fin-ov-label">You</span></div>
+      <div><span id="fin-partner-total">$0</span><span class="fin-ov-label"><span class="pname"></span></span></div>
+    </div>
+  </div>
+  <div id="fin-cat-chart"></div>
+
+  <!-- Recent Expenses -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Recent</div></div>
+  <div id="fin-recent"><div class="empty">No expenses yet this month</div></div>
+
   <!-- Shared Budget -->
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Money Goals</div></div>
   <div class="hl-budget-form">

@@ -919,3 +919,39 @@
   .game-picker{grid-template-columns:repeat(3,1fr)}
   .rps-btn{width:80px;font-size:34px;padding:16px 8px}
 }
+
+/* ===== FINANCE MODULE ===== */
+.fin-quick-add{background:var(--card-bg);border-radius:22px;padding:18px;box-shadow:var(--card-shadow);margin-bottom:20px}
+.fin-input-row{display:flex;align-items:center;gap:4px;margin-bottom:12px}
+.fin-dollar{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);padding:0 8px}
+.fin-amount-input{flex:1;font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--cream);padding:8px 0;border:none;background:transparent;outline:none;border-bottom:2px solid var(--bdr-s)}
+.fin-amount-input:focus{border-bottom-color:var(--gold)}
+.fin-amount-input::placeholder{color:var(--t3);font-family:'Outfit',sans-serif;font-size:16px}
+.fin-cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.fin-cat{padding:6px 12px;border-radius:16px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;transition:all .2s}
+.fin-cat.active{background:var(--gold);color:#fff;font-weight:600}
+.fin-note-row{display:flex;gap:8px}
+.fin-note-row .quiz-q{flex:1;margin-bottom:0}
+
+.fin-overview{display:flex;align-items:center;justify-content:space-between;background:var(--card-bg);border-radius:20px;padding:20px;box-shadow:var(--card-shadow);margin-bottom:16px}
+.fin-ov-total{text-align:center}
+.fin-ov-num{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold);display:block;line-height:1}
+.fin-ov-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
+.fin-ov-split{display:flex;gap:20px;text-align:center}
+.fin-ov-split span:first-child{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--cream);display:block;line-height:1}
+
+.fin-cat-bars{background:var(--card-bg);border-radius:18px;padding:16px;box-shadow:var(--card-shadow);margin-bottom:20px}
+.fin-cat-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.fin-cat-row:last-child{margin-bottom:0}
+.fin-cat-name{font-size:11px;color:var(--t2);min-width:70px;text-transform:capitalize}
+.fin-cat-bar{flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.fin-cat-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.fin-cat-amt{font-size:11px;color:var(--cream);font-weight:500;min-width:40px;text-align:right}
+
+.fin-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--bdr-s)}
+.fin-item:last-child{border-bottom:none}
+.fin-item-icon{font-size:20px;min-width:32px;text-align:center}
+.fin-item-info{flex:1}
+.fin-item-note{font-size:13px;font-weight:500;color:var(--cream)}
+.fin-item-meta{font-size:10px;color:var(--t3);margin-top:2px}
+.fin-item-amount{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);font-weight:500}

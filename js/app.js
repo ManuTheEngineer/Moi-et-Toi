@@ -201,6 +201,7 @@ function finishLogin() {
   listenSavings();
   listenMeals();
   listenChores();
+  listenExpenses();
   enforcePrivacy();
   // Dashboard UX
   renderDashHero();

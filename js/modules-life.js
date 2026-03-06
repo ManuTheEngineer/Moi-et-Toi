@@ -744,6 +744,110 @@ function listenIntentions() {
 }
 
 // ===== HOME BUILDING =====
+// ===== EXPENSE TRACKING =====
+let selectedFinCat = 'food';
+
+function selectFinCat(el, cat) {
+  selectedFinCat = cat;
+  document.querySelectorAll('.fin-cat').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+async function addExpense() {
+  if (!db || !user) return;
+  const amount = parseFloat(document.getElementById('fin-amount').value);
+  const note = document.getElementById('fin-note').value.trim();
+  if (!amount || amount <= 0) { toast('Enter an amount'); return; }
+  const today = new Date().toISOString().split('T')[0];
+  const btn = event?.target;
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+  await db.ref('finances/expenses').push({
+    amount, category: selectedFinCat, note,
+    paidBy: user, date: today, timestamp: Date.now()
+  });
+  document.getElementById('fin-amount').value = '';
+  document.getElementById('fin-note').value = '';
+  if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
+  toast('$' + amount.toFixed(2) + ' logged');
+}
+
+function listenExpenses() {
+  if (!db) return;
+  db.ref('finances/expenses').orderByChild('timestamp').on('value', snap => {
+    const all = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; all.push(v); });
+    all.reverse();
+    renderFinOverview(all);
+    renderFinRecent(all);
+    renderFinCatChart(all);
+  });
+}
+
+function renderFinOverview(expenses) {
+  const now = new Date();
+  const month = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  const thisMonth = expenses.filter(e => e.date && e.date.startsWith(month));
+  const total = thisMonth.reduce((s, e) => s + (e.amount || 0), 0);
+  const myTotal = thisMonth.filter(e => e.paidBy === user).reduce((s, e) => s + (e.amount || 0), 0);
+  const partnerTotal = thisMonth.filter(e => e.paidBy === partner).reduce((s, e) => s + (e.amount || 0), 0);
+
+  const el1 = document.getElementById('fin-total');
+  const el2 = document.getElementById('fin-my-total');
+  const el3 = document.getElementById('fin-partner-total');
+  if (el1) el1.textContent = '$' + total.toFixed(0);
+  if (el2) el2.textContent = '$' + myTotal.toFixed(0);
+  if (el3) el3.textContent = '$' + partnerTotal.toFixed(0);
+}
+
+function renderFinRecent(expenses) {
+  const el = document.getElementById('fin-recent');
+  if (!el) return;
+  const recent = expenses.slice(0, 15);
+  if (!recent.length) { el.innerHTML = '<div class="empty">No expenses yet</div>'; return; }
+  const catIcons = { food: '🍕', transport: '🚗', housing: '🏠', entertainment: '🎬', shopping: '🛍️', health: '💊', subscriptions: '📱', other: '📦' };
+  el.innerHTML = recent.map(e => {
+    const who = e.paidBy === user ? 'You' : NAMES[partner];
+    const icon = catIcons[e.category] || '📦';
+    const ago = timeAgo(e.timestamp);
+    return `<div class="fin-item">
+      <div class="fin-item-icon">${icon}</div>
+      <div class="fin-item-info">
+        <div class="fin-item-note">${esc(e.note || e.category)}</div>
+        <div class="fin-item-meta">${who} · ${ago}</div>
+      </div>
+      <div class="fin-item-amount">$${e.amount.toFixed(2)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderFinCatChart(expenses) {
+  const el = document.getElementById('fin-cat-chart');
+  if (!el) return;
+  const now = new Date();
+  const month = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  const thisMonth = expenses.filter(e => e.date && e.date.startsWith(month));
+  if (!thisMonth.length) { el.innerHTML = ''; return; }
+
+  const cats = {};
+  thisMonth.forEach(e => { cats[e.category] = (cats[e.category] || 0) + e.amount; });
+  const total = Object.values(cats).reduce((s, v) => s + v, 0);
+  const sorted = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+  const colors = { food: '#C4784A', transport: '#4A90D9', housing: '#2D8A56', entertainment: '#7B5B8C', shopping: '#D4943A', health: '#C44B4B', subscriptions: '#3A7BA6', other: '#6B6465' };
+
+  let html = '<div class="fin-cat-bars">';
+  sorted.forEach(([cat, amt]) => {
+    const pct = Math.round((amt / total) * 100);
+    const color = colors[cat] || '#6B6465';
+    html += `<div class="fin-cat-row">
+      <span class="fin-cat-name">${cat}</span>
+      <div class="fin-cat-bar"><div class="fin-cat-fill" style="width:${pct}%;background:${color}"></div></div>
+      <span class="fin-cat-amt">$${amt.toFixed(0)}</span>
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
 async function addSavingsGoal() {
   if (!db || !user) return;
   const name = document.getElementById('hl-goal-name').value.trim();
