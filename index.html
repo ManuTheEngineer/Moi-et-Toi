@@ -807,6 +807,18 @@
       <button class="game-pick-btn" onclick="newEmojiGame()">
         <span class="gpb-icon">🎭</span><span class="gpb-name">Emoji Guess</span>
       </button>
+      <button class="game-pick-btn" onclick="new21Q()">
+        <span class="gpb-icon">❓</span><span class="gpb-name">21 Questions</span>
+      </button>
+      <button class="game-pick-btn" onclick="newTTAL()">
+        <span class="gpb-icon">🤥</span><span class="gpb-name">2 Truths</span>
+      </button>
+      <button class="game-pick-btn" onclick="newWordChain()">
+        <span class="gpb-icon">🔗</span><span class="gpb-name">Word Chain</span>
+      </button>
+      <button class="game-pick-btn" onclick="newTrivia()">
+        <span class="gpb-icon">🧠</span><span class="gpb-name">Trivia</span>
+      </button>
     </div>
     <div id="game-stats-board"></div>
   </div>
@@ -854,6 +866,42 @@
       <span class="gv-title">Emoji Guess</span>
     </div>
     <div id="emoji-board"></div>
+  </div>
+
+  <!-- 21 Questions View -->
+  <div class="game-view" id="gv-21q" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">21 Questions</span>
+    </div>
+    <div id="q21-board"></div>
+  </div>
+
+  <!-- Two Truths and a Lie View -->
+  <div class="game-view" id="gv-ttal" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Two Truths & a Lie</span>
+    </div>
+    <div id="ttal-board"></div>
+  </div>
+
+  <!-- Word Chain View -->
+  <div class="game-view" id="gv-wordchain" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Word Chain</span>
+    </div>
+    <div id="wc-board"></div>
+  </div>
+
+  <!-- Trivia View -->
+  <div class="game-view" id="gv-trivia" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Trivia</span>
+    </div>
+    <div id="trivia-board"></div>
   </div>
 
   <!-- Compatibility Score -->

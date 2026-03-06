@@ -952,7 +952,11 @@ function renderAllGameStats() {
       { key: 'c4', name: 'Connect 4', icon: '⊚' },
       { key: 'memory', name: 'Memory', icon: '🃏' },
       { key: 'rps', name: 'Rock Paper Scissors', icon: '✊' },
-      { key: 'emoji', name: 'Emoji Guess', icon: '🎭' }
+      { key: 'emoji', name: 'Emoji Guess', icon: '🎭' },
+      { key: '21q', name: '21 Questions', icon: '❓' },
+      { key: 'ttal', name: '2 Truths', icon: '🤥' },
+      { key: 'wordchain', name: 'Word Chain', icon: '🔗' },
+      { key: 'trivia', name: 'Trivia', icon: '🧠' }
     ];
     const myTotal = my.totalGames || 0;
     const myWins = types.reduce((s, t) => s + ((my[t.key]?.w) || 0), 0);
@@ -993,7 +997,7 @@ function listenGameInvites() {
       if (g.startedBy === partner && g.status === 'active') {
         const el = document.getElementById('game-invite');
         if (el) {
-          const names = { ttt: 'Tic-Tac-Toe', c4: 'Connect Four', memory: 'Memory Match', rps: 'Rock Paper Scissors', emoji: 'Emoji Guess' };
+          const names = { ttt: 'Tic-Tac-Toe', c4: 'Connect Four', memory: 'Memory Match', rps: 'Rock Paper Scissors', emoji: 'Emoji Guess', '21q': '21 Questions', ttal: 'Two Truths & a Lie', wordchain: 'Word Chain', trivia: 'Trivia' };
           el.innerHTML = `<div class="game-invite-card">
             <span>${NAMES[partner]} wants to play <strong>${names[g.type] || g.type}</strong>!</span>
             <button class="gi-join" onclick="joinGame('${c.key}','${g.type}')">Join</button>
@@ -1013,6 +1017,10 @@ function joinGame(key, type) {
   else if (type === 'memory') { listenGame(key, renderMemory); showGameView('memory'); }
   else if (type === 'rps') { listenGame(key, renderRPS); showGameView('rps'); }
   else if (type === 'emoji') { listenGame(key, renderEmoji); showGameView('emoji'); }
+  else if (type === '21q') { listenGame(key, render21Q); showGameView('21q'); }
+  else if (type === 'ttal') { listenGame(key, renderTTAL); showGameView('ttal'); }
+  else if (type === 'wordchain') { listenGame(key, renderWordChain); showGameView('wordchain'); }
+  else if (type === 'trivia') { listenGame(key, renderTrivia); showGameView('trivia'); }
 }
 
 function showGameView(game) {
@@ -1543,6 +1551,462 @@ function renderEmoji(data, key) {
     html += `<div class="game-status">${msg}</div>`;
     html += `<div class="emoji-answer">The answer was: <strong>${data.answer}</strong></div>`;
     html += `<div class="game-actions"><button class="game-btn" onclick="newEmojiGame()">New Round</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ===== 21 QUESTIONS =====
+async function new21Q() {
+  const key = await startGame('21q', {
+    thinker: user,
+    guesser: partner,
+    questionsLeft: 21,
+    questions: [],
+    answer: '',
+    phase: 'setup' // setup -> playing -> finished
+  });
+  if (!key) return;
+  listenGame(key, render21Q);
+  showGameView('21q');
+}
+
+async function set21QAnswer() {
+  if (!activeGameKey) return;
+  const input = document.getElementById('q21-answer-input');
+  if (!input) return;
+  const answer = input.value.trim();
+  if (!answer) { toast('Enter your secret answer'); return; }
+  await db.ref('games/sessions/' + activeGameKey).update({ answer, phase: 'playing' });
+}
+
+async function ask21Q() {
+  if (!activeGameKey) return;
+  const input = document.getElementById('q21-question-input');
+  if (!input) return;
+  const q = input.value.trim();
+  if (!q) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data || data.phase !== 'playing') return;
+  const questions = data.questions || [];
+  questions.push({ text: q, from: user, answer: null });
+  await db.ref('games/sessions/' + activeGameKey).update({ questions, questionsLeft: (data.questionsLeft || 21) - 1 });
+  input.value = '';
+}
+
+async function answer21Q(idx, ans) {
+  if (!activeGameKey) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data) return;
+  const questions = data.questions || [];
+  if (questions[idx]) questions[idx].answer = ans;
+  await db.ref('games/sessions/' + activeGameKey).update({ questions });
+}
+
+async function guess21Q() {
+  if (!activeGameKey) return;
+  const input = document.getElementById('q21-final-guess');
+  if (!input) return;
+  const guess = input.value.trim().toLowerCase();
+  if (!guess) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data) return;
+  const correct = guess === (data.answer || '').toLowerCase();
+  const winner = correct ? data.guesser : data.thinker;
+  await endGame(activeGameKey, '21q', winner);
+  await db.ref('games/sessions/' + activeGameKey).update({ finalGuess: guess, correct });
+}
+
+function render21Q(data, key) {
+  const el = document.getElementById('q21-board');
+  if (!el) return;
+  const isThinker = data.thinker === user;
+  const questions = data.questions || [];
+
+  let html = `<div class="q21-counter">${data.questionsLeft || 0} questions left</div>`;
+
+  if (data.phase === 'setup') {
+    if (isThinker) {
+      html += `<div class="q21-setup">
+        <div class="game-status">Think of something — a person, place, or thing</div>
+        <input id="q21-answer-input" class="quiz-q" placeholder="Type your secret answer..." onkeydown="if(event.key==='Enter')set21QAnswer()">
+        <button class="game-btn" onclick="set21QAnswer()">Lock it in</button>
+      </div>`;
+    } else {
+      html += `<div class="game-status turn">${NAMES[partner]} is thinking of something...</div>`;
+    }
+  } else if (data.phase === 'playing' || data.status === 'active') {
+    // Show Q&A history
+    if (questions.length) {
+      html += '<div class="q21-history">';
+      questions.forEach((q, i) => {
+        html += `<div class="q21-item">
+          <div class="q21-q">${esc(q.text)}</div>`;
+        if (q.answer !== null) {
+          html += `<div class="q21-a ${q.answer}">${q.answer === 'yes' ? '✓ Yes' : q.answer === 'no' ? '✗ No' : '~ Maybe'}</div>`;
+        } else if (isThinker) {
+          html += `<div class="q21-btns">
+            <button class="q21-ans yes" onclick="answer21Q(${i},'yes')">Yes</button>
+            <button class="q21-ans no" onclick="answer21Q(${i},'no')">No</button>
+            <button class="q21-ans maybe" onclick="answer21Q(${i},'maybe')">Maybe</button>
+          </div>`;
+        } else {
+          html += `<div class="q21-a pending">Waiting...</div>`;
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+
+    if (!isThinker && data.questionsLeft > 0) {
+      html += `<div class="q21-ask">
+        <input id="q21-question-input" class="quiz-q" placeholder="Ask a yes/no question..." onkeydown="if(event.key==='Enter')ask21Q()">
+        <button class="game-btn" onclick="ask21Q()">Ask</button>
+      </div>`;
+      html += `<div class="q21-guess-section" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr-s)">
+        <div style="font-size:11px;color:var(--t3);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Ready to guess?</div>
+        <input id="q21-final-guess" class="quiz-q" placeholder="Your final guess..." onkeydown="if(event.key==='Enter')guess21Q()">
+        <button class="game-btn" onclick="guess21Q()">Final Guess</button>
+      </div>`;
+    } else if (!isThinker && data.questionsLeft <= 0) {
+      html += `<div class="q21-guess-section">
+        <div class="game-status">No questions left — make your guess!</div>
+        <input id="q21-final-guess" class="quiz-q" placeholder="Your final guess...">
+        <button class="game-btn" onclick="guess21Q()">Final Guess</button>
+      </div>`;
+    } else {
+      html += `<div class="game-status turn">Waiting for ${NAMES[partner]} to ask or guess...</div>`;
+    }
+  }
+
+  if (data.status === 'finished') {
+    html = `<div class="q21-counter">${21 - (data.questionsLeft || 0)} questions used</div>`;
+    html += `<div class="game-status">${data.correct ? NAMES[data.guesser] + ' guessed it!' : NAMES[data.thinker] + ' stumped them!'}</div>`;
+    html += `<div style="text-align:center;font-size:14px;color:var(--t2);margin:8px 0">The answer was: <strong>${esc(data.answer)}</strong></div>`;
+    if (data.finalGuess) html += `<div style="text-align:center;font-size:12px;color:var(--t3)">Guess: "${esc(data.finalGuess)}"</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="new21Q()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ===== TWO TRUTHS AND A LIE =====
+async function newTTAL() {
+  const key = await startGame('ttal', {
+    writer: user,
+    guesser: partner,
+    statements: [],
+    lieIndex: -1,
+    guess: -1,
+    phase: 'setup'
+  });
+  if (!key) return;
+  listenGame(key, renderTTAL);
+  showGameView('ttal');
+}
+
+async function submitTTAL() {
+  if (!activeGameKey) return;
+  const s1 = document.getElementById('ttal-s1')?.value.trim();
+  const s2 = document.getElementById('ttal-s2')?.value.trim();
+  const s3 = document.getElementById('ttal-s3')?.value.trim();
+  const lieIdx = parseInt(document.querySelector('input[name="ttal-lie"]:checked')?.value);
+  if (!s1 || !s2 || !s3) { toast('Fill in all three statements'); return; }
+  if (isNaN(lieIdx)) { toast('Select which one is the lie'); return; }
+  await db.ref('games/sessions/' + activeGameKey).update({
+    statements: [s1, s2, s3],
+    lieIndex: lieIdx,
+    phase: 'guessing'
+  });
+}
+
+async function guessTTAL(idx) {
+  if (!activeGameKey) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data) return;
+  const correct = idx === data.lieIndex;
+  const winner = correct ? data.guesser : data.writer;
+  await db.ref('games/sessions/' + activeGameKey).update({ guess: idx });
+  await endGame(activeGameKey, 'ttal', winner);
+}
+
+function renderTTAL(data, key) {
+  const el = document.getElementById('ttal-board');
+  if (!el) return;
+  const isWriter = data.writer === user;
+
+  let html = '';
+  if (data.phase === 'setup') {
+    if (isWriter) {
+      html += `<div class="game-status">Write two truths and one lie about yourself</div>
+        <div class="ttal-form">
+          <div class="ttal-input-row">
+            <input type="radio" name="ttal-lie" value="0" id="ttal-r0"><label for="ttal-r0" class="ttal-lie-label">Lie</label>
+            <input id="ttal-s1" class="quiz-q" placeholder="Statement 1...">
+          </div>
+          <div class="ttal-input-row">
+            <input type="radio" name="ttal-lie" value="1" id="ttal-r1"><label for="ttal-r1" class="ttal-lie-label">Lie</label>
+            <input id="ttal-s2" class="quiz-q" placeholder="Statement 2...">
+          </div>
+          <div class="ttal-input-row">
+            <input type="radio" name="ttal-lie" value="2" id="ttal-r2"><label for="ttal-r2" class="ttal-lie-label">Lie</label>
+            <input id="ttal-s3" class="quiz-q" placeholder="Statement 3...">
+          </div>
+          <button class="game-btn" onclick="submitTTAL()">Submit</button>
+        </div>`;
+    } else {
+      html += `<div class="game-status turn">${NAMES[partner]} is writing their statements...</div>`;
+    }
+  } else if (data.phase === 'guessing' && data.status === 'active') {
+    html += `<div class="game-status">${isWriter ? 'Waiting for ' + NAMES[partner] + ' to guess the lie...' : 'Which one is the lie?'}</div>`;
+    html += '<div class="ttal-statements">';
+    data.statements.forEach((s, i) => {
+      if (!isWriter) {
+        html += `<button class="ttal-stmt" onclick="guessTTAL(${i})">${esc(s)}</button>`;
+      } else {
+        html += `<div class="ttal-stmt static">${esc(s)} ${i === data.lieIndex ? '<span class="ttal-lie-mark">← the lie</span>' : ''}</div>`;
+      }
+    });
+    html += '</div>';
+  }
+
+  if (data.status === 'finished') {
+    const correct = data.guess === data.lieIndex;
+    html += `<div class="game-status">${correct ? NAMES[data.guesser] + ' found the lie!' : NAMES[data.writer] + ' fooled them!'}</div>`;
+    html += '<div class="ttal-statements">';
+    data.statements.forEach((s, i) => {
+      const cls = i === data.lieIndex ? 'lie' : 'truth';
+      const picked = i === data.guess ? ' picked' : '';
+      html += `<div class="ttal-stmt result ${cls}${picked}">${esc(s)} <span class="ttal-badge">${i === data.lieIndex ? '🤥 LIE' : '✓ TRUE'}</span></div>`;
+    });
+    html += '</div>';
+    html += `<div class="game-actions"><button class="game-btn" onclick="newTTAL()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ===== WORD CHAIN =====
+async function newWordChain() {
+  const categories = ['animals', 'food', 'places', 'movies', 'anything'];
+  const cat = categories[Math.floor(Math.random() * categories.length)];
+  const starters = { animals: 'cat', food: 'pizza', places: 'Paris', movies: 'Avatar', anything: 'love' };
+  const key = await startGame('wordchain', {
+    turn: user,
+    category: cat,
+    words: [{ word: starters[cat], by: 'system' }],
+    scores: { her: 0, him: 0 },
+    timer: 15,
+    lastTime: Date.now()
+  });
+  if (!key) return;
+  listenGame(key, renderWordChain);
+  showGameView('wordchain');
+}
+
+async function submitWord() {
+  if (!activeGameKey) return;
+  const input = document.getElementById('wc-word-input');
+  if (!input) return;
+  const word = input.value.trim().toLowerCase();
+  if (!word) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data || data.turn !== user || data.status !== 'active') return;
+  const words = data.words || [];
+  const lastWord = words[words.length - 1].word.toLowerCase();
+  const lastChar = lastWord.charAt(lastWord.length - 1);
+
+  // Validate: starts with last letter of previous word
+  if (word.charAt(0) !== lastChar) {
+    toast('Word must start with "' + lastChar.toUpperCase() + '"');
+    return;
+  }
+  // No repeats
+  if (words.some(w => w.word.toLowerCase() === word)) {
+    toast('Already used!');
+    return;
+  }
+
+  words.push({ word, by: user });
+  const scores = data.scores || { her: 0, him: 0 };
+  scores[user] = (scores[user] || 0) + 1;
+  await db.ref('games/sessions/' + activeGameKey).update({
+    words,
+    scores,
+    turn: partner,
+    lastTime: Date.now()
+  });
+  input.value = '';
+}
+
+async function passWordChain() {
+  if (!activeGameKey) return;
+  // Passing means you lose
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data || data.status !== 'active') return;
+  await endGame(activeGameKey, 'wordchain', partner);
+}
+
+function renderWordChain(data, key) {
+  const el = document.getElementById('wc-board');
+  if (!el) return;
+  const isMyTurn = data.turn === user;
+  const words = data.words || [];
+  const lastWord = words.length ? words[words.length - 1].word : '';
+  const nextLetter = lastWord.charAt(lastWord.length - 1).toUpperCase();
+  const scores = data.scores || { her: 0, him: 0 };
+
+  let html = `<div class="wc-scorebar">
+    <span class="me">${NAMES[user]}: ${scores[user] || 0}</span>
+    <span class="wc-cat">${data.category || 'anything'}</span>
+    <span>${NAMES[partner]}: ${scores[partner] || 0}</span>
+  </div>`;
+
+  // Word chain display
+  html += '<div class="wc-chain">';
+  const recent = words.slice(-8);
+  recent.forEach(w => {
+    const cls = w.by === user ? 'me' : w.by === partner ? 'them' : 'system';
+    html += `<div class="wc-word ${cls}">${esc(w.word)}</div>`;
+  });
+  html += '</div>';
+
+  if (data.status === 'active') {
+    if (isMyTurn) {
+      html += `<div class="wc-prompt">Word starting with <strong>"${nextLetter}"</strong></div>`;
+      html += `<div class="wc-input-row">
+        <input id="wc-word-input" class="quiz-q" placeholder="Type a word..." onkeydown="if(event.key==='Enter')submitWord()" style="flex:1">
+        <button class="game-btn" onclick="submitWord()">Go</button>
+      </div>`;
+      html += `<button class="game-btn secondary" onclick="passWordChain()" style="margin-top:8px;width:100%">I give up</button>`;
+    } else {
+      html += `<div class="game-status turn">Waiting for ${NAMES[partner]} — next letter: "${nextLetter}"</div>`;
+    }
+  } else {
+    html += `<div class="game-status">${data.winner === user ? 'You won!' : NAMES[partner] + ' won!'} Chain: ${words.length - 1} words</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newWordChain()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ===== TRIVIA =====
+const TRIVIA_QUESTIONS = [
+  { q: "What's the hardest natural substance?", a: "Diamond", opts: ["Diamond", "Gold", "Titanium", "Quartz"] },
+  { q: "Which planet is known as the Red Planet?", a: "Mars", opts: ["Venus", "Mars", "Jupiter", "Mercury"] },
+  { q: "How many bones are in the adult human body?", a: "206", opts: ["206", "208", "186", "212"] },
+  { q: "What year did the Titanic sink?", a: "1912", opts: ["1905", "1912", "1920", "1898"] },
+  { q: "Which country has the most time zones?", a: "France", opts: ["Russia", "USA", "France", "China"] },
+  { q: "What's the smallest country in the world?", a: "Vatican City", opts: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"] },
+  { q: "Who painted the Mona Lisa?", a: "Leonardo da Vinci", opts: ["Michelangelo", "Leonardo da Vinci", "Raphael", "Donatello"] },
+  { q: "What's the longest river in the world?", a: "Nile", opts: ["Amazon", "Nile", "Yangtze", "Mississippi"] },
+  { q: "Which element has the chemical symbol 'Au'?", a: "Gold", opts: ["Silver", "Gold", "Iron", "Aluminum"] },
+  { q: "In what year did World War II end?", a: "1945", opts: ["1943", "1944", "1945", "1946"] },
+  { q: "What's the capital of Australia?", a: "Canberra", opts: ["Sydney", "Melbourne", "Canberra", "Brisbane"] },
+  { q: "How many hearts does an octopus have?", a: "3", opts: ["1", "2", "3", "4"] },
+  { q: "Which language has the most native speakers?", a: "Mandarin Chinese", opts: ["English", "Mandarin Chinese", "Spanish", "Hindi"] },
+  { q: "What's the largest ocean?", a: "Pacific", opts: ["Atlantic", "Pacific", "Indian", "Arctic"] },
+  { q: "What color do you get mixing blue and yellow?", a: "Green", opts: ["Green", "Purple", "Orange", "Brown"] },
+  { q: "Which planet has the most moons?", a: "Saturn", opts: ["Jupiter", "Saturn", "Uranus", "Neptune"] },
+  { q: "What year was the first iPhone released?", a: "2007", opts: ["2005", "2006", "2007", "2008"] },
+  { q: "What's the fastest land animal?", a: "Cheetah", opts: ["Lion", "Cheetah", "Gazelle", "Horse"] },
+  { q: "How many strings does a standard guitar have?", a: "6", opts: ["4", "5", "6", "8"] },
+  { q: "What gas do plants absorb from the air?", a: "Carbon dioxide", opts: ["Oxygen", "Carbon dioxide", "Nitrogen", "Hydrogen"] }
+];
+
+async function newTrivia() {
+  // Pick 5 random questions
+  const shuffled = [...TRIVIA_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 5);
+  const key = await startGame('trivia', {
+    questions: shuffled.map(q => ({ ...q, opts: q.opts.sort(() => Math.random() - 0.5) })),
+    current: 0,
+    scores: { her: 0, him: 0 },
+    answers: { her: [], him: [] },
+    turn: user
+  });
+  if (!key) return;
+  listenGame(key, renderTrivia);
+  showGameView('trivia');
+}
+
+async function answerTrivia(answer) {
+  if (!activeGameKey) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data || data.status !== 'active' || data.turn !== user) return;
+  const q = data.questions[data.current];
+  const correct = answer === q.a;
+  const scores = data.scores || { her: 0, him: 0 };
+  const answers = data.answers || { her: [], him: [] };
+  if (correct) scores[user] = (scores[user] || 0) + 1;
+  answers[user] = answers[user] || [];
+  answers[user].push({ q: data.current, picked: answer, correct });
+
+  // Check if partner also answered this question
+  const partnerAnswers = answers[partner] || [];
+  const partnerAnswered = partnerAnswers.some(a => a.q === data.current);
+
+  let updates = { scores, answers };
+  if (partnerAnswered) {
+    // Both answered — move to next question
+    if (data.current + 1 >= data.questions.length) {
+      // Game over
+      const w = scores[user] > scores[partner] ? user : scores[partner] > scores[user] ? partner : 'draw';
+      updates.turn = null;
+      await db.ref('games/sessions/' + activeGameKey).update(updates);
+      await endGame(activeGameKey, 'trivia', w);
+      return;
+    } else {
+      updates.current = data.current + 1;
+      updates.turn = user; // both can answer
+    }
+  } else {
+    updates.turn = partner; // wait for partner
+  }
+  await db.ref('games/sessions/' + activeGameKey).update(updates);
+}
+
+function renderTrivia(data, key) {
+  const el = document.getElementById('trivia-board');
+  if (!el) return;
+  const scores = data.scores || { her: 0, him: 0 };
+  const myAnswers = (data.answers && data.answers[user]) || [];
+  const current = data.current || 0;
+
+  let html = `<div class="trivia-scorebar">
+    <span class="me">${NAMES[user]}: ${scores[user] || 0}</span>
+    <span class="trivia-round">Q${current + 1} of ${data.questions.length}</span>
+    <span>${NAMES[partner]}: ${scores[partner] || 0}</span>
+  </div>`;
+
+  if (data.status === 'active') {
+    const q = data.questions[current];
+    const alreadyAnswered = myAnswers.some(a => a.q === current);
+
+    html += `<div class="trivia-question">${esc(q.q)}</div>`;
+    html += '<div class="trivia-opts">';
+    q.opts.forEach(opt => {
+      if (alreadyAnswered) {
+        const myPick = myAnswers.find(a => a.q === current);
+        const cls = opt === q.a ? 'correct' : (myPick && myPick.picked === opt ? 'wrong' : '');
+        html += `<div class="trivia-opt ${cls} disabled">${esc(opt)}</div>`;
+      } else {
+        html += `<button class="trivia-opt" onclick="answerTrivia('${esc(opt)}')">${esc(opt)}</button>`;
+      }
+    });
+    html += '</div>';
+
+    if (alreadyAnswered) {
+      html += `<div class="game-status turn">Waiting for ${NAMES[partner]}...</div>`;
+    }
+  } else {
+    // Finished
+    const w = data.winner;
+    html += `<div class="game-status">${w === 'draw' ? "It's a tie!" : (w === user ? 'You won!' : NAMES[partner] + ' won!')}</div>`;
+    html += `<div style="text-align:center;font-size:14px;color:var(--t2);margin:8px 0">${scores[user] || 0} — ${scores[partner] || 0}</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newTrivia()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
   }
   el.innerHTML = html;
 }

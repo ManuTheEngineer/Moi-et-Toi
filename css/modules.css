@@ -915,9 +915,72 @@
 .gs-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--red));border-radius:3px;transition:width .5s ease}
 .gs-record{font-size:10px;color:var(--t3);min-width:60px;text-align:right}
 
+/* 21 Questions */
+.q21-counter{text-align:center;padding:10px;font-size:18px;font-family:'Cormorant Garamond',serif;color:var(--gold);margin-bottom:12px}
+.q21-setup{text-align:center}
+.q21-history{margin-bottom:16px}
+.q21-item{padding:10px 14px;background:var(--card-bg);border-radius:14px;margin-bottom:6px;box-shadow:var(--card-shadow)}
+.q21-q{font-size:13px;color:var(--cream);margin-bottom:6px}
+.q21-a{font-size:12px;font-weight:600}
+.q21-a.yes{color:var(--teal)}
+.q21-a.no{color:var(--red)}
+.q21-a.maybe{color:var(--gold)}
+.q21-a.pending{color:var(--t3);font-style:italic;font-weight:400}
+.q21-btns{display:flex;gap:6px}
+.q21-ans{padding:4px 14px;border-radius:12px;border:none;font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;font-weight:600;transition:all .2s}
+.q21-ans.yes{background:rgba(42,143,143,.15);color:var(--teal)}
+.q21-ans.no{background:rgba(196,75,75,.1);color:var(--red)}
+.q21-ans.maybe{background:var(--tint);color:var(--gold)}
+.q21-ans:active{transform:scale(.92)}
+.q21-ask{margin-top:12px}
+.q21-guess-section{text-align:center}
+
+/* Two Truths and a Lie */
+.ttal-form{display:flex;flex-direction:column;gap:10px}
+.ttal-input-row{display:flex;align-items:center;gap:8px}
+.ttal-input-row input[type="radio"]{accent-color:var(--red);flex-shrink:0}
+.ttal-lie-label{font-size:10px;color:var(--red);font-weight:600;min-width:24px;flex-shrink:0}
+.ttal-input-row .quiz-q{flex:1;margin-bottom:0}
+.ttal-statements{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.ttal-stmt{padding:16px 20px;border-radius:16px;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:14px;color:var(--cream);text-align:left;border:2px solid transparent;cursor:pointer;transition:all .25s;font-family:'Outfit',sans-serif;line-height:1.5}
+.ttal-stmt:hover:not(.static):not(.result){border-color:var(--gold);transform:translateY(-2px)}
+.ttal-stmt:active:not(.static):not(.result){transform:scale(.97)}
+.ttal-stmt.static{cursor:default}
+.ttal-stmt.result.truth{border-color:var(--teal);background:rgba(42,143,143,.06)}
+.ttal-stmt.result.lie{border-color:var(--red);background:rgba(196,75,75,.06)}
+.ttal-stmt.result.picked{box-shadow:0 0 0 3px rgba(196,120,74,.3)}
+.ttal-badge{float:right;font-size:11px;font-weight:600;letter-spacing:.5px}
+.ttal-lie-mark{font-size:10px;color:var(--red);font-style:italic}
+
+/* Word Chain */
+.wc-scorebar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:14px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);font-size:13px;color:var(--t2)}
+.wc-scorebar .me{color:var(--gold);font-weight:600}
+.wc-cat{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
+.wc-chain{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;min-height:40px}
+.wc-word{padding:6px 14px;border-radius:14px;font-size:13px;font-weight:500;animation:fadeIn .3s ease}
+.wc-word.me{background:var(--tint);color:var(--gold)}
+.wc-word.them{background:rgba(199,113,131,.1);color:var(--red)}
+.wc-word.system{background:var(--bg3);color:var(--t2)}
+.wc-prompt{text-align:center;font-size:14px;color:var(--cream);margin-bottom:12px}
+.wc-input-row{display:flex;gap:8px}
+
+/* Trivia */
+.trivia-scorebar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);font-size:13px;color:var(--t2)}
+.trivia-scorebar .me{color:var(--gold);font-weight:600}
+.trivia-round{font-size:11px;color:var(--t3)}
+.trivia-question{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--cream);text-align:center;margin-bottom:20px;line-height:1.4;font-weight:400}
+.trivia-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.trivia-opt{padding:16px 14px;border-radius:16px;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:13px;color:var(--cream);text-align:center;cursor:pointer;transition:all .25s;border:2px solid transparent;font-family:'Outfit',sans-serif}
+.trivia-opt:hover:not(.disabled){border-color:var(--gold);transform:translateY(-2px)}
+.trivia-opt:active:not(.disabled){transform:scale(.95)}
+.trivia-opt.correct{border-color:var(--teal);background:rgba(42,143,143,.1);color:var(--teal);font-weight:600}
+.trivia-opt.wrong{border-color:var(--red);background:rgba(196,75,75,.06);color:var(--red)}
+.trivia-opt.disabled{cursor:default;opacity:.8}
+
 @media(max-width:400px){
   .game-picker{grid-template-columns:repeat(3,1fr)}
   .rps-btn{width:80px;font-size:34px;padding:16px 8px}
+  .trivia-opts{grid-template-columns:1fr}
 }
 
 /* ===== FINANCE MODULE ===== */
