@@ -91,9 +91,9 @@
 <nav class="bnav" role="navigation" aria-label="Main navigation">
   <div class="bnav-indicator" id="bnav-indicator"></div>
   <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></span><span class="nl">Today</span><span class="bn-badge" id="badge-dash"></span></button>
-  <button class="bn" data-p="together" onclick="go('connect')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></span><span class="nl">Together</span><span class="bn-badge" id="badge-together"></span></button>
-  <button class="bn" data-p="track" onclick="go('mood')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></span><span class="nl">Track</span><span class="bn-badge" id="badge-track"></span></button>
-  <button class="bn" data-p="build" onclick="go('dreams')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="nl">Build</span><span class="bn-badge" id="badge-build"></span></button>
+  <button class="bn" data-p="together" onclick="go('together')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></span><span class="nl">Together</span><span class="bn-badge" id="badge-together"></span></button>
+  <button class="bn" data-p="track" onclick="go('track')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></span><span class="nl">Track</span><span class="bn-badge" id="badge-track"></span></button>
+  <button class="bn" data-p="build" onclick="go('build')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="nl">Build</span><span class="bn-badge" id="badge-build"></span></button>
   <button class="bn" data-p="explore" onclick="go('explore')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span class="nl">Explore</span><span class="bn-badge" id="badge-explore"></span></button>
 </nav>
 
@@ -288,6 +288,393 @@
     </div>
   </div>
 
+</div>
+</div>
+
+<!-- ===== TOGETHER HUB ===== -->
+<div class="pg" id="pg-together">
+<div class="ctn">
+
+  <!-- Hero: Connection Pulse -->
+  <div class="hub-hero hub-hero-together">
+    <div class="hub-hero-glow"></div>
+    <div class="hub-hero-content">
+      <div class="hub-hero-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+      </div>
+      <div class="hub-hero-label">Together</div>
+      <div class="hub-hero-title" id="together-hero-title">Your shared space</div>
+      <div class="hub-hero-sub" id="together-hero-sub">Where your connection lives</div>
+    </div>
+    <div class="hub-hero-stats">
+      <div class="hub-hero-stat" onclick="go('connect')">
+        <div class="hub-hero-stat-num" id="hub-tg-letters">0</div>
+        <div class="hub-hero-stat-label">Letters</div>
+      </div>
+      <div class="hub-hero-stat" onclick="go('question')">
+        <div class="hub-hero-stat-num" id="hub-tg-streak">0</div>
+        <div class="hub-hero-stat-label">Q Streak</div>
+      </div>
+      <div class="hub-hero-stat" onclick="go('games')">
+        <div class="hub-hero-stat-num" id="hub-tg-games">0</div>
+        <div class="hub-hero-stat-label">Games</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="hub-actions">
+    <button class="hub-action-btn" onclick="go('connect')">
+      <div class="hub-action-icon ha-rose"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></div>
+      <span>Write</span>
+    </button>
+    <button class="hub-action-btn" onclick="go('question')">
+      <div class="hub-action-icon ha-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+      <span>Daily Q</span>
+    </button>
+    <button class="hub-action-btn" onclick="go('games')">
+      <div class="hub-action-icon ha-lavender"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/></svg></div>
+      <span>Play</span>
+    </button>
+    <button class="hub-action-btn" onclick="go('datenight')">
+      <div class="hub-action-icon ha-red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></div>
+      <span>Date</span>
+    </button>
+  </div>
+
+  <!-- Recent Activity Card (compact) -->
+  <div class="hub-card" id="together-recent-card">
+    <div class="hub-card-header">
+      <div class="hub-card-dot" style="background:var(--rose)"></div>
+      <div class="hub-card-title">Recent Moments</div>
+      <div class="hub-card-link" onclick="go('connect')">See all</div>
+    </div>
+    <div class="hub-card-body" id="together-recent-feed">
+      <div class="hub-empty">Start connecting — send a tap, write a letter, or answer today's question</div>
+    </div>
+  </div>
+
+  <!-- Feature Cards Grid -->
+  <div class="hub-feature-grid">
+    <div class="hub-feature-card hfc-warm" onclick="go('connect')">
+      <div class="hfc-icon">💌</div>
+      <div class="hfc-name">Love Letters</div>
+      <div class="hfc-desc">Write to each other</div>
+    </div>
+    <div class="hub-feature-card hfc-deep" onclick="go('deeptalk')">
+      <div class="hfc-icon">🌊</div>
+      <div class="hfc-name">Deep Talk</div>
+      <div class="hfc-desc">Go deeper together</div>
+    </div>
+    <div class="hub-feature-card hfc-play" onclick="go('games')">
+      <div class="hfc-icon">🎮</div>
+      <div class="hfc-name">Games</div>
+      <div class="hfc-desc">Play & compete</div>
+    </div>
+    <div class="hub-feature-card hfc-warm" onclick="go('datenight')">
+      <div class="hfc-icon">🌙</div>
+      <div class="hfc-name">Date Night</div>
+      <div class="hfc-desc">Plan something special</div>
+    </div>
+    <div class="hub-feature-card hfc-deep" onclick="go('challenges')">
+      <div class="hfc-icon">⭐</div>
+      <div class="hfc-name">Challenges</div>
+      <div class="hfc-desc">Grow as a couple</div>
+    </div>
+    <div class="hub-feature-card hfc-play" onclick="go('checkin')">
+      <div class="hfc-icon">💬</div>
+      <div class="hfc-name">Check-in</div>
+      <div class="hfc-desc">Weekly pulse</div>
+    </div>
+  </div>
+
+  <!-- Deeper Connection -->
+  <div class="hub-section-label">Deeper Connection</div>
+  <div class="hub-list-group">
+    <div class="hub-list-row" onclick="go('lovelang')">
+      <div class="hub-list-icon">❤️</div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Love Languages</div>
+        <div class="hub-list-sub">Understand how you love</div>
+      </div>
+      <div class="hub-list-arrow">›</div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('attachment')">
+      <div class="hub-list-icon">🔗</div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Attachment Style</div>
+        <div class="hub-list-sub">Learn your bond patterns</div>
+      </div>
+      <div class="hub-list-arrow">›</div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('knowyou')">
+      <div class="hub-list-icon">✨</div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Know Your Person</div>
+        <div class="hub-list-sub">Learn everything about each other</div>
+      </div>
+      <div class="hub-list-arrow">›</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== TRACK HUB ===== -->
+<div class="pg" id="pg-track">
+<div class="ctn">
+
+  <!-- Hero: Wellness Pulse -->
+  <div class="hub-hero hub-hero-track">
+    <div class="hub-hero-glow"></div>
+    <div class="hub-hero-content">
+      <div class="hub-hero-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="hub-hero-label">Track</div>
+      <div class="hub-hero-title" id="track-hero-title">Your wellness</div>
+      <div class="hub-hero-sub" id="track-hero-sub">Mind, body, and growth</div>
+    </div>
+    <div class="hub-hero-stats">
+      <div class="hub-hero-stat" onclick="go('mood')">
+        <div class="hub-hero-stat-num" id="hub-tr-mood">--</div>
+        <div class="hub-hero-stat-label">Mood</div>
+      </div>
+      <div class="hub-hero-stat" onclick="go('fitness')">
+        <div class="hub-hero-stat-num" id="hub-tr-workouts">0</div>
+        <div class="hub-hero-stat-label">Workouts</div>
+      </div>
+      <div class="hub-hero-stat" onclick="go('gratitude')">
+        <div class="hub-hero-stat-num" id="hub-tr-gratitude">0</div>
+        <div class="hub-hero-stat-label">Grateful</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="hub-actions">
+    <button class="hub-action-btn" onclick="go('mood')">
+      <div class="hub-action-icon ha-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg></div>
+      <span>Mood</span>
+    </button>
+    <button class="hub-action-btn" onclick="go('fitness')">
+      <div class="hub-action-icon ha-emerald"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/></svg></div>
+      <span>Workout</span>
+    </button>
+    <button class="hub-action-btn" onclick="go('nutrition')">
+      <div class="hub-action-icon ha-rose"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+      <span>Nutrition</span>
+    </button>
+    <button class="hub-action-btn" onclick="go('gratitude')">
+      <div class="hub-action-icon ha-lavender"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <span>Grateful</span>
+    </button>
+  </div>
+
+  <!-- Today's Snapshot -->
+  <div class="hub-card" id="track-today-card">
+    <div class="hub-card-header">
+      <div class="hub-card-dot" style="background:var(--gold)"></div>
+      <div class="hub-card-title">Today's Snapshot</div>
+    </div>
+    <div class="hub-snapshot" id="track-snapshot">
+      <div class="hub-snap-item" onclick="go('mood')">
+        <div class="hub-snap-emoji" id="track-snap-mood">☀️</div>
+        <div class="hub-snap-label">Mood</div>
+        <div class="hub-snap-value" id="track-snap-mood-val">Not logged</div>
+      </div>
+      <div class="hub-snap-item" onclick="go('fitness')">
+        <div class="hub-snap-emoji" id="track-snap-energy">⚡</div>
+        <div class="hub-snap-label">Energy</div>
+        <div class="hub-snap-value" id="track-snap-energy-val">Not logged</div>
+      </div>
+      <div class="hub-snap-item" onclick="go('fitness')">
+        <div class="hub-snap-emoji">🏋️</div>
+        <div class="hub-snap-label">Workout</div>
+        <div class="hub-snap-value" id="track-snap-workout-val">Not yet</div>
+      </div>
+      <div class="hub-snap-item" onclick="go('nutrition')">
+        <div class="hub-snap-emoji">🥗</div>
+        <div class="hub-snap-label">Meals</div>
+        <div class="hub-snap-value" id="track-snap-meals-val">0 logged</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Cards -->
+  <div class="hub-feature-grid">
+    <div class="hub-feature-card hfc-warm" onclick="go('mood')">
+      <div class="hfc-icon">🌤️</div>
+      <div class="hfc-name">Mood Journal</div>
+      <div class="hfc-desc">How are you feeling?</div>
+    </div>
+    <div class="hub-feature-card hfc-deep" onclick="go('fitness')">
+      <div class="hfc-icon">💪</div>
+      <div class="hfc-name">Fitness Hub</div>
+      <div class="hfc-desc">Train together or solo</div>
+    </div>
+    <div class="hub-feature-card hfc-play" onclick="go('nutrition')">
+      <div class="hfc-icon">🍎</div>
+      <div class="hfc-name">Nutrition</div>
+      <div class="hfc-desc">Fuel your body right</div>
+    </div>
+    <div class="hub-feature-card hfc-warm" onclick="go('gratitude')">
+      <div class="hfc-icon">🙏</div>
+      <div class="hfc-name">Gratitude</div>
+      <div class="hfc-desc">Count your blessings</div>
+    </div>
+    <div class="hub-feature-card hfc-deep" onclick="go('grow')">
+      <div class="hfc-icon">🌱</div>
+      <div class="hfc-name">Growth</div>
+      <div class="hfc-desc">Learn & evolve together</div>
+    </div>
+    <div class="hub-feature-card hfc-play" onclick="go('checkin')">
+      <div class="hfc-icon">📊</div>
+      <div class="hfc-name">Check-in</div>
+      <div class="hfc-desc">Weekly reflection</div>
+    </div>
+  </div>
+
+  <!-- Personal Spaces -->
+  <div class="hub-section-label">Personal Spaces</div>
+  <div class="hub-list-group">
+    <div class="hub-list-row" onclick="go('herspace')">
+      <div class="hub-list-icon">🌸</div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Taylor's Space</div>
+        <div class="hub-list-sub">Cycle tracking, self-care, affirmations</div>
+      </div>
+      <div class="hub-list-arrow">›</div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('hisspace')">
+      <div class="hub-list-icon">⚡</div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Manu's Space</div>
+        <div class="hub-list-sub">Strength goals, personal records</div>
+      </div>
+      <div class="hub-list-arrow">›</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== BUILD HUB ===== -->
+<div class="pg" id="pg-build">
+<div class="ctn">
+
+  <!-- Hero: Building Your Future -->
+  <div class="hub-hero hub-hero-build">
+    <div class="hub-hero-glow"></div>
+    <div class="hub-hero-content">
+      <div class="hub-hero-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      </div>
+      <div class="hub-hero-label">Build</div>
+      <div class="hub-hero-title" id="build-hero-title">Your future together</div>
+      <div class="hub-hero-sub" id="build-hero-sub">Dream, plan, and create the life you want</div>
+    </div>
+    <div class="hub-hero-stats">
+      <div class="hub-hero-stat" onclick="go('dreams')">
+        <div class="hub-hero-stat-num" id="hub-bd-dreams">0</div>
+        <div class="hub-hero-stat-label">Dreams</div>
+      </div>
+      <div class="hub-hero-stat" onclick="go('homelife')">
+        <div class="hub-hero-stat-num" id="hub-bd-budget">--</div>
+        <div class="hub-hero-stat-label">Budget</div>
+      </div>
+      <div class="hub-hero-stat" onclick="go('calendar')">
+        <div class="hub-hero-stat-num" id="hub-bd-events">0</div>
+        <div class="hub-hero-stat-label">Events</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="hub-actions">
+    <button class="hub-action-btn" onclick="go('dreams')">
+      <div class="hub-action-icon ha-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg></div>
+      <span>Dream</span>
+    </button>
+    <button class="hub-action-btn" onclick="go('homelife')">
+      <div class="hub-action-icon ha-teal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+      <span>Finances</span>
+    </button>
+    <button class="hub-action-btn" onclick="go('calendar')">
+      <div class="hub-action-icon ha-lavender"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <span>Calendar</span>
+    </button>
+    <button class="hub-action-btn" onclick="go('dreamhome')">
+      <div class="hub-action-icon ha-emerald"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><rect x="9" y="14" width="6" height="7"/></svg></div>
+      <span>Home</span>
+    </button>
+  </div>
+
+  <!-- Featured -->
+  <div class="hub-feature-grid">
+    <div class="hub-feature-card hfc-warm" onclick="go('dreams')">
+      <div class="hfc-icon">✨</div>
+      <div class="hfc-name">Our Dreams</div>
+      <div class="hfc-desc">Map your shared vision</div>
+    </div>
+    <div class="hub-feature-card hfc-deep" onclick="go('dreamhome')">
+      <div class="hfc-icon">🏡</div>
+      <div class="hfc-name">Dream Home</div>
+      <div class="hfc-desc">Design your space</div>
+    </div>
+    <div class="hub-feature-card hfc-play" onclick="go('homelife')">
+      <div class="hfc-icon">💰</div>
+      <div class="hfc-name">Finances</div>
+      <div class="hfc-desc">Budget & track spending</div>
+    </div>
+    <div class="hub-feature-card hfc-warm" onclick="go('calendar')">
+      <div class="hfc-icon">📅</div>
+      <div class="hfc-name">Calendar</div>
+      <div class="hfc-desc">Stay in sync</div>
+    </div>
+    <div class="hub-feature-card hfc-deep" onclick="go('family')">
+      <div class="hfc-icon">👨‍👩‍👧</div>
+      <div class="hfc-name">Future Family</div>
+      <div class="hfc-desc">Plan your family path</div>
+    </div>
+    <div class="hub-feature-card hfc-play" onclick="go('story')">
+      <div class="hfc-icon">📖</div>
+      <div class="hfc-name">Our Story</div>
+      <div class="hfc-desc">Milestones & timeline</div>
+    </div>
+  </div>
+
+  <!-- Foundation -->
+  <div class="hub-section-label">Foundation</div>
+  <div class="hub-list-group">
+    <div class="hub-list-row" onclick="go('foundation')">
+      <div class="hub-list-icon">🏛️</div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Our Foundation</div>
+        <div class="hub-list-sub">Values, boundaries, and agreements</div>
+      </div>
+      <div class="hub-list-arrow">›</div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('culture')">
+      <div class="hub-list-icon">🌍</div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Our Cultures</div>
+        <div class="hub-list-sub">Celebrate where you come from</div>
+      </div>
+      <div class="hub-list-arrow">›</div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('spiritual')">
+      <div class="hub-list-icon">🕊️</div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Our Spirit</div>
+        <div class="hub-list-sub">Spiritual life together</div>
+      </div>
+      <div class="hub-list-arrow">›</div>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -571,123 +958,166 @@
 </div>
 </div>
 
-<!-- ===== EXPLORE (destination page, not a menu) ===== -->
+<!-- ===== EXPLORE ===== -->
 <div class="pg" id="pg-explore">
 <div class="ctn">
   <div class="explore-header">
     <div class="explore-tagline">Discover</div>
-    <h1 class="explore-title">Our World</h1>
+    <h1 class="explore-title">Everything</h1>
   </div>
 
-  <!-- Featured cards -->
-  <div class="explore-featured">
-    <div class="explore-feat-card card-hero" onclick="go('knowyou')" style="background:var(--grad-know)">
-      <div class="explore-feat-badge">New</div>
-      <div class="explore-feat-name">Know Your Person</div>
-      <div class="explore-feat-desc">Learn everything about each other</div>
+  <!-- Spotlight: Scrollable featured cards -->
+  <div class="explore-spotlight">
+    <div class="explore-spot-card" onclick="go('knowyou')" style="background:var(--grad-know)">
+      <div class="explore-spot-badge">New</div>
+      <div class="explore-spot-icon">✨</div>
+      <div class="explore-spot-name">Know Your Person</div>
+      <div class="explore-spot-desc">Learn everything about each other</div>
     </div>
-    <div class="explore-feat-card card-hero" onclick="go('dreamhome')" style="background:var(--grad-dreamhome)">
-      <div class="explore-feat-badge">New</div>
-      <div class="explore-feat-name">Dream Home</div>
-      <div class="explore-feat-desc">Design your future together</div>
+    <div class="explore-spot-card" onclick="go('dreamhome')" style="background:var(--grad-dreamhome)">
+      <div class="explore-spot-badge">New</div>
+      <div class="explore-spot-icon">🏡</div>
+      <div class="explore-spot-name">Dream Home</div>
+      <div class="explore-spot-desc">Design your future together</div>
+    </div>
+    <div class="explore-spot-card" onclick="go('grow')" style="background:var(--grad-grow)">
+      <div class="explore-spot-badge">New</div>
+      <div class="explore-spot-icon">🌱</div>
+      <div class="explore-spot-name">Grow Together</div>
+      <div class="explore-spot-desc">Guided lessons for couples</div>
+    </div>
+    <div class="explore-spot-card" onclick="go('challenges')" style="background:var(--grad-games)">
+      <div class="explore-spot-badge">New</div>
+      <div class="explore-spot-icon">⭐</div>
+      <div class="explore-spot-name">Challenges</div>
+      <div class="explore-spot-desc">Couple challenges & streaks</div>
     </div>
   </div>
 
-  <div class="explore-grid-3">
-    <div class="explore-icon-card card-action" onclick="go('fitness')">
-      <div class="icon-badge ib-emerald ib-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/></svg></div>
-      <div class="explore-icon-label">Fitness</div>
+  <!-- Quick Access Grid -->
+  <div class="explore-quick-grid">
+    <div class="explore-quick-item" onclick="go('connect')">
+      <div class="explore-quick-icon eq-rose">💌</div>
+      <div class="explore-quick-label">Letters</div>
     </div>
-    <div class="explore-icon-card card-action" onclick="go('nutrition')">
-      <div class="icon-badge ib-rose ib-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-      <div class="explore-icon-label">Nutrition</div>
+    <div class="explore-quick-item" onclick="go('games')">
+      <div class="explore-quick-icon eq-lavender">🎮</div>
+      <div class="explore-quick-label">Games</div>
     </div>
-    <div class="explore-icon-card card-action" onclick="go('calendar')">
-      <div class="icon-badge ib-teal ib-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-      <div class="explore-icon-label">Calendar</div>
+    <div class="explore-quick-item" onclick="go('mood')">
+      <div class="explore-quick-icon eq-gold">☀️</div>
+      <div class="explore-quick-label">Mood</div>
+    </div>
+    <div class="explore-quick-item" onclick="go('fitness')">
+      <div class="explore-quick-icon eq-emerald">💪</div>
+      <div class="explore-quick-label">Fitness</div>
+    </div>
+    <div class="explore-quick-item" onclick="go('question')">
+      <div class="explore-quick-icon eq-teal">💬</div>
+      <div class="explore-quick-label">Daily Q</div>
+    </div>
+    <div class="explore-quick-item" onclick="go('calendar')">
+      <div class="explore-quick-icon eq-gold">📅</div>
+      <div class="explore-quick-label">Calendar</div>
+    </div>
+    <div class="explore-quick-item" onclick="go('ai')">
+      <div class="explore-quick-icon eq-teal">🤖</div>
+      <div class="explore-quick-label">AI Chat</div>
+    </div>
+    <div class="explore-quick-item" onclick="go('memories')">
+      <div class="explore-quick-icon eq-rose">📸</div>
+      <div class="explore-quick-label">Memories</div>
     </div>
   </div>
 
-  <!-- Relationship -->
-  <div class="explore-cat-label">Relationship</div>
+  <!-- Together -->
+  <div class="explore-cat-label">Together</div>
   <div class="explore-group">
-    <div class="hub-row" onclick="go('connect')"><div class="hub-row-label">Connect</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('connect')"><div class="hub-row-ico">💌</div><div class="hub-row-label">Connect</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('games')"><div class="hub-row-label">Games</div><div class="hub-row-status"><span class="hub-badge count" id="hub-games-status">Play</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('games')"><div class="hub-row-ico">🎮</div><div class="hub-row-label">Games</div><div class="hub-row-status"><span class="hub-badge count" id="hub-games-status">Play</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('lovelang')"><div class="hub-row-label">Love Languages</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ll-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('deeptalk')"><div class="hub-row-ico">🌊</div><div class="hub-row-label">Deep Talk</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('attachment')"><div class="hub-row-label">Attachment Style</div><div class="hub-row-status"><span class="hub-badge count" id="hub-as-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('datenight')"><div class="hub-row-ico">🌙</div><div class="hub-row-label">Date Night</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('checkin')"><div class="hub-row-label">Weekly Check-in</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ci-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('question')"><div class="hub-row-ico">💬</div><div class="hub-row-label">Daily Question</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dq-status">--</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('deeptalk')"><div class="hub-row-label">Deep Talk</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dt-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('challenges')"><div class="hub-row-ico">⭐</div><div class="hub-row-label">Couple Challenges</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('datenight')"><div class="hub-row-label">Date Night</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dn-status">Plan</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('lovelang')"><div class="hub-row-ico">❤️</div><div class="hub-row-label">Love Languages</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ll-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('question')"><div class="hub-row-label">Daily Question</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dq-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('attachment')"><div class="hub-row-ico">🔗</div><div class="hub-row-label">Attachment Style</div><div class="hub-row-status"><span class="hub-badge count" id="hub-as-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('challenges')"><div class="hub-row-label">Couple Challenges</div><div class="hub-row-status"><span class="hub-badge hub-badge-new">New</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('checkin')"><div class="hub-row-ico">📊</div><div class="hub-row-label">Weekly Check-in</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ci-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="explore-divider"></div>
+    <div class="hub-row" onclick="go('knowyou')"><div class="hub-row-ico">✨</div><div class="hub-row-label">Know Your Person</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
   </div>
 
-  <!-- Life Building -->
-  <div class="explore-cat-label">Life Building</div>
+  <!-- Track & Wellness -->
+  <div class="explore-cat-label">Track &amp; Wellness</div>
   <div class="explore-group">
-    <div class="hub-row" onclick="go('homelife')"><div class="hub-row-label">Home Life</div><div class="hub-row-status"><span class="hub-badge count" id="hub-hl-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('mood')"><div class="hub-row-ico">🌤️</div><div class="hub-row-label">Mood Journal</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('dreams')"><div class="hub-row-label">Our Dreams</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dr-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('fitness')"><div class="hub-row-ico">💪</div><div class="hub-row-label">Fitness Hub</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('family')"><div class="hub-row-label">Future Family</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fam-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('nutrition')"><div class="hub-row-ico">🍎</div><div class="hub-row-label">Nutrition</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('foundation')"><div class="hub-row-label">Our Foundation</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fdn-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('gratitude')"><div class="hub-row-ico">🙏</div><div class="hub-row-label">Gratitude</div><div class="hub-row-status"><span class="hub-badge count" id="hub-grat-status">--</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('culture')"><div class="hub-row-label">Our Cultures</div><div class="hub-row-status"><span class="hub-badge count" id="hub-cx-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('grow')"><div class="hub-row-ico">🌱</div><div class="hub-row-label">Grow Together</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('spiritual')"><div class="hub-row-label">Our Spirit</div><div class="hub-row-status"><span class="hub-badge count" id="hub-sp-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('herspace')"><div class="hub-row-ico">🌸</div><div class="hub-row-label">Taylor's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div class="explore-divider"></div>
+    <div class="hub-row" onclick="go('hisspace')"><div class="hub-row-ico">⚡</div><div class="hub-row-label">Manu's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
   </div>
 
-  <!-- Growth & Wellness -->
-  <div class="explore-cat-label">Growth &amp; Wellness</div>
+  <!-- Build & Plan -->
+  <div class="explore-cat-label">Build &amp; Plan</div>
   <div class="explore-group">
-    <div class="hub-row" onclick="go('fitness')"><div class="hub-row-label">Fitness Hub</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('dreams')"><div class="hub-row-ico">✨</div><div class="hub-row-label">Our Dreams</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dr-status">--</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('nutrition')"><div class="hub-row-label">Nutrition</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('dreamhome')"><div class="hub-row-ico">🏡</div><div class="hub-row-label">Dream Home</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('gratitude')"><div class="hub-row-label">Gratitude</div><div class="hub-row-status"><span class="hub-badge count" id="hub-grat-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('homelife')"><div class="hub-row-ico">💰</div><div class="hub-row-label">Finances</div><div class="hub-row-status"><span class="hub-badge count" id="hub-hl-status">--</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('herspace')"><div class="hub-row-label">Taylor's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('calendar')"><div class="hub-row-ico">📅</div><div class="hub-row-label">Calendar</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('hisspace')"><div class="hub-row-label">Manu's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('family')"><div class="hub-row-ico">👨‍👩‍👧</div><div class="hub-row-label">Future Family</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fam-status">--</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('grow')"><div class="hub-row-label">Grow Together</div><div class="hub-row-status"><span class="hub-badge hub-badge-new">New</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('foundation')"><div class="hub-row-ico">🏛️</div><div class="hub-row-label">Our Foundation</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fdn-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="explore-divider"></div>
+    <div class="hub-row" onclick="go('culture')"><div class="hub-row-ico">🌍</div><div class="hub-row-label">Our Cultures</div><div class="hub-row-status"><span class="hub-badge count" id="hub-cx-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="explore-divider"></div>
+    <div class="hub-row" onclick="go('spiritual')"><div class="hub-row-ico">🕊️</div><div class="hub-row-label">Our Spirit</div><div class="hub-row-status"><span class="hub-badge count" id="hub-sp-status">--</span><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Extras -->
   <div class="explore-cat-label">More</div>
   <div class="explore-group">
-    <div class="hub-row" onclick="go('memories')"><div class="hub-row-label">Photo Memories</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('memories')"><div class="hub-row-ico">📸</div><div class="hub-row-label">Photo Memories</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('achievements')"><div class="hub-row-label">Achievements</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('achievements')"><div class="hub-row-ico">🏆</div><div class="hub-row-label">Achievements</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('bucket')"><div class="hub-row-label">Bucket List</div><div class="hub-row-status"><span class="hub-badge count" id="hub-bl-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('bucket')"><div class="hub-row-ico">📝</div><div class="hub-row-label">Bucket List</div><div class="hub-row-status"><span class="hub-badge count" id="hub-bl-status">--</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('wishlist')"><div class="hub-row-label">Wishlists</div><div class="hub-row-status"><span class="hub-badge count" id="hub-wl-status">--</span><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('wishlist')"><div class="hub-row-ico">🎁</div><div class="hub-row-label">Wishlists</div><div class="hub-row-status"><span class="hub-badge count" id="hub-wl-status">--</span><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('story')"><div class="hub-row-label">Our Story</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('story')"><div class="hub-row-ico">📖</div><div class="hub-row-label">Our Story</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('ai')"><div class="hub-row-label">AI Chat</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+    <div class="hub-row" onclick="go('ai')"><div class="hub-row-ico">🤖</div><div class="hub-row-label">AI Chat</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Settings -->
   <div class="explore-cat-label">Settings</div>
   <div class="explore-group mb-20">
-    <div class="hub-row" onclick="toggleTheme()"><div class="hub-row-label">Theme</div><span class="t-xs c-t3" id="more-theme-sub">Auto</span></div>
+    <div class="hub-row" onclick="toggleTheme()"><div class="hub-row-ico">🎨</div><div class="hub-row-label">Theme</div><span class="t-xs c-t3" id="more-theme-sub">Auto</span></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="updateApiKey()"><div class="hub-row-label">API Key</div></div>
+    <div class="hub-row" onclick="updateApiKey()"><div class="hub-row-ico">🔑</div><div class="hub-row-label">API Key</div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="switchUser()"><div class="hub-row-label">Switch Profile</div></div>
+    <div class="hub-row" onclick="switchUser()"><div class="hub-row-ico">👤</div><div class="hub-row-label">Switch Profile</div></div>
     <div class="explore-divider"></div>
-    <div class="hub-row" onclick="logout()"><div class="hub-row-label c-red">Log Out</div></div>
+    <div class="hub-row" onclick="logout()"><div class="hub-row-ico">🚪</div><div class="hub-row-label c-red">Log Out</div></div>
   </div>
 </div>
 </div>

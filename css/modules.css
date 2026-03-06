@@ -1611,3 +1611,117 @@
 .tot-or-wrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2}
 .c-vio{color:var(--vio)}
 .mt-neg8{margin-top:-8px}
+
+/* ===== HUB PAGES — Together, Track, Build ===== */
+
+/* Hub Hero */
+.hub-hero{position:relative;border-radius:22px;padding:24px 20px 16px;margin-bottom:14px;overflow:hidden;text-align:center}
+.hub-hero-together{background:linear-gradient(145deg,rgba(139,26,74,0.18),rgba(196,75,108,0.10))}
+.hub-hero-track{background:linear-gradient(145deg,rgba(212,120,74,0.18),rgba(232,160,96,0.10))}
+.hub-hero-build{background:linear-gradient(145deg,rgba(26,58,92,0.18),rgba(45,90,138,0.10))}
+.hub-hero-glow{position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;opacity:.12;pointer-events:none}
+.hub-hero-together .hub-hero-glow{background:radial-gradient(circle,var(--rose),transparent 70%)}
+.hub-hero-track .hub-hero-glow{background:radial-gradient(circle,var(--gold),transparent 70%)}
+.hub-hero-build .hub-hero-glow{background:radial-gradient(circle,var(--teal),transparent 70%)}
+.hub-hero-content{position:relative;z-index:1}
+.hub-hero-icon{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.08);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:var(--cream)}
+.hub-hero-together .hub-hero-icon{color:var(--rose)}
+.hub-hero-track .hub-hero-icon{color:var(--gold)}
+.hub-hero-build .hub-hero-icon{color:var(--teal)}
+.hub-hero-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.hub-hero-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--cream);letter-spacing:1px}
+.hub-hero-sub{font-size:12px;color:var(--t2);margin-top:4px}
+.hub-hero-stats{display:flex;gap:8px;margin-top:16px;position:relative;z-index:1}
+.hub-hero-stat{flex:1;text-align:center;padding:10px 4px;background:rgba(255,255,255,0.05);border-radius:12px;cursor:pointer;transition:transform .2s}
+.hub-hero-stat:active{transform:scale(.96)}
+.hub-hero-stat-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--gold)}
+.hub-hero-stat-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:2px}
+
+/* Hub Quick Actions */
+.hub-actions{display:flex;gap:8px;margin-bottom:14px}
+.hub-action-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:16px;box-shadow:var(--card-shadow);cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;font-size:10px;letter-spacing:.5px;color:var(--cream);font-weight:500}
+.hub-action-btn:active{transform:scale(.95)}
+.hub-action-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff}
+.ha-rose{background:var(--rose)}
+.ha-gold{background:var(--gold)}
+.ha-lavender{background:var(--lavender)}
+.ha-red{background:var(--red)}
+.ha-emerald{background:var(--emerald)}
+.ha-teal{background:var(--teal)}
+
+/* Hub Card */
+.hub-card{background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:20px;padding:16px 18px;box-shadow:var(--card-shadow);margin-bottom:14px}
+.hub-card-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.hub-card-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.hub-card-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;color:var(--cream);flex:1}
+.hub-card-link{font-size:10px;color:var(--gold);cursor:pointer;font-weight:500}
+.hub-card-body{min-height:40px}
+.hub-empty{font-size:12px;color:var(--t3);text-align:center;padding:12px 0}
+
+/* Hub Snapshot (Track page today's status) */
+.hub-snapshot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.hub-snap-item{text-align:center;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,0.03);cursor:pointer;transition:transform .2s}
+.hub-snap-item:active{transform:scale(.95)}
+.hub-snap-emoji{font-size:20px;margin-bottom:4px}
+.hub-snap-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)}
+.hub-snap-value{font-size:10px;color:var(--cream);margin-top:2px;font-weight:500}
+
+/* Hub Feature Grid (2-col card grid) */
+.hub-feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.hub-feature-card{padding:18px 16px;border-radius:18px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.hub-feature-card:active{transform:scale(.96)}
+.hfc-warm{background:linear-gradient(145deg,rgba(196,120,74,0.10),rgba(184,134,11,0.06))}
+.hfc-deep{background:linear-gradient(145deg,rgba(26,58,92,0.12),rgba(42,143,143,0.06))}
+.hfc-play{background:linear-gradient(145deg,rgba(92,45,130,0.10),rgba(123,104,174,0.06))}
+.hfc-icon{font-size:24px;margin-bottom:8px}
+.hfc-name{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:2px}
+.hfc-desc{font-size:10px;color:var(--t2)}
+
+/* Hub Section Label */
+.hub-section-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:6px 0 8px}
+
+/* Hub List Group (Apple Settings style) */
+.hub-list-group{background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:18px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:20px}
+.hub-list-row{display:flex;align-items:center;padding:14px 16px;gap:12px;cursor:pointer;transition:background .15s}
+.hub-list-row:active{background:var(--tint-xs)}
+.hub-list-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0}
+.hub-list-info{flex:1;min-width:0}
+.hub-list-name{font-size:13px;font-weight:500;color:var(--cream)}
+.hub-list-sub{font-size:10px;color:var(--t3);margin-top:1px}
+.hub-list-arrow{color:var(--t3);font-size:18px;flex-shrink:0}
+.hub-list-divider{height:1px;background:var(--tint);margin:0 16px 0 56px}
+
+/* Explore Redesign — Spotlight Carousel */
+.explore-spotlight{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 0 14px;margin-bottom:6px;scrollbar-width:none}
+.explore-spotlight::-webkit-scrollbar{display:none}
+.explore-spot-card{flex:0 0 68%;scroll-snap-align:start;border-radius:20px;padding:20px 18px;color:#fff;cursor:pointer;transition:transform .2s;position:relative;overflow:hidden;min-height:110px}
+.explore-spot-card:active{transform:scale(.97)}
+.explore-spot-badge{font-size:9px;letter-spacing:2px;text-transform:uppercase;opacity:.7;margin-bottom:6px}
+.explore-spot-icon{font-size:28px;margin-bottom:6px}
+.explore-spot-name{font-size:16px;font-weight:600}
+.explore-spot-desc{font-size:11px;opacity:.75;margin-top:4px}
+
+/* Explore Quick Access Grid */
+.explore-quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.explore-quick-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:16px;background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);box-shadow:var(--card-shadow);cursor:pointer;transition:all .2s}
+.explore-quick-item:active{transform:scale(.94)}
+.explore-quick-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.eq-rose{background:rgba(232,84,122,0.12)}.eq-lavender{background:rgba(123,104,174,0.12)}
+.eq-gold{background:rgba(184,134,11,0.12)}.eq-emerald{background:rgba(45,155,110,0.12)}
+.eq-teal{background:rgba(26,168,168,0.12)}
+.explore-quick-label{font-size:9px;font-weight:500;color:var(--cream);letter-spacing:.3px}
+
+/* Hub row emoji icon */
+.hub-row-ico{font-size:16px;width:28px;text-align:center;flex-shrink:0;margin-right:4px}
+
+/* Hub page background accents */
+/* Hub feed items */
+.hub-feed-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bdr-s)}
+.hub-feed-item:last-child{border-bottom:none}
+.hub-feed-emoji{font-size:18px;flex-shrink:0;width:26px;text-align:center}
+.hub-feed-text{flex:1;font-size:12px;color:var(--cream)}
+.hub-feed-time{font-size:10px;color:var(--t3);flex-shrink:0}
+
+body[data-page="together"]{--page-accent:var(--rose)}
+body[data-page="track"]{--page-accent:var(--gold)}
+body[data-page="build"]{--page-accent:var(--teal)}

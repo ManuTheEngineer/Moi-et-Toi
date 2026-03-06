@@ -243,7 +243,7 @@ function finishLogin() {
   initCollapsingHeader();
   setTimeout(updateNavIndicator, 100);
   // Hub & module statuses
-  setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); checkAchievements(); updateNavBadges(); }, 1500);
+  setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); checkAchievements(); updateNavBadges(); initHubPages(); }, 1500);
   // Refresh badges periodically
   setInterval(updateNavBadges, 60000);
 }

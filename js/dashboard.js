@@ -1428,3 +1428,91 @@ async function saveSettings() {
   renderDashHero();
 }
 
+// ===== HUB PAGES — Live data for Together, Track, Build =====
+function initHubPages() {
+  if (!db) return;
+  const today = localDate();
+
+  // Together hub stats
+  db.ref('letters').orderByChild('timestamp').limitToLast(50).once('value', snap => {
+    const el = document.getElementById('hub-tg-letters');
+    if (el) el.textContent = snap.numChildren() || 0;
+  });
+  db.ref('daily_answers/' + today).once('value', snap => {
+    // Use streak from existing streak logic
+    const el = document.getElementById('hub-tg-streak');
+    const streakEl = document.getElementById('streak-count');
+    if (el && streakEl) el.textContent = streakEl.textContent || '0';
+  });
+
+  // Together recent feed (last 3 activities: taps, letters, answers)
+  db.ref('taps').orderByChild('ts').limitToLast(3).once('value', snap => {
+    const feed = document.getElementById('together-recent-feed');
+    if (!feed || !snap.exists()) return;
+    const items = [];
+    snap.forEach(c => {
+      const t = c.val();
+      const who = t.from === user ? 'You' : (NAMES[t.from] || 'Partner');
+      const ago = _timeAgo(t.ts);
+      items.unshift('<div class="hub-feed-item"><span class="hub-feed-emoji">' + (t.emoji || '💕') + '</span><span class="hub-feed-text">' + who + ' sent a ' + (t.type || 'tap') + '</span><span class="hub-feed-time">' + ago + '</span></div>');
+    });
+    if (items.length > 0) feed.innerHTML = items.join('');
+  });
+
+  // Track hub stats
+  db.ref('moods').orderByChild('timestamp').limitToLast(7).once('value', snap => {
+    const el = document.getElementById('hub-tr-mood');
+    const snapMood = document.getElementById('track-snap-mood-val');
+    if (!snap.exists()) return;
+    let sum = 0, count = 0, todayMood = null, todayEnergy = null;
+    const MOOD_LABELS = ['','Rough','Off','Okay','Good','Great'];
+    const ENERGY_LABELS = ['','Drained','Low','Steady','Wired','Charged'];
+    snap.forEach(c => {
+      const m = c.val();
+      if (m.user === user) {
+        sum += m.mood || 0;
+        count++;
+        if (m.date === today) {
+          todayMood = m.mood;
+          todayEnergy = m.energy;
+        }
+      }
+    });
+    if (el && count > 0) el.textContent = (sum / count).toFixed(1);
+    if (snapMood && todayMood) snapMood.textContent = MOOD_LABELS[todayMood] || todayMood;
+    const snapEnergy = document.getElementById('track-snap-energy-val');
+    if (snapEnergy && todayEnergy) snapEnergy.textContent = ENERGY_LABELS[todayEnergy] || todayEnergy;
+  });
+
+  db.ref('gratitude').orderByChild('timestamp').limitToLast(20).once('value', snap => {
+    const el = document.getElementById('hub-tr-gratitude');
+    if (el) el.textContent = snap.numChildren() || 0;
+  });
+
+  // Build hub stats
+  db.ref('dreams').once('value', snap => {
+    const el = document.getElementById('hub-bd-dreams');
+    if (el) el.textContent = snap.numChildren() || 0;
+  });
+
+  db.ref('calendar').once('value', snap => {
+    const el = document.getElementById('hub-bd-events');
+    if (el) el.textContent = snap.numChildren() || 0;
+  });
+
+  // Together hero title — personalized
+  const heroTitle = document.getElementById('together-hero-title');
+  if (heroTitle && NAMES[partner]) {
+    heroTitle.textContent = 'You & ' + NAMES[partner];
+  }
+}
+
+function _timeAgo(ts) {
+  if (!ts) return '';
+  const diff = Math.floor((Date.now() - ts) / 1000);
+  if (diff < 60) return 'now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h';
+  return Math.floor(diff / 86400) + 'd';
+}
+

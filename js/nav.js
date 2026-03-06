@@ -2,17 +2,15 @@
 // Map sub-pages to their parent tab
 const TAB_MAP = {
   'dash': 'dash',
-  'connect': 'together', 'games': 'together', 'deeptalk': 'together', 'question': 'together', 'datenight': 'together', 'lovelang': 'together', 'checkin': 'together', 'challenges': 'together',
-  'mood': 'track', 'fitness': 'track', 'gratitude': 'track', 'w1': 'track', 'w2': 'track', 'w3': 'track',
-  'dreams': 'build', 'homelife': 'build', 'family': 'build', 'foundation': 'build', 'culture': 'build', 'spiritual': 'build', 'dreamhome': 'build', 'calendar': 'build',
-  'explore': 'explore', 'more': 'explore', 'ai': 'explore', 'bucket': 'explore', 'wishlist': 'explore', 'herspace': 'explore', 'hisspace': 'explore', 'story': 'explore',
-  'knowyou': 'explore', 'nutrition': 'explore', 'memories': 'explore', 'achievements': 'explore', 'settings': 'explore',
-  'grow': 'track'
+  'together': 'together', 'connect': 'together', 'games': 'together', 'deeptalk': 'together', 'question': 'together', 'datenight': 'together', 'lovelang': 'together', 'checkin': 'together', 'challenges': 'together', 'knowyou': 'together', 'attachment': 'together',
+  'track': 'track', 'mood': 'track', 'fitness': 'track', 'gratitude': 'track', 'w1': 'track', 'w2': 'track', 'w3': 'track', 'nutrition': 'track', 'grow': 'track', 'herspace': 'track', 'hisspace': 'track',
+  'build': 'build', 'dreams': 'build', 'homelife': 'build', 'family': 'build', 'foundation': 'build', 'culture': 'build', 'spiritual': 'build', 'dreamhome': 'build', 'calendar': 'build', 'story': 'build',
+  'explore': 'explore', 'more': 'explore', 'ai': 'explore', 'bucket': 'explore', 'wishlist': 'explore', 'memories': 'explore', 'achievements': 'explore', 'settings': 'explore'
 };
 
 // Tab ordering for directional transitions and swipe nav
 const TAB_ORDER = ['dash', 'together', 'track', 'build', 'explore'];
-const TAB_LANDINGS = { dash:'dash', together:'connect', track:'mood', build:'dreams', explore:'explore' };
+const TAB_LANDINGS = { dash:'dash', together:'together', track:'track', build:'build', explore:'explore' };
 
 function go(p) {
   if (p === 'more') p = 'explore';
@@ -136,7 +134,8 @@ const _IC = {
   dumbbell:_i('<path d="M6.5 6.5h11v11h-11z" fill="none"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/>')
 };
 const PAGE_META = {
-  dash:{icon:_IC.home,label:'Home'},connect:{icon:_IC.mail,label:'Connect'},games:{icon:_IC.game,label:'Games'},
+  dash:{icon:_IC.home,label:'Home'},together:{icon:_IC.heart,label:'Together'},track:{icon:_IC.activity,label:'Track'},build:{icon:_IC.globe,label:'Build'},
+  connect:{icon:_IC.mail,label:'Connect'},games:{icon:_IC.game,label:'Games'},
   question:{icon:_IC.chat,label:'Daily Q'},deeptalk:{icon:_IC.wave,label:'Deep Talk'},datenight:{icon:_IC.heart,label:'Date Night'},challenges:{icon:_IC.star,label:'Challenges'},
   lovelang:{icon:_IC.heart,label:'Love Lang'},checkin:{icon:_IC.check,label:'Check-in'},gratitude:{icon:_IC.star,label:'Gratitude'},
   knowyou:{icon:_IC.users,label:'Know You'},dreams:{icon:_IC.sparkle,label:'Dreams'},dreamhome:{icon:_IC.house,label:'Dream Home'},
