@@ -565,9 +565,19 @@ function setMemDetailAlbum(album) {
 
 function deleteMemory() {
   if (!currentMemoryKey || !db) return;
-  if (!confirm('Delete this memory? This cannot be undone.')) return;
+  openModal(`<div style="text-align:center">
+    <p style="font-size:15px;color:var(--t1);margin:0 0 6px;font-weight:600">Delete Memory?</p>
+    <p style="font-size:13px;color:var(--t3);margin:0 0 16px">This cannot be undone.</p>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sm" onclick="closeModal()" style="flex:1;background:var(--card-bg);color:var(--t2)">Cancel</button>
+      <button class="btn-sm" onclick="confirmDeleteMemory()" style="flex:1;background:var(--red);color:#fff">Delete</button>
+    </div>
+  </div>`);
+}
+function confirmDeleteMemory() {
+  if (!currentMemoryKey || !db) return;
   db.ref('memories/' + currentMemoryKey).remove();
-  closeMemoryDetail();
+  closeModal(); closeMemoryDetail();
   toast('Memory deleted');
 }
 

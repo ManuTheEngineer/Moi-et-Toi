@@ -134,8 +134,7 @@ input:focus,textarea:focus,select:focus{box-shadow:var(--focus-ring);animation:f
 .pg-goal{min-height:44px;display:flex;align-items:center}
 .fam-discuss-item{min-height:44px}
 
-/* Empty state styling */
-.empty{text-align:center;padding:24px 16px;color:var(--t3);font-size:13px;line-height:1.6;font-style:italic}
+/* Empty state styling — defined in components.css */
 
 /* Success pulse for completed items */
 @keyframes successPulse{0%{box-shadow:0 0 0 0 rgba(45,138,86,.3)}100%{box-shadow:0 0 0 12px transparent}}

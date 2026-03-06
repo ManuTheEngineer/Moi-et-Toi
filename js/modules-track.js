@@ -842,12 +842,21 @@ function viewProgressPhoto(key) {
   });
 }
 
-async function deleteProgressPhoto(key) {
+function deleteProgressPhoto(key) {
   if (!db || !user) return;
-  if (!confirm('Delete this progress photo?')) return;
+  openModal(`<div style="text-align:center">
+    <p style="font-size:15px;color:var(--t1);margin:0 0 6px;font-weight:600">Delete Photo?</p>
+    <p style="font-size:13px;color:var(--t3);margin:0 0 16px">This cannot be undone.</p>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sm" onclick="closeModal()" style="flex:1;background:var(--card-bg);color:var(--t2)">Cancel</button>
+      <button class="btn-sm" onclick="confirmDeletePhoto('${key}')" style="flex:1;background:var(--red);color:#fff">Delete</button>
+    </div>
+  </div>`);
+}
+async function confirmDeletePhoto(key) {
   await db.ref('fitness/' + user + '/photos/' + key).remove();
   closeModal();
-  toast('Photo deleted');
+  toast('Photo removed');
 }
 
 function compareProgressPhotos() {

@@ -895,9 +895,9 @@ function renderMeDashboard() {
       items.reverse();
       if (items.length > 0) {
         listEl.innerHTML = items.slice(0, 5).map(i =>
-          `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card-bg);border-radius:14px;margin-bottom:6px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
-            <div style="width:20px;height:20px;border-radius:50%;border:2px solid ${i.done?'var(--gold)':'var(--t3)'};display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold);flex-shrink:0">${i.done?'✓':''}</div>
-            <div style="font-size:13px;color:var(--cream);flex:1;${i.done?'text-decoration:line-through;opacity:.5':''}">${i.title}</div>
+          `<div class="dash-goal-item">
+            <div class="dash-goal-check${i.done?' done':''}">${i.done?'✓':''}</div>
+            <div class="dash-goal-text${i.done?' done':''}">${i.title}</div>
           </div>`
         ).join('');
       }
@@ -1056,17 +1056,17 @@ function renderActivityFeed() {
     function renderItem(i) {
       const ts = timeAgo(new Date(i.timestamp));
       const isMe = i.user === user;
-      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card-bg);border-radius:14px;margin-bottom:6px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
-        <div style="width:28px;height:28px;border-radius:50%;background:${isMe?'var(--tint)':'var(--red-s)'};display:flex;align-items:center;justify-content:center;font-size:11px;color:${isMe?'var(--gold)':'var(--red)'};flex-shrink:0">${(isMe ? 'You' : i.userName).charAt(0)}</div>
-        <div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--cream)">${isMe ? 'You' : i.userName} ${i.description}</div></div>
-        <div style="font-size:9px;color:var(--t3);flex-shrink:0">${ts}</div>
+      return `<div class="act-item">
+        <div class="act-avatar ${isMe?'me':'them'}">${(isMe ? 'You' : i.userName).charAt(0)}</div>
+        <div class="act-body">${isMe ? 'You' : i.userName} ${i.description}</div>
+        <div class="act-time">${ts}</div>
       </div>`;
     }
 
     let html = items.slice(0, 3).map(renderItem).join('');
     if (items.length > 3) {
-      html += `<div id="activity-extra" style="display:none">${items.slice(3).map(renderItem).join('')}</div>`;
-      html += `<div id="activity-toggle" onclick="toggleActivityFeed()" style="text-align:center;padding:8px;font-size:11px;color:var(--gold);cursor:pointer;font-weight:500">Show more</div>`;
+      html += `<div id="activity-extra" class="d-none">${items.slice(3).map(renderItem).join('')}</div>`;
+      html += `<div id="activity-toggle" class="act-more" onclick="toggleActivityFeed()">Show more</div>`;
     }
     el.innerHTML = html;
   });
@@ -1076,8 +1076,8 @@ function toggleActivityFeed() {
   const extra = document.getElementById('activity-extra');
   const toggle = document.getElementById('activity-toggle');
   if (!extra || !toggle) return;
-  const hidden = extra.style.display === 'none';
-  extra.style.display = hidden ? 'block' : 'none';
+  const hidden = extra.classList.contains('d-none');
+  extra.classList.toggle('d-none');
   toggle.textContent = hidden ? 'Show less' : 'Show more';
 }
 
@@ -1094,7 +1094,7 @@ function renderDashMeGratitude() {
     if (!items.length) return;
     items.reverse();
     list.innerHTML = items.slice(0, 3).map(i =>
-      `<div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px"><span style="color:var(--gold);font-size:10px">&#9679;</span><span>${esc(i.message || '')}</span></div>`
+      `<div class="d-flex gap-8 items-baseline mb-4"><span class="c-gold" style="font-size:10px">&#9679;</span><span>${esc(i.message || '')}</span></div>`
     ).join('');
     showEl(card);
   });
@@ -1275,17 +1275,15 @@ function renderTaskList(containerId, listId, countId, tasks, doneCount) {
       : '<div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--t3)"></div>';
     const textColor = t.done ? 'var(--t3)' : 'var(--cream)';
     const textDecor = t.done ? 'line-through' : 'none';
-    return `<div onclick="go('${t.page}')" style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;border-bottom:1px solid var(--bdr-s)">
-      <div style="width:22px;height:22px;border-radius:50%;background:${t.done ? 'var(--tint)' : 'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0">${checkIcon}</div>
+    return `<div class="dash-task" onclick="go('${t.page}')">
+      <div class="dash-task-check${t.done?' done':''}">${checkIcon}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:500;color:${textColor};text-decoration:${textDecor}">${t.label}</div>
-        ${!t.done ? '<div style="font-size:10px;color:var(--t3);margin-top:1px">' + t.desc + '</div>' : ''}
+        <div class="dash-task-label${t.done?' done':''}">${t.label}</div>
+        ${!t.done ? '<div class="dash-task-desc">' + t.desc + '</div>' : ''}
       </div>
       ${!t.done ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>' : ''}
     </div>`;
   }).join('');
-  // Remove border from last item
-  if (list.lastElementChild) list.lastElementChild.style.borderBottom = 'none';
   showEl(container);
 }
 

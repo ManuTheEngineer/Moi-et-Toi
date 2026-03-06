@@ -70,9 +70,7 @@
 .card-glow{transition:box-shadow .3s}.card-glow:hover{box-shadow:var(--card-hover),0 0 20px var(--glow-gold)}
 /* ===== SECTION DIVIDERS ===== */
 .sec-divider{height:1px;margin:32px 0;background:linear-gradient(90deg,transparent,var(--bdr),transparent)}
-/* ===== EMPTY STATES ===== */
-.empty{text-align:center;padding:32px 20px;color:var(--t3);font-size:13px;position:relative}
-.empty::before{content:'';display:block;width:48px;height:48px;margin:0 auto 14px;border-radius:50%;background:var(--tint);opacity:0.6}
+/* ===== EMPTY STATES ===== — consolidated below at line ~268 */
 
 /* ===== VIEW TOGGLE (Us/Me) ===== */
 .view-toggle{display:flex;position:relative;background:var(--card-bg);border-radius:50px;padding:4px;margin-bottom:12px;cursor:pointer;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)}
@@ -265,7 +263,7 @@
 .toast.on{animation:toastBounce .4s cubic-bezier(.2,.8,.3,1)}
 
 /* ===== EMPTY ===== */
-.empty{text-align:center;padding:32px 20px;font-size:12px;color:var(--t3);line-height:1.8}
+.empty{text-align:center;padding:28px 20px;font-size:13px;color:var(--t3);line-height:1.6;font-style:italic}
 .empty::before{content:'';display:block;width:40px;height:2px;background:var(--tint);border-radius:1px;margin:0 auto 12px}
 
 /* ===== SKELETON LOADING ===== */

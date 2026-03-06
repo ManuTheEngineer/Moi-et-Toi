@@ -616,11 +616,17 @@ async function executeAITool(toolName, toolInput) {
 async function sendAI() {
   // Check for API key
   if (!CLAUDE_API_KEY) {
-    const key = prompt('Enter your Anthropic API key (one-time setup, works for both of you):');
-    if (!key || !key.startsWith('sk-ant-')) { toast('Invalid API key'); return; }
-    CLAUDE_API_KEY = key;
-    await db.ref('profiles/apiKey').set(key);
-    toast('API key saved');
+    openModal(`<div style="text-align:left">
+      <h3 style="margin:0 0 8px;font-size:16px;color:var(--t1)">AI Setup</h3>
+      <p style="font-size:13px;color:var(--t3);margin:0 0 12px">Enter your Anthropic API key (one-time setup, works for both of you)</p>
+      <input id="ai-key-input" type="text" class="form-input" placeholder="sk-ant-..." style="width:100%;font-size:14px;font-family:monospace">
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-sm" onclick="closeModal()" style="flex:1;background:var(--card-bg);color:var(--t2)">Cancel</button>
+        <button class="btn-sm" onclick="submitAIKey()" style="flex:1">Save &amp; Send</button>
+      </div>
+    </div>`);
+    setTimeout(function(){ var el=document.getElementById('ai-key-input'); if(el) el.focus(); }, 100);
+    return;
   }
 
   const input = document.getElementById('chat-input');
@@ -707,6 +713,17 @@ async function sendAI() {
     document.getElementById('typing').classList.remove('on');
     msgEl.innerHTML += `<div class="chat-msg ai"><div class="msg-from">Claude</div>Connection error. Check your API key in the config.</div>`;
   }
+}
+
+async function submitAIKey() {
+  var key = (document.getElementById('ai-key-input') || {}).value || '';
+  key = key.trim();
+  if (!key || !key.startsWith('sk-ant-')) { toast('Invalid API key'); return; }
+  CLAUDE_API_KEY = key;
+  await db.ref('profiles/apiKey').set(key);
+  closeModal();
+  toast('API key saved');
+  sendAI();
 }
 
 function formatAIReply(text) {
@@ -941,7 +958,7 @@ function renderOpenWhenLetters(letters) {
     }).join('');
   }
   if (fromMe.length) {
-    html += `<div style="font-size:11px;color:var(--t3);margin:12px 0 6px;letter-spacing:1px;text-transform:uppercase">Sent by you</div>`;
+    html += `<div class="t-label c-t3 mt-12 mb-6">Sent by you</div>`;
     html += fromMe.map(l => {
       return `<div class="ow-card sent"><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-status">${l.opened ? 'Opened' : 'Sealed'}</div></div>`;
     }).join('');

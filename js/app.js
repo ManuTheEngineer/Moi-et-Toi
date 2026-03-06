@@ -272,12 +272,24 @@ async function exportAllData() {
 }
 
 function updateApiKey() {
-  const key = prompt('Enter Anthropic API key:', CLAUDE_API_KEY || '');
+  openModal(`<div style="text-align:left">
+    <h3 style="margin:0 0 12px;font-size:16px;color:var(--t1)">API Key</h3>
+    <input id="api-key-input" type="text" class="form-input" placeholder="sk-ant-..." value="${esc(CLAUDE_API_KEY || '')}" style="width:100%;font-size:14px;font-family:monospace">
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn-sm" onclick="closeModal()" style="flex:1;background:var(--card-bg);color:var(--t2)">Cancel</button>
+      <button class="btn-sm" onclick="submitApiKey()" style="flex:1">Save</button>
+    </div>
+  </div>`);
+  setTimeout(function(){ var el=document.getElementById('api-key-input'); if(el) el.focus(); }, 100);
+}
+function submitApiKey() {
+  var key = (document.getElementById('api-key-input') || {}).value || '';
+  key = key.trim();
   if (key && key.startsWith('sk-ant-')) {
     CLAUDE_API_KEY = key;
     db.ref('profiles/apiKey').set(key);
-    toast('API key updated');
-    closeMenu();
+    closeModal(); closeMenu(); toast('API key updated');
   } else if (key) { toast('Invalid key format'); }
+  else { closeModal(); }
 }
 

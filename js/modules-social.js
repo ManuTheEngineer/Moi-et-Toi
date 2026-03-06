@@ -2891,12 +2891,25 @@ async function startChallenge(packId) {
   if (!pack) return;
   const snap = await db.ref('challenges/active').once('value');
   if (snap.val()) {
-    if (!confirm('You already have an active challenge. Replace it?')) return;
+    openModal(`<div style="text-align:center">
+      <p style="font-size:15px;color:var(--t1);margin:0 0 6px;font-weight:600">Replace Challenge?</p>
+      <p style="font-size:13px;color:var(--t3);margin:0 0 16px">You already have an active challenge. Replace it?</p>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="closeModal()" style="flex:1;background:var(--card-bg);color:var(--t2)">Cancel</button>
+        <button class="btn-sm" onclick="closeModal();confirmStartChallenge('${packId}')" style="flex:1">Replace</button>
+      </div>
+    </div>`);
+    return;
   }
+  confirmStartChallenge(packId);
+}
+async function confirmStartChallenge(packId) {
+  const pack = CHALLENGE_PACKS[packId];
+  if (!pack) return;
   await db.ref('challenges/active').set({
     packId, startedAt: Date.now(), startedBy: user, completed: {}
   });
-  toast(pack.name + ' started! 💪');
+  toast(pack.name + ' started!');
 }
 
 async function completeChallenge() {
@@ -2922,9 +2935,18 @@ async function completeChallenge() {
   }
 }
 
-async function abandonChallenge() {
+function abandonChallenge() {
   if (!db) return;
-  if (!confirm('Abandon this challenge? Progress will be lost.')) return;
+  openModal(`<div style="text-align:center">
+    <p style="font-size:15px;color:var(--t1);margin:0 0 6px;font-weight:600">Abandon Challenge?</p>
+    <p style="font-size:13px;color:var(--t3);margin:0 0 16px">Progress will be lost.</p>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sm" onclick="closeModal()" style="flex:1;background:var(--card-bg);color:var(--t2)">Cancel</button>
+      <button class="btn-sm" onclick="closeModal();confirmAbandonChallenge()" style="flex:1;background:var(--red);color:#fff">Abandon</button>
+    </div>
+  </div>`);
+}
+async function confirmAbandonChallenge() {
   await db.ref('challenges/active').remove();
   toast('Challenge abandoned');
 }
