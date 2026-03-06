@@ -1,5 +1,8 @@
 // ===== MOOD =====
 let selectedEnergy = 3;
+let selectedSleep = 0;
+let selectedStress = 0;
+let selectedTags = [];
 
 function selMood(val, el) {
   selectedMood = val;
@@ -11,6 +14,28 @@ function selEnergy(val, el) {
   selectedEnergy = val;
   document.querySelectorAll('#energy-grid .pill-btn').forEach(b => b.classList.remove('sel'));
   el.classList.add('sel');
+}
+
+function selSleep(val, el) {
+  selectedSleep = val;
+  document.querySelectorAll('#sleep-grid .pill-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selStress(val, el) {
+  selectedStress = val;
+  document.querySelectorAll('#stress-grid .pill-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function toggleTag(el) {
+  const tag = el.dataset.tag;
+  el.classList.toggle('sel');
+  if (selectedTags.includes(tag)) {
+    selectedTags = selectedTags.filter(t => t !== tag);
+  } else {
+    selectedTags.push(tag);
+  }
 }
 
 async function submitMood() {
@@ -26,16 +51,28 @@ async function submitMood() {
     timestamp: Date.now(),
     date: localDate()
   };
+  if (selectedSleep) entry.sleep = selectedSleep;
+  if (selectedStress) entry.stress = selectedStress;
+  if (selectedTags.length) entry.tags = selectedTags;
+  const dedicated = document.getElementById('mood-dedicate-check');
+  if (dedicated && dedicated.checked) entry.dedicatedTo = partner;
+
   const key = db.ref('moods').push().key;
   await db.ref('moods/' + key).set(entry);
   document.getElementById('mood-note').value = '';
+  if (dedicated) dedicated.checked = false;
   selectedMood = 0;
   selectedEnergy = 3;
-  document.querySelectorAll('#mood-grid .pill-btn, #energy-grid .pill-btn').forEach(b => b.classList.remove('sel'));
+  selectedSleep = 0;
+  selectedStress = 0;
+  selectedTags = [];
+  document.querySelectorAll('#mood-grid .pill-btn, #energy-grid .pill-btn, #sleep-grid .pill-btn, #stress-grid .pill-btn').forEach(b => b.classList.remove('sel'));
+  document.querySelectorAll('.mood-tag').forEach(b => b.classList.remove('sel'));
   updateStreak();
   if (typeof logActivity === 'function') logActivity('mood', 'checked in');
+  if (entry.dedicatedTo) toast('Dedicated to ' + NAMES[partner] + ' 💕');
+  else toast('Checked in');
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Check in'; }, 1500); }
-  toast('Checked in');
 }
 
 function listenMoods() {
@@ -53,15 +90,24 @@ function renderMoodFeed(moods) {
   if (!moods.length) { el.innerHTML = '<div class="empty">Your mood story starts with one check-in</div>'; return; }
   const emojis = ['', '😴', '😐', '🙂', '😊', '🔥'];
   const energyLbls = ['', 'Drained', 'Low', 'Steady', 'Strong', 'On fire'];
+  const sleepLbls = ['', 'Awful', 'Poor', 'Okay', 'Good', 'Amazing'];
+  const stressLbls = ['', 'Calm', 'Light', 'Some', 'High', 'Max'];
   el.innerHTML = moods.map(m => {
     const t = new Date(m.timestamp);
     const ts = timeAgo(t);
+    let details = [energyLbls[m.energy] + ' energy'];
+    if (m.sleep) details.push(sleepLbls[m.sleep] + ' sleep');
+    if (m.stress) details.push(stressLbls[m.stress] + ' stress');
+    const tagHtml = m.tags ? m.tags.map(t => `<span class="mh-tag">#${t}</span>`).join('') : '';
+    const dedicateHtml = m.dedicatedTo ? `<div class="mh-dedicate">💕 For ${m.dedicatedTo === user ? 'you' : NAMES[m.dedicatedTo]}</div>` : '';
     return `<div class="mh-item">
       <div class="mh-emoji">${emojis[m.mood]}</div>
       <div class="mh-info">
         <div class="mh-name">${m.user === user ? 'You' : (m.userName || '?')}</div>
-        <div class="mh-detail">${energyLbls[m.energy] || ''} energy</div>
-        ${m.note ? `<div class="mh-note">${m.note.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>` : ''}
+        <div class="mh-detail">${details.join(' · ')}</div>
+        ${tagHtml ? `<div class="mh-tags">${tagHtml}</div>` : ''}
+        ${m.note ? `<div class="mh-note">${esc(m.note)}</div>` : ''}
+        ${dedicateHtml}
       </div>
       <div class="mh-time">${ts}</div>
     </div>`;

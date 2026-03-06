@@ -315,8 +315,44 @@
     <button class="pill-btn" onclick="selEnergy(5,this)">Charged</button>
   </div>
 
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Add a Note</div></div>
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Sleep</div></div>
+  <div class="pill-row" id="sleep-grid">
+    <button class="pill-btn" onclick="selSleep(1,this)">Awful</button>
+    <button class="pill-btn" onclick="selSleep(2,this)">Poor</button>
+    <button class="pill-btn" onclick="selSleep(3,this)">Okay</button>
+    <button class="pill-btn" onclick="selSleep(4,this)">Good</button>
+    <button class="pill-btn" onclick="selSleep(5,this)">Amazing</button>
+  </div>
+
+  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Stress</div></div>
+  <div class="pill-row" id="stress-grid">
+    <button class="pill-btn" onclick="selStress(1,this)">Calm</button>
+    <button class="pill-btn" onclick="selStress(2,this)">Light</button>
+    <button class="pill-btn" onclick="selStress(3,this)">Some</button>
+    <button class="pill-btn" onclick="selStress(4,this)">High</button>
+    <button class="pill-btn" onclick="selStress(5,this)">Max</button>
+  </div>
+
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Tags</div></div>
+  <div class="mood-tags" id="mood-tags">
+    <button class="mood-tag" onclick="toggleTag(this)" data-tag="work">#work</button>
+    <button class="mood-tag" onclick="toggleTag(this)" data-tag="health">#health</button>
+    <button class="mood-tag" onclick="toggleTag(this)" data-tag="relationship">#relationship</button>
+    <button class="mood-tag" onclick="toggleTag(this)" data-tag="family">#family</button>
+    <button class="mood-tag" onclick="toggleTag(this)" data-tag="money">#money</button>
+    <button class="mood-tag" onclick="toggleTag(this)" data-tag="growth">#growth</button>
+    <button class="mood-tag" onclick="toggleTag(this)" data-tag="social">#social</button>
+    <button class="mood-tag" onclick="toggleTag(this)" data-tag="rest">#rest</button>
+  </div>
+
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Note</div></div>
   <textarea class="mood-note" id="mood-note" placeholder="Anything on your mind?"></textarea>
+
+  <div class="mood-dedicate">
+    <label class="mood-dedicate-label">
+      <input type="checkbox" id="mood-dedicate-check"> Dedicate this check-in to <span class="pname"></span> 💕
+    </label>
+  </div>
 
   <button class="mood-submit" id="mood-submit-btn" onclick="submitMood()">Check in</button>
 
