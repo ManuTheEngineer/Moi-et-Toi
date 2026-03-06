@@ -819,6 +819,15 @@
       <button class="game-pick-btn" onclick="newTrivia()">
         <span class="gpb-icon">🧠</span><span class="gpb-name">Trivia</span>
       </button>
+      <button class="game-pick-btn" onclick="newWar()">
+        <span class="gpb-icon">🃏</span><span class="gpb-name">War</span>
+      </button>
+      <button class="game-pick-btn" onclick="newCheckers()">
+        <span class="gpb-icon">🏁</span><span class="gpb-name">Checkers</span>
+      </button>
+      <button class="game-pick-btn" onclick="newGoFish()">
+        <span class="gpb-icon">🐟</span><span class="gpb-name">Go Fish</span>
+      </button>
     </div>
     <div id="game-stats-board"></div>
   </div>
@@ -902,6 +911,33 @@
       <span class="gv-title">Trivia</span>
     </div>
     <div id="trivia-board"></div>
+  </div>
+
+  <!-- War View -->
+  <div class="game-view" id="gv-war" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">War</span>
+    </div>
+    <div id="war-board"></div>
+  </div>
+
+  <!-- Checkers View -->
+  <div class="game-view" id="gv-checkers" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Checkers</span>
+    </div>
+    <div id="checkers-board"></div>
+  </div>
+
+  <!-- Go Fish View -->
+  <div class="game-view" id="gv-gofish" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Go Fish</span>
+    </div>
+    <div id="gofish-board"></div>
   </div>
 
   <!-- Compatibility Score -->

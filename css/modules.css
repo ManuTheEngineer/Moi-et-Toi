@@ -986,6 +986,56 @@
   .game-picker{grid-template-columns:repeat(2,1fr)}
 }
 
+/* War Card Game */
+.war-scores{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);font-size:13px;color:var(--t2)}
+.war-scores .me{color:var(--gold);font-weight:600}
+.war-round{font-size:11px;color:var(--t3)}
+.war-field{display:flex;align-items:center;justify-content:space-around;gap:16px;padding:20px 0;position:relative}
+.war-side{text-align:center}
+.war-label{font-size:11px;color:var(--t3);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase}
+.war-card{width:80px;height:112px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;font-weight:700;box-shadow:var(--card-shadow);animation:popIn .3s ease}
+.war-card.red{background:#fff;color:#c0392b;border:2px solid #e74c3c}
+.war-card.black{background:#fff;color:#2c3e50;border:2px solid #34495e}
+.war-card.facedown{background:linear-gradient(135deg,var(--gold),var(--red));color:rgba(255,255,255,.5);font-size:28px;border:none}
+.war-card span{font-size:14px;margin-top:2px}
+.war-card-slot{width:80px;height:112px;border-radius:12px;border:2px dashed var(--bdr-s);background:transparent}
+.war-pile-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--gold);color:#fff;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:600;letter-spacing:1px;z-index:1}
+.war-result{text-align:center;font-size:13px;color:var(--cream);padding:8px;margin-bottom:8px}
+.war-flip-btn{width:100%;margin-top:8px;animation:pulse 1.5s ease-in-out infinite}
+
+/* Checkers */
+.ck-scores{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:12px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);font-size:13px;color:var(--t2)}
+.ck-scores .me{color:var(--gold);font-weight:600}
+.ck-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:0;max-width:340px;margin:0 auto;border-radius:12px;overflow:hidden;box-shadow:var(--card-shadow)}
+.ck-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;position:relative}
+.ck-cell.light{background:#f5e6d3}
+.ck-cell.dark{background:#8b6f47}
+.ck-cell.selected{box-shadow:inset 0 0 0 3px var(--gold)}
+.ck-cell.valid-move{background:rgba(196,120,74,.3)}
+.ck-piece{width:75%;height:75%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.ck-piece.light{background:linear-gradient(135deg,#f5f5f5,#ddd);border:2px solid #ccc;color:#888}
+.ck-piece.dark{background:linear-gradient(135deg,#4a3728,#2c1f14);border:2px solid #3d2b1f;color:#c0a080}
+.ck-piece.king{box-shadow:0 0 10px rgba(196,120,74,.4)}
+.ck-dot{width:30%;height:30%;border-radius:50%;background:rgba(196,120,74,.4)}
+
+/* Go Fish */
+.gf-scorebar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:12px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);font-size:13px;color:var(--t2)}
+.gf-scorebar .me{color:var(--gold);font-weight:600}
+.gf-deck{font-size:11px;color:var(--t3)}
+.gf-action{text-align:center;padding:10px 16px;margin-bottom:12px;font-size:13px;color:var(--cream);background:var(--tint);border-radius:14px;animation:fadeIn .3s ease}
+.gf-opponent{text-align:center;padding:16px;margin-bottom:12px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow)}
+.gf-label{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+.gf-count{font-size:18px;font-family:'Cormorant Garamond',serif;color:var(--cream);margin-top:4px}
+.gf-prompt{text-align:center;font-size:12px;color:var(--gold);margin-bottom:12px;font-weight:500}
+.gf-hand{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:12px 0}
+.gf-card{width:52px;height:72px;border-radius:8px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:16px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.1);transition:all .2s;position:relative}
+.gf-card.red{color:#c0392b}
+.gf-card.black{color:#2c3e50}
+.gf-card span{font-size:10px;margin-top:1px}
+.gf-card.active{cursor:pointer}
+.gf-card.active:hover{transform:translateY(-4px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.gf-card.active:active{transform:scale(.92)}
+
 /* ===== FINANCE MODULE ===== */
 .fin-quick-add{background:var(--card-bg);border-radius:22px;padding:18px;box-shadow:var(--card-shadow);margin-bottom:20px}
 .fin-input-row{display:flex;align-items:center;gap:4px;margin-bottom:12px}

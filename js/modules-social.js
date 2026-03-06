@@ -956,7 +956,10 @@ function renderAllGameStats() {
       { key: '21q', name: '21 Questions', icon: '❓' },
       { key: 'ttal', name: '2 Truths', icon: '🤥' },
       { key: 'wordchain', name: 'Word Chain', icon: '🔗' },
-      { key: 'trivia', name: 'Trivia', icon: '🧠' }
+      { key: 'trivia', name: 'Trivia', icon: '🧠' },
+      { key: 'war', name: 'War', icon: '🃏' },
+      { key: 'checkers', name: 'Checkers', icon: '🏁' },
+      { key: 'gofish', name: 'Go Fish', icon: '🐟' }
     ];
     const myTotal = my.totalGames || 0;
     const myWins = types.reduce((s, t) => s + ((my[t.key]?.w) || 0), 0);
@@ -997,7 +1000,7 @@ function listenGameInvites() {
       if (g.startedBy === partner && g.status === 'active') {
         const el = document.getElementById('game-invite');
         if (el) {
-          const names = { ttt: 'Tic-Tac-Toe', c4: 'Connect Four', memory: 'Memory Match', rps: 'Rock Paper Scissors', emoji: 'Emoji Guess', '21q': '21 Questions', ttal: 'Two Truths & a Lie', wordchain: 'Word Chain', trivia: 'Trivia' };
+          const names = { ttt: 'Tic-Tac-Toe', c4: 'Connect Four', memory: 'Memory Match', rps: 'Rock Paper Scissors', emoji: 'Emoji Guess', '21q': '21 Questions', ttal: 'Two Truths & a Lie', wordchain: 'Word Chain', trivia: 'Trivia', war: 'War', checkers: 'Checkers', gofish: 'Go Fish' };
           el.innerHTML = `<div class="game-invite-card">
             <span>${NAMES[partner]} wants to play <strong>${names[g.type] || g.type}</strong>!</span>
             <button class="gi-join" onclick="joinGame('${c.key}','${g.type}')">Join</button>
@@ -1021,6 +1024,9 @@ function joinGame(key, type) {
   else if (type === 'ttal') { listenGame(key, renderTTAL); showGameView('ttal'); }
   else if (type === 'wordchain') { listenGame(key, renderWordChain); showGameView('wordchain'); }
   else if (type === 'trivia') { listenGame(key, renderTrivia); showGameView('trivia'); }
+  else if (type === 'war') { listenGame(key, renderWar); showGameView('war'); }
+  else if (type === 'checkers') { listenGame(key, renderCheckers); showGameView('checkers'); }
+  else if (type === 'gofish') { listenGame(key, renderGoFish); showGameView('gofish'); }
 }
 
 function showGameView(game) {
@@ -2007,6 +2013,427 @@ function renderTrivia(data, key) {
     html += `<div class="game-status">${w === 'draw' ? "It's a tie!" : (w === user ? 'You won!' : NAMES[partner] + ' won!')}</div>`;
     html += `<div style="text-align:center;font-size:14px;color:var(--t2);margin:8px 0">${scores[user] || 0} — ${scores[partner] || 0}</div>`;
     html += `<div class="game-actions"><button class="game-btn" onclick="newTrivia()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ===== WAR (CARD GAME) =====
+function buildDeck() {
+  const suits = ['♠','♥','♦','♣'];
+  const ranks = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+  const deck = [];
+  suits.forEach(s => ranks.forEach(r => deck.push({ rank: r, suit: s, value: ranks.indexOf(r) + 2 })));
+  return deck.sort(() => Math.random() - 0.5);
+}
+
+async function newWar() {
+  const deck = buildDeck();
+  const half = Math.floor(deck.length / 2);
+  const key = await startGame('war', {
+    deck1: deck.slice(0, half),
+    deck2: deck.slice(half),
+    played: { p1: null, p2: null },
+    warPile: [],
+    round: 0,
+    phase: 'flip'
+  });
+  if (!key) return;
+  listenGame(key, renderWar);
+  showGameView('war');
+}
+
+async function flipWar() {
+  if (!activeGameKey) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data || data.status !== 'active' || data.phase !== 'flip') return;
+  const isP1 = data.startedBy === user;
+  const myDeck = isP1 ? 'deck1' : 'deck2';
+  const mySlot = isP1 ? 'p1' : 'p2';
+  const deck = data[myDeck] || [];
+  if (!deck.length) return;
+  const played = data.played || { p1: null, p2: null };
+  if (played[mySlot]) return;
+  const card = deck.shift();
+  played[mySlot] = card;
+  const updates = { played };
+  updates[myDeck] = deck;
+  const otherSlot = isP1 ? 'p2' : 'p1';
+  if (played[otherSlot]) updates.phase = 'reveal';
+  await db.ref('games/sessions/' + activeGameKey).update(updates);
+}
+
+async function resolveWar() {
+  if (!activeGameKey) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data || data.phase !== 'reveal') return;
+  const p = data.played || {};
+  if (!p.p1 || !p.p2) return;
+  const pile = data.warPile || [];
+  const allCards = [...pile, p.p1, p.p2];
+  let deck1 = data.deck1 || [];
+  let deck2 = data.deck2 || [];
+
+  if (p.p1.value > p.p2.value) {
+    deck1 = [...deck1, ...allCards.sort(() => Math.random() - 0.5)];
+    await db.ref('games/sessions/' + activeGameKey).update({ deck1, deck2, played: { p1: null, p2: null }, warPile: [], phase: 'flip', round: (data.round || 0) + 1, lastWinner: 'p1' });
+  } else if (p.p2.value > p.p1.value) {
+    deck2 = [...deck2, ...allCards.sort(() => Math.random() - 0.5)];
+    await db.ref('games/sessions/' + activeGameKey).update({ deck1, deck2, played: { p1: null, p2: null }, warPile: [], phase: 'flip', round: (data.round || 0) + 1, lastWinner: 'p2' });
+  } else {
+    const faceDown1 = deck1.splice(0, Math.min(3, deck1.length));
+    const faceDown2 = deck2.splice(0, Math.min(3, deck2.length));
+    const newPile = [...allCards, ...faceDown1, ...faceDown2];
+    await db.ref('games/sessions/' + activeGameKey).update({ deck1, deck2, played: { p1: null, p2: null }, warPile: newPile, phase: 'flip', round: (data.round || 0) + 1, lastWinner: 'war' });
+  }
+  const updated = (await db.ref('games/sessions/' + activeGameKey).once('value')).val();
+  if (updated && updated.status === 'active') {
+    if (!(updated.deck1 || []).length && !(updated.played?.p1)) {
+      await endGame(activeGameKey, 'war', updated.startedBy === 'him' ? 'her' : 'him');
+    } else if (!(updated.deck2 || []).length && !(updated.played?.p2)) {
+      await endGame(activeGameKey, 'war', updated.startedBy);
+    }
+  }
+}
+
+function cardDisplay(card) {
+  if (!card) return '<div class="war-card facedown">?</div>';
+  const color = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
+  return `<div class="war-card ${color}">${card.rank}<span>${card.suit}</span></div>`;
+}
+
+function renderWar(data, key) {
+  const el = document.getElementById('war-board');
+  if (!el) return;
+  const isP1 = data.startedBy === user;
+  const myDeck = isP1 ? data.deck1 : data.deck2;
+  const theirDeck = isP1 ? data.deck2 : data.deck1;
+  const myPlayed = isP1 ? data.played?.p1 : data.played?.p2;
+  const theirPlayed = isP1 ? data.played?.p2 : data.played?.p1;
+  const warPile = data.warPile || [];
+
+  let html = `<div class="war-scores">
+    <span class="me">${NAMES[user]}: ${(myDeck || []).length}</span>
+    <span class="war-round">Round ${(data.round || 0) + 1}</span>
+    <span>${NAMES[partner]}: ${(theirDeck || []).length}</span>
+  </div>`;
+
+  html += '<div class="war-field">';
+  html += `<div class="war-side"><div class="war-label">${NAMES[partner]}</div>${theirPlayed && data.phase === 'reveal' ? cardDisplay(theirPlayed) : (theirPlayed ? '<div class="war-card facedown">?</div>' : '<div class="war-card-slot"></div>')}</div>`;
+  if (warPile.length) html += `<div class="war-pile-badge">WAR! ${warPile.length} cards</div>`;
+  html += `<div class="war-side"><div class="war-label">${NAMES[user]}</div>${myPlayed ? cardDisplay(myPlayed) : '<div class="war-card-slot"></div>'}</div>`;
+  html += '</div>';
+
+  if (data.lastWinner && data.phase === 'flip') {
+    const msg = data.lastWinner === 'war' ? 'WAR! Tied — play again!' : ((data.lastWinner === 'p1') === isP1 ? 'You won the round!' : NAMES[partner] + ' won the round!');
+    html += `<div class="war-result">${msg}</div>`;
+  }
+
+  if (data.status === 'active') {
+    if (data.phase === 'flip') {
+      if (!myPlayed) {
+        html += `<button class="game-btn war-flip-btn" onclick="flipWar()">Flip Card</button>`;
+      } else {
+        html += `<div class="game-status turn">Waiting for ${NAMES[partner]} to flip...</div>`;
+      }
+    } else if (data.phase === 'reveal') {
+      html += `<button class="game-btn" onclick="resolveWar()">Continue</button>`;
+    }
+  } else {
+    html += `<div class="game-status">${data.winner === user ? 'You won the war!' : NAMES[partner] + ' won!'}</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newWar()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ===== CHECKERS =====
+function initCheckersBoard() {
+  const board = Array(8).fill(null).map(() => Array(8).fill(null));
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 8; c++) { if ((r + c) % 2 === 1) board[r][c] = { color: 'dark', king: false }; }
+  for (let r = 5; r < 8; r++) for (let c = 0; c < 8; c++) { if ((r + c) % 2 === 1) board[r][c] = { color: 'light', king: false }; }
+  return board;
+}
+
+let checkersSelected = null;
+
+async function newCheckers() {
+  const board = initCheckersBoard();
+  const key = await startGame('checkers', {
+    board,
+    turn: user,
+    lightPlayer: user,
+    darkPlayer: partner
+  });
+  if (!key) return;
+  checkersSelected = null;
+  listenGame(key, renderCheckers);
+  showGameView('checkers');
+}
+
+function getCheckerMoves(board, r, c, piece) {
+  if (!piece) return [];
+  const moves = [];
+  const dirs = piece.color === 'light' ? [[-1, -1], [-1, 1]] : [[1, -1], [1, 1]];
+  if (piece.king) { dirs.push(...(piece.color === 'light' ? [[1, -1], [1, 1]] : [[-1, -1], [-1, 1]])); }
+  dirs.forEach(([dr, dc]) => {
+    const nr = r + dr, nc = c + dc;
+    if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
+      if (!board[nr][nc]) {
+        moves.push({ r: nr, c: nc, jump: false });
+      } else if (board[nr][nc].color !== piece.color) {
+        const jr = nr + dr, jc = nc + dc;
+        if (jr >= 0 && jr < 8 && jc >= 0 && jc < 8 && !board[jr][jc]) {
+          moves.push({ r: jr, c: jc, jump: true, captureR: nr, captureC: nc });
+        }
+      }
+    }
+  });
+  return moves;
+}
+
+async function clickChecker(r, c) {
+  if (!activeGameKey) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data || data.status !== 'active' || data.turn !== user) return;
+  const board = data.board;
+  const myColor = data.lightPlayer === user ? 'light' : 'dark';
+
+  if (checkersSelected) {
+    const { sr, sc } = checkersSelected;
+    const piece = board[sr][sc];
+    if (!piece || piece.color !== myColor) { checkersSelected = null; return; }
+    const moves = getCheckerMoves(board, sr, sc, piece);
+    const move = moves.find(m => m.r === r && m.c === c);
+    if (!move) {
+      if (board[r][c] && board[r][c].color === myColor) {
+        checkersSelected = { sr: r, sc: c };
+        renderCheckers(data, activeGameKey);
+      } else {
+        checkersSelected = null;
+        renderCheckers(data, activeGameKey);
+      }
+      return;
+    }
+    board[r][c] = piece;
+    board[sr][sc] = null;
+    if (move.jump) board[move.captureR][move.captureC] = null;
+    if (piece.color === 'light' && r === 0) piece.king = true;
+    if (piece.color === 'dark' && r === 7) piece.king = true;
+
+    let extraJumps = [];
+    if (move.jump) {
+      extraJumps = getCheckerMoves(board, r, c, piece).filter(m => m.jump);
+    }
+
+    checkersSelected = null;
+    if (move.jump && extraJumps.length) {
+      checkersSelected = { sr: r, sc: c };
+      await db.ref('games/sessions/' + activeGameKey).update({ board });
+    } else {
+      const opColor = myColor === 'light' ? 'dark' : 'light';
+      let opPieces = 0;
+      board.forEach(row => row.forEach(cell => { if (cell && cell.color === opColor) opPieces++; }));
+      if (opPieces === 0) {
+        await db.ref('games/sessions/' + activeGameKey).update({ board });
+        await endGame(activeGameKey, 'checkers', user);
+      } else {
+        await db.ref('games/sessions/' + activeGameKey).update({ board, turn: partner });
+      }
+    }
+  } else {
+    if (board[r][c] && board[r][c].color === myColor) {
+      checkersSelected = { sr: r, sc: c };
+      renderCheckers(data, activeGameKey);
+    }
+  }
+}
+
+function renderCheckers(data, key) {
+  const el = document.getElementById('checkers-board');
+  if (!el) return;
+  const board = data.board;
+  const myColor = data.lightPlayer === user ? 'light' : 'dark';
+  const isMyTurn = data.turn === user;
+
+  let lightCount = 0, darkCount = 0;
+  board.forEach(row => row.forEach(cell => { if (cell) { if (cell.color === 'light') lightCount++; else darkCount++; } }));
+  const myCount = myColor === 'light' ? lightCount : darkCount;
+  const theirCount = myColor === 'light' ? darkCount : lightCount;
+
+  let html = `<div class="ck-scores"><span class="me">${NAMES[user]}: ${myCount}</span><span>${NAMES[partner]}: ${theirCount}</span></div>`;
+
+  let validMoves = [];
+  if (checkersSelected && isMyTurn) {
+    const { sr, sc } = checkersSelected;
+    const piece = board[sr][sc];
+    if (piece) validMoves = getCheckerMoves(board, sr, sc, piece);
+  }
+
+  const flip = myColor === 'dark';
+  html += '<div class="ck-grid">';
+  for (let ri = 0; ri < 8; ri++) {
+    for (let ci = 0; ci < 8; ci++) {
+      const r = flip ? 7 - ri : ri;
+      const c = flip ? 7 - ci : ci;
+      const isDark = (r + c) % 2 === 1;
+      const cell = board[r][c];
+      const isSelected = checkersSelected && checkersSelected.sr === r && checkersSelected.sc === c;
+      const isValidDest = validMoves.some(m => m.r === r && m.c === c);
+      let cls = isDark ? 'ck-cell dark' : 'ck-cell light';
+      if (isSelected) cls += ' selected';
+      if (isValidDest) cls += ' valid-move';
+      let inner = '';
+      if (cell) {
+        inner = `<div class="ck-piece ${cell.color}${cell.king ? ' king' : ''}">${cell.king ? '♛' : ''}</div>`;
+      } else if (isValidDest) {
+        inner = '<div class="ck-dot"></div>';
+      }
+      html += `<div class="${cls}" onclick="clickChecker(${r},${c})">${inner}</div>`;
+    }
+  }
+  html += '</div>';
+
+  if (data.status === 'active') {
+    html += `<div class="game-status${isMyTurn ? '' : ' turn'}">${isMyTurn ? 'Your turn' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
+  } else {
+    html += `<div class="game-status">${data.winner === user ? 'You won!' : NAMES[partner] + ' won!'}</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newCheckers()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ===== GO FISH =====
+function buildGoFishDeck() {
+  const suits = ['♠','♥','♦','♣'];
+  const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  const deck = [];
+  suits.forEach(s => ranks.forEach(r => deck.push({ rank: r, suit: s })));
+  return deck.sort(() => Math.random() - 0.5);
+}
+
+async function newGoFish() {
+  const deck = buildGoFishDeck();
+  const hand1 = deck.splice(0, 7);
+  const hand2 = deck.splice(0, 7);
+  const key = await startGame('gofish', {
+    deck,
+    hands: { him: user === 'him' ? hand1 : hand2, her: user === 'him' ? hand2 : hand1 },
+    books: { him: 0, her: 0 },
+    turn: user,
+    lastAction: '',
+    phase: 'ask'
+  });
+  if (!key) return;
+  listenGame(key, renderGoFish);
+  showGameView('gofish');
+}
+
+function checkBooks(hand) {
+  const counts = {};
+  hand.forEach(c => { counts[c.rank] = (counts[c.rank] || 0) + 1; });
+  let books = 0;
+  const bookRanks = [];
+  Object.entries(counts).forEach(([rank, count]) => {
+    if (count >= 4) { books++; bookRanks.push(rank); }
+  });
+  const remaining = hand.filter(c => !bookRanks.includes(c.rank));
+  return { books, remaining };
+}
+
+async function askGoFish(rank) {
+  if (!activeGameKey) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data || data.status !== 'active' || data.turn !== user) return;
+  const hands = data.hands;
+  const myHand = hands[user];
+  const theirHand = hands[partner];
+  const deck = data.deck || [];
+
+  const found = theirHand.filter(c => c.rank === rank);
+  const notFound = theirHand.filter(c => c.rank !== rank);
+  let action = '';
+
+  if (found.length > 0) {
+    const newMyHand = [...myHand, ...found];
+    hands[user] = newMyHand;
+    hands[partner] = notFound;
+    action = `${NAMES[user]} asked for ${rank}s — got ${found.length}!`;
+    const result = checkBooks(hands[user]);
+    const bks = data.books || { him: 0, her: 0 };
+    bks[user] += result.books;
+    hands[user] = result.remaining;
+    const updates = { hands, books: bks, lastAction: action, turn: user };
+    if (bks.him + bks.her >= 13 || (!hands.him.length && !hands.her.length && !deck.length)) {
+      await db.ref('games/sessions/' + activeGameKey).update(updates);
+      const w = bks[user] > bks[partner] ? user : bks[partner] > bks[user] ? partner : 'draw';
+      await endGame(activeGameKey, 'gofish', w);
+    } else {
+      await db.ref('games/sessions/' + activeGameKey).update(updates);
+    }
+  } else {
+    action = `${NAMES[user]} asked for ${rank}s — Go Fish!`;
+    if (deck.length) {
+      const drawn = deck.shift();
+      myHand.push(drawn);
+      if (drawn.rank === rank) action += ` Drew a ${rank}!`;
+    }
+    hands[user] = myHand;
+    const result = checkBooks(hands[user]);
+    const bks = data.books || { him: 0, her: 0 };
+    bks[user] += result.books;
+    hands[user] = result.remaining;
+    const updates = { hands, books: bks, deck, lastAction: action, turn: partner };
+    if (bks.him + bks.her >= 13 || (!hands.him.length && !hands.her.length && !deck.length)) {
+      await db.ref('games/sessions/' + activeGameKey).update(updates);
+      const w = bks[user] > bks[partner] ? user : bks[partner] > bks[user] ? partner : 'draw';
+      await endGame(activeGameKey, 'gofish', w);
+    } else {
+      if (!hands[user].length && deck.length) hands[user] = [deck.shift()];
+      await db.ref('games/sessions/' + activeGameKey).update(updates);
+    }
+  }
+}
+
+function renderGoFish(data, key) {
+  const el = document.getElementById('gofish-board');
+  if (!el) return;
+  const myHand = (data.hands && data.hands[user]) || [];
+  const theirCount = (data.hands && data.hands[partner] || []).length;
+  const deckCount = (data.deck || []).length;
+  const books = data.books || { him: 0, her: 0 };
+  const isMyTurn = data.turn === user;
+
+  let html = `<div class="gf-scorebar">
+    <span class="me">${NAMES[user]}: ${books[user]} books</span>
+    <span class="gf-deck">${deckCount} in deck</span>
+    <span>${NAMES[partner]}: ${books[partner]} books</span>
+  </div>`;
+
+  if (data.lastAction) html += `<div class="gf-action">${esc(data.lastAction)}</div>`;
+
+  html += `<div class="gf-opponent"><div class="gf-label">${NAMES[partner]}'s hand</div><div class="gf-count">${theirCount} cards</div></div>`;
+
+  if (data.status === 'active') {
+    if (isMyTurn && myHand.length) html += `<div class="gf-prompt">Tap a card to ask for that rank</div>`;
+    else if (!isMyTurn) html += `<div class="game-status turn">Waiting for ${NAMES[partner]}...</div>`;
+    html += '<div class="gf-hand">';
+    const sorted = [...myHand].sort((a, b) => {
+      const r = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+      return r.indexOf(a.rank) - r.indexOf(b.rank);
+    });
+    sorted.forEach(card => {
+      const color = (card.suit === '♥' || card.suit === '♦') ? 'red' : 'black';
+      const clickable = isMyTurn ? `onclick="askGoFish('${card.rank}')"` : '';
+      html += `<div class="gf-card ${color}${isMyTurn ? ' active' : ''}" ${clickable}>${card.rank}<span>${card.suit}</span></div>`;
+    });
+    html += '</div>';
+  } else {
+    html += `<div class="game-status">${data.winner === 'draw' ? "It's a tie!" : (data.winner === user ? 'You won!' : NAMES[partner] + ' won!')}</div>`;
+    html += `<div style="text-align:center;font-size:14px;color:var(--t2);margin:8px 0">${books[user]} — ${books[partner]} books</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newGoFish()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
   }
   el.innerHTML = html;
 }
