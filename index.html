@@ -410,12 +410,22 @@
 <div class="pg" id="pg-ai">
 <div class="ctn">
 
+  <!-- Context Selector -->
+  <div class="ai-ctx-bar" id="ai-ctx-bar">
+    <button class="ai-ctx-pill active" data-ctx="general" onclick="setAIContext('general')">💬 General</button>
+    <button class="ai-ctx-pill" data-ctx="relationship" onclick="setAIContext('relationship')">💕 Relationship</button>
+    <button class="ai-ctx-pill" data-ctx="fitness" onclick="setAIContext('fitness')">🏋️ Fitness</button>
+    <button class="ai-ctx-pill" data-ctx="finances" onclick="setAIContext('finances')">💰 Finances</button>
+    <button class="ai-ctx-pill" data-ctx="goals" onclick="setAIContext('goals')">🎯 Goals</button>
+    <button class="ai-ctx-pill" data-ctx="planning" onclick="setAIContext('planning')">📅 Planning</button>
+  </div>
+
   <div class="chat-messages" id="chat-messages">
-    <div class="chat-msg ai"><div class="msg-from">Claude</div>Hey! I'm your shared AI assistant. Ask me anything, tell me to update your plans, or just talk. Both of you can chat with me and I'll remember context from this conversation.</div>
+    <div class="chat-msg ai"><div class="msg-from">Claude</div>Hey! I'm your shared AI assistant. I can take actions in the app — log moods, track expenses, send notes, check stats, and more. Try asking me something or switch my context above for specialized help.</div>
   </div>
   <div class="typing" id="typing">Claude is thinking...</div>
   <div class="chat-input-row">
-    <input class="chat-input" id="chat-input" placeholder="Ask about your relationship, plans, anything..." onkeydown="if(event.key==='Enter')sendAI()">
+    <input class="chat-input" id="chat-input" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')sendAI()">
     <button class="chat-send" onclick="sendAI()">Send</button>
   </div>
 </div>

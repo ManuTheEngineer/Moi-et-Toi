@@ -301,6 +301,272 @@ function renderStreakCalendar() {
 }
 
 // ===== AI CHAT =====
+let aiContext = 'general';
+const AI_CONTEXTS = {
+  general: { label: 'General', icon: '💬', desc: 'Casual chat, advice, brainstorming' },
+  relationship: { label: 'Relationship', icon: '💕', desc: 'Mood data, health score, coaching' },
+  fitness: { label: 'Fitness', icon: '🏋️', desc: 'Workouts, goals, progress' },
+  finances: { label: 'Finances', icon: '💰', desc: 'Spending, budgets, savings' },
+  goals: { label: 'Goals', icon: '🎯', desc: 'Goals, habits, growth' },
+  planning: { label: 'Planning', icon: '📅', desc: 'Calendar, dates, coordination' }
+};
+
+const AI_TOOLS = [
+  {
+    name: 'log_mood',
+    description: 'Log a mood check-in for the current user. Use when the user tells you how they feel.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        mood: { type: 'integer', minimum: 1, maximum: 5, description: '1=struggling, 2=low, 3=okay, 4=good, 5=thriving' },
+        energy: { type: 'integer', minimum: 1, maximum: 5, description: '1=drained to 5=energized' },
+        note: { type: 'string', description: 'Optional note about the mood' }
+      },
+      required: ['mood', 'energy']
+    }
+  },
+  {
+    name: 'get_mood_stats',
+    description: 'Get mood statistics for a user over a time period. Returns averages, trends, streaks.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        user: { type: 'string', enum: ['her', 'him', 'both'], description: 'Whose mood stats to get' },
+        period: { type: 'string', enum: ['7d', '30d', '90d', 'all'], description: 'Time period' }
+      },
+      required: ['user', 'period']
+    }
+  },
+  {
+    name: 'add_expense',
+    description: 'Log an expense to the shared finance tracker.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        amount: { type: 'number', description: 'Amount in dollars' },
+        category: { type: 'string', enum: ['food', 'transport', 'housing', 'entertainment', 'shopping', 'health', 'subscriptions', 'other'] },
+        note: { type: 'string', description: 'What the expense was for' }
+      },
+      required: ['amount', 'category']
+    }
+  },
+  {
+    name: 'send_note',
+    description: 'Send a love note/letter to the partner.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', description: 'The note/letter content' }
+      },
+      required: ['message']
+    }
+  },
+  {
+    name: 'get_relationship_health',
+    description: 'Get the relationship health score with detailed breakdown. Shows mood sync, communication, goals, fitness, and financial alignment.',
+    input_schema: { type: 'object', properties: {} }
+  },
+  {
+    name: 'add_calendar_event',
+    description: 'Add an event to the shared calendar.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', description: 'Event title' },
+        date: { type: 'string', description: 'Date in YYYY-MM-DD format' },
+        notes: { type: 'string', description: 'Optional notes' }
+      },
+      required: ['title', 'date']
+    }
+  },
+  {
+    name: 'create_goal',
+    description: 'Create a new personal or shared goal.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', description: 'Goal title' },
+        type: { type: 'string', enum: ['personal', 'shared'], description: 'Personal or shared with partner' }
+      },
+      required: ['title']
+    }
+  },
+  {
+    name: 'get_financial_summary',
+    description: 'Get spending summary for the current month. Returns total spent, by category, budget remaining.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        period: { type: 'string', enum: ['this_month', 'last_month', 'this_week'], description: 'Time period' }
+      },
+      required: ['period']
+    }
+  }
+];
+
+function setAIContext(ctx) {
+  aiContext = ctx;
+  document.querySelectorAll('.ai-ctx-pill').forEach(el => {
+    el.classList.toggle('active', el.dataset.ctx === ctx);
+  });
+  const placeholder = {
+    general: 'Ask me anything...',
+    relationship: 'How are we doing this week?',
+    fitness: 'Create a workout plan for me',
+    finances: 'How much did we spend this month?',
+    goals: 'Help me set a new goal',
+    planning: 'Plan a date night for us'
+  };
+  const input = document.getElementById('chat-input');
+  if (input) input.placeholder = placeholder[ctx] || 'Ask me anything...';
+}
+
+function buildAISystemPrompt() {
+  let prompt = `You are the AI inside "Moi et Toi," a private relationship app for ${NAMES.him} and ${NAMES.her}. The current user is ${NAMES[user]} (${user}).
+
+WHO THEY ARE:
+- ${NAMES.him} (him) is from Togo, West Africa. Ewe, Mina, French. Togolese traditions, values, and food.
+- ${NAMES.her} (her) is from Texas. Southern roots, Texan culture, American traditions.
+- They're an intercultural couple — young, ambitious, building toward marriage and family.
+
+YOUR ROLE:
+- Their trusted friend. Part of the inner circle. Not a chatbot.
+- Be warm, honest, direct, and concise. Use their names.
+- You have TOOLS that let you read and write data in the app. Use them proactively when the conversation calls for it — don't just chat, take action.
+- When a user tells you how they feel, log their mood. When they mention spending, log an expense. Be proactive.`;
+
+  // Add context-specific data
+  if (aiContext === 'relationship' && typeof MET !== 'undefined' && MET._ready) {
+    const moodStats = MET.mood.stats || {};
+    prompt += `\n\nRELATIONSHIP CONTEXT:
+- Relationship health score: ${MET.relationship.score || 'not yet computed'}
+- Breakdown: ${JSON.stringify(MET.relationship.breakdown || {})}
+- ${NAMES.her}'s 7-day mood avg: ${moodStats.her?.avg7d?.toFixed(1) || 'no data'}
+- ${NAMES.him}'s 7-day mood avg: ${moodStats.him?.avg7d?.toFixed(1) || 'no data'}
+- Mood sync score: ${moodStats.joint?.syncScore ? Math.round(moodStats.joint.syncScore * 100) + '%' : 'no data'}
+- Check-in streak: ${moodStats.joint?.streak || 0} days
+Use this data to provide specific, personalized relationship insights.`;
+  }
+
+  if (aiContext === 'fitness' && typeof MET !== 'undefined' && MET._ready) {
+    const fitStats = MET.fitness.stats || {};
+    prompt += `\n\nFITNESS CONTEXT:
+- ${NAMES[user]}'s workouts last 7 days: ${fitStats[user]?.last7 || 0}
+- ${NAMES[user]}'s workouts last 30 days: ${fitStats[user]?.last30 || 0}
+- Total volume trend: ${fitStats[user]?.volumeTrend || 'no data'}
+- Partner sync days: ${fitStats.syncDays || 0}
+Use this data to help with workout planning and fitness coaching.`;
+  }
+
+  if (aiContext === 'finances' && typeof MET !== 'undefined' && MET._ready) {
+    const finStats = MET.finance.stats || {};
+    prompt += `\n\nFINANCE CONTEXT:
+- This month total: $${finStats.thisMonth?.total?.toFixed(2) || '0'}
+- Top category: ${finStats.thisMonth?.topCategory || 'no data'}
+- Budget utilization: ${finStats.thisMonth?.budgetPct ? Math.round(finStats.thisMonth.budgetPct * 100) + '%' : 'no data'}
+Use this data to help with budgeting and spending analysis.`;
+  }
+
+  if (aiContext === 'goals') {
+    prompt += `\n\nGOALS CONTEXT: Help with setting, tracking, and achieving goals. Both personal development and shared couple goals. Be a supportive coach.`;
+  }
+
+  if (aiContext === 'planning') {
+    prompt += `\n\nPLANNING CONTEXT: Help plan dates, coordinate schedules, suggest activities. Consider both Togolese and Texan cultural activities. Be creative and specific.`;
+  }
+
+  return prompt;
+}
+
+async function executeAITool(toolName, toolInput) {
+  switch (toolName) {
+    case 'log_mood': {
+      if (!db) return { error: 'Database not connected' };
+      const today = new Date().toISOString().split('T')[0];
+      await db.ref('moods').push({
+        mood: toolInput.mood,
+        energy: toolInput.energy,
+        note: toolInput.note || '',
+        user, userName: NAMES[user],
+        timestamp: Date.now(), date: today
+      });
+      return { success: true, message: `Mood logged: ${toolInput.mood}/5, energy ${toolInput.energy}/5` };
+    }
+    case 'get_mood_stats': {
+      if (!MET._ready) return { error: 'Metrics not loaded yet' };
+      const target = toolInput.user;
+      const stats = MET.mood.stats;
+      if (target === 'both') {
+        return {
+          him: { avg7d: stats.him?.avg7d, avg30d: stats.him?.avg30d, streak: stats.him?.streak, total: stats.him?.total },
+          her: { avg7d: stats.her?.avg7d, avg30d: stats.her?.avg30d, streak: stats.her?.streak, total: stats.her?.total },
+          joint: { syncScore: stats.joint?.syncScore, bestDay: stats.joint?.bestDay, streak: stats.joint?.streak }
+        };
+      }
+      const s = stats[target] || {};
+      return { avg7d: s.avg7d, avg30d: s.avg30d, avg90d: s.avg90d, streak: s.streak, total: s.total, trend: s.trend };
+    }
+    case 'add_expense': {
+      if (!db) return { error: 'Database not connected' };
+      const today = new Date().toISOString().split('T')[0];
+      await db.ref('finances/expenses').push({
+        amount: toolInput.amount,
+        category: toolInput.category,
+        note: toolInput.note || '',
+        paidBy: user,
+        date: today,
+        timestamp: Date.now()
+      });
+      return { success: true, message: `Expense logged: $${toolInput.amount} (${toolInput.category})` };
+    }
+    case 'send_note': {
+      if (!db) return { error: 'Database not connected' };
+      await db.ref('letters').push({
+        from: user, fromName: NAMES[user],
+        message: toolInput.message,
+        timestamp: Date.now(), read: false
+      });
+      return { success: true, message: 'Note sent to ' + NAMES[partner] };
+    }
+    case 'get_relationship_health': {
+      if (!MET._ready) return { error: 'Metrics not loaded yet' };
+      return { score: MET.relationship.score, breakdown: MET.relationship.breakdown };
+    }
+    case 'add_calendar_event': {
+      if (!db) return { error: 'Database not connected' };
+      await db.ref('calendar').push({
+        title: toolInput.title,
+        date: toolInput.date,
+        notes: toolInput.notes || '',
+        createdBy: user,
+        timestamp: Date.now()
+      });
+      return { success: true, message: `Event "${toolInput.title}" added for ${toolInput.date}` };
+    }
+    case 'create_goal': {
+      if (!db) return { error: 'Database not connected' };
+      const isShared = toolInput.type === 'shared';
+      const path = isShared ? 'personalGoals/shared' : 'personalGoals/' + user;
+      await db.ref(path).push({
+        title: toolInput.title,
+        done: false,
+        timestamp: Date.now()
+      });
+      return { success: true, message: `Goal created: "${toolInput.title}"` };
+    }
+    case 'get_financial_summary': {
+      if (!MET._ready) return { error: 'Metrics not loaded yet' };
+      const stats = MET.finance.stats;
+      if (toolInput.period === 'this_month') {
+        return stats.thisMonth || { total: 0, byCategory: {}, message: 'No expenses this month' };
+      }
+      return stats[toolInput.period] || { message: 'No data for this period' };
+    }
+    default:
+      return { error: 'Unknown tool: ' + toolName };
+  }
+}
+
 async function sendAI() {
   // Check for API key
   if (!CLAUDE_API_KEY) {
@@ -310,14 +576,14 @@ async function sendAI() {
     await db.ref('profiles/apiKey').set(key);
     toast('API key saved');
   }
-  
+
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
   input.value = '';
 
   const msgEl = document.getElementById('chat-messages');
-  msgEl.innerHTML += `<div class="chat-msg user"><div class="msg-from">${NAMES[user]}</div>${text}</div>`;
+  msgEl.innerHTML += `<div class="chat-msg user"><div class="msg-from">${NAMES[user]}</div>${esc(text)}</div>`;
 
   chatHistory.push({ role: 'user', content: `[${NAMES[user]}]: ${text}` });
 
@@ -325,41 +591,84 @@ async function sendAI() {
   msgEl.scrollTop = msgEl.scrollHeight;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    // Build request with tools
+    const requestBody = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      system: buildAISystemPrompt(),
+      messages: chatHistory,
+      tools: AI_TOOLS
+    };
+
+    let response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        system: `You are the AI inside Manu & Taylor's private relationship app. You know them.
-
-WHO THEY ARE:
-- Manu (${NAMES.him}) is from Togo, West Africa. Ewe, Mina, French. Togolese traditions, values, and food.
-- Taylor (${NAMES.her}) is from Texas. Southern roots, Texan culture, American traditions.
-- They're an intercultural couple — young, ambitious, building toward marriage and family.
-
-WHO YOU ARE:
-- Their trusted friend. Part of the inner circle. Not a chatbot.
-- You help with anything: relationship stuff, cultural questions, meal ideas, workouts, date plans, money, conflict, parenting prep, faith, communication, growth, household, or just listening.
-- Be warm, honest, and direct. Keep it concise. Talk like someone who actually knows them.
-- Draw on both Togolese and Texan culture when relevant.
-- You can reference features in the app (mood check-ins, love languages, check-ins, deep talks, date night, dreams, family planning, etc.)
-
-Talking to you right now: ${NAMES[user]} (${user === 'him' ? 'Manu, from Togo' : 'Taylor, from Texas'}).`,
-        messages: chatHistory
-      })
+      body: JSON.stringify(requestBody)
     });
-    const data = await res.json();
-    const reply = data.content?.[0]?.text || 'Sorry, I had trouble responding. Try again.';
-    chatHistory.push({ role: 'assistant', content: reply });
+    let data = await response.json();
+
+    // Handle tool use loop (max 5 iterations)
+    let iterations = 0;
+    while (data.stop_reason === 'tool_use' && iterations < 5) {
+      iterations++;
+      const assistantContent = data.content || [];
+      chatHistory.push({ role: 'assistant', content: assistantContent });
+
+      // Process all tool calls
+      const toolResults = [];
+      for (const block of assistantContent) {
+        if (block.type === 'tool_use') {
+          // Show tool use in UI
+          const toolLabel = { log_mood: '📊 Logging mood', get_mood_stats: '📈 Getting mood stats', add_expense: '💳 Logging expense', send_note: '💌 Sending note', get_relationship_health: '💕 Checking relationship health', add_calendar_event: '📅 Adding event', create_goal: '🎯 Creating goal', get_financial_summary: '💰 Getting finances' };
+          msgEl.innerHTML += `<div class="chat-tool-call">${toolLabel[block.name] || '🔧 ' + block.name}</div>`;
+          msgEl.scrollTop = msgEl.scrollHeight;
+
+          const result = await executeAITool(block.name, block.input);
+          toolResults.push({
+            type: 'tool_result',
+            tool_use_id: block.id,
+            content: JSON.stringify(result)
+          });
+        }
+      }
+
+      chatHistory.push({ role: 'user', content: toolResults });
+
+      // Continue conversation with tool results
+      response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1024,
+          system: buildAISystemPrompt(),
+          messages: chatHistory,
+          tools: AI_TOOLS
+        })
+      });
+      data = await response.json();
+    }
+
+    // Extract final text response
+    const textBlocks = (data.content || []).filter(b => b.type === 'text');
+    const reply = textBlocks.map(b => b.text).join('\n') || 'Done!';
+    chatHistory.push({ role: 'assistant', content: data.content || reply });
 
     document.getElementById('typing').classList.remove('on');
-    msgEl.innerHTML += `<div class="chat-msg ai"><div class="msg-from">Claude</div>${reply}</div>`;
+    msgEl.innerHTML += `<div class="chat-msg ai"><div class="msg-from">Claude</div>${formatAIReply(reply)}</div>`;
     msgEl.scrollTop = msgEl.scrollHeight;
   } catch (err) {
     document.getElementById('typing').classList.remove('on');
     msgEl.innerHTML += `<div class="chat-msg ai"><div class="msg-from">Claude</div>Connection error. Check your API key in the config.</div>`;
   }
+}
+
+function formatAIReply(text) {
+  // Basic markdown-ish formatting
+  return esc(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
 }
 
 // ===== WORKOUT LOG =====

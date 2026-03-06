@@ -130,6 +130,16 @@
 .typing{font-size:11px;color:var(--t3);padding:8px 0;font-style:italic;display:none}
 .typing.on{display:block}
 
+/* AI Context Selector */
+.ai-ctx-bar{display:flex;gap:6px;overflow-x:auto;padding:4px 0 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.ai-ctx-bar::-webkit-scrollbar{display:none}
+.ai-ctx-pill{padding:8px 14px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:12px;white-space:nowrap;cursor:pointer;transition:all .2s;flex-shrink:0}
+.ai-ctx-pill.active{background:var(--gold);color:#fff;font-weight:600;box-shadow:0 2px 10px rgba(196,120,74,.25)}
+.ai-ctx-pill:not(.active):hover{background:var(--bg3)}
+
+/* AI Tool Call Display */
+.chat-tool-call{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:12px;background:var(--tint);color:var(--gold);font-size:11px;font-weight:500;margin-bottom:8px;animation:fadeIn .3s ease}
+
 /* ===== QUICK ACTIONS ===== */
 .qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
 .qa{padding:22px 8px;border-radius:22px;text-align:center;cursor:pointer;border:none;background:var(--card-bg);box-shadow:var(--card-shadow);transition:all .25s}
