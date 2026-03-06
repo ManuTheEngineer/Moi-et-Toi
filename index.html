@@ -52,19 +52,19 @@
 <!-- Page Header Bar -->
 <header class="page-header hidden" id="page-header">
   <div class="ph-left">
-    <button class="ph-back" id="ph-back" onclick="goBack()">
+    <button class="ph-back" id="ph-back" onclick="goBack()" aria-label="Go back">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
     <div class="ph-title" id="ph-title"></div>
   </div>
   <div class="ph-right">
-    <div class="hbg" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    <div class="hbg" onclick="toggleMenu()" role="button" aria-label="Open menu" tabindex="0"><span></span><span></span><span></span></div>
   </div>
 </header>
 <div class="cmd-backdrop" id="cmd-backdrop" onclick="closeMenu()"></div>
 <div class="cmd-center" id="cmd-center">
   <div class="cmd-handle"></div>
-  <input class="cmd-search" id="cmd-search" placeholder="Search features..." oninput="filterQuickSheet(this.value)">
+  <input class="cmd-search" id="cmd-search" placeholder="Search features..." oninput="filterQuickSheet(this.value)" aria-label="Search features">
 
   <!-- Search results (hidden by default) -->
   <div id="cmd-search-results" style="display:none"></div>
@@ -87,7 +87,7 @@
   <div class="cmd-see-all" onclick="closeMenu();go('explore')">See All Features ›</div>
 </div>
 <!-- Bottom Nav — restructured with 5 new groups -->
-<nav class="bnav">
+<nav class="bnav" role="navigation" aria-label="Main navigation">
   <div class="bnav-indicator" id="bnav-indicator"></div>
   <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></span><span class="nl">Today</span><span class="bn-badge" id="badge-dash"></span></button>
   <button class="bn" data-p="together" onclick="go('connect')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></span><span class="nl">Together</span><span class="bn-badge" id="badge-together"></span></button>
@@ -3064,7 +3064,12 @@
 </div><!-- end shell -->
 
 <!-- Toast -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+<!-- Generic Modal -->
+<div class="generic-modal-overlay" id="generic-modal" onclick="if(event.target===this)closeModal()" role="dialog" aria-modal="true">
+  <div class="generic-modal-box" id="generic-modal-content"></div>
+</div>
 
 <!-- Confirm Dialog -->
 <div class="confirm-overlay" id="confirm-dialog">

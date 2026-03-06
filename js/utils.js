@@ -68,6 +68,21 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('on'), 2500);
 }
 
+function openModal(html) {
+  const overlay = document.getElementById('generic-modal');
+  const content = document.getElementById('generic-modal-content');
+  if (!overlay || !content) return;
+  content.innerHTML = html;
+  overlay.classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  const overlay = document.getElementById('generic-modal');
+  if (overlay) overlay.classList.remove('on');
+  document.body.style.overflow = '';
+}
+
 // ===== THEME =====
 function getThemePref() {
   return localStorage.getItem('met_theme') || 'auto';
