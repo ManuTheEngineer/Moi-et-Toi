@@ -182,3 +182,95 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+// ===== DYNAMIC VISUALS =====
+
+// Mood-reactive accent color shift
+function applyMoodReactiveUI() {
+  if (typeof MET === 'undefined' || !MET._ready || !user) return;
+  const stats = MET.mood.stats[user];
+  if (!stats || !stats.avg7d) return;
+  const avg = stats.avg7d;
+  const root = document.documentElement;
+  // Subtle hue shift based on mood (10-15% shift)
+  if (avg <= 2) {
+    root.style.setProperty('--mood-accent', 'rgba(74,144,217,0.08)');
+    root.style.setProperty('--mood-glow', 'rgba(74,144,217,0.12)');
+  } else if (avg >= 4) {
+    root.style.setProperty('--mood-accent', 'rgba(196,120,74,0.1)');
+    root.style.setProperty('--mood-glow', 'rgba(196,120,74,0.15)');
+  } else {
+    root.style.setProperty('--mood-accent', 'transparent');
+    root.style.setProperty('--mood-glow', 'transparent');
+  }
+}
+
+// Count-up animation for dashboard numbers
+function animateCountUp(el, target, duration) {
+  if (!el) return;
+  const start = parseInt(el.textContent) || 0;
+  if (start === target) return;
+  const diff = target - start;
+  const steps = Math.max(20, Math.abs(diff));
+  const stepTime = Math.max(duration / steps, 16);
+  let current = start;
+  const increment = diff / steps;
+  const timer = setInterval(() => {
+    current += increment;
+    if ((increment > 0 && current >= target) || (increment < 0 && current <= target)) {
+      el.textContent = target;
+      clearInterval(timer);
+    } else {
+      el.textContent = Math.round(current);
+    }
+  }, stepTime);
+}
+
+// Scroll-triggered animation for charts
+function initScrollAnimations() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  // Observe chart containers and cards with animation
+  document.querySelectorAll('.chart-wrap, .rh-card, .fin-overview, .gs-summary, .sg-card, .habit-card').forEach(el => {
+    el.classList.add('scroll-animate');
+    observer.observe(el);
+  });
+}
+
+// Time-based atmosphere (subtle background adjustments)
+function updateAtmosphere() {
+  const h = new Date().getHours();
+  const root = document.documentElement;
+  if (h >= 5 && h < 12) {
+    root.style.setProperty('--atm-warmth', '0.03');
+    root.style.setProperty('--atm-hue', '40');
+  } else if (h >= 12 && h < 17) {
+    root.style.setProperty('--atm-warmth', '0');
+    root.style.setProperty('--atm-hue', '0');
+  } else if (h >= 17 && h < 21) {
+    root.style.setProperty('--atm-warmth', '0.05');
+    root.style.setProperty('--atm-hue', '25');
+  } else {
+    root.style.setProperty('--atm-warmth', '0.04');
+    root.style.setProperty('--atm-hue', '220');
+  }
+}
+
+// Init all dynamic visuals
+function initDynamicVisuals() {
+  updateAtmosphere();
+  setInterval(updateAtmosphere, 15 * 60 * 1000); // Update every 15 min
+  // Delay scroll observer to ensure DOM is ready
+  setTimeout(initScrollAnimations, 500);
+  // Hook into metrics for mood-reactive UI
+  if (typeof onMetricsUpdate === 'function') {
+    onMetricsUpdate(applyMoodReactiveUI);
+  }
+}
+
