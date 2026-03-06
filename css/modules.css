@@ -1022,3 +1022,22 @@
 .todo-info{flex:1}
 .todo-title{font-size:13px;color:var(--cream)}
 .todo-by{font-size:10px;color:var(--t3);margin-left:8px}
+
+/* ===== OPEN WHEN LETTERS ===== */
+.ow-toggle{margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.ow-label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2);cursor:pointer}
+.ow-label input[type="checkbox"]{accent-color:var(--gold);width:16px;height:16px}
+.ow-select{padding:6px 12px;border-radius:12px;border:1px solid var(--bdr-s);background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;outline:none}
+.ow-select:focus{border-color:var(--gold)}
+.ow-card{background:var(--card-bg);border-radius:20px;padding:18px;margin-bottom:10px;box-shadow:var(--card-shadow);transition:all .25s}
+.ow-card.sealed{cursor:pointer;text-align:center;border:1px dashed var(--gold);background:linear-gradient(135deg,rgba(196,120,74,.06),rgba(199,113,131,.04))}
+.ow-card.sealed:hover{transform:translateY(-2px);box-shadow:var(--card-hover)}
+.ow-card.sealed:active{transform:scale(.97)}
+.ow-seal{font-size:36px;margin-bottom:8px}
+.ow-tag{display:inline-block;padding:3px 12px;border-radius:14px;font-size:10px;letter-spacing:1px;text-transform:uppercase;background:var(--tint);color:var(--gold);margin-bottom:8px;font-weight:600}
+.ow-hint{font-size:11px;color:var(--t3);font-style:italic}
+.ow-msg{font-size:13px;color:var(--cream);line-height:1.7;margin-bottom:8px}
+.ow-from{font-size:10px;color:var(--t3)}
+.ow-card.opened{border-left:3px solid var(--lavender)}
+.ow-card.sent{opacity:.7}
+.ow-status{font-size:10px;color:var(--t3)}

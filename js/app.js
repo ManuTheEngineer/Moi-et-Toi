@@ -153,6 +153,7 @@ function finishLogin() {
   listenMoods();
   listenTaps();
   listenLetters();
+  listenOpenWhenLetters();
   listenMilestones();
   listenCountdowns();
   listenDailyAnswers();

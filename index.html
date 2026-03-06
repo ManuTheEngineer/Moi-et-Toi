@@ -491,9 +491,32 @@
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Write a letter</div></div>
   <div class="letter-compose">
     <textarea class="letter-textarea" id="letter-input" placeholder="Say something real..."></textarea>
+    <div class="ow-toggle">
+      <label class="ow-label">
+        <input type="checkbox" id="ow-check" onchange="toggleOpenWhen()"> "Open when..." letter
+      </label>
+      <select id="ow-tag" class="ow-select" style="display:none">
+        <option value="">Choose a moment...</option>
+        <option value="sad">Open when you're sad</option>
+        <option value="miss">Open when you miss me</option>
+        <option value="happy">Open when you're happy</option>
+        <option value="stressed">Open when you're stressed</option>
+        <option value="angry">Open when you're angry at me</option>
+        <option value="bored">Open when you're bored</option>
+        <option value="proud">Open when you're proud of yourself</option>
+        <option value="love">Open when you need to feel loved</option>
+        <option value="birthday">Open on your birthday</option>
+        <option value="anniversary">Open on our anniversary</option>
+      </select>
+    </div>
     <button class="letter-send" id="letter-send-btn" onclick="sendLetter()">Send</button>
   </div>
 
+  <!-- Open When Collection -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Open When...</div></div>
+  <div id="ow-letters"><div class="empty">No sealed letters yet</div></div>
+
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Letters</div></div>
   <div class="letter-feed" id="letter-feed"><div class="empty">Write something only they will read</div></div>
 </div>
 </div>

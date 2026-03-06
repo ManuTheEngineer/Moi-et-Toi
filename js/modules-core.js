@@ -841,25 +841,91 @@ function showTapOverlay(type) {
 }
 
 // ===== LOVE LETTERS =====
+function toggleOpenWhen() {
+  const check = document.getElementById('ow-check');
+  const select = document.getElementById('ow-tag');
+  if (select) select.style.display = check.checked ? 'block' : 'none';
+}
+
 async function sendLetter() {
   if (!db || !user) return;
   const input = document.getElementById('letter-input');
   const btn = document.getElementById('letter-send-btn');
   const text = input.value.trim();
   if (!text) { toast('Write something first'); return; }
+
+  const owCheck = document.getElementById('ow-check');
+  const owTag = document.getElementById('ow-tag');
+  const isOpenWhen = owCheck && owCheck.checked && owTag && owTag.value;
+
   if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
-  const entry = {
-    from: user,
-    fromName: NAMES[user],
-    message: text,
-    timestamp: Date.now(),
-    read: false
-  };
-  await db.ref('letters').push(entry);
+
+  if (isOpenWhen) {
+    // Save as sealed "open when" letter
+    await db.ref('openWhenLetters').push({
+      from: user, fromName: NAMES[user],
+      message: text, openWhen: owTag.value,
+      timestamp: Date.now(), opened: false
+    });
+    owCheck.checked = false;
+    owTag.style.display = 'none';
+    owTag.value = '';
+    toast('Sealed letter saved 💌');
+  } else {
+    const entry = {
+      from: user, fromName: NAMES[user],
+      message: text, timestamp: Date.now(), read: false
+    };
+    await db.ref('letters').push(entry);
+    toast('Delivered');
+  }
   input.value = '';
   if (typeof logActivity === 'function') logActivity('letters', 'sent a letter');
   if (btn) { btn.textContent = 'Sent'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Send'; }, 1500); }
-  toast('Delivered');
+}
+
+function listenOpenWhenLetters() {
+  if (!db) return;
+  db.ref('openWhenLetters').orderByChild('timestamp').on('value', snap => {
+    const letters = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; letters.push(v); });
+    letters.reverse();
+    renderOpenWhenLetters(letters);
+  });
+}
+
+function renderOpenWhenLetters(letters) {
+  const el = document.getElementById('ow-letters');
+  if (!el) return;
+  // Show only letters addressed to me (from partner)
+  const forMe = letters.filter(l => l.from === partner);
+  const fromMe = letters.filter(l => l.from === user);
+  if (!letters.length) { el.innerHTML = '<div class="empty">No sealed letters yet</div>'; return; }
+
+  const owLabels = { sad: '😢 When you\'re sad', miss: '💭 When you miss me', happy: '😊 When you\'re happy', stressed: '😰 When you\'re stressed', angry: '😤 When you\'re angry at me', bored: '🥱 When you\'re bored', proud: '💪 When you\'re proud', love: '❤️ When you need love', birthday: '🎂 On your birthday', anniversary: '💍 On our anniversary' };
+
+  let html = '';
+  if (forMe.length) {
+    html += forMe.map(l => {
+      if (l.opened) {
+        return `<div class="ow-card opened"><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-msg">${esc(l.message)}</div><div class="ow-from">From ${l.fromName} · ${timeAgo(l.timestamp)}</div></div>`;
+      }
+      return `<div class="ow-card sealed" onclick="openSealedLetter('${l._key}')"><div class="ow-seal">💌</div><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-hint">Tap to open</div></div>`;
+    }).join('');
+  }
+  if (fromMe.length) {
+    html += `<div style="font-size:11px;color:var(--t3);margin:12px 0 6px;letter-spacing:1px;text-transform:uppercase">Sent by you</div>`;
+    html += fromMe.map(l => {
+      return `<div class="ow-card sent"><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-status">${l.opened ? 'Opened' : 'Sealed'}</div></div>`;
+    }).join('');
+  }
+  el.innerHTML = html;
+}
+
+async function openSealedLetter(key) {
+  if (!db) return;
+  await db.ref('openWhenLetters/' + key + '/opened').set(true);
+  toast('Letter opened 💌');
 }
 
 function listenLetters() {
