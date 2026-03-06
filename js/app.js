@@ -247,6 +247,27 @@ function finishLogin() {
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
 function logout() { firebase.auth().signOut(); location.reload(); }
+
+async function exportAllData() {
+  if (!db) { toast('Not connected'); return; }
+  toast('Preparing export...');
+  try {
+    const snap = await db.ref('/').once('value');
+    const data = snap.val();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'moiettoi-backup-' + new Date().toISOString().split('T')[0] + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Data exported!');
+  } catch (e) {
+    toast('Export failed');
+    console.error(e);
+  }
+}
+
 function updateApiKey() {
   const key = prompt('Enter Anthropic API key:', CLAUDE_API_KEY || '');
   if (key && key.startsWith('sk-ant-')) {
