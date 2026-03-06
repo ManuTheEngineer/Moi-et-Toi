@@ -9,6 +9,87 @@
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) fillScreen(); });
 })();
 
+// ===== DYNAMIC TIME-OF-DAY SYSTEM =====
+function getTimeOfDay() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 7) return 'dawn';
+  if (h >= 7 && h < 11) return 'morning';
+  if (h >= 11 && h < 16) return 'afternoon';
+  if (h >= 16 && h < 18) return 'golden';
+  if (h >= 18 && h < 21) return 'evening';
+  return 'night';
+}
+
+function updateTimeOfDay() {
+  document.body.setAttribute('data-time', getTimeOfDay());
+}
+
+// Update every 5 minutes
+updateTimeOfDay();
+setInterval(updateTimeOfDay, 5 * 60 * 1000);
+
+// ===== FLOATING ORBS SYSTEM =====
+function spawnOrbs() {
+  const container = document.getElementById('particles');
+  if (!container) return;
+
+  const orbColors = {
+    dawn: ['rgba(255,120,150,0.12)', 'rgba(180,140,255,0.10)', 'rgba(255,200,140,0.08)'],
+    morning: ['rgba(255,200,100,0.10)', 'rgba(255,160,80,0.08)', 'rgba(255,220,160,0.07)'],
+    afternoon: ['rgba(100,180,255,0.08)', 'rgba(80,200,200,0.07)', 'rgba(160,220,255,0.06)'],
+    golden: ['rgba(255,140,50,0.12)', 'rgba(255,100,80,0.10)', 'rgba(255,180,60,0.08)'],
+    evening: ['rgba(120,80,200,0.10)', 'rgba(200,100,150,0.08)', 'rgba(212,149,106,0.07)'],
+    night: ['rgba(60,80,180,0.08)', 'rgba(100,60,180,0.07)', 'rgba(0,140,140,0.05)']
+  };
+
+  // Remove existing orbs
+  container.querySelectorAll('.bg-orb').forEach(o => o.remove());
+
+  const time = getTimeOfDay();
+  const colors = orbColors[time] || orbColors.night;
+
+  for (let i = 0; i < 4; i++) {
+    const orb = document.createElement('div');
+    orb.className = 'bg-orb';
+    const size = 150 + Math.random() * 200;
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    const duration = 20 + Math.random() * 25;
+    const dx = (Math.random() - 0.5) * 120;
+    const dy = (Math.random() - 0.5) * 80;
+    orb.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${x}%;top:${y}%;
+      background:${colors[i % colors.length]};
+      --orb-dx:${dx}px;--orb-dy:${dy}px;
+      --orb-opacity:${0.08 + Math.random() * 0.1};
+      animation-duration:${duration}s;
+      animation-delay:${i * 3}s;
+    `;
+    container.appendChild(orb);
+  }
+}
+
+// Add mesh background layer
+function addMeshLayer() {
+  if (document.querySelector('.bg-mesh')) return;
+  const mesh = document.createElement('div');
+  mesh.className = 'bg-mesh';
+  document.body.appendChild(mesh);
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', function() {
+  spawnOrbs();
+  addMeshLayer();
+  // Re-spawn orbs when time period changes
+  setInterval(function() {
+    const current = document.body.getAttribute('data-time');
+    const now = getTimeOfDay();
+    if (current !== now) spawnOrbs();
+  }, 5 * 60 * 1000);
+});
+
 // ===== INDIVIDUAL SPACE PRIVACY =====
 function enforcePrivacy() {
   // Hide the other person's individual space from More hub and menu

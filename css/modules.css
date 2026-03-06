@@ -101,9 +101,9 @@
 .dq-input{width:100%;padding:14px 18px;border-radius:50px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;outline:none;text-align:center;transition:box-shadow .2s}
 .dq-input:focus{box-shadow:var(--focus-ring)}
 .dq-input::placeholder{color:var(--t3)}
-.dq-submit{width:100%;padding:14px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .25s;margin-top:10px;box-shadow:0 4px 16px rgba(28,43,74,.12)}
-.dq-submit:hover{transform:translateY(-1px)}
-.dq-submit:active{transform:scale(0.97)}
+.dq-submit{width:100%;padding:14px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s cubic-bezier(.2,.8,.3,1);margin-top:10px;box-shadow:0 4px 20px var(--glow-gold);letter-spacing:.5px}
+.dq-submit:hover{transform:translateY(-2px);box-shadow:0 8px 28px var(--glow-gold)}
+.dq-submit:active{transform:scale(0.96)}
 .dq-answers{margin-top:16px;text-align:left}
 .dq-answer{padding:10px 14px;border-radius:10px;margin-bottom:8px;font-size:13px;line-height:1.5}
 .dq-answer.mine{background:var(--card-bg);border:none;color:var(--cream);box-shadow:var(--card-shadow);border-radius:14px;padding:12px 16px}
@@ -214,12 +214,16 @@
 .feat-card .fc-num{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;position:absolute;right:20px;top:50%;transform:translateY(-50%);opacity:.2}
 
 /* ===== SECTION HEADERS WITH COLOR ===== */
-.sec-head{display:flex;align-items:center;gap:10px;margin:24px 0 12px}
-.sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.sec-dot.sd-green{background:var(--gold)}
-.sec-dot.sd-rose{background:#C4784A}
-.sec-dot.sd-amber{background:#B08A50}
-.sec-dot.sd-purple{background:#3A2860}
+.sec-head{display:flex;align-items:center;gap:10px;margin:28px 0 14px}
+.sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor}
+.sec-dot.sd-green{background:var(--gold);color:var(--gold)}
+.sec-dot.sd-rose{background:var(--rose);color:var(--rose)}
+.sec-dot.sd-amber{background:var(--red);color:var(--red)}
+.sec-dot.sd-purple{background:var(--lavender);color:var(--lavender)}
+.sec-dot.sd-gold{background:var(--gold);color:var(--gold)}
+.sec-dot.sd-lavender{background:var(--lavender);color:var(--lavender)}
+.sec-dot.sd-teal{background:var(--teal);color:var(--teal)}
+.sec-dot.sd-emerald{background:var(--emerald);color:var(--emerald)}
 .sec-head .sec-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t2);font-weight:500}
 
 /* ===== CELEBRATION ANIMATIONS ===== */

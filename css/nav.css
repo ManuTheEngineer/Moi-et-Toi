@@ -13,7 +13,8 @@
 .explore-dir-item .edi-label{font-size:9px;font-weight:500;color:var(--cream);letter-spacing:.3px}
 
 /* ===== LOGIN ===== */
-.login{position:fixed;top:0;left:0;width:100%;height:var(--real-h,100vh);z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:linear-gradient(160deg,#0C1220 0%,#1C2B4A 40%,#2A3D60 70%,#C4784A 100%);padding:env(safe-area-inset-top,0px) 32px env(safe-area-inset-bottom,0px);box-sizing:border-box}
+.login{position:fixed;top:0;left:0;width:100%;height:var(--real-h,100vh);z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:linear-gradient(160deg,#0A0E1A 0%,#151E38 30%,#2D1848 60%,#8B1A4A 85%,#E8A840 100%);background-size:200% 200%;animation:loginBgShift 12s ease-in-out infinite alternate;padding:env(safe-area-inset-top,0px) 32px env(safe-area-inset-bottom,0px);box-sizing:border-box}
+@keyframes loginBgShift{0%{background-position:0% 0%}100%{background-position:100% 100%}}
 .login.h{display:none}
 .login-inner{display:flex;flex-direction:column;align-items:center;width:100%;max-width:320px}
 .login-logo{width:56px;height:56px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:1px;color:#fff;margin-bottom:16px;animation:logoPulse 3s ease-in-out infinite;backdrop-filter:blur(8px)}
@@ -23,9 +24,9 @@
 .login-input:focus{background:rgba(255,255,255,.18);box-shadow:0 0 0 3px rgba(212,149,106,.3)}
 .login-input::placeholder{color:rgba(255,255,255,.45)}
 .login-input.mb16{margin-bottom:16px}
-.login-btn{width:100%;max-width:320px;padding:14px;border-radius:50px;border:none;background:#D4956A;color:#fff;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;letter-spacing:1.5px;cursor:pointer;transition:all .25s;text-transform:uppercase;box-shadow:0 4px 20px rgba(212,149,106,.3)}
-.login-btn:hover{background:#E0A87E;transform:translateY(-1px);box-shadow:0 6px 28px rgba(212,149,106,.4)}
-.login-btn:active{transform:scale(0.97);box-shadow:0 2px 12px rgba(212,149,106,.2)}
+.login-btn{width:100%;max-width:320px;padding:14px;border-radius:50px;border:none;background:linear-gradient(135deg,#E8A840,#D4784A);color:#fff;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;letter-spacing:1.5px;cursor:pointer;transition:all .25s;text-transform:uppercase;box-shadow:0 4px 24px rgba(232,168,64,.35)}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 6px 32px rgba(232,168,64,.45)}
+.login-btn:active{transform:scale(0.97);box-shadow:0 2px 12px rgba(232,168,64,.2)}
 .login-err{margin-top:16px;font-size:13px;color:#E0A882;text-align:center}
 .login h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;letter-spacing:5px;text-transform:uppercase;color:#fff;margin-bottom:4px;text-align:center;padding-left:5px}
 .login .sub{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:32px;text-align:center;padding-left:4px}

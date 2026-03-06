@@ -1,10 +1,11 @@
-const CACHE_NAME = 'moiettoi-v78';
+const CACHE_NAME = 'moiettoi-v80';
 
 const ASSETS = [
   './',
   './index.html',
   './css/variables.css',
   './css/base.css',
+  './css/dynamic-bg.css',
   './css/components.css',
   './css/nav.css',
   './css/modules.css',
