@@ -149,7 +149,9 @@ function finishLogin() {
   document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
   document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
   if(user==='him'){var ki=document.querySelector('[onclick*="sendTap(event,\'kiss\'"]');if(ki){var ic=ki.querySelector('.pill-ico');if(ic)ic.textContent='😘';}}
-  go('dash');
+  // Handle PWA shortcut deep links
+  const startPage = new URLSearchParams(window.location.search).get('page');
+  go(startPage || 'dash');
   listenMoods();
   listenTaps();
   listenLetters();

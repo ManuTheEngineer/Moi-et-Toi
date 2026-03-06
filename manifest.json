@@ -1,13 +1,40 @@
 {
   "name": "Manu & Taylor",
   "short_name": "M&T",
-  "description": "Our place.",
+  "description": "A shared space for two — track moods, write letters, play games, plan your future, and grow together.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
   "background_color": "#0C1220",
   "theme_color": "#0C1220",
   "orientation": "portrait",
+  "categories": ["lifestyle", "social"],
+  "shortcuts": [
+    {
+      "name": "Log Mood",
+      "short_name": "Mood",
+      "url": "./index.html?page=mood",
+      "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Write Letter",
+      "short_name": "Letter",
+      "url": "./index.html?page=connect",
+      "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Play Games",
+      "short_name": "Games",
+      "url": "./index.html?page=games",
+      "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Daily Question",
+      "short_name": "Question",
+      "url": "./index.html?page=question",
+      "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
   "icons": [
     { "src": "icons/icon-72x72.png", "sizes": "72x72", "type": "image/png" },
     { "src": "icons/icon-96x96.png", "sizes": "96x96", "type": "image/png" },
