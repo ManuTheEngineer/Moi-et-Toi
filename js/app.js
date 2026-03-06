@@ -136,8 +136,8 @@ function showWelcomeGate() {
   const form = document.getElementById('login-form');
   const gate = document.getElementById('welcome-gate');
   const greeting = document.getElementById('welcome-greeting');
-  if (form) form.style.display = 'none';
-  if (gate) gate.style.display = '';
+  hideEl(form);
+  showEl(gate);
   const h = new Date().getHours();
   const timeLabel = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
   if (greeting) greeting.textContent = timeLabel + ', ' + (NAMES[user] || '');

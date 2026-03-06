@@ -193,7 +193,7 @@ function closeMenu() {
   const search = document.getElementById('cmd-search');
   if (search) search.value = '';
   const sr = document.getElementById('cmd-search-results');
-  if (sr) sr.style.display = 'none';
+  if (sr) hideEl(sr);
 }
 
 function populateQuickSheet() {
@@ -220,7 +220,7 @@ function filterQuickSheet(val) {
   const q = val.toLowerCase().trim();
   const sr = document.getElementById('cmd-search-results');
   if (!sr) return;
-  if (!q) { sr.style.display = 'none'; return; }
+  if (!q) { hideEl(sr); return; }
   const matches = Object.entries(PAGE_META).filter(([k,v]) => v.label.toLowerCase().includes(q));
   if (matches.length === 0) {
     sr.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--t3);text-align:center">No matches</div>';
@@ -229,7 +229,7 @@ function filterQuickSheet(val) {
       '<div class="cmd-ctx-item" onclick="closeMenu();go(\''+k+'\')" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;margin:3px"><span class="cmd-ctx-icon" style="margin:0">'+v.icon+'</span><span class="cmd-ctx-label" style="font-size:12px">'+v.label+'</span></div>'
     ).join('');
   }
-  sr.style.display = 'block';
+  showEl(sr);
 }
 
 function goCmd(page) { closeMenu(); go(page); }

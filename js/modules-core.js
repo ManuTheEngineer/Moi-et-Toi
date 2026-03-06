@@ -895,7 +895,7 @@ async function sendLetter() {
       timestamp: Date.now(), opened: false
     });
     owCheck.checked = false;
-    owTag.style.display = 'none';
+    hideEl(owTag);
     owTag.value = '';
     toast('Sealed letter saved 💌');
   } else {

@@ -1513,13 +1513,13 @@ function openRoom(room) {
   const names = { living: 'Living Room', bedroom: 'Bedroom', kitchen: 'Kitchen', bathroom: 'Bathroom', outdoor: 'Outdoor', office: 'Office' };
   document.getElementById('dh-room-title').textContent = names[room] || room;
   showEl('dh-room-detail');
-  document.getElementById('dh-rooms').style.display = 'none';
+  hideEl('dh-rooms');
   renderRoomIdeas();
 }
 
 function closeRoomDetail() {
   hideEl('dh-room-detail');
-  document.getElementById('dh-rooms').style.display = '';
+  showEl('dh-rooms');
   currentRoom = null;
 }
 

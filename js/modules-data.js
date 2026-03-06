@@ -849,7 +849,7 @@ function loadIdentityProfiles() {
     const data = snap.val() || {};
     renderIdentityProfiles(data);
     const startEl = document.getElementById('id-quiz-start');
-    if (startEl) startEl.style.display = data[user] ? 'none' : 'block';
+    if (startEl) { if (data[user]) hideEl(startEl); else showEl(startEl); }
   });
 }
 
