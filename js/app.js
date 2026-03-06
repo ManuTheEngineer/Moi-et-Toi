@@ -235,6 +235,7 @@ function finishLogin() {
   initPresence();
   // Nav enhancements: swipe gestures, tab indicator, badges
   initSwipeNav();
+  initCollapsingHeader();
   setTimeout(updateNavIndicator, 100);
   // Hub & module statuses
   setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); checkAchievements(); updateNavBadges(); }, 1500);

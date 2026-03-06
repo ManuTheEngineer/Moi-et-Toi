@@ -277,6 +277,23 @@ function initSwipeNav() {
   }, { passive: true });
 }
 
+// ===== COLLAPSING HEADER =====
+function initCollapsingHeader() {
+  let lastY = 0;
+  let ticking = false;
+  const header = document.getElementById('page-header');
+  if (!header) return;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        header.classList.toggle('compact', window.scrollY > 40);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
 // ===== NAV BADGES =====
 function updateNavBadges() {
   if (typeof db === 'undefined' || !db) return;
