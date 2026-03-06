@@ -209,8 +209,7 @@ function renderFitnessHub() {
 }
 
 function toggleHistDetail(id) {
-  const el = document.getElementById(id);
-  if (el) el.style.display = el.style.display === 'none' ? '' : 'none';
+  toggleEl(id);
 }
 
 function guessCategory(name) {
@@ -325,14 +324,14 @@ function renderFitnessCharts(workouts) {
 // ===== WORKOUT BUILDER =====
 function openWorkoutBuilder() {
   const builder = document.getElementById('fit-builder');
-  if (builder) builder.style.display = '';
+  showEl(builder);
   builderExercises = [];
   renderExerciseList('all');
   renderBuilderSelected();
 }
 function closeWorkoutBuilder() {
   const builder = document.getElementById('fit-builder');
-  if (builder) builder.style.display = 'none';
+  hideEl(builder);
   builderExercises = [];
 }
 function filterExercises(group) {
@@ -419,7 +418,7 @@ async function startSavedProgram(key) {
     startTime: Date.now()
   };
   renderWorkoutSession();
-  document.getElementById('ws-active').style.display = '';
+  showEl('ws-active');
   document.getElementById('ws-title').textContent = prog.name;
   startWorkoutTimer();
 }
@@ -439,7 +438,7 @@ function startBuilderWorkout() {
   };
   closeWorkoutBuilder();
   renderWorkoutSession();
-  document.getElementById('ws-active').style.display = '';
+  showEl('ws-active');
   document.getElementById('ws-title').textContent = name;
   startWorkoutTimer();
 }
@@ -469,7 +468,7 @@ function startWorkout(program) {
     startTime: Date.now()
   };
   renderWorkoutSession();
-  document.getElementById('ws-active').style.display = '';
+  showEl('ws-active');
   document.getElementById('ws-title').textContent = prog.name + ' Workout';
   startWorkoutTimer();
 }
@@ -540,8 +539,7 @@ function renderWorkoutSession() {
 }
 
 function toggleWsEx(i) {
-  const el = document.getElementById('ws-sets-' + i);
-  if (el) el.style.display = el.style.display === 'none' ? '' : 'none';
+  toggleEl('ws-sets-' + i);
 }
 
 function updateSet(exIdx, setIdx, field, val) {
@@ -579,7 +577,7 @@ function startRest(seconds) {
   let remaining = seconds;
   const timer = document.getElementById('rest-timer');
   const countdown = document.getElementById('rest-countdown');
-  if (timer) timer.style.display = '';
+  showEl(timer);
   const update = () => {
     if (countdown) countdown.textContent = remaining;
     if (remaining <= 0) { skipRest(); return; }
@@ -591,8 +589,7 @@ function startRest(seconds) {
 
 function skipRest() {
   if (restInterval) clearInterval(restInterval);
-  const timer = document.getElementById('rest-timer');
-  if (timer) timer.style.display = 'none';
+  hideEl('rest-timer');
 }
 
 function searchAddExercise() {
@@ -654,7 +651,7 @@ async function finishWorkout() {
   if (wsTimer) clearInterval(wsTimer);
   skipRest();
   activeWorkout = null;
-  document.getElementById('ws-active').style.display = 'none';
+  hideEl('ws-active');
   const musclesTrained = [...new Set(exercises.map(e => e.category).filter(Boolean))];
   toast('Workout done! ' + exercises.length + ' exercises, ' + duration + 'min, ' + musclesTrained.join('/'));
   awardXP(50);
@@ -664,7 +661,7 @@ function cancelWorkout() {
   if (wsTimer) clearInterval(wsTimer);
   skipRest();
   activeWorkout = null;
-  document.getElementById('ws-active').style.display = 'none';
+  hideEl('ws-active');
 }
 
 async function quickLogExercise() {

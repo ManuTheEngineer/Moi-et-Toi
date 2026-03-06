@@ -337,7 +337,7 @@ function renderDashNudges() {
         }
 
         container.innerHTML = nudges.join('');
-        container.style.display = nudges.length === 0 ? 'none' : 'flex';
+        if (nudges.length === 0) hideEl(container); else { showEl(container); container.style.display = 'flex'; }
       });
     });
   });
@@ -849,8 +849,7 @@ function setViewMode(mode) {
   document.querySelectorAll('.vt-option').forEach(e => e.classList.toggle('active', e.dataset.mode === mode));
   const slider = document.getElementById('vt-slider');
   if (slider) slider.classList.toggle('me', mode === 'me');
-  document.getElementById('dash-us').style.display = mode === 'us' ? 'block' : 'none';
-  document.getElementById('dash-me').style.display = mode === 'me' ? 'block' : 'none';
+  if (mode === 'us') { showEl('dash-us'); hideEl('dash-me'); } else { hideEl('dash-us'); showEl('dash-me'); }
   if (mode === 'me') renderMeDashboard();
 }
 
@@ -1097,7 +1096,7 @@ function renderDashMeGratitude() {
     list.innerHTML = items.slice(0, 3).map(i =>
       `<div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px"><span style="color:var(--gold);font-size:10px">&#9679;</span><span>${esc(i.message || '')}</span></div>`
     ).join('');
-    card.style.display = 'block';
+    showEl(card);
   });
 }
 
@@ -1117,7 +1116,7 @@ function renderDashMeAffirmation() {
   ];
   const idx = Math.floor(Date.now() / 86400000) % affirmations.length;
   text.textContent = affirmations[idx];
-  card.style.display = 'block';
+  showEl(card);
 }
 
 // ===== DAILY QUESTION PREVIEW ON DASHBOARD =====
@@ -1133,7 +1132,7 @@ function renderDashDailyQ() {
     const q = snap.val();
     if (!q || !q.text) return;
     textEl.textContent = q.text;
-    card.style.display = 'block';
+    showEl(card);
 
     // Check who answered
     db.ref('dailyAnswers/' + today).once('value', aSnap => {
@@ -1287,7 +1286,7 @@ function renderTaskList(containerId, listId, countId, tasks, doneCount) {
   }).join('');
   // Remove border from last item
   if (list.lastElementChild) list.lastElementChild.style.borderBottom = 'none';
-  container.style.display = 'block';
+  showEl(container);
 }
 
 // ===== PUSH NOTIFICATIONS FOR DAILY TASKS =====

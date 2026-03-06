@@ -944,7 +944,7 @@ function previewReceipt(input) {
       pendingReceiptData = dataUrl;
       const prev = document.getElementById('fin-receipt-preview');
       const img = document.getElementById('fin-receipt-img');
-      if (prev && img) { img.src = dataUrl; prev.style.display = 'block'; }
+      if (prev && img) { img.src = dataUrl; showEl(prev); }
     });
   };
   reader.readAsDataURL(file);
@@ -954,7 +954,7 @@ function clearReceipt() {
   pendingReceiptData = null;
   const prev = document.getElementById('fin-receipt-preview');
   const input = document.getElementById('fin-receipt-input');
-  if (prev) prev.style.display = 'none';
+  hideEl(prev);
   if (input) input.value = '';
 }
 

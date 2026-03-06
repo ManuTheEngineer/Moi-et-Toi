@@ -102,18 +102,17 @@
 <div class="ctn">
   <div class="ptr" id="ptr"><span class="ptr-spinner"></span><span class="ptr-text">Pull to refresh</span></div>
 
-  <!-- Greeting + Partner Row (merged) -->
-  <div style="padding:10px 0 6px;display:flex;align-items:center;justify-content:space-between">
+  <!-- Greeting + Partner Row -->
+  <div class="dash-greeting-row">
     <div>
-      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)" id="dash-time-label">Good morning</div>
-      <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:28px;letter-spacing:2px;color:var(--cream);margin-top:4px" id="dash-greeting">...</h1>
+      <div class="dash-time-label" id="dash-time-label">Good morning</div>
+      <h1 class="dash-title" id="dash-greeting">...</h1>
     </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div id="dash-partner-card" style="display:flex;align-items:center;gap:5px;cursor:pointer" onclick="go('connect')">
-        <div class="presence-dot" id="dash-presence-dot" style="width:6px;height:6px;flex-shrink:0"></div>
-        <div style="font-size:12px;font-weight:500;color:var(--cream)" id="dash-partner-name">...</div>
+    <div class="dash-partner">
+      <div class="dash-partner-link" id="dash-partner-card" onclick="go('connect')">
+        <div class="dash-presence" id="dash-presence-dot"></div>
+        <div class="dash-partner-name" id="dash-partner-name">...</div>
       </div>
-      <div class="hbg" onclick="toggleMenu()" style="width:32px;height:32px"><span></span><span></span><span></span></div>
     </div>
   </div>
 
@@ -127,148 +126,146 @@
   <!-- ===== "US" DASHBOARD ===== -->
   <div id="dash-us">
 
-    <!-- Unified hero: Pulse + Stats in one card -->
-    <div class="card-hero" onclick="togglePulseBreakdown()" style="padding:16px;background:linear-gradient(135deg, rgba(196,120,74,0.12), rgba(176,138,80,0.08));cursor:pointer;margin-bottom:8px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+    <!-- Relationship Pulse Hero -->
+    <div class="hero-card hero-card-us cursor-pointer" onclick="togglePulseBreakdown()">
+      <div class="hero-top">
         <svg width="56" height="56" viewBox="0 0 120 120" id="dash-pulse-svg">
           <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg3)" stroke-width="8"/>
           <circle cx="60" cy="60" r="50" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round" stroke-dasharray="314" id="dash-pulse-ring" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s ease"/>
           <text x="60" y="64" text-anchor="middle" fill="var(--gold)" font-size="22" font-weight="600" font-family="Outfit" id="dash-pulse-score">--</text>
         </svg>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)">Relationship Pulse</div>
-          <div style="font-size:14px;font-weight:500;color:var(--cream);margin-top:2px" id="dash-pulse-label">Getting started</div>
-          <div style="font-size:10px;color:var(--t3);margin-top:1px" id="dash-pulse-tip">Start with a mood check-in</div>
-          <div style="display:flex;gap:12px;margin-top:6px">
-            <div id="today-mood" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--cream)">
+        <div class="hero-info">
+          <div class="t-label c-t3">Relationship Pulse</div>
+          <div class="t-body fw-500 c-cream mt-4" id="dash-pulse-label">Getting started</div>
+          <div class="t-xs c-t3 mt-4" id="dash-pulse-tip">Start with a mood check-in</div>
+          <div class="d-flex gap-12 mt-6">
+            <div class="mood-indicator" id="today-mood">
               <span class="skel" style="width:18px;height:18px;border-radius:50%;display:inline-block"></span>
               <span>You</span>
             </div>
-            <div id="partner-mood" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--cream)">
+            <div class="mood-indicator" id="partner-mood">
               <span class="skel" style="width:18px;height:18px;border-radius:50%;display:inline-block"></span>
               <span class="pname"></span>
             </div>
           </div>
         </div>
       </div>
-      <!-- Inline stats row -->
-      <div style="display:flex;gap:8px">
-        <div onclick="event.stopPropagation();go('question')" style="flex:1;text-align:center;padding:10px 6px;background:rgba(255,255,255,0.05);border-radius:12px;cursor:pointer">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold)" id="dash-streak-num">0</div>
-          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:1px">Streak</div>
+      <div class="stat-mini-row">
+        <div class="stat-mini cursor-pointer" onclick="event.stopPropagation();go('question')">
+          <div class="stat-mini-num gold" id="dash-streak-num">0</div>
+          <div class="stat-mini-label">Streak</div>
         </div>
-        <div onclick="event.stopPropagation();go('story')" id="dash-together-card" style="flex:1;text-align:center;padding:10px 6px;background:rgba(255,255,255,0.05);border-radius:12px;cursor:pointer">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold)" id="dash-together-num">--</div>
-          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:1px">Days Together</div>
+        <div class="stat-mini cursor-pointer" onclick="event.stopPropagation();go('story')" id="dash-together-card">
+          <div class="stat-mini-num gold" id="dash-together-num">--</div>
+          <div class="stat-mini-label">Days Together</div>
         </div>
-        <div onclick="event.stopPropagation();go('mood')" style="flex:1;text-align:center;padding:10px 6px;background:rgba(255,255,255,0.05);border-radius:12px;cursor:pointer">
-          <div id="dash-sparkline" style="width:100%;height:24px"></div>
-          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:1px">This Week</div>
+        <div class="stat-mini cursor-pointer" onclick="event.stopPropagation();go('mood')">
+          <div id="dash-sparkline" class="w-full" style="height:24px"></div>
+          <div class="stat-mini-label">This Week</div>
         </div>
       </div>
     </div>
 
-    <!-- Pulse breakdown (hidden by default, toggled by tapping pulse) -->
-    <div id="dash-pulse-breakdown" style="display:none;padding:12px 14px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:8px">
-      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px">Health Breakdown</div>
+    <!-- Pulse breakdown (hidden by default) -->
+    <div class="dash-card d-none" id="dash-pulse-breakdown">
+      <div class="dash-card-title c-gold mb-8">Health Breakdown</div>
       <div id="dash-pulse-bars"></div>
     </div>
 
-    <!-- Daily Tasks checklist -->
-    <div id="dash-daily-tasks" style="display:none;padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:8px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600">Today's Tasks</div>
-        <div id="dash-tasks-count" style="font-size:9px;color:var(--t3)"></div>
+    <!-- Daily Tasks -->
+    <div class="dash-card d-none" id="dash-daily-tasks">
+      <div class="dash-card-header">
+        <div class="dash-card-title c-gold">Today's Tasks</div>
+        <div class="dash-card-status" id="dash-tasks-count"></div>
       </div>
       <div id="dash-tasks-list"></div>
     </div>
 
     <!-- Daily Question preview -->
-    <div id="dash-daily-q" onclick="go('question')" style="cursor:pointer;padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:10px;display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600">Daily Question</div>
-        <div style="font-size:9px;color:var(--t3)" id="dash-dq-status"></div>
+    <div class="dash-card d-none cursor-pointer mb-10" id="dash-daily-q" onclick="go('question')">
+      <div class="dash-card-header mb-6">
+        <div class="dash-card-title c-gold">Daily Question</div>
+        <div class="dash-card-status" id="dash-dq-status"></div>
       </div>
-      <div style="font-size:13px;color:var(--cream);line-height:1.4" id="dash-dq-text"></div>
+      <div class="t-body c-cream" id="dash-dq-text"></div>
     </div>
 
     <!-- Recent activity feed -->
-    <div style="margin-bottom:6px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);font-weight:600">Recent Activity</div>
+    <div class="activity-section">
+      <div class="activity-header">
+        <div class="t-label c-t3">Recent Activity</div>
       </div>
       <div id="dash-activity-feed">
-        <div style="padding:12px 14px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);font-size:12px;color:var(--t3)">Activity from both of you shows here</div>
+        <div class="activity-empty">Activity from both of you shows here</div>
       </div>
     </div>
   </div>
 
   <!-- ===== "ME" DASHBOARD ===== -->
-  <div id="dash-me" style="display:none">
+  <div id="dash-me" class="d-none">
 
-    <!-- Unified hero: Growth ring + stats in one card -->
-    <div class="card-hero" style="padding:16px;background:linear-gradient(135deg, rgba(42,143,143,0.12), rgba(123,111,166,0.08));margin-bottom:8px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+    <!-- Personal Growth Hero -->
+    <div class="hero-card hero-card-me">
+      <div class="hero-top">
         <svg width="56" height="56" viewBox="0 0 120 120">
           <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg3)" stroke-width="8"/>
           <circle cx="60" cy="60" r="50" fill="none" stroke="var(--teal)" stroke-width="8" stroke-linecap="round" stroke-dasharray="314" id="dash-me-ring" stroke-dashoffset="314" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s ease"/>
           <text x="60" y="64" text-anchor="middle" fill="var(--teal)" font-size="22" font-weight="600" font-family="Outfit" id="dash-me-score">--</text>
         </svg>
-        <div style="flex:1">
-          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3)">Personal Growth</div>
-          <div style="font-size:14px;font-weight:500;color:var(--cream);margin-top:2px" id="dash-me-label">Your journey</div>
-          <div style="font-size:11px;color:var(--t3);margin-top:1px" id="dash-me-tip">Track your personal progress</div>
+        <div class="hero-info">
+          <div class="t-label c-t3">Personal Growth</div>
+          <div class="t-body fw-500 c-cream mt-4" id="dash-me-label">Your journey</div>
+          <div class="t-sm c-t3 mt-4" id="dash-me-tip">Track your personal progress</div>
         </div>
       </div>
-      <!-- Inline stats -->
-      <div style="display:flex;gap:8px">
-        <div style="flex:1;text-align:center;padding:10px 6px;background:rgba(255,255,255,0.05);border-radius:12px">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold)" id="dash-me-mood-avg">--</div>
-          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:1px">Mood</div>
+      <div class="stat-mini-row">
+        <div class="stat-mini">
+          <div class="stat-mini-num gold" id="dash-me-mood-avg">--</div>
+          <div class="stat-mini-label">Mood</div>
         </div>
-        <div style="flex:1;text-align:center;padding:10px 6px;background:rgba(255,255,255,0.05);border-radius:12px">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--rose)" id="dash-me-goals">0</div>
-          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:1px">Goals</div>
+        <div class="stat-mini">
+          <div class="stat-mini-num rose" id="dash-me-goals">0</div>
+          <div class="stat-mini-label">Goals</div>
         </div>
-        <div style="flex:1;text-align:center;padding:10px 6px;background:rgba(255,255,255,0.05);border-radius:12px">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--lavender)" id="dash-me-energy">--</div>
-          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:1px">Energy</div>
+        <div class="stat-mini">
+          <div class="stat-mini-num lavender" id="dash-me-energy">--</div>
+          <div class="stat-mini-label">Energy</div>
         </div>
       </div>
     </div>
 
-    <!-- Daily Tasks checklist (Me view) -->
-    <div id="dash-me-daily-tasks" style="display:none;padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:8px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:600">Today's Tasks</div>
-        <div id="dash-me-tasks-count" style="font-size:9px;color:var(--t3)"></div>
+    <!-- Daily Tasks (Me view) -->
+    <div class="dash-card d-none" id="dash-me-daily-tasks">
+      <div class="dash-card-header">
+        <div class="dash-card-title c-teal">Today's Tasks</div>
+        <div class="dash-card-status" id="dash-me-tasks-count"></div>
       </div>
       <div id="dash-me-tasks-list"></div>
     </div>
 
-    <!-- Wellness quick-track + Goals (merged, no section header) -->
-    <div style="padding:12px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:8px">
-      <div id="dash-me-care-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin-bottom:8px">
-        <div class="me-care-item" style="padding:8px 4px;border-radius:12px;background:var(--tint-xs)">
-          <div class="icon-badge ib-teal" style="margin:0 auto;width:28px;height:28px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></div>
-          <div style="font-size:9px;color:var(--t3);margin-top:2px">Hydrate</div>
+    <!-- Wellness quick-track + Goals -->
+    <div class="me-care-card">
+      <div class="d-grid grid-3 gap-8 text-center mb-8" id="dash-me-care-grid">
+        <div class="me-care-item">
+          <div class="icon-badge ib-teal me-care-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></div>
+          <div class="me-care-label">Hydrate</div>
         </div>
-        <div class="me-care-item" style="padding:8px 4px;border-radius:12px;background:var(--tint-xs)">
-          <div class="icon-badge ib-emerald" style="margin:0 auto;width:28px;height:28px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-          <div style="font-size:9px;color:var(--t3);margin-top:2px">Move</div>
+        <div class="me-care-item">
+          <div class="icon-badge ib-emerald me-care-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <div class="me-care-label">Move</div>
         </div>
-        <div class="me-care-item" style="padding:8px 4px;border-radius:12px;background:var(--tint-xs)">
-          <div class="icon-badge ib-lavender" style="margin:0 auto;width:28px;height:28px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
-          <div style="font-size:9px;color:var(--t3);margin-top:2px">Journal</div>
+        <div class="me-care-item">
+          <div class="icon-badge ib-lavender me-care-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+          <div class="me-care-label">Journal</div>
         </div>
       </div>
       <div id="dash-me-goals-list">
-        <div class="empty" style="padding:6px;font-size:11px">Your personal goals appear here</div>
+        <div class="empty t-sm p-6">Your personal goals appear here</div>
       </div>
     </div>
 
-    <!-- My Mood Chart (compact) -->
-    <div class="chart-wrap" style="padding:10px 12px;margin-bottom:8px">
+    <!-- My Mood Chart -->
+    <div class="chart-wrap p-12 mb-8">
       <div class="chart-title">My Mood This Week</div>
       <svg class="chart-svg" viewBox="0 0 320 80" id="me-mood-chart">
         <defs><linearGradient id="meChartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--chart-2)" stop-opacity=".3"/><stop offset="100%" stop-color="var(--chart-2)" stop-opacity="0"/></linearGradient></defs>
@@ -280,14 +277,14 @@
     </div>
 
     <!-- Gratitude + affirmation -->
-    <div id="dash-me-gratitude" style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:10px;display:none">
-      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px">Recent Gratitude</div>
-      <div id="dash-me-grat-list" style="font-size:12px;color:var(--cream);line-height:1.5"></div>
+    <div class="dash-gratitude d-none" id="dash-me-gratitude">
+      <div class="t-label c-gold mb-6">Recent Gratitude</div>
+      <div class="t-body c-cream" id="dash-me-grat-list" style="line-height:1.5"></div>
     </div>
 
-    <div id="dash-me-affirmation" style="padding:14px 16px;background:linear-gradient(135deg, rgba(196,120,74,0.08), rgba(176,138,80,0.05));border-radius:16px;border:1px solid var(--bdr-s);display:none">
-      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);font-weight:600;margin-bottom:4px">Today's Affirmation</div>
-      <div id="dash-me-affirm-text" style="font-size:13px;color:var(--cream);line-height:1.4;font-style:italic"></div>
+    <div class="dash-affirmation d-none" id="dash-me-affirmation">
+      <div class="t-label c-t3 mb-4">Today's Affirmation</div>
+      <div class="affirmation-text" id="dash-me-affirm-text"></div>
     </div>
   </div>
 
@@ -363,13 +360,13 @@
   <!-- Mood Distribution Donut -->
   <div class="chart-wrap">
     <div class="chart-title">Mood Distribution</div>
-    <div style="display:flex;align-items:center;gap:20px">
+    <div class="d-flex items-center gap-16">
       <svg class="chart-svg" viewBox="0 0 140 140" style="max-width:140px" id="mood-donut">
         <circle cx="70" cy="70" r="52" fill="none" stroke="var(--bg3)" stroke-width="28"/>
         <text class="donut-label" x="70" y="66" id="donut-avg">--</text>
         <text class="donut-sub" x="70" y="84">avg mood</text>
       </svg>
-      <div class="chart-legend" id="donut-legend" style="flex-direction:column;gap:6px"></div>
+      <div class="chart-legend flex-col gap-6" id="donut-legend"></div>
     </div>
   </div>
 
@@ -395,43 +392,43 @@
   <!-- Mood Analytics (Phase 15) -->
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Insights</div></div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-    <div class="chart-wrap" style="padding:10px 12px;margin-bottom:0">
+  <div class="d-grid grid-2 gap-8 mb-10">
+    <div class="chart-wrap p-12 mb-0">
       <div class="chart-title">Mood by Day</div>
-      <div id="mood-dow-heatmap" style="display:flex;gap:3px"></div>
+      <div class="d-flex gap-4" id="mood-dow-heatmap"></div>
     </div>
-    <div class="chart-wrap" style="padding:10px 12px;margin-bottom:0">
+    <div class="chart-wrap p-12 mb-0">
       <div class="chart-title">Mood vs Energy</div>
       <div id="mood-scatter"></div>
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-    <div style="text-align:center;padding:12px 6px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold)" id="mood-avg-7d">--</div>
-      <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">7d Avg</div>
+  <div class="mood-stat-row grid-3 mb-10">
+    <div class="mood-stat-box">
+      <div class="mood-stat-num c-gold" id="mood-avg-7d">--</div>
+      <div class="mood-stat-label">7d Avg</div>
     </div>
-    <div style="text-align:center;padding:12px 6px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--rose)" id="mood-avg-30d">--</div>
-      <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">30d Avg</div>
+    <div class="mood-stat-box">
+      <div class="mood-stat-num c-rose" id="mood-avg-30d">--</div>
+      <div class="mood-stat-label">30d Avg</div>
     </div>
-    <div style="text-align:center;padding:12px 6px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px" id="mood-trend-dir">--</div>
-      <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)">Trend</div>
+    <div class="mood-stat-box">
+      <div class="mood-stat-num" id="mood-trend-dir">--</div>
+      <div class="mood-stat-label">Trend</div>
     </div>
   </div>
 
-  <div style="padding:10px 14px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:10px;display:flex;align-items:center;gap:10px" id="mood-sync-card">
-    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);font-weight:600">Mood Sync</div>
-    <div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div id="mood-sync-bar" style="height:100%;background:var(--gold);border-radius:3px;width:0%;transition:width .8s ease"></div></div>
-    <div style="font-size:13px;font-weight:600;color:var(--gold)" id="mood-sync-pct">--</div>
+  <div class="mood-sync-card" id="mood-sync-card">
+    <div class="mood-sync-label">Mood Sync</div>
+    <div class="mood-sync-track"><div class="mood-sync-fill" id="mood-sync-bar"></div></div>
+    <div class="mood-sync-pct" id="mood-sync-pct">--</div>
   </div>
 
   <!-- Time Machine -->
-  <div class="chart-wrap" style="padding:10px 12px;margin-bottom:10px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <div class="chart-title" style="margin:0">Time Machine</div>
-      <input type="date" id="tm-date" style="background:var(--input-bg);border:none;border-radius:8px;padding:4px 8px;font-size:11px;color:var(--cream);font-family:Outfit" onchange="document.getElementById('tm-result').dataset.custom='1';renderTimeMachine('tm-result',this.value)">
+  <div class="chart-wrap p-12 mb-10">
+    <div class="d-flex items-center justify-between mb-8">
+      <div class="chart-title mb-0">Time Machine</div>
+      <input type="date" id="tm-date" class="form-input" style="width:auto;padding:4px 8px;font-size:11px" onchange="document.getElementById('tm-result').dataset.custom='1';renderTimeMachine('tm-result',this.value)">
     </div>
     <div id="tm-result"></div>
   </div>
@@ -551,7 +548,7 @@
     <input type="text" id="cd-title" placeholder="What are you counting down to?">
     <div class="ms-row">
       <input type="date" id="cd-date">
-      <input type="text" id="cd-emoji" placeholder="Emoji" maxlength="2" style="max-width:60px;text-align:center">
+      <input type="text" id="cd-emoji" placeholder="Emoji" maxlength="2" class="input-sm">
     </div>
     <button class="ms-save" onclick="saveCountdown()">Save Countdown</button>
     <div class="ms-cancel" onclick="toggleCdForm()">Cancel</div>
@@ -564,7 +561,7 @@
     <input type="text" id="ms-title" placeholder="Milestone title (e.g. First Date)">
     <div class="ms-row">
       <input type="date" id="ms-date">
-      <input type="text" id="ms-emoji" placeholder="Emoji" maxlength="2" style="max-width:60px;text-align:center">
+      <input type="text" id="ms-emoji" placeholder="Emoji" maxlength="2" class="input-sm">
     </div>
     <textarea id="ms-desc" placeholder="Description (optional)..."></textarea>
     <button class="ms-save" onclick="saveMilestone()">Save Milestone</button>
@@ -577,120 +574,120 @@
 <!-- ===== EXPLORE (destination page, not a menu) ===== -->
 <div class="pg" id="pg-explore">
 <div class="ctn">
-  <div style="padding:12px 0 6px">
-    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)">Discover</div>
-    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;letter-spacing:2px;color:var(--cream);margin-top:4px">Our World</h1>
+  <div class="explore-header">
+    <div class="explore-tagline">Discover</div>
+    <h1 class="explore-title">Our World</h1>
   </div>
 
   <!-- Featured cards -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
-    <div class="card-hero" onclick="go('knowyou')" style="cursor:pointer;padding:18px;background:var(--grad-know);min-height:90px">
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:4px">New</div>
-      <div style="font-size:15px;font-weight:600">Know Your Person</div>
-      <div style="font-size:11px;opacity:.7;margin-top:4px">Learn everything about each other</div>
+  <div class="explore-featured">
+    <div class="explore-feat-card card-hero" onclick="go('knowyou')" style="background:var(--grad-know)">
+      <div class="explore-feat-badge">New</div>
+      <div class="explore-feat-name">Know Your Person</div>
+      <div class="explore-feat-desc">Learn everything about each other</div>
     </div>
-    <div class="card-hero" onclick="go('dreamhome')" style="cursor:pointer;padding:18px;background:var(--grad-dreamhome);min-height:90px">
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:4px">New</div>
-      <div style="font-size:15px;font-weight:600">Dream Home</div>
-      <div style="font-size:11px;opacity:.7;margin-top:4px">Design your future together</div>
+    <div class="explore-feat-card card-hero" onclick="go('dreamhome')" style="background:var(--grad-dreamhome)">
+      <div class="explore-feat-badge">New</div>
+      <div class="explore-feat-name">Dream Home</div>
+      <div class="explore-feat-desc">Design your future together</div>
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
-    <div class="card-action" onclick="go('fitness')" style="cursor:pointer;padding:14px;text-align:center">
+  <div class="explore-grid-3">
+    <div class="explore-icon-card card-action" onclick="go('fitness')">
       <div class="icon-badge ib-emerald" style="margin:0 auto 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/></svg></div>
-      <div style="font-size:12px;font-weight:500;color:var(--cream)">Fitness</div>
+      <div class="explore-icon-label">Fitness</div>
     </div>
-    <div class="card-action" onclick="go('nutrition')" style="cursor:pointer;padding:14px;text-align:center">
+    <div class="explore-icon-card card-action" onclick="go('nutrition')">
       <div class="icon-badge ib-rose" style="margin:0 auto 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-      <div style="font-size:12px;font-weight:500;color:var(--cream)">Nutrition</div>
+      <div class="explore-icon-label">Nutrition</div>
     </div>
-    <div class="card-action" onclick="go('calendar')" style="cursor:pointer;padding:14px;text-align:center">
+    <div class="explore-icon-card card-action" onclick="go('calendar')">
       <div class="icon-badge ib-teal" style="margin:0 auto 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-      <div style="font-size:12px;font-weight:500;color:var(--cream)">Calendar</div>
+      <div class="explore-icon-label">Calendar</div>
     </div>
   </div>
 
   <!-- Relationship -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Relationship</div>
-  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+  <div class="explore-cat-label">Relationship</div>
+  <div class="explore-group">
     <div class="hub-row" onclick="go('connect')"><div class="hub-row-label">Connect</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('games')"><div class="hub-row-label">Games</div><div class="hub-row-status"><span class="hub-badge count" id="hub-games-status">Play</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('lovelang')"><div class="hub-row-label">Love Languages</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ll-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('attachment')"><div class="hub-row-label">Attachment Style</div><div class="hub-row-status"><span class="hub-badge count" id="hub-as-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('checkin')"><div class="hub-row-label">Weekly Check-in</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ci-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('deeptalk')"><div class="hub-row-label">Deep Talk</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dt-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('datenight')"><div class="hub-row-label">Date Night</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dn-status">Plan</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('question')"><div class="hub-row-label">Daily Question</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dq-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="go('challenges')"><div class="hub-row-label">Couple Challenges</div><div class="hub-row-status"><span class="hub-badge count" style="background:rgba(123,111,166,0.15);color:var(--lavender)">New</span><span class="hub-chevron">›</span></div></div>
+    <div class="explore-divider"></div>
+    <div class="hub-row" onclick="go('challenges')"><div class="hub-row-label">Couple Challenges</div><div class="hub-row-status"><span class="hub-badge" style="background:rgba(123,111,166,0.15);color:var(--lavender)">New</span><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Life Building -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Life Building</div>
-  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+  <div class="explore-cat-label">Life Building</div>
+  <div class="explore-group">
     <div class="hub-row" onclick="go('homelife')"><div class="hub-row-label">Home Life</div><div class="hub-row-status"><span class="hub-badge count" id="hub-hl-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('dreams')"><div class="hub-row-label">Our Dreams</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dr-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('family')"><div class="hub-row-label">Future Family</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fam-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('foundation')"><div class="hub-row-label">Our Foundation</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fdn-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('culture')"><div class="hub-row-label">Our Cultures</div><div class="hub-row-status"><span class="hub-badge count" id="hub-cx-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('spiritual')"><div class="hub-row-label">Our Spirit</div><div class="hub-row-status"><span class="hub-badge count" id="hub-sp-status">--</span><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Growth & Wellness -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Growth &amp; Wellness</div>
-  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+  <div class="explore-cat-label">Growth &amp; Wellness</div>
+  <div class="explore-group">
     <div class="hub-row" onclick="go('fitness')"><div class="hub-row-label">Fitness Hub</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('nutrition')"><div class="hub-row-label">Nutrition</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('gratitude')"><div class="hub-row-label">Gratitude</div><div class="hub-row-status"><span class="hub-badge count" id="hub-grat-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('herspace')"><div class="hub-row-label">Taylor's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('hisspace')"><div class="hub-row-label">Manu's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="go('grow')"><div class="hub-row-label">Grow Together</div><div class="hub-row-status"><span class="hub-badge count" style="background:rgba(123,111,166,0.15);color:var(--lavender)">New</span><span class="hub-chevron">›</span></div></div>
+    <div class="explore-divider"></div>
+    <div class="hub-row" onclick="go('grow')"><div class="hub-row-label">Grow Together</div><div class="hub-row-status"><span class="hub-badge" style="background:rgba(123,111,166,0.15);color:var(--lavender)">New</span><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Extras -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">More</div>
-  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px">
+  <div class="explore-cat-label">More</div>
+  <div class="explore-group">
     <div class="hub-row" onclick="go('memories')"><div class="hub-row-label">Photo Memories</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('achievements')"><div class="hub-row-label">Achievements</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('bucket')"><div class="hub-row-label">Bucket List</div><div class="hub-row-status"><span class="hub-badge count" id="hub-bl-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('wishlist')"><div class="hub-row-label">Wishlists</div><div class="hub-row-status"><span class="hub-badge count" id="hub-wl-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('story')"><div class="hub-row-label">Our Story</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
+    <div class="explore-divider"></div>
     <div class="hub-row" onclick="go('ai')"><div class="hub-row-label">AI Chat</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
   </div>
 
   <!-- Settings -->
-  <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px">Settings</div>
-  <div style="background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:18px">
-    <div class="hub-row" onclick="toggleTheme()"><div style="flex:1;font-size:13px;color:var(--cream)">Theme</div><span style="font-size:12px;color:var(--t3)" id="more-theme-sub">Auto</span></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="updateApiKey()"><div style="flex:1;font-size:13px;color:var(--cream)">API Key</div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="switchUser()"><div style="flex:1;font-size:13px;color:var(--cream)">Switch Profile</div></div>
-    <div style="height:1px;background:var(--tint);margin:0 18px"></div>
-    <div class="hub-row" onclick="logout()"><div style="font-size:13px;color:var(--red)">Log Out</div></div>
+  <div class="explore-cat-label">Settings</div>
+  <div class="explore-group mb-20">
+    <div class="hub-row" onclick="toggleTheme()"><div class="hub-row-label">Theme</div><span class="t-xs c-t3" id="more-theme-sub">Auto</span></div>
+    <div class="explore-divider"></div>
+    <div class="hub-row" onclick="updateApiKey()"><div class="hub-row-label">API Key</div></div>
+    <div class="explore-divider"></div>
+    <div class="hub-row" onclick="switchUser()"><div class="hub-row-label">Switch Profile</div></div>
+    <div class="explore-divider"></div>
+    <div class="hub-row" onclick="logout()"><div class="hub-row-label c-red">Log Out</div></div>
   </div>
 </div>
 </div>
@@ -787,7 +784,7 @@
       <button class="tot-option" onclick="pickTOT('A')"><div class="tot-text" id="tot-a">Loading...</div></button>
       <button class="tot-option" onclick="pickTOT('B')"><div class="tot-text" id="tot-b">Loading...</div></button>
     </div>
-    <div style="text-align:center;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2"><div style="width:32px;height:32px;border-radius:50%;background:var(--card-bg);color:var(--t3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;letter-spacing:1px;border:none;box-shadow:var(--card-shadow)">OR</div></div>
+    <div class="tot-option .tot-or" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2"><div style="width:32px;height:32px;border-radius:50%;background:var(--card-bg);color:var(--t3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;letter-spacing:1px;box-shadow:var(--card-shadow)">OR</div></div>
   </div>
   <div class="wyr-nav" style="margin-bottom:20px">
     <button onclick="prevTOT()">Previous</button>
@@ -1000,7 +997,7 @@
 
   <div class="bl-form">
     <input type="text" id="bl-input" placeholder="Something we want to do...">
-    <input type="text" id="bl-emoji" placeholder="🌍" maxlength="2" style="max-width:50px;text-align:center">
+    <input type="text" id="bl-emoji" placeholder="🌍" maxlength="2" class="input-emoji">
     <button onclick="addBucketItem()">+</button>
   </div>
 
@@ -1028,7 +1025,7 @@
   </div>
   <div class="bl-form" style="margin-top:-8px">
     <input type="url" id="wl-link" placeholder="Link (optional)" style="flex:2">
-    <select id="wl-priority" style="padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px">
+    <select id="wl-priority" class="select-field">
       <option value="love">Love it</option>
       <option value="want">Want it</option>
       <option value="need">Need it</option>
@@ -1219,11 +1216,11 @@
     </div>
   </div>
 
-  <div class="dn-result" id="dn-result" style="display:none">
+  <div class="dn-result d-none" id="dn-result">
     <div class="dn-cat" id="dn-result-cat"></div>
     <div class="dn-idea" id="dn-result-idea"></div>
     <div class="dn-desc" id="dn-result-desc"></div>
-    <div style="display:flex;gap:8px;margin-top:14px">
+    <div class="d-flex gap-8 mt-16">
       <button class="dn-action" onclick="saveDateIdea()">Save this</button>
       <button class="dn-action dn-skip" onclick="spinDateNight()">Try Another</button>
     </div>
@@ -1294,11 +1291,11 @@
       </div>
     </div>
 
-    <div style="text-align:center;margin:16px 0">
+    <div class="text-center mt-16 mb-16">
       <div id="as-radar"></div>
     </div>
 
-    <div class="chart-wrap" style="padding:14px" id="as-combo-tips"></div>
+    <div class="chart-wrap p-14" id="as-combo-tips"></div>
 
     <button class="dq-submit" onclick="retakeASQuiz()" style="margin-top:16px">Retake Quiz</button>
   </div>
@@ -1355,8 +1352,8 @@
   <div class="dr-form">
     <input type="text" id="dr-title" placeholder="Something we're dreaming about...">
     <div class="ms-row">
-      <input type="text" id="dr-emoji" placeholder="🏡" maxlength="2" style="max-width:50px;text-align:center">
-      <select id="dr-cat" style="padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;flex:1">
+      <input type="text" id="dr-emoji" placeholder="🏡" maxlength="2" class="input-emoji">
+      <select id="dr-cat" class="select-field flex-1">
         <option value="home">Home & Living</option>
         <option value="travel">Travel</option>
         <option value="career">Career</option>
@@ -1426,11 +1423,13 @@
 
   <!-- Growth Module Link -->
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Growth</div></div>
-  <div class="card-action" onclick="setGrowPath('her');go('grow')" style="display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;margin-bottom:14px">
-    <div class="icon-badge ib-lavender" style="width:36px;height:36px;font-size:16px">🌱</div>
-    <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--cream)">Her Path — Values & Growth</div>
-    <div style="font-size:11px;color:var(--t3)">Timeless values, modern love</div></div>
-    <span style="font-size:16px;color:var(--t3)">›</span>
+  <div class="card-action grow-link" onclick="setGrowPath('her');go('grow')">
+    <div class="icon-badge ib-lavender" style="width:36px;height:36px">🌱</div>
+    <div class="grow-link-info">
+      <div class="grow-link-title">Her Path — Values & Growth</div>
+      <div class="grow-link-desc">Timeless values, modern love</div>
+    </div>
+    <span class="grow-link-chevron">›</span>
   </div>
 
   <!-- Personal Goals -->
@@ -1483,11 +1482,13 @@
 
   <!-- Growth Module Link -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Growth</div></div>
-  <div class="card-action" onclick="setGrowPath('him');go('grow')" style="display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;margin-bottom:14px">
-    <div class="icon-badge ib-gold" style="width:36px;height:36px;font-size:16px">🌱</div>
-    <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--cream)">His Path — Values & Growth</div>
-    <div style="font-size:11px;color:var(--t3)">Timeless values, modern love</div></div>
-    <span style="font-size:16px;color:var(--t3)">›</span>
+  <div class="card-action grow-link" onclick="setGrowPath('him');go('grow')">
+    <div class="icon-badge ib-gold" style="width:36px;height:36px">🌱</div>
+    <div class="grow-link-info">
+      <div class="grow-link-title">His Path — Values & Growth</div>
+      <div class="grow-link-desc">Timeless values, modern love</div>
+    </div>
+    <span class="grow-link-chevron">›</span>
   </div>
 
   <!-- Personal Goals -->
@@ -1520,7 +1521,7 @@
     <div class="cx-phrase-form">
       <input type="text" id="cx-word" placeholder="Word or phrase..." class="quiz-q">
       <input type="text" id="cx-meaning" placeholder="What it means..." class="quiz-q">
-      <select id="cx-lang" style="padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px">
+      <select id="cx-lang" class="select-field">
         <option value="ewe">Ewe (Togo)</option>
         <option value="french">French</option>
         <option value="mina">Mina</option>
@@ -1537,8 +1538,8 @@
   <div class="cx-trad-form">
     <input type="text" id="cx-trad-title" placeholder="A tradition, food, or custom...">
     <div class="ms-row">
-      <input type="text" id="cx-trad-emoji" placeholder="🎉" maxlength="2" style="max-width:50px;text-align:center">
-      <select id="cx-trad-origin" style="padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;flex:1">
+      <input type="text" id="cx-trad-emoji" placeholder="🎉" maxlength="2" class="input-emoji">
+      <select id="cx-trad-origin" class="select-field flex-1">
         <option value="togo">From Togo</option>
         <option value="texas">From Texas</option>
         <option value="ours">Ours (new)</option>
@@ -1554,8 +1555,8 @@
   <div class="cx-recipe-form">
     <input type="text" id="cx-recipe-name" placeholder="Dish name...">
     <div class="ms-row">
-      <input type="text" id="cx-recipe-emoji" placeholder="🍲" maxlength="2" style="max-width:50px;text-align:center">
-      <select id="cx-recipe-origin" style="padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;flex:1">
+      <input type="text" id="cx-recipe-emoji" placeholder="🍲" maxlength="2" class="input-emoji">
+      <select id="cx-recipe-origin" class="select-field flex-1">
         <option value="togo">Togolese</option>
         <option value="texas">Texan</option>
         <option value="fusion">Our Fusion</option>
@@ -1631,7 +1632,7 @@
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Name Ideas</div></div>
   <div class="bl-form">
     <input type="text" id="fam-name-input" placeholder="A name you love...">
-    <select id="fam-name-gender" style="padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px">
+    <select id="fam-name-gender" class="select-field">
       <option value="girl">Girl</option>
       <option value="boy">Boy</option>
       <option value="neutral">Neutral</option>
@@ -1669,7 +1670,7 @@
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Shared Goals</div></div>
   <div class="bl-form">
     <input type="text" id="shared-goal-input" placeholder="A goal for both of us...">
-    <select id="shared-goal-cat" style="padding:12px 14px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px">
+    <select id="shared-goal-cat" class="select-field">
       <option value="relationship">💕 Relationship</option>
       <option value="health">🏃 Health</option>
       <option value="finance">💰 Finance</option>
@@ -1792,9 +1793,9 @@
       </label>
       <button class="dq-submit" onclick="addExpense()">Add</button>
     </div>
-    <div id="fin-receipt-preview" style="display:none;margin-top:8px;position:relative">
-      <img id="fin-receipt-img" style="max-height:100px;border-radius:10px;border:1px solid var(--bdr-s)">
-      <button onclick="clearReceipt()" style="position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:none;background:var(--red);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center">&times;</button>
+    <div class="receipt-preview d-none" id="fin-receipt-preview">
+      <img id="fin-receipt-img" class="receipt-preview img">
+      <button class="receipt-remove" onclick="clearReceipt()">&times;</button>
     </div>
   </div>
 
@@ -1829,7 +1830,7 @@
   <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Meal Ideas</div></div>
   <div class="bl-form">
     <input type="text" id="hl-meal-input" placeholder="What should we cook?">
-    <select id="hl-meal-day" style="padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px">
+    <select id="hl-meal-day" class="select-field">
       <option value="anytime">Anytime</option>
       <option value="mon">Monday</option>
       <option value="tue">Tuesday</option>
@@ -1847,7 +1848,7 @@
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Household Tasks</div></div>
   <div class="bl-form">
     <input type="text" id="hl-chore-input" placeholder="Add a task...">
-    <select id="hl-chore-who" style="padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px">
+    <select id="hl-chore-who" class="select-field">
       <option value="shared">Shared</option>
       <option value="her">Her</option>
       <option value="him">Him</option>
@@ -1877,80 +1878,80 @@
   <!-- Couple Fitness (Us mode) -->
   <div class="us-only">
     <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Partner Activity</div></div>
-    <div class="card-data" id="fit-partner-status" style="margin-bottom:14px">
+    <div class="card-data partner-card" id="fit-partner-status">
       <div class="cd-accent" style="background:var(--emerald)"></div>
-      <div style="display:flex;align-items:center;gap:10px;flex:1">
+      <div class="partner-card-inner">
         <div class="presence-dot" id="fit-partner-dot"></div>
-        <div><div style="font-size:13px;font-weight:500;color:var(--cream)" id="fit-partner-name">Partner</div>
-        <div style="font-size:11px;color:var(--t3)" id="fit-partner-last">No workouts yet</div></div>
+        <div>
+          <div class="partner-card-name" id="fit-partner-name">Partner</div>
+          <div class="partner-card-status" id="fit-partner-last">No workouts yet</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Active Workout Session (enhanced set-by-set) -->
-  <div class="workout-session" id="ws-active" style="display:none">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+  <!-- Active Workout Session -->
+  <div class="workout-session d-none" id="ws-active">
+    <div class="ws-top">
       <div>
-        <div style="font-size:15px;font-weight:600;color:var(--cream)" id="ws-title">Workout</div>
-        <div style="font-size:11px;color:var(--t3)" id="ws-timer">00:00</div>
+        <div class="ws-name" id="ws-title">Workout</div>
+        <div class="ws-time" id="ws-timer">00:00</div>
       </div>
-      <div style="text-align:right">
-        <div style="font-size:18px;font-weight:700;color:var(--emerald)" id="ws-volume-live">0</div>
-        <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">Volume</div>
+      <div class="text-right">
+        <div class="ws-vol-num" id="ws-volume-live">0</div>
+        <div class="ws-vol-label">Volume</div>
       </div>
     </div>
     <div class="ws-progress"><div class="ws-progress-bar" id="ws-bar" style="width:0%"></div></div>
-    <!-- Rest timer config -->
     <div class="rest-config" id="rest-config">
-      <span style="font-size:10px;color:var(--t3);align-self:center;margin-right:4px">Rest:</span>
+      <span class="rest-label-sm">Rest:</span>
       <button class="rest-opt" onclick="setRestDuration(30)">30s</button>
       <button class="rest-opt active" onclick="setRestDuration(60)">60s</button>
       <button class="rest-opt" onclick="setRestDuration(90)">90s</button>
       <button class="rest-opt" onclick="setRestDuration(120)">2m</button>
     </div>
     <div id="ws-exercises"></div>
-    <div class="rest-timer" id="rest-timer" style="display:none">
-      <div style="font-size:12px;color:var(--t3)">Rest</div>
-      <div style="font-size:28px;font-weight:700;color:var(--emerald)" id="rest-countdown">60</div>
+    <div class="rest-timer d-none" id="rest-timer">
+      <div class="rest-label">Rest</div>
+      <div class="rest-num" id="rest-countdown">60</div>
       <button class="btn-sm" onclick="skipRest()">Skip</button>
     </div>
-    <!-- Add exercise during workout -->
-    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr-s)">
-      <div style="font-size:11px;color:var(--t3);margin-bottom:6px">Add exercise:</div>
-      <div style="display:flex;gap:6px">
-        <input type="text" id="ws-add-ex-search" placeholder="Search exercises..." style="flex:1;padding:8px 12px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-size:12px;font-family:'Outfit',sans-serif">
-        <button class="btn-sm" onclick="searchAddExercise()" style="background:var(--emerald);color:#fff;border:none;padding:8px 14px;border-radius:12px;cursor:pointer;font-size:11px">Add</button>
+    <div class="ws-add-section">
+      <div class="ws-add-label">Add exercise:</div>
+      <div class="ws-add-row">
+        <input type="text" id="ws-add-ex-search" placeholder="Search exercises..." class="ws-add-input">
+        <button class="ws-add-btn" onclick="searchAddExercise()">Add</button>
       </div>
-      <div id="ws-add-results" style="margin-top:4px"></div>
+      <div class="mt-4" id="ws-add-results"></div>
     </div>
-    <div style="display:flex;gap:10px;margin-top:16px">
-      <button class="dq-submit" onclick="finishWorkout()" style="flex:1;background:var(--grad-fitness)">Finish Workout</button>
-      <button class="btn-sm" onclick="cancelWorkout()" style="color:var(--red)">Cancel</button>
+    <div class="ws-actions">
+      <button class="dq-submit flex-1" onclick="finishWorkout()" style="background:var(--grad-fitness)">Finish Workout</button>
+      <button class="btn-sm c-red" onclick="cancelWorkout()">Cancel</button>
     </div>
   </div>
 
   <!-- Workout Programs -->
   <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Programs</div></div>
-  <div class="fit-programs" style="grid-template-columns:1fr 1fr">
+  <div class="fit-programs grid-2">
     <div class="fit-prog card-action" onclick="startWorkout('foundation')">
-      <div class="icon-badge ib-emerald" style="width:32px;height:32px;font-size:14px">&#x1F331;</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Foundation</div>
-      <div style="font-size:10px;color:var(--t3)">Beginner &bull; Full Body</div></div>
+      <div class="icon-badge ib-emerald" style="width:32px;height:32px">&#x1F331;</div>
+      <div><div class="t-body fw-600 c-cream">Foundation</div>
+      <div class="t-xs c-t3">Beginner &bull; Full Body</div></div>
     </div>
     <div class="fit-prog card-action" onclick="startWorkout('elevated')">
-      <div class="icon-badge ib-teal" style="width:32px;height:32px;font-size:14px">&#x26A1;</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Elevated</div>
-      <div style="font-size:10px;color:var(--t3)">Advanced &bull; Split</div></div>
+      <div class="icon-badge ib-teal" style="width:32px;height:32px">&#x26A1;</div>
+      <div><div class="t-body fw-600 c-cream">Elevated</div>
+      <div class="t-xs c-t3">Advanced &bull; Split</div></div>
     </div>
     <div class="fit-prog card-action" onclick="startWorkout('fullbody')">
-      <div class="icon-badge ib-lavender" style="width:32px;height:32px;font-size:14px">&#x1F525;</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Full Body</div>
-      <div style="font-size:10px;color:var(--t3)">Complete &bull; All Levels</div></div>
+      <div class="icon-badge ib-lavender" style="width:32px;height:32px">&#x1F525;</div>
+      <div><div class="t-body fw-600 c-cream">Full Body</div>
+      <div class="t-xs c-t3">Complete &bull; All Levels</div></div>
     </div>
     <div class="fit-prog card-action" onclick="openWorkoutBuilder()" style="border-style:dashed">
-      <div class="icon-badge ib-amber" style="width:32px;height:32px;font-size:14px">&#x2795;</div>
-      <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Create Workout</div>
-      <div style="font-size:10px;color:var(--t3)">Build your own</div></div>
+      <div class="icon-badge ib-amber" style="width:32px;height:32px">&#x2795;</div>
+      <div><div class="t-body fw-600 c-cream">Create Workout</div>
+      <div class="t-xs c-t3">Build your own</div></div>
     </div>
   </div>
 
@@ -1958,12 +1959,12 @@
   <div class="fit-saved-progs" id="fit-saved-progs"></div>
 
   <!-- Workout Builder (hidden by default) -->
-  <div class="fit-builder" id="fit-builder" style="display:none">
+  <div class="fit-builder d-none" id="fit-builder">
     <div class="fit-builder-header">
-      <div style="font-size:14px;font-weight:600;color:var(--cream)">Workout Builder</div>
-      <button class="btn-sm" onclick="closeWorkoutBuilder()" style="font-size:18px;color:var(--t3);background:none;border:none;cursor:pointer">&times;</button>
+      <div class="t-body fw-600 c-cream">Workout Builder</div>
+      <button class="modal-close" onclick="closeWorkoutBuilder()">&times;</button>
     </div>
-    <input type="text" id="fit-builder-name" placeholder="Workout name (e.g., Push Day)" style="width:100%;padding:10px 14px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-size:13px;font-family:'Outfit',sans-serif;margin-bottom:12px;box-sizing:border-box">
+    <input type="text" id="fit-builder-name" placeholder="Workout name (e.g., Push Day)" class="form-input mb-12">
     <!-- Muscle group filter -->
     <div class="fit-mg-tabs" id="fit-mg-tabs">
       <button class="fit-mg-tab active" onclick="filterExercises('all')">All</button>
@@ -1975,29 +1976,29 @@
       <button class="fit-mg-tab" onclick="filterExercises('core')">Core</button>
     </div>
     <!-- Exercise search -->
-    <input type="text" id="fit-builder-search" placeholder="Search exercises..." oninput="searchExercises(this.value)" style="width:100%;padding:8px 14px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-size:12px;font-family:'Outfit',sans-serif;margin-bottom:8px;box-sizing:border-box">
+    <input type="text" id="fit-builder-search" placeholder="Search exercises..." oninput="searchExercises(this.value)" class="form-input mb-8" style="font-size:12px;padding:8px 14px">
     <!-- Exercise list -->
     <div class="fit-ex-list" id="fit-ex-list"></div>
     <!-- Selected exercises -->
     <div class="fit-selected" id="fit-selected">
-      <div style="font-size:11px;font-weight:600;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Selected Exercises (<span id="fit-sel-count">0</span>)</div>
+      <div class="t-label c-t3 mb-8">Selected Exercises (<span id="fit-sel-count">0</span>)</div>
       <div id="fit-sel-list"></div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="dq-submit" onclick="saveCustomProgram()" style="flex:1;background:var(--emerald)">Save Program</button>
-      <button class="dq-submit" onclick="startBuilderWorkout()" style="flex:1;background:var(--grad-fitness)">Start Now</button>
+    <div class="d-flex gap-8 mt-16">
+      <button class="dq-submit flex-1" onclick="saveCustomProgram()" style="background:var(--emerald)">Save Program</button>
+      <button class="dq-submit flex-1" onclick="startBuilderWorkout()" style="background:var(--grad-fitness)">Start Now</button>
     </div>
   </div>
 
   <!-- Quick Log -->
   <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Quick Log</div></div>
   <div class="card" id="fit-quick-log-section">
-    <div style="display:flex;gap:8px;margin-bottom:10px">
-      <input type="text" id="fit-ex-name" placeholder="Exercise" style="flex:2" list="fit-ex-datalist">
+    <div class="d-flex gap-8 mb-10">
+      <input type="text" id="fit-ex-name" placeholder="Exercise" class="flex-1" style="flex:2" list="fit-ex-datalist">
       <datalist id="fit-ex-datalist"></datalist>
-      <input type="number" id="fit-ex-sets" placeholder="Sets" style="flex:1">
-      <input type="number" id="fit-ex-reps" placeholder="Reps" style="flex:1">
-      <input type="number" id="fit-ex-weight" placeholder="lbs" style="flex:1">
+      <input type="number" id="fit-ex-sets" placeholder="Sets" class="flex-1">
+      <input type="number" id="fit-ex-reps" placeholder="Reps" class="flex-1">
+      <input type="number" id="fit-ex-weight" placeholder="lbs" class="flex-1">
     </div>
     <button class="dq-submit" onclick="quickLogExercise()">Log Exercise</button>
   </div>
@@ -2010,7 +2011,7 @@
   </div>
   <div class="fit-chart-wrap">
     <div class="fit-chart-title">Workout Calendar (last 4 weeks)</div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:8px;color:var(--t3)">Mon</span><span style="font-size:8px;color:var(--t3)">Tue</span><span style="font-size:8px;color:var(--t3)">Wed</span><span style="font-size:8px;color:var(--t3)">Thu</span><span style="font-size:8px;color:var(--t3)">Fri</span><span style="font-size:8px;color:var(--t3)">Sat</span><span style="font-size:8px;color:var(--t3)">Sun</span></div>
+    <div class="streak-day-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
     <div class="fit-heatmap" id="fit-heatmap"></div>
   </div>
   <div class="fit-chart-wrap">

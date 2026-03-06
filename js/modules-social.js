@@ -304,7 +304,7 @@ function spinDateNight() {
     document.getElementById('dn-result-cat').textContent = currentDateIdea.cat.toUpperCase();
     document.getElementById('dn-result-idea').textContent = currentDateIdea.title;
     document.getElementById('dn-result-desc').textContent = currentDateIdea.desc;
-    document.getElementById('dn-result').style.display = 'block';
+    showEl('dn-result');
   }, 600);
 }
 
@@ -1007,7 +1007,7 @@ function listenGameInvites() {
             <span>${NAMES[partner]} wants to play <strong>${names[g.type] || g.type}</strong>!</span>
             <button class="gi-join" onclick="joinGame('${c.key}','${g.type}')">Join</button>
           </div>`;
-          el.style.display = 'block';
+          showEl(el);
         }
       }
     });
@@ -1016,7 +1016,7 @@ function listenGameInvites() {
 
 function joinGame(key, type) {
   const el = document.getElementById('game-invite');
-  if (el) { el.style.display = 'none'; el.innerHTML = ''; }
+  if (el) { hideEl(el); el.innerHTML = ''; }
   if (type === 'ttt') { listenGame(key, renderTTT); showGameView('ttt'); }
   else if (type === 'c4') { listenGame(key, renderC4); showGameView('c4'); }
   else if (type === 'memory') { listenGame(key, renderMemory); showGameView('memory'); }
@@ -1034,17 +1034,16 @@ function joinGame(key, type) {
 }
 
 function showGameView(game) {
-  document.querySelectorAll('.game-view').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.game-view').forEach(el => hideEl(el));
   const el = document.getElementById('gv-' + game);
-  if (el) el.style.display = 'block';
-  document.getElementById('game-lobby')?.style && (document.getElementById('game-lobby').style.display = 'none');
+  showEl(el);
+  hideEl('game-lobby');
 }
 
 function showGameLobby() {
   stopListeningGame();
-  document.querySelectorAll('.game-view').forEach(el => el.style.display = 'none');
-  const lobby = document.getElementById('game-lobby');
-  if (lobby) lobby.style.display = 'block';
+  document.querySelectorAll('.game-view').forEach(el => hideEl(el));
+  showEl('game-lobby');
   renderAllGameStats();
 }
 

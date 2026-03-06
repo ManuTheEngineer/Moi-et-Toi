@@ -28,6 +28,24 @@ function updateTimeOfDay() {
 updateTimeOfDay();
 setInterval(updateTimeOfDay, 5 * 60 * 1000);
 
+// ===== SHOW/HIDE HELPERS (works with d-none class OR inline style) =====
+function showEl(id) {
+  const el = typeof id === 'string' ? document.getElementById(id) : id;
+  if (!el) return;
+  el.classList.remove('d-none');
+  el.style.display = '';
+}
+function hideEl(id) {
+  const el = typeof id === 'string' ? document.getElementById(id) : id;
+  if (!el) return;
+  el.classList.add('d-none');
+}
+function toggleEl(id) {
+  const el = typeof id === 'string' ? document.getElementById(id) : id;
+  if (!el) return;
+  if (el.classList.contains('d-none')) showEl(el); else hideEl(el);
+}
+
 // ===== FLOATING ORBS SYSTEM =====
 function spawnOrbs() {
   const container = document.getElementById('particles');

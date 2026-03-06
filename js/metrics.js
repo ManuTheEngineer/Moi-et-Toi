@@ -762,8 +762,8 @@ function onMetricsUpdate(fn) {
 function togglePulseBreakdown() {
   const el = document.getElementById('dash-pulse-breakdown');
   if (!el) return;
-  const isHidden = el.style.display === 'none';
-  el.style.display = isHidden ? 'block' : 'none';
+  const isHidden = el.classList.contains('d-none');
+  toggleEl(el);
   if (isHidden) renderPulseBreakdown();
 }
 

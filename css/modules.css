@@ -1275,3 +1275,177 @@
 .settings-btn:active{transform:scale(.96)}
 .settings-btn-danger{background:rgba(220,80,80,0.12);color:#dc5050}
 .settings-btn-danger:hover{background:rgba(220,80,80,0.20)}
+
+/* ===== UX OVERHAUL — DESIGN SYSTEM CLASSES ===== */
+
+/* --- Layout Utilities --- */
+.d-flex{display:flex}.d-grid{display:grid}.d-none{display:none}
+.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}
+.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}
+.gap-4{gap:4px}.gap-6{gap:6px}.gap-8{gap:8px}.gap-10{gap:10px}.gap-12{gap:12px}.gap-14{gap:14px}.gap-16{gap:16px}
+.flex-1{flex:1;min-width:0}.flex-shrink-0{flex-shrink:0}
+.text-center{text-align:center}.text-right{text-align:right}
+.w-full{width:100%}
+.grid-2{grid-template-columns:1fr 1fr}.grid-3{grid-template-columns:repeat(3,1fr)}.grid-4{grid-template-columns:repeat(4,1fr)}
+.cursor-pointer{cursor:pointer}
+.relative{position:relative}
+
+/* --- Spacing --- */
+.mb-0{margin-bottom:0}.mb-4{margin-bottom:4px}.mb-6{margin-bottom:6px}.mb-8{margin-bottom:8px}.mb-10{margin-bottom:10px}
+.mb-12{margin-bottom:12px}.mb-14{margin-bottom:14px}.mb-16{margin-bottom:16px}.mb-20{margin-bottom:20px}
+.mt-4{margin-top:4px}.mt-6{margin-top:6px}.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}
+.p-0{padding:0}.p-6{padding:6px}.p-10{padding:10px}.p-12{padding:12px}.p-14{padding:14px}.p-16{padding:16px}.p-20{padding:20px}
+.px-0{padding-left:0;padding-right:0}.py-10{padding-top:10px;padding-bottom:10px}
+
+/* --- Typography --- */
+.t-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.t-label-lg{font-size:10px;letter-spacing:3px;text-transform:uppercase}
+.t-label-sm{font-size:8px;letter-spacing:1px;text-transform:uppercase}
+.t-serif{font-family:'Cormorant Garamond',serif}
+.t-body{font-size:13px;line-height:1.4}
+.t-sm{font-size:11px}.t-xs{font-size:10px}.t-xxs{font-size:9px}
+.t-lg{font-size:15px}.t-xl{font-size:22px}.t-2xl{font-size:28px}.t-3xl{font-size:32px}
+.fw-300{font-weight:300}.fw-500{font-weight:500}.fw-600{font-weight:600}.fw-700{font-weight:700}
+.ls-2{letter-spacing:2px}.ls-3{letter-spacing:3px}
+.c-cream{color:var(--cream)}.c-gold{color:var(--gold)}.c-rose{color:var(--rose)}.c-teal{color:var(--teal)}
+.c-emerald{color:var(--emerald)}.c-lavender{color:var(--lavender)}.c-t2{color:var(--t2)}.c-t3{color:var(--t3)}
+.c-red{color:var(--red)}
+
+/* --- Dashboard Components --- */
+.dash-greeting-row{padding:10px 0 6px;display:flex;align-items:center;justify-content:space-between}
+.dash-time-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)}
+.dash-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:28px;letter-spacing:2px;color:var(--cream);margin-top:4px}
+.dash-partner{display:flex;align-items:center;gap:8px}
+.dash-partner-link{display:flex;align-items:center;gap:5px;cursor:pointer}
+.dash-presence{width:8px;height:8px;flex-shrink:0;border-radius:50%;background:var(--t3);transition:background .3s}
+.dash-presence.online{background:var(--emerald);box-shadow:0 0 6px var(--emerald)}
+.dash-partner-name{font-size:12px;font-weight:500;color:var(--cream)}
+
+/* Hero card (unified pulse/growth card) */
+.hero-card{padding:16px;border-radius:20px;margin-bottom:8px;position:relative;overflow:hidden}
+.hero-card-us{background:linear-gradient(135deg,rgba(196,120,74,0.12),rgba(176,138,80,0.08))}
+.hero-card-me{background:linear-gradient(135deg,rgba(42,143,143,0.12),rgba(123,111,166,0.08))}
+.hero-card .hero-top{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.hero-card .hero-info{flex:1;min-width:0}
+
+/* Stat mini-cards (streak, days together, sparkline etc.) */
+.stat-mini-row{display:flex;gap:8px}
+.stat-mini{flex:1;text-align:center;padding:10px 6px;background:rgba(255,255,255,0.05);border-radius:12px;transition:transform .2s}
+.stat-mini:active{transform:scale(.96)}
+.stat-mini-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400}
+.stat-mini-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:1px}
+.stat-mini-num.gold{color:var(--gold)}.stat-mini-num.rose{color:var(--rose)}.stat-mini-num.lavender{color:var(--lavender)}
+.stat-mini-num.teal{color:var(--teal)}.stat-mini-num.emerald{color:var(--emerald)}
+
+/* Dashboard card (standard) */
+.dash-card{padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:8px}
+.dash-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.dash-card-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.dash-card-status{font-size:9px;color:var(--t3)}
+
+/* Today mood indicators */
+.mood-indicator{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--cream)}
+.mood-indicator .skel{width:18px;height:18px;border-radius:50%;display:inline-block}
+
+/* Activity feed */
+.activity-section{margin-bottom:6px}
+.activity-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.activity-empty{padding:12px 14px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);font-size:12px;color:var(--t3)}
+
+/* Me dashboard care grid */
+.me-care-card{padding:12px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:8px}
+.me-care-item{padding:8px 4px;border-radius:12px;background:var(--tint-xs);text-align:center;cursor:pointer;transition:all .2s}
+.me-care-item:active{transform:scale(.94)}
+.me-care-icon{margin:0 auto;width:28px;height:28px}
+.me-care-label{font-size:9px;color:var(--t3);margin-top:2px}
+
+/* Gratitude + affirmation cards */
+.dash-gratitude{padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:10px}
+.dash-affirmation{padding:14px 16px;background:linear-gradient(135deg,rgba(196,120,74,0.08),rgba(176,138,80,0.05));border-radius:16px;border:1px solid var(--bdr-s)}
+.affirmation-text{font-size:13px;color:var(--cream);line-height:1.4;font-style:italic}
+
+/* --- Explore Page --- */
+.explore-header{padding:12px 0 6px}
+.explore-tagline{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)}
+.explore-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;letter-spacing:2px;color:var(--cream);margin-top:4px}
+
+.explore-featured{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.explore-feat-card{cursor:pointer;padding:18px;min-height:90px;border-radius:20px;color:#fff;position:relative;overflow:hidden;transition:transform .2s}
+.explore-feat-card:active{transform:scale(.97)}
+.explore-feat-badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:4px}
+.explore-feat-name{font-size:15px;font-weight:600}
+.explore-feat-desc{font-size:11px;opacity:.7;margin-top:4px}
+
+.explore-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.explore-icon-card{cursor:pointer;padding:14px;text-align:center;transition:transform .2s}
+.explore-icon-card:active{transform:scale(.95)}
+.explore-icon-label{font-size:12px;font-weight:500;color:var(--cream);margin-top:8px}
+
+.explore-cat-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 8px}
+.explore-group{background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px}
+.explore-divider{height:1px;background:var(--tint);margin:0 18px}
+.hub-row-label{flex:1;font-size:13px;color:var(--cream)}
+
+/* --- Mood Page Improvements --- */
+.mood-stat-row{display:grid;gap:8px;margin-bottom:10px}
+.mood-stat-box{text-align:center;padding:12px 6px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)}
+.mood-stat-num{font-family:'Cormorant Garamond',serif;font-size:22px}
+.mood-stat-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)}
+.mood-sync-card{padding:10px 14px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.mood-sync-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);font-weight:600}
+.mood-sync-track{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.mood-sync-fill{height:100%;background:var(--gold);border-radius:3px;width:0%;transition:width .8s ease}
+.mood-sync-pct{font-size:13px;font-weight:600;color:var(--gold)}
+
+/* --- Hub Row (for Explore page list items) --- */
+.hub-row{display:flex;align-items:center;padding:14px 18px;cursor:pointer;transition:background .15s}
+.hub-row:active{background:var(--tint-xs)}
+.hub-row-status{display:flex;align-items:center;gap:6px}
+.hub-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--tint);color:var(--gold);font-weight:600}
+.hub-chevron{font-size:16px;color:var(--t3)}
+
+/* --- Select fields (replace inline style selects) --- */
+.select-field{padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;outline:none;transition:box-shadow .2s}
+.select-field:focus{box-shadow:var(--focus-ring)}
+
+/* --- Inline style input fix --- */
+.input-emoji{max-width:50px;text-align:center}
+.input-sm{max-width:60px;text-align:center}
+
+/* --- Growth link card --- */
+.grow-link{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;margin-bottom:14px;transition:transform .2s}
+.grow-link:active{transform:scale(.97)}
+.grow-link-info{flex:1}
+.grow-link-title{font-size:13px;font-weight:600;color:var(--cream)}
+.grow-link-desc{font-size:11px;color:var(--t3)}
+.grow-link-chevron{font-size:16px;color:var(--t3)}
+
+/* --- Fitness page fix (inline styles) --- */
+.workout-session{padding:14px 16px;background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:14px}
+.ws-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ws-name{font-size:15px;font-weight:600;color:var(--cream)}
+.ws-time{font-size:11px;color:var(--t3)}
+.ws-vol-num{font-size:18px;font-weight:700;color:var(--emerald)}
+.ws-vol-label{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+.ws-add-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr-s)}
+.ws-add-label{font-size:11px;color:var(--t3);margin-bottom:6px}
+.ws-add-row{display:flex;gap:6px}
+.ws-add-input{flex:1;padding:8px 12px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-size:12px;font-family:'Outfit',sans-serif}
+.ws-add-btn{background:var(--emerald);color:#fff;border:none;padding:8px 14px;border-radius:12px;cursor:pointer;font-size:11px}
+.ws-actions{display:flex;gap:10px;margin-top:16px}
+
+/* --- Partner status card --- */
+.partner-card{margin-bottom:14px}
+.partner-card-inner{display:flex;align-items:center;gap:10px;flex:1}
+.partner-card-name{font-size:13px;font-weight:500;color:var(--cream)}
+.partner-card-status{font-size:11px;color:var(--t3)}
+
+/* --- Receipt preview --- */
+.receipt-preview{margin-top:8px;position:relative}
+.receipt-preview img{max-height:100px;border-radius:10px;border:1px solid var(--bdr-s)}
+.receipt-remove{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:none;background:var(--red);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* --- Rest timer --- */
+.rest-label{font-size:12px;color:var(--t3)}
+.rest-num{font-size:28px;font-weight:700;color:var(--emerald)}
+.rest-label-sm{font-size:10px;color:var(--t3);align-self:center;margin-right:4px}
