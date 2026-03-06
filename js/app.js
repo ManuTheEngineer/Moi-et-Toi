@@ -225,6 +225,7 @@ function finishLogin() {
   listenNutritionData();
   listenCalendarEvents();
   listenDreamHome();
+  loadDHVisions();
   listenKnowYou();
   loadIdentityProfiles();
   listenMemories();

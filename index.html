@@ -2256,6 +2256,39 @@
     <div id="dh-style-result" style="margin-top:12px"></div>
   </div>
 
+  <!-- Vision Board -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Home Vision Board</div></div>
+  <div class="card" style="margin-bottom:16px">
+    <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Color Palette</div>
+    <div class="dh-palette" id="dh-palette">
+      <div class="dh-color" style="background:#F5E6D3" onclick="toggleDHColor('#F5E6D3',this)"></div>
+      <div class="dh-color" style="background:#D4946A" onclick="toggleDHColor('#D4946A',this)"></div>
+      <div class="dh-color" style="background:#8B6F47" onclick="toggleDHColor('#8B6F47',this)"></div>
+      <div class="dh-color" style="background:#2C3E50" onclick="toggleDHColor('#2C3E50',this)"></div>
+      <div class="dh-color" style="background:#1A1A2E" onclick="toggleDHColor('#1A1A2E',this)"></div>
+      <div class="dh-color" style="background:#E8D5B7" onclick="toggleDHColor('#E8D5B7',this)"></div>
+      <div class="dh-color" style="background:#A8D8B9" onclick="toggleDHColor('#A8D8B9',this)"></div>
+      <div class="dh-color" style="background:#F2C6DE" onclick="toggleDHColor('#F2C6DE',this)"></div>
+      <div class="dh-color" style="background:#C9B1FF" onclick="toggleDHColor('#C9B1FF',this)"></div>
+      <div class="dh-color" style="background:#FFFFFF" onclick="toggleDHColor('#FFFFFF',this)"></div>
+    </div>
+    <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px">Must-Haves</div>
+    <div class="dh-musthaves" id="dh-musthaves">
+      <button class="dh-mh-btn" onclick="toggleDHMust('garden',this)">Garden</button>
+      <button class="dh-mh-btn" onclick="toggleDHMust('garage',this)">Garage</button>
+      <button class="dh-mh-btn" onclick="toggleDHMust('pool',this)">Pool</button>
+      <button class="dh-mh-btn" onclick="toggleDHMust('fireplace',this)">Fireplace</button>
+      <button class="dh-mh-btn" onclick="toggleDHMust('office',this)">Home Office</button>
+      <button class="dh-mh-btn" onclick="toggleDHMust('gym',this)">Home Gym</button>
+      <button class="dh-mh-btn" onclick="toggleDHMust('balcony',this)">Balcony</button>
+      <button class="dh-mh-btn" onclick="toggleDHMust('walk-in',this)">Walk-in Closet</button>
+      <button class="dh-mh-btn" onclick="toggleDHMust('bathtub',this)">Bathtub</button>
+      <button class="dh-mh-btn" onclick="toggleDHMust('island',this)">Kitchen Island</button>
+    </div>
+    <button class="dq-submit" onclick="saveDHVision()" style="margin-top:14px;background:var(--lavender)">Save Vision</button>
+  </div>
+  <div id="dh-vision-compare"></div>
+
   <!-- Room Planner -->
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Room by Room</div></div>
   <div class="dh-rooms" id="dh-rooms">

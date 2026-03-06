@@ -1545,3 +1545,103 @@ async function toggleSharedTodo(key, done) {
   if (done) toast('Done ✓');
 }
 
+// ===== DREAM HOME VISION BOARD =====
+let dhSelectedColors = [];
+let dhSelectedMusts = [];
+
+function toggleDHColor(color, btn) {
+  const idx = dhSelectedColors.indexOf(color);
+  if (idx > -1) { dhSelectedColors.splice(idx, 1); btn.classList.remove('selected'); }
+  else if (dhSelectedColors.length < 5) { dhSelectedColors.push(color); btn.classList.add('selected'); }
+  else { toast('Select up to 5 colors'); }
+}
+
+function toggleDHMust(item, btn) {
+  const idx = dhSelectedMusts.indexOf(item);
+  if (idx > -1) { dhSelectedMusts.splice(idx, 1); btn.classList.remove('selected'); }
+  else { dhSelectedMusts.push(item); btn.classList.add('selected'); }
+}
+
+async function saveDHVision() {
+  if (!db || !user) return;
+  await db.ref('dreamHome/vision/' + user).set({
+    colors: dhSelectedColors,
+    mustHaves: dhSelectedMusts,
+    updatedAt: Date.now()
+  });
+  toast('Vision saved!');
+  loadDHVisions();
+}
+
+function loadDHVisions() {
+  if (!db) return;
+  db.ref('dreamHome/vision').on('value', snap => {
+    const data = snap.val() || {};
+    renderDHVisionCompare(data);
+    // Restore selections
+    const mine = data[user];
+    if (mine) {
+      dhSelectedColors = mine.colors || [];
+      dhSelectedMusts = mine.mustHaves || [];
+      document.querySelectorAll('.dh-color').forEach(el => {
+        const bg = el.style.background || el.style.backgroundColor;
+        el.classList.toggle('selected', dhSelectedColors.some(c => c.toLowerCase() === bg.toLowerCase() || c === bg));
+      });
+      document.querySelectorAll('.dh-mh-btn').forEach(el => {
+        const item = el.getAttribute('onclick')?.match(/toggleDHMust\('(\w[\w-]*)'/)?.[1];
+        if (item) el.classList.toggle('selected', dhSelectedMusts.includes(item));
+      });
+    }
+  });
+}
+
+function renderDHVisionCompare(data) {
+  const el = document.getElementById('dh-vision-compare');
+  if (!el) return;
+  const mine = data[user];
+  const theirs = data[partner];
+  if (!mine && !theirs) { el.innerHTML = ''; return; }
+
+  let html = '';
+  // Show overlap
+  if (mine && theirs) {
+    const sharedColors = (mine.colors || []).filter(c => (theirs.colors || []).includes(c));
+    const sharedMusts = (mine.mustHaves || []).filter(m => (theirs.mustHaves || []).includes(m));
+    if (sharedColors.length || sharedMusts.length) {
+      html += `<div class="card" style="margin-bottom:12px;border-left:3px solid var(--gold)">
+        <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">You Both Want</div>`;
+      if (sharedColors.length) {
+        html += '<div style="display:flex;gap:4px;margin-bottom:8px">';
+        sharedColors.forEach(c => { html += `<div style="width:28px;height:28px;border-radius:8px;background:${c};border:2px solid var(--gold)"></div>`; });
+        html += '</div>';
+      }
+      if (sharedMusts.length) {
+        html += '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+        sharedMusts.forEach(m => { html += `<span style="padding:3px 10px;border-radius:10px;font-size:11px;background:var(--tint);color:var(--gold)">${m}</span>`; });
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+  }
+
+  [user, partner].forEach(p => {
+    const v = data[p];
+    if (!v) return;
+    const name = NAMES[p];
+    const bc = p === user ? 'var(--gold)' : 'var(--rose)';
+    html += `<div class="card" style="margin-bottom:10px;border-left:3px solid ${bc}">
+      <div style="font-size:12px;font-weight:600;color:var(--cream);margin-bottom:8px">${name}'s Vision</div>`;
+    if (v.colors && v.colors.length) {
+      html += '<div style="display:flex;gap:4px;margin-bottom:8px">';
+      v.colors.forEach(c => { html += `<div style="width:24px;height:24px;border-radius:6px;background:${c};border:1px solid var(--bdr-s)"></div>`; });
+      html += '</div>';
+    }
+    if (v.mustHaves && v.mustHaves.length) {
+      html += '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+      v.mustHaves.forEach(m => { html += `<span style="padding:2px 8px;border-radius:8px;font-size:10px;background:var(--input-bg);color:var(--t2)">${m}</span>`; });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
