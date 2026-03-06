@@ -202,6 +202,8 @@ function finishLogin() {
   listenMeals();
   listenChores();
   listenExpenses();
+  listenSharedGoals();
+  listenHabits();
   enforcePrivacy();
   // Dashboard UX
   renderDashHero();
@@ -212,6 +214,7 @@ function finishLogin() {
   renderDashMeAffirmation();
   initMetricsEngine(); // Phase 15: data engine replaces calculateRelationshipPulse
   listenMoodUpdates(); // incremental mood index updates
+  onMetricsUpdate(() => renderRelHealthCard());
   initViewToggle();
   // New modules v3 - enhanced features
   listenFitnessData();

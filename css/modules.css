@@ -955,3 +955,50 @@
 .fin-item-note{font-size:13px;font-weight:500;color:var(--cream)}
 .fin-item-meta{font-size:10px;color:var(--t3);margin-top:2px}
 .fin-item-amount{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);font-weight:500}
+
+/* ===== SHARED GOALS ===== */
+.sg-card{background:var(--card-bg);border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:var(--card-shadow)}
+.sg-card.done{opacity:.6}
+.sg-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.sg-cat-icon{font-size:16px}
+.sg-title{flex:1;font-size:13px;font-weight:500;color:var(--cream)}
+.sg-progress{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sg-bar{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.sg-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--red));border-radius:3px;transition:width .5s ease}
+.sg-pct{font-size:11px;color:var(--t3);min-width:28px;text-align:right}
+.sg-actions{display:flex;gap:8px}
+.sg-update,.sg-complete{padding:6px 14px;border-radius:12px;border:none;font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;transition:all .2s}
+.sg-update{background:var(--input-bg);color:var(--t2)}
+.sg-complete{background:var(--gold);color:#fff;font-weight:600}
+
+/* ===== DAILY HABITS ===== */
+.habit-card{background:var(--card-bg);border-radius:18px;padding:14px;margin-bottom:10px;box-shadow:var(--card-shadow)}
+.habit-top{display:flex;align-items:center;gap:10px}
+.habit-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--gold);flex-shrink:0;transition:all .2s}
+.habit-check.done{background:var(--gold);color:#fff;border-color:var(--gold)}
+.habit-info{flex:1}
+.habit-name{font-size:13px;font-weight:500;color:var(--cream)}
+.habit-meta{font-size:10px;color:var(--t3);margin-top:2px}
+.habit-dots{display:flex;gap:4px;margin-top:10px;justify-content:flex-end}
+.habit-dot{width:14px;height:14px;border-radius:4px;background:var(--bg3);transition:background .2s}
+.habit-dot.on{background:var(--gold)}
+
+/* ===== RELATIONSHIP HEALTH CARD ===== */
+.rh-card{background:var(--card-bg);border-radius:22px;padding:22px;box-shadow:var(--card-shadow);display:flex;gap:20px;align-items:flex-start}
+.rh-score-ring{flex-shrink:0;width:100px}
+.rh-svg{width:100%;height:auto}
+.rh-score-text{font-family:'Cormorant Garamond',serif;font-size:24px;fill:var(--gold);text-anchor:middle;dominant-baseline:middle}
+.rh-score-label{font-family:'Outfit',sans-serif;font-size:8px;fill:var(--t3);text-anchor:middle;letter-spacing:2px;text-transform:uppercase}
+.rh-breakdown{flex:1}
+.rh-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.rh-row:last-child{margin-bottom:0}
+.rh-label{font-size:10px;color:var(--t2);min-width:85px}
+.rh-bar{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.rh-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .5s ease}
+.rh-val{font-size:9px;color:var(--t3);min-width:24px;text-align:right}
+
+@media(max-width:400px){
+  .rh-card{flex-direction:column;align-items:center}
+  .rh-score-ring{width:80px}
+  .rh-label{min-width:70px;font-size:9px}
+}

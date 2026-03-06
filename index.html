@@ -1462,6 +1462,34 @@
   </div>
   <div id="fdn-value-list"><div class="empty">What do you both stand for?</div></div>
 
+  <!-- Shared Goals -->
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Shared Goals</div></div>
+  <div class="bl-form">
+    <input type="text" id="shared-goal-input" placeholder="A goal for both of us...">
+    <select id="shared-goal-cat" style="padding:12px 14px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px">
+      <option value="relationship">💕 Relationship</option>
+      <option value="health">🏃 Health</option>
+      <option value="finance">💰 Finance</option>
+      <option value="home">🏠 Home</option>
+      <option value="career">💼 Career</option>
+      <option value="personal">🌱 Growth</option>
+    </select>
+    <button onclick="addSharedGoal()">+</button>
+  </div>
+  <div id="shared-goals-list"><div class="empty">Build your future together</div></div>
+
+  <!-- Daily Habits -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Daily Habits</div></div>
+  <div class="bl-form">
+    <input type="text" id="habit-input" placeholder="A daily habit to track...">
+    <button onclick="addHabit()">+</button>
+  </div>
+  <div id="habits-list"><div class="empty">Build consistency together</div></div>
+
+  <!-- Relationship Health Score -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Relationship Health</div></div>
+  <div id="rel-health-card"></div>
+
   <!-- Communication Agreements -->
   <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Communication Agreements</div></div>
   <div class="fdn-agreements" id="fdn-agreements">

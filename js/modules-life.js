@@ -236,6 +236,185 @@ async function toggleGoal(who, key, done) {
   if (done) toast('Goal completed');
 }
 
+// ===== SHARED GOALS =====
+async function addSharedGoal() {
+  if (!db || !user) return;
+  const title = document.getElementById('shared-goal-input').value.trim();
+  const cat = document.getElementById('shared-goal-cat').value;
+  if (!title) { toast('Enter a goal'); return; }
+  const btn = event?.target;
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  await db.ref('goals/shared').push({
+    title, category: cat, type: 'shared',
+    progress: 0, milestones: [],
+    createdBy: user, createdAt: Date.now(), completedAt: null
+  });
+  document.getElementById('shared-goal-input').value = '';
+  if (btn) { btn.disabled = false; btn.textContent = '+'; }
+  toast('Shared goal added');
+}
+
+function listenSharedGoals() {
+  if (!db) return;
+  db.ref('goals/shared').orderByChild('createdAt').on('value', snap => {
+    const items = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+    items.reverse();
+    renderSharedGoals(items);
+  });
+}
+
+function renderSharedGoals(goals) {
+  const el = document.getElementById('shared-goals-list');
+  if (!el) return;
+  if (!goals.length) { el.innerHTML = '<div class="empty">Build your future together</div>'; return; }
+  const catIcons = { relationship: '💕', health: '🏃', finance: '💰', home: '🏠', career: '💼', personal: '🌱' };
+  el.innerHTML = goals.map(g => {
+    const pct = g.progress || 0;
+    const done = g.completedAt;
+    return `<div class="sg-card ${done ? 'done' : ''}">
+      <div class="sg-header">
+        <span class="sg-cat-icon">${catIcons[g.category] || '🎯'}</span>
+        <span class="sg-title">${esc(g.title)}</span>
+        <button class="item-delete" onclick="event.stopPropagation();db.ref('goals/shared/${g._key}').remove();toast('Removed')">×</button>
+      </div>
+      <div class="sg-progress">
+        <div class="sg-bar"><div class="sg-fill" style="width:${pct}%"></div></div>
+        <span class="sg-pct">${pct}%</span>
+      </div>
+      <div class="sg-actions">
+        <button class="sg-update" onclick="updateGoalProgress('${g._key}')">Update</button>
+        ${!done ? `<button class="sg-complete" onclick="completeGoal('${g._key}')">✓ Complete</button>` : '<span style="font-size:10px;color:var(--gold)">✓ Done</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function updateGoalProgress(key) {
+  if (!db) return;
+  const pct = parseInt(prompt('Progress (0-100):') || '0');
+  if (pct >= 0 && pct <= 100) {
+    await db.ref('goals/shared/' + key + '/progress').set(pct);
+    toast('Progress updated');
+  }
+}
+
+async function completeGoal(key) {
+  if (!db) return;
+  await db.ref('goals/shared/' + key).update({ progress: 100, completedAt: Date.now() });
+  toast('Goal completed! 🎉');
+  if (typeof showConfetti === 'function') showConfetti();
+  if (typeof awardXP === 'function') awardXP(25);
+}
+
+// ===== DAILY HABITS =====
+async function addHabit() {
+  if (!db || !user) return;
+  const name = document.getElementById('habit-input').value.trim();
+  if (!name) { toast('Enter a habit'); return; }
+  const btn = event?.target;
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  await db.ref('habits').push({
+    name, user, frequency: 'daily',
+    createdAt: Date.now()
+  });
+  document.getElementById('habit-input').value = '';
+  if (btn) { btn.disabled = false; btn.textContent = '+'; }
+  toast('Habit added');
+}
+
+function listenHabits() {
+  if (!db) return;
+  db.ref('habits').orderByChild('createdAt').on('value', snap => {
+    const items = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+    renderHabits(items);
+  });
+}
+
+function renderHabits(habits) {
+  const el = document.getElementById('habits-list');
+  if (!el) return;
+  if (!habits.length) { el.innerHTML = '<div class="empty">Build consistency together</div>'; return; }
+  const today = new Date().toISOString().split('T')[0];
+  el.innerHTML = habits.map(h => {
+    const history = h.history || {};
+    const doneToday = history[today];
+    // Calculate streak
+    let streak = 0;
+    const d = new Date();
+    while (true) {
+      const ds = d.toISOString().split('T')[0];
+      if (history[ds]) { streak++; d.setDate(d.getDate() - 1); } else break;
+    }
+    // Last 7 days dots
+    let dots = '';
+    for (let i = 6; i >= 0; i--) {
+      const dd = new Date(); dd.setDate(dd.getDate() - i);
+      const ds = dd.toISOString().split('T')[0];
+      dots += `<div class="habit-dot ${history[ds] ? 'on' : ''}"></div>`;
+    }
+    const who = h.user === user ? 'You' : NAMES[h.user] || '?';
+    return `<div class="habit-card">
+      <div class="habit-top">
+        <div class="habit-check ${doneToday ? 'done' : ''}" onclick="toggleHabit('${h._key}','${today}',${!doneToday})">${doneToday ? '✓' : ''}</div>
+        <div class="habit-info">
+          <div class="habit-name">${esc(h.name)}</div>
+          <div class="habit-meta">${who} · ${streak > 0 ? '🔥 ' + streak + ' day streak' : 'Start today'}</div>
+        </div>
+        <button class="item-delete" onclick="event.stopPropagation();db.ref('habits/${h._key}').remove();toast('Removed')">×</button>
+      </div>
+      <div class="habit-dots">${dots}</div>
+    </div>`;
+  }).join('');
+}
+
+async function toggleHabit(key, date, done) {
+  if (!db) return;
+  if (done) {
+    await db.ref('habits/' + key + '/history/' + date).set(true);
+    toast('Habit logged ✓');
+  } else {
+    await db.ref('habits/' + key + '/history/' + date).remove();
+  }
+}
+
+// ===== RELATIONSHIP HEALTH DISPLAY =====
+function renderRelHealthCard() {
+  const el = document.getElementById('rel-health-card');
+  if (!el || typeof MET === 'undefined' || !MET._ready) return;
+  const score = MET.relationship.score || 0;
+  const bd = MET.relationship.breakdown || {};
+  const items = [
+    { label: 'Mood Check-ins', val: bd.moodFreq || 0, weight: '20%' },
+    { label: 'Mood Sync', val: bd.moodSync || 0, weight: '15%' },
+    { label: 'Communication', val: bd.communication || 0, weight: '15%' },
+    { label: 'Shared Goals', val: bd.goals || 0, weight: '15%' },
+    { label: 'Games & Fun', val: bd.games || 0, weight: '10%' },
+    { label: 'Fitness Sync', val: bd.fitness || 0, weight: '10%' },
+    { label: 'Financial', val: bd.financial || 0, weight: '10%' },
+    { label: 'Weekly Review', val: bd.weeklyReview || 0, weight: '5%' }
+  ];
+  el.innerHTML = `<div class="rh-card">
+    <div class="rh-score-ring">
+      <svg viewBox="0 0 100 100" class="rh-svg">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg3)" stroke-width="8"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round"
+          stroke-dasharray="251" stroke-dashoffset="${251 - (score / 100) * 251}" transform="rotate(-90 50 50)"/>
+        <text x="50" y="46" class="rh-score-text">${score}</text>
+        <text x="50" y="58" class="rh-score-label">health</text>
+      </svg>
+    </div>
+    <div class="rh-breakdown">
+      ${items.map(i => `<div class="rh-row">
+        <span class="rh-label">${i.label}</span>
+        <div class="rh-bar"><div class="rh-fill" style="width:${i.val}%"></div></div>
+        <span class="rh-val">${i.val}%</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
 // ===== CULTURE EXCHANGE =====
 async function addPhrase() {
   if (!db || !user) return;
