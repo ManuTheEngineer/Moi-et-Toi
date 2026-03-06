@@ -131,21 +131,42 @@ const _IC = {
   award:_i('<circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>'),
   compass:_i('<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>'),
   trend:_i('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>'),
-  dumbbell:_i('<path d="M6.5 6.5h11v11h-11z" fill="none"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/>')
+  dumbbell:_i('<path d="M6.5 6.5h11v11h-11z" fill="none"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/>'),
+  moon:_i('<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>'),
+  link:_i('<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>'),
+  barChart:_i('<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>'),
+  leaf:_i('<path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66L19 5l-2 3z"/><path d="M12.5 12.5l-4 4"/>'),
+  palette:_i('<circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12" r="1.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.04-.23-.29-.38-.63-.38-1.02 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.5-4.5-9.94-10-9.94z"/>'),
+  key:_i('<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.78 7.78 5.5 5.5 0 017.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>'),
+  userSingle:_i('<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>'),
+  logOut:_i('<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'),
+  droplet:_i('<path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/>'),
+  edit:_i('<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>'),
+  phone:_i('<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>'),
+  target:_i('<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>'),
+  utensils:_i('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>'),
+  car:_i('<path d="M16 3H1v10h16V3z" fill="none"/><circle cx="5.5" cy="13.5" r="2.5"/><circle cx="12.5" cy="13.5" r="2.5"/><path d="M4 3l-3 7h18l-3-7"/>'),
+  film:_i('<rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/><line x1="17" y1="17" x2="22" y2="17"/>'),
+  bag:_i('<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>'),
+  plusCircle:_i('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>'),
+  box:_i('<path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>'),
+  flower:_i('<path d="M12 7.5a4.5 4.5 0 11-4.5 4.5M12 7.5a4.5 4.5 0 104.5 4.5M12 7.5V3"/><circle cx="12" cy="12" r="3"/><path d="M12 16.5V21"/>'),
+  brain:_i('<path d="M9.5 2A4.5 4.5 0 005 6.5a4.49 4.49 0 00.98 2.81A4.5 4.5 0 003 13.5a4.5 4.5 0 004.5 4.5h1V21h7v-3h1a4.5 4.5 0 004.5-4.5 4.49 4.49 0 00-2.98-4.19A4.49 4.49 0 0019 6.5 4.5 4.5 0 0014.5 2h-5z"/>'),
+  monitor:_i('<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>')
 };
 const PAGE_META = {
   dash:{icon:_IC.home,label:'Home'},together:{icon:_IC.heart,label:'Together'},track:{icon:_IC.activity,label:'Track'},build:{icon:_IC.globe,label:'Build'},
   connect:{icon:_IC.mail,label:'Connect'},games:{icon:_IC.game,label:'Games'},
-  question:{icon:_IC.chat,label:'Daily Q'},deeptalk:{icon:_IC.wave,label:'Deep Talk'},datenight:{icon:_IC.heart,label:'Date Night'},challenges:{icon:_IC.star,label:'Challenges'},
-  lovelang:{icon:_IC.heart,label:'Love Lang'},checkin:{icon:_IC.check,label:'Check-in'},gratitude:{icon:_IC.star,label:'Gratitude'},
+  question:{icon:_IC.chat,label:'Daily Q'},deeptalk:{icon:_IC.wave,label:'Deep Talk'},datenight:{icon:_IC.moon,label:'Date Night'},challenges:{icon:_IC.star,label:'Challenges'},
+  lovelang:{icon:_IC.heart,label:'Love Lang'},checkin:{icon:_IC.barChart,label:'Check-in'},gratitude:{icon:_IC.star,label:'Gratitude'},attachment:{icon:_IC.link,label:'Attachment'},
   knowyou:{icon:_IC.users,label:'Know You'},dreams:{icon:_IC.sparkle,label:'Dreams'},dreamhome:{icon:_IC.house,label:'Dream Home'},
   homelife:{icon:_IC.dollar,label:'Finances'},family:{icon:_IC.users,label:'Family'},bucket:{icon:_IC.list,label:'Bucket List'},
   calendar:{icon:_IC.cal,label:'Calendar'},foundation:{icon:_IC.columns,label:'Foundation'},wishlist:{icon:_IC.gift,label:'Wishlists'},
   memories:{icon:_IC.camera,label:'Memories'},mood:{icon:_IC.sun,label:'Mood'},fitness:{icon:_IC.dumbbell,label:'Fitness'},
-  nutrition:{icon:_IC.apple,label:'Nutrition'},spiritual:{icon:_IC.feather,label:'Spirit'},herspace:{icon:_IC.heart,label:'Her Space'},
+  nutrition:{icon:_IC.apple,label:'Nutrition'},spiritual:{icon:_IC.feather,label:'Spirit'},herspace:{icon:_IC.flower,label:'Her Space'},
   hisspace:{icon:_IC.zap,label:'His Space'},story:{icon:_IC.book,label:'Timeline'},culture:{icon:_IC.globe,label:'Cultures'},
   ai:{icon:_IC.cpu,label:'AI Chat'},achievements:{icon:_IC.award,label:'Achievements'},explore:{icon:_IC.compass,label:'Explore'},
-  grow:{icon:_IC.trend,label:'Growth'},
+  grow:{icon:_IC.leaf,label:'Growth'},
   settings:{icon:_IC.list,label:'Settings'}
 };
 
@@ -352,3 +373,57 @@ function initParticles() {
     container.appendChild(p);
   }
 }
+
+// ===== REPLACE EMOJIS WITH SVG ICONS =====
+function replaceEmojisWithIcons() {
+  // Hub rows & feature cards: extract page from go('page') and use PAGE_META icon
+  document.querySelectorAll('.hub-row, .hub-feature-card, .explore-quick-item, .explore-spot-card').forEach(function(el) {
+    var onclick = el.getAttribute('onclick') || '';
+    var match = onclick.match(/go\('(\w+)'\)/);
+    if (!match) return;
+    var meta = PAGE_META[match[1]];
+    if (!meta) return;
+    var ico = el.querySelector('.hub-row-ico, .hfc-icon, .explore-quick-icon, .explore-spot-icon');
+    if (ico) ico.innerHTML = meta.icon;
+  });
+
+  // Hub list icons (within hub sections)
+  document.querySelectorAll('.hub-list-row').forEach(function(el) {
+    var onclick = el.getAttribute('onclick') || '';
+    var match = onclick.match(/go\('(\w+)'\)/);
+    if (!match) return;
+    var meta = PAGE_META[match[1]];
+    if (!meta) return;
+    var ico = el.querySelector('.hub-list-icon');
+    if (ico) ico.innerHTML = meta.icon;
+  });
+
+  // Settings rows (non-go functions)
+  var settingsMap = {
+    'toggleTheme': _IC.palette,
+    'updateApiKey': _IC.key,
+    'switchUser': _IC.userSingle,
+    'logout': _IC.logOut
+  };
+  document.querySelectorAll('.hub-row').forEach(function(row) {
+    var onclick = row.getAttribute('onclick') || '';
+    for (var fn in settingsMap) {
+      if (onclick.indexOf(fn) !== -1) {
+        var ico = row.querySelector('.hub-row-ico');
+        if (ico) ico.innerHTML = settingsMap[fn];
+      }
+    }
+  });
+
+  // Hub snap emojis (Track hub quick stats)
+  var snapMap = [
+    ['track-snap-mood', _IC.sun],
+    ['track-snap-energy', _IC.zap]
+  ];
+  snapMap.forEach(function(pair) {
+    var el = document.getElementById(pair[0]);
+    if (el) el.innerHTML = pair[1];
+  });
+}
+
+document.addEventListener('DOMContentLoaded', replaceEmojisWithIcons);

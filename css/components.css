@@ -155,7 +155,8 @@
 /* AI Context Selector */
 .ai-ctx-bar{display:flex;gap:6px;overflow-x:auto;padding:4px 0 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .ai-ctx-bar::-webkit-scrollbar{display:none}
-.ai-ctx-pill{padding:8px 14px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:12px;white-space:nowrap;cursor:pointer;transition:all .2s;flex-shrink:0}
+.ai-ctx-pill{padding:8px 14px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:12px;white-space:nowrap;cursor:pointer;transition:all .2s;flex-shrink:0;display:inline-flex;align-items:center;gap:5px}
+.ai-ctx-pill svg{vertical-align:middle;flex-shrink:0}
 .ai-ctx-pill.active{background:var(--gold);color:#fff;font-weight:600;box-shadow:0 2px 10px rgba(196,120,74,.25)}
 .ai-ctx-pill:not(.active):hover{background:var(--bg3)}
 

@@ -268,13 +268,14 @@ function renderSharedGoals(goals) {
   const el = document.getElementById('shared-goals-list');
   if (!el) return;
   if (!goals.length) { el.innerHTML = '<div class="empty">Build your future together</div>'; return; }
-  const catIcons = { relationship: '💕', health: '🏃', finance: '💰', home: '🏠', career: '💼', personal: '🌱' };
+  var _s = function(d){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';};
+  const catIcons = { relationship: _s('<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>'), health: _s('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'), finance: _s('<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>'), home: _s('<path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/>'), career: _s('<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3h-8v4h8V3z"/>'), personal: _s('<path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66L19 5l-2 3z"/><path d="M12.5 12.5l-4 4"/>') };
   el.innerHTML = goals.map(g => {
     const pct = g.progress || 0;
     const done = g.completedAt;
     return `<div class="sg-card ${done ? 'done' : ''}">
       <div class="sg-header">
-        <span class="sg-cat-icon">${catIcons[g.category] || '🎯'}</span>
+        <span class="sg-cat-icon">${catIcons[g.category] || _s('<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>')}</span>
         <span class="sg-title">${esc(g.title)}</span>
         <button class="item-delete" onclick="event.stopPropagation();db.ref('goals/shared/${g._key}').remove();toast('Removed')">×</button>
       </div>
@@ -1012,10 +1013,11 @@ function renderFinRecent(expenses) {
   if (!el) return;
   const recent = expenses.slice(0, 15);
   if (!recent.length) { el.innerHTML = '<div class="empty">No expenses yet</div>'; return; }
-  const catIcons = { food: '🍕', transport: '🚗', housing: '🏠', entertainment: '🎬', shopping: '🛍️', health: '💊', subscriptions: '📱', other: '📦' };
+  var _s = function(d){return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';};
+  const catIcons = { food: _s('<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>'), transport: _s('<path d="M5 17h14v-5H5zm0 0a2 2 0 01-2-2V8l2-4h14l2 4v7a2 2 0 01-2 2m-12 0v2m10-2v2"/><circle cx="7.5" cy="13" r="1"/><circle cx="16.5" cy="13" r="1"/>'), housing: _s('<path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/>'), entertainment: _s('<rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/>'), shopping: _s('<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>'), health: _s('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>'), subscriptions: _s('<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>'), other: _s('<path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>') };
   el.innerHTML = recent.map(e => {
     const who = e.paidBy === user ? 'You' : NAMES[partner];
-    const icon = catIcons[e.category] || '📦';
+    const icon = catIcons[e.category] || catIcons.other;
     const ago = timeAgo(e.timestamp);
     return `<div class="fin-item">
       <div class="fin-item-icon">${icon}</div>
