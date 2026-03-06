@@ -53,7 +53,7 @@
 .cd-days{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--gold);line-height:1}
 .cd-unit{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-top:2px}
 .cd-title{font-size:11px;font-weight:500;color:var(--cream);margin-top:8px}
-.cd-date{font-size:10px;color:var(--t3)}
+.cd-date{font-size:11px;color:var(--t3)}
 .cd-add{padding:16px;border-radius:18px;border:2px dashed var(--tint-b);text-align:center;cursor:pointer;transition:all .2s;background:transparent}
 .cd-add:hover{border-color:var(--gold);background:var(--tint-xs)}
 .cd-add:active{transform:scale(0.97)}
@@ -149,7 +149,8 @@
 
 /* ===== BUCKET LIST & WISHLISTS ===== */
 .bl-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card-bg);border:none;border-radius:16px;margin-bottom:8px;transition:all .2s;box-shadow:var(--card-shadow)}
-.bl-item.completed{opacity:.5;text-decoration:line-through}
+.bl-item.completed{opacity:1;background:linear-gradient(135deg,rgba(196,120,74,0.06),rgba(176,138,80,0.03))}
+.bl-item.completed .bl-title{text-decoration:line-through;color:var(--gold)}
 .bl-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--bdr);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:11px;color:transparent}
 .bl-check:hover{border-color:var(--gold)}
 .bl-item.completed .bl-check{background:var(--gold);border-color:var(--gold);color:var(--bg)}
@@ -164,11 +165,11 @@
 .bl-form button{padding:10px 18px;border-radius:50px;border:none;background:var(--gold);color:#fff;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;transition:all .2s}
 .bl-form button:active{transform:scale(0.97)}
 .bl-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.bl-cat{padding:6px 14px;border-radius:50px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:none;color:var(--t3);cursor:pointer;transition:all .2s;background:var(--input-bg)}
+.bl-cat{padding:10px 16px;border-radius:50px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:none;color:var(--t3);cursor:pointer;transition:all .2s;background:var(--input-bg);min-height:40px;display:inline-flex;align-items:center}
 .bl-cat.on{color:#fff;background:var(--gold)}
 
 .wl-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card-bg);border:none;border-radius:16px;margin-bottom:8px;box-shadow:var(--card-shadow)}
-.wl-item.purchased{opacity:.5}
+.wl-item.purchased{opacity:1;background:linear-gradient(135deg,rgba(196,120,74,0.06),transparent)}
 .wl-info{flex:1}
 .wl-title{font-size:13px;font-weight:500;color:var(--cream)}
 .wl-priority{font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px}
@@ -176,7 +177,7 @@
 .wl-priority.want{background:var(--red-s);color:var(--red);border:none}
 .wl-priority.need{background:var(--sec-bg);color:var(--amber);border:none}
 .wl-link{font-size:10px;color:var(--gold);text-decoration:none;margin-top:4px;display:inline-block}
-.wl-buy{padding:6px 14px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.wl-buy{padding:10px 20px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;min-height:40px}
 .wl-buy:active{transform:scale(0.95)}
 
 /* ===== HUB PAGES ===== */
@@ -434,14 +435,16 @@
 .fam-name-card{display:flex;align-items:center;gap:10px;padding:14px;background:var(--card-bg);border:none;border-radius:16px;margin-bottom:8px;box-shadow:var(--card-shadow)}
 .fam-name-text{flex:1;font-weight:500;font-size:14px}
 .fam-name-gender{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
-.fam-name-heart{cursor:pointer;font-size:16px;color:var(--t3);transition:all .2s}
+.fam-name-heart{cursor:pointer;font-size:16px;color:var(--t3);transition:all .2s;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
 .fam-name-heart.loved{color:var(--gold)}
 
 /* ===== OUR FOUNDATION ===== */
-.fdn-agree-item{display:flex;align-items:center;gap:10px;padding:14px;background:var(--card-bg);border:none;border-radius:16px;margin-bottom:8px;box-shadow:var(--card-shadow);cursor:pointer;font-size:13px;transition:all .2s}
+.fdn-agree-item{display:flex;align-items:center;gap:10px;padding:14px;background:var(--card-bg);border:none;border-radius:16px;margin-bottom:8px;box-shadow:var(--card-shadow);cursor:pointer;font-size:13px;transition:background .3s ease,color .3s ease,transform .15s;min-height:44px}
+.fdn-agree-item:active{transform:scale(.98)}
 .fdn-agree-item.agreed{background:var(--gold);color:#fff}
-.fdn-agree-item.agreed .fdn-check::after{content:'✓';color:var(--gold)}
-.fdn-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.fdn-agree-item.agreed .fdn-check{border-color:rgba(255,255,255,.4)}
+.fdn-agree-item.agreed .fdn-check::after{content:'✓';color:#fff}
+.fdn-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all .2s}
 .fdn-conflict-card{background:var(--card-bg);border:none;border-radius:20px;padding:22px;box-shadow:var(--card-shadow)}
 .fdn-conflict-step{display:flex;gap:10px;margin-bottom:14px;font-size:12px;color:var(--t2);line-height:1.5;align-items:flex-start}
 .fdn-conflict-step:last-child{margin-bottom:0}
@@ -458,10 +461,12 @@
 .sp-devo-ref{font-size:11px;opacity:.7;font-weight:500}
 .sp-prayer-form,.sp-bless-form{margin-bottom:12px}
 .sp-prayer-card,.sp-bless-card{background:var(--card-bg);border:none;border-radius:16px;padding:16px;margin-bottom:8px;box-shadow:var(--card-shadow)}
+.sp-prayer-card{border-left:3px solid var(--gold)}
+.sp-bless-card{border-left:3px solid var(--emerald)}
 .sp-prayer-from{font-size:11px;color:var(--t3);margin-bottom:4px;font-weight:500}
 .sp-prayer-text{font-size:12px;color:var(--t1);line-height:1.5}
 .sp-prayer-pray{font-size:10px;color:var(--gold);cursor:pointer;margin-top:6px}
-.sp-intent-card{display:flex;align-items:center;gap:10px;padding:14px;background:var(--card-bg);border:none;border-radius:16px;margin-bottom:8px;box-shadow:var(--card-shadow)}
+.sp-intent-card{display:flex;align-items:center;gap:10px;padding:14px;background:var(--card-bg);border:none;border-radius:16px;margin-bottom:8px;box-shadow:var(--card-shadow);border-left:3px solid var(--rose)}
 .sp-intent-text{flex:1;font-size:13px}
 .sp-intent-by{font-size:10px;color:var(--t3)}
 
@@ -673,7 +678,7 @@
 .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .cal-month{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--cream)}
 .cal-nav{display:flex;gap:8px}
-.cal-nav button{width:36px;height:36px;border-radius:50%;border:none;background:var(--input-bg);color:var(--t2);cursor:pointer;font-size:14px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.cal-nav button{width:44px;height:44px;border-radius:50%;border:none;background:var(--input-bg);color:var(--t2);cursor:pointer;font-size:14px;transition:all .2s;display:flex;align-items:center;justify-content:center}
 .cal-nav button:hover{background:var(--gold);color:#fff}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
 .cal-day-label{text-align:center;font-size:9px;color:var(--t3);letter-spacing:.5px;padding:4px 0;text-transform:uppercase}
@@ -740,7 +745,7 @@
 .mem-upload:hover{border-color:var(--gold);background:var(--tint-xs)}
 .mem-upload .mu-icon{font-size:32px;margin-bottom:8px;display:block;color:var(--t3)}
 .mem-upload .mu-text{font-size:12px;color:var(--t3)}
-.mem-fav-btn{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.4);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;z-index:2;backdrop-filter:blur(4px)}
+.mem-fav-btn{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.4);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;z-index:2;backdrop-filter:blur(4px)}
 .mem-fav-btn.active{color:var(--gold)}
 .mem-album-bar{display:flex;gap:6px;overflow-x:auto;padding:4px 0 12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .mem-album-bar::-webkit-scrollbar{display:none}
@@ -766,16 +771,16 @@
 /* ===== ACHIEVEMENTS ===== */
 .achievement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
 .achievement{text-align:center;padding:14px 8px;border-radius:18px;background:var(--card-bg);box-shadow:var(--card-shadow);transition:all .2s}
-.achievement.locked{opacity:.35}
+.achievement.locked{opacity:.4}
 .achievement .ach-icon{font-size:28px;margin-bottom:6px;display:block}
-.achievement .ach-name{font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--cream);font-weight:500}
+.achievement .ach-name{font-size:10px;letter-spacing:.3px;text-transform:uppercase;color:var(--cream);font-weight:500}
 .achievement.unlocked{border:1px solid var(--gold);background:linear-gradient(135deg,rgba(28,43,74,.04),rgba(212,149,106,.04))}
 .ach-progress{margin-top:4px}
 .ach-prog-bar{height:4px;border-radius:3px;background:var(--input-bg);overflow:hidden;margin-bottom:2px}
 .ach-prog-fill{height:100%;border-radius:3px;background:var(--gold);transition:width .4s}
-.ach-prog-text{font-size:8px;color:var(--t3)}
-.xp-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:8px}
-.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--red));border-radius:4px;transition:width .6s ease}
+.ach-prog-text{font-size:9px;color:var(--t3)}
+.xp-bar{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:8px}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--red));border-radius:5px;transition:width .8s ease}
 .level-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;font-size:11px;font-weight:600;color:var(--gold);background:var(--tint);margin-bottom:16px}
 /* ===== GROW TOGETHER (Learning Modules) ===== */
 .grow-module{background:var(--card-bg);border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:var(--card-shadow);cursor:pointer;transition:all .25s;border:1px solid var(--bdr-s)}
@@ -1107,7 +1112,7 @@
 .fin-amount-input:focus{border-bottom-color:var(--gold)}
 .fin-amount-input::placeholder{color:var(--t3);font-family:'Outfit',sans-serif;font-size:16px}
 .fin-cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.fin-cat{padding:6px 12px;border-radius:16px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:4px}
+.fin-cat{padding:8px 14px;border-radius:16px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:4px;min-height:40px}
 .fin-cat.active{background:var(--gold);color:#fff;font-weight:600}
 .fin-cat svg{vertical-align:middle;flex-shrink:0}
 .fin-note-row{display:flex;gap:8px;align-items:center}

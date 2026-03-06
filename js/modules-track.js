@@ -1383,6 +1383,22 @@ function calNav(dir) {
   renderCalendar();
 }
 
+// Swipe to change month
+(function initCalSwipe() {
+  var startX = 0;
+  document.addEventListener('touchstart', function(e) {
+    var grid = document.getElementById('cal-grid');
+    if (grid && grid.contains(e.target)) startX = e.touches[0].clientX;
+    else startX = 0;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    if (!startX) return;
+    var diff = e.changedTouches[0].clientX - startX;
+    if (Math.abs(diff) > 60) calNav(diff < 0 ? 1 : -1);
+    startX = 0;
+  });
+})();
+
 function selectCalDay(dateStr) {
   calSelectedDate = dateStr;
   renderCalendar();
