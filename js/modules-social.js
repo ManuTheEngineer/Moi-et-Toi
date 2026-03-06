@@ -959,7 +959,9 @@ function renderAllGameStats() {
       { key: 'trivia', name: 'Trivia', icon: '🧠' },
       { key: 'war', name: 'War', icon: '🃏' },
       { key: 'checkers', name: 'Checkers', icon: '🏁' },
-      { key: 'gofish', name: 'Go Fish', icon: '🐟' }
+      { key: 'gofish', name: 'Go Fish', icon: '🐟' },
+      { key: 'hangman', name: 'Hangman', icon: '💀' },
+      { key: 'battleship', name: 'Battleship', icon: '🚢' }
     ];
     const myTotal = my.totalGames || 0;
     const myWins = types.reduce((s, t) => s + ((my[t.key]?.w) || 0), 0);
@@ -1000,7 +1002,7 @@ function listenGameInvites() {
       if (g.startedBy === partner && g.status === 'active') {
         const el = document.getElementById('game-invite');
         if (el) {
-          const names = { ttt: 'Tic-Tac-Toe', c4: 'Connect Four', memory: 'Memory Match', rps: 'Rock Paper Scissors', emoji: 'Emoji Guess', '21q': '21 Questions', ttal: 'Two Truths & a Lie', wordchain: 'Word Chain', trivia: 'Trivia', war: 'War', checkers: 'Checkers', gofish: 'Go Fish' };
+          const names = { ttt: 'Tic-Tac-Toe', c4: 'Connect Four', memory: 'Memory Match', rps: 'Rock Paper Scissors', emoji: 'Emoji Guess', '21q': '21 Questions', ttal: 'Two Truths & a Lie', wordchain: 'Word Chain', trivia: 'Trivia', war: 'War', checkers: 'Checkers', gofish: 'Go Fish', hangman: 'Hangman', battleship: 'Battleship' };
           el.innerHTML = `<div class="game-invite-card">
             <span>${NAMES[partner]} wants to play <strong>${names[g.type] || g.type}</strong>!</span>
             <button class="gi-join" onclick="joinGame('${c.key}','${g.type}')">Join</button>
@@ -1027,6 +1029,8 @@ function joinGame(key, type) {
   else if (type === 'war') { listenGame(key, renderWar); showGameView('war'); }
   else if (type === 'checkers') { listenGame(key, renderCheckers); showGameView('checkers'); }
   else if (type === 'gofish') { listenGame(key, renderGoFish); showGameView('gofish'); }
+  else if (type === 'hangman') { listenGame(key, renderHangman); showGameView('hangman'); }
+  else if (type === 'battleship') { listenGame(key, renderBattleship); showGameView('battleship'); }
 }
 
 function showGameView(game) {
@@ -2434,6 +2438,255 @@ function renderGoFish(data, key) {
     html += `<div class="game-status">${data.winner === 'draw' ? "It's a tie!" : (data.winner === user ? 'You won!' : NAMES[partner] + ' won!')}</div>`;
     html += `<div style="text-align:center;font-size:14px;color:var(--t2);margin:8px 0">${books[user]} — ${books[partner]} books</div>`;
     html += `<div class="game-actions"><button class="game-btn" onclick="newGoFish()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ===== HANGMAN =====
+const HANGMAN_WORDS = [
+  { word: 'ADVENTURE', hint: 'Something exciting to do together' },
+  { word: 'CHOCOLATE', hint: 'Sweet treat' },
+  { word: 'SUNSET', hint: 'Romantic sky view' },
+  { word: 'BUTTERFLY', hint: 'Feeling when you first fell in love' },
+  { word: 'HONEYMOON', hint: 'Post-wedding trip' },
+  { word: 'SOULMATE', hint: 'The one meant for you' },
+  { word: 'STARGAZING', hint: 'Looking up on a clear night' },
+  { word: 'CUDDLE', hint: 'Cozy closeness' },
+  { word: 'PARADISE', hint: 'Perfect place' },
+  { word: 'MOONLIGHT', hint: 'Romantic illumination' },
+  { word: 'TREASURE', hint: 'Something precious' },
+  { word: 'BLOSSOM', hint: 'Flowers opening up' },
+  { word: 'PROMISE', hint: 'A commitment made' },
+  { word: 'SERENITY', hint: 'Perfect peace' },
+  { word: 'WANDERLUST', hint: 'Desire to travel' },
+  { word: 'FOREVER', hint: 'How long this lasts' },
+  { word: 'CHERISH', hint: 'To hold dear' },
+  { word: 'HARMONY', hint: 'Being in sync' },
+  { word: 'EMBRACE', hint: 'A warm hold' },
+  { word: 'DEVOTION', hint: 'Deep commitment' }
+];
+
+async function newHangman() {
+  const pick = HANGMAN_WORDS[Math.floor(Math.random() * HANGMAN_WORDS.length)];
+  const key = await startGame('hangman', {
+    word: pick.word,
+    hint: pick.hint,
+    guessed: [],
+    wrong: 0,
+    maxWrong: 6,
+    guesser: partner,
+    setter: user
+  });
+  if (!key) return;
+  listenGame(key, renderHangman);
+  showGameView('hangman');
+}
+
+async function guessHangmanLetter(letter) {
+  if (!activeGameKey) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data || data.status !== 'active' || data.guesser !== user) return;
+  const guessed = data.guessed || [];
+  if (guessed.includes(letter)) return;
+  guessed.push(letter);
+  const isCorrect = data.word.includes(letter);
+  const wrong = isCorrect ? data.wrong : (data.wrong || 0) + 1;
+  const updates = { guessed, wrong };
+
+  // Check win/lose
+  const wordLetters = [...new Set(data.word.split(''))];
+  const allGuessed = wordLetters.every(l => guessed.includes(l));
+  if (allGuessed) {
+    await db.ref('games/sessions/' + activeGameKey).update(updates);
+    await endGame(activeGameKey, 'hangman', data.guesser);
+  } else if (wrong >= (data.maxWrong || 6)) {
+    await db.ref('games/sessions/' + activeGameKey).update(updates);
+    await endGame(activeGameKey, 'hangman', data.setter);
+  } else {
+    await db.ref('games/sessions/' + activeGameKey).update(updates);
+  }
+}
+
+function renderHangman(data, key) {
+  const el = document.getElementById('hangman-board');
+  if (!el) return;
+  const isGuesser = data.guesser === user;
+  const guessed = data.guessed || [];
+  const wrong = data.wrong || 0;
+  const maxWrong = data.maxWrong || 6;
+
+  // Hangman SVG
+  const parts = [
+    '<circle cx="50" cy="25" r="10" fill="none" stroke="var(--cream)" stroke-width="2"/>', // head
+    '<line x1="50" y1="35" x2="50" y2="60" stroke="var(--cream)" stroke-width="2"/>', // body
+    '<line x1="50" y1="42" x2="35" y2="55" stroke="var(--cream)" stroke-width="2"/>', // left arm
+    '<line x1="50" y1="42" x2="65" y2="55" stroke="var(--cream)" stroke-width="2"/>', // right arm
+    '<line x1="50" y1="60" x2="38" y2="78" stroke="var(--cream)" stroke-width="2"/>', // left leg
+    '<line x1="50" y1="60" x2="62" y2="78" stroke="var(--cream)" stroke-width="2"/>'  // right leg
+  ];
+
+  let html = `<div class="hm-display">
+    <svg viewBox="0 0 100 90" class="hm-svg">
+      <line x1="20" y1="85" x2="80" y2="85" stroke="var(--t3)" stroke-width="2"/>
+      <line x1="30" y1="85" x2="30" y2="5" stroke="var(--t3)" stroke-width="2"/>
+      <line x1="30" y1="5" x2="50" y2="5" stroke="var(--t3)" stroke-width="2"/>
+      <line x1="50" y1="5" x2="50" y2="15" stroke="var(--t3)" stroke-width="2"/>
+      ${parts.slice(0, wrong).join('')}
+    </svg>
+    <div class="hm-wrong">${wrong} / ${maxWrong}</div>
+  </div>`;
+
+  // Word display
+  const wordDisplay = data.word.split('').map(l => guessed.includes(l) || data.status === 'finished' ? l : '_').join(' ');
+  html += `<div class="hm-word">${wordDisplay}</div>`;
+  html += `<div class="hm-hint">${data.hint}</div>`;
+
+  if (data.status === 'active') {
+    if (isGuesser) {
+      html += '<div class="hm-keyboard">';
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(l => {
+        const used = guessed.includes(l);
+        const correct = used && data.word.includes(l);
+        const cls = used ? (correct ? 'correct' : 'wrong') : '';
+        html += `<button class="hm-key ${cls}" ${used ? 'disabled' : `onclick="guessHangmanLetter('${l}')"`}>${l}</button>`;
+      });
+      html += '</div>';
+    } else {
+      html += `<div class="game-status turn">The word is: <strong>${data.word}</strong><br>${NAMES[partner]} is guessing...</div>`;
+    }
+  } else {
+    const won = data.winner === user;
+    html += `<div class="game-status">${won ? 'You won!' : NAMES[partner] + ' won!'}</div>`;
+    html += `<div style="text-align:center;font-size:14px;color:var(--t2);margin:8px 0">The word was: <strong>${data.word}</strong></div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newHangman()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ===== BATTLESHIP =====
+function initBattleGrid() {
+  return Array(8).fill(null).map(() => Array(8).fill(null));
+}
+
+function placeShipsRandom(grid) {
+  const ships = [4, 3, 3, 2, 2]; // ship lengths
+  ships.forEach(len => {
+    let placed = false;
+    while (!placed) {
+      const horizontal = Math.random() > 0.5;
+      const r = Math.floor(Math.random() * 8);
+      const c = Math.floor(Math.random() * 8);
+      if (horizontal && c + len <= 8) {
+        let ok = true;
+        for (let i = 0; i < len; i++) if (grid[r][c + i] !== null) ok = false;
+        if (ok) { for (let i = 0; i < len; i++) grid[r][c + i] = 'ship'; placed = true; }
+      } else if (!horizontal && r + len <= 8) {
+        let ok = true;
+        for (let i = 0; i < len; i++) if (grid[r + i][c] !== null) ok = false;
+        if (ok) { for (let i = 0; i < len; i++) grid[r + i][c] = 'ship'; placed = true; }
+      }
+    }
+  });
+  return grid;
+}
+
+async function newBattleship() {
+  const myGrid = placeShipsRandom(initBattleGrid());
+  const partnerGrid = placeShipsRandom(initBattleGrid());
+  const key = await startGame('battleship', {
+    grids: { [user]: myGrid, [partner]: partnerGrid },
+    shots: { [user]: [], [partner]: [] },
+    turn: user,
+    shipsLeft: { [user]: 14, [partner]: 14 } // 4+3+3+2+2 = 14 cells
+  });
+  if (!key) return;
+  listenGame(key, renderBattleship);
+  showGameView('battleship');
+}
+
+async function fireBattleship(r, c) {
+  if (!activeGameKey) return;
+  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const data = snap.val();
+  if (!data || data.status !== 'active' || data.turn !== user) return;
+  const shots = data.shots || {};
+  const myShots = shots[user] || [];
+  if (myShots.some(s => s.r === r && s.c === c)) return; // already fired here
+
+  const partnerGrid = data.grids[partner];
+  const isHit = partnerGrid[r][c] === 'ship';
+  myShots.push({ r, c, hit: isHit });
+  shots[user] = myShots;
+  const shipsLeft = data.shipsLeft || {};
+  if (isHit) shipsLeft[partner] = (shipsLeft[partner] || 14) - 1;
+
+  if (shipsLeft[partner] <= 0) {
+    await db.ref('games/sessions/' + activeGameKey).update({ shots, shipsLeft });
+    await endGame(activeGameKey, 'battleship', user);
+  } else {
+    await db.ref('games/sessions/' + activeGameKey).update({ shots, shipsLeft, turn: partner });
+  }
+}
+
+function renderBattleship(data, key) {
+  const el = document.getElementById('battleship-board');
+  if (!el) return;
+  const isMyTurn = data.turn === user;
+  const myShots = (data.shots && data.shots[user]) || [];
+  const theirShots = (data.shots && data.shots[partner]) || [];
+  const myGrid = data.grids[user];
+  const shipsLeft = data.shipsLeft || {};
+
+  let html = `<div class="bs-scores">
+    <span class="me">${NAMES[user]}: ${shipsLeft[partner] || 0} to sink</span>
+    <span>${NAMES[partner]}: ${shipsLeft[user] || 0} to sink</span>
+  </div>`;
+
+  if (data.status === 'active') {
+    html += `<div class="game-status${isMyTurn ? '' : ' turn'}">${isMyTurn ? 'Your turn — fire!' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
+  }
+
+  // Enemy grid (where I shoot)
+  html += `<div class="bs-label">${NAMES[partner]}'s Waters</div>`;
+  html += '<div class="bs-grid">';
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const shot = myShots.find(s => s.r === r && s.c === c);
+      let cls = 'bs-cell';
+      let inner = '';
+      if (shot) {
+        cls += shot.hit ? ' hit' : ' miss';
+        inner = shot.hit ? '💥' : '·';
+      } else if (isMyTurn && data.status === 'active') {
+        cls += ' target';
+      }
+      const click = !shot && isMyTurn && data.status === 'active' ? `onclick="fireBattleship(${r},${c})"` : '';
+      html += `<div class="${cls}" ${click}>${inner}</div>`;
+    }
+  }
+  html += '</div>';
+
+  // My grid (showing my ships and their shots)
+  html += `<div class="bs-label" style="margin-top:16px">Your Waters</div>`;
+  html += '<div class="bs-grid mine">';
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const isShip = myGrid[r][c] === 'ship';
+      const shot = theirShots.find(s => s.r === r && s.c === c);
+      let cls = 'bs-cell';
+      let inner = '';
+      if (shot && shot.hit) { cls += ' hit'; inner = '💥'; }
+      else if (shot) { cls += ' miss'; inner = '·'; }
+      else if (isShip) { cls += ' ship'; }
+      html += `<div class="${cls}">${inner}</div>`;
+    }
+  }
+  html += '</div>';
+
+  if (data.status === 'finished') {
+    html += `<div class="game-status">${data.winner === user ? 'You sank their fleet!' : NAMES[partner] + ' sank your fleet!'}</div>`;
+    html += `<div class="game-actions"><button class="game-btn" onclick="newBattleship()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
   }
   el.innerHTML = html;
 }

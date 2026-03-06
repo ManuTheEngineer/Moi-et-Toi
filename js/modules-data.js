@@ -713,3 +713,160 @@ function initPresence() {
   });
 }
 
+// ===== IDENTITY QUIZ =====
+const ID_QUIZ_QUESTIONS = [
+  { id: 'personality', q: 'How would you describe your personality?', type: 'choice', opts: ['Introvert', 'Extrovert', 'Ambivert'] },
+  { id: 'conflict', q: 'How do you handle conflict?', type: 'choice', opts: ['Talk it out immediately', 'Need space first, then talk', 'Avoid confrontation', 'Write down my feelings'] },
+  { id: 'love_give', q: 'How do you prefer to show love?', type: 'choice', opts: ['Words of affirmation', 'Acts of service', 'Physical touch', 'Quality time', 'Gift giving'] },
+  { id: 'love_receive', q: 'How do you prefer to receive love?', type: 'choice', opts: ['Words of affirmation', 'Acts of service', 'Physical touch', 'Quality time', 'Receiving gifts'] },
+  { id: 'morning', q: 'Are you a morning or night person?', type: 'choice', opts: ['Early bird', 'Night owl', 'Depends on the day'] },
+  { id: 'social_battery', q: 'How quickly does your social battery drain?', type: 'choice', opts: ['Very fast — need lots of alone time', 'Moderate — balanced', 'Slow — love being around people'] },
+  { id: 'stress_relief', q: 'What helps you de-stress?', type: 'multi', opts: ['Exercise', 'Being alone', 'Talking to someone', 'Music', 'Nature', 'Sleep', 'Creative outlet', 'Food'] },
+  { id: 'apology', q: 'What matters most in an apology?', type: 'choice', opts: ["Hearing 'I\\'m sorry'", 'Understanding what went wrong', 'Changed behavior', 'Making amends/gestures'] },
+  { id: 'values', q: 'Your top 3 values?', type: 'multi', opts: ['Family', 'Honesty', 'Loyalty', 'Adventure', 'Faith', 'Growth', 'Freedom', 'Security', 'Creativity', 'Kindness'] },
+  { id: 'dream_life', q: 'Your ideal life in 5 years?', type: 'text' },
+  { id: 'dealbreaker', q: "What's a relationship dealbreaker for you?", type: 'text' },
+  { id: 'happiest', q: 'When are you happiest?', type: 'text' },
+  { id: 'attachment', q: 'How would you describe your attachment style?', type: 'choice', opts: ['Secure — comfortable with closeness', 'Anxious — crave reassurance', 'Avoidant — value independence', 'Not sure'] },
+  { id: 'communication', q: 'Preferred communication style?', type: 'choice', opts: ['Direct and blunt', 'Gentle and diplomatic', 'Through humor', 'Through actions more than words'] },
+  { id: 'energy', q: 'Perfect weekend?', type: 'choice', opts: ['Stay in, relax, recharge', 'Go out, explore, socialize', 'Mix of both', 'Whatever my partner wants'] }
+];
+
+let idQuizIdx = 0;
+let idQuizAnswers = {};
+let idMultiSelections = [];
+
+function startIdentityQuiz() {
+  idQuizIdx = 0;
+  idQuizAnswers = {};
+  const startEl = document.getElementById('id-quiz-start');
+  if (startEl) startEl.style.display = 'none';
+  const el = document.getElementById('id-quiz-active');
+  if (el) el.style.display = 'block';
+  renderIdQuizQuestion();
+}
+
+function renderIdQuizQuestion() {
+  const el = document.getElementById('id-quiz-active');
+  if (!el) return;
+  if (idQuizIdx >= ID_QUIZ_QUESTIONS.length) { saveIdentityQuiz(); return; }
+  const q = ID_QUIZ_QUESTIONS[idQuizIdx];
+  const progress = Math.round((idQuizIdx / ID_QUIZ_QUESTIONS.length) * 100);
+  let html = `<div class="card" style="border:1px solid var(--lavender)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:10px;color:var(--lavender);text-transform:uppercase;letter-spacing:1px">Question ${idQuizIdx + 1} of ${ID_QUIZ_QUESTIONS.length}</div>
+      <div style="font-size:10px;color:var(--t3)">${progress}%</div>
+    </div>
+    <div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-bottom:16px"><div style="height:100%;width:${progress}%;background:var(--lavender);border-radius:2px;transition:width .3s"></div></div>
+    <div style="font-size:15px;color:var(--cream);font-weight:500;margin-bottom:16px">${q.q}</div>`;
+  if (q.type === 'choice') {
+    html += '<div class="id-opts">';
+    q.opts.forEach(opt => { html += `<button class="id-opt" onclick="answerIdQuiz('${opt.replace(/'/g,"\\'")}')">${opt}</button>`; });
+    html += '</div>';
+  } else if (q.type === 'multi') {
+    idMultiSelections = [];
+    html += '<div class="id-opts multi">';
+    q.opts.forEach(opt => { html += `<button class="id-opt multi" onclick="toggleIdMulti(this,'${opt}')">${opt}</button>`; });
+    html += '</div><button class="dq-submit" onclick="submitIdMulti()" style="margin-top:12px;background:var(--lavender)">Continue</button>';
+  } else if (q.type === 'text') {
+    html += `<textarea id="id-text-answer" rows="3" placeholder="Type your answer..." style="width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;box-sizing:border-box;margin-bottom:12px"></textarea>`;
+    html += `<button class="dq-submit" onclick="submitIdText()" style="background:var(--lavender)">Continue</button>`;
+  }
+  if (idQuizIdx > 0) html += `<div style="text-align:center;margin-top:12px"><span style="font-size:12px;color:var(--t3);cursor:pointer" onclick="idQuizIdx--;renderIdQuizQuestion()">← Back</span></div>`;
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function toggleIdMulti(btn, opt) {
+  const idx = idMultiSelections.indexOf(opt);
+  if (idx > -1) { idMultiSelections.splice(idx, 1); btn.classList.remove('selected'); }
+  else if (idMultiSelections.length < 3) { idMultiSelections.push(opt); btn.classList.add('selected'); }
+  else { toast('Select up to 3'); }
+}
+
+function submitIdMulti() {
+  if (!idMultiSelections.length) { toast('Select at least one'); return; }
+  idQuizAnswers[ID_QUIZ_QUESTIONS[idQuizIdx].id] = [...idMultiSelections];
+  idMultiSelections = [];
+  idQuizIdx++;
+  renderIdQuizQuestion();
+}
+
+function submitIdText() {
+  const input = document.getElementById('id-text-answer');
+  if (!input || !input.value.trim()) { toast('Write something'); return; }
+  idQuizAnswers[ID_QUIZ_QUESTIONS[idQuizIdx].id] = input.value.trim();
+  idQuizIdx++;
+  renderIdQuizQuestion();
+}
+
+function answerIdQuiz(answer) {
+  idQuizAnswers[ID_QUIZ_QUESTIONS[idQuizIdx].id] = answer;
+  idQuizIdx++;
+  renderIdQuizQuestion();
+}
+
+async function saveIdentityQuiz() {
+  if (!db || !user) return;
+  await db.ref('identityQuiz/' + user).set({ answers: idQuizAnswers, completedAt: Date.now() });
+  const el = document.getElementById('id-quiz-active');
+  if (el) el.style.display = 'none';
+  toast('Identity profile saved!');
+  if (typeof awardXP === 'function') awardXP(25);
+  loadIdentityProfiles();
+}
+
+function loadIdentityProfiles() {
+  if (!db) return;
+  db.ref('identityQuiz').on('value', snap => {
+    const data = snap.val() || {};
+    renderIdentityProfiles(data);
+    const startEl = document.getElementById('id-quiz-start');
+    if (startEl) startEl.style.display = data[user] ? 'none' : 'block';
+  });
+}
+
+function renderIdentityProfiles(data) {
+  const el = document.getElementById('id-quiz-results');
+  if (!el) return;
+  let html = '';
+  [user, partner].forEach(p => {
+    const profile = data[p];
+    if (!profile) return;
+    const a = profile.answers || {};
+    const isMe = p === user;
+    const name = NAMES[p];
+    const bc = isMe ? 'var(--gold)' : 'var(--rose)';
+    html += `<div class="card" style="margin-bottom:12px;border-left:3px solid ${bc}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:14px;font-weight:600;color:var(--cream)">${name}'s Profile</div>
+        ${isMe ? '<span style="font-size:10px;color:var(--t3);cursor:pointer" onclick="startIdentityQuiz()">Retake</span>' : ''}
+      </div>`;
+    const fields = [
+      { key: 'personality', label: 'Personality' }, { key: 'morning', label: 'Chronotype' },
+      { key: 'love_give', label: 'Gives Love Via' }, { key: 'love_receive', label: 'Receives Love Via' },
+      { key: 'conflict', label: 'Conflict Style' }, { key: 'attachment', label: 'Attachment' },
+      { key: 'communication', label: 'Communication' }, { key: 'social_battery', label: 'Social Battery' },
+      { key: 'energy', label: 'Perfect Weekend' }, { key: 'apology', label: 'Apology Style' }
+    ];
+    html += '<div class="kyp-grid" style="margin-bottom:12px">';
+    fields.forEach(f => {
+      if (a[f.key]) {
+        const val = Array.isArray(a[f.key]) ? a[f.key].join(', ') : a[f.key];
+        html += `<div class="kyp-item" style="padding:10px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px">${f.label}</div><div style="font-size:12px;color:var(--cream);margin-top:3px">${esc(val)}</div></div>`;
+      }
+    });
+    html += '</div>';
+    if (a.values) html += `<div style="margin-bottom:8px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Core Values</div><div style="display:flex;gap:4px;flex-wrap:wrap">${a.values.map(v => '<span style="padding:3px 10px;border-radius:10px;font-size:11px;background:var(--tint);color:var(--gold)">' + esc(v) + '</span>').join('')}</div></div>`;
+    if (a.stress_relief) html += `<div style="margin-bottom:8px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Stress Relief</div><div style="display:flex;gap:4px;flex-wrap:wrap">${a.stress_relief.map(v => '<span style="padding:3px 10px;border-radius:10px;font-size:11px;background:rgba(42,143,143,.1);color:var(--teal)">' + esc(v) + '</span>').join('')}</div></div>`;
+    ['dream_life', 'dealbreaker', 'happiest'].forEach(key => {
+      if (a[key]) {
+        const labels = { dream_life: 'Ideal Life in 5 Years', dealbreaker: 'Dealbreaker', happiest: 'Happiest When' };
+        html += `<div style="margin-bottom:8px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">${labels[key]}</div><div style="font-size:12px;color:var(--cream);font-style:italic;line-height:1.5">"${esc(a[key])}"</div></div>`;
+      }
+    });
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+

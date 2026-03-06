@@ -1036,6 +1036,32 @@
 .gf-card.active:hover{transform:translateY(-4px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
 .gf-card.active:active{transform:scale(.92)}
 
+/* Hangman */
+.hm-display{text-align:center;margin-bottom:16px;position:relative}
+.hm-svg{max-width:140px;height:auto;margin:0 auto;display:block}
+.hm-wrong{font-size:11px;color:var(--red);margin-top:6px}
+.hm-word{text-align:center;font-family:'Cormorant Garamond',serif;font-size:28px;letter-spacing:8px;color:var(--cream);margin-bottom:8px}
+.hm-hint{text-align:center;font-size:12px;color:var(--t3);font-style:italic;margin-bottom:16px}
+.hm-keyboard{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;padding:8px 0}
+.hm-key{width:32px;height:36px;border-radius:8px;border:none;background:var(--card-bg);box-shadow:var(--card-shadow);color:var(--cream);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.hm-key:hover:not(:disabled){background:var(--gold);color:#fff}
+.hm-key:active:not(:disabled){transform:scale(.88)}
+.hm-key.correct{background:var(--teal);color:#fff}
+.hm-key.wrong{background:var(--red);color:#fff;opacity:.5}
+.hm-key:disabled{cursor:default}
+
+/* Battleship */
+.bs-scores{display:flex;justify-content:space-between;padding:12px 16px;margin-bottom:12px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);font-size:13px;color:var(--t2)}
+.bs-scores .me{color:var(--gold);font-weight:600}
+.bs-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;text-align:center}
+.bs-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;max-width:280px;margin:0 auto;background:var(--bg3);border-radius:8px;padding:2px}
+.bs-cell{aspect-ratio:1;background:var(--card-bg);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;border-radius:2px}
+.bs-cell.target{cursor:pointer;background:rgba(42,143,143,.06)}
+.bs-cell.target:hover{background:rgba(42,143,143,.2)}
+.bs-cell.hit{background:rgba(196,75,75,.15)}
+.bs-cell.miss{background:var(--bg3);color:var(--t3);font-size:18px}
+.bs-grid.mine .bs-cell.ship{background:rgba(176,138,80,.15)}
+
 /* ===== FINANCE MODULE ===== */
 .fin-quick-add{background:var(--card-bg);border-radius:22px;padding:18px;box-shadow:var(--card-shadow);margin-bottom:20px}
 .fin-input-row{display:flex;align-items:center;gap:4px;margin-bottom:12px}

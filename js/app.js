@@ -226,6 +226,7 @@ function finishLogin() {
   listenCalendarEvents();
   listenDreamHome();
   listenKnowYou();
+  loadIdentityProfiles();
   listenMemories();
   listenAchievements();
   listenGrowData();

@@ -828,6 +828,12 @@
       <button class="game-pick-btn" onclick="newGoFish()">
         <span class="gpb-icon">🐟</span><span class="gpb-name">Go Fish</span>
       </button>
+      <button class="game-pick-btn" onclick="newHangman()">
+        <span class="gpb-icon">💀</span><span class="gpb-name">Hangman</span>
+      </button>
+      <button class="game-pick-btn" onclick="newBattleship()">
+        <span class="gpb-icon">🚢</span><span class="gpb-name">Battleship</span>
+      </button>
     </div>
     <div id="game-stats-board"></div>
   </div>
@@ -938,6 +944,24 @@
       <span class="gv-title">Go Fish</span>
     </div>
     <div id="gofish-board"></div>
+  </div>
+
+  <!-- Hangman View -->
+  <div class="game-view" id="gv-hangman" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Hangman</span>
+    </div>
+    <div id="hangman-board"></div>
+  </div>
+
+  <!-- Battleship View -->
+  <div class="game-view" id="gv-battleship" style="display:none">
+    <div class="gv-header">
+      <button class="gv-back" onclick="showGameLobby()">← Back</button>
+      <span class="gv-title">Battleship</span>
+    </div>
+    <div id="battleship-board"></div>
   </div>
 
   <!-- Compatibility Score -->
@@ -2320,6 +2344,19 @@
       <button class="dq-submit" onclick="startKYPQuiz()" style="padding:8px 16px;font-size:11px;background:var(--rose)">Quiz Me!</button>
     </div>
   </div>
+
+  <!-- Identity Profile -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Identity Profile</div></div>
+  <div id="id-quiz-start">
+    <div class="card" style="text-align:center;padding:24px">
+      <div style="font-size:36px;margin-bottom:12px">🪞</div>
+      <div style="font-size:15px;font-weight:500;color:var(--cream);margin-bottom:8px">Discover Your Identity</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:16px;line-height:1.6">Take a quick quiz about your personality, values, and preferences. Your partner will see your results!</div>
+      <button class="dq-submit" onclick="startIdentityQuiz()" style="background:var(--lavender)">Start Quiz</button>
+    </div>
+  </div>
+  <div id="id-quiz-active" style="display:none"></div>
+  <div id="id-quiz-results"></div>
 
   <!-- "Do You Know?" Quiz (hidden by default) -->
   <div id="kyp-quiz" style="display:none">
