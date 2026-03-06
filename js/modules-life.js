@@ -292,11 +292,23 @@ function renderSharedGoals(goals) {
   }).join('');
 }
 
-async function updateGoalProgress(key) {
+function updateGoalProgress(key) {
   if (!db) return;
-  const pct = parseInt(prompt('Progress (0-100):') || '0');
+  openModal(`
+    <div style="text-align:center;padding:12px 0">
+      <div style="font-size:14px;font-weight:600;color:var(--cream);margin-bottom:12px">Update Progress</div>
+      <input type="range" id="goal-pct-slider" min="0" max="100" value="50" style="width:80%;accent-color:var(--gold)" oninput="document.getElementById('goal-pct-val').textContent=this.value+'%'">
+      <div id="goal-pct-val" style="font-size:20px;color:var(--gold);font-weight:600;margin:8px 0">50%</div>
+      <button onclick="submitGoalProgress('${key}')" class="dq-submit" style="margin-top:8px">Save</button>
+    </div>
+  `);
+}
+
+async function submitGoalProgress(key) {
+  var pct = parseInt(document.getElementById('goal-pct-slider').value) || 0;
   if (pct >= 0 && pct <= 100) {
     await db.ref('goals/shared/' + key + '/progress').set(pct);
+    closeModal();
     toast('Progress updated');
   }
 }
@@ -1120,12 +1132,27 @@ function listenSavings() {
   });
 }
 
-async function updateSavings(key) {
+function updateSavings(key) {
   if (!db) return;
-  const amount = parseFloat(prompt('Enter new saved amount:') || '0');
+  openModal(`
+    <div style="text-align:center;padding:12px 0">
+      <div style="font-size:14px;font-weight:600;color:var(--cream);margin-bottom:12px">Update Saved Amount</div>
+      <div style="position:relative;max-width:200px;margin:0 auto">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:16px">$</span>
+        <input type="number" id="savings-amount-input" placeholder="0" style="width:100%;padding:14px 14px 14px 28px;border-radius:14px;border:1px solid var(--border);background:var(--input-bg);color:var(--cream);font-size:18px;font-weight:600;text-align:center;box-sizing:border-box" inputmode="decimal">
+      </div>
+      <button onclick="submitSavingsUpdate('${key}')" class="dq-submit" style="margin-top:12px">Save</button>
+    </div>
+  `);
+  setTimeout(function(){ var el=document.getElementById('savings-amount-input'); if(el) el.focus(); }, 300);
+}
+
+async function submitSavingsUpdate(key) {
+  var amount = parseFloat(document.getElementById('savings-amount-input').value) || 0;
   if (amount > 0) {
     await db.ref('homelife/savings/' + key + '/saved').set(amount);
-    toast('Updated');
+    closeModal();
+    toast('Savings updated');
   }
 }
 

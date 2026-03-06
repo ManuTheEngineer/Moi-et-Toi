@@ -356,10 +356,22 @@ function listenDateNights() {
   });
 }
 
-async function markDateDone(key) {
+function markDateDone(key) {
   if (!db) return;
-  const rating = parseInt(prompt('Rate this date 1-5 stars:') || '0');
+  openModal(`
+    <div style="text-align:center;padding:12px 0">
+      <div style="font-size:14px;font-weight:600;color:var(--cream);margin-bottom:12px">How was your date?</div>
+      <div style="display:flex;justify-content:center;gap:12px;margin-bottom:16px">
+        ${[1,2,3,4,5].map(n => `<button onclick="submitDateRating('${key}',${n})" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--tint);color:var(--gold);font-size:18px;cursor:pointer;transition:all .15s;font-family:Outfit,sans-serif" onpointerdown="this.style.transform='scale(.9)';this.style.background='var(--gold)';this.style.color='#fff'" onpointerup="this.style.transform=''">${n}★</button>`).join('')}
+      </div>
+      <button onclick="submitDateRating('${key}',0)" style="border:none;background:none;color:var(--t3);font-size:12px;cursor:pointer;padding:8px">Skip rating</button>
+    </div>
+  `);
+}
+
+async function submitDateRating(key, rating) {
   await db.ref('dateNights/' + key).update({ done: true, doneAt: Date.now(), rating: Math.min(5, Math.max(0, rating)) });
+  closeModal();
   toast('Date completed');
 }
 

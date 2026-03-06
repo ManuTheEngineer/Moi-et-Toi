@@ -44,14 +44,24 @@ function renderKnowYou() {
 
 function editKYP(field) {
   const current = kypData[field] || '';
-  const val = prompt('Enter your ' + field + ':', current);
-  if (val !== null) {
-    db.ref('knowYou/' + user + '/favorites/' + field).set(val.trim());
-    // Also update display immediately for own data
-    const el = document.getElementById('kyp-' + field);
-    if (el) el.textContent = val.trim() || 'Tap to add';
-    awardXP(5);
-  }
+  openModal(`
+    <div style="padding:8px 0">
+      <div style="font-size:14px;font-weight:600;color:var(--cream);margin-bottom:10px;text-transform:capitalize">${field.replace(/([A-Z])/g,' $1')}</div>
+      <input type="text" id="kyp-edit-input" value="${(current||'').replace(/"/g,'&quot;')}" placeholder="Enter your ${field}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input-bg);color:var(--cream);font-size:14px;box-sizing:border-box">
+      <button onclick="submitKYPEdit('${field}')" class="dq-submit" style="margin-top:10px;width:100%">Save</button>
+    </div>
+  `);
+  setTimeout(function(){ var el=document.getElementById('kyp-edit-input'); if(el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 300);
+}
+
+function submitKYPEdit(field) {
+  var val = (document.getElementById('kyp-edit-input').value||'').trim();
+  db.ref('knowYou/' + user + '/favorites/' + field).set(val);
+  var el = document.getElementById('kyp-' + field);
+  if (el) el.textContent = val || 'Tap to add';
+  closeModal();
+  awardXP(5);
+  toast('Saved');
 }
 
 async function addKYPDate() {
@@ -370,8 +380,21 @@ function filterMemAlbum(album) {
 }
 
 function addCustomAlbum() {
-  const name = prompt('Album name:');
-  if (!name || !name.trim()) return;
+  openModal(`
+    <div style="padding:8px 0">
+      <div style="font-size:14px;font-weight:600;color:var(--cream);margin-bottom:10px">New Album</div>
+      <input type="text" id="album-name-input" placeholder="Album name" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input-bg);color:var(--cream);font-size:14px;box-sizing:border-box">
+      <button onclick="submitCustomAlbum()" class="dq-submit" style="margin-top:10px;width:100%">Create</button>
+    </div>
+  `);
+  setTimeout(function(){ var el=document.getElementById('album-name-input'); if(el) el.focus(); }, 300);
+  return;
+}
+
+function submitCustomAlbum() {
+  var name = (document.getElementById('album-name-input').value||'').trim();
+  closeModal();
+  if (!name) return;
   const albumName = name.trim();
   if (!memCustomAlbums.includes(albumName)) {
     memCustomAlbums.push(albumName);
