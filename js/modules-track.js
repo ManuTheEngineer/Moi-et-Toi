@@ -1067,7 +1067,7 @@ function openGrowLesson(path, moduleId, lessonIdx) {
   document.getElementById('grow-complete-btn').textContent = growCompleted[key] ? '✓ Completed' : 'Mark Complete';
   document.getElementById('grow-complete-btn').style.background = growCompleted[key] ? 'var(--emerald)' : 'var(--gold)';
 
-  document.getElementById('grow-lesson-modal').style.display = '';
+  document.getElementById('grow-lesson-modal').classList.add('on');
   document.body.style.overflow = 'hidden';
 }
 
@@ -1078,7 +1078,7 @@ function closeGrowLesson() {
     const text = document.getElementById('grow-lesson-reflection').value.trim();
     if (text && db) db.ref('grow/' + user + '/reflections/' + key).set(text);
   }
-  document.getElementById('grow-lesson-modal').style.display = 'none';
+  document.getElementById('grow-lesson-modal').classList.remove('on');
   document.body.style.overflow = '';
   growCurrentLesson = null;
 }

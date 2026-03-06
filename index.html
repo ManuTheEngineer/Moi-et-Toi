@@ -2940,36 +2940,35 @@
 </div>
 
 <!-- Lesson View (overlay) -->
-<div class="lmod" id="grow-lesson-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:var(--sheet-bg);overflow-y:auto;-webkit-overflow-scrolling:touch">
-<div style="padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px))">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-    <button onclick="closeGrowLesson()" style="background:none;border:none;color:var(--cream);font-size:24px;cursor:pointer">&larr;</button>
-    <div style="font-size:11px;color:var(--t3)" id="grow-lesson-progress">Lesson 1 of 4</div>
-    <div style="width:24px"></div>
+<div class="modal-full" id="grow-lesson-modal">
+<div class="modal-header">
+  <button class="modal-close" onclick="closeGrowLesson()">&larr;</button>
+  <div class="form-label" style="margin:0" id="grow-lesson-progress">Lesson 1 of 4</div>
+  <div style="width:36px"></div>
+</div>
+<div class="modal-body">
+  <div class="ch-progress-bar" style="margin-bottom:20px">
+    <div class="ch-progress-fill" id="grow-lesson-bar"></div>
   </div>
-  <!-- Progress bar -->
-  <div style="height:3px;background:var(--bg3);border-radius:2px;margin-bottom:20px;overflow:hidden">
-    <div style="height:100%;background:var(--gold);border-radius:2px;transition:width .4s" id="grow-lesson-bar"></div>
-  </div>
-  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:26px;color:var(--cream);margin-bottom:20px;line-height:1.3" id="grow-lesson-title"></h2>
+  <h2 class="feat-header-title" style="color:var(--cream);margin-bottom:20px" id="grow-lesson-title"></h2>
 
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Introduction</div></div>
-  <div style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:20px" id="grow-lesson-intro"></div>
+  <div class="grow-text" id="grow-lesson-intro"></div>
 
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">The Traditional Value</div></div>
-  <div style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:20px" id="grow-lesson-traditional"></div>
+  <div class="grow-text" id="grow-lesson-traditional"></div>
 
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">The Modern Twist</div></div>
-  <div style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:20px" id="grow-lesson-modern"></div>
+  <div class="grow-text" id="grow-lesson-modern"></div>
 
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Reflect</div></div>
-  <div style="font-size:14px;color:var(--gold);font-style:italic;margin-bottom:10px" id="grow-lesson-reflection-q"></div>
-  <textarea id="grow-lesson-reflection" rows="3" placeholder="Your thoughts..." style="width:100%;padding:12px 14px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;box-sizing:border-box;margin-bottom:14px"></textarea>
+  <div class="grow-reflection-q" id="grow-lesson-reflection-q"></div>
+  <textarea id="grow-lesson-reflection" rows="3" placeholder="Your thoughts..." class="form-input" style="resize:vertical;margin-bottom:14px"></textarea>
 
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">This Week's Action</div></div>
-  <div style="font-size:14px;color:var(--cream);background:rgba(196,120,74,0.08);padding:14px 16px;border-radius:16px;border-left:3px solid var(--gold);margin-bottom:20px" id="grow-lesson-action"></div>
+  <div class="grow-action-box" id="grow-lesson-action"></div>
 
-  <div style="display:flex;gap:10px;margin-top:10px">
+  <div class="form-row" style="margin-top:14px">
     <button class="dq-submit" onclick="prevGrowLesson()" id="grow-prev-btn" style="flex:1;background:var(--input-bg);color:var(--t2)" disabled>&larr; Previous</button>
     <button class="dq-submit" onclick="completeGrowLesson()" id="grow-complete-btn" style="flex:1;background:var(--gold)">Mark Complete</button>
     <button class="dq-submit" onclick="nextGrowLesson()" id="grow-next-btn" style="flex:1">&rarr; Next</button>
@@ -2982,49 +2981,49 @@
 <div class="ctn">
 
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Profile</div></div>
-  <div style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:12px">
-    <label style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Your Name</label>
-    <input type="text" id="set-name" placeholder="Your name" style="width:100%;padding:12px 14px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;box-sizing:border-box">
+  <div class="form-card">
+    <label class="form-label">Your Name</label>
+    <input type="text" id="set-name" placeholder="Your name" class="form-input">
   </div>
 
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Relationship</div></div>
-  <div style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:12px">
-    <label style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Together Since</label>
-    <input type="date" id="set-anniversary" style="width:100%;padding:12px 14px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;box-sizing:border-box">
-    <div style="font-size:11px;color:var(--t3);margin-top:6px">This sets your "Days Together" count on the dashboard</div>
+  <div class="form-card">
+    <label class="form-label">Together Since</label>
+    <input type="date" id="set-anniversary" class="form-input">
+    <div class="form-hint">This sets your "Days Together" count on the dashboard</div>
   </div>
 
-  <div style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:12px">
-    <label style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Partner's Name</label>
-    <input type="text" id="set-partner-name" placeholder="Partner's name" style="width:100%;padding:12px 14px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;box-sizing:border-box" disabled>
-    <div style="font-size:11px;color:var(--t3);margin-top:6px">Only your partner can change their name</div>
+  <div class="form-card">
+    <label class="form-label">Partner's Name</label>
+    <input type="text" id="set-partner-name" placeholder="Partner's name" class="form-input" disabled>
+    <div class="form-hint">Only your partner can change their name</div>
   </div>
 
   <button onclick="saveSettings()" class="dq-submit" style="width:100%;margin-top:8px;margin-bottom:20px">Save Changes</button>
 
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Account</div></div>
-  <div style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:12px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <span style="font-size:13px;color:var(--t2)">Theme</span>
-      <button onclick="toggleTheme()" style="padding:8px 16px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-size:12px;cursor:pointer" id="set-theme-btn">Toggle</button>
+  <div class="form-card">
+    <div class="settings-row">
+      <span class="settings-label">Theme</span>
+      <button onclick="toggleTheme()" class="settings-btn" id="set-theme-btn">Toggle</button>
     </div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <span style="font-size:13px;color:var(--t2)">Switch User</span>
-      <button onclick="switchUser()" style="padding:8px 16px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-size:12px;cursor:pointer">Switch</button>
+    <div class="settings-row">
+      <span class="settings-label">Switch User</span>
+      <button onclick="switchUser()" class="settings-btn">Switch</button>
     </div>
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:13px;color:var(--t2)">Log Out</span>
-      <button onclick="logout()" style="padding:8px 16px;border-radius:20px;border:none;background:rgba(220,80,80,0.15);color:#dc5050;font-size:12px;cursor:pointer">Log Out</button>
+    <div class="settings-row" style="margin-bottom:0">
+      <span class="settings-label">Log Out</span>
+      <button onclick="logout()" class="settings-btn settings-btn-danger">Log Out</button>
     </div>
   </div>
 
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Data</div></div>
-  <div style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:12px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <span style="font-size:13px;color:var(--t2)">Export All Data</span>
-      <button onclick="exportAllData()" style="padding:8px 16px;border-radius:20px;border:none;background:var(--lavender);color:#fff;font-size:12px;cursor:pointer">Export</button>
+  <div class="form-card">
+    <div class="settings-row">
+      <span class="settings-label">Export All Data</span>
+      <button onclick="exportAllData()" class="settings-btn" style="background:var(--lavender);color:#fff">Export</button>
     </div>
-    <div style="font-size:11px;color:var(--t3)">Download all your shared data as a JSON file for backup</div>
+    <div class="form-hint">Download all your shared data as a JSON file for backup</div>
   </div>
 
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">About</div></div>
