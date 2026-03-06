@@ -584,6 +584,13 @@ function renderAchievements() {
   });
 }
 
+function renderAchProgress(elId, current, target) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const pct = Math.min(100, Math.round((current / target) * 100));
+  el.innerHTML = `<div class="ach-prog-bar"><div class="ach-prog-fill" style="width:${pct}%"></div></div><span class="ach-prog-text">${Math.min(current, target)}/${target}</span>`;
+}
+
 async function awardXP(amount) {
   if (!db) return;
   const snap = await db.ref('achievements/xp').once('value');
@@ -615,14 +622,20 @@ async function checkAchievements() {
   const letters = await db.ref('letters').once('value');
   const letterCount = letters.val() ? Object.keys(letters.val()).length : 0;
   if (letterCount >= 1) unlockBadge('first-letter', 'First Letter');
+  if (letterCount >= 5) unlockBadge('love-letters5', 'Pen Pals');
+  if (letterCount >= 25) unlockBadge('love-letters25', 'Love Novelist');
   const el = id => document.getElementById(id);
   if (el('ach-stat-letters')) el('ach-stat-letters').textContent = letterCount;
+  renderAchProgress('ach-prog-letters5', letterCount, 5);
+  renderAchProgress('ach-prog-letters25', letterCount, 25);
 
   // Check games
   const gamesSnap = await db.ref('games/history').once('value');
   const gameCount = gamesSnap.val() ? Object.keys(gamesSnap.val()).length : 0;
   if (gameCount >= 10) unlockBadge('game-champs', 'Game Night Champions');
+  if (gameCount >= 50) unlockBadge('game-master', 'Game Master');
   if (el('ach-stat-games')) el('ach-stat-games').textContent = gameCount;
+  renderAchProgress('ach-prog-games50', gameCount, 50);
 
   // Check moods
   const moodSnap = await db.ref('moods').once('value');
@@ -660,11 +673,25 @@ async function checkAchievements() {
   const dhRooms = Object.keys(dreamHomeData).filter(r => dreamHomeData[r] && Object.keys(dreamHomeData[r]).length > 0);
   if (dhRooms.length >= 3) unlockBadge('home-dreamers', 'Home Dreamers');
 
-  // Check streak for week and month badges
+  // Check gratitude
+  const gratSnap = await db.ref('gratitude').once('value');
+  const gratCount = gratSnap.val() ? Object.keys(gratSnap.val()).length : 0;
+  if (gratCount >= 30) unlockBadge('gratitude-guru', 'Gratitude Guru');
+  renderAchProgress('ach-prog-gratitude', gratCount, 30);
+
+  // Check challenges
+  const chSnap = await db.ref('challenges/history').once('value');
+  const chCount = chSnap.val() ? Object.keys(chSnap.val()).length : 0;
+  if (chCount >= 1) unlockBadge('challenge-first', 'Challenger');
+  if (chCount >= 3) unlockBadge('challenge-three', 'Challenge Royalty');
+  renderAchProgress('ach-prog-challenges', chCount, 3);
+
+  // Check streak for week, month, and century badges
   const streakEl = document.getElementById('fit-streak');
   const currentStreak = streakEl ? parseInt(streakEl.textContent) : 0;
   if (currentStreak >= 7) unlockBadge('week-streak', 'Week Streak');
   if (currentStreak >= 30) unlockBadge('month-strong', 'Month Strong');
+  if (currentStreak >= 100) unlockBadge('century', 'Century Club');
 
   // Check fit couple - both worked out this week
   const partnerFitSnap = await db.ref('fitness/' + partner + '/workouts').orderByChild('date').limitToLast(7).once('value');

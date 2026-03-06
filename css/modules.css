@@ -756,6 +756,10 @@
 .achievement .ach-icon{font-size:28px;margin-bottom:6px;display:block}
 .achievement .ach-name{font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:var(--cream);font-weight:500}
 .achievement.unlocked{border:1px solid var(--gold);background:linear-gradient(135deg,rgba(28,43,74,.04),rgba(212,149,106,.04))}
+.ach-progress{margin-top:4px}
+.ach-prog-bar{height:4px;border-radius:3px;background:var(--input-bg);overflow:hidden;margin-bottom:2px}
+.ach-prog-fill{height:100%;border-radius:3px;background:var(--gold);transition:width .4s}
+.ach-prog-text{font-size:8px;color:var(--t3)}
 .xp-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:8px}
 .xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--red));border-radius:4px;transition:width .6s ease}
 .level-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;font-size:11px;font-weight:600;color:var(--gold);background:var(--tint);margin-bottom:16px}
