@@ -805,7 +805,7 @@
 @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 
 /* Game Picker Grid */
-.game-picker{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px}
+.game-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
 .game-pick-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 6px;border-radius:18px;border:none;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer;transition:all .25s;font-family:'Outfit',sans-serif}
 .game-pick-btn:hover{transform:translateY(-3px);box-shadow:var(--card-hover)}
 .game-pick-btn:active{transform:scale(0.92)}
@@ -981,6 +981,9 @@
   .game-picker{grid-template-columns:repeat(3,1fr)}
   .rps-btn{width:80px;font-size:34px;padding:16px 8px}
   .trivia-opts{grid-template-columns:1fr}
+}
+@media(max-width:340px){
+  .game-picker{grid-template-columns:repeat(2,1fr)}
 }
 
 /* ===== FINANCE MODULE ===== */
