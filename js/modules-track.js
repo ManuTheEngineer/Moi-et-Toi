@@ -1456,3 +1456,92 @@ async function deleteHomeWish(key) {
   await db.ref('dreamHome/wishlist/' + key).remove();
 }
 
+// ===== SHARED GROCERY LIST =====
+async function addGroceryItem() {
+  if (!db || !user) return;
+  const input = document.getElementById('grocery-input');
+  const name = input.value.trim();
+  if (!name) return;
+  await db.ref('grocery').push({
+    name, checked: false, addedBy: user, timestamp: Date.now()
+  });
+  input.value = '';
+  toast('Added');
+}
+
+function listenGrocery() {
+  if (!db) return;
+  db.ref('grocery').orderByChild('timestamp').on('value', snap => {
+    const items = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+    const el = document.getElementById('grocery-list');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Your shared shopping list</div>'; return; }
+    const unchecked = items.filter(i => !i.checked);
+    const checked = items.filter(i => i.checked);
+    el.innerHTML = [...unchecked, ...checked].map(i => {
+      return `<div class="grocery-item ${i.checked ? 'done' : ''}">
+        <div class="grocery-check" onclick="toggleGrocery('${i._key}',${!i.checked})">${i.checked ? '✓' : ''}</div>
+        <span class="grocery-name">${esc(i.name)}</span>
+        <button class="item-delete" onclick="db.ref('grocery/${i._key}').remove()">×</button>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function toggleGrocery(key, checked) {
+  if (!db) return;
+  await db.ref('grocery/' + key + '/checked').set(checked);
+}
+
+async function clearCheckedGrocery() {
+  if (!db) return;
+  const snap = await db.ref('grocery').once('value');
+  const updates = {};
+  snap.forEach(c => { if (c.val().checked) updates[c.key] = null; });
+  await db.ref('grocery').update(updates);
+  toast('Cleared checked items');
+}
+
+// ===== SHARED TO-DO LIST =====
+async function addSharedTodo() {
+  if (!db || !user) return;
+  const input = document.getElementById('todo-input');
+  const title = input.value.trim();
+  if (!title) return;
+  await db.ref('sharedTodos').push({
+    title, done: false, addedBy: user, timestamp: Date.now()
+  });
+  input.value = '';
+  toast('Task added');
+}
+
+function listenSharedTodos() {
+  if (!db) return;
+  db.ref('sharedTodos').orderByChild('timestamp').on('value', snap => {
+    const items = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+    items.reverse();
+    const el = document.getElementById('shared-todo-list');
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<div class="empty">Tasks for both of you</div>'; return; }
+    el.innerHTML = items.map(i => {
+      const who = i.addedBy === user ? 'You' : NAMES[i.addedBy] || '?';
+      return `<div class="todo-item ${i.done ? 'done' : ''}">
+        <div class="todo-check" onclick="toggleSharedTodo('${i._key}',${!i.done})">${i.done ? '✓' : ''}</div>
+        <div class="todo-info">
+          <span class="todo-title">${esc(i.title)}</span>
+          <span class="todo-by">${who}</span>
+        </div>
+        <button class="item-delete" onclick="db.ref('sharedTodos/${i._key}').remove()">×</button>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function toggleSharedTodo(key, done) {
+  if (!db) return;
+  await db.ref('sharedTodos/' + key + '/done').set(done);
+  if (done) toast('Done ✓');
+}
+

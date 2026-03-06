@@ -204,6 +204,8 @@ function finishLogin() {
   listenExpenses();
   listenSharedGoals();
   listenHabits();
+  listenGrocery();
+  listenSharedTodos();
   enforcePrivacy();
   // Dashboard UX
   renderDashHero();

@@ -1002,3 +1002,23 @@
   .rh-score-ring{width:80px}
   .rh-label{min-width:70px;font-size:9px}
 }
+
+/* ===== GROCERY LIST ===== */
+.grocery-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--bdr-s)}
+.grocery-item:last-child{border-bottom:none}
+.grocery-item.done{opacity:.4}
+.grocery-item.done .grocery-name{text-decoration:line-through}
+.grocery-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--gold);flex-shrink:0;transition:all .2s}
+.grocery-item.done .grocery-check{background:var(--gold);color:#fff;border-color:var(--gold)}
+.grocery-name{flex:1;font-size:13px;color:var(--cream)}
+
+/* ===== SHARED TO-DO ===== */
+.todo-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--bdr-s)}
+.todo-item:last-child{border-bottom:none}
+.todo-item.done{opacity:.4}
+.todo-item.done .todo-title{text-decoration:line-through}
+.todo-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--gold);flex-shrink:0;transition:all .2s}
+.todo-item.done .todo-check{background:var(--gold);color:#fff;border-color:var(--gold)}
+.todo-info{flex:1}
+.todo-title{font-size:13px;color:var(--cream)}
+.todo-by{font-size:10px;color:var(--t3);margin-left:8px}
