@@ -127,6 +127,9 @@ function listenFitnessData() {
   db.ref('fitness/' + user + '/programs').on('value', snap => {
     renderSavedPrograms(snap.val() || {});
   });
+  db.ref('fitness/' + user + '/photos').orderByChild('timestamp').limitToLast(12).on('value', snap => {
+    renderProgressPhotos(snap.val() || {});
+  });
   // Populate exercise datalist for quick log
   const dl = document.getElementById('fit-ex-datalist');
   if (dl) dl.innerHTML = EXERCISE_DB.map(e => '<option value="'+esc(e.name)+'">').join('');
@@ -752,6 +755,127 @@ function renderBodyTrends() {
         </svg>`;
     }
   }
+}
+
+// ===== PROGRESS PHOTOS =====
+function handleProgressPhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  if (file.size > 5 * 1024 * 1024) { toast('Photo too large (max 5MB)'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    compressImage(e.target.result, 600, 0.6).then(dataUrl => {
+      saveProgressPhoto(dataUrl);
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+function compressImage(dataUrl, maxDim, quality) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; } }
+      else { if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = dataUrl;
+  });
+}
+
+async function saveProgressPhoto(dataUrl) {
+  if (!db || !user) return;
+  const type = (document.getElementById('prog-photo-type') || {}).value || 'front';
+  const note = (document.getElementById('prog-photo-note') || {}).value || '';
+  const key = db.ref('fitness/' + user + '/photos').push().key;
+  await db.ref('fitness/' + user + '/photos/' + key).set({
+    data: dataUrl,
+    type: type,
+    note: note,
+    timestamp: Date.now(),
+    date: localDate()
+  });
+  const noteEl = document.getElementById('prog-photo-note');
+  if (noteEl) noteEl.value = '';
+  const inputEl = document.getElementById('prog-photo-input');
+  if (inputEl) inputEl.value = '';
+  toast('Progress photo saved!');
+}
+
+function renderProgressPhotos(photos) {
+  const el = document.getElementById('prog-photos-gallery');
+  if (!el) return;
+  if (!photos || Object.keys(photos).length === 0) {
+    el.innerHTML = '<div class="empty">No progress photos yet</div>';
+    return;
+  }
+  const arr = Object.entries(photos).map(([k, v]) => ({ ...v, _key: k })).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const typeLabels = { front: 'Front', side: 'Side', back: 'Back', flex: 'Flex' };
+  el.innerHTML = '<div class="prog-grid">' + arr.slice(0, 12).map(p => `
+    <div class="prog-thumb" onclick="viewProgressPhoto('${p._key}')">
+      <img src="${p.data}" alt="Progress" loading="lazy">
+      <div class="prog-label">${typeLabels[p.type] || p.type}</div>
+      <div class="prog-date">${new Date(p.timestamp).toLocaleDateString('en-US', {month:'short',day:'numeric'})}</div>
+    </div>
+  `).join('') + '</div>';
+  // Compare button
+  if (arr.length >= 2) {
+    el.innerHTML += `<button class="dq-submit" onclick="compareProgressPhotos()" style="margin-top:10px;background:var(--grad-fitness);width:100%">Compare First & Latest</button>`;
+  }
+}
+
+function viewProgressPhoto(key) {
+  if (!db || !user) return;
+  db.ref('fitness/' + user + '/photos/' + key).once('value', snap => {
+    const p = snap.val();
+    if (!p) return;
+    const typeLabels = { front: 'Front', side: 'Side', back: 'Back', flex: 'Flex' };
+    openModal(`
+      <div style="text-align:center">
+        <img src="${p.data}" style="max-width:100%;border-radius:16px;margin-bottom:12px">
+        <div style="font-size:13px;color:var(--cream);font-weight:600">${typeLabels[p.type] || p.type} · ${new Date(p.timestamp).toLocaleDateString()}</div>
+        ${p.note ? `<div style="font-size:12px;color:var(--t3);margin-top:6px">${esc(p.note)}</div>` : ''}
+        <button class="btn-sm" onclick="deleteProgressPhoto('${key}')" style="margin-top:16px;color:var(--red)">Delete Photo</button>
+      </div>
+    `);
+  });
+}
+
+async function deleteProgressPhoto(key) {
+  if (!db || !user) return;
+  if (!confirm('Delete this progress photo?')) return;
+  await db.ref('fitness/' + user + '/photos/' + key).remove();
+  closeModal();
+  toast('Photo deleted');
+}
+
+function compareProgressPhotos() {
+  if (!db || !user) return;
+  db.ref('fitness/' + user + '/photos').orderByChild('timestamp').once('value', snap => {
+    const arr = [];
+    snap.forEach(c => { arr.push(c.val()); });
+    if (arr.length < 2) return;
+    const first = arr[0], latest = arr[arr.length - 1];
+    openModal(`
+      <div style="font-size:14px;font-weight:600;color:var(--cream);text-align:center;margin-bottom:12px">Your Progress</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">First</div>
+          <img src="${first.data}" style="width:100%;border-radius:12px">
+          <div style="font-size:10px;color:var(--t3);margin-top:4px">${new Date(first.timestamp).toLocaleDateString()}</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Latest</div>
+          <img src="${latest.data}" style="width:100%;border-radius:12px">
+          <div style="font-size:10px;color:var(--t3);margin-top:4px">${new Date(latest.timestamp).toLocaleDateString()}</div>
+        </div>
+      </div>
+    `);
+  });
 }
 
 // ========================================

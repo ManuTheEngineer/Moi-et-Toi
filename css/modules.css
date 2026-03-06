@@ -602,6 +602,13 @@
 .fit-metric-row .fmr-label{font-size:12px;font-weight:500;color:var(--cream);flex:1}
 .fit-metric-row input{width:70px;padding:6px 10px;border-radius:10px;border:none;background:var(--input-bg);color:var(--t1);font-size:12px;text-align:center;font-family:'Outfit',sans-serif}
 .fit-metric-row .fmr-trend{font-size:10px;width:20px;text-align:center}
+/* Progress Photos */
+.prog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.prog-thumb{position:relative;border-radius:12px;overflow:hidden;cursor:pointer;aspect-ratio:1;background:var(--input-bg)}
+.prog-thumb img{width:100%;height:100%;object-fit:cover}
+.prog-thumb:hover{transform:scale(1.02);transition:transform .2s}
+.prog-label{position:absolute;top:6px;left:6px;font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(0,0,0,.6);color:#fff;text-transform:uppercase;letter-spacing:.5px}
+.prog-date{position:absolute;bottom:6px;right:6px;font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(0,0,0,.5);color:rgba(255,255,255,.8)}
 /* Fitness: Muscle map */
 .fit-body-map{text-align:center;margin-bottom:16px;padding:10px}
 .fit-body-map svg{max-width:180px;height:auto}

@@ -1992,6 +1992,27 @@
     </div>
   </div>
 
+  <!-- Progress Photos -->
+  <div class="me-only">
+    <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Progress Photos</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+        <label class="dq-submit" style="flex:1;text-align:center;cursor:pointer;background:var(--grad-fitness);margin:0">
+          <input type="file" accept="image/*" capture="environment" id="prog-photo-input" onchange="handleProgressPhoto(this)" style="display:none">
+          📸 Take Progress Photo
+        </label>
+      </div>
+      <select id="prog-photo-type" style="width:100%;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;margin-bottom:8px">
+        <option value="front">Front</option>
+        <option value="side">Side</option>
+        <option value="back">Back</option>
+        <option value="flex">Flex / Pose</option>
+      </select>
+      <textarea id="prog-photo-note" placeholder="Optional note..." style="width:100%;padding:10px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-size:12px;font-family:'Outfit',sans-serif;min-height:36px;resize:none;box-sizing:border-box"></textarea>
+    </div>
+    <div id="prog-photos-gallery"></div>
+  </div>
+
   <!-- PRs -->
   <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Personal Records</div></div>
   <div id="fit-prs-list"><div class="empty">Set some PRs by logging workouts</div></div>
