@@ -16,6 +16,10 @@
 .tap-item .tap-time{font-size:10px;color:var(--t3);text-align:right;min-width:50px}
 
 .letter-compose{margin-bottom:20px}
+.lt-toolbar{display:flex;gap:4px;margin-bottom:6px}
+.lt-btn{width:34px;height:34px;border-radius:10px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.lt-btn:hover{background:var(--gold);color:#fff}
+.lt-btn:active{transform:scale(.88)}
 .letter-textarea{width:100%;padding:16px 20px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;outline:none;resize:none;min-height:80px;line-height:1.7;transition:box-shadow .2s}
 .letter-textarea:focus{box-shadow:var(--focus-ring)}
 .letter-textarea::placeholder{color:var(--t3)}

@@ -841,6 +841,33 @@ function showTapOverlay(type) {
 }
 
 // ===== LOVE LETTERS =====
+function letterFormat(before, after) {
+  const ta = document.getElementById('letter-input');
+  if (!ta) return;
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const text = ta.value;
+  const selected = text.substring(start, end) || 'text';
+  ta.value = text.substring(0, start) + before + selected + after + text.substring(end);
+  ta.focus();
+  ta.setSelectionRange(start + before.length, start + before.length + selected.length);
+}
+
+function letterInsert(emoji) {
+  const ta = document.getElementById('letter-input');
+  if (!ta) return;
+  const start = ta.selectionStart;
+  ta.value = ta.value.substring(0, start) + emoji + ta.value.substring(ta.selectionEnd);
+  ta.focus();
+  ta.setSelectionRange(start + emoji.length, start + emoji.length);
+}
+
+function formatLetterText(text) {
+  return esc(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/_(.+?)_/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
+
 function toggleOpenWhen() {
   const check = document.getElementById('ow-check');
   const select = document.getElementById('ow-tag');
@@ -908,7 +935,7 @@ function renderOpenWhenLetters(letters) {
   if (forMe.length) {
     html += forMe.map(l => {
       if (l.opened) {
-        return `<div class="ow-card opened"><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-msg">${esc(l.message)}</div><div class="ow-from">From ${l.fromName} · ${timeAgo(l.timestamp)}</div></div>`;
+        return `<div class="ow-card opened"><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-msg">${formatLetterText(l.message)}</div><div class="ow-from">From ${l.fromName} · ${timeAgo(l.timestamp)}</div></div>`;
       }
       return `<div class="ow-card sealed" onclick="openSealedLetter('${l._key}')"><div class="ow-seal">💌</div><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-hint">Tap to open</div></div>`;
     }).join('');
@@ -956,7 +983,7 @@ function renderLetterFeed(letters) {
         <span class="letter-from">${isMe ? 'You' : l.fromName}${!isMe && !l.read ? '<span class="letter-unread"></span>' : ''}</span>
         <span class="letter-time">${ts}</span>
       </div>
-      <div class="letter-body">${l.message.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
+      <div class="letter-body">${formatLetterText(l.message)}</div>
     </div>`;
   }).join('');
 }

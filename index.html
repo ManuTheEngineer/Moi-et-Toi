@@ -490,6 +490,14 @@
   <!-- Love Letters -->
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Write a letter</div></div>
   <div class="letter-compose">
+    <div class="lt-toolbar">
+      <button class="lt-btn" onclick="letterFormat('**','**')" title="Bold"><strong>B</strong></button>
+      <button class="lt-btn" onclick="letterFormat('_','_')" title="Italic"><em>I</em></button>
+      <button class="lt-btn" onclick="letterInsert('❤️')" title="Heart">❤️</button>
+      <button class="lt-btn" onclick="letterInsert('💕')" title="Hearts">💕</button>
+      <button class="lt-btn" onclick="letterInsert('✨')" title="Sparkle">✨</button>
+      <button class="lt-btn" onclick="letterInsert('🥰')" title="Love face">🥰</button>
+    </div>
     <textarea class="letter-textarea" id="letter-input" placeholder="Say something real..."></textarea>
     <div class="ow-toggle">
       <label class="ow-label">
