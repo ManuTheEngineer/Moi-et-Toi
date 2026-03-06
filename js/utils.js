@@ -178,6 +178,10 @@ function timeAgo(date) {
 // ===== TOAST =====
 function toast(msg) {
   const t = document.getElementById('toast');
+  // Dismiss keyboard on mobile after form submit
+  if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+    document.activeElement.blur();
+  }
   // Add checkmark icon for positive messages
   const positive = /added|saved|shared|logged|set|sent|completed|achieved|noted|updated|removed/i.test(msg);
   t.innerHTML = (positive ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> ' : '') + msg;

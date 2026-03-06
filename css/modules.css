@@ -17,7 +17,7 @@
 
 .letter-compose{margin-bottom:20px}
 .lt-toolbar{display:flex;gap:4px;margin-bottom:6px}
-.lt-btn{width:34px;height:34px;border-radius:10px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.lt-btn{width:44px;height:44px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .lt-btn:hover{background:var(--gold);color:#fff}
 .lt-btn:active{transform:scale(.88)}
 .letter-textarea{width:100%;padding:16px 20px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;outline:none;resize:none;min-height:80px;line-height:1.7;transition:box-shadow .2s}
@@ -31,6 +31,7 @@
 .letter-card{background:var(--card-bg);border:none;border-radius:22px;padding:20px;margin-bottom:14px;position:relative;box-shadow:var(--card-shadow)}
 .letter-card.from-me{border-left:3px solid var(--gold)}
 .letter-card.from-them{border-left:3px solid var(--red)}
+.letter-card:active{transform:scale(.98);transition:transform .15s}
 .letter-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .letter-from{font-size:11px;font-weight:500;color:var(--cream)}
 .letter-time{font-size:10px;color:var(--t3)}
@@ -121,16 +122,16 @@
 .grat-card .grat-time{font-size:10px;color:var(--t3);margin-top:6px}
 
 /* ===== GAMES ===== */
-.wyr-card{background:var(--card-bg);border:none;border-radius:24px;padding:26px;margin-bottom:18px;text-align:center;box-shadow:var(--card-shadow)}
+.wyr-card{background:var(--card-bg);border:none;border-radius:24px;padding:26px;margin-bottom:18px;text-align:center;box-shadow:var(--card-shadow);transition:opacity .2s ease}
 .wyr-vs{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin:12px 0}
 .wyr-option{width:100%;padding:16px;border-radius:16px;border:none;background:var(--input-bg);color:var(--cream);font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer;transition:all .25s;margin-bottom:10px;text-align:center}
 .wyr-option:hover{background:var(--tint);transform:translateY(-1px)}
 .wyr-option:active{transform:scale(0.97)}
-.wyr-option.picked{background:var(--gold);color:#fff;font-weight:600;box-shadow:0 4px 16px rgba(28,43,74,.12)}
+.wyr-option.picked{background:var(--gold);color:#fff;font-weight:600;box-shadow:0 4px 16px rgba(28,43,74,.12);transform:scale(1.02)}
 .wyr-option.partner-picked{border-color:var(--red);background:var(--red-s)}
 .wyr-result{margin-top:12px;font-size:12px;color:var(--t2);font-style:italic}
 .wyr-nav{display:flex;justify-content:center;gap:12px;margin-top:16px}
-.wyr-nav button{padding:10px 20px;border-radius:50px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.wyr-nav button{padding:12px 24px;border-radius:50px;border:none;background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;min-height:44px}
 .wyr-nav button:hover{background:var(--gold);color:#fff}
 .wyr-nav button:active{transform:scale(0.97)}
 
@@ -272,6 +273,7 @@
 .tod-btn:active{transform:scale(0.95);opacity:.9}
 
 /* ===== THIS OR THAT ===== */
+#tot-wrap{transition:opacity .2s ease}
 .tot-card{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:22px;overflow:hidden;margin-bottom:16px;min-height:120px}
 .tot-option{padding:24px 14px;text-align:center;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;border:none;font-family:'Outfit',sans-serif}
 .tot-option:first-child{background:var(--grad-grow);color:#fff;border-right:2px solid rgba(255,255,255,.2)}
@@ -302,7 +304,7 @@
 .dn-saved-info{flex:1}
 .dn-saved-title{font-weight:500;font-size:13px}
 .dn-saved-meta{font-size:10px;color:var(--t3);margin-top:2px}
-.dn-done-btn{padding:6px 14px;border-radius:50px;border:none;background:var(--input-bg);color:var(--gold);font-size:10px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s}
+.dn-done-btn{padding:8px 16px;border-radius:50px;border:none;background:var(--input-bg);color:var(--gold);font-size:11px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;min-height:36px}
 
 /* ===== LOVE LANGUAGES ===== */
 .ll-results{margin-bottom:20px}
@@ -324,6 +326,7 @@
 .ll-options{display:flex;flex-direction:column;gap:10px}
 .ll-option{padding:16px 18px;border-radius:16px;border:none;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:13px;color:var(--t1);cursor:pointer;transition:all .2s;text-align:left;font-family:'Outfit',sans-serif}
 .ll-option:active{background:var(--gold);color:#fff;transform:scale(.98)}
+.ll-options{transition:opacity .2s}
 
 /* ===== WEEKLY CHECK-IN ===== */
 .ci-status{background:var(--card-bg);border:none;border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:var(--card-shadow);text-align:center}
@@ -506,10 +509,10 @@
 .prog-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s ease}
 
 /* ===== DELETE BUTTON ===== */
-.item-delete{width:28px;height:28px;border-radius:50%;border:none;background:transparent;color:var(--t3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;opacity:0}
+.item-delete{width:36px;height:36px;border-radius:50%;border:none;background:transparent;color:var(--t3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;opacity:0}
 .bl-item:hover .item-delete,.dr-card:hover .item-delete,.hl-chore-card:hover .item-delete,.fam-name-card:hover .item-delete,.sp-intent-card:hover .item-delete,.wl-item:hover .item-delete,.hl-meal-card:hover .item-delete{opacity:1}
 .item-delete:hover{background:var(--red-s);color:var(--red)}
-@media(hover:none){.item-delete{opacity:.4}}
+@media(hover:none){.item-delete{opacity:.5}}
 
 /* ===== CONFIRM DIALOG ===== */
 /* Generic modal */
@@ -844,7 +847,7 @@
 .game-pick-btn:hover{transform:translateY(-3px);box-shadow:var(--card-hover)}
 .game-pick-btn:active{transform:scale(0.92)}
 .gpb-icon{font-size:24px;line-height:1}
-.gpb-name{font-size:9px;letter-spacing:.5px;color:var(--t2);font-weight:500;text-align:center}
+.gpb-name{font-size:11px;letter-spacing:.3px;color:var(--t2);font-weight:500;text-align:center}
 
 /* Game View Layout */
 .game-view{animation:fadeIn .25s ease}
@@ -961,7 +964,7 @@
 .q21-a.maybe{color:var(--gold)}
 .q21-a.pending{color:var(--t3);font-style:italic;font-weight:400}
 .q21-btns{display:flex;gap:6px}
-.q21-ans{padding:4px 14px;border-radius:12px;border:none;font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;font-weight:600;transition:all .2s}
+.q21-ans{padding:10px 18px;border-radius:14px;border:none;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;font-weight:600;transition:all .2s;min-height:40px}
 .q21-ans.yes{background:rgba(42,143,143,.15);color:var(--teal)}
 .q21-ans.no{background:rgba(196,75,75,.1);color:var(--red)}
 .q21-ans.maybe{background:var(--tint);color:var(--gold)}
@@ -1077,7 +1080,7 @@
 .hm-word{text-align:center;font-family:'Cormorant Garamond',serif;font-size:28px;letter-spacing:8px;color:var(--cream);margin-bottom:8px}
 .hm-hint{text-align:center;font-size:12px;color:var(--t3);font-style:italic;margin-bottom:16px}
 .hm-keyboard{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;padding:8px 0}
-.hm-key{width:32px;height:36px;border-radius:8px;border:none;background:var(--card-bg);box-shadow:var(--card-shadow);color:var(--cream);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.hm-key{width:36px;height:40px;border-radius:10px;border:none;background:var(--card-bg);box-shadow:var(--card-shadow);color:var(--cream);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;touch-action:manipulation}
 .hm-key:hover:not(:disabled){background:var(--gold);color:#fff}
 .hm-key:active:not(:disabled){transform:scale(.88)}
 .hm-key.correct{background:var(--teal);color:#fff}

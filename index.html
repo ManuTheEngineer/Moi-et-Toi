@@ -1151,7 +1151,7 @@
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Today</div></div>
   <div class="grat-compose">
     <textarea class="grat-textarea" id="grat-input" placeholder="Today I'm grateful for..."></textarea>
-    <button class="dq-submit" id="grat-submit-btn" onclick="submitGratitude()" class="mt-8">Share</button>
+    <button class="dq-submit mt-8" id="grat-submit-btn" onclick="submitGratitude()">Share</button>
   </div>
 
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Feed</div></div>
@@ -1693,7 +1693,7 @@
       </div>
     </div>
     <div class="ll-tips" id="ll-tips"></div>
-    <button class="dq-submit" onclick="retakeLLQuiz()" class="mt-16">Retake Quiz</button>
+    <button class="dq-submit mt-16" onclick="retakeLLQuiz()">Retake Quiz</button>
   </div>
 
   <div id="ll-quiz">
@@ -1727,7 +1727,7 @@
 
     <div class="chart-wrap p-14" id="as-combo-tips"></div>
 
-    <button class="dq-submit" onclick="retakeASQuiz()" class="mt-16">Retake Quiz</button>
+    <button class="dq-submit mt-16" onclick="retakeASQuiz()">Retake Quiz</button>
   </div>
 
   <div id="as-quiz">
@@ -1893,7 +1893,7 @@
         <input type="number" id="him-pr-weight" placeholder="Weight" class="flex-1">
         <input type="number" id="him-pr-reps" placeholder="Reps" class="flex-1">
       </div>
-      <button class="dq-submit" onclick="logPR()" class="mt-8">Log PR</button>
+      <button class="dq-submit mt-8" onclick="logPR()">Log PR</button>
     </div>
     <div id="him-pr-list"><div class="empty">Log your first PR</div></div>
   </div>
@@ -1958,7 +1958,7 @@
         <option value="english">Southern English</option>
         <option value="slang">Texas Slang</option>
       </select>
-      <button class="dq-submit" onclick="addPhrase()" class="mt-8">Add Phrase</button>
+      <button class="dq-submit mt-8" onclick="addPhrase()">Add Phrase</button>
     </div>
     <div id="cx-phrases" class="stagger-in"><div class="empty">Teach each other your languages</div></div>
   </div>
@@ -2809,7 +2809,7 @@
       <button class="dh-mh-btn" onclick="toggleDHMust('bathtub',this)">Bathtub</button>
       <button class="dh-mh-btn" onclick="toggleDHMust('island',this)">Kitchen Island</button>
     </div>
-    <button class="dq-submit" onclick="saveDHVision()" class="mt-14 btn-lavender">Save Vision</button>
+    <button class="dq-submit mt-14 btn-lavender" onclick="saveDHVision()">Save Vision</button>
   </div>
   <div id="dh-vision-compare"></div>
 
@@ -2917,7 +2917,7 @@
       <div class="id-quiz-emoji">🪞</div>
       <div class="id-quiz-title">Discover Your Identity</div>
       <div class="id-quiz-desc">Take a quick quiz about your personality, values, and preferences. Your partner will see your results!</div>
-      <button class="dq-submit" onclick="startIdentityQuiz()" class="btn-lavender">Start Quiz</button>
+      <button class="dq-submit btn-lavender" onclick="startIdentityQuiz()">Start Quiz</button>
     </div>
   </div>
   <div id="id-quiz-active" class="d-none"></div>
@@ -2930,7 +2930,7 @@
       <div class="kyp-quiz-q" id="kyp-quiz-q"></div>
       <input type="text" id="kyp-quiz-answer" placeholder="Your answer..." class="mb-8">
       <div class="d-flex gap-8">
-        <button class="dq-submit" onclick="checkKYPQuiz()" class="flex-1 btn-rose">Check</button>
+        <button class="dq-submit flex-1 btn-rose" onclick="checkKYPQuiz()">Check</button>
         <button class="btn-sm" onclick="skipKYPQuiz()">Skip</button>
       </div>
       <div id="kyp-quiz-result" class="kyp-quiz-result"></div>
@@ -3076,7 +3076,7 @@
   <div class="card mb-4">
     <div class="d-flex gap-8">
       <input type="text" id="kyp-cat-happy" placeholder="Something that makes them light up..." class="flex-1">
-      <button class="dq-submit" onclick="saveKYPCategory('happy')" class="p-8-14">+</button>
+      <button class="dq-submit p-8-14" onclick="saveKYPCategory('happy')">+</button>
     </div>
   </div>
   <div id="kyp-cat-list-happy"><div class="empty t-sm">Nothing added yet</div></div>
@@ -3085,7 +3085,7 @@
   <div class="card mb-4">
     <div class="d-flex gap-8">
       <input type="text" id="kyp-cat-petpeeves" placeholder="Things they can't stand..." class="flex-1">
-      <button class="dq-submit" onclick="saveKYPCategory('petpeeves')" class="p-8-14">+</button>
+      <button class="dq-submit p-8-14" onclick="saveKYPCategory('petpeeves')">+</button>
     </div>
   </div>
   <div id="kyp-cat-list-petpeeves"><div class="empty t-sm">Nothing added yet</div></div>
@@ -3094,7 +3094,7 @@
   <div class="card mb-4">
     <div class="d-flex gap-8">
       <input type="text" id="kyp-cat-dreams" placeholder="Big dreams and aspirations..." class="flex-1">
-      <button class="dq-submit" onclick="saveKYPCategory('dreams')" class="p-8-14">+</button>
+      <button class="dq-submit p-8-14" onclick="saveKYPCategory('dreams')">+</button>
     </div>
   </div>
   <div id="kyp-cat-list-dreams"><div class="empty t-sm">Nothing added yet</div></div>
@@ -3103,7 +3103,7 @@
   <div class="card mb-4">
     <div class="d-flex gap-8">
       <input type="text" id="kyp-cat-fears" placeholder="Things that worry or scare them..." class="flex-1">
-      <button class="dq-submit" onclick="saveKYPCategory('fears')" class="p-8-14">+</button>
+      <button class="dq-submit p-8-14" onclick="saveKYPCategory('fears')">+</button>
     </div>
   </div>
   <div id="kyp-cat-list-fears"><div class="empty t-sm">Nothing added yet</div></div>
@@ -3365,7 +3365,7 @@
   <div class="card">
     <div class="t-sm c-t3 mb-8" id="grow-reflection-prompt">What is one thing you can do today to strengthen your relationship?</div>
     <textarea id="grow-reflection-input" rows="3" placeholder="Write your reflection..." class="form-textarea-sm"></textarea>
-    <button class="dq-submit" onclick="saveGrowReflection()" class="mt-8">Save Reflection</button>
+    <button class="dq-submit mt-8" onclick="saveGrowReflection()">Save Reflection</button>
   </div>
 </div>
 </div>

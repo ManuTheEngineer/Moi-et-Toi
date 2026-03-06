@@ -26,6 +26,8 @@ let wyrIndex = 0;
 
 function loadWYR() {
   const q = WYR_QUESTIONS[wyrIndex];
+  var card = document.getElementById('wyr-card');
+  if (card) { card.style.opacity = '0'; setTimeout(function(){ card.style.opacity = '1'; }, 50); }
   document.getElementById('wyr-a').textContent = q.a;
   document.getElementById('wyr-b').textContent = q.b;
   document.getElementById('wyr-a').className = 'wyr-option';
@@ -82,6 +84,7 @@ async function submitQuizQ() {
   document.getElementById('quiz-a').value = '';
   if (btn) { btn.textContent = 'Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add question'; }, 1500); }
   toast('Question added');
+  setTimeout(function(){ var el = document.getElementById('quiz-q'); if(el) el.focus(); }, 200);
 }
 
 function listenQuiz() {
@@ -412,9 +415,12 @@ function renderLLQuestion() {
   const q = LL_QUIZ[llStep];
   document.getElementById('ll-progress').textContent = `Question ${llStep+1} of ${LL_QUIZ.length}`;
   document.getElementById('ll-q-text').textContent = q.q;
-  document.getElementById('ll-options').innerHTML = q.a.map((a,i) =>
+  var opts = document.getElementById('ll-options');
+  if (opts) { opts.style.opacity = '0'; }
+  opts.innerHTML = q.a.map((a,i) =>
     `<button class="ll-option" onclick="pickLL(${i})">${a}</button>`
   ).join('');
+  if (opts) { setTimeout(function(){ opts.style.opacity = '1'; }, 50); }
 }
 
 function pickLL(choice) {

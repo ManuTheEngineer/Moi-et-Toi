@@ -154,6 +154,8 @@ function loadTOT() {
   const aEl = document.getElementById('tot-a');
   const bEl = document.getElementById('tot-b');
   if (!aEl || !bEl) return;
+  var wrap = document.getElementById('tot-wrap');
+  if (wrap) { wrap.style.opacity = '0'; setTimeout(function(){ wrap.style.opacity = '1'; }, 50); }
   aEl.textContent = q.a;
   bEl.textContent = q.b;
   // Reset styles
