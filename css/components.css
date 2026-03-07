@@ -288,9 +288,11 @@
   .wl-buy{min-height:44px;padding:10px 16px}
   .cal-nav button{width:44px;height:44px}
   /* Form inputs — prevent iOS zoom (require 16px+ font-size) */
+  input,textarea,select,
   .login-input,.mood-note,.letter-textarea,.grat-textarea,.chat-input,.dq-input,
   .quiz-q,.bl-form input,.ms-form input,.ms-form textarea,.cd-form input,
   .cmd-search,.lig input,.dt-journal-form textarea{font-size:16px}
+  input[type="checkbox"],input[type="radio"],input[type="range"],input[type="color"]{font-size:inherit}
   /* Cards — slightly reduce padding for more content space */
   .card{padding:22px;border-radius:22px}
   .card-story{padding:24px}
