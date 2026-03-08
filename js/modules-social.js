@@ -154,12 +154,15 @@ async function addBucketItem() {
   document.getElementById('bl-input').focus();
   if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
   toast('Added to bucket list');
+  if (typeof logActivity === 'function') logActivity('bucket', 'added to bucket list');
 }
 
 function filterBucket(cat, el) {
   bucketFilter = cat;
   document.querySelectorAll('.bl-cat').forEach(e => e.classList.remove('on'));
   if (el) el.classList.add('on');
+  // Remove previous listener before re-attaching to prevent stacking
+  if (db) db.ref('bucketList').off('value');
   listenBucketList();
 }
 
@@ -326,6 +329,7 @@ async function saveDateIdea() {
     done: false, timestamp: Date.now()
   });
   toast('Date idea saved');
+  if (typeof logActivity === 'function') logActivity('datenight', 'saved a date idea');
 }
 
 function listenDateNights() {
@@ -577,6 +581,7 @@ function renderCheckinFeed(weeks) {
 
 // ===== DREAM BOARD =====
 let dreamFilter = 'all';
+let _lastDreamItems = [];
 const DR_CAT_ICONS = { home:'🏠', travel:'✈️', career:'💼', family:'👨‍👩‍👧', experience:'🎯', financial:'💰' };
 const DR_CAT_COLORS = { home:'var(--lavender)', travel:'var(--teal)', career:'var(--gold)', family:'var(--rose)', experience:'var(--emerald)', financial:'var(--amber)' };
 const DR_PRIORITY_LABELS = { someday:'Someday', thisyear:'This Year', next2:'Next 2 Yrs', '5year':'5 Year', lifetime:'Lifetime' };
@@ -605,12 +610,15 @@ async function addDream() {
   if (btn) { btn.textContent = '\u2713 Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add Dream'; }, 1500); }
   toast('Dream added');
   awardXP(10);
+  if (typeof logActivity === 'function') logActivity('dreams', 'added a dream: ' + title);
 }
 
 function filterDreams(cat, el) {
   dreamFilter = cat;
   document.querySelectorAll('#dr-cats .bl-cat').forEach(e => e.classList.remove('on'));
   if (el) el.classList.add('on');
+  // Remove previous listener before re-attaching to prevent stacking
+  if (db) db.ref('dreams').off('value');
   listenDreams();
 }
 
@@ -619,6 +627,7 @@ function listenDreams() {
     const items = [];
     snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
     items.reverse();
+    _lastDreamItems = items;
     renderDreams(items);
   });
 }
@@ -662,7 +671,8 @@ function renderDreams(items) {
 }
 
 function updateDRStats(items) {
-  if (!items) return;
+  if (!items) items = _lastDreamItems;
+  if (!items || !items.length) return;
   const total = items.length;
   const done = items.filter(i => i.achieved).length;
   const active = total - done;
@@ -686,7 +696,7 @@ function updateDRStats(items) {
 async function toggleDream(key, achieved) {
   if (!db) return;
   await db.ref('dreams/' + key + '/achieved').set(achieved);
-  if (achieved) { toast('Dream achieved!'); showConfetti(); awardXP(25); }
+  if (achieved) { toast('Dream achieved!'); showConfetti(); awardXP(25); if (typeof logActivity === 'function') logActivity('dreams', 'achieved a dream!'); }
 }
 
 // ===== ATTACHMENT STYLE QUIZ =====

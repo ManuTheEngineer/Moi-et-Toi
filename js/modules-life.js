@@ -1002,6 +1002,7 @@ async function addExpense() {
   document.getElementById('fin-amount').focus();
   if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
   toast('$' + amount.toFixed(2) + ' logged');
+  if (typeof logActivity === 'function') logActivity('finances', 'logged an expense');
 }
 
 function listenExpenses() {

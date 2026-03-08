@@ -169,7 +169,7 @@ const PAGE_META = {
   datenight:{icon:_IC.moon,label:'Date Night'},checkin:{icon:_IC.barChart,label:'Check-in'},knowyou:{icon:_IC.users,label:'Know You'},
   wellness:{icon:_IC.activity,label:'Wellness'},mood:{icon:_IC.sun,label:'Mood'},fitness:{icon:_IC.dumbbell,label:'Fitness'},
   nutrition:{icon:_IC.apple,label:'Nutrition'},gratitude:{icon:_IC.star,label:'Gratitude'},
-  plan:{icon:_IC.globe,label:'Plan'},dreams:{icon:_IC.sparkle,label:'Dreams'},homelife:{icon:_IC.dollar,label:'Finances'},
+  plan:{icon:_IC.globe,label:'Plan'},dreams:{icon:_IC.sparkle,label:'Dreams'},dreamhome:{icon:_IC.house,label:'Dream Home'},homelife:{icon:_IC.dollar,label:'Finances'},
   calendar:{icon:_IC.cal,label:'Calendar'},story:{icon:_IC.book,label:'Timeline'},values:{icon:_IC.columns,label:'Values'},lists:{icon:_IC.gift,label:'Lists'},
   more:{icon:_IC.compass,label:'More'},memories:{icon:_IC.camera,label:'Memories'},ai:{icon:_IC.cpu,label:'AI Chat'},
   achievements:{icon:_IC.award,label:'Achievements'},settings:{icon:_IC.list,label:'Settings'},

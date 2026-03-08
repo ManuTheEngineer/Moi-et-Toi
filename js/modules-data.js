@@ -346,6 +346,7 @@ async function saveMemory() {
   document.getElementById('mem-file').value = '';
   toast('Memory saved');
   awardXP(15);
+  if (typeof logActivity === 'function') logActivity('memories', 'added a memory');
 }
 
 function checkOnThisDay() {

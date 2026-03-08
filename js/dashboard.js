@@ -1354,8 +1354,10 @@ const _originalGo = go;
 go = function(p) {
   _originalGo(p);
   if (p === 'explore' || p === 'more') { updateHubStatuses(); }
+  if (p === 'together' || p === 'wellness' || p === 'plan') { updateHubStatuses(); updateModuleStats(); }
   if (p === 'bucket') updateBLStats();
   if (p === 'dreams') updateDRStats();
+  if (p === 'lists') updateBLStats();
   if (p === 'homelife') updateHLStats();
   if (p === 'culture') updateCXStats();
   if (p === 'spiritual') updateSPStats();
@@ -1363,7 +1365,7 @@ go = function(p) {
   if (p === 'family') updateFAMStats();
   if (p === 'games') updateGamesStats();
   if (p === 'datenight') updateDNStats();
-  if (p === 'dash') { renderDailyTasks(); }
+  if (p === 'dash') { renderDailyTasks(); renderDashHero(); }
   if (p === 'settings') { loadSettings(); }
   if (p === 'fitness') renderFitnessHub();
   if (p === 'nutrition') renderNutritionDay();
@@ -1372,6 +1374,8 @@ go = function(p) {
   if (p === 'knowyou') renderKnowYou();
   if (p === 'memories') renderMemories();
   if (p === 'achievements') { renderAchievements(); checkAchievements(); }
+  if (p === 'mood') renderStreakCalendar();
+  if (p === 'story') { updateModuleStats(); }
   // Update presence
   if (db && user) db.ref('presence/' + user + '/currentPage').set(p);
 };

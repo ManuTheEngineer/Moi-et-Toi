@@ -408,7 +408,8 @@
 .hs-care-streak{font-size:11px;color:var(--t3);text-align:center;margin-bottom:16px}
 .him-clarity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
 .him-pr-form{padding:8px 0}
-.him-pr-form input{width:100%;padding:10px 12px;border:1px solid var(--bdr);border-radius:10px;background:var(--input-bg);color:var(--cream);font-size:13px;box-sizing:border-box;margin-bottom:6px}
+.him-pr-form input{width:100%;padding:12px 16px;border:none;border-radius:14px;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;box-sizing:border-box;margin-bottom:6px;outline:none;transition:box-shadow .2s}
+.him-pr-form input:focus{box-shadow:var(--focus-ring)}
 .him-pr-form input::placeholder{color:var(--t3)}
 .him-pr-card{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card-bg);border:none;border-radius:14px;margin-bottom:6px;box-shadow:var(--card-shadow)}
 .him-pr-name{font-weight:500;font-size:13px;flex:1}
@@ -503,7 +504,8 @@
 
 /* ===== HOME BUILDING ===== */
 .hl-budget-form{background:var(--card-bg);border:none;border-radius:20px;padding:20px;margin-bottom:12px;box-shadow:var(--card-shadow)}
-.hl-budget-form input{width:100%;margin-bottom:8px;padding:12px 16px;border-radius:14px}
+.hl-budget-form input{width:100%;margin-bottom:8px;padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;outline:none;transition:box-shadow .2s}
+.hl-budget-form input:focus{box-shadow:var(--focus-ring)}
 .hl-savings-card{background:var(--card-bg);border:none;border-radius:18px;padding:18px;margin-bottom:10px;box-shadow:var(--card-shadow)}
 .hl-savings-name{font-weight:600;font-size:14px;margin-bottom:6px}
 .hl-savings-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:6px}
@@ -1852,15 +1854,6 @@
 .ha-red{background:var(--red)}
 .ha-emerald{background:var(--emerald)}
 .ha-teal{background:var(--teal)}
-
-/* Hub Card */
-.hub-card{background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:20px;padding:16px 18px;box-shadow:var(--card-shadow);margin-bottom:14px}
-.hub-card-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.hub-card-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.hub-card-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;color:var(--cream);flex:1}
-.hub-card-link{font-size:10px;color:var(--gold);cursor:pointer;font-weight:500}
-.hub-card-body{min-height:40px}
-.hub-empty{font-size:12px;color:var(--t3);text-align:center;padding:12px 0}
 
 /* Hub Snapshot (Track page today's status) */
 .hub-snapshot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
