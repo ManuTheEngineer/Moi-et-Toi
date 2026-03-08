@@ -343,18 +343,49 @@
 .ci-card-a{font-size:12px;color:var(--t1);margin-bottom:8px;padding-left:8px;border-left:2px solid var(--bdr)}
 
 /* ===== DREAM BOARD ===== */
-.dr-form{background:var(--card-bg);border:none;border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--card-shadow)}
-.dr-card{background:var(--card-bg);border:none;border-radius:18px;padding:18px;margin-bottom:10px;box-shadow:var(--card-shadow);display:flex;gap:12px;align-items:flex-start}
-.dr-card.achieved{opacity:.7}
-.dr-card.achieved .dr-title{text-decoration:line-through}
-.dr-emoji{font-size:28px;flex-shrink:0}
-.dr-info{flex:1}
-.dr-title{font-weight:500;font-size:14px}
-.dr-cat-tag{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:500;margin-top:2px}
-.dr-desc{font-size:12px;color:var(--t2);margin-top:4px;line-height:1.4}
+/* Dreams — hero progress */
+.dr-hero{display:flex;align-items:center;gap:16px;padding:18px 20px;background:var(--card-bg);border-radius:22px;margin-bottom:14px;box-shadow:var(--card-shadow)}
+.dr-ring-wrap{position:relative;width:72px;height:72px;flex-shrink:0}
+.dr-ring{width:100%;height:100%}
+.dr-ring circle:last-child{transition:stroke-dashoffset .8s ease}
+.dr-ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--gold)}
+.dr-ring-text small{font-size:11px;margin-left:1px}
+.dr-hero-stats{display:flex;gap:16px;flex:1;justify-content:space-around}
+.dr-hero-stat{display:flex;flex-direction:column;align-items:center;gap:2px}
+.dr-hs-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--cream)}
+.dr-hs-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)}
+
+/* Dreams — home link card */
+.dr-home-link{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card-bg);border-radius:18px;margin-bottom:14px;box-shadow:var(--card-shadow);cursor:pointer;transition:all .2s;border:1px solid var(--bdr-s)}
+.dr-home-link:active{transform:scale(.98)}
+.dr-hl-icon{font-size:24px;flex-shrink:0}
+.dr-hl-info{flex:1}
+.dr-hl-title{font-size:13px;font-weight:600;color:var(--cream)}
+.dr-hl-sub{font-size:10px;color:var(--t3);margin-top:1px}
+.dr-hl-arrow{font-size:20px;color:var(--t3)}
+
+/* Dreams — form */
+.dr-form{background:var(--card-bg);border:none;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:var(--card-shadow)}
+.dr-form-header{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px}
+.dr-form-row{display:flex;gap:8px;margin-top:8px}
+
+/* Dreams — cards */
+.dr-card{background:var(--card-bg);border:none;border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:var(--card-shadow);display:flex;gap:12px;align-items:flex-start;transition:all .2s;position:relative}
+.dr-card:active{transform:scale(.99)}
+.dr-card.achieved{opacity:.55}
+.dr-card.achieved .dr-title{text-decoration:line-through;color:var(--t3)}
+.dr-emoji{font-size:26px;flex-shrink:0}
+.dr-info{flex:1;min-width:0}
+.dr-title{font-weight:600;font-size:14px;color:var(--cream);line-height:1.3}
+.dr-tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.dr-cat-tag{font-size:9px;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+.dr-prio-tag{font-size:9px;padding:1px 8px;border-radius:8px;background:var(--tint);color:var(--t2);letter-spacing:.3px}
+.dr-target-tag{font-size:9px;color:var(--teal);font-weight:500}
+.dr-desc{font-size:12px;color:var(--t2);margin-top:6px;line-height:1.5}
 .dr-meta{font-size:10px;color:var(--t3);margin-top:6px}
 .dr-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:12px;color:var(--gold);transition:all .2s}
-.dr-check:active{transform:scale(.9)}
+.dr-check:active{transform:scale(.85)}
+.dr-card.achieved .dr-check{background:var(--gold);border-color:var(--gold);color:#fff}
 
 /* ===== HER SPACE ===== */
 .hs-affirm{background:var(--grad-love);border-radius:22px;padding:26px 22px;margin-bottom:20px;cursor:pointer;text-align:center;color:#fff;box-shadow:var(--shadow-lg)}
@@ -828,6 +859,37 @@
 .dh-tl-phase.done .dh-tl-name{color:var(--lavender);font-weight:600}
 .dh-tl-line{flex:1;height:2px;background:var(--bdr-s);min-width:8px}
 .dh-tl-phase.done+.dh-tl-line{background:var(--lavender)}
+
+/* Dream Home — summary card */
+.dh-summary{background:var(--card-bg);border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)}
+.dh-sum-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.dh-sum-icon{font-size:28px}
+.dh-sum-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--cream)}
+.dh-sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.dh-sum-item{padding:10px 12px;background:var(--input-bg);border-radius:12px}
+.dh-si-label{display:block;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:2px}
+.dh-si-val{display:block;font-size:12px;font-weight:600;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dh-sum-progress{margin-top:4px}
+.dh-sum-prog-label{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:4px}
+
+/* Dream Home — mortgage */
+.dh-mortgage-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dh-mort-field{display:flex;flex-direction:column;gap:4px}
+.dh-mort-result{margin-top:14px;border-top:1px solid var(--bdr-s);padding-top:12px}
+.dh-mort-row{display:flex;justify-content:space-between;padding:6px 0;font-size:12px;color:var(--t2);border-bottom:1px solid var(--tint-xs)}
+.dh-mort-row:last-child{border-bottom:none}
+.dh-mort-row span:last-child{font-weight:600;color:var(--cream)}
+.dh-mort-highlight{background:rgba(196,120,74,.08);margin:4px -8px;padding:10px 8px;border-radius:10px;border-bottom:none}
+.dh-mort-highlight span:last-child{font-size:16px;color:var(--gold);font-weight:700}
+
+/* Dream Home — checklist */
+.dh-check-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--tint-xs);cursor:pointer;transition:opacity .2s}
+.dh-check-item:last-child{border-bottom:none}
+.dh-check-item span{font-size:12px;color:var(--cream);transition:all .2s}
+.dh-check-box{width:22px;height:22px;border-radius:7px;border:2px solid var(--bdr);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:11px;color:transparent}
+.dh-check-item.done .dh-check-box{background:var(--lavender);border-color:var(--lavender);color:#fff}
+.dh-check-item.done .dh-check-box::after{content:'✓'}
+.dh-check-item.done span{text-decoration:line-through;color:var(--t3)}
 
 /* ===== KNOW YOUR PERSON ===== */
 .kyp-section{margin-bottom:20px}

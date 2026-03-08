@@ -1533,13 +1533,15 @@ function dhLoadAll() {
     if (ts && c.targetDate) ts.textContent = 'Target: ' + c.targetDate;
     // Timeline phase
     if (c.timelinePhase) {
-      const phases = ['research','land','design','build','movein'];
+      const phases = ['research','land','design','permits','build','movein'];
       const idx = phases.indexOf(c.timelinePhase);
       document.querySelectorAll('.dh-tl-phase').forEach((el, i) => { el.classList.toggle('done', i <= idx); });
     }
     // Design notes
     dhRenderNotes();
     dhRenderFinance();
+    dhRenderSummary();
+    dhLoadChecklist();
   });
 }
 
@@ -1553,6 +1555,7 @@ async function dhSave(key, val) {
   if (key === 'location') { const el = document.getElementById('dh-location-saved'); if (el) el.textContent = val; }
   if (key === 'targetDate') { const el = document.getElementById('dh-target-saved'); if (el) el.textContent = 'Target: ' + val; }
   if (key === 'totalBudget' || key === 'savedAmount') dhRenderFinance();
+  dhRenderSummary();
 }
 
 // Stepper controls
@@ -1660,11 +1663,13 @@ async function dhSaveBudget(cat, val) {
 
 // Timeline phase
 function dhSetTimeline(el, phase) {
-  const phases = ['research','land','design','build','movein'];
+  const phases = ['research','land','design','permits','build','movein'];
   const idx = phases.indexOf(phase);
   document.querySelectorAll('.dh-tl-phase').forEach((p, i) => { p.classList.toggle('done', i <= idx); });
   if (db) db.ref('dreamHome/config/timelinePhase').set(phase);
   toast('Phase: ' + phase);
+  dhConfig.timelinePhase = phase;
+  dhRenderSummary();
 }
 
 // Render finance section
@@ -1816,6 +1821,95 @@ async function addHomeWish() {
 
 async function deleteHomeWish(key) {
   await db.ref('dreamHome/wishlist/' + key).remove();
+}
+
+// Summary card renderer
+function dhRenderSummary() {
+  const c = dhConfig;
+  const locEl = document.getElementById('dh-s-location');
+  if (locEl) locEl.textContent = c.location || 'Not set';
+  const styleEl = document.getElementById('dh-s-style');
+  if (styleEl) styleEl.textContent = c.archStyle || 'Not set';
+  const specEl = document.getElementById('dh-s-specs');
+  if (specEl) {
+    const beds = c.beds || 3, baths = c.baths || 2, sqft = c.sqft;
+    specEl.textContent = `${beds} bed / ${baths} bath${sqft ? ' / ' + parseInt(sqft).toLocaleString() + ' sqft' : ''}`;
+  }
+  const budEl = document.getElementById('dh-s-budget');
+  if (budEl) budEl.textContent = c.totalBudget ? '$' + parseInt(c.totalBudget).toLocaleString() : 'Not set';
+  const savEl = document.getElementById('dh-s-saved');
+  if (savEl) savEl.textContent = '$' + (parseInt(c.savedAmount) || 0).toLocaleString();
+  const phaseEl = document.getElementById('dh-s-phase');
+  const phaseNames = { research:'Research', land:'Land Search', design:'Design', permits:'Permits', build:'Building', movein:'Move In' };
+  if (phaseEl) phaseEl.textContent = phaseNames[c.timelinePhase] || 'Research';
+
+  // Planning progress — count how many config fields are filled
+  let filled = 0, total = 10;
+  if (c.location) filled++;
+  if (c.plotSize) filled++;
+  if (c.buildType) filled++;
+  if (c.archStyle) filled++;
+  if (c.sqft) filled++;
+  if (c.totalBudget) filled++;
+  if (c.tags && Object.keys(c.tags).length > 0) filled++;
+  if (c.colors && c.colors.length > 0) filled++;
+  if (c.timelinePhase && c.timelinePhase !== 'research') filled++;
+  if (c.targetDate) filled++;
+  const pct = Math.round((filled / total) * 100);
+  const pctEl = document.getElementById('dh-sum-pct');
+  if (pctEl) pctEl.textContent = pct + '%';
+  const fillEl = document.getElementById('dh-sum-fill');
+  if (fillEl) fillEl.style.width = pct + '%';
+}
+
+// Mortgage calculator
+function dhCalcMortgage() {
+  const price = parseFloat(document.getElementById('dh-mort-price').value) || 0;
+  const downPct = parseFloat(document.getElementById('dh-mort-down').value) || 20;
+  const rate = parseFloat(document.getElementById('dh-mort-rate').value) || 6.5;
+  const years = parseInt(document.getElementById('dh-mort-term').value) || 30;
+  const resultEl = document.getElementById('dh-mort-result');
+  if (!resultEl || !price) { if (resultEl) resultEl.innerHTML = ''; return; }
+
+  const down = price * (downPct / 100);
+  const loan = price - down;
+  const monthlyRate = (rate / 100) / 12;
+  const numPayments = years * 12;
+  let monthly = 0;
+  if (monthlyRate > 0) {
+    monthly = loan * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+  } else {
+    monthly = loan / numPayments;
+  }
+  const totalPaid = monthly * numPayments;
+  const totalInterest = totalPaid - loan;
+
+  resultEl.innerHTML = `
+    <div class="dh-mort-row"><span>Down Payment</span><span>$${Math.round(down).toLocaleString()}</span></div>
+    <div class="dh-mort-row"><span>Loan Amount</span><span>$${Math.round(loan).toLocaleString()}</span></div>
+    <div class="dh-mort-row dh-mort-highlight"><span>Monthly Payment</span><span>$${Math.round(monthly).toLocaleString()}</span></div>
+    <div class="dh-mort-row"><span>Total Interest</span><span>$${Math.round(totalInterest).toLocaleString()}</span></div>
+    <div class="dh-mort-row"><span>Total Paid</span><span>$${Math.round(totalPaid).toLocaleString()}</span></div>`;
+}
+
+// Build checklist toggle
+function dhToggleCheck(el) {
+  el.classList.toggle('done');
+  // Save checklist state
+  if (!db) return;
+  const items = document.querySelectorAll('#dh-checklist .dh-check-item');
+  const state = {};
+  items.forEach((item, i) => { state[i] = item.classList.contains('done'); });
+  db.ref('dreamHome/config/checklist').set(state);
+}
+
+function dhLoadChecklist() {
+  if (!db) return;
+  db.ref('dreamHome/config/checklist').once('value').then(snap => {
+    const state = snap.val() || {};
+    const items = document.querySelectorAll('#dh-checklist .dh-check-item');
+    items.forEach((item, i) => { if (state[i]) item.classList.add('done'); });
+  });
 }
 
 // ===== SHARED GROCERY LIST =====

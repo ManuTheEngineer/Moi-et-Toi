@@ -577,6 +577,9 @@ function renderCheckinFeed(weeks) {
 
 // ===== DREAM BOARD =====
 let dreamFilter = 'all';
+const DR_CAT_ICONS = { home:'🏠', travel:'✈️', career:'💼', family:'👨‍👩‍👧', experience:'🎯', financial:'💰' };
+const DR_CAT_COLORS = { home:'var(--lavender)', travel:'var(--teal)', career:'var(--gold)', family:'var(--rose)', experience:'var(--emerald)', financial:'var(--amber)' };
+const DR_PRIORITY_LABELS = { someday:'Someday', thisyear:'This Year', next2:'Next 2 Yrs', '5year':'5 Year', lifetime:'Lifetime' };
 
 async function addDream() {
   if (!db || !user) return;
@@ -584,19 +587,24 @@ async function addDream() {
   const emoji = document.getElementById('dr-emoji').value.trim() || '✧';
   const cat = document.getElementById('dr-cat').value;
   const desc = document.getElementById('dr-desc').value.trim();
+  const priority = document.getElementById('dr-priority').value;
+  const target = document.getElementById('dr-target').value.trim();
   if (!title) { toast('Describe your dream'); return; }
   const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
   await db.ref('dreams').push({
     title, emoji, category: cat, description: desc,
+    priority, targetDate: target,
     addedBy: user, addedByName: NAMES[user],
     achieved: false, timestamp: Date.now()
   });
   document.getElementById('dr-title').value = '';
   document.getElementById('dr-emoji').value = '';
   document.getElementById('dr-desc').value = '';
+  document.getElementById('dr-target').value = '';
   document.getElementById('dr-title').focus();
-  if (btn) { btn.textContent = '\u2713 Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add dream'; }, 1500); }
+  if (btn) { btn.textContent = '\u2713 Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add Dream'; }, 1500); }
   toast('Dream added');
+  awardXP(10);
 }
 
 function filterDreams(cat, el) {
@@ -618,30 +626,67 @@ function listenDreams() {
 function renderDreams(items) {
   const el = document.getElementById('dr-list');
   if (!el) return;
-  const filtered = dreamFilter === 'all' ? items : items.filter(i => i.category === dreamFilter);
-  if (!filtered.length) { el.innerHTML = '<div class="empty">No dreams in this category yet.</div>'; return; }
+  let filtered;
+  if (dreamFilter === 'all') filtered = items.filter(i => !i.achieved);
+  else if (dreamFilter === 'achieved') filtered = items.filter(i => i.achieved);
+  else filtered = items.filter(i => i.category === dreamFilter && !i.achieved);
+
+  if (!filtered.length) {
+    el.innerHTML = `<div class="empty">${dreamFilter === 'achieved' ? 'No achieved dreams yet — keep going!' : 'No dreams in this category yet'}</div>`;
+    updateDRStats(items);
+    return;
+  }
   el.innerHTML = filtered.map(i => {
     const ts = timeAgo(new Date(i.timestamp));
     const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
-    return `<div class="dr-card ${i.achieved?'achieved':''}">
+    const catColor = DR_CAT_COLORS[i.category] || 'var(--gold)';
+    const catIcon = DR_CAT_ICONS[i.category] || '';
+    const prioLabel = DR_PRIORITY_LABELS[i.priority] || '';
+    return `<div class="dr-card ${i.achieved?'achieved':''}" style="border-left:3px solid ${catColor}">
       <div class="dr-check" onclick="toggleDream('${i._key}',${!i.achieved})">${i.achieved?'✓':''}</div>
       <div class="dr-emoji">${i.emoji}</div>
       <div class="dr-info">
-        <div class="dr-title">${i.title}</div>
-        <div class="dr-cat-tag">${i.category}</div>
+        <div class="dr-title">${esc(i.title)}</div>
+        <div class="dr-tags-row">
+          <span class="dr-cat-tag" style="color:${catColor}">${catIcon} ${i.category}</span>
+          ${prioLabel ? `<span class="dr-prio-tag">${prioLabel}</span>` : ''}
+          ${i.targetDate ? `<span class="dr-target-tag">${esc(i.targetDate)}</span>` : ''}
+        </div>
         ${i.description ? `<div class="dr-desc">${i.description.replace(/</g,'&lt;')}</div>` : ''}
         <div class="dr-meta">${who} · ${ts}</div>
       </div>
       <button class="item-delete" onclick="event.stopPropagation();deleteDream('${i._key}')">×</button>
     </div>`;
   }).join('');
-  updateDRStats();
+  updateDRStats(items);
+}
+
+function updateDRStats(items) {
+  if (!items) return;
+  const total = items.length;
+  const done = items.filter(i => i.achieved).length;
+  const active = total - done;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+  // Progress ring
+  const ring = document.getElementById('dr-ring-fill');
+  if (ring) { const dashoffset = 220 - (220 * pct / 100); ring.style.strokeDashoffset = dashoffset; }
+  const pctEl = document.getElementById('dr-ring-pct');
+  if (pctEl) pctEl.textContent = pct;
+
+  // Stat numbers
+  const totalEl = document.getElementById('dr-total-ct');
+  const doneEl = document.getElementById('dr-done-ct');
+  const activeEl = document.getElementById('dr-active-ct');
+  if (totalEl) totalEl.textContent = total;
+  if (doneEl) doneEl.textContent = done;
+  if (activeEl) activeEl.textContent = active;
 }
 
 async function toggleDream(key, achieved) {
   if (!db) return;
   await db.ref('dreams/' + key + '/achieved').set(achieved);
-  if (achieved) { toast('Dream achieved'); showConfetti(); }
+  if (achieved) { toast('Dream achieved!'); showConfetti(); awardXP(25); }
 }
 
 // ===== ATTACHMENT STYLE QUIZ =====

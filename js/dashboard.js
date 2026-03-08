@@ -676,21 +676,7 @@ function updateBLStats() {
   });
 }
 
-function updateDRStats() {
-  const el = document.getElementById('dr-stats');
-  if (!el || !db) return;
-  db.ref('dreams').once('value', snap => {
-    if (!snap.exists()) { el.innerHTML = ''; return; }
-    let total = 0, done = 0;
-    const cats = {};
-    snap.forEach(c => { total++; const v = c.val(); if (v.achieved) done++; cats[v.category] = (cats[v.category]||0)+1; });
-    const topCat = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
-    el.innerHTML = `
-      <div class="mod-stat"><div class="mod-stat-num">${total}</div><div class="mod-stat-label">Dreams</div></div>
-      <div class="mod-stat"><div class="mod-stat-num">${done}</div><div class="mod-stat-label">Achieved</div></div>
-      ${topCat ? `<div class="mod-stat"><div class="mod-stat-num">${topCat[1]}</div><div class="mod-stat-label">${topCat[0]}</div></div>` : ''}`;
-  });
-}
+// updateDRStats moved to modules-social.js renderDreams
 
 function updateHLStats() {
   const el = document.getElementById('hl-stats');

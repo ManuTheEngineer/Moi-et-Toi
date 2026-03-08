@@ -1405,42 +1405,97 @@
 <div class="pg" id="pg-dreams">
 <div class="ctn">
 
-  <div class="mod-status" id="dr-stats"></div>
+  <!-- Progress Overview -->
+  <div class="dr-hero" id="dr-hero">
+    <div class="dr-ring-wrap">
+      <svg class="dr-ring" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="35" fill="none" stroke="var(--bg3)" stroke-width="5"/>
+        <circle cx="40" cy="40" r="35" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220" id="dr-ring-fill" transform="rotate(-90 40 40)"/>
+      </svg>
+      <div class="dr-ring-text"><span id="dr-ring-pct">0</span><small>%</small></div>
+    </div>
+    <div class="dr-hero-stats">
+      <div class="dr-hero-stat"><span class="dr-hs-num" id="dr-total-ct">0</span><span class="dr-hs-label">Dreams</span></div>
+      <div class="dr-hero-stat"><span class="dr-hs-num" id="dr-done-ct">0</span><span class="dr-hs-label">Achieved</span></div>
+      <div class="dr-hero-stat"><span class="dr-hs-num" id="dr-active-ct">0</span><span class="dr-hs-label">Active</span></div>
+    </div>
+  </div>
 
+  <!-- Quick link to Dream Home -->
+  <div class="dr-home-link" onclick="go('dreamhome')">
+    <div class="dr-hl-icon">🏠</div>
+    <div class="dr-hl-info"><div class="dr-hl-title">Dream Home Planner</div><div class="dr-hl-sub">Design your future home together</div></div>
+    <div class="dr-hl-arrow">&#x203A;</div>
+  </div>
+
+  <!-- Add Dream Form -->
   <div class="dr-form">
-    <input type="text" id="dr-title" placeholder="Something we're dreaming about...">
-    <div class="ms-row">
-      <input type="text" id="dr-emoji" placeholder="🏡" maxlength="2" class="input-emoji">
+    <div class="dr-form-header">Add a Dream</div>
+    <input type="text" id="dr-title" class="quiz-q" placeholder="What are you dreaming about?">
+    <div class="dr-form-row">
+      <input type="text" id="dr-emoji" placeholder="✧" maxlength="2" class="input-emoji">
       <select id="dr-cat" class="select-field flex-1">
-        <option value="home">Home & Living</option>
-        <option value="travel">Travel</option>
-        <option value="career">Career</option>
-        <option value="family">Family</option>
-        <option value="experience">Experiences</option>
-        <option value="financial">Financial</option>
+        <option value="home">🏠 Home & Living</option>
+        <option value="travel">✈️ Travel</option>
+        <option value="career">💼 Career</option>
+        <option value="family">👨‍👩‍👧 Family</option>
+        <option value="experience">🎯 Experiences</option>
+        <option value="financial">💰 Financial</option>
       </select>
     </div>
-    <textarea id="dr-desc" class="mood-note" placeholder="Describe the dream... (optional)"></textarea>
-    <button class="dq-submit" onclick="addDream()">Add dream</button>
+    <div class="dr-form-row">
+      <select id="dr-priority" class="select-field flex-1">
+        <option value="someday">Someday</option>
+        <option value="thisyear">This Year</option>
+        <option value="next2">Next 2 Years</option>
+        <option value="5year">5 Year Goal</option>
+        <option value="lifetime">Lifetime</option>
+      </select>
+      <input type="text" id="dr-target" class="quiz-q flex-1" placeholder="Target date (optional)">
+    </div>
+    <textarea id="dr-desc" class="mood-note" placeholder="Describe the dream, why it matters..." rows="2"></textarea>
+    <button class="dq-submit" onclick="addDream()">Add Dream</button>
   </div>
 
+  <!-- Category Filters -->
   <div class="bl-cats" id="dr-cats">
     <span class="bl-cat on" onclick="filterDreams('all',this)">All</span>
-    <span class="bl-cat" onclick="filterDreams('home',this)">Home</span>
-    <span class="bl-cat" onclick="filterDreams('travel',this)">Travel</span>
-    <span class="bl-cat" onclick="filterDreams('career',this)">Career</span>
-    <span class="bl-cat" onclick="filterDreams('family',this)">Family</span>
-    <span class="bl-cat" onclick="filterDreams('financial',this)">Financial</span>
+    <span class="bl-cat" onclick="filterDreams('home',this)">🏠 Home</span>
+    <span class="bl-cat" onclick="filterDreams('travel',this)">✈️ Travel</span>
+    <span class="bl-cat" onclick="filterDreams('career',this)">💼 Career</span>
+    <span class="bl-cat" onclick="filterDreams('family',this)">👨‍👩‍👧 Family</span>
+    <span class="bl-cat" onclick="filterDreams('experience',this)">🎯 Experiences</span>
+    <span class="bl-cat" onclick="filterDreams('financial',this)">💰 Financial</span>
+    <span class="bl-cat" onclick="filterDreams('achieved',this)">✓ Achieved</span>
   </div>
 
-  <div id="dr-list" class="stagger-in"><div class="empty">Start mapping out the future you want</div></div>
+  <!-- Dream List -->
+  <div id="dr-list" class="stagger-in"><div class="empty">Start mapping out the future you want together</div></div>
 </div>
 </div>
 <!-- ===== DREAM HOME ===== -->
 <div class="pg" id="pg-dreamhome">
 <div class="ctn">
 
-  <div class="mod-status" id="dh-stats"></div>
+  <!-- Summary Overview Card -->
+  <div class="dh-summary" id="dh-summary">
+    <div class="dh-sum-header">
+      <div class="dh-sum-icon">🏠</div>
+      <div class="dh-sum-title">Our Dream Home</div>
+    </div>
+    <div class="dh-sum-grid" id="dh-sum-grid">
+      <div class="dh-sum-item"><span class="dh-si-label">Location</span><span class="dh-si-val" id="dh-s-location">Not set</span></div>
+      <div class="dh-sum-item"><span class="dh-si-label">Style</span><span class="dh-si-val" id="dh-s-style">Not set</span></div>
+      <div class="dh-sum-item"><span class="dh-si-label">Specs</span><span class="dh-si-val" id="dh-s-specs">--</span></div>
+      <div class="dh-sum-item"><span class="dh-si-label">Budget</span><span class="dh-si-val" id="dh-s-budget">Not set</span></div>
+      <div class="dh-sum-item"><span class="dh-si-label">Saved</span><span class="dh-si-val" id="dh-s-saved">$0</span></div>
+      <div class="dh-sum-item"><span class="dh-si-label">Phase</span><span class="dh-si-val" id="dh-s-phase">Research</span></div>
+    </div>
+    <div class="dh-sum-progress">
+      <div class="dh-sum-prog-label"><span>Planning Progress</span><span id="dh-sum-pct">0%</span></div>
+      <div class="dh-prog-bar"><div class="dh-prog-fill" id="dh-sum-fill" style="width:0%;background:var(--lavender)"></div></div>
+    </div>
+  </div>
 
   <!-- Phase Tabs -->
   <div class="dh-phases">
@@ -1471,8 +1526,27 @@
       <div class="dh-saved-val" id="dh-location-saved"></div>
     </div>
 
+    <!-- Neighbourhood Priorities -->
+    <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Neighbourhood Priorities</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-tag-row">
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Good schools')">Good schools</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Low crime')">Low crime</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Parks nearby')">Parks nearby</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Walkable')">Walkable</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Close to work')">Close to work</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Public transport')">Public transport</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Shopping nearby')">Shopping nearby</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Quiet street')">Quiet street</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Family-friendly')">Family-friendly</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Gated community')">Gated community</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Gym / fitness')">Gym / fitness</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'neighbourhood','Restaurants')">Restaurants</span>
+      </div>
+    </div>
+
     <!-- Plot / Land -->
-    <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Plot &amp; Land</div></div>
+    <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Plot &amp; Land</div></div>
     <div class="card" style="margin-bottom:12px">
       <div class="dh-size-grid">
         <div class="dh-size-opt" onclick="dhSelectSize(this,'small')"><div class="dh-size-icon">🏘️</div><div class="dh-size-label">Small</div><div class="dh-size-sub">Under 5,000 sq ft</div></div>
@@ -1490,7 +1564,7 @@
     </div>
 
     <!-- Build Type -->
-    <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Build Type</div></div>
+    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Build Type</div></div>
     <div class="card" style="margin-bottom:12px">
       <div class="dh-build-grid">
         <div class="dh-build-opt" onclick="dhSelectBuild(this,'new')"><span class="dh-bo-icon">🔨</span><span class="dh-bo-label">New Build</span></div>
@@ -1501,7 +1575,7 @@
     </div>
 
     <!-- House Config -->
-    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">House Specs</div></div>
+    <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">House Specs</div></div>
     <div class="card" style="margin-bottom:12px">
       <div class="dh-specs-grid">
         <div class="dh-spec">
@@ -1529,7 +1603,7 @@
     </div>
 
     <!-- Must-Haves -->
-    <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Must-Haves</div></div>
+    <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Must-Haves</div></div>
     <div class="card" style="margin-bottom:12px">
       <div class="dh-tag-row" id="dh-musthaves">
         <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Walk-in closet')">Walk-in closet</span>
@@ -1547,6 +1621,25 @@
         <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Guest suite')">Guest suite</span>
         <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Gym')">Gym</span>
         <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Media room')">Media room</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Wine cellar')">Wine cellar</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Mudroom')">Mudroom</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Butler pantry')">Butler pantry</span>
+      </div>
+    </div>
+
+    <!-- Energy & Sustainability -->
+    <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Energy &amp; Sustainability</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-tag-row">
+        <span class="dh-tag" onclick="dhToggleTag(this,'energy','Solar panels')">Solar panels</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'energy','Battery storage')">Battery storage</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'energy','EV charger')">EV charger</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'energy','Rainwater tank')">Rainwater tank</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'energy','Double glazing')">Double glazing</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'energy','Insulation upgrade')">Insulation upgrade</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'energy','Heat pump')">Heat pump</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'energy','Greywater recycling')">Greywater recycling</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'energy','Smart thermostat')">Smart thermostat</span>
       </div>
     </div>
   </div>
@@ -1642,8 +1735,67 @@
       </div>
     </div>
 
+    <!-- Flooring -->
+    <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Flooring</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-tag-row">
+        <span class="dh-tag" onclick="dhToggleTag(this,'flooring','Hardwood')">Hardwood</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'flooring','Engineered wood')">Engineered wood</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'flooring','Tile')">Tile</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'flooring','Polished concrete')">Polished concrete</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'flooring','Marble')">Marble</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'flooring','Vinyl plank')">Vinyl plank</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'flooring','Carpet')">Carpet</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'flooring','Heated floors')">Heated floors</span>
+      </div>
+    </div>
+
+    <!-- Lighting -->
+    <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Lighting &amp; Fixtures</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-tag-row">
+        <span class="dh-tag" onclick="dhToggleTag(this,'lighting','Recessed LED')">Recessed LED</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'lighting','Pendant lights')">Pendant lights</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'lighting','Chandeliers')">Chandeliers</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'lighting','Under-cabinet')">Under-cabinet</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'lighting','Dimmers')">Dimmers</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'lighting','Smart lighting')">Smart lighting</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'lighting','Skylights')">Skylights</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'lighting','Track lighting')">Track lighting</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'lighting','Outdoor lighting')">Outdoor lighting</span>
+      </div>
+    </div>
+
+    <!-- Countertops & Finishes -->
+    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Countertops &amp; Finishes</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-tag-row">
+        <span class="dh-tag" onclick="dhToggleTag(this,'countertop','Granite')">Granite</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'countertop','Quartz')">Quartz</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'countertop','Marble')">Marble</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'countertop','Butcher block')">Butcher block</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'countertop','Concrete')">Concrete</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'countertop','Porcelain')">Porcelain</span>
+      </div>
+    </div>
+
+    <!-- Smart Home -->
+    <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Smart Home Tech</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-tag-row">
+        <span class="dh-tag" onclick="dhToggleTag(this,'smarthome','Smart locks')">Smart locks</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'smarthome','Security cameras')">Security cameras</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'smarthome','Video doorbell')">Video doorbell</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'smarthome','Automated blinds')">Automated blinds</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'smarthome','Whole-home audio')">Whole-home audio</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'smarthome','Smart irrigation')">Smart irrigation</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'smarthome','Home automation')">Home automation</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'smarthome','Wired ethernet')">Wired ethernet</span>
+      </div>
+    </div>
+
     <!-- Notes -->
-    <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Design Notes</div></div>
+    <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Design Notes</div></div>
     <div class="card" style="margin-bottom:12px">
       <textarea id="dh-design-notes" class="mood-note" placeholder="Ideas, inspiration links, notes..." rows="3"></textarea>
       <button class="dh-save-btn" style="margin-top:8px" onclick="dhSaveNote()">Save Note</button>
@@ -1754,8 +1906,32 @@
       <div id="dh-wishlist" style="margin-top:10px"><div class="empty">Add items to your home wishlist</div></div>
     </div>
 
+    <!-- Mortgage Calculator -->
+    <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Mortgage Estimate</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-mortgage-grid">
+        <div class="dh-mort-field">
+          <label class="dh-spec-label">Home Price</label>
+          <div class="dh-field-row"><span class="dh-dollar">$</span><input type="number" id="dh-mort-price" class="quiz-q" placeholder="500000" oninput="dhCalcMortgage()"></div>
+        </div>
+        <div class="dh-mort-field">
+          <label class="dh-spec-label">Down Payment %</label>
+          <div class="dh-field-row"><input type="number" id="dh-mort-down" class="quiz-q" placeholder="20" value="20" oninput="dhCalcMortgage()"><span style="font-size:12px;color:var(--t3)">%</span></div>
+        </div>
+        <div class="dh-mort-field">
+          <label class="dh-spec-label">Interest Rate %</label>
+          <div class="dh-field-row"><input type="number" id="dh-mort-rate" class="quiz-q" placeholder="6.5" value="6.5" step="0.1" oninput="dhCalcMortgage()"><span style="font-size:12px;color:var(--t3)">%</span></div>
+        </div>
+        <div class="dh-mort-field">
+          <label class="dh-spec-label">Loan Term</label>
+          <div class="dh-field-row"><select id="dh-mort-term" class="select-field" style="flex:1" onchange="dhCalcMortgage()"><option value="30">30 years</option><option value="25">25 years</option><option value="20">20 years</option><option value="15">15 years</option></select></div>
+        </div>
+      </div>
+      <div id="dh-mort-result" class="dh-mort-result"></div>
+    </div>
+
     <!-- Timeline -->
-    <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Build Timeline</div></div>
+    <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Build Timeline</div></div>
     <div class="card" style="margin-bottom:12px">
       <div class="dh-timeline-row">
         <div class="dh-tl-phase" onclick="dhSetTimeline(this,'research')"><div class="dh-tl-dot"></div><div class="dh-tl-name">Research</div></div>
@@ -1763,6 +1939,8 @@
         <div class="dh-tl-phase" onclick="dhSetTimeline(this,'land')"><div class="dh-tl-dot"></div><div class="dh-tl-name">Land</div></div>
         <div class="dh-tl-line"></div>
         <div class="dh-tl-phase" onclick="dhSetTimeline(this,'design')"><div class="dh-tl-dot"></div><div class="dh-tl-name">Design</div></div>
+        <div class="dh-tl-line"></div>
+        <div class="dh-tl-phase" onclick="dhSetTimeline(this,'permits')"><div class="dh-tl-dot"></div><div class="dh-tl-name">Permits</div></div>
         <div class="dh-tl-line"></div>
         <div class="dh-tl-phase" onclick="dhSetTimeline(this,'build')"><div class="dh-tl-dot"></div><div class="dh-tl-name">Build</div></div>
         <div class="dh-tl-line"></div>
@@ -1773,6 +1951,23 @@
         <button class="dh-save-btn" onclick="dhSave('targetDate',document.getElementById('dh-target-date').value)">Set</button>
       </div>
       <div id="dh-target-saved" class="dh-saved-val"></div>
+    </div>
+
+    <!-- Checklist -->
+    <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Build Checklist</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div id="dh-checklist">
+        <div class="dh-check-item" onclick="dhToggleCheck(this)"><div class="dh-check-box"></div><span>Research areas &amp; neighbourhoods</span></div>
+        <div class="dh-check-item" onclick="dhToggleCheck(this)"><div class="dh-check-box"></div><span>Get pre-approved for financing</span></div>
+        <div class="dh-check-item" onclick="dhToggleCheck(this)"><div class="dh-check-box"></div><span>Find &amp; secure land / property</span></div>
+        <div class="dh-check-item" onclick="dhToggleCheck(this)"><div class="dh-check-box"></div><span>Hire architect / designer</span></div>
+        <div class="dh-check-item" onclick="dhToggleCheck(this)"><div class="dh-check-box"></div><span>Finalise floor plans</span></div>
+        <div class="dh-check-item" onclick="dhToggleCheck(this)"><div class="dh-check-box"></div><span>Select builder / contractor</span></div>
+        <div class="dh-check-item" onclick="dhToggleCheck(this)"><div class="dh-check-box"></div><span>Get building permits</span></div>
+        <div class="dh-check-item" onclick="dhToggleCheck(this)"><div class="dh-check-box"></div><span>Choose interior finishes</span></div>
+        <div class="dh-check-item" onclick="dhToggleCheck(this)"><div class="dh-check-box"></div><span>Landscaping plan</span></div>
+        <div class="dh-check-item" onclick="dhToggleCheck(this)"><div class="dh-check-box"></div><span>Final inspection &amp; handover</span></div>
+      </div>
     </div>
   </div>
 
