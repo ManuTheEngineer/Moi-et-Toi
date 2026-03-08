@@ -193,7 +193,7 @@ function needsOnboarding() {
 // injected inputs inside position:fixed containers.
 let onboardStep = 0;
 let onboardData = { name: '', nickname: '', anniversary: '', photo: '' };
-const OB_TOTAL = 8;
+const OB_TOTAL = 7;
 
 function startOnboarding() {
   onboardStep = 0;
@@ -299,37 +299,16 @@ function renderOnboardStep() {
     skip.style.display = '';
     btn.textContent = 'Continue';
   } else if (onboardStep === 5) {
-    // Tour 1
-    title.textContent = 'Your Home';
-    sub.textContent = '';
-    tour.style.display = '';
-    tour.innerHTML = '<div class="ob-tour-card">'
-      + '<div class="ob-tour-row"><span class="ob-tour-ico">🏠</span><div><strong>Home</strong><br>Your dashboard — mood, daily questions, streaks, and a pulse on your relationship.</div></div>'
-      + '<div class="ob-tour-row"><span class="ob-tour-ico">💕</span><div><strong>Together</strong><br>Letters, games, date nights, check-ins — everything you do as a couple.</div></div>'
-      + '</div>';
-    btn.textContent = 'Next';
+    // Ready screen before interactive tour
+    bar.style.width = '90%';
+    emoji.textContent = '🏡'; emoji.style.display = '';
+    title.textContent = "Let me show you around";
+    sub.innerHTML = "I'll walk you through your new space —<br>it'll only take a moment.";
+    btn.textContent = 'Show me';
   } else if (onboardStep === 6) {
-    // Tour 2
-    title.textContent = 'Your Tools';
-    sub.textContent = '';
-    tour.style.display = '';
-    tour.innerHTML = '<div class="ob-tour-card">'
-      + '<div class="ob-tour-row"><span class="ob-tour-ico">📊</span><div><strong>Wellness</strong><br>Track mood, fitness, nutrition, and gratitude — individually and together.</div></div>'
-      + '<div class="ob-tour-row"><span class="ob-tour-ico">🌍</span><div><strong>Plan</strong><br>Dreams, calendar, finances, your dream home, shared values and wishlists.</div></div>'
-      + '<div class="ob-tour-row"><span class="ob-tour-ico">✨</span><div><strong>More</strong><br>AI chat, memories, achievements, and settings.</div></div>'
-      + '</div>';
-    btn.textContent = 'Got it';
-  } else if (onboardStep === 7) {
-    // Done
-    bar.style.width = '100%';
-    emoji.textContent = '✨'; emoji.style.display = '';
-    title.textContent = isHer ? 'All yours, baby' : "You're all set";
-    var msg = 'Welcome, <strong>' + esc(onboardData.name) + '</strong>.<br>'
-      + 'Your partner is <strong>' + esc(onboardData.nickname) + '</strong> in here.';
-    if (onboardData.anniversary) msg += '<br>Counting the days since <strong>' + onboardData.anniversary + '</strong>.';
-    sub.innerHTML = msg;
-    btn.textContent = 'Enter Moi & Toi';
-    btn.onclick = function() { finishOnboarding(); };
+    // Done — finishOnboarding then launch interactive tour
+    finishOnboarding(true);
+    return; // tour will launch after app loads
   }
 }
 
@@ -382,7 +361,7 @@ function resizePhoto(file, callback) {
   reader.readAsDataURL(file);
 }
 
-async function finishOnboarding() {
+async function finishOnboarding(startTour) {
   NAMES[user] = onboardData.name;
   var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
   NICKNAMES[nickKey] = onboardData.nickname;
@@ -401,6 +380,198 @@ async function finishOnboarding() {
   }
   document.getElementById('login').classList.remove('onboard-active');
   finishLogin();
+  if (startTour) {
+    setTimeout(function() { startAppTour(); }, 600);
+  }
+}
+
+// ===== INTERACTIVE APP TOUR =====
+let tourStep = 0;
+const TOUR_STEPS = [
+  {
+    target: '.dash-greeting-row',
+    title: 'Your Home',
+    text: 'This is your dashboard — it greets you and shows how you and your partner are doing.',
+    position: 'bottom',
+    page: 'dash'
+  },
+  {
+    target: '.hero-card-us',
+    title: 'Relationship Pulse',
+    text: 'Your relationship health at a glance — mood, streak, and days together. Tap to see the breakdown.',
+    position: 'bottom',
+    page: 'dash'
+  },
+  {
+    target: '#dash-daily-q, .dash-card',
+    title: 'Daily Question',
+    text: 'Every day, you both get a new question. Answer it to build your streak and learn about each other.',
+    position: 'top',
+    page: 'dash',
+    fallbackText: true
+  },
+  {
+    target: '.view-toggle',
+    title: 'Us & Me',
+    text: 'Switch between "Us" (your relationship) and "Me" (your personal growth and goals).',
+    position: 'bottom',
+    page: 'dash'
+  },
+  {
+    target: '[data-p="together"]',
+    title: 'Together',
+    text: 'Letters, games, date nights, check-ins — everything you do as a couple lives here.',
+    position: 'top',
+    page: 'dash',
+    navigate: 'together'
+  },
+  {
+    target: '.hub-action-btn, .hub-list-row',
+    title: 'Your Couple Space',
+    text: 'Send letters, play games, plan date nights, and take quizzes together. All in one place.',
+    position: 'bottom',
+    page: 'together'
+  },
+  {
+    target: '[data-p="wellness"]',
+    title: 'Wellness',
+    text: 'Track mood, fitness, nutrition, and gratitude — individually and together.',
+    position: 'top',
+    page: 'together',
+    navigate: 'wellness'
+  },
+  {
+    target: '[data-p="plan"]',
+    title: 'Plan',
+    text: 'Dreams, calendar, finances, dream home — plan your future side by side.',
+    position: 'top',
+    page: 'wellness',
+    navigate: 'plan'
+  },
+  {
+    target: '[data-p="more"]',
+    title: 'More',
+    text: 'AI chat, photo memories, achievements, and settings. There\'s always more to explore.',
+    position: 'top',
+    page: 'plan',
+    navigate: 'more'
+  }
+];
+
+function startAppTour() {
+  tourStep = 0;
+  var overlay = document.getElementById('tour-overlay');
+  if (!overlay) return;
+  overlay.classList.add('on');
+  document.body.classList.add('touring');
+  showTourStep();
+}
+
+function showTourStep() {
+  var step = TOUR_STEPS[tourStep];
+  if (!step) { endTour(); return; }
+
+  // Navigate if needed
+  if (step.navigate) {
+    go(step.navigate);
+    setTimeout(function() { positionTourStep(step); }, 350);
+  } else if (step.page) {
+    go(step.page);
+    setTimeout(function() { positionTourStep(step); }, 100);
+  } else {
+    positionTourStep(step);
+  }
+}
+
+function positionTourStep(step) {
+  var overlay = document.getElementById('tour-overlay');
+  var spotlight = document.getElementById('tour-spotlight');
+  var tooltip = document.getElementById('tour-tooltip');
+  var titleEl = document.getElementById('tour-title');
+  var textEl = document.getElementById('tour-text');
+  var countEl = document.getElementById('tour-count');
+
+  // Find target — try multiple selectors separated by comma
+  var target = null;
+  var selectors = step.target.split(',');
+  for (var i = 0; i < selectors.length; i++) {
+    var el = document.querySelector(selectors[i].trim());
+    if (el && el.offsetParent !== null) { target = el; break; }
+  }
+
+  // Set content
+  titleEl.textContent = step.title;
+  textEl.textContent = step.text;
+  countEl.textContent = (tourStep + 1) + ' / ' + TOUR_STEPS.length;
+
+  if (target) {
+    var rect = target.getBoundingClientRect();
+    var pad = 8;
+    spotlight.style.display = '';
+    spotlight.style.top = (rect.top - pad) + 'px';
+    spotlight.style.left = (rect.left - pad) + 'px';
+    spotlight.style.width = (rect.width + pad * 2) + 'px';
+    spotlight.style.height = (rect.height + pad * 2) + 'px';
+    spotlight.style.borderRadius = getComputedStyle(target).borderRadius || '12px';
+
+    // Scroll target into view first
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function() {
+      // Recalculate after scroll
+      var r2 = target.getBoundingClientRect();
+      spotlight.style.top = (r2.top - pad) + 'px';
+      spotlight.style.left = (r2.left - pad) + 'px';
+      spotlight.style.width = (r2.width + pad * 2) + 'px';
+      spotlight.style.height = (r2.height + pad * 2) + 'px';
+
+      // Position tooltip
+      positionTooltip(tooltip, r2, step.position);
+    }, 350);
+  } else {
+    // No visible target — center the tooltip, hide spotlight
+    spotlight.style.display = 'none';
+    tooltip.style.top = '50%';
+    tooltip.style.left = '50%';
+    tooltip.style.transform = 'translate(-50%, -50%)';
+  }
+
+  // Animate in
+  tooltip.classList.remove('tour-tooltip-in');
+  void tooltip.offsetWidth;
+  tooltip.classList.add('tour-tooltip-in');
+}
+
+function positionTooltip(tooltip, rect, position) {
+  var gap = 16;
+  tooltip.style.transform = '';
+  tooltip.style.left = '20px';
+  tooltip.style.right = '20px';
+  tooltip.style.width = 'auto';
+
+  if (position === 'top') {
+    tooltip.style.top = '';
+    tooltip.style.bottom = (window.innerHeight - rect.top + gap) + 'px';
+  } else {
+    tooltip.style.bottom = '';
+    tooltip.style.top = (rect.bottom + gap) + 'px';
+  }
+}
+
+function tourNext() {
+  tourStep++;
+  if (tourStep >= TOUR_STEPS.length) {
+    endTour();
+  } else {
+    showTourStep();
+  }
+}
+
+function endTour() {
+  var overlay = document.getElementById('tour-overlay');
+  if (overlay) overlay.classList.remove('on');
+  document.body.classList.remove('touring');
+  go('dash');
+  toast('You\'re all set! Explore anytime.');
 }
 
 function showWelcomeGate() {

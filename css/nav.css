@@ -83,6 +83,26 @@
 .welcome-photo-img{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid rgba(184,134,11,.3);box-shadow:0 4px 20px rgba(0,0,0,.15);animation:photoFadeIn .6s ease both}
 @keyframes photoFadeIn{0%{opacity:0;transform:scale(.85)}100%{opacity:1;transform:scale(1)}}
 
+/* ===== INTERACTIVE APP TOUR ===== */
+.tour-overlay{position:fixed;inset:0;z-index:3000;pointer-events:none;opacity:0;transition:opacity .3s}
+.tour-overlay.on{opacity:1;pointer-events:all}
+.tour-overlay::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.7);z-index:0}
+.tour-spotlight{position:absolute;z-index:1;box-shadow:0 0 0 9999px rgba(0,0,0,.7);border:2px solid rgba(184,134,11,.5);transition:all .4s cubic-bezier(.4,0,.2,1);border-radius:12px}
+.tour-tooltip{position:absolute;z-index:2;background:var(--card-bg,#1e1e2e);border:1px solid rgba(184,134,11,.3);border-radius:16px;padding:20px;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;transform:translateY(10px)}
+.tour-tooltip.tour-tooltip-in{animation:tourIn .35s ease forwards}
+@keyframes tourIn{to{opacity:1;transform:translateY(0)}}
+.tour-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--gold,#B8860B);letter-spacing:1px;margin-bottom:6px}
+.tour-text{font-size:14px;line-height:1.6;color:var(--cream,#F5F0E8);opacity:.85}
+.tour-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.tour-count{font-size:11px;color:var(--t3,rgba(245,240,232,.35));letter-spacing:1px}
+.tour-btns{display:flex;gap:8px}
+.tour-skip{background:none;border:1px solid rgba(255,255,255,.12);color:var(--t3,rgba(245,240,232,.35));font-size:12px;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.5px}
+.tour-skip:active{opacity:.6}
+.tour-next{background:var(--gold,#B8860B);border:none;color:#1A1A2E;font-size:12px;font-weight:600;padding:6px 18px;border-radius:20px;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.5px}
+.tour-next:active{transform:scale(.95)}
+body.touring .bnav{z-index:3001}
+body.touring .bn{pointer-events:none}
+
 /* ===== SHELL ===== */
 .shell{display:none;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh}
 .shell.on{display:block}
