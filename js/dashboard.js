@@ -92,12 +92,12 @@ function openModal(html) {
   var el = document.getElementById('generic-modal');
   var box = document.getElementById('generic-modal-content');
   if (box) box.innerHTML = html;
-  if (el) { el.classList.remove('d-none'); el.style.display = ''; }
+  if (el) { el.classList.add('on'); }
 }
 
 function closeModal() {
   var el = document.getElementById('generic-modal');
-  if (el) { el.classList.add('d-none'); }
+  if (el) { el.classList.remove('on'); }
 }
 
 // ===== PRIVACY =====

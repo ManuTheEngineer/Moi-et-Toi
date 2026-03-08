@@ -5,29 +5,31 @@ var WEATHER = {
   lat: null,
   lon: null,
   data: null,
-  scene: 'meadow', // meadow | coastal | forest
+  scene: 'meadow',
   locationGranted: false,
   audioCtx: null,
   audioNodes: {},
   audioEnabled: false,
+  audioUnlocked: false,
   refreshTimer: null,
   previewTimer: null,
   previewRunning: false
 };
 
 // ===== SCENE DEFINITIONS =====
+// Warm, intimate tones matching the app's cream/gold/rose palette
 var SCENES = {
   meadow: {
-    label: 'Meadow',
+    label: 'Golden Meadow',
     icon: '🌾',
-    desc: 'Rolling fields, wildflowers, gentle breezes',
+    desc: 'Sun-kissed fields, wildflowers, gentle warmth',
     creatures: {
       dawn: ['rabbit', 'butterfly', 'songbird'],
       morning: ['bird', 'butterfly', 'bee', 'rabbit'],
       afternoon: ['bird', 'bee', 'dragonfly'],
       golden: ['bird', 'deer', 'rabbit'],
       evening: ['owl', 'bat', 'deer'],
-      night: ['firefly', 'owl', 'cricket']
+      night: ['firefly', 'owl']
     },
     sounds: {
       base: 'wind',
@@ -39,23 +41,23 @@ var SCENES = {
       night: 'crickets'
     },
     colors: {
-      dawn: { ground: 'rgba(180,200,140,0.08)', accent: 'rgba(255,220,150,0.06)' },
-      morning: { ground: 'rgba(140,200,100,0.08)', accent: 'rgba(255,240,180,0.05)' },
-      afternoon: { ground: 'rgba(120,180,80,0.06)', accent: 'rgba(200,230,160,0.05)' },
-      golden: { ground: 'rgba(200,180,100,0.10)', accent: 'rgba(255,180,80,0.08)' },
-      evening: { ground: 'rgba(100,120,80,0.08)', accent: 'rgba(180,140,200,0.06)' },
-      night: { ground: 'rgba(40,60,30,0.06)', accent: 'rgba(60,80,120,0.05)' }
+      dawn: { ground: 'rgba(200,180,140,0.10)', accent: 'rgba(255,200,150,0.08)' },
+      morning: { ground: 'rgba(180,200,130,0.08)', accent: 'rgba(255,230,170,0.06)' },
+      afternoon: { ground: 'rgba(160,190,110,0.07)', accent: 'rgba(220,210,160,0.05)' },
+      golden: { ground: 'rgba(210,180,110,0.12)', accent: 'rgba(255,180,80,0.10)' },
+      evening: { ground: 'rgba(130,110,90,0.08)', accent: 'rgba(180,140,160,0.06)' },
+      night: { ground: 'rgba(50,50,40,0.06)', accent: 'rgba(60,60,80,0.05)' }
     }
   },
   coastal: {
-    label: 'Coastal',
+    label: 'Sunset Shore',
     icon: '🌊',
-    desc: 'Ocean waves, sandy shores, sea breeze',
+    desc: 'Warm tides, sandy breeze, ocean calm',
     creatures: {
       dawn: ['seagull', 'crab', 'dolphin'],
-      morning: ['seagull', 'pelican', 'fish'],
+      morning: ['seagull', 'fish', 'crab'],
       afternoon: ['seagull', 'jellyfish', 'turtle'],
-      golden: ['seagull', 'pelican', 'dolphin'],
+      golden: ['seagull', 'dolphin', 'crab'],
       evening: ['seagull', 'bat', 'crab'],
       night: ['firefly', 'crab', 'whale']
     },
@@ -69,25 +71,25 @@ var SCENES = {
       night: 'waves'
     },
     colors: {
-      dawn: { ground: 'rgba(180,200,220,0.08)', accent: 'rgba(255,180,150,0.06)' },
-      morning: { ground: 'rgba(140,200,240,0.08)', accent: 'rgba(255,240,200,0.05)' },
-      afternoon: { ground: 'rgba(80,180,220,0.08)', accent: 'rgba(160,220,255,0.06)' },
-      golden: { ground: 'rgba(220,180,120,0.10)', accent: 'rgba(255,160,80,0.08)' },
-      evening: { ground: 'rgba(80,100,160,0.08)', accent: 'rgba(200,140,180,0.06)' },
-      night: { ground: 'rgba(20,40,80,0.08)', accent: 'rgba(40,60,120,0.06)' }
+      dawn: { ground: 'rgba(200,185,170,0.10)', accent: 'rgba(255,180,140,0.08)' },
+      morning: { ground: 'rgba(170,195,210,0.08)', accent: 'rgba(240,220,190,0.06)' },
+      afternoon: { ground: 'rgba(140,190,210,0.08)', accent: 'rgba(200,215,230,0.06)' },
+      golden: { ground: 'rgba(220,185,130,0.12)', accent: 'rgba(255,165,90,0.10)' },
+      evening: { ground: 'rgba(110,110,140,0.08)', accent: 'rgba(180,140,160,0.06)' },
+      night: { ground: 'rgba(30,40,60,0.08)', accent: 'rgba(40,50,80,0.06)' }
     }
   },
   forest: {
-    label: 'Forest',
+    label: 'Whispering Woods',
     icon: '🌲',
-    desc: 'Dense woods, dappled light, woodland life',
+    desc: 'Dappled light, mossy trails, woodland peace',
     creatures: {
       dawn: ['fox', 'songbird', 'butterfly'],
       morning: ['bird', 'squirrel', 'butterfly', 'woodpecker'],
       afternoon: ['bird', 'squirrel', 'dragonfly'],
       golden: ['deer', 'bird', 'fox'],
       evening: ['owl', 'bat', 'fox'],
-      night: ['firefly', 'owl', 'wolf']
+      night: ['firefly', 'owl']
     },
     sounds: {
       base: 'forestWind',
@@ -99,12 +101,12 @@ var SCENES = {
       night: 'owls'
     },
     colors: {
-      dawn: { ground: 'rgba(60,100,60,0.08)', accent: 'rgba(200,180,120,0.06)' },
-      morning: { ground: 'rgba(40,120,60,0.08)', accent: 'rgba(180,220,140,0.05)' },
-      afternoon: { ground: 'rgba(30,100,50,0.06)', accent: 'rgba(140,200,120,0.05)' },
-      golden: { ground: 'rgba(120,100,40,0.10)', accent: 'rgba(255,180,60,0.08)' },
-      evening: { ground: 'rgba(40,60,40,0.08)', accent: 'rgba(100,80,140,0.06)' },
-      night: { ground: 'rgba(15,30,15,0.08)', accent: 'rgba(30,50,80,0.06)' }
+      dawn: { ground: 'rgba(100,110,70,0.10)', accent: 'rgba(200,180,130,0.08)' },
+      morning: { ground: 'rgba(80,120,70,0.08)', accent: 'rgba(180,200,140,0.06)' },
+      afternoon: { ground: 'rgba(70,110,60,0.07)', accent: 'rgba(160,190,130,0.05)' },
+      golden: { ground: 'rgba(140,120,60,0.12)', accent: 'rgba(220,180,80,0.10)' },
+      evening: { ground: 'rgba(60,70,50,0.08)', accent: 'rgba(100,80,100,0.06)' },
+      night: { ground: 'rgba(20,30,20,0.08)', accent: 'rgba(30,40,50,0.06)' }
     }
   }
 };
@@ -131,6 +133,7 @@ var WEATHER_EFFECTS = {
 function requestLocationPermission() {
   return new Promise(function(resolve) {
     if (!navigator.geolocation) {
+      toast('Geolocation not supported on this device');
       resolve(false);
       return;
     }
@@ -139,17 +142,23 @@ function requestLocationPermission() {
         WEATHER.lat = pos.coords.latitude;
         WEATHER.lon = pos.coords.longitude;
         WEATHER.locationGranted = true;
-        if (db && user) {
+        if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
           db.ref('settings/weather/' + user + '/location').set({
             lat: WEATHER.lat,
             lon: WEATHER.lon,
             granted: true
           });
+          db.ref('settings/weather/' + user + '/prompted').set(true);
         }
         resolve(true);
       },
-      function() {
+      function(err) {
         WEATHER.locationGranted = false;
+        if (err.code === 1) {
+          toast('Location permission denied — you can enable it in settings later');
+        } else {
+          toast('Could not get location — try again later');
+        }
         resolve(false);
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 }
@@ -158,23 +167,23 @@ function requestLocationPermission() {
 }
 
 // ===== SUNRISE / SUNSET CALCULATION =====
-// Attempt real sunrise/sunset from weather API data; fallback to approximation
 function getSunTimes() {
-  if (WEATHER.data && WEATHER.data.sys) {
+  if (WEATHER.data && WEATHER.data.sys && WEATHER.data.sys.sunrise) {
     return {
       sunrise: WEATHER.data.sys.sunrise * 1000,
       sunset: WEATHER.data.sys.sunset * 1000
     };
   }
-  // Fallback: approximate based on latitude or default
+  // Fallback: approximate based on latitude
   var now = new Date();
   var doy = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
   var lat = WEATHER.lat || 35;
-  // Simple approximation
   var declination = 23.45 * Math.sin((2 * Math.PI / 365) * (doy - 81));
   var latRad = lat * Math.PI / 180;
   var decRad = declination * Math.PI / 180;
-  var hourAngle = Math.acos(-Math.tan(latRad) * Math.tan(decRad));
+  var cosHA = -Math.tan(latRad) * Math.tan(decRad);
+  cosHA = Math.max(-1, Math.min(1, cosHA));
+  var hourAngle = Math.acos(cosHA);
   var dayHours = (2 * hourAngle * 180 / Math.PI) / 15;
   var noon = 12;
   var sunriseH = noon - dayHours / 2;
@@ -186,13 +195,10 @@ function getSunTimes() {
   };
 }
 
-// Override getTimeOfDay and getSunPosition with real data when available
 function getTimeOfDayWeather() {
   var times = getSunTimes();
-  var now = Date.now();
   var sunriseH = new Date(times.sunrise).getHours() + new Date(times.sunrise).getMinutes() / 60;
   var sunsetH = new Date(times.sunset).getHours() + new Date(times.sunset).getMinutes() / 60;
-
   var h = new Date().getHours() + new Date().getMinutes() / 60;
 
   if (h >= sunriseH - 1 && h < sunriseH + 1) return 'dawn';
@@ -205,7 +211,6 @@ function getTimeOfDayWeather() {
 
 function getSunPositionWeather() {
   var times = getSunTimes();
-  var now = Date.now();
   var h = new Date().getHours() + new Date().getMinutes() / 60;
   var sunriseH = new Date(times.sunrise).getHours() + new Date(times.sunrise).getMinutes() / 60;
   var sunsetH = new Date(times.sunset).getHours() + new Date(times.sunset).getMinutes() / 60;
@@ -230,7 +235,6 @@ function getSunPositionWeather() {
 function fetchWeather() {
   if (!WEATHER.lat || !WEATHER.lon) return Promise.resolve(null);
 
-  // Use Open-Meteo (free, no API key required)
   var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + WEATHER.lat +
     '&longitude=' + WEATHER.lon +
     '&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,cloud_cover' +
@@ -240,7 +244,6 @@ function fetchWeather() {
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (!data || !data.current) return null;
-      // Map Open-Meteo WMO codes to our weather types
       var code = data.current.weather_code;
       var condition = mapWMOCode(code);
       WEATHER.data = {
@@ -255,19 +258,25 @@ function fetchWeather() {
           sunset: data.daily && data.daily.sunset ? new Date(data.daily.sunset[0]).getTime() / 1000 : null
         }
       };
+      // Update location button
+      var btn = document.getElementById('set-location-btn');
+      if (btn) btn.textContent = 'Refresh';
+      var infoEl = document.getElementById('weather-info-display');
+      if (infoEl) infoEl.classList.remove('d-none');
       return WEATHER.data;
     })
-    .catch(function() { return null; });
+    .catch(function(e) {
+      console.warn('Weather fetch failed:', e);
+      return null;
+    });
 }
 
 function mapWMOCode(code) {
   if (code === 0) return 'clear';
   if (code <= 3) return 'clouds';
   if (code >= 45 && code <= 48) return 'fog';
-  if (code >= 51 && code <= 55) return 'drizzle';
-  if (code >= 56 && code <= 57) return 'drizzle';
-  if (code >= 61 && code <= 65) return 'rain';
-  if (code >= 66 && code <= 67) return 'rain';
+  if (code >= 51 && code <= 57) return 'drizzle';
+  if (code >= 61 && code <= 67) return 'rain';
   if (code >= 71 && code <= 77) return 'snow';
   if (code >= 80 && code <= 82) return 'rain';
   if (code >= 85 && code <= 86) return 'snow';
@@ -282,7 +291,7 @@ function getTempTint() {
   if (t <= -10) return { tint: 'rgba(100,140,255,0.08)', label: 'Freezing' };
   if (t <= 0) return { tint: 'rgba(120,160,255,0.06)', label: 'Cold' };
   if (t <= 10) return { tint: 'rgba(140,180,220,0.04)', label: 'Cool' };
-  if (t <= 20) return { tint: 'rgba(200,220,180,0.03)', label: 'Mild' };
+  if (t <= 20) return { tint: 'rgba(200,210,180,0.03)', label: 'Mild' };
   if (t <= 30) return { tint: 'rgba(255,200,120,0.05)', label: 'Warm' };
   if (t <= 38) return { tint: 'rgba(255,160,60,0.07)', label: 'Hot' };
   return { tint: 'rgba(255,100,50,0.09)', label: 'Extreme heat' };
@@ -290,7 +299,6 @@ function getTempTint() {
 
 // ===== WEATHER PARTICLE EFFECTS =====
 function renderWeatherEffects(container) {
-  // Remove existing weather layer
   var existing = container.querySelector('.weather-fx-layer');
   if (existing) existing.remove();
 
@@ -302,14 +310,14 @@ function renderWeatherEffects(container) {
   var layer = document.createElement('div');
   layer.className = 'weather-fx-layer';
 
-  // Overlay (fog, haze, overcast)
+  // Overlay
   if (fx.overlay) {
     var overlay = document.createElement('div');
     overlay.className = 'weather-overlay weather-overlay-' + fx.overlay;
     layer.appendChild(overlay);
   }
 
-  // Particles (rain, snow, dust)
+  // Particles
   if (fx.particles > 0) {
     for (var i = 0; i < fx.particles; i++) {
       var p = document.createElement('div');
@@ -324,10 +332,9 @@ function renderWeatherEffects(container) {
                  (1 + Math.random() * 1.5);
 
       p.style.cssText = 'left:' + x + '%;width:' + size + 'px;height:' +
-        (condition === 'rain' || condition === 'drizzle' ? size * 8 : size) +
+        (condition === 'rain' || condition === 'drizzle' || condition === 'thunderstorm' ? size * 8 : size) +
         'px;animation-delay:' + delay + 's;animation-duration:' + dur + 's';
 
-      // Wind offset
       if (WEATHER.data.windSpeed > 15) {
         p.style.setProperty('--wind-offset', (WEATHER.data.windSpeed * 2) + 'px');
       }
@@ -335,7 +342,7 @@ function renderWeatherEffects(container) {
     }
   }
 
-  // Lightning flashes for thunderstorms
+  // Lightning
   if (condition === 'thunderstorm') {
     scheduleLightning(layer);
   }
@@ -349,7 +356,7 @@ function renderWeatherEffects(container) {
     layer.appendChild(tintOverlay);
   }
 
-  // Wind streaks when windy
+  // Wind streaks
   if (WEATHER.data.windSpeed > 20) {
     for (var w = 0; w < 8; w++) {
       var streak = document.createElement('div');
@@ -370,7 +377,6 @@ function scheduleLightning(layer) {
     flash.className = 'weather-lightning';
     layer.appendChild(flash);
     setTimeout(function() { if (flash.parentNode) flash.remove(); }, 300);
-    // Double flash sometimes
     if (Math.random() < 0.4) {
       setTimeout(function() {
         var flash2 = document.createElement('div');
@@ -392,27 +398,22 @@ function renderSceneCreature(container, type) {
     case 'deer': renderDeer(container); break;
     case 'owl': renderOwl(container); break;
     case 'bat': renderBat(container); break;
-    case 'cricket': break; // audio only
     case 'fox': renderFox(container); break;
     case 'squirrel': renderSquirrel(container); break;
     case 'woodpecker': renderWoodpecker(container); break;
-    case 'wolf': break; // audio only (howl)
-    case 'seagull': renderSeagull(container); break;
+    case 'seagull': case 'pelican': renderSeagull(container); break;
     case 'crab': renderCrab(container); break;
     case 'dolphin': renderDolphin(container); break;
-    case 'pelican': renderSeagull(container); break;
     case 'fish': renderFish(container); break;
     case 'jellyfish': renderJellyfish(container); break;
     case 'turtle': renderTurtle(container); break;
     case 'whale': renderWhale(container); break;
-    case 'songbird': renderBird(container); break;
-    case 'bird': renderBird(container); break;
+    case 'songbird': case 'bird': renderBird(container); break;
     case 'butterfly': renderButterfly(container); break;
     case 'firefly': renderFirefly(container); break;
   }
 }
 
-// Each creature is a simple CSS-animated div
 function renderRabbit(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-rabbit';
@@ -542,7 +543,7 @@ function renderCrab(container) {
   var dur = 8 + Math.random() * 6;
   var dir = Math.random() < 0.5 ? 1 : -1;
   el.style.cssText = 'bottom:4%;' + (dir > 0 ? 'left:5%' : 'right:5%') + ';--crab-dir:' + (dir * 120) + 'px;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="crab-body"></div><div class="crab-claw crab-claw-l"></div><div class="crab-claw crab-claw-r"></div><div class="crab-leg crab-leg-l"></div><div class="crab-leg crab-leg-r"></div>';
+  el.innerHTML = '<div class="crab-body"></div><div class="crab-claw crab-claw-l"></div><div class="crab-claw crab-claw-r"></div>';
   container.appendChild(el);
   setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
 }
@@ -600,76 +601,174 @@ function renderWhale(container) {
 }
 
 // ===== AMBIENT AUDIO SYSTEM =====
-function initAudioSystem() {
-  if (WEATHER.audioCtx) return;
+// Audio requires user gesture — we unlock on first tap/click
+function unlockAudio() {
+  if (WEATHER.audioUnlocked) return;
   try {
     WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Create and play a silent buffer to unlock
+    var buf = WEATHER.audioCtx.createBuffer(1, 1, 22050);
+    var src = WEATHER.audioCtx.createBufferSource();
+    src.buffer = buf;
+    src.connect(WEATHER.audioCtx.destination);
+    src.start(0);
+    WEATHER.audioUnlocked = true;
+    // Now start audio if it was enabled
+    if (WEATHER.audioEnabled) {
+      updateAmbientAudio();
+    }
   } catch(e) {
-    return;
+    console.warn('Audio unlock failed:', e);
   }
 }
+
+// Attach unlock to first user interaction
+document.addEventListener('touchstart', unlockAudio, { once: true });
+document.addEventListener('click', unlockAudio, { once: true });
 
 function generateNoise(type) {
   if (!WEATHER.audioCtx) return null;
   var ctx = WEATHER.audioCtx;
-  var bufferSize = ctx.sampleRate * 2;
-  var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  var sampleRate = ctx.sampleRate;
+  var bufferSize = sampleRate * 3; // 3 seconds loop
+  var buffer = ctx.createBuffer(1, bufferSize, sampleRate);
   var data = buffer.getChannelData(0);
 
   switch (type) {
     case 'rain':
+      for (var i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.035;
+        // Occasional louder drops
+        if (Math.random() < 0.002) data[i] *= 6;
+      }
+      break;
     case 'lightRain':
       for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * (type === 'lightRain' ? 0.02 : 0.04);
-        if (Math.random() < 0.001) data[i] *= 8; // drip
+        data[i] = (Math.random() * 2 - 1) * 0.015;
+        if (Math.random() < 0.001) data[i] *= 5;
       }
       break;
     case 'wind':
-    case 'forestWind':
       var b0 = 0;
       for (var i = 0; i < bufferSize; i++) {
         var white = Math.random() * 2 - 1;
-        b0 = 0.99 * b0 + 0.01 * white;
-        data[i] = b0 * (type === 'forestWind' ? 0.08 : 0.12);
+        b0 = 0.993 * b0 + 0.007 * white;
+        data[i] = b0 * 0.10;
+      }
+      break;
+    case 'forestWind':
+      var b0 = 0, b1 = 0;
+      for (var i = 0; i < bufferSize; i++) {
+        var white = Math.random() * 2 - 1;
+        b0 = 0.996 * b0 + 0.004 * white;
+        b1 = 0.999 * b1 + 0.001 * white;
+        data[i] = (b0 * 0.06 + b1 * 0.03);
+        // Subtle rustling
+        if (Math.random() < 0.0005) {
+          for (var k = 0; k < Math.min(600, bufferSize - i); k++) {
+            data[i + k] += (Math.random() * 2 - 1) * 0.02 * Math.exp(-k / 200);
+          }
+        }
       }
       break;
     case 'waves':
       for (var i = 0; i < bufferSize; i++) {
-        var t = i / ctx.sampleRate;
-        data[i] = Math.sin(t * 0.3) * 0.03 +
-                  Math.sin(t * 0.7 + 1.3) * 0.02 +
-                  (Math.random() * 2 - 1) * 0.01;
+        var t = i / sampleRate;
+        // Layered wave sounds at different frequencies
+        data[i] = Math.sin(t * 0.25) * 0.04 +
+                  Math.sin(t * 0.6 + 1.2) * 0.025 +
+                  Math.sin(t * 1.1 + 2.8) * 0.015 +
+                  (Math.random() * 2 - 1) * 0.008;
       }
       break;
     case 'thunder':
       for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.05;
-        if (Math.random() < 0.0005) {
-          for (var j = 0; j < Math.min(4000, bufferSize - i); j++) {
-            data[i + j] = (Math.random() * 2 - 1) * 0.3 * Math.exp(-j / 2000);
+        data[i] = (Math.random() * 2 - 1) * 0.04;
+        // Rumbles
+        if (Math.random() < 0.0003) {
+          for (var j = 0; j < Math.min(5000, bufferSize - i); j++) {
+            data[i + j] += (Math.random() * 2 - 1) * 0.25 * Math.exp(-j / 3000);
           }
         }
       }
       break;
-    default: // crickets, birdsong, etc. — soft filtered noise
-      var b1 = 0, b2 = 0;
+    case 'crickets':
+      var b0 = 0;
       for (var i = 0; i < bufferSize; i++) {
         var white = Math.random() * 2 - 1;
-        b1 = 0.995 * b1 + 0.005 * white;
-        b2 = 0.999 * b2 + 0.001 * white;
-        data[i] = (b1 + b2) * 0.04;
-        // Chirps for crickets/birdsong
-        if (type === 'crickets' && Math.random() < 0.0003) {
+        b0 = 0.997 * b0 + 0.003 * white;
+        data[i] = b0 * 0.03;
+        // Chirps
+        if (Math.random() < 0.0004) {
           for (var k = 0; k < Math.min(800, bufferSize - i); k++) {
-            data[i + k] += Math.sin(k * 0.5) * 0.03 * Math.exp(-k / 200);
+            data[i + k] += Math.sin(k * 0.6) * 0.04 * Math.exp(-k / 150);
           }
         }
-        if ((type === 'birdsong' || type === 'seagulls') && Math.random() < 0.0002) {
-          for (var k = 0; k < Math.min(2000, bufferSize - i); k++) {
-            var freq = 0.3 + 0.2 * Math.sin(k / 300);
-            data[i + k] += Math.sin(k * freq) * 0.04 * Math.exp(-k / 800);
+      }
+      break;
+    case 'birdsong':
+      var b0 = 0;
+      for (var i = 0; i < bufferSize; i++) {
+        var white = Math.random() * 2 - 1;
+        b0 = 0.998 * b0 + 0.002 * white;
+        data[i] = b0 * 0.02;
+        // Bird calls — warbling frequency sweeps
+        if (Math.random() < 0.00025) {
+          for (var k = 0; k < Math.min(2500, bufferSize - i); k++) {
+            var freq = 0.3 + 0.25 * Math.sin(k / 250);
+            data[i + k] += Math.sin(k * freq) * 0.05 * Math.exp(-k / 1000);
           }
         }
+      }
+      break;
+    case 'seagulls':
+      var b0 = 0;
+      for (var i = 0; i < bufferSize; i++) {
+        var white = Math.random() * 2 - 1;
+        b0 = 0.998 * b0 + 0.002 * white;
+        data[i] = b0 * 0.015;
+        // Seagull-like calls — higher, more nasal
+        if (Math.random() < 0.0002) {
+          for (var k = 0; k < Math.min(3000, bufferSize - i); k++) {
+            var freq = 0.4 + 0.15 * Math.sin(k / 400);
+            data[i + k] += Math.sin(k * freq) * 0.04 * Math.exp(-k / 1200);
+          }
+        }
+      }
+      break;
+    case 'owls':
+      var b0 = 0;
+      for (var i = 0; i < bufferSize; i++) {
+        var white = Math.random() * 2 - 1;
+        b0 = 0.999 * b0 + 0.001 * white;
+        data[i] = b0 * 0.02;
+        // Low hooting
+        if (Math.random() < 0.00008) {
+          for (var k = 0; k < Math.min(4000, bufferSize - i); k++) {
+            data[i + k] += Math.sin(k * 0.08) * 0.06 * Math.exp(-k / 2000);
+          }
+        }
+      }
+      break;
+    case 'insects':
+    case 'forestAmbient':
+      var b0 = 0, b1 = 0;
+      for (var i = 0; i < bufferSize; i++) {
+        var white = Math.random() * 2 - 1;
+        b0 = 0.996 * b0 + 0.004 * white;
+        b1 = 0.999 * b1 + 0.001 * white;
+        data[i] = (b0 + b1) * 0.025;
+        // Insect buzzes
+        if (Math.random() < 0.0003) {
+          for (var k = 0; k < Math.min(500, bufferSize - i); k++) {
+            data[i + k] += Math.sin(k * 0.8) * 0.02 * Math.exp(-k / 150);
+          }
+        }
+      }
+      break;
+    default:
+      for (var i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.01;
       }
       break;
   }
@@ -677,8 +776,13 @@ function generateNoise(type) {
 }
 
 function playAmbientSound(type, volume) {
-  if (!WEATHER.audioCtx || !WEATHER.audioEnabled) return;
-  if (WEATHER.audioNodes[type]) return; // already playing
+  if (!WEATHER.audioCtx || !WEATHER.audioEnabled || !WEATHER.audioUnlocked) return;
+  if (WEATHER.audioNodes[type]) return;
+
+  // Resume context if suspended
+  if (WEATHER.audioCtx.state === 'suspended') {
+    WEATHER.audioCtx.resume();
+  }
 
   var buffer = generateNoise(type);
   if (!buffer) return;
@@ -688,11 +792,9 @@ function playAmbientSound(type, volume) {
   source.loop = true;
 
   var gain = WEATHER.audioCtx.createGain();
-  gain.gain.value = volume || 0.15;
-
-  // Fade in
+  var vol = volume || 0.12;
   gain.gain.setValueAtTime(0, WEATHER.audioCtx.currentTime);
-  gain.gain.linearRampToValueAtTime(volume || 0.15, WEATHER.audioCtx.currentTime + 2);
+  gain.gain.linearRampToValueAtTime(vol, WEATHER.audioCtx.currentTime + 2);
 
   source.connect(gain);
   gain.connect(WEATHER.audioCtx.destination);
@@ -720,42 +822,50 @@ function stopAllSounds() {
 }
 
 function updateAmbientAudio() {
-  if (!WEATHER.audioEnabled || !WEATHER.audioCtx) return;
+  if (!WEATHER.audioEnabled || !WEATHER.audioCtx || !WEATHER.audioUnlocked) return;
+
   var scene = SCENES[WEATHER.scene];
   if (!scene) return;
-  var time = WEATHER.locationGranted ? getTimeOfDayWeather() : getTimeOfDay();
+  var time = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
   var soundType = scene.sounds[time] || scene.sounds.base;
 
   // Stop sounds not matching current
+  var keepSounds = [scene.sounds.base, soundType];
+  if (WEATHER.data) {
+    var wxFx = WEATHER_EFFECTS[WEATHER.data.condition];
+    if (wxFx && wxFx.sound) keepSounds.push(wxFx.sound);
+  }
   Object.keys(WEATHER.audioNodes).forEach(function(k) {
-    if (k !== soundType && k !== scene.sounds.base) stopAmbientSound(k);
+    if (keepSounds.indexOf(k) === -1) stopAmbientSound(k);
   });
 
-  // Play base and time-specific sounds
-  playAmbientSound(scene.sounds.base, 0.08);
-  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.12);
+  // Play sounds
+  playAmbientSound(scene.sounds.base, 0.06);
+  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.10);
 
   // Weather sounds
   if (WEATHER.data) {
     var wxFx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wxFx && wxFx.sound) {
-      playAmbientSound(wxFx.sound, 0.15);
-    }
+    if (wxFx && wxFx.sound) playAmbientSound(wxFx.sound, 0.12);
   }
 }
 
 function toggleAmbientAudio(on) {
   WEATHER.audioEnabled = on;
   if (on) {
-    initAudioSystem();
-    if (WEATHER.audioCtx && WEATHER.audioCtx.state === 'suspended') {
-      WEATHER.audioCtx.resume();
+    if (!WEATHER.audioUnlocked) {
+      // Will start when user next taps
+      toast('Sounds will start on next tap');
+    } else {
+      if (WEATHER.audioCtx && WEATHER.audioCtx.state === 'suspended') {
+        WEATHER.audioCtx.resume();
+      }
+      updateAmbientAudio();
     }
-    updateAmbientAudio();
   } else {
     stopAllSounds();
   }
-  if (db && user) {
+  if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
     db.ref('settings/weather/' + user + '/audio').set(on);
   }
 }
@@ -767,7 +877,7 @@ function renderSceneGround(container) {
 
   var scene = SCENES[WEATHER.scene];
   if (!scene) return;
-  var time = WEATHER.locationGranted ? getTimeOfDayWeather() : getTimeOfDay();
+  var time = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
   var colors = scene.colors[time] || scene.colors.morning;
 
   var ground = document.createElement('div');
@@ -780,10 +890,9 @@ function renderSceneGround(container) {
 function spawnSceneCreatures(container) {
   var scene = SCENES[WEATHER.scene];
   if (!scene) return;
-  var time = WEATHER.locationGranted ? getTimeOfDayWeather() : getTimeOfDay();
+  var time = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
   var creatures = scene.creatures[time] || scene.creatures.morning;
 
-  // Spawn 1-3 creatures
   var count = 1 + Math.floor(Math.random() * 2);
   for (var i = 0; i < count; i++) {
     var type = creatures[Math.floor(Math.random() * creatures.length)];
@@ -792,17 +901,13 @@ function spawnSceneCreatures(container) {
 }
 
 // ===== OVERRIDE EXISTING SYSTEM =====
-// Patch after DOM load to avoid hoisting issues
-// We override by saving + reassigning on the window object
 (function() {
   function patchSkySystem() {
-    // Save originals
     var _origGetTimeOfDay = window.getTimeOfDay;
     var _origGetSunPosition = window.getSunPosition;
     var _origSpawnCreatures = window.spawnCreatures;
     var _origRenderLivingSky = window.renderLivingSky;
 
-    // Override getTimeOfDay when location is available
     window.getTimeOfDay = function() {
       if (WEATHER.locationGranted && WEATHER.data) {
         return getTimeOfDayWeather();
@@ -817,7 +922,6 @@ function spawnSceneCreatures(container) {
       return _origGetSunPosition ? _origGetSunPosition() : { isNight: false, x: 50, y: 15, progress: 0.5 };
     };
 
-    // Override creature spawning to use scene creatures
     window.spawnCreatures = function(container) {
       if (WEATHER.scene && SCENES[WEATHER.scene]) {
         spawnSceneCreatures(container);
@@ -826,7 +930,6 @@ function spawnSceneCreatures(container) {
       }
     };
 
-    // Enhanced sky render with weather effects
     window.renderLivingSky = function(container) {
       if (_origRenderLivingSky) _origRenderLivingSky(container);
       renderSceneGround(container);
@@ -834,7 +937,6 @@ function spawnSceneCreatures(container) {
     };
   }
 
-  // Patch after all scripts have loaded
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', patchSkySystem);
   } else {
@@ -867,7 +969,6 @@ function startScenePreview(sceneName, previewEl) {
   function renderPreviewFrame() {
     if (!WEATHER.previewRunning) return;
     var period = periods[idx];
-    var colors = scene.colors[period];
 
     previewEl.innerHTML = '';
     previewEl.style.background = gradients[period];
@@ -885,7 +986,7 @@ function startScenePreview(sceneName, previewEl) {
     wxLabel.textContent = weatherConditions[wxIdx].charAt(0).toUpperCase() + weatherConditions[wxIdx].slice(1);
     previewEl.appendChild(wxLabel);
 
-    // Scene ground color
+    // Scene ground
     var ground = document.createElement('div');
     ground.className = 'preview-ground scene-ground-' + sceneName;
     previewEl.appendChild(ground);
@@ -895,7 +996,6 @@ function startScenePreview(sceneName, previewEl) {
       var moon = document.createElement('div');
       moon.className = 'preview-moon';
       previewEl.appendChild(moon);
-      // Stars
       for (var s = 0; s < 15; s++) {
         var star = document.createElement('div');
         star.className = 'preview-star';
@@ -912,7 +1012,7 @@ function startScenePreview(sceneName, previewEl) {
       previewEl.appendChild(sun);
     }
 
-    // Weather particles in preview
+    // Weather particles
     var wx = weatherConditions[wxIdx];
     if (wx === 'rain') {
       for (var r = 0; r < 20; r++) {
@@ -937,7 +1037,7 @@ function startScenePreview(sceneName, previewEl) {
       }
     }
 
-    // Creatures
+    // Creature emoji
     var creatures = scene.creatures[period];
     if (creatures && creatures.length > 0) {
       var c1 = creatures[0];
@@ -946,12 +1046,19 @@ function startScenePreview(sceneName, previewEl) {
       creatureEl.textContent = getCreatureEmoji(c1);
       creatureEl.style.cssText = 'bottom:15%;left:' + (20 + Math.random() * 60) + '%';
       previewEl.appendChild(creatureEl);
+      if (creatures.length > 1) {
+        var c2El = document.createElement('div');
+        c2El.className = 'preview-creature';
+        c2El.textContent = getCreatureEmoji(creatures[1]);
+        c2El.style.cssText = 'bottom:18%;left:' + (10 + Math.random() * 40) + '%;animation-delay:0.5s';
+        previewEl.appendChild(c2El);
+      }
     }
 
-    // Temperature indicator
+    // Temperature
     var tempEl = document.createElement('div');
     tempEl.className = 'preview-temp';
-    var temps = { dawn: '18°', morning: '22°', afternoon: '28°', golden: '25°', evening: '20°', night: '16°' };
+    var temps = { dawn: '16°', morning: '20°', afternoon: '27°', golden: '24°', evening: '19°', night: '14°' };
     tempEl.textContent = temps[period];
     previewEl.appendChild(tempEl);
   }
@@ -977,7 +1084,7 @@ function getCreatureEmoji(type) {
   var map = {
     rabbit: '🐇', bird: '🐦', butterfly: '🦋', bee: '🐝', dragonfly: '🪰',
     deer: '🦌', owl: '🦉', bat: '🦇', fox: '🦊', squirrel: '🐿',
-    woodpecker: '🪶', firefly: '✨', cricket: '🦗', wolf: '🐺',
+    woodpecker: '🪶', firefly: '✨', wolf: '🐺',
     seagull: '🕊', crab: '🦀', dolphin: '🐬', pelican: '🕊',
     fish: '🐟', jellyfish: '🪼', turtle: '🐢', whale: '🐋', songbird: '🐦'
   };
@@ -997,7 +1104,7 @@ function showLocationPrompt() {
       '<p class="loc-prompt-desc">Allow location access to bring your real weather to life — rain, snow, sunshine, wind and more, right in your background.</p>' +
       '<div class="loc-prompt-features">' +
         '<div class="loc-feat"><span>🌧</span> Real weather effects</div>' +
-        '<div class="loc-feat"><span>🌅</span> Accurate sunrise & sunset</div>' +
+        '<div class="loc-feat"><span>🌅</span> Actual sunrise & sunset</div>' +
         '<div class="loc-feat"><span>🌡</span> Temperature colors</div>' +
         '<div class="loc-feat"><span>🔊</span> Nature sounds</div>' +
       '</div>' +
@@ -1005,31 +1112,36 @@ function showLocationPrompt() {
       '<div class="loc-prompt-skip" onclick="handleLocationDeny()">Not now</div>' +
     '</div>';
 
-  modal.classList.add('active');
+  modal.classList.add('on');
 }
 
 function handleLocationAllow() {
   var modal = document.getElementById('generic-modal');
-  if (modal) modal.classList.remove('active');
+  if (modal) modal.classList.remove('on');
+
+  toast('Requesting location...');
   requestLocationPermission().then(function(granted) {
     if (granted) {
-      toast('Location enabled — fetching weather');
-      fetchWeather().then(function() {
-        var container = document.getElementById('sky-scene');
-        if (container && livingSkyEnabled) renderLivingSky(container);
-        updateAmbientAudio();
-        updateWeatherInfoUI();
+      toast('Location enabled — fetching weather...');
+      fetchWeather().then(function(data) {
+        if (data) {
+          var container = document.getElementById('sky-scene');
+          if (container && livingSkyEnabled) renderLivingSky(container);
+          updateAmbientAudio();
+          updateWeatherInfoUI();
+          toast('Weather loaded: ' + Math.round(data.temp) + '° ' + data.condition);
+        } else {
+          toast('Could not fetch weather data');
+        }
       });
-    } else {
-      toast('Location access denied');
     }
   });
 }
 
 function handleLocationDeny() {
   var modal = document.getElementById('generic-modal');
-  if (modal) modal.classList.remove('active');
-  if (db && user) {
+  if (modal) modal.classList.remove('on');
+  if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
     db.ref('settings/weather/' + user + '/prompted').set(true);
   }
 }
@@ -1048,6 +1160,7 @@ function updateWeatherInfoUI() {
     thunderstorm: '⛈️', snow: '❄️', mist: '🌫️', fog: '🌫️',
     haze: '🌫️', dust: '💨', sand: '💨'
   };
+  el.classList.remove('d-none');
   el.innerHTML = '<span class="weather-icon">' + (condIcon[d.condition] || '🌤') + '</span>' +
     '<span class="weather-temp">' + Math.round(d.temp) + '°C</span>' +
     '<span class="weather-cond">' + d.condition.charAt(0).toUpperCase() + d.condition.slice(1) + '</span>' +
@@ -1058,55 +1171,72 @@ function updateWeatherInfoUI() {
 function setWeatherScene(sceneName) {
   if (!SCENES[sceneName]) return;
   WEATHER.scene = sceneName;
-  if (db && user) {
+  if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
     db.ref('settings/weather/' + user + '/scene').set(sceneName);
   }
-  // Re-render sky
   var container = document.getElementById('sky-scene');
   if (container && livingSkyEnabled) renderLivingSky(container);
   updateAmbientAudio();
 
-  // Update UI selection
   document.querySelectorAll('.scene-option').forEach(function(opt) {
     opt.classList.toggle('active', opt.getAttribute('data-scene') === sceneName);
   });
-  toast(SCENES[sceneName].label + ' scene activated');
+
+  // If preview is running, restart with new scene
+  if (WEATHER.previewRunning) {
+    var box = document.getElementById('scene-preview-box');
+    if (box) startScenePreview(sceneName, box);
+  }
+
+  toast(SCENES[sceneName].label + ' activated');
 }
 
 // ===== INIT =====
 function initWeatherSystem() {
-  // Load saved settings
-  if (db && user) {
-    db.ref('settings/weather/' + user).once('value', function(snap) {
-      var data = snap.val() || {};
-      if (data.scene) WEATHER.scene = data.scene;
-      if (data.audio) {
-        WEATHER.audioEnabled = data.audio;
-        var audioToggle = document.getElementById('set-ambient-audio');
-        if (audioToggle) audioToggle.checked = data.audio;
-      }
-      if (data.location && data.location.granted) {
-        WEATHER.lat = data.location.lat;
-        WEATHER.lon = data.location.lon;
-        WEATHER.locationGranted = true;
-        fetchWeather().then(function() {
-          var container = document.getElementById('sky-scene');
-          if (container && livingSkyEnabled) renderLivingSky(container);
-          updateWeatherInfoUI();
-        });
-      } else if (!data.prompted) {
-        // First time — prompt for location after a delay
-        setTimeout(function() {
-          if (livingSkyEnabled) showLocationPrompt();
-        }, 3000);
-      }
+  if (typeof db === 'undefined' || !db || typeof user === 'undefined' || !user) return;
 
-      // Update scene option UI
-      document.querySelectorAll('.scene-option').forEach(function(opt) {
-        opt.classList.toggle('active', opt.getAttribute('data-scene') === WEATHER.scene);
-      });
+  db.ref('settings/weather/' + user).once('value', function(snap) {
+    var data = snap.val() || {};
+
+    // Load scene
+    if (data.scene && SCENES[data.scene]) {
+      WEATHER.scene = data.scene;
+    }
+
+    // Load audio preference
+    if (data.audio) {
+      WEATHER.audioEnabled = true;
+      var audioToggle = document.getElementById('set-ambient-audio');
+      if (audioToggle) audioToggle.checked = true;
+    }
+
+    // Update scene selection UI
+    document.querySelectorAll('.scene-option').forEach(function(opt) {
+      opt.classList.toggle('active', opt.getAttribute('data-scene') === WEATHER.scene);
     });
-  }
+
+    // Load location
+    if (data.location && data.location.granted && data.location.lat) {
+      WEATHER.lat = data.location.lat;
+      WEATHER.lon = data.location.lon;
+      WEATHER.locationGranted = true;
+      // Update button
+      var btn = document.getElementById('set-location-btn');
+      if (btn) btn.textContent = 'Refresh';
+
+      fetchWeather().then(function() {
+        var container = document.getElementById('sky-scene');
+        if (container && livingSkyEnabled) renderLivingSky(container);
+        updateWeatherInfoUI();
+        updateAmbientAudio();
+      });
+    } else if (!data.prompted) {
+      // First time — prompt after delay
+      setTimeout(function() {
+        if (livingSkyEnabled) showLocationPrompt();
+      }, 4000);
+    }
+  });
 
   // Refresh weather every 15 minutes
   WEATHER.refreshTimer = setInterval(function() {
@@ -1120,12 +1250,11 @@ function initWeatherSystem() {
   }, 15 * 60 * 1000);
 }
 
-// Hook into the app init flow — called after auth
+// Hook into app init
 document.addEventListener('DOMContentLoaded', function() {
-  // Will be called by loadSettings or after auth
   setTimeout(function() {
     if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
       initWeatherSystem();
     }
-  }, 2000);
+  }, 2500);
 });
