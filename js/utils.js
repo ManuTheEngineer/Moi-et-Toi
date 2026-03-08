@@ -1,8 +1,10 @@
 // ===== VIEWPORT FIX (PWA full-screen coverage) =====
 (function(){
+  var fullH = 0;
   function fillScreen(){
     var h = Math.max(window.screen.height, window.innerHeight, document.documentElement.clientHeight);
     document.documentElement.style.setProperty('--real-h', h + 'px');
+    if (h > fullH) fullH = h; // Track max height (before keyboard)
   }
   fillScreen();
   window.addEventListener('resize', fillScreen);
@@ -10,21 +12,34 @@
 
   // Track visual viewport for keyboard-aware layouts
   if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', function() {
-      document.documentElement.style.setProperty('--vv-h', window.visualViewport.height + 'px');
-    });
-    document.documentElement.style.setProperty('--vv-h', window.visualViewport.height + 'px');
+    var vv = window.visualViewport;
+    function onVVResize() {
+      var h = vv.height;
+      document.documentElement.style.setProperty('--vv-h', h + 'px');
+      // Detect keyboard open: viewport shrinks significantly
+      var keyboardOpen = fullH > 0 && (fullH - h) > 100;
+      document.body.classList.toggle('keyboard-open', keyboardOpen);
+    }
+    vv.addEventListener('resize', onVVResize);
+    onVVResize();
   }
 
-  // Dismiss keyboard on scroll (mobile UX)
+  // Dismiss keyboard on scroll — only on main page, not in modals or forms
   var scrollTick = false;
   window.addEventListener('scroll', function() {
     if (!scrollTick) {
       scrollTick = true;
       requestAnimationFrame(function() {
         var active = document.activeElement;
-        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') && !active.closest('.chat-input-wrap') && !active.closest('#onboard-steps') && !active.closest('#login-form')) {
-          if (window.scrollY > 60) active.blur();
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')
+          && !active.closest('.chat-input-wrap')
+          && !active.closest('#onboard-steps')
+          && !active.closest('#login-form')
+          && !active.closest('.generic-modal-overlay')
+          && !active.closest('.generic-modal-box')
+          && !active.closest('.lmod')
+          && !active.closest('.form-card')) {
+          if (window.scrollY > 120) active.blur();
         }
         scrollTick = false;
       });

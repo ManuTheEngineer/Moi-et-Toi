@@ -5,6 +5,9 @@ body{margin:0;padding:0}
 /* Touch delay fix for mobile */
 *{-webkit-tap-highlight-color:transparent}
 button,a,[onclick],[role="button"]{touch-action:manipulation}
+/* Hide bottom nav when keyboard is open so it doesn't overlay content */
+body.keyboard-open .bnav{transform:translateY(100%);pointer-events:none}
+body.keyboard-open .shell{padding-bottom:0}
 /* ===== IMMERSIVE BACKGROUND — aurora + particles + noise ===== */
 body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:

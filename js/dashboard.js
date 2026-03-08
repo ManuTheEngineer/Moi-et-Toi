@@ -93,10 +93,23 @@ function openModal(html) {
   var box = document.getElementById('generic-modal-content');
   if (box) box.innerHTML = html;
   if (el) { el.classList.add('on'); }
+  // When keyboard opens inside modal, scroll the focused input into view
+  if (box) {
+    box.addEventListener('focusin', function _scrollInput(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        setTimeout(function() { e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 350);
+      }
+    });
+  }
 }
 
 function closeModal() {
   var el = document.getElementById('generic-modal');
+  // Blur any focused input first so keyboard dismisses cleanly
+  var active = document.activeElement;
+  if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+    active.blur();
+  }
   if (el) { el.classList.remove('on'); }
 }
 
@@ -1584,7 +1597,6 @@ function connectSpotify() {
       '<div id="spotify-partner-link" style="margin-top:12px;font-size:12px;color:var(--t3)"></div>' +
     '</div>'
   );
-  setTimeout(function() { var el = document.getElementById('spotify-link'); if (el) el.focus(); }, 350);
   // Load existing links
   if (db && user) {
     db.ref('settings/music/' + user + '/spotify').once('value', function(s) {
@@ -1623,7 +1635,6 @@ function connectYouTubeMusic() {
       '<div id="ytm-partner-link" style="margin-top:12px;font-size:12px;color:var(--t3)"></div>' +
     '</div>'
   );
-  setTimeout(function() { var el = document.getElementById('ytm-link'); if (el) el.focus(); }, 350);
   if (db && user) {
     db.ref('settings/music/' + user + '/youtube').once('value', function(s) {
       var el = document.getElementById('ytm-link');

@@ -676,23 +676,40 @@ function renderPelican(container) {
 }
 
 // ===== AMBIENT AUDIO SYSTEM =====
-// Audio unlock — only needs to happen once per session
+// Audio unlock — requires user gesture on iOS/Safari
 function unlockAudio() {
-  if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') return;
   try {
     if (!WEATHER.audioCtx) {
       WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
     var ctx = WEATHER.audioCtx;
+
+    // Resume if suspended/interrupted
     if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
       ctx.resume().then(function() {
+        // iOS requires an actual buffer to be played during a user gesture
+        _playSilentBuffer(ctx);
         WEATHER.audioUnlocked = true;
         _onAudioReady();
       });
-    } else if (ctx.state === 'running' && !WEATHER.audioUnlocked) {
-      WEATHER.audioUnlocked = true;
-      _onAudioReady();
+    } else if (ctx.state === 'running') {
+      if (!WEATHER.audioUnlocked) {
+        _playSilentBuffer(ctx);
+        WEATHER.audioUnlocked = true;
+        _onAudioReady();
+      }
     }
+  } catch(e) {}
+}
+
+// iOS Safari needs an actual buffer played during user gesture to fully unlock
+function _playSilentBuffer(ctx) {
+  try {
+    var buf = ctx.createBuffer(1, 1, 22050);
+    var src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(ctx.destination);
+    src.start(0);
   } catch(e) {}
 }
 
@@ -705,15 +722,17 @@ function _onAudioReady() {
   }
 }
 
-// Only listen until unlocked, then remove listeners
+// Keep listener alive — AudioContext can re-suspend on mobile (page background, etc.)
+// Debounce to avoid running on every rapid tap
+var _unlockTimer = null;
 function _tryUnlock() {
-  if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
-    document.removeEventListener('touchstart', _tryUnlock);
-    document.removeEventListener('click', _tryUnlock);
-    return;
-  }
   // Don't fight AudioContext.suspend() during voice recording
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
+  // Already running, skip
+  if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') return;
+  // Debounce — only run once per 500ms
+  if (_unlockTimer) return;
+  _unlockTimer = setTimeout(function() { _unlockTimer = null; }, 500);
   unlockAudio();
 }
 document.addEventListener('touchstart', _tryUnlock, { passive: true });
@@ -1344,13 +1363,21 @@ function playMoodSound(moodKey) {
   // Stop any existing mood sound
   stopMoodSound();
 
-  if (!WEATHER.audioUnlocked) {
+  // Tapping a mood button IS a user gesture — unlock audio right here
+  if (!WEATHER.audioCtx) {
+    WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  var ctx = WEATHER.audioCtx;
+  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
     WEATHER.moodPlaying = moodKey;
-    toast('Tap anywhere first, then the sound will play');
+    ctx.resume().then(function() {
+      _playSilentBuffer(ctx);
+      WEATHER.audioUnlocked = true;
+      playMoodSound(moodKey); // retry now that we're unlocked
+    });
     return;
   }
-  if (!WEATHER.audioCtx) return;
-  if (WEATHER.audioCtx.state === 'suspended') WEATHER.audioCtx.resume();
+  WEATHER.audioUnlocked = true;
 
   var mood = MOOD_SOUNDS[moodKey];
   if (!mood) return;
@@ -1461,7 +1488,6 @@ setInterval(syncSkyState, 30000);
 
 // Periodic audio retry — if enabled but no sounds playing, try again
 setInterval(function() {
-  // Skip retry during voice recording (AudioContext is deliberately suspended)
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
   if (WEATHER.audioEnabled && WEATHER.audioCtx && Object.keys(WEATHER.audioNodes).length === 0) {
     if (WEATHER.audioCtx.state !== 'running') {
@@ -1471,6 +1497,17 @@ setInterval(function() {
     }
   }
 }, 5000);
+
+// Resume audio when page returns from background
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) return;
+  if (typeof vnRecording !== 'undefined' && vnRecording) return;
+  if (WEATHER.audioCtx && WEATHER.audioEnabled) {
+    if (WEATHER.audioCtx.state === 'suspended' || WEATHER.audioCtx.state === 'interrupted') {
+      WEATHER.audioCtx.resume().then(function() { updateAmbientAudio(); });
+    }
+  }
+});
 
 // ===== INIT =====
 function initWeatherSystem() {
