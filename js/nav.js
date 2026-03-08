@@ -210,10 +210,6 @@ function initSwipeNav() {
     // Don't swipe if started on an interactive element
     if (_swipeOnInteractive) return;
 
-    // Don't swipe if cmd sheet is open
-    const cmd = document.getElementById('cmd-center');
-    if (cmd && cmd.classList.contains('on')) return;
-
     const currentTab = TAB_MAP[document.body.dataset.page] || document.body.dataset.page;
     const idx = TAB_ORDER.indexOf(currentTab);
     if (idx === -1) return;
@@ -246,31 +242,34 @@ function initCollapsingHeader() {
 // ===== NAV BADGES =====
 function updateNavBadges() {
   if (typeof db === 'undefined' || !db) return;
-
-  // Together tab: check for recent letters
-  db.ref('letters').orderByChild('timestamp').limitToLast(5).once('value', function(snap) {
-    const badge = document.getElementById('badge-together');
-    if (!badge) return;
-    let unread = 0;
-    const now = Date.now();
-    if (snap.exists()) snap.forEach(function(c) {
-      const v = c.val();
-      if (v.timestamp && (now - v.timestamp) < 86400000) unread++;
-    });
-    if (unread > 0) { badge.textContent = unread; badge.classList.add('show'); }
-    else { badge.classList.remove('show'); }
-  });
-
-  // Track tab: check if mood logged today
-  var today = localDate();
   var u = typeof user !== 'undefined' ? user : null;
+  var p = typeof partner !== 'undefined' ? partner : null;
+
+  // Together tab: count unread letters from partner (last 24h)
+  if (p) {
+    db.ref('letters').orderByChild('timestamp').limitToLast(5).once('value', function(snap) {
+      const badge = document.getElementById('badge-together');
+      if (!badge) return;
+      let unread = 0;
+      const now = Date.now();
+      if (snap.exists()) snap.forEach(function(c) {
+        const v = c.val();
+        if (v.from === p && v.timestamp && (now - v.timestamp) < 86400000) unread++;
+      });
+      if (unread > 0) { badge.textContent = unread; badge.classList.add('show'); }
+      else { badge.classList.remove('show'); }
+    });
+  }
+
+  // Wellness tab: gentle nudge if mood not logged today
+  var today = localDate();
   if (u) {
     db.ref('moods').orderByChild('date').equalTo(today).once('value', function(snap) {
-      const badge = document.getElementById('badge-track');
+      const badge = document.getElementById('badge-wellness');
       if (!badge) return;
       var found = false;
       if (snap.exists()) snap.forEach(function(c) { if (c.val().user === u) found = true; });
-      if (!found) { badge.textContent = '!'; badge.classList.add('show'); }
+      if (!found) { badge.textContent = '1'; badge.classList.add('show'); }
       else { badge.classList.remove('show'); }
     });
   }

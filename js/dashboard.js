@@ -1273,36 +1273,34 @@ function renderTaskList(containerId, listId, countId, tasks, doneCount) {
 // ===== PUSH NOTIFICATIONS FOR DAILY TASKS =====
 function initNotifications() {
   if (!('Notification' in window)) return;
-  // Request permission on first app load (after login)
   if (Notification.permission === 'default') {
-    // Delay request so it's not jarring on first load
+    // Delay permission request so it's not jarring on first load
     setTimeout(() => {
       Notification.requestPermission().then(perm => {
         if (perm === 'granted') scheduleDailyReminder();
       });
-    }, 5000);
+    }, 8000);
   } else if (Notification.permission === 'granted') {
     scheduleDailyReminder();
   }
 }
 
 function scheduleDailyReminder() {
-  // Check every 30 minutes if user has pending tasks and hasn't been notified today
   const REMINDER_KEY = 'met_last_reminder';
-  const CHECK_INTERVAL = 30 * 60 * 1000; // 30 min
+  const CHECK_INTERVAL = 60 * 60 * 1000; // Check every hour (not 30 min — less aggressive)
 
   function check() {
     if (!db || !user) return;
     const today = localDate();
     const lastReminder = localStorage.getItem(REMINDER_KEY);
-    if (lastReminder === today) return; // Already reminded today
+    if (lastReminder === today) return;
 
     const now = new Date();
     const hour = now.getHours();
-    // Only remind between 9am and 9pm
-    if (hour < 9 || hour > 21) return;
+    // Only remind between 10am and 8pm — respect quiet hours
+    if (hour < 10 || hour > 20) return;
 
-    // Check if there are pending daily tasks
+    // Check the two most important daily tasks (mood + daily question)
     Promise.all([
       db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value'),
       db.ref('dailyAnswers/' + today + '/' + user).once('value'),
@@ -1311,6 +1309,7 @@ function scheduleDailyReminder() {
       if (moods.exists()) moods.forEach(c => { if (c.val().user === user && c.val().date === today) moodDone = true; });
       const dqDone = dq.exists();
 
+      // Only notify if at least one core task is pending
       if (!moodDone || !dqDone) {
         const pending = [];
         if (!moodDone) pending.push('mood check-in');
@@ -1321,17 +1320,24 @@ function scheduleDailyReminder() {
     });
   }
 
-  // Initial check after a short delay
-  setTimeout(check, 10000);
-  // Then check periodically
+  // Initial check after a longer delay (don't notify right after login)
+  setTimeout(check, 30000);
   setInterval(check, CHECK_INTERVAL);
 }
 
 function sendNotification(pendingTasks) {
   if (Notification.permission !== 'granted') return;
+  // Warm, friendly messages that feel personal
+  const msgs = {
+    1: {
+      'mood check-in': 'Take a moment to check in with yourself today',
+      'daily question': 'A new question is waiting for you and your partner',
+    },
+    multi: 'Your mood check-in and daily question are waiting for you'
+  };
   const body = pendingTasks.length === 1
-    ? 'You still need to do your ' + pendingTasks[0] + ' today'
-    : 'You still need to do your ' + pendingTasks.join(' & ') + ' today';
+    ? (msgs[1][pendingTasks[0]] || 'You have something waiting for you')
+    : msgs.multi;
   try {
     new Notification('Moi & Toi', {
       body: body,
@@ -1339,12 +1345,12 @@ function sendNotification(pendingTasks) {
       badge: 'icons/icon-96x96.png',
       tag: 'daily-reminder',
       renotify: false,
+      silent: false,
     });
-  } catch(e) { /* SW notification fallback not needed for now */ }
+  } catch(e) {}
 }
 
 function checkDailyNotification(tasks, doneCount) {
-  // If not all tasks done and user hasn't been notified, check
   if (doneCount < tasks.length) initNotifications();
 }
 
