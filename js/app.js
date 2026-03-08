@@ -9,7 +9,7 @@ try { FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_fb_config')); } cat
 let CLAUDE_API_KEY = "";
 
 // Profile names & nicknames - loaded from Firebase
-let NAMES = { her: "Taylor", him: "Manu" };
+let NAMES = { her: "", him: "" };
 let NICKNAMES = { herCallsHim: "", himCallsHer: "" };
 
 // ==========================================
@@ -100,13 +100,12 @@ async function loadProfiles() {
   return new Promise(resolve => {
     db.ref('profiles').on('value', snap => {
       const data = snap.val();
-      if (data) {
-        if (data.her) NAMES.her = data.her;
-        if (data.him) NAMES.him = data.him;
-        if (data.herCallsHim) NICKNAMES.herCallsHim = data.herCallsHim;
-        if (data.himCallsHer) NICKNAMES.himCallsHer = data.himCallsHer;
-        if (data.apiKey) CLAUDE_API_KEY = data.apiKey;
-      }
+      // Reset to empty so onboarding triggers if profiles were wiped
+      NAMES.her = (data && data.her) || '';
+      NAMES.him = (data && data.him) || '';
+      NICKNAMES.herCallsHim = (data && data.herCallsHim) || '';
+      NICKNAMES.himCallsHer = (data && data.himCallsHer) || '';
+      if (data && data.apiKey) CLAUDE_API_KEY = data.apiKey;
       if (user) {
         document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
         document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
