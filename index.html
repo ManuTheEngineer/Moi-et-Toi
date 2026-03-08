@@ -2516,10 +2516,10 @@
   <!-- Shared Grocery List -->
   <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Grocery List</div></div>
   <div class="bl-form">
-    <input type="text" id="grocery-input" placeholder="Add item..." onkeydown="if(event.key==='Enter')addGroceryItem()">
-    <button onclick="addGroceryItem()">+</button>
+    <input type="text" id="cal-grocery-input" placeholder="Add item..." onkeydown="if(event.key==='Enter')addGroceryItem('cal-grocery-input')">
+    <button onclick="addGroceryItem('cal-grocery-input')">+</button>
   </div>
-  <div id="grocery-list"><div class="empty">Your shared shopping list</div></div>
+  <div id="cal-grocery-list"><div class="empty">Your shared shopping list</div></div>
 
   <!-- Shared To-Do -->
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Shared To-Do</div></div>

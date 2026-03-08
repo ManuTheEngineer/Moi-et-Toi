@@ -1,7 +1,4 @@
-/* ===== ENHANCED TOAST ===== */
-.toast{position:fixed;bottom:calc(110px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:#fff;padding:14px 32px;border-radius:50px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.2,.8,.3,1);z-index:1200;box-shadow:0 8px 32px rgba(28,43,74,.2);letter-spacing:.5px}
-.toast.on{opacity:1;transform:translateX(-50%) translateY(0);animation:toastBounce .5s cubic-bezier(.2,.8,.3,1)}
-@keyframes toastBounce{0%{transform:translateX(-50%) translateY(40px);opacity:0}60%{transform:translateX(-50%) translateY(-4px);opacity:1}100%{transform:translateX(-50%) translateY(0)}}
+/* Toast styles consolidated below (line ~260) */
 
 /* ===== QUICK ACTION SHEET (hamburger menu) ===== */
 .cmd-backdrop{position:fixed;inset:0;z-index:899;background:rgba(0,0,0,0.5);opacity:0;pointer-events:none;transition:opacity .3s ease;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
@@ -258,9 +255,8 @@
 
 /* ===== TOAST ===== */
 .toast{position:fixed;bottom:calc(110px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:#fff;padding:14px 32px;border-radius:50px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.2,.8,.3,1);z-index:1200;box-shadow:0 8px 32px rgba(28,43,74,.2);letter-spacing:.5px;display:flex;align-items:center;gap:6px}
-.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);animation:toastBounce .4s cubic-bezier(.2,.8,.3,1)}
 @keyframes toastBounce{0%{transform:translateX(-50%) translateY(20px) scale(.8)}60%{transform:translateX(-50%) translateY(-4px) scale(1.02)}100%{transform:translateX(-50%) translateY(0) scale(1)}}
-.toast.on{animation:toastBounce .4s cubic-bezier(.2,.8,.3,1)}
 
 /* ===== EMPTY ===== */
 .empty{text-align:center;padding:28px 20px;font-size:13px;color:var(--t3);line-height:1.6;font-style:italic}

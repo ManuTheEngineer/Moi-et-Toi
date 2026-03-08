@@ -1280,26 +1280,7 @@ function renderMealPlan() {
     </div>`).join('');
 }
 
-async function addGroceryItem() {
-  const input = document.getElementById('grocery-input');
-  const name = input.value.trim();
-  if (!name) return;
-  await db.ref('nutrition/groceryList').push({ name, checked: false, user, timestamp: Date.now() });
-  input.value = '';
-}
-
-function renderGroceryList() {
-  const container = document.getElementById('grocery-list');
-  if (!container) return;
-  const items = Object.entries(groceryData);
-  if (!items.length) { container.innerHTML = '<div class="empty">Build your shared grocery list</div>'; return; }
-  container.innerHTML = items.map(([k, i]) => `
-    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--tint)">
-      <input type="checkbox" ${i.checked ? 'checked' : ''} onchange="toggleGrocery('${k}', this.checked)">
-      <span style="flex:1;font-size:13px;color:var(--cream);${i.checked ? 'text-decoration:line-through;opacity:.5' : ''}">${esc(i.name)}</span>
-      <button onclick="deleteGrocery('${k}')" style="background:none;border:none;color:var(--red);font-size:16px;cursor:pointer">&times;</button>
-    </div>`).join('');
-}
+// Nutrition grocery removed — uses shared addGroceryItem below
 
 async function toggleGrocery(key, checked) {
   await db.ref('nutrition/groceryList/' + key + '/checked').set(checked);
@@ -1913,9 +1894,10 @@ function dhLoadChecklist() {
 }
 
 // ===== SHARED GROCERY LIST =====
-async function addGroceryItem() {
+async function addGroceryItem(inputId) {
   if (!db || !user) return;
-  const input = document.getElementById('grocery-input');
+  const input = document.getElementById(inputId || 'grocery-input');
+  if (!input) return;
   const name = input.value.trim();
   if (!name) return;
   await db.ref('grocery').push({
@@ -1930,18 +1912,21 @@ function listenGrocery() {
   db.ref('grocery').orderByChild('timestamp').on('value', snap => {
     const items = [];
     snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
-    const el = document.getElementById('grocery-list');
-    if (!el) return;
-    if (!items.length) { el.innerHTML = '<div class="empty">Your shared shopping list</div>'; return; }
-    const unchecked = items.filter(i => !i.checked);
-    const checked = items.filter(i => i.checked);
-    el.innerHTML = [...unchecked, ...checked].map(i => {
-      return `<div class="grocery-item ${i.checked ? 'done' : ''}">
-        <div class="grocery-check" onclick="toggleGrocery('${i._key}',${!i.checked})">${i.checked ? '✓' : ''}</div>
-        <span class="grocery-name">${esc(i.name)}</span>
-        <button class="item-delete" onclick="db.ref('grocery/${i._key}').remove()">×</button>
-      </div>`;
-    }).join('');
+    // Render to both grocery list containers
+    ['grocery-list', 'cal-grocery-list'].forEach(elId => {
+      const el = document.getElementById(elId);
+      if (!el) return;
+      if (!items.length) { el.innerHTML = '<div class="empty">Your shared shopping list</div>'; return; }
+      const unchecked = items.filter(i => !i.checked);
+      const checked = items.filter(i => i.checked);
+      el.innerHTML = [...unchecked, ...checked].map(i => {
+        return `<div class="grocery-item ${i.checked ? 'done' : ''}">
+          <div class="grocery-check" onclick="toggleGrocery('${i._key}',${!i.checked})">${i.checked ? '✓' : ''}</div>
+          <span class="grocery-name">${esc(i.name)}</span>
+          <button class="item-delete" onclick="db.ref('grocery/${i._key}').remove()">×</button>
+        </div>`;
+      }).join('');
+    });
   });
 }
 

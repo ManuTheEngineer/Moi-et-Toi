@@ -111,11 +111,6 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .sky-cloud-highlight{position:absolute;background:rgba(255,255,255,.2);border-radius:50%;filter:blur(2px)}
 .sky-cloud-wisp{position:absolute;border-radius:40% 60% 50% 40%;filter:blur(6px);opacity:.3}
 
-/* Dark mode clouds — wispy */
-.sky-cloud-dark .sky-cloud-body{background:rgba(180,160,220,.08);filter:blur(3px)}
-.sky-cloud-dark .sky-cloud-puff{background:rgba(180,160,220,.06);filter:blur(4px)}
-.sky-cloud-dark .sky-cloud-shadow{display:none}
-.sky-cloud-dark .sky-cloud-highlight{background:rgba(200,180,255,.04)}
 
 /* Birds */
 .sky-bird{position:absolute;opacity:0;animation:birdFly var(--bird-dur,12s) ease-in-out var(--bird-delay,0s) 1 forwards}
