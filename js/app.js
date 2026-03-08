@@ -246,10 +246,35 @@ function finishLogin() {
   setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); checkAchievements(); updateNavBadges(); initHubPages(); }, 1500);
   // Refresh badges periodically
   setInterval(updateNavBadges, 60000);
+  // ONE-TIME DATA WIPE — remove this block after it runs
+  setTimeout(() => clearAllData(), 3000);
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
 function logout() { firebase.auth().signOut(); location.reload(); }
+
+async function clearAllData() {
+  if (!db) { toast('Not connected'); return; }
+  try {
+    // Preserve profiles and API key
+    const profilesSnap = await db.ref('profiles').once('value');
+    const apiSnap = await db.ref('apiKey').once('value');
+    const profiles = profilesSnap.val();
+    const apiKey = apiSnap.val();
+    // Wipe everything
+    await db.ref('/').remove();
+    // Restore essentials
+    if (profiles) await db.ref('profiles').set(profiles);
+    if (apiKey) await db.ref('apiKey').set(apiKey);
+    // Clear local caches
+    ['met_last_reminder', 'met_recent_pages'].forEach(k => localStorage.removeItem(k));
+    toast('All data cleared');
+    setTimeout(() => location.reload(), 1000);
+  } catch (e) {
+    toast('Clear failed');
+    console.error(e);
+  }
+}
 
 async function exportAllData() {
   if (!db) { toast('Not connected'); return; }
