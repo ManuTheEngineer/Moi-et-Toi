@@ -51,6 +51,54 @@ function updateTimeOfDay() {
 updateTimeOfDay();
 setInterval(updateTimeOfDay, 5 * 60 * 1000);
 
+// ===== TOAST NOTIFICATION =====
+function toast(msg, duration) {
+  duration = duration || 2500;
+  var existing = document.getElementById('toast-msg');
+  if (existing) existing.remove();
+  var el = document.createElement('div');
+  el.id = 'toast-msg';
+  el.textContent = msg;
+  el.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.82);color:#fff;padding:10px 22px;border-radius:20px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:80vw;text-align:center;font-family:Outfit,sans-serif';
+  document.body.appendChild(el);
+  requestAnimationFrame(function() { el.style.opacity = '1'; });
+  setTimeout(function() {
+    el.style.opacity = '0';
+    setTimeout(function() { el.remove(); }, 300);
+  }, duration);
+}
+
+// ===== TIME AGO HELPER =====
+function timeAgo(date) {
+  if (!date) return '';
+  var ts = typeof date === 'number' ? date : date.getTime ? date.getTime() : 0;
+  var diff = Math.floor((Date.now() - ts) / 1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  var days = Math.floor(diff / 86400);
+  if (days === 1) return 'yesterday';
+  if (days < 7) return days + 'd ago';
+  return Math.floor(days / 7) + 'w ago';
+}
+
+// ===== HTML ESCAPE =====
+function esc(str) {
+  if (!str) return '';
+  var d = document.createElement('div');
+  d.appendChild(document.createTextNode(str));
+  return d.innerHTML;
+}
+
+// ===== LOCAL DATE HELPER =====
+function localDate(d) {
+  d = d || new Date();
+  var y = d.getFullYear();
+  var m = ('0' + (d.getMonth() + 1)).slice(-2);
+  var day = ('0' + d.getDate()).slice(-2);
+  return y + '-' + m + '-' + day;
+}
+
 // ===== SHOW/HIDE HELPERS (works with d-none class OR inline style) =====
 function showEl(id) {
   const el = typeof id === 'string' ? document.getElementById(id) : id;
