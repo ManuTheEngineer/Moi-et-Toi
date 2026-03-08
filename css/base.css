@@ -8,6 +8,11 @@ button,a,[onclick],[role="button"]{touch-action:manipulation}
 /* Hide bottom nav when keyboard is open so it doesn't overlay content */
 body.keyboard-open .bnav{transform:translateY(100%);pointer-events:none}
 body.keyboard-open .shell{padding-bottom:0}
+/* Lock body scroll when modal is open — prevents iOS from scrolling behind fixed overlay */
+body.modal-open{overflow:hidden;position:fixed;width:100%;height:100%}
+/* Reposition modal to top when keyboard opens so input stays visible */
+body.keyboard-open .generic-modal-overlay{align-items:flex-start;padding-top:20px}
+body.keyboard-open .generic-modal-box{max-height:calc(var(--vv-h, 50vh) - 40px)}
 /* ===== IMMERSIVE BACKGROUND — aurora + particles + noise ===== */
 body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:

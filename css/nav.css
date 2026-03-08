@@ -47,8 +47,8 @@
 /* Switch login overlay from fixed to absolute so iOS keyboard can push content up */
 .login.onboard-active{position:absolute;height:auto;min-height:100vh;min-height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:max(env(safe-area-inset-top,20px),40px);padding-bottom:80px;scroll-behavior:smooth}
 .onboard-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px;margin:auto}
-.onboard-progress{width:100%;max-width:200px;height:3px;background:rgba(255,255,255,.25);border-radius:3px;margin-bottom:28px;overflow:hidden}
-.onboard-bar{height:100%;background:linear-gradient(90deg,var(--gold),#D4784A);border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.onboard-progress{width:100%;max-width:220px;height:4px;background:rgba(26,26,46,.08);border-radius:4px;margin-bottom:32px;overflow:hidden}
+.onboard-bar{height:100%;background:linear-gradient(90deg,var(--gold),#D4784A);border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1)}
 
 /* Step content wrapper — handles smooth transitions between steps */
 .ob-content{position:relative;display:flex;flex-direction:column;align-items:center;width:100%}
@@ -57,10 +57,10 @@
 @keyframes obFadeOut{to{opacity:0;transform:translateY(-12px)}}
 @keyframes obFadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-.onboard-emoji{font-size:44px;margin-bottom:14px;opacity:0;transform:scale(0);transition:all .5s cubic-bezier(.175,.885,.32,1.275)}
-.ob-content.ob-enter .onboard-emoji{opacity:1;transform:scale(1);transition-delay:.15s}
-.onboard-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:26px;letter-spacing:2.5px;text-transform:uppercase;color:#1A1A2E;margin-bottom:8px;text-align:center;transition:opacity .3s}
-.onboard-sub{font-size:14px;line-height:1.6;color:rgba(26,26,46,.50);margin-bottom:24px;text-align:center;max-width:280px;transition:opacity .3s}
+.onboard-emoji{font-size:48px;margin-bottom:16px;opacity:0;transform:scale(0) rotate(-10deg);transition:all .6s cubic-bezier(.175,.885,.32,1.275)}
+.ob-content.ob-enter .onboard-emoji{opacity:1;transform:scale(1) rotate(0deg);transition-delay:.1s}
+.onboard-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:28px;letter-spacing:2px;text-transform:uppercase;color:#1A1A2E;margin-bottom:10px;text-align:center;transition:opacity .3s}
+.onboard-sub{font-size:15px;line-height:1.65;color:rgba(26,26,46,.55);margin-bottom:28px;text-align:center;max-width:290px;transition:opacity .3s}
 .onboard-sub strong{color:#1A1A2E;font-weight:600}
 
 /* Inputs — smooth reveal with slight upward slide */
@@ -75,10 +75,10 @@
 
 .onboard-skip{font-size:13px;color:rgba(26,26,46,.35);margin-top:10px;cursor:pointer;letter-spacing:.5px;transition:opacity .3s}
 .onboard-skip:active{opacity:.6}
-.onboard-dots{display:flex;gap:7px;margin-top:20px}
-.onboard-dot{width:6px;height:6px;border-radius:50%;background:rgba(26,26,46,.12);transition:all .4s cubic-bezier(.4,0,.2,1)}
-.onboard-dot.active{background:var(--gold);width:20px;border-radius:3px}
-.onboard-dot.done{background:rgba(184,134,11,.35)}
+.onboard-dots{display:flex;gap:8px;margin-top:24px}
+.onboard-dot{width:7px;height:7px;border-radius:50%;background:rgba(26,26,46,.10);transition:all .5s cubic-bezier(.4,0,.2,1)}
+.onboard-dot.active{background:var(--gold);width:24px;border-radius:4px;box-shadow:0 0 8px rgba(184,134,11,.3)}
+.onboard-dot.done{background:rgba(184,134,11,.4)}
 
 /* Tour cards */
 .ob-tour-card{width:100%;max-width:320px;background:rgba(255,255,255,.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:20px;padding:16px 18px;margin-bottom:24px;text-align:left}
@@ -119,12 +119,12 @@
 .tour-overlay{position:fixed;inset:0;z-index:3000;pointer-events:none;opacity:0;transition:opacity .3s}
 .tour-overlay.on{opacity:1;pointer-events:all}
 .tour-overlay::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.7);z-index:0}
-.tour-spotlight{position:absolute;z-index:1;box-shadow:0 0 0 9999px rgba(0,0,0,.7);border:2px solid rgba(184,134,11,.5);transition:all .4s cubic-bezier(.4,0,.2,1);border-radius:12px}
-.tour-tooltip{position:absolute;z-index:2;background:var(--card-bg,#1e1e2e);border:1px solid rgba(184,134,11,.3);border-radius:16px;padding:20px;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;transform:translateY(10px)}
-.tour-tooltip.tour-tooltip-in{animation:tourIn .35s ease forwards}
-@keyframes tourIn{to{opacity:1;transform:translateY(0)}}
-.tour-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--gold,#B8860B);letter-spacing:1px;margin-bottom:6px}
-.tour-text{font-size:14px;line-height:1.6;color:var(--cream,#F5F0E8);opacity:.85}
+.tour-spotlight{position:absolute;z-index:1;box-shadow:0 0 0 9999px rgba(0,0,0,.65),0 0 20px rgba(184,134,11,.2);border:2px solid rgba(184,134,11,.4);transition:all .5s cubic-bezier(.4,0,.2,1);border-radius:16px}
+.tour-tooltip{position:absolute;z-index:2;background:var(--card-bg,#1e1e2e);border:1px solid rgba(184,134,11,.25);border-radius:20px;padding:22px 24px;max-width:340px;box-shadow:0 12px 40px rgba(0,0,0,.5);opacity:0;transform:translateY(12px) scale(.96)}
+.tour-tooltip.tour-tooltip-in{animation:tourIn .4s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes tourIn{to{opacity:1;transform:translateY(0) scale(1)}}
+.tour-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--gold,#B8860B);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.tour-text{font-size:14px;line-height:1.7;color:var(--cream,#F5F0E8);opacity:.8}
 .tour-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
 .tour-count{font-size:11px;color:var(--t3,rgba(245,240,232,.35));letter-spacing:1px}
 .tour-btns{display:flex;gap:8px}

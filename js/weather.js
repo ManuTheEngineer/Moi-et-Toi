@@ -1145,57 +1145,98 @@ function generateNoise(type) {
 
     // ===== MOOD SOUNDS =====
     case 'moodRelaxing': {
-      // Warm pad: Dmaj7 chord with slow LFO and soft noise bed
-      for (i = 0; i < len; i++) {
-        t = i / sr;
-        var lfo = 1 + 0.15 * Math.sin(PI2 * 0.2 * t);
-        var lfo2 = 1 + 0.1 * Math.sin(PI2 * 0.13 * t + 1);
-        L[i] = (Math.sin(PI2 * 146.8 * t) * 0.12 * lfo + // D3
-                Math.sin(PI2 * 185.0 * t) * 0.08 * lfo2 + // F#3
-                Math.sin(PI2 * 220.0 * t) * 0.10 * lfo +  // A3
-                Math.sin(PI2 * 277.2 * t) * 0.06 +          // C#4
-                (Math.random() * 2 - 1) * 0.03);
-        R[i] = (Math.sin(PI2 * 146.8 * t + 0.3) * 0.10 * lfo2 +
-                Math.sin(PI2 * 185.0 * t + 0.5) * 0.10 * lfo +
-                Math.sin(PI2 * 220.0 * t + 0.2) * 0.08 * lfo2 +
-                Math.sin(PI2 * 293.7 * t) * 0.05 +          // D4
-                (Math.random() * 2 - 1) * 0.03);
+      // Soft piano: slow arpeggiated Dmaj7 with sustain pedal feel
+      var relaxNotes = [
+        {f: 146.8, t: 0.0}, {f: 185.0, t: 0.5}, {f: 220.0, t: 1.0}, {f: 277.2, t: 1.5},
+        {f: 293.7, t: 2.5}, {f: 220.0, t: 3.0}, {f: 185.0, t: 3.5}, {f: 146.8, t: 4.0},
+        {f: 130.8, t: 5.0}, {f: 164.8, t: 5.5}, {f: 220.0, t: 6.0}, {f: 261.6, t: 6.5},
+        {f: 293.7, t: 7.5}, {f: 261.6, t: 8.0}, {f: 220.0, t: 8.5}, {f: 164.8, t: 9.0}
+      ];
+      for (var n = 0; n < relaxNotes.length; n++) {
+        var note = relaxNotes[n];
+        var start = Math.floor(note.t * sr);
+        var dur = Math.floor(sr * 2.5);
+        for (k = 0; k < dur && start + k < len; k++) {
+          var env = Math.exp(-k / (sr * 1.8)) * (1 - Math.exp(-k / (sr * 0.005)));
+          var s = (Math.sin(PI2 * note.f * k / sr) * 0.22 +
+                   Math.sin(PI2 * note.f * 2 * k / sr) * 0.06 * Math.exp(-k / (sr * 0.8)) +
+                   Math.sin(PI2 * note.f * 3 * k / sr) * 0.02 * Math.exp(-k / (sr * 0.4))) * env;
+          L[start + k] += s * 0.9; R[start + k] += s * 0.75;
+        }
       }
+      // Soft reverb tail
+      var dly = Math.floor(sr * 0.12);
+      for (i = dly; i < len; i++) { L[i] += L[i - dly] * 0.15; R[i] += R[i - dly] * 0.18; }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'moodRomantic': {
-      // Intimate: Am7 with gentle vibrato + warmth
+      // Romantic piano: slow, tender melody in Am with warm harmonics
+      var romNotes = [
+        {f: 220, t: 0.0}, {f: 261.6, t: 0.6}, {f: 329.6, t: 1.2}, {f: 392, t: 1.8},
+        {f: 329.6, t: 2.8}, {f: 293.7, t: 3.3}, {f: 261.6, t: 3.8},
+        {f: 220, t: 4.8}, {f: 196, t: 5.4}, {f: 220, t: 6.0}, {f: 261.6, t: 6.6},
+        {f: 246.9, t: 7.6}, {f: 220, t: 8.2}, {f: 196, t: 8.8}, {f: 174.6, t: 9.4}
+      ];
+      for (var n = 0; n < romNotes.length; n++) {
+        var note = romNotes[n];
+        var start = Math.floor(note.t * sr);
+        var dur = Math.floor(sr * 2.8);
+        for (k = 0; k < dur && start + k < len; k++) {
+          var env = Math.exp(-k / (sr * 2.2)) * (1 - Math.exp(-k / (sr * 0.004)));
+          var vib = Math.sin(PI2 * 5 * k / sr) * 0.8;
+          var s = (Math.sin(PI2 * (note.f + vib) * k / sr) * 0.25 +
+                   Math.sin(PI2 * (note.f + vib) * 2 * k / sr) * 0.07 * Math.exp(-k / (sr * 1.0)) +
+                   Math.sin(PI2 * (note.f + vib) * 3 * k / sr) * 0.03 * Math.exp(-k / (sr * 0.5))) * env;
+          L[start + k] += s * 0.85; R[start + k] += s * 0.8;
+        }
+      }
+      // Warm pad underneath
       for (i = 0; i < len; i++) {
         t = i / sr;
-        var vib = Math.sin(PI2 * 4.5 * t) * 2;
-        var swell = 0.8 + 0.2 * Math.sin(PI2 * 0.08 * t);
-        L[i] = (Math.sin(PI2 * (220 + vib) * t) * 0.14 +     // A3
-                Math.sin(PI2 * (261.6 + vib) * t) * 0.10 +   // C4
-                Math.sin(PI2 * (329.6 + vib) * t) * 0.10 +   // E4
-                Math.sin(PI2 * (392.0 + vib) * t) * 0.06 +   // G4
-                (Math.random() * 2 - 1) * 0.02) * swell;
-        R[i] = (Math.sin(PI2 * (220 + vib) * t + 0.4) * 0.12 +
-                Math.sin(PI2 * (261.6 + vib) * t + 0.6) * 0.12 +
-                Math.sin(PI2 * (329.6 + vib) * t + 0.3) * 0.08 +
-                Math.sin(PI2 * (440 + vib) * t) * 0.04 +     // A4
-                (Math.random() * 2 - 1) * 0.02) * swell;
+        var pad = Math.sin(PI2 * 110 * t) * 0.03 + Math.sin(PI2 * 165 * t) * 0.02;
+        var swell = 0.6 + 0.4 * Math.sin(PI2 * 0.08 * t);
+        L[i] += pad * swell; R[i] += pad * swell;
       }
+      var dly = Math.floor(sr * 0.15);
+      for (i = dly; i < len; i++) { L[i] += L[i - dly] * 0.12; R[i] += R[i - dly] * 0.15; }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'moodLively': {
-      // Upbeat: major arpeggios with rhythmic pulse
-      for (i = 0; i < len; i++) {
-        t = i / sr;
-        var beat = Math.max(0, Math.sin(PI2 * 2 * t)) * 0.3 + 0.7;
-        var note1 = Math.sin(PI2 * 329.6 * t + Math.sin(PI2 * 3 * t) * 0.5); // E4
-        var note2 = Math.sin(PI2 * 415.3 * t); // Ab4
-        var note3 = Math.sin(PI2 * 523.3 * t + Math.sin(PI2 * 5 * t) * 0.3); // C5
-        var bass = Math.sin(PI2 * 164.8 * t) * 0.15; // E3
-        L[i] = (note1 * 0.12 + note2 * 0.08 + note3 * 0.06 + bass +
-                (Math.random() * 2 - 1) * 0.06) * beat;
-        R[i] = (note1 * 0.08 + note2 * 0.12 + note3 * 0.08 + bass +
-                (Math.random() * 2 - 1) * 0.06) * beat;
+      // Upbeat acoustic guitar strum: major key arpeggios with rhythm
+      var livelyChords = [
+        {notes: [329.6, 415.3, 523.3], t: 0.0}, // E major
+        {notes: [349.2, 440, 523.3], t: 0.8},    // F major
+        {notes: [392, 493.9, 587.3], t: 1.6},    // G major
+        {notes: [261.6, 329.6, 392], t: 2.4},    // C major
+        {notes: [329.6, 415.3, 523.3], t: 3.6},
+        {notes: [293.7, 370, 440], t: 4.4},      // D major
+        {notes: [392, 493.9, 587.3], t: 5.2},
+        {notes: [261.6, 329.6, 392], t: 6.0},
+        {notes: [349.2, 440, 523.3], t: 7.2},
+        {notes: [329.6, 415.3, 523.3], t: 8.0},
+        {notes: [293.7, 370, 440], t: 8.8}
+      ];
+      for (var c = 0; c < livelyChords.length; c++) {
+        var chord = livelyChords[c];
+        for (var ni = 0; ni < chord.notes.length; ni++) {
+          var strumDelay = ni * 0.03;
+          var start = Math.floor((chord.t + strumDelay) * sr);
+          var dur = Math.floor(sr * 0.7);
+          var freq = chord.notes[ni];
+          for (k = 0; k < dur && start + k < len; k++) {
+            var env = Math.exp(-k / (sr * 0.35)) * (1 - Math.exp(-k / (sr * 0.001)));
+            var s = (Math.sin(PI2 * freq * k / sr) * 0.14 +
+                     Math.sin(PI2 * freq * 2 * k / sr) * 0.08 * Math.exp(-k / (sr * 0.15)) +
+                     Math.sin(PI2 * freq * 3 * k / sr) * 0.04 * Math.exp(-k / (sr * 0.1)) +
+                     Math.sin(PI2 * freq * 4 * k / sr) * 0.02 * Math.exp(-k / (sr * 0.08))) * env;
+            var pan = 0.4 + ni * 0.15;
+            L[start + k] += s * (1 - pan); R[start + k] += s * pan;
+          }
+        }
       }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'moodCozy': {
@@ -1231,136 +1272,187 @@ function generateNoise(type) {
       break;
     }
     case 'moodFocused': {
-      // Deep focus: binaural beats (10Hz alpha) + low pad + subtle texture
+      // Lo-fi focus: gentle piano chords + binaural undertone + vinyl crackle
+      var focChords = [
+        {notes: [261.6, 329.6, 392], t: 0},     // Cmaj
+        {notes: [220, 293.7, 349.2], t: 2.5},   // Dm
+        {notes: [196, 246.9, 329.6], t: 5.0},    // Em
+        {notes: [174.6, 220, 293.7], t: 7.5}     // Dm low
+      ];
+      for (var c = 0; c < focChords.length; c++) {
+        var chord = focChords[c];
+        for (var ni = 0; ni < chord.notes.length; ni++) {
+          var start = Math.floor((chord.t + ni * 0.08) * sr);
+          var dur = Math.floor(sr * 3.0);
+          var freq = chord.notes[ni];
+          for (k = 0; k < dur && start + k < len; k++) {
+            var env = Math.exp(-k / (sr * 2.0)) * (1 - Math.exp(-k / (sr * 0.006)));
+            var s = (Math.sin(PI2 * freq * k / sr) * 0.16 +
+                     Math.sin(PI2 * freq * 2 * k / sr) * 0.04 * Math.exp(-k / (sr * 0.6))) * env;
+            L[start + k] += s * 0.8; R[start + k] += s * 0.7;
+          }
+        }
+      }
+      // Binaural undertone for focus (10Hz alpha beat)
       for (i = 0; i < len; i++) {
         t = i / sr;
-        var lfo = 0.8 + 0.2 * Math.sin(PI2 * 0.05 * t);
-        L[i] = (Math.sin(PI2 * 200 * t) * 0.15 +     // Left: 200Hz
-                Math.sin(PI2 * 100 * t) * 0.08 +
-                (Math.random() * 2 - 1) * 0.015) * lfo;
-        R[i] = (Math.sin(PI2 * 210 * t) * 0.15 +     // Right: 210Hz (10Hz beat)
-                Math.sin(PI2 * 100.5 * t) * 0.08 +
-                (Math.random() * 2 - 1) * 0.015) * lfo;
+        L[i] += Math.sin(PI2 * 200 * t) * 0.03;
+        R[i] += Math.sin(PI2 * 210 * t) * 0.03;
       }
+      // Subtle vinyl crackle
+      for (var cr = 0; cr < 40; cr++) {
+        var pos = Math.floor(Math.random() * len);
+        L[pos] += (Math.random() - 0.5) * 0.06;
+        R[pos] += (Math.random() - 0.5) * 0.06;
+      }
+      var dly = Math.floor(sr * 0.1);
+      for (i = dly; i < len; i++) { L[i] += L[i - dly] * 0.12; R[i] += R[i - dly] * 0.14; }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'moodPlayful': {
-      // Whimsical: pentatonic melody fragments + bouncy feel
-      var notes = [392, 440, 523.3, 587.3, 659.3, 784]; // G major pentatonic
-      for (i = 0; i < len; i++) {
-        t = i / sr;
-        var bounce = Math.abs(Math.sin(PI2 * 1.5 * t));
-        L[i] = (Math.sin(PI2 * 392 * t) * 0.08 + Math.sin(PI2 * 523.3 * t + Math.sin(PI2 * 6 * t) * 1.5) * 0.08 +
-                (Math.random() * 2 - 1) * 0.05) * (0.6 + bounce * 0.4);
-        R[i] = (Math.sin(PI2 * 440 * t) * 0.08 + Math.sin(PI2 * 587.3 * t + Math.sin(PI2 * 4 * t) * 1) * 0.06 +
-                (Math.random() * 2 - 1) * 0.05) * (0.6 + bounce * 0.4);
-      }
-      // Sparkle hits
-      for (var sp = 0; sp < 15; sp++) {
-        var sPos = Math.floor(Math.random() * (len - sr * 0.2));
-        var sNote = notes[Math.floor(Math.random() * notes.length)] * 2;
-        var sLen = Math.floor(sr * 0.1);
-        for (k = 0; k < sLen && sPos + k < len; k++) {
-          var env = Math.exp(-k / (sLen * 0.2));
-          var s = Math.sin(PI2 * sNote * k / sr) * 0.12 * env;
-          L[sPos + k] += s * (Math.random() > 0.5 ? 1 : 0.3);
-          R[sPos + k] += s * (Math.random() > 0.5 ? 1 : 0.3);
+      // Playful xylophone/music box melody in G major
+      var playNotes = [
+        {f: 784, t: 0.0}, {f: 880, t: 0.25}, {f: 784, t: 0.5}, {f: 659.3, t: 0.75},
+        {f: 587.3, t: 1.25}, {f: 659.3, t: 1.5}, {f: 784, t: 1.75},
+        {f: 523.3, t: 2.5}, {f: 587.3, t: 2.75}, {f: 659.3, t: 3.0}, {f: 784, t: 3.5},
+        {f: 880, t: 4.0}, {f: 784, t: 4.5}, {f: 659.3, t: 5.0},
+        {f: 587.3, t: 5.5}, {f: 523.3, t: 6.0}, {f: 587.3, t: 6.5},
+        {f: 392, t: 7.0}, {f: 440, t: 7.5}, {f: 523.3, t: 8.0}, {f: 587.3, t: 8.5},
+        {f: 659.3, t: 9.0}, {f: 784, t: 9.5}
+      ];
+      for (var n = 0; n < playNotes.length; n++) {
+        var note = playNotes[n];
+        var start = Math.floor(note.t * sr);
+        var dur = Math.floor(sr * 0.5);
+        for (k = 0; k < dur && start + k < len; k++) {
+          var env = Math.exp(-k / (sr * 0.18)) * (1 - Math.exp(-k / (sr * 0.0005)));
+          var s = (Math.sin(PI2 * note.f * k / sr) * 0.18 +
+                   Math.sin(PI2 * note.f * 3 * k / sr) * 0.06 * Math.exp(-k / (sr * 0.08)) +
+                   Math.sin(PI2 * note.f * 5 * k / sr) * 0.02 * Math.exp(-k / (sr * 0.04))) * env;
+          var pan = 0.3 + (note.f / 1000) * 0.4;
+          L[start + k] += s * (1 - pan); R[start + k] += s * pan;
         }
       }
       for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'moodDreamy': {
-      // Ethereal: slow evolving pad with shimmer + reverb-like delays
-      for (i = 0; i < len; i++) {
-        t = i / sr;
-        var drift = Math.sin(PI2 * 0.05 * t);
-        var shimmer = Math.sin(PI2 * 0.3 * t) * 0.5;
-        L[i] = Math.sin(PI2 * (261.6 + drift * 3) * t) * 0.08 +
-               Math.sin(PI2 * (392 + drift * 2) * t + shimmer) * 0.06 +
-               Math.sin(PI2 * (523.3 + drift * 4) * t) * 0.05 +
-               Math.sin(PI2 * (784 + drift * 5) * t) * 0.03 +
-               (Math.random() * 2 - 1) * 0.02;
-        R[i] = Math.sin(PI2 * (261.6 + drift * 3) * t + 1.2) * 0.06 +
-               Math.sin(PI2 * (392 + drift * 2) * t + 0.8 + shimmer) * 0.08 +
-               Math.sin(PI2 * (523.3 + drift * 4) * t + 0.5) * 0.06 +
-               Math.sin(PI2 * (659.3 + drift * 3) * t) * 0.04 +
-               (Math.random() * 2 - 1) * 0.02;
+      // Ethereal harp arpeggios with long reverb
+      var dreamNotes = [
+        {f: 261.6, t: 0.0}, {f: 392, t: 0.4}, {f: 523.3, t: 0.8}, {f: 659.3, t: 1.2},
+        {f: 784, t: 1.6}, {f: 659.3, t: 2.4}, {f: 523.3, t: 2.8},
+        {f: 293.7, t: 3.6}, {f: 440, t: 4.0}, {f: 587.3, t: 4.4}, {f: 784, t: 4.8},
+        {f: 880, t: 5.2}, {f: 784, t: 6.0}, {f: 587.3, t: 6.4},
+        {f: 246.9, t: 7.2}, {f: 370, t: 7.6}, {f: 493.9, t: 8.0}, {f: 659.3, t: 8.4},
+        {f: 784, t: 8.8}, {f: 659.3, t: 9.4}
+      ];
+      for (var n = 0; n < dreamNotes.length; n++) {
+        var note = dreamNotes[n];
+        var start = Math.floor(note.t * sr);
+        var dur = Math.floor(sr * 3.0);
+        for (k = 0; k < dur && start + k < len; k++) {
+          var env = Math.exp(-k / (sr * 2.5)) * (1 - Math.exp(-k / (sr * 0.002)));
+          var s = (Math.sin(PI2 * note.f * k / sr) * 0.15 +
+                   Math.sin(PI2 * note.f * 2 * k / sr) * 0.05 * Math.exp(-k / (sr * 1.0)) +
+                   Math.sin(PI2 * note.f * 0.5 * k / sr) * 0.03) * env;
+          L[start + k] += s * (0.6 + 0.3 * Math.sin(PI2 * 0.2 * k / sr));
+          R[start + k] += s * (0.7 + 0.2 * Math.sin(PI2 * 0.15 * k / sr));
+        }
       }
-      // Soft echo/delay effect
-      var delay = Math.floor(sr * 0.37);
-      for (i = delay; i < len; i++) {
-        L[i] += L[i - delay] * 0.25;
-        R[i] += R[i - delay] * 0.2;
+      // Long reverb
+      var dly1 = Math.floor(sr * 0.17), dly2 = Math.floor(sr * 0.37);
+      for (i = dly2; i < len; i++) {
+        L[i] += L[i - dly1] * 0.2 + L[i - dly2] * 0.12;
+        R[i] += R[i - dly1] * 0.15 + R[i - dly2] * 0.18;
         L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
       }
       break;
     }
     case 'moodSerene': {
-      // Meditation: singing bowl resonances + breath-like swell
-      for (i = 0; i < len; i++) {
-        t = i / sr;
-        var breath = 0.5 + 0.5 * Math.sin(PI2 * 0.1 * t); // 5s breath cycle
-        // Singing bowl harmonics (F4 fundamental)
-        L[i] = (Math.sin(PI2 * 349.2 * t) * 0.12 +
-                Math.sin(PI2 * 349.2 * 2.71 * t) * 0.04 + // inharmonic partial
-                Math.sin(PI2 * 349.2 * 4.16 * t) * 0.02 +
-                (Math.random() * 2 - 1) * 0.01) * breath;
-        R[i] = (Math.sin(PI2 * 349.2 * t + 0.5) * 0.10 +
-                Math.sin(PI2 * 349.2 * 3.0 * t) * 0.04 +
-                Math.sin(PI2 * 523.3 * t) * 0.05 +   // C5 second bowl
-                (Math.random() * 2 - 1) * 0.01) * breath;
+      // Singing bowls with gentle melodic progression
+      var bowlNotes = [
+        {f: 349.2, t: 0.0, dur: 4.0}, {f: 523.3, t: 2.0, dur: 4.0},
+        {f: 392, t: 4.5, dur: 4.0}, {f: 293.7, t: 6.5, dur: 3.5}
+      ];
+      for (var n = 0; n < bowlNotes.length; n++) {
+        var note = bowlNotes[n];
+        var start = Math.floor(note.t * sr);
+        var dur = Math.floor(sr * note.dur);
+        for (k = 0; k < dur && start + k < len; k++) {
+          var breath = 0.5 + 0.5 * Math.sin(PI2 * 0.12 * k / sr);
+          var env = (1 - Math.exp(-k / (sr * 0.3))) * Math.exp(-k / (sr * 3.5));
+          var s = (Math.sin(PI2 * note.f * k / sr) * 0.15 +
+                   Math.sin(PI2 * note.f * 2.71 * k / sr) * 0.05 * Math.exp(-k / (sr * 1.5)) +
+                   Math.sin(PI2 * note.f * 4.16 * k / sr) * 0.02 * Math.exp(-k / (sr * 0.8))) * env * breath;
+          L[start + k] += s * 0.85; R[start + k] += s * 0.75;
+        }
       }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'moodSoulful': {
-      // Deep and warm: minor 9th chord + gentle vibrato
-      for (i = 0; i < len; i++) {
-        t = i / sr;
-        var vib = Math.sin(PI2 * 5 * t) * 1.5;
-        var swell = 0.7 + 0.3 * Math.sin(PI2 * 0.12 * t);
-        L[i] = (Math.sin(PI2 * (130.8 + vib) * t) * 0.12 + // C3
-                Math.sin(PI2 * (155.6 + vib) * t) * 0.10 + // Eb3
-                Math.sin(PI2 * (196 + vib) * t) * 0.08 +   // G3
-                Math.sin(PI2 * (233.1 + vib) * t) * 0.06 + // Bb3
-                Math.sin(PI2 * (293.7 + vib) * t) * 0.04 + // D4
-                (Math.random() * 2 - 1) * 0.02) * swell;
-        R[i] = (Math.sin(PI2 * (130.8 + vib) * t + 0.4) * 0.10 +
-                Math.sin(PI2 * (155.6 + vib) * t + 0.6) * 0.12 +
-                Math.sin(PI2 * (196 + vib) * t + 0.3) * 0.09 +
-                Math.sin(PI2 * (233.1 + vib) * t + 0.5) * 0.05 +
-                Math.sin(PI2 * (311.1 + vib) * t) * 0.04 +   // Eb4
-                (Math.random() * 2 - 1) * 0.02) * swell;
+      // Jazzy piano: Cm9 voicings with soulful walk
+      var soulNotes = [
+        {f: 130.8, t: 0.0}, {f: 155.6, t: 0.3}, {f: 196, t: 0.6}, {f: 233.1, t: 0.9}, {f: 293.7, t: 1.2},
+        {f: 261.6, t: 2.0}, {f: 196, t: 2.4}, {f: 233.1, t: 2.8},
+        {f: 146.8, t: 3.5}, {f: 174.6, t: 3.8}, {f: 220, t: 4.1}, {f: 261.6, t: 4.5},
+        {f: 233.1, t: 5.3}, {f: 196, t: 5.8}, {f: 174.6, t: 6.3},
+        {f: 130.8, t: 7.0}, {f: 164.8, t: 7.4}, {f: 196, t: 7.8}, {f: 233.1, t: 8.3},
+        {f: 261.6, t: 8.8}, {f: 293.7, t: 9.3}
+      ];
+      for (var n = 0; n < soulNotes.length; n++) {
+        var note = soulNotes[n];
+        var start = Math.floor(note.t * sr);
+        var dur = Math.floor(sr * 2.0);
+        for (k = 0; k < dur && start + k < len; k++) {
+          var vib = Math.sin(PI2 * 5.5 * k / sr) * 1.2;
+          var env = Math.exp(-k / (sr * 1.5)) * (1 - Math.exp(-k / (sr * 0.005)));
+          var s = (Math.sin(PI2 * (note.f + vib) * k / sr) * 0.2 +
+                   Math.sin(PI2 * (note.f + vib) * 2 * k / sr) * 0.06 * Math.exp(-k / (sr * 0.7)) +
+                   Math.sin(PI2 * (note.f + vib) * 3 * k / sr) * 0.02 * Math.exp(-k / (sr * 0.4))) * env;
+          L[start + k] += s * 0.8; R[start + k] += s * 0.7;
+        }
       }
+      var dly = Math.floor(sr * 0.13);
+      for (i = dly; i < len; i++) { L[i] += L[i - dly] * 0.1; R[i] += R[i - dly] * 0.13; }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'moodTropical': {
-      // Island vibes: steel drum resonances + gentle wave base + warmth
-      _brownNoise(L, len, 0.06);
-      _brownNoise(R, len, 0.06);
-      // Steel drum notes (pentatonic)
-      var tropNotes = [523.3, 587.3, 659.3, 784, 880]; // C5 pentatonic
-      for (var n = 0; n < 20; n++) {
-        var nPos = Math.floor(Math.random() * (len - sr * 0.5));
-        var freq = tropNotes[Math.floor(Math.random() * tropNotes.length)];
-        var nLen = Math.floor(sr * (0.3 + Math.random() * 0.5));
-        var pan = Math.random();
-        for (k = 0; k < nLen && nPos + k < len; k++) {
-          var env = Math.exp(-k / (nLen * 0.3));
-          var s = (Math.sin(PI2 * freq * k / sr) * 0.15 +
-                   Math.sin(PI2 * freq * 2.01 * k / sr) * 0.04 + // inharmonic
-                   Math.sin(PI2 * freq * 3.98 * k / sr) * 0.02) * env;
-          L[nPos + k] += s * (1 - pan * 0.4);
-          R[nPos + k] += s * (0.6 + pan * 0.4);
+      // Steel drum melody over ocean waves + ukulele rhythm
+      // Gentle wave base
+      _brownNoise(L, len, 0.04);
+      _brownNoise(R, len, 0.04);
+      // Steel drum melody (C major pentatonic)
+      var tropMelody = [
+        {f: 523.3, t: 0.0}, {f: 587.3, t: 0.4}, {f: 659.3, t: 0.8}, {f: 784, t: 1.2},
+        {f: 880, t: 1.6}, {f: 784, t: 2.2}, {f: 659.3, t: 2.6},
+        {f: 587.3, t: 3.4}, {f: 523.3, t: 3.8}, {f: 587.3, t: 4.2}, {f: 659.3, t: 4.6},
+        {f: 784, t: 5.2}, {f: 880, t: 5.6}, {f: 1046.5, t: 6.0},
+        {f: 880, t: 6.8}, {f: 784, t: 7.2}, {f: 659.3, t: 7.6},
+        {f: 587.3, t: 8.2}, {f: 523.3, t: 8.6}, {f: 659.3, t: 9.2}
+      ];
+      for (var n = 0; n < tropMelody.length; n++) {
+        var note = tropMelody[n];
+        var start = Math.floor(note.t * sr);
+        var dur = Math.floor(sr * 0.6);
+        for (k = 0; k < dur && start + k < len; k++) {
+          var env = Math.exp(-k / (sr * 0.25)) * (1 - Math.exp(-k / (sr * 0.0008)));
+          var s = (Math.sin(PI2 * note.f * k / sr) * 0.16 +
+                   Math.sin(PI2 * note.f * 2.01 * k / sr) * 0.06 * Math.exp(-k / (sr * 0.1)) +
+                   Math.sin(PI2 * note.f * 3.98 * k / sr) * 0.03 * Math.exp(-k / (sr * 0.06))) * env;
+          var pan = 0.3 + Math.sin(n * 0.7) * 0.2;
+          L[start + k] += s * (1 - pan); R[start + k] += s * pan;
         }
       }
-      // Warm pad underneath
+      // Warm pad
       for (i = 0; i < len; i++) {
         t = i / sr;
-        L[i] += Math.sin(PI2 * 261.6 * t) * 0.04 + Math.sin(PI2 * 392 * t) * 0.03;
-        R[i] += Math.sin(PI2 * 261.6 * t + 0.5) * 0.03 + Math.sin(PI2 * 329.6 * t) * 0.04;
+        var pad = Math.sin(PI2 * 261.6 * t) * 0.025 + Math.sin(PI2 * 392 * t) * 0.02;
+        L[i] += pad; R[i] += pad;
+        L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
       }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'moodCampfire': {
@@ -1506,7 +1598,7 @@ function updateAmbientAudio() {
   }
 
   var scene = SCENES[WEATHER.scene];
-  if (!scene) { playAmbientSound('wind', 0.4); return; }
+  if (!scene) { playAmbientSound('wind', 0.12); return; }
 
   var time = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
   var soundType = scene.sounds[time] || scene.sounds.base;
@@ -1519,11 +1611,12 @@ function updateAmbientAudio() {
     if (keep.indexOf(k) === -1) stopAmbientSound(k);
   });
 
-  playAmbientSound(scene.sounds.base, 0.4);
-  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.35);
+  // Keep volumes subtle and calming — background ambiance, not foreground
+  playAmbientSound(scene.sounds.base, 0.12);
+  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.10);
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wx && wx.sound) playAmbientSound(wx.sound, 0.45);
+    if (wx && wx.sound) playAmbientSound(wx.sound, 0.15);
   }
 }
 
@@ -1812,7 +1905,7 @@ function playMoodSound(moodKey) {
 
   var gain = WEATHER.audioCtx.createGain();
   gain.gain.setValueAtTime(0, WEATHER.audioCtx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.45, WEATHER.audioCtx.currentTime + 1.5);
+  gain.gain.linearRampToValueAtTime(0.25, WEATHER.audioCtx.currentTime + 2.0);
 
   source.connect(gain);
   gain.connect(WEATHER.audioCtx.destination);

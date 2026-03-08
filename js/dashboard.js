@@ -93,13 +93,24 @@ function openModal(html) {
   var box = document.getElementById('generic-modal-content');
   if (box) box.innerHTML = html;
   if (el) { el.classList.add('on'); }
-  // When keyboard opens inside modal, scroll the focused input into view
+  // Lock body scroll to prevent iOS from scrolling behind the fixed overlay
+  document.body.dataset.scrollY = window.scrollY;
+  document.body.style.top = '-' + window.scrollY + 'px';
+  document.body.classList.add('modal-open');
+  // Ensure inputs inside modal are tappable on iOS
   if (box) {
-    box.addEventListener('focusin', function _scrollInput(e) {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-        setTimeout(function() { e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 350);
-      }
-    });
+    var inputs = box.querySelectorAll('input, textarea');
+    for (var i = 0; i < inputs.length; i++) {
+      (function(input) {
+        // Force focus on touchend to bypass iOS fixed-overlay input issues
+        input.addEventListener('touchend', function(e) {
+          e.preventDefault();
+          input.focus();
+        });
+        // Ensure inputs have correct styles for iOS
+        input.style.fontSize = '16px'; // Prevents iOS zoom on focus
+      })(inputs[i]);
+    }
   }
 }
 
@@ -111,6 +122,10 @@ function closeModal() {
     active.blur();
   }
   if (el) { el.classList.remove('on'); }
+  var scrollY = parseInt(document.body.dataset.scrollY || '0', 10);
+  document.body.classList.remove('modal-open');
+  document.body.style.top = '';
+  window.scrollTo(0, scrollY);
 }
 
 // ===== PRIVACY =====
@@ -1538,6 +1553,8 @@ function loadSettings() {
   }
   // Weather settings
   loadWeatherSettings();
+  // Shared music feed
+  loadSharedMusicFeed();
 }
 
 function toggleLivingSkySetting(on) {
@@ -1585,32 +1602,65 @@ function loadWeatherSettings() {
   });
 }
 
-// ===== MUSIC CONNECT =====
+// ===== MUSIC CONNECT & SHARING =====
+
+// Extract embed URLs from Spotify/YouTube links
+function getSpotifyEmbedUrl(url) {
+  // open.spotify.com/track/xxx or spotify:track:xxx
+  var m = url.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+  if (m) return 'https://open.spotify.com/embed/' + m[1] + '/' + m[2] + '?theme=0&utm_source=generator';
+  return null;
+}
+function getYouTubeEmbedUrl(url) {
+  var m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|music\.youtube\.com\/watch\?v=)([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://www.youtube.com/embed/' + m[1] + '?autoplay=0';
+  // YouTube Music playlist
+  var mp = url.match(/(?:youtube\.com|music\.youtube\.com)\/playlist\?list=([a-zA-Z0-9_-]+)/);
+  if (mp) return 'https://www.youtube.com/embed/videoseries?list=' + mp[1];
+  return null;
+}
+
 function connectSpotify() {
   openModal(
-    '<div style="text-align:center;padding:20px">' +
-      '<div style="font-size:40px;margin-bottom:12px">🎵</div>' +
-      '<h2 style="font-family:Cormorant Garamond,serif;font-size:22px;margin:0 0 8px">Connect Spotify</h2>' +
-      '<p style="font-size:13px;color:var(--t2);margin:0 0 16px;line-height:1.5">Share your Spotify profile or playlist link with your partner so you can listen together.</p>' +
-      '<input type="text" id="spotify-link" placeholder="Paste your Spotify link..." class="form-input" style="margin-bottom:12px" autocomplete="off" autocorrect="off" autocapitalize="off">' +
-      '<button class="dq-submit w-full" onclick="saveSpotifyLink()">Save Link</button>' +
-      '<div id="spotify-partner-link" style="margin-top:12px;font-size:12px;color:var(--t3)"></div>' +
+    '<div style="text-align:center;padding:16px">' +
+      '<div style="font-size:36px;margin-bottom:10px">🎵</div>' +
+      '<h2 style="font-family:Cormorant Garamond,serif;font-size:20px;margin:0 0 6px">Spotify</h2>' +
+      '<p style="font-size:13px;color:var(--t2);margin:0 0 14px;line-height:1.5">Paste a song, album, or playlist link to share with your partner.</p>' +
+      '<input type="url" inputmode="url" id="spotify-link" placeholder="Paste Spotify link..." class="form-input" style="margin-bottom:10px;font-size:16px" autocomplete="off" autocorrect="off" autocapitalize="off">' +
+      '<div style="display:flex;gap:8px">' +
+        '<button class="dq-submit" style="flex:1" onclick="saveSpotifyLink()">Save</button>' +
+        '<button class="dq-submit" style="flex:1;background:var(--gold)" onclick="shareSongWithPartner(\'spotify\')">Send to Partner</button>' +
+      '</div>' +
+      '<div id="spotify-embed" style="margin-top:14px;border-radius:12px;overflow:hidden"></div>' +
+      '<div id="spotify-partner-section" style="margin-top:14px"></div>' +
     '</div>'
   );
-  // Load existing links
   if (db && user) {
     db.ref('settings/music/' + user + '/spotify').once('value', function(s) {
       var el = document.getElementById('spotify-link');
-      if (el && s.val()) el.value = s.val();
+      if (el && s.val()) {
+        el.value = s.val();
+        showSpotifyEmbed(s.val());
+      }
     });
-    if (typeof partnerUID !== 'undefined' && partnerUID) {
-      db.ref('settings/music/' + partnerUID + '/spotify').once('value', function(s) {
-        var el = document.getElementById('spotify-partner-link');
-        if (el && s.val()) {
-          el.innerHTML = '<a href="' + s.val() + '" target="_blank" style="color:var(--gold)">Open partner\'s Spotify</a>';
-        }
-      });
-    }
+    var partnerRole = user === 'her' ? 'him' : 'her';
+    db.ref('settings/music/' + partnerRole + '/spotify').once('value', function(s) {
+      var el = document.getElementById('spotify-partner-section');
+      if (el && s.val()) {
+        var embedUrl = getSpotifyEmbedUrl(s.val());
+        el.innerHTML = '<div style="font-size:12px;color:var(--t3);margin-bottom:8px">Partner\'s Spotify:</div>' +
+          (embedUrl ? '<iframe src="' + embedUrl + '" width="100%" height="80" frameborder="0" allow="encrypted-media" style="border-radius:12px"></iframe>' : '') +
+          '<a href="' + s.val() + '" target="_blank" style="display:block;margin-top:6px;color:var(--gold);font-size:12px">Open in Spotify</a>';
+      }
+    });
+  }
+}
+
+function showSpotifyEmbed(url) {
+  var embedUrl = getSpotifyEmbedUrl(url);
+  var el = document.getElementById('spotify-embed');
+  if (el && embedUrl) {
+    el.innerHTML = '<iframe src="' + embedUrl + '" width="100%" height="80" frameborder="0" allow="encrypted-media" style="border-radius:12px"></iframe>';
   }
 }
 
@@ -1619,35 +1669,52 @@ function saveSpotifyLink() {
   if (!link || !link.value.trim()) return;
   if (db && user) {
     db.ref('settings/music/' + user + '/spotify').set(link.value.trim());
+    showSpotifyEmbed(link.value.trim());
     toast('Spotify link saved');
-    closeModal();
   }
 }
 
 function connectYouTubeMusic() {
   openModal(
-    '<div style="text-align:center;padding:20px">' +
-      '<div style="font-size:40px;margin-bottom:12px">🎶</div>' +
-      '<h2 style="font-family:Cormorant Garamond,serif;font-size:22px;margin:0 0 8px">Connect YouTube Music</h2>' +
-      '<p style="font-size:13px;color:var(--t2);margin:0 0 16px;line-height:1.5">Share a YouTube Music playlist link with your partner for synced vibes.</p>' +
-      '<input type="text" id="ytm-link" placeholder="Paste your YouTube Music link..." class="form-input" style="margin-bottom:12px" autocomplete="off" autocorrect="off" autocapitalize="off">' +
-      '<button class="dq-submit w-full" onclick="saveYTMLink()">Save Link</button>' +
-      '<div id="ytm-partner-link" style="margin-top:12px;font-size:12px;color:var(--t3)"></div>' +
+    '<div style="text-align:center;padding:16px">' +
+      '<div style="font-size:36px;margin-bottom:10px">🎶</div>' +
+      '<h2 style="font-family:Cormorant Garamond,serif;font-size:20px;margin:0 0 6px">YouTube Music</h2>' +
+      '<p style="font-size:13px;color:var(--t2);margin:0 0 14px;line-height:1.5">Paste a song or playlist link to share with your partner.</p>' +
+      '<input type="url" inputmode="url" id="ytm-link" placeholder="Paste YouTube Music link..." class="form-input" style="margin-bottom:10px;font-size:16px" autocomplete="off" autocorrect="off" autocapitalize="off">' +
+      '<div style="display:flex;gap:8px">' +
+        '<button class="dq-submit" style="flex:1" onclick="saveYTMLink()">Save</button>' +
+        '<button class="dq-submit" style="flex:1;background:var(--gold)" onclick="shareSongWithPartner(\'youtube\')">Send to Partner</button>' +
+      '</div>' +
+      '<div id="ytm-embed" style="margin-top:14px;border-radius:12px;overflow:hidden"></div>' +
+      '<div id="ytm-partner-section" style="margin-top:14px"></div>' +
     '</div>'
   );
   if (db && user) {
     db.ref('settings/music/' + user + '/youtube').once('value', function(s) {
       var el = document.getElementById('ytm-link');
-      if (el && s.val()) el.value = s.val();
+      if (el && s.val()) {
+        el.value = s.val();
+        showYTMEmbed(s.val());
+      }
     });
-    if (typeof partnerUID !== 'undefined' && partnerUID) {
-      db.ref('settings/music/' + partnerUID + '/youtube').once('value', function(s) {
-        var el = document.getElementById('ytm-partner-link');
-        if (el && s.val()) {
-          el.innerHTML = '<a href="' + s.val() + '" target="_blank" style="color:var(--gold)">Open partner\'s YouTube Music</a>';
-        }
-      });
-    }
+    var partnerRole = user === 'her' ? 'him' : 'her';
+    db.ref('settings/music/' + partnerRole + '/youtube').once('value', function(s) {
+      var el = document.getElementById('ytm-partner-section');
+      if (el && s.val()) {
+        var embedUrl = getYouTubeEmbedUrl(s.val());
+        el.innerHTML = '<div style="font-size:12px;color:var(--t3);margin-bottom:8px">Partner\'s YouTube Music:</div>' +
+          (embedUrl ? '<iframe src="' + embedUrl + '" width="100%" height="200" frameborder="0" allow="autoplay; encrypted-media" style="border-radius:12px"></iframe>' : '') +
+          '<a href="' + s.val() + '" target="_blank" style="display:block;margin-top:6px;color:var(--gold);font-size:12px">Open in YouTube Music</a>';
+      }
+    });
+  }
+}
+
+function showYTMEmbed(url) {
+  var embedUrl = getYouTubeEmbedUrl(url);
+  var el = document.getElementById('ytm-embed');
+  if (el && embedUrl) {
+    el.innerHTML = '<iframe src="' + embedUrl + '" width="100%" height="200" frameborder="0" allow="autoplay; encrypted-media" style="border-radius:12px"></iframe>';
   }
 }
 
@@ -1656,9 +1723,75 @@ function saveYTMLink() {
   if (!link || !link.value.trim()) return;
   if (db && user) {
     db.ref('settings/music/' + user + '/youtube').set(link.value.trim());
+    showYTMEmbed(link.value.trim());
     toast('YouTube Music link saved');
-    closeModal();
   }
+}
+
+// Share a song link with partner as a notification/message
+function shareSongWithPartner(platform) {
+  var linkEl = document.getElementById(platform === 'spotify' ? 'spotify-link' : 'ytm-link');
+  if (!linkEl || !linkEl.value.trim()) { toast('Paste a link first'); return; }
+  var url = linkEl.value.trim();
+  if (!db || !user) { toast('Not connected'); return; }
+
+  var partnerRole = user === 'her' ? 'him' : 'her';
+  var senderName = typeof NAMES !== 'undefined' ? NAMES[user] : user;
+  var icon = platform === 'spotify' ? '🎵' : '🎶';
+
+  // Save to shared music feed
+  db.ref('shared-music').push({
+    from: user,
+    fromName: senderName,
+    platform: platform,
+    url: url,
+    ts: Date.now()
+  });
+
+  // Send notification to partner
+  db.ref('notifications/' + partnerRole).push({
+    type: 'shared-song',
+    from: user,
+    fromName: senderName,
+    platform: platform,
+    url: url,
+    icon: icon,
+    ts: Date.now()
+  });
+
+  if (typeof sendInAppNotif === 'function') {
+    sendInAppNotif('music', senderName + ' shared a song with you ' + icon, icon);
+  }
+  toast('Song sent to partner!');
+}
+
+function loadSharedMusicFeed() {
+  var feed = document.getElementById('shared-music-feed');
+  if (!feed || !db) return;
+  db.ref('shared-music').orderByChild('ts').limitToLast(5).once('value', function(snap) {
+    var songs = [];
+    snap.forEach(function(child) { songs.push(child.val()); });
+    songs.reverse();
+    if (!songs.length) { feed.innerHTML = ''; return; }
+    var html = '<div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:8px">Recently Shared</div>';
+    songs.forEach(function(song) {
+      var icon = song.platform === 'spotify' ? '🎵' : '🎶';
+      var ago = typeof timeAgo === 'function' ? timeAgo(song.ts) : '';
+      var embedUrl = song.platform === 'spotify' ? getSpotifyEmbedUrl(song.url) : getYouTubeEmbedUrl(song.url);
+      html += '<div style="background:var(--input-bg);border-radius:14px;padding:12px;margin-bottom:8px">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
+          '<span style="font-size:13px;font-weight:500;color:var(--t1)">' + icon + ' ' + (song.fromName || song.from) + '</span>' +
+          '<span style="font-size:11px;color:var(--t3)">' + ago + '</span>' +
+        '</div>';
+      if (embedUrl) {
+        var h = song.platform === 'spotify' ? '80' : '150';
+        html += '<iframe src="' + embedUrl + '" width="100%" height="' + h + '" frameborder="0" allow="encrypted-media" style="border-radius:10px"></iframe>';
+      }
+      html += '<a href="' + song.url + '" target="_blank" style="display:block;margin-top:6px;font-size:11px;color:var(--gold)">Open in app</a>';
+      html += '</div>';
+    });
+    feed.innerHTML = html;
+  });
 }
 
 async function saveSettings() {

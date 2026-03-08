@@ -313,57 +313,55 @@ function renderOnboardStep() {
 
     // Configure each step
     if (onboardStep === 0) {
-      title.textContent = isHer ? 'Hey Baby' : 'Welcome';
-      sub.innerHTML = isHer
-        ? "I'm sorry baby, let's start over.<br>Let me set things up right this time."
-        : "Let's build our space together.<br>This only takes a moment.";
-      btn.textContent = isHer ? "Okay, let's go" : "Let's begin";
+      title.textContent = 'Your Space Awaits';
+      sub.innerHTML = "Welcome to <strong>Moi & Toi</strong> — a private space just for you two.<br>Let's get you set up in under a minute.";
+      btn.textContent = "Let's go";
     } else if (onboardStep === 1) {
-      emoji.textContent = '👋'; emoji.style.display = '';
+      emoji.textContent = '✨'; emoji.style.display = '';
       title.textContent = "What's your name?";
-      sub.textContent = 'This is how your partner will see you in the app.';
+      sub.textContent = "Your partner will see this name throughout the app.";
       nameIn.style.display = ''; nameIn.value = onboardData.name;
       setTimeout(function(){ nameIn.focus(); }, 500);
-      btn.textContent = 'Continue';
+      btn.textContent = 'Next';
     } else if (onboardStep === 2) {
-      emoji.textContent = isHer ? '💜' : '💛'; emoji.style.display = '';
-      title.textContent = 'What do you call ' + partnerLabel + '?';
-      sub.textContent = 'A pet name, nickname, or their real name — whatever feels like you.';
-      nickIn.placeholder = isHer ? 'Baby, Babe, His name...' : 'Babe, Love, Her name...';
+      emoji.textContent = '💕'; emoji.style.display = '';
+      title.textContent = 'A name for ' + partnerLabel;
+      sub.textContent = "What do you call your partner? A pet name, nickname, or real name — whatever feels right.";
+      nickIn.placeholder = isHer ? 'e.g. Baby, Babe, His name...' : 'e.g. Babe, Love, Her name...';
       nickIn.style.display = ''; nickIn.value = onboardData.nickname;
       setTimeout(function(){ nickIn.focus(); }, 500);
-      btn.textContent = 'Continue';
+      btn.textContent = 'Next';
     } else if (onboardStep === 3) {
-      emoji.textContent = '📸'; emoji.style.display = '';
-      title.textContent = 'Pick a photo of ' + partnerLabel;
-      sub.textContent = 'This is how ' + partnerLabel + ' will see themselves — choose how you see them today.';
+      emoji.textContent = '📷'; emoji.style.display = '';
+      title.textContent = 'Add a photo';
+      sub.textContent = "Choose a photo of " + partnerLabel + ". This appears on their profile throughout the app.";
       photoWrap.style.display = '';
       skip.style.display = '';
       if (onboardData.photo) {
         var prev = document.getElementById('ob-photo-preview');
         prev.innerHTML = '<img src="' + onboardData.photo + '" alt="photo">';
       }
-      btn.textContent = 'Continue';
+      btn.textContent = 'Next';
     } else if (onboardStep === 4) {
-      emoji.textContent = '📅'; emoji.style.display = '';
-      title.textContent = 'When did it start?';
-      sub.textContent = 'The day you two became official. This powers your "Days Together" count.';
+      emoji.textContent = '💍'; emoji.style.display = '';
+      title.textContent = 'Your anniversary';
+      sub.textContent = "When did your relationship start? We'll track your days together and celebrate milestones.";
       annivIn.style.display = '';
       skip.style.display = '';
-      btn.textContent = 'Continue';
+      btn.textContent = 'Next';
     } else if (onboardStep === 5) {
       emoji.textContent = '🌅'; emoji.style.display = '';
       title.textContent = 'Living Sky';
-      sub.innerHTML = 'The app has a living sky — the sun moves with time, turns to moon at night, birds fly by, fireflies glow.';
+      sub.innerHTML = "Your app has a living sky that follows real time — sunrise, sunset, stars at night, birds by day, and fireflies after dark.";
       skyCard.style.display = '';
       document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
-      btn.textContent = 'Continue';
+      btn.textContent = 'Next';
     } else if (onboardStep === 6) {
       bar.style.width = '95%';
-      emoji.textContent = '🏡'; emoji.style.display = '';
-      title.textContent = "Let me show you around";
-      sub.innerHTML = "I'll walk you through your new space —<br>it'll only take a moment.";
-      btn.textContent = 'Show me';
+      emoji.textContent = '🎉'; emoji.style.display = '';
+      title.textContent = "You're all set!";
+      sub.innerHTML = "Let me give you a quick tour of your new space — it only takes 30 seconds.";
+      btn.textContent = 'Start tour';
     } else if (onboardStep === 7) {
       finishOnboarding(true);
       return;
@@ -454,68 +452,68 @@ let tourStep = 0;
 const TOUR_STEPS = [
   {
     target: '.dash-greeting-row',
-    title: 'Your Home',
-    text: 'This is your dashboard — it greets you and shows how you and your partner are doing.',
+    title: 'Home',
+    text: 'Your dashboard updates throughout the day with personalized greetings, weather, and your relationship status.',
     position: 'bottom',
     page: 'dash'
   },
   {
     target: '.hero-card-us',
-    title: 'Relationship Pulse',
-    text: 'Your relationship health at a glance — mood, streak, and days together. Tap to see the breakdown.',
+    title: 'Your Pulse',
+    text: 'See your relationship at a glance — days together, daily streak, and how you\'re both feeling. Tap it for more detail.',
     position: 'bottom',
     page: 'dash'
   },
   {
     target: '#dash-daily-q, .dash-card',
     title: 'Daily Question',
-    text: 'Every day, you both get a new question. Answer it to build your streak and learn about each other.',
+    text: 'A new question appears every day for both of you. Answer daily to build your streak and discover new things about each other.',
     position: 'top',
     page: 'dash',
     fallbackText: true
   },
   {
     target: '.view-toggle',
-    title: 'Us & Me',
-    text: 'Switch between "Us" (your relationship) and "Me" (your personal growth and goals).',
+    title: 'Us & Me Views',
+    text: '"Us" shows your relationship together. "Me" is your personal space for individual growth, goals, and wellness.',
     position: 'bottom',
     page: 'dash'
   },
   {
     target: '[data-p="together"]',
-    title: 'Together',
-    text: 'Letters, games, date nights, check-ins — everything you do as a couple lives here.',
+    title: 'Together Tab',
+    text: 'Your couple activities — love letters, date night ideas, fun games, quizzes, and relationship check-ins.',
     position: 'top',
     page: 'dash',
     navigate: 'together'
   },
   {
     target: '.hub-action-btn, .hub-list-row',
-    title: 'Your Couple Space',
-    text: 'Send letters, play games, plan date nights, and take quizzes together. All in one place.',
+    title: 'Activities',
+    text: 'Write letters, plan date nights, play couple games, and more. Everything syncs in real-time with your partner.',
     position: 'bottom',
     page: 'together'
   },
   {
     target: '[data-p="wellness"]',
-    title: 'Wellness',
-    text: 'Track mood, fitness, nutrition, and gratitude — individually and together.',
+    title: 'Wellness Tab',
+    text: 'Track mood, fitness, nutrition, sleep, and gratitude. See how you\'re both doing side by side.',
     position: 'top',
     page: 'together',
     navigate: 'wellness'
   },
   {
     target: '[data-p="plan"]',
-    title: 'Plan',
-    text: 'Dreams, calendar, finances, dream home — plan your future side by side.',
+    title: 'Plan Tab',
+    text: 'Shared calendar, bucket list, finances, and dream home planning — build your future together.',
     position: 'top',
     page: 'wellness',
     navigate: 'plan'
   },
   {
     target: '[data-p="more"]',
-    title: 'More',
-    text: 'AI chat, photo memories, achievements, and settings. There\'s always more to explore.',
+    title: 'More Tab',
+    text: 'AI assistant, photo memories, music, achievements, ambient sounds, and settings.',
     position: 'top',
     page: 'plan',
     navigate: 'more'
@@ -635,7 +633,7 @@ function endTour() {
   if (overlay) overlay.classList.remove('on');
   document.body.classList.remove('touring');
   go('dash');
-  toast('You\'re all set! Explore anytime.');
+  toast('Welcome home! Enjoy your space together.');
 }
 
 function showWelcomeGate() {
