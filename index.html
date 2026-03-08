@@ -85,16 +85,16 @@
     <div class="cmd-ctx-item" onclick="toggleTheme();closeMenu()"><span class="cmd-ctx-icon" id="cmd-theme-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></span><span class="cmd-ctx-label" id="cmd-theme-label">Theme</span></div>
   </div>
 
-  <div class="cmd-see-all" onclick="closeMenu();go('explore')">See All Features ›</div>
+  <div class="cmd-see-all" onclick="closeMenu();go('more')">More ›</div>
 </div>
 <!-- Bottom Nav — restructured with 5 new groups -->
 <nav class="bnav" role="navigation" aria-label="Main navigation">
   <div class="bnav-indicator" id="bnav-indicator"></div>
-  <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></span><span class="nl">Today</span><span class="bn-badge" id="badge-dash"></span></button>
+  <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></span><span class="nl">Home</span><span class="bn-badge" id="badge-dash"></span></button>
   <button class="bn" data-p="together" onclick="go('together')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></span><span class="nl">Together</span><span class="bn-badge" id="badge-together"></span></button>
-  <button class="bn" data-p="track" onclick="go('track')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></span><span class="nl">Track</span><span class="bn-badge" id="badge-track"></span></button>
-  <button class="bn" data-p="build" onclick="go('build')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="nl">Build</span><span class="bn-badge" id="badge-build"></span></button>
-  <button class="bn" data-p="explore" onclick="go('explore')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span class="nl">Explore</span><span class="bn-badge" id="badge-explore"></span></button>
+  <button class="bn" data-p="wellness" onclick="go('wellness')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></span><span class="nl">Wellness</span><span class="bn-badge" id="badge-wellness"></span></button>
+  <button class="bn" data-p="plan" onclick="go('plan')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><span class="nl">Plan</span><span class="bn-badge" id="badge-plan"></span></button>
+  <button class="bn" data-p="more" onclick="go('more')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span class="nl">More</span><span class="bn-badge" id="badge-more"></span></button>
 </nav>
 
 <!-- ===== DASHBOARD ===== -->
@@ -295,162 +295,76 @@
 <div class="pg" id="pg-together">
 <div class="ctn">
 
-  <!-- Hero: Connection Pulse -->
-  <div class="hub-hero hub-hero-together">
-    <div class="hub-hero-glow"></div>
-    <div class="hub-hero-content">
-      <div class="hub-hero-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
-      </div>
-      <div class="hub-hero-label">Together</div>
-      <div class="hub-hero-title" id="together-hero-title">Your shared space</div>
-      <div class="hub-hero-sub" id="together-hero-sub">Where your connection lives</div>
-    </div>
-    <div class="hub-hero-stats">
-      <div class="hub-hero-stat" onclick="go('connect')">
-        <div class="hub-hero-stat-num" id="hub-tg-letters">0</div>
-        <div class="hub-hero-stat-label">Letters</div>
-      </div>
-      <div class="hub-hero-stat" onclick="go('question')">
-        <div class="hub-hero-stat-num" id="hub-tg-streak">0</div>
-        <div class="hub-hero-stat-label">Q Streak</div>
-      </div>
-      <div class="hub-hero-stat" onclick="go('games')">
-        <div class="hub-hero-stat-num" id="hub-tg-games">0</div>
-        <div class="hub-hero-stat-label">Games</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Quick Actions -->
+  <!-- Quick Actions — direct access to sub-features -->
   <div class="hub-actions">
     <button class="hub-action-btn" onclick="go('connect')">
       <div class="hub-action-icon ha-rose"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></div>
-      <span>Write</span>
-    </button>
-    <button class="hub-action-btn" onclick="go('question')">
-      <div class="hub-action-icon ha-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-      <span>Daily Q</span>
+      <span>Letters</span>
     </button>
     <button class="hub-action-btn" onclick="go('games')">
       <div class="hub-action-icon ha-lavender"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/></svg></div>
       <span>Play</span>
     </button>
     <button class="hub-action-btn" onclick="go('datenight')">
-      <div class="hub-action-icon ha-red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></div>
-      <span>Date</span>
+      <div class="hub-action-icon ha-red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <span>Date Night</span>
+    </button>
+    <button class="hub-action-btn" onclick="go('checkin')">
+      <div class="hub-action-icon ha-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></div>
+      <span>Check-in</span>
     </button>
   </div>
 
-  <!-- Recent Activity Card (compact) -->
-  <div class="hub-card" id="together-recent-card">
-    <div class="hub-card-header">
-      <div class="hub-card-dot" style="background:var(--rose)"></div>
-      <div class="hub-card-title">Recent Moments</div>
-      <div class="hub-card-link" onclick="go('connect')">See all</div>
-    </div>
-    <div class="hub-card-body" id="together-recent-feed">
-      <div class="hub-empty">Start connecting — send a tap, write a letter, or answer today's question</div>
+  <!-- Daily Question — inline (was pg-question) -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Daily Question</div>
+    <div class="streak-bar" id="streak-bar" style="margin-left:auto">
+      <span class="streak-fire streak-fire-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1012 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z"/></svg></span>
+      <span class="streak-count" id="streak-count">0</span>
     </div>
   </div>
-
-  <!-- Feature Cards Grid -->
-  <div class="hub-feature-grid">
-    <div class="hub-feature-card hfc-warm" onclick="go('connect')">
-      <div class="hfc-icon">💌</div>
-      <div class="hfc-name">Love Letters</div>
-      <div class="hfc-desc">Write to each other</div>
-    </div>
-    <div class="hub-feature-card hfc-deep" onclick="go('deeptalk')">
-      <div class="hfc-icon">🌊</div>
-      <div class="hfc-name">Deep Talk</div>
-      <div class="hfc-desc">Go deeper together</div>
-    </div>
-    <div class="hub-feature-card hfc-play" onclick="go('games')">
-      <div class="hfc-icon">🎮</div>
-      <div class="hfc-name">Games</div>
-      <div class="hfc-desc">Play & compete</div>
-    </div>
-    <div class="hub-feature-card hfc-warm" onclick="go('datenight')">
-      <div class="hfc-icon">🌙</div>
-      <div class="hfc-name">Date Night</div>
-      <div class="hfc-desc">Plan something special</div>
-    </div>
-    <div class="hub-feature-card hfc-deep" onclick="go('challenges')">
-      <div class="hfc-icon">⭐</div>
-      <div class="hfc-name">Challenges</div>
-      <div class="hfc-desc">Grow as a couple</div>
-    </div>
-    <div class="hub-feature-card hfc-play" onclick="go('checkin')">
-      <div class="hfc-icon">💬</div>
-      <div class="hfc-name">Check-in</div>
-      <div class="hfc-desc">Weekly pulse</div>
-    </div>
+  <div class="dq-card" id="dq-card">
+    <div class="dq-category" id="dq-category">Loading...</div>
+    <div class="dq-question" id="dq-question">...</div>
+    <input class="dq-input" id="dq-answer" placeholder="Your answer..." onkeydown="if(event.key==='Enter')submitDailyAnswer()">
+    <button class="dq-submit" id="dq-submit-btn" onclick="submitDailyAnswer()">Answer</button>
+    <div class="dq-answers" id="dq-answers"></div>
   </div>
 
-  <!-- Deeper Connection -->
-  <div class="hub-section-label">Deeper Connection</div>
-  <div class="hub-list-group">
-    <div class="hub-list-row" onclick="go('lovelang')">
-      <div class="hub-list-icon">❤️</div>
-      <div class="hub-list-info">
-        <div class="hub-list-name">Love Languages</div>
-        <div class="hub-list-sub">Understand how you love</div>
-      </div>
-      <div class="hub-list-arrow">›</div>
-    </div>
-    <div class="hub-list-divider"></div>
-    <div class="hub-list-row" onclick="go('attachment')">
-      <div class="hub-list-icon">🔗</div>
-      <div class="hub-list-info">
-        <div class="hub-list-name">Attachment Style</div>
-        <div class="hub-list-sub">Learn your bond patterns</div>
-      </div>
-      <div class="hub-list-arrow">›</div>
-    </div>
-    <div class="hub-list-divider"></div>
+  <!-- Deep Talk — inline (was pg-deeptalk) -->
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Deep Talk</div></div>
+  <div class="dt-current" id="dt-current">
+    <div class="dt-depth" id="dt-depth">Level 1</div>
+    <div class="dt-prompt" id="dt-prompt"></div>
+    <div class="dt-instruction">Sit together. No phones. Look at each other. Talk.</div>
+  </div>
+  <div class="dt-controls">
+    <button class="dn-action" onclick="prevDeepTalk()">Previous</button>
+    <button class="dn-action" onclick="nextDeepTalk()">Next Prompt</button>
+  </div>
+  <div class="bl-cats" id="dt-levels">
+    <span class="bl-cat on" onclick="setDTLevel('light',this)">Light</span>
+    <span class="bl-cat" onclick="setDTLevel('medium',this)">Medium</span>
+    <span class="bl-cat" onclick="setDTLevel('deep',this)">Deep</span>
+    <span class="bl-cat" onclick="setDTLevel('soul',this)">Soul</span>
+  </div>
+
+  <!-- Know Your Person link -->
+  <div class="hub-list-group" style="margin-top:16px">
     <div class="hub-list-row" onclick="go('knowyou')">
-      <div class="hub-list-icon">✨</div>
+      <div class="hub-list-icon">&#x2728;</div>
       <div class="hub-list-info">
         <div class="hub-list-name">Know Your Person</div>
         <div class="hub-list-sub">Learn everything about each other</div>
       </div>
-      <div class="hub-list-arrow">›</div>
+      <div class="hub-list-arrow">&#x203A;</div>
     </div>
   </div>
 </div>
 </div>
 
-<!-- ===== TRACK HUB ===== -->
-<div class="pg" id="pg-track">
+<!-- ===== WELLNESS (was Track) ===== -->
+<div class="pg" id="pg-wellness">
 <div class="ctn">
-
-  <!-- Hero: Wellness Pulse -->
-  <div class="hub-hero hub-hero-track">
-    <div class="hub-hero-glow"></div>
-    <div class="hub-hero-content">
-      <div class="hub-hero-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      </div>
-      <div class="hub-hero-label">Track</div>
-      <div class="hub-hero-title" id="track-hero-title">Your wellness</div>
-      <div class="hub-hero-sub" id="track-hero-sub">Mind, body, and growth</div>
-    </div>
-    <div class="hub-hero-stats">
-      <div class="hub-hero-stat" onclick="go('mood')">
-        <div class="hub-hero-stat-num" id="hub-tr-mood">--</div>
-        <div class="hub-hero-stat-label">Mood</div>
-      </div>
-      <div class="hub-hero-stat" onclick="go('fitness')">
-        <div class="hub-hero-stat-num" id="hub-tr-workouts">0</div>
-        <div class="hub-hero-stat-label">Workouts</div>
-      </div>
-      <div class="hub-hero-stat" onclick="go('gratitude')">
-        <div class="hub-hero-stat-num" id="hub-tr-gratitude">0</div>
-        <div class="hub-hero-stat-label">Grateful</div>
-      </div>
-    </div>
-  </div>
 
   <!-- Quick Actions -->
   <div class="hub-actions">
@@ -460,7 +374,7 @@
     </button>
     <button class="hub-action-btn" onclick="go('fitness')">
       <div class="hub-action-icon ha-emerald"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/></svg></div>
-      <span>Workout</span>
+      <span>Fitness</span>
     </button>
     <button class="hub-action-btn" onclick="go('nutrition')">
       <div class="hub-action-icon ha-rose"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
@@ -468,7 +382,7 @@
     </button>
     <button class="hub-action-btn" onclick="go('gratitude')">
       <div class="hub-action-icon ha-lavender"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-      <span>Grateful</span>
+      <span>Gratitude</span>
     </button>
   </div>
 
@@ -476,203 +390,76 @@
   <div class="hub-card" id="track-today-card">
     <div class="hub-card-header">
       <div class="hub-card-dot" style="background:var(--gold)"></div>
-      <div class="hub-card-title">Today's Snapshot</div>
+      <div class="hub-card-title">Today</div>
     </div>
     <div class="hub-snapshot" id="track-snapshot">
       <div class="hub-snap-item" onclick="go('mood')">
-        <div class="hub-snap-emoji" id="track-snap-mood">☀️</div>
+        <div class="hub-snap-emoji" id="track-snap-mood">&#x2600;&#xFE0F;</div>
         <div class="hub-snap-label">Mood</div>
         <div class="hub-snap-value" id="track-snap-mood-val">Not logged</div>
       </div>
       <div class="hub-snap-item" onclick="go('fitness')">
-        <div class="hub-snap-emoji" id="track-snap-energy">⚡</div>
+        <div class="hub-snap-emoji" id="track-snap-energy">&#x26A1;</div>
         <div class="hub-snap-label">Energy</div>
         <div class="hub-snap-value" id="track-snap-energy-val">Not logged</div>
       </div>
       <div class="hub-snap-item" onclick="go('fitness')">
-        <div class="hub-snap-emoji">🏋️</div>
+        <div class="hub-snap-emoji">&#x1F3CB;&#xFE0F;</div>
         <div class="hub-snap-label">Workout</div>
         <div class="hub-snap-value" id="track-snap-workout-val">Not yet</div>
       </div>
       <div class="hub-snap-item" onclick="go('nutrition')">
-        <div class="hub-snap-emoji">🥗</div>
+        <div class="hub-snap-emoji">&#x1F957;</div>
         <div class="hub-snap-label">Meals</div>
         <div class="hub-snap-value" id="track-snap-meals-val">0 logged</div>
       </div>
     </div>
   </div>
-
-  <!-- Feature Cards -->
-  <div class="hub-feature-grid">
-    <div class="hub-feature-card hfc-warm" onclick="go('mood')">
-      <div class="hfc-icon">🌤️</div>
-      <div class="hfc-name">Mood Journal</div>
-      <div class="hfc-desc">How are you feeling?</div>
-    </div>
-    <div class="hub-feature-card hfc-deep" onclick="go('fitness')">
-      <div class="hfc-icon">💪</div>
-      <div class="hfc-name">Fitness Hub</div>
-      <div class="hfc-desc">Train together or solo</div>
-    </div>
-    <div class="hub-feature-card hfc-play" onclick="go('nutrition')">
-      <div class="hfc-icon">🍎</div>
-      <div class="hfc-name">Nutrition</div>
-      <div class="hfc-desc">Fuel your body right</div>
-    </div>
-    <div class="hub-feature-card hfc-warm" onclick="go('gratitude')">
-      <div class="hfc-icon">🙏</div>
-      <div class="hfc-name">Gratitude</div>
-      <div class="hfc-desc">Count your blessings</div>
-    </div>
-    <div class="hub-feature-card hfc-deep" onclick="go('grow')">
-      <div class="hfc-icon">🌱</div>
-      <div class="hfc-name">Growth</div>
-      <div class="hfc-desc">Learn & evolve together</div>
-    </div>
-    <div class="hub-feature-card hfc-play" onclick="go('checkin')">
-      <div class="hfc-icon">📊</div>
-      <div class="hfc-name">Check-in</div>
-      <div class="hfc-desc">Weekly reflection</div>
-    </div>
-  </div>
-
-  <!-- Personal Spaces -->
-  <div class="hub-section-label">Personal Spaces</div>
-  <div class="hub-list-group">
-    <div class="hub-list-row" onclick="go('herspace')">
-      <div class="hub-list-icon">🌸</div>
-      <div class="hub-list-info">
-        <div class="hub-list-name">Taylor's Space</div>
-        <div class="hub-list-sub">Cycle tracking, self-care, affirmations</div>
-      </div>
-      <div class="hub-list-arrow">›</div>
-    </div>
-    <div class="hub-list-divider"></div>
-    <div class="hub-list-row" onclick="go('hisspace')">
-      <div class="hub-list-icon">⚡</div>
-      <div class="hub-list-info">
-        <div class="hub-list-name">Manu's Space</div>
-        <div class="hub-list-sub">Strength goals, personal records</div>
-      </div>
-      <div class="hub-list-arrow">›</div>
-    </div>
-  </div>
 </div>
 </div>
 
-<!-- ===== BUILD HUB ===== -->
-<div class="pg" id="pg-build">
+<!-- ===== PLAN (was Build) ===== -->
+<div class="pg" id="pg-plan">
 <div class="ctn">
-
-  <!-- Hero: Building Your Future -->
-  <div class="hub-hero hub-hero-build">
-    <div class="hub-hero-glow"></div>
-    <div class="hub-hero-content">
-      <div class="hub-hero-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-      </div>
-      <div class="hub-hero-label">Build</div>
-      <div class="hub-hero-title" id="build-hero-title">Your future together</div>
-      <div class="hub-hero-sub" id="build-hero-sub">Dream, plan, and create the life you want</div>
-    </div>
-    <div class="hub-hero-stats">
-      <div class="hub-hero-stat" onclick="go('dreams')">
-        <div class="hub-hero-stat-num" id="hub-bd-dreams">0</div>
-        <div class="hub-hero-stat-label">Dreams</div>
-      </div>
-      <div class="hub-hero-stat" onclick="go('homelife')">
-        <div class="hub-hero-stat-num" id="hub-bd-budget">--</div>
-        <div class="hub-hero-stat-label">Budget</div>
-      </div>
-      <div class="hub-hero-stat" onclick="go('calendar')">
-        <div class="hub-hero-stat-num" id="hub-bd-events">0</div>
-        <div class="hub-hero-stat-label">Events</div>
-      </div>
-    </div>
-  </div>
 
   <!-- Quick Actions -->
   <div class="hub-actions">
-    <button class="hub-action-btn" onclick="go('dreams')">
-      <div class="hub-action-icon ha-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg></div>
-      <span>Dream</span>
+    <button class="hub-action-btn" onclick="go('calendar')">
+      <div class="hub-action-icon ha-lavender"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <span>Calendar</span>
     </button>
     <button class="hub-action-btn" onclick="go('homelife')">
       <div class="hub-action-icon ha-teal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
       <span>Finances</span>
     </button>
-    <button class="hub-action-btn" onclick="go('calendar')">
-      <div class="hub-action-icon ha-lavender"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-      <span>Calendar</span>
+    <button class="hub-action-btn" onclick="go('dreams')">
+      <div class="hub-action-icon ha-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg></div>
+      <span>Dreams</span>
     </button>
-    <button class="hub-action-btn" onclick="go('dreamhome')">
-      <div class="hub-action-icon ha-emerald"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><rect x="9" y="14" width="6" height="7"/></svg></div>
-      <span>Home</span>
+    <button class="hub-action-btn" onclick="go('lists')">
+      <div class="hub-action-icon ha-rose"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg></div>
+      <span>Lists</span>
     </button>
   </div>
 
-  <!-- Featured -->
-  <div class="hub-feature-grid">
-    <div class="hub-feature-card hfc-warm" onclick="go('dreams')">
-      <div class="hfc-icon">✨</div>
-      <div class="hfc-name">Our Dreams</div>
-      <div class="hfc-desc">Map your shared vision</div>
-    </div>
-    <div class="hub-feature-card hfc-deep" onclick="go('dreamhome')">
-      <div class="hfc-icon">🏡</div>
-      <div class="hfc-name">Dream Home</div>
-      <div class="hfc-desc">Design your space</div>
-    </div>
-    <div class="hub-feature-card hfc-play" onclick="go('homelife')">
-      <div class="hfc-icon">💰</div>
-      <div class="hfc-name">Finances</div>
-      <div class="hfc-desc">Budget & track spending</div>
-    </div>
-    <div class="hub-feature-card hfc-warm" onclick="go('calendar')">
-      <div class="hfc-icon">📅</div>
-      <div class="hfc-name">Calendar</div>
-      <div class="hfc-desc">Stay in sync</div>
-    </div>
-    <div class="hub-feature-card hfc-deep" onclick="go('family')">
-      <div class="hfc-icon">👨‍👩‍👧</div>
-      <div class="hfc-name">Future Family</div>
-      <div class="hfc-desc">Plan your family path</div>
-    </div>
-    <div class="hub-feature-card hfc-play" onclick="go('story')">
-      <div class="hfc-icon">📖</div>
-      <div class="hfc-name">Our Story</div>
-      <div class="hfc-desc">Milestones & timeline</div>
-    </div>
-  </div>
-
-  <!-- Foundation -->
-  <div class="hub-section-label">Foundation</div>
+  <!-- Feature Links -->
   <div class="hub-list-group">
-    <div class="hub-list-row" onclick="go('foundation')">
-      <div class="hub-list-icon">🏛️</div>
+    <div class="hub-list-row" onclick="go('story')">
+      <div class="hub-list-icon">&#x1F4D6;</div>
       <div class="hub-list-info">
-        <div class="hub-list-name">Our Foundation</div>
-        <div class="hub-list-sub">Values, boundaries, and agreements</div>
+        <div class="hub-list-name">Our Timeline</div>
+        <div class="hub-list-sub">Milestones &#38; memories</div>
       </div>
-      <div class="hub-list-arrow">›</div>
+      <div class="hub-list-arrow">&#x203A;</div>
     </div>
     <div class="hub-list-divider"></div>
-    <div class="hub-list-row" onclick="go('culture')">
-      <div class="hub-list-icon">🌍</div>
+    <div class="hub-list-row" onclick="go('values')">
+      <div class="hub-list-icon">&#x1F3DB;&#xFE0F;</div>
       <div class="hub-list-info">
-        <div class="hub-list-name">Our Cultures</div>
-        <div class="hub-list-sub">Celebrate where you come from</div>
+        <div class="hub-list-name">Our Values</div>
+        <div class="hub-list-sub">Foundation, culture &#38; spiritual life</div>
       </div>
-      <div class="hub-list-arrow">›</div>
-    </div>
-    <div class="hub-list-divider"></div>
-    <div class="hub-list-row" onclick="go('spiritual')">
-      <div class="hub-list-icon">🕊️</div>
-      <div class="hub-list-info">
-        <div class="hub-list-name">Our Spirit</div>
-        <div class="hub-list-sub">Spiritual life together</div>
-      </div>
-      <div class="hub-list-arrow">›</div>
+      <div class="hub-list-arrow">&#x203A;</div>
     </div>
   </div>
 </div>
@@ -959,191 +746,21 @@
 </div>
 
 <!-- ===== EXPLORE ===== -->
-<div class="pg" id="pg-explore">
+<div class="pg" id="pg-more">
 <div class="ctn">
-  <div class="explore-header">
-    <div class="explore-tagline">Discover</div>
-    <h1 class="explore-title">Everything</h1>
+  <div class="hub-qa-grid" style="margin-bottom:20px">
+    <div class="hub-qa" onclick="go('memories')"><div class="hub-qa-ico">📸</div><span>Memories</span></div>
+    <div class="hub-qa" onclick="go('ai')"><div class="hub-qa-ico">🤖</div><span>AI Chat</span></div>
+    <div class="hub-qa" onclick="go('achievements')"><div class="hub-qa-ico">🏆</div><span>Achievements</span></div>
+    <div class="hub-qa" onclick="go('settings')"><div class="hub-qa-ico">⚙️</div><span>Settings</span></div>
   </div>
 
-  <!-- Spotlight: Scrollable featured cards -->
-  <div class="explore-spotlight">
-    <div class="explore-spot-card" onclick="go('knowyou')" style="background:var(--grad-know)">
-      <div class="explore-spot-badge">New</div>
-      <div class="explore-spot-icon">✨</div>
-      <div class="explore-spot-name">Know Your Person</div>
-      <div class="explore-spot-desc">Learn everything about each other</div>
-    </div>
-    <div class="explore-spot-card" onclick="go('dreamhome')" style="background:var(--grad-dreamhome)">
-      <div class="explore-spot-badge">New</div>
-      <div class="explore-spot-icon">🏡</div>
-      <div class="explore-spot-name">Dream Home</div>
-      <div class="explore-spot-desc">Design your future together</div>
-    </div>
-    <div class="explore-spot-card" onclick="go('grow')" style="background:var(--grad-grow)">
-      <div class="explore-spot-badge">New</div>
-      <div class="explore-spot-icon">🌱</div>
-      <div class="explore-spot-name">Grow Together</div>
-      <div class="explore-spot-desc">Guided lessons for couples</div>
-    </div>
-    <div class="explore-spot-card" onclick="go('challenges')" style="background:var(--grad-games)">
-      <div class="explore-spot-badge">New</div>
-      <div class="explore-spot-icon">⭐</div>
-      <div class="explore-spot-name">Challenges</div>
-      <div class="explore-spot-desc">Couple challenges & streaks</div>
-    </div>
-  </div>
-
-  <!-- Quick Access Grid -->
-  <div class="explore-quick-grid">
-    <div class="explore-quick-item" onclick="go('connect')">
-      <div class="explore-quick-icon eq-rose">💌</div>
-      <div class="explore-quick-label">Letters</div>
-    </div>
-    <div class="explore-quick-item" onclick="go('games')">
-      <div class="explore-quick-icon eq-lavender">🎮</div>
-      <div class="explore-quick-label">Games</div>
-    </div>
-    <div class="explore-quick-item" onclick="go('mood')">
-      <div class="explore-quick-icon eq-gold">☀️</div>
-      <div class="explore-quick-label">Mood</div>
-    </div>
-    <div class="explore-quick-item" onclick="go('fitness')">
-      <div class="explore-quick-icon eq-emerald">💪</div>
-      <div class="explore-quick-label">Fitness</div>
-    </div>
-    <div class="explore-quick-item" onclick="go('question')">
-      <div class="explore-quick-icon eq-teal">💬</div>
-      <div class="explore-quick-label">Daily Q</div>
-    </div>
-    <div class="explore-quick-item" onclick="go('calendar')">
-      <div class="explore-quick-icon eq-gold">📅</div>
-      <div class="explore-quick-label">Calendar</div>
-    </div>
-    <div class="explore-quick-item" onclick="go('ai')">
-      <div class="explore-quick-icon eq-teal">🤖</div>
-      <div class="explore-quick-label">AI Chat</div>
-    </div>
-    <div class="explore-quick-item" onclick="go('memories')">
-      <div class="explore-quick-icon eq-rose">📸</div>
-      <div class="explore-quick-label">Memories</div>
-    </div>
-  </div>
-
-  <!-- Together -->
-  <div class="explore-cat-label">Together</div>
-  <div class="explore-group">
-    <div class="hub-row" onclick="go('connect')"><div class="hub-row-ico">💌</div><div class="hub-row-label">Connect</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('games')"><div class="hub-row-ico">🎮</div><div class="hub-row-label">Games</div><div class="hub-row-status"><span class="hub-badge count" id="hub-games-status">Play</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('deeptalk')"><div class="hub-row-ico">🌊</div><div class="hub-row-label">Deep Talk</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('datenight')"><div class="hub-row-ico">🌙</div><div class="hub-row-label">Date Night</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('question')"><div class="hub-row-ico">💬</div><div class="hub-row-label">Daily Question</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dq-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('challenges')"><div class="hub-row-ico">⭐</div><div class="hub-row-label">Couple Challenges</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('lovelang')"><div class="hub-row-ico">❤️</div><div class="hub-row-label">Love Languages</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ll-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('attachment')"><div class="hub-row-ico">🔗</div><div class="hub-row-label">Attachment Style</div><div class="hub-row-status"><span class="hub-badge count" id="hub-as-status">Take quiz</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('checkin')"><div class="hub-row-ico">📊</div><div class="hub-row-label">Weekly Check-in</div><div class="hub-row-status"><span class="hub-badge count" id="hub-ci-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('knowyou')"><div class="hub-row-ico">✨</div><div class="hub-row-label">Know Your Person</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-  </div>
-
-  <!-- Track & Wellness -->
-  <div class="explore-cat-label">Track &amp; Wellness</div>
-  <div class="explore-group">
-    <div class="hub-row" onclick="go('mood')"><div class="hub-row-ico">🌤️</div><div class="hub-row-label">Mood Journal</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('fitness')"><div class="hub-row-ico">💪</div><div class="hub-row-label">Fitness Hub</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('nutrition')"><div class="hub-row-ico">🍎</div><div class="hub-row-label">Nutrition</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('gratitude')"><div class="hub-row-ico">🙏</div><div class="hub-row-label">Gratitude</div><div class="hub-row-status"><span class="hub-badge count" id="hub-grat-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('grow')"><div class="hub-row-ico">🌱</div><div class="hub-row-label">Grow Together</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('herspace')"><div class="hub-row-ico">🌸</div><div class="hub-row-label">Taylor's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('hisspace')"><div class="hub-row-ico">⚡</div><div class="hub-row-label">Manu's Space</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-  </div>
-
-  <!-- Build & Plan -->
-  <div class="explore-cat-label">Build &amp; Plan</div>
-  <div class="explore-group">
-    <div class="hub-row" onclick="go('dreams')"><div class="hub-row-ico">✨</div><div class="hub-row-label">Our Dreams</div><div class="hub-row-status"><span class="hub-badge count" id="hub-dr-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('dreamhome')"><div class="hub-row-ico">🏡</div><div class="hub-row-label">Dream Home</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('homelife')"><div class="hub-row-ico">💰</div><div class="hub-row-label">Finances</div><div class="hub-row-status"><span class="hub-badge count" id="hub-hl-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('calendar')"><div class="hub-row-ico">📅</div><div class="hub-row-label">Calendar</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('family')"><div class="hub-row-ico">👨‍👩‍👧</div><div class="hub-row-label">Future Family</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fam-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('foundation')"><div class="hub-row-ico">🏛️</div><div class="hub-row-label">Our Foundation</div><div class="hub-row-status"><span class="hub-badge count" id="hub-fdn-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('culture')"><div class="hub-row-ico">🌍</div><div class="hub-row-label">Our Cultures</div><div class="hub-row-status"><span class="hub-badge count" id="hub-cx-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('spiritual')"><div class="hub-row-ico">🕊️</div><div class="hub-row-label">Our Spirit</div><div class="hub-row-status"><span class="hub-badge count" id="hub-sp-status">--</span><span class="hub-chevron">›</span></div></div>
-  </div>
-
-  <!-- Extras -->
-  <div class="explore-cat-label">More</div>
-  <div class="explore-group">
-    <div class="hub-row" onclick="go('memories')"><div class="hub-row-ico">📸</div><div class="hub-row-label">Photo Memories</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('achievements')"><div class="hub-row-ico">🏆</div><div class="hub-row-label">Achievements</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('bucket')"><div class="hub-row-ico">📝</div><div class="hub-row-label">Bucket List</div><div class="hub-row-status"><span class="hub-badge count" id="hub-bl-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('wishlist')"><div class="hub-row-ico">🎁</div><div class="hub-row-label">Wishlists</div><div class="hub-row-status"><span class="hub-badge count" id="hub-wl-status">--</span><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('story')"><div class="hub-row-ico">📖</div><div class="hub-row-label">Our Story</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="go('ai')"><div class="hub-row-ico">🤖</div><div class="hub-row-label">AI Chat</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-  </div>
-
-  <!-- Settings -->
-  <div class="explore-cat-label">Settings</div>
-  <div class="explore-group mb-20">
-    <div class="hub-row" onclick="toggleTheme()"><div class="hub-row-ico">🎨</div><div class="hub-row-label">Theme</div><span class="t-xs c-t3" id="more-theme-sub">Auto</span></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="updateApiKey()"><div class="hub-row-ico">🔑</div><div class="hub-row-label">API Key</div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="switchUser()"><div class="hub-row-ico">👤</div><div class="hub-row-label">Switch Profile</div></div>
-    <div class="explore-divider"></div>
-    <div class="hub-row" onclick="logout()"><div class="hub-row-ico">🚪</div><div class="hub-row-label c-red">Log Out</div></div>
-  </div>
+  <div class="hub-row" onclick="go('memories')"><div class="hub-row-ico">📸</div><div class="hub-row-label">Photo Memories</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+  <div class="hub-row" onclick="go('ai')"><div class="hub-row-ico">🤖</div><div class="hub-row-label">AI Chat</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+  <div class="hub-row" onclick="go('achievements')"><div class="hub-row-ico">🏆</div><div class="hub-row-label">Achievements</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+  <div class="hub-row" onclick="go('settings')"><div class="hub-row-ico">⚙️</div><div class="hub-row-label">Settings</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
 </div>
 </div>
-
-<!-- ===== DAILY QUESTION ===== -->
-<div class="pg" id="pg-question">
-<div class="ctn">
-
-  <!-- Streak -->
-  <div class="streak-bar" id="streak-bar">
-    <span class="streak-fire streak-fire-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1012 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z"/></svg></span>
-    <span class="streak-count" id="streak-count">0</span>
-    <span class="streak-label">day streak</span>
-  </div>
-
-  <!-- Today's Question -->
-  <div class="dq-card" id="dq-card">
-    <div class="dq-category" id="dq-category">Loading...</div>
-    <div class="dq-question" id="dq-question">...</div>
-    <input class="dq-input" id="dq-answer" placeholder="Your answer..." onkeydown="if(event.key==='Enter')submitDailyAnswer()">
-    <button class="dq-submit" id="dq-submit-btn" onclick="submitDailyAnswer()">Answer</button>
-    <div class="dq-answers" id="dq-answers"></div>
-  </div>
-</div>
-</div>
-
 <!-- ===== GRATITUDE ===== -->
 <div class="pg" id="pg-gratitude">
 <div class="ctn">
@@ -1418,57 +1035,6 @@
   </div>
 </div>
 </div>
-
-<!-- ===== BUCKET LIST ===== -->
-<div class="pg" id="pg-bucket">
-<div class="ctn">
-
-  <div class="mod-status" id="bl-stats"></div>
-
-  <div class="bl-form">
-    <input type="text" id="bl-input" placeholder="Something we want to do...">
-    <input type="text" id="bl-emoji" placeholder="🌍" maxlength="2" class="input-emoji">
-    <button onclick="addBucketItem()">+</button>
-  </div>
-
-  <div class="bl-cats" id="bl-cats">
-    <span class="bl-cat on" onclick="filterBucket('all',this)">All</span>
-    <span class="bl-cat" onclick="filterBucket('travel',this)">Travel</span>
-    <span class="bl-cat" onclick="filterBucket('food',this)">Food</span>
-    <span class="bl-cat" onclick="filterBucket('adventure',this)">Adventure</span>
-    <span class="bl-cat" onclick="filterBucket('home',this)">Home</span>
-  </div>
-
-  <div id="bl-list" class="stagger-in"><div class="empty">What do you two want to do before you're old and gray?</div></div>
-</div>
-</div>
-
-<!-- ===== WISHLISTS ===== -->
-<div class="pg" id="pg-wishlist">
-<div class="ctn">
-
-  <!-- My wishlist -->
-  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">My Wishlist</div></div>
-  <div class="bl-form">
-    <input type="text" id="wl-input" placeholder="Add something you want...">
-    <button onclick="addWishItem()">+</button>
-  </div>
-  <div class="bl-form mt-neg8">
-    <input type="url" id="wl-link" placeholder="Link (optional)" class="flex-2">
-    <select id="wl-priority" class="select-field">
-      <option value="love">Love it</option>
-      <option value="want">Want it</option>
-      <option value="need">Need it</option>
-    </select>
-  </div>
-  <div id="wl-mine" class="stagger-in"><div class="empty">Drop hints here</div></div>
-
-  <!-- Partner's wishlist -->
-  <div class="sec-head mt-24"><div class="sec-dot sd-gold"></div><div class="sec-title"><span class="pname"></span>'s Wishlist</div></div>
-  <div id="wl-theirs" class="stagger-in"><div class="empty">Nothing here yet — they're being mysterious</div></div>
-</div>
-</div>
-
 <!-- ===== FOUNDATION WORKOUT ===== -->
 <div class="pg" id="pg-w1">
 <div class="ctn">
@@ -1571,68 +1137,6 @@
   <div class="wft"><div class="wfq" style="color:var(--vio-tag)">The whole body. The whole vision. The whole her.</div><div class="wfs">Complete</div></div>
 </div>
 </div>
-
-<!-- ===== COUPLE CHALLENGES ===== -->
-<div class="pg" id="pg-challenges">
-<div class="ctn">
-
-  <!-- Active Challenge -->
-  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Active Challenge</div></div>
-  <div id="ch-active"><div class="empty">No active challenge — start one below!</div></div>
-
-  <!-- Challenge Packs -->
-  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Challenge Packs</div></div>
-  <div class="ch-packs">
-    <div class="ch-pack card-action" onclick="startChallenge('love7')">
-      <div class="ch-pack-emoji">💕</div>
-      <div class="ch-pack-info">
-        <div class="ch-pack-name">7 Days of Love</div>
-        <div class="ch-pack-desc">One loving action every day for a week</div>
-      </div>
-    </div>
-    <div class="ch-pack card-action" onclick="startChallenge('comm14')">
-      <div class="ch-pack-emoji">💬</div>
-      <div class="ch-pack-info">
-        <div class="ch-pack-name">14-Day Communication</div>
-        <div class="ch-pack-desc">Strengthen how you talk & listen</div>
-      </div>
-    </div>
-    <div class="ch-pack card-action" onclick="startChallenge('adventure21')">
-      <div class="ch-pack-emoji">🌟</div>
-      <div class="ch-pack-info">
-        <div class="ch-pack-name">21-Day Adventure</div>
-        <div class="ch-pack-desc">Try something new together every day</div>
-      </div>
-    </div>
-    <div class="ch-pack card-action" onclick="startChallenge('intimacy30')">
-      <div class="ch-pack-emoji">🔥</div>
-      <div class="ch-pack-info">
-        <div class="ch-pack-name">30-Day Intimacy</div>
-        <div class="ch-pack-desc">Deepen your emotional & physical bond</div>
-      </div>
-    </div>
-    <div class="ch-pack card-action" onclick="startChallenge('gratitude7')">
-      <div class="ch-pack-emoji">🙏</div>
-      <div class="ch-pack-info">
-        <div class="ch-pack-name">7 Days of Gratitude</div>
-        <div class="ch-pack-desc">Express appreciation in new ways</div>
-      </div>
-    </div>
-    <div class="ch-pack card-action" onclick="startChallenge('fun14')">
-      <div class="ch-pack-emoji">🎉</div>
-      <div class="ch-pack-info">
-        <div class="ch-pack-name">14-Day Fun Factor</div>
-        <div class="ch-pack-desc">Bring more laughter & play into your life</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Completed Challenges -->
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Completed</div></div>
-  <div id="ch-completed"><div class="empty">Complete a challenge pack to see it here</div></div>
-</div>
-</div>
-
 <!-- ===== DATE NIGHT GENERATOR ===== -->
 <div class="pg" id="pg-datenight">
 <div class="ctn">
@@ -1673,71 +1177,6 @@
   <div id="dn-history"><div class="empty">Your date history starts here</div></div>
 </div>
 </div>
-
-<!-- ===== LOVE LANGUAGES ===== -->
-<div class="pg" id="pg-lovelang">
-<div class="ctn">
-
-  <div class="ll-results" id="ll-results" class="d-none">
-    <div class="ll-pair">
-      <div class="ll-profile">
-        <div class="ll-name"><span class="uname"></span></div>
-        <div class="ll-primary" id="ll-my-primary">--</div>
-        <div class="ll-bars" id="ll-my-bars"></div>
-      </div>
-      <div class="ll-divider"></div>
-      <div class="ll-profile">
-        <div class="ll-name"><span class="pname"></span></div>
-        <div class="ll-primary" id="ll-partner-primary">--</div>
-        <div class="ll-bars" id="ll-partner-bars"></div>
-      </div>
-    </div>
-    <div class="ll-tips" id="ll-tips"></div>
-    <button class="dq-submit mt-16" onclick="retakeLLQuiz()">Retake Quiz</button>
-  </div>
-
-  <div id="ll-quiz">
-    <div class="ll-progress" id="ll-progress">Question 1 of 10</div>
-    <div class="ll-question" id="ll-q-text"></div>
-    <div class="ll-options" id="ll-options"></div>
-  </div>
-</div>
-</div>
-
-<!-- ===== ATTACHMENT STYLE ===== -->
-<div class="pg" id="pg-attachment">
-<div class="ctn">
-
-  <div class="ll-results" id="as-results" class="d-none">
-    <div class="ll-pair">
-      <div class="ll-profile">
-        <div class="ll-name"><span class="uname"></span></div>
-        <div id="as-my-result"></div>
-      </div>
-      <div class="ll-divider"></div>
-      <div class="ll-profile">
-        <div class="ll-name"><span class="pname"></span></div>
-        <div id="as-partner-result"></div>
-      </div>
-    </div>
-
-    <div class="text-center mt-16 mb-16">
-      <div id="as-radar"></div>
-    </div>
-
-    <div class="chart-wrap p-14" id="as-combo-tips"></div>
-
-    <button class="dq-submit mt-16" onclick="retakeASQuiz()">Retake Quiz</button>
-  </div>
-
-  <div id="as-quiz">
-    <div class="ll-progress" id="as-progress">Question 1 of 10</div>
-    <div class="ll-question" id="as-q-text"></div>
-    <div class="ll-options" id="as-options"></div>
-  </div>
-</div>
-</div>
-
 <!-- ===== WEEKLY CHECK-IN ===== -->
 <div class="pg" id="pg-checkin">
 <div class="ctn">
@@ -1808,390 +1247,6 @@
   <div id="dr-list" class="stagger-in"><div class="empty">Start mapping out the future you want</div></div>
 </div>
 </div>
-
-<!-- ===== HER SPACE ===== -->
-<div class="pg" id="pg-herspace">
-<div class="ctn">
-
-  <!-- Daily Affirmation -->
-  <div class="hs-affirm" id="hs-affirm" onclick="nextAffirmation()">
-    <div class="hs-affirm-label">Today's Affirmation</div>
-    <div class="hs-affirm-text" id="hs-affirm-text"></div>
-    <div class="hs-affirm-tap">Tap for another</div>
-  </div>
-
-  <!-- Cycle Tracker -->
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Cycle Tracker</div></div>
-  <div class="card">
-    <div class="card-h"><span class="card-t">Current Cycle</span><span class="card-s" id="hs-cycle-phase">--</span></div>
-    <div class="hs-cycle-ring" id="hs-cycle-ring">
-      <svg viewBox="0 0 120 120" class="hs-cycle-svg">
-        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg3)" stroke-width="8"/>
-        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round" stroke-dasharray="314" id="hs-cycle-arc" stroke-dashoffset="314" transform="rotate(-90 60 60)"/>
-        <text x="60" y="55" text-anchor="middle" fill="var(--t1)" font-size="18" font-weight="600" font-family="Outfit" id="hs-cycle-day">--</text>
-        <text x="60" y="72" text-anchor="middle" fill="var(--t3)" font-size="9" font-family="Outfit">day of cycle</text>
-      </svg>
-    </div>
-    <div class="hs-cycle-actions">
-      <button class="dn-action" onclick="logPeriodStart()">Log Period Start</button>
-      <button class="dn-action dn-skip" onclick="logPeriodEnd()">Log Period End</button>
-    </div>
-    <div class="hs-cycle-info" id="hs-cycle-info"></div>
-  </div>
-
-  <!-- Self-Care Checklist -->
-  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Self-Care Today</div></div>
-  <div class="hs-care-grid" id="hs-care-grid">
-    <div class="hs-care-item" onclick="toggleCare(this,'water')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></span><span class="hs-care-label">Water</span></div>
-    <div class="hs-care-item" onclick="toggleCare(this,'skincare')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg></span><span class="hs-care-label">Skincare</span></div>
-    <div class="hs-care-item" onclick="toggleCare(this,'movement')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><span class="hs-care-label">Movement</span></div>
-    <div class="hs-care-item" onclick="toggleCare(this,'journal')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span><span class="hs-care-label">Journal</span></div>
-    <div class="hs-care-item" onclick="toggleCare(this,'sleep')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></span><span class="hs-care-label">Sleep 8h</span></div>
-    <div class="hs-care-item" onclick="toggleCare(this,'nourish')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/><line x1="12" y1="2" x2="12" y2="5"/></svg></span><span class="hs-care-label">Nourish</span></div>
-  </div>
-  <div class="hs-care-streak" id="hs-care-streak"></div>
-
-  <!-- Growth Module Link -->
-  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Growth</div></div>
-  <div class="card-action grow-link" onclick="setGrowPath('her');go('grow')">
-    <div class="icon-badge ib-lavender ib-sz-36">🌱</div>
-    <div class="grow-link-info">
-      <div class="grow-link-title">Her Path — Values & Growth</div>
-      <div class="grow-link-desc">Timeless values, modern love</div>
-    </div>
-    <span class="grow-link-chevron">›</span>
-  </div>
-
-  <!-- Personal Goals -->
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">My Goals</div></div>
-  <div class="bl-form">
-    <input type="text" id="hs-goal-input" placeholder="Add a personal goal...">
-    <button onclick="addPersonalGoal('her')">+</button>
-  </div>
-  <div id="hs-goals"><div class="empty">What are you working towards?</div></div>
-</div>
-</div>
-
-<!-- ===== HIS SPACE ===== -->
-<div class="pg" id="pg-hisspace">
-<div class="ctn">
-
-  <!-- Daily Motivation -->
-  <div class="hs-affirm him-affirm" id="him-affirm" onclick="nextMotivation()">
-    <div class="hs-affirm-label">Today's Focus</div>
-    <div class="hs-affirm-text" id="him-affirm-text"></div>
-    <div class="hs-affirm-tap">Tap for another</div>
-  </div>
-
-  <!-- Strength Tracker -->
-  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Strength Log</div></div>
-  <div class="card">
-    <div class="card-h"><span class="card-t">Personal Records</span><span class="card-s">Track progress</span></div>
-    <div class="him-pr-form">
-      <input type="text" id="him-pr-exercise" placeholder="Exercise name...">
-      <div class="ms-row">
-        <input type="number" id="him-pr-weight" placeholder="Weight" class="flex-1">
-        <input type="number" id="him-pr-reps" placeholder="Reps" class="flex-1">
-      </div>
-      <button class="dq-submit mt-8" onclick="logPR()">Log PR</button>
-    </div>
-    <div id="him-pr-list"><div class="empty">Log your first PR</div></div>
-  </div>
-
-  <!-- Mental Clarity -->
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Mental Clarity</div></div>
-  <div class="him-clarity-grid" id="him-clarity-grid">
-    <div class="hs-care-item" onclick="toggleClarity(this,'meditate')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><span class="hs-care-label">Meditate</span></div>
-    <div class="hs-care-item" onclick="toggleClarity(this,'read')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span><span class="hs-care-label">Read</span></div>
-    <div class="hs-care-item" onclick="toggleClarity(this,'workout')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/></svg></span><span class="hs-care-label">Workout</span></div>
-    <div class="hs-care-item" onclick="toggleClarity(this,'cold')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M20 16l-4-4 4-4"/><path d="M4 8l4 4-4 4"/><path d="M16 4l-4 4-4-4"/><path d="M8 20l4-4 4 4"/></svg></span><span class="hs-care-label">Cold Exp.</span></div>
-    <div class="hs-care-item" onclick="toggleClarity(this,'noscreen')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="2" y1="3" x2="22" y2="17"/></svg></span><span class="hs-care-label">Screen Off</span></div>
-    <div class="hs-care-item" onclick="toggleClarity(this,'gratitude')"><span class="hs-care-emoji"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="hs-care-label">Grateful</span></div>
-  </div>
-  <div class="him-clarity-streak" id="him-clarity-streak"></div>
-
-  <!-- Growth Module Link -->
-  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Growth</div></div>
-  <div class="card-action grow-link" onclick="setGrowPath('him');go('grow')">
-    <div class="icon-badge ib-gold ib-sz-36">🌱</div>
-    <div class="grow-link-info">
-      <div class="grow-link-title">His Path — Values & Growth</div>
-      <div class="grow-link-desc">Timeless values, modern love</div>
-    </div>
-    <span class="grow-link-chevron">›</span>
-  </div>
-
-  <!-- Personal Goals -->
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">My Goals</div></div>
-  <div class="bl-form">
-    <input type="text" id="him-goal-input" placeholder="Add a personal goal...">
-    <button onclick="addPersonalGoal('him')">+</button>
-  </div>
-  <div id="him-goals"><div class="empty">What are you working towards?</div></div>
-</div>
-</div>
-
-<!-- ===== CULTURE EXCHANGE ===== -->
-<div class="pg" id="pg-culture">
-<div class="ctn">
-
-  <div class="mod-status" id="cx-stats"></div>
-
-  <!-- Culture Cards -->
-  <div class="cx-hero">
-    <div class="cx-flag" onclick="go('culture')">🇹🇬<span>Togo</span></div>
-    <div class="cx-bridge">♡</div>
-    <div class="cx-flag" onclick="go('culture')">🇺🇸<span>Texas</span></div>
-  </div>
-
-  <!-- Teach Me -->
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Teach Me</div></div>
-  <div class="card">
-    <div class="card-h"><span class="card-t">Language Exchange</span><span class="card-s">Learn each other's words</span></div>
-    <div class="cx-phrase-form">
-      <input type="text" id="cx-word" placeholder="Word or phrase..." class="quiz-q">
-      <input type="text" id="cx-meaning" placeholder="What it means..." class="quiz-q">
-      <select id="cx-lang" class="select-field">
-        <option value="ewe">Ewe (Togo)</option>
-        <option value="french">French</option>
-        <option value="mina">Mina</option>
-        <option value="english">Southern English</option>
-        <option value="slang">Texas Slang</option>
-      </select>
-      <button class="dq-submit mt-8" onclick="addPhrase()">Add Phrase</button>
-    </div>
-    <div id="cx-phrases" class="stagger-in"><div class="empty">Teach each other your languages</div></div>
-  </div>
-
-  <!-- Cultural Traditions -->
-  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Our Traditions</div></div>
-  <div class="cx-trad-form">
-    <input type="text" id="cx-trad-title" placeholder="A tradition, food, or custom...">
-    <div class="ms-row">
-      <input type="text" id="cx-trad-emoji" placeholder="🎉" maxlength="2" class="input-emoji">
-      <select id="cx-trad-origin" class="select-field flex-1">
-        <option value="togo">From Togo</option>
-        <option value="texas">From Texas</option>
-        <option value="ours">Ours (new)</option>
-      </select>
-    </div>
-    <textarea id="cx-trad-desc" class="mood-note" placeholder="Tell the story behind it..."></textarea>
-    <button class="dq-submit" onclick="addTradition()">Save Tradition</button>
-  </div>
-  <div id="cx-traditions" class="stagger-in"><div class="empty">Share your cultural traditions</div></div>
-
-  <!-- Recipes -->
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Recipes From Home</div></div>
-  <div class="cx-recipe-form">
-    <input type="text" id="cx-recipe-name" placeholder="Dish name...">
-    <div class="ms-row">
-      <input type="text" id="cx-recipe-emoji" placeholder="🍲" maxlength="2" class="input-emoji">
-      <select id="cx-recipe-origin" class="select-field flex-1">
-        <option value="togo">Togolese</option>
-        <option value="texas">Texan</option>
-        <option value="fusion">Our Fusion</option>
-      </select>
-    </div>
-    <textarea id="cx-recipe-how" class="mood-note" placeholder="Ingredients & how to make it..."></textarea>
-    <button class="dq-submit" onclick="addRecipe()">Save Recipe</button>
-  </div>
-  <div id="cx-recipes" class="stagger-in"><div class="empty">Share recipes from your cultures</div></div>
-</div>
-</div>
-
-<!-- ===== DEEP TALK ===== -->
-<div class="pg" id="pg-deeptalk">
-<div class="ctn">
-
-  <div class="dt-current" id="dt-current">
-    <div class="dt-depth" id="dt-depth">Level 1</div>
-    <div class="dt-prompt" id="dt-prompt"></div>
-    <div class="dt-instruction">Sit together. No phones. Look at each other. Talk.</div>
-  </div>
-
-  <div class="dt-controls">
-    <button class="dn-action" onclick="prevDeepTalk()">Previous</button>
-    <button class="dn-action" onclick="nextDeepTalk()" class="btn-gold">Next Prompt</button>
-  </div>
-
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Choose Depth</div></div>
-  <div class="bl-cats" id="dt-levels">
-    <span class="bl-cat on" onclick="setDTLevel('light',this)">Light</span>
-    <span class="bl-cat" onclick="setDTLevel('medium',this)">Medium</span>
-    <span class="bl-cat" onclick="setDTLevel('deep',this)">Deep</span>
-    <span class="bl-cat" onclick="setDTLevel('soul',this)">Soul</span>
-  </div>
-
-  <!-- Conversation Log -->
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Conversation Journal</div></div>
-  <div class="dt-journal-form">
-    <textarea class="mood-note" id="dt-journal" placeholder="What did you learn about each other tonight?"></textarea>
-    <button class="dq-submit" onclick="saveConvoNote()">Save Reflection</button>
-  </div>
-  <div id="dt-journal-feed"><div class="empty">After a deep conversation, write what you learned.</div></div>
-</div>
-</div>
-
-<!-- ===== FAMILY PLANNING ===== -->
-<div class="pg" id="pg-family">
-<div class="ctn">
-
-  <div class="mod-status" id="fam-stats"></div>
-
-  <!-- Life Stage -->
-  <div class="fam-stage" id="fam-stage">
-    <div class="fam-stage-label">Current Stage</div>
-    <div class="fam-stage-name" id="fam-stage-name">Dating & Building</div>
-    <div class="fam-stage-bar">
-      <div class="fam-stage-fill" id="fam-stage-fill" style="width:15%"></div>
-    </div>
-    <div class="fam-stage-steps">
-      <span class="fam-step active">Dating</span>
-      <span class="fam-step">Engaged</span>
-      <span class="fam-step">Married</span>
-      <span class="fam-step">Parents</span>
-      <span class="fam-step">Growing</span>
-    </div>
-  </div>
-
-  <!-- Discussions -->
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Things to Discuss</div></div>
-  <div class="fam-discuss" id="fam-discuss"></div>
-
-  <!-- Baby Names -->
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Name Ideas</div></div>
-  <div class="bl-form">
-    <input type="text" id="fam-name-input" placeholder="A name you love...">
-    <select id="fam-name-gender" class="select-field">
-      <option value="girl">Girl</option>
-      <option value="boy">Boy</option>
-      <option value="neutral">Neutral</option>
-    </select>
-    <button onclick="addBabyName()">+</button>
-  </div>
-  <div id="fam-names" class="stagger-in"><div class="empty">Save names you both love</div></div>
-
-  <!-- Family Goals -->
-  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Family Goals</div></div>
-  <div class="bl-form">
-    <input type="text" id="fam-goal-input" placeholder="A goal for your family...">
-    <button onclick="addFamilyGoal()">+</button>
-  </div>
-  <div id="fam-goals" class="stagger-in"><div class="empty">Set goals for your future family</div></div>
-</div>
-</div>
-
-<!-- ===== OUR FOUNDATION ===== -->
-<div class="pg" id="pg-foundation">
-<div class="ctn">
-
-  <div class="mod-status" id="fdn-stats"></div>
-
-  <!-- Shared Values -->
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Our Values</div></div>
-  <div class="fdn-values" id="fdn-values"></div>
-  <div class="bl-form">
-    <input type="text" id="fdn-value-input" placeholder="A value we share...">
-    <button onclick="addValue()">+</button>
-  </div>
-  <div id="fdn-value-list" class="stagger-in"><div class="empty">What do you both stand for?</div></div>
-
-  <!-- Shared Goals -->
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Shared Goals</div></div>
-  <div class="bl-form">
-    <input type="text" id="shared-goal-input" placeholder="A goal for both of us...">
-    <select id="shared-goal-cat" class="select-field">
-      <option value="relationship">Relationship</option>
-      <option value="health">Health</option>
-      <option value="finance">Finance</option>
-      <option value="home">Home</option>
-      <option value="career">Career</option>
-      <option value="personal">Growth</option>
-    </select>
-    <button onclick="addSharedGoal()">+</button>
-  </div>
-  <div id="shared-goals-list" class="stagger-in"><div class="empty">Build your future together</div></div>
-
-  <!-- Daily Habits -->
-  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Daily Habits</div></div>
-  <div class="bl-form">
-    <input type="text" id="habit-input" placeholder="A daily habit to track...">
-    <button onclick="addHabit()">+</button>
-  </div>
-  <div id="habits-list" class="stagger-in"><div class="empty">Build consistency together</div></div>
-
-  <!-- Relationship Health Score -->
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Relationship Health</div></div>
-  <div id="rel-health-card"></div>
-
-  <!-- Communication Agreements -->
-  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Communication Agreements</div></div>
-  <div class="fdn-agreements" id="fdn-agreements">
-    <div class="fdn-agree-item" onclick="toggleAgreement(this,0)"><span class="fdn-check"></span>We don't go to bed angry</div>
-    <div class="fdn-agree-item" onclick="toggleAgreement(this,1)"><span class="fdn-check"></span>We use "I feel" not "you always"</div>
-    <div class="fdn-agree-item" onclick="toggleAgreement(this,2)"><span class="fdn-check"></span>We take a pause when heated before responding</div>
-    <div class="fdn-agree-item" onclick="toggleAgreement(this,3)"><span class="fdn-check"></span>We validate each other's feelings, even when we disagree</div>
-    <div class="fdn-agree-item" onclick="toggleAgreement(this,4)"><span class="fdn-check"></span>We never bring up past resolved issues</div>
-    <div class="fdn-agree-item" onclick="toggleAgreement(this,5)"><span class="fdn-check"></span>We choose understanding over winning</div>
-  </div>
-  <div class="bl-form mt-12">
-    <input type="text" id="fdn-agree-input" placeholder="Add your own agreement...">
-    <button onclick="addAgreement()">+</button>
-  </div>
-  <div id="fdn-custom-agrees"></div>
-
-  <!-- Conflict Resolution -->
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">When We Disagree</div></div>
-  <div class="fdn-conflict-card">
-    <div class="fdn-conflict-step"><span class="fdn-num">1</span><strong>Pause.</strong> Take 20 minutes apart to cool down. No texting in anger.</div>
-    <div class="fdn-conflict-step"><span class="fdn-num">2</span><strong>Own your part.</strong> Start with "I feel ___ when ___" — no blame.</div>
-    <div class="fdn-conflict-step"><span class="fdn-num">3</span><strong>Listen to understand</strong>, not to respond. Repeat back what you heard.</div>
-    <div class="fdn-conflict-step"><span class="fdn-num">4</span><strong>Find the need.</strong> Behind every complaint is an unmet need. Find it.</div>
-    <div class="fdn-conflict-step"><span class="fdn-num">5</span><strong>Repair.</strong> Say what you'll do differently. Mean it. Follow through.</div>
-  </div>
-</div>
-</div>
-
-<!-- ===== SPIRITUAL SPACE ===== -->
-<div class="pg" id="pg-spiritual">
-<div class="ctn">
-
-  <div class="mod-status" id="sp-stats"></div>
-
-  <!-- Daily Devotional -->
-  <div class="sp-devo" id="sp-devo" onclick="nextDevotional()">
-    <div class="sp-devo-label">Daily Reflection</div>
-    <div class="sp-devo-verse" id="sp-devo-verse"></div>
-    <div class="sp-devo-ref" id="sp-devo-ref"></div>
-    <div class="hs-affirm-tap">Tap for another</div>
-  </div>
-
-  <!-- Prayer Requests -->
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Prayer Requests</div></div>
-  <div class="sp-prayer-form">
-    <textarea class="mood-note" id="sp-prayer-input" placeholder="What's on your heart..."></textarea>
-    <button class="dq-submit" onclick="addPrayer()">Share Prayer Request</button>
-  </div>
-  <div id="sp-prayers" class="stagger-in"><div class="empty">Share what you need prayer for</div></div>
-
-  <!-- Gratitude to God -->
-  <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Blessings Journal</div></div>
-  <div class="sp-bless-form">
-    <textarea class="mood-note" id="sp-bless-input" placeholder="A blessing you're thankful for..."></textarea>
-    <button class="dq-submit" onclick="addBlessing()">Give Thanks</button>
-  </div>
-  <div id="sp-blessings" class="stagger-in"><div class="empty">Count your blessings together</div></div>
-
-  <!-- Shared Intentions -->
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Our Intentions</div></div>
-  <div class="bl-form">
-    <input type="text" id="sp-intent-input" placeholder="An intention for this season...">
-    <button onclick="addIntention()">+</button>
-  </div>
-  <div id="sp-intentions" class="stagger-in"><div class="empty">Set spiritual intentions together</div></div>
-</div>
-</div>
-
 <!-- ===== HOME BUILDING ===== -->
 <div class="pg" id="pg-homelife">
 <div class="ctn">
@@ -2758,143 +1813,6 @@
   <div id="shared-todo-list"><div class="empty">Tasks for both of you</div></div>
 </div>
 </div>
-
-<!-- ===== DREAM HOME ===== -->
-<div class="pg" id="pg-dreamhome">
-<div class="ctn">
-
-  <!-- Style Quiz -->
-  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Your Style</div></div>
-  <div class="card" id="dh-style-quiz">
-    <div class="dh-quiz-prompt">What is your home style?</div>
-    <div class="dh-style-options" id="dh-style-options">
-      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('modern')">Modern</button>
-      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('rustic')">Rustic</button>
-      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('minimalist')">Minimalist</button>
-      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('cozy')">Cozy</button>
-      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('industrial')">Industrial</button>
-      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('bohemian')">Bohemian</button>
-      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('scandinavian')">Scandinavian</button>
-      <button class="btn-sm dh-style-btn" onclick="selectHomeStyle('traditional')">Traditional</button>
-    </div>
-    <div id="dh-style-result" class="mt-12"></div>
-  </div>
-
-  <!-- Vision Board -->
-  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Home Vision Board</div></div>
-  <div class="card mb-16">
-    <div class="dh-section-label mb-10">Color Palette</div>
-    <div class="dh-palette" id="dh-palette">
-      <div class="dh-color" style="background:#F5E6D3" onclick="toggleDHColor('#F5E6D3',this)"></div>
-      <div class="dh-color" style="background:#D4946A" onclick="toggleDHColor('#D4946A',this)"></div>
-      <div class="dh-color" style="background:#8B6F47" onclick="toggleDHColor('#8B6F47',this)"></div>
-      <div class="dh-color" style="background:#2C3E50" onclick="toggleDHColor('#2C3E50',this)"></div>
-      <div class="dh-color" style="background:#1A1A2E" onclick="toggleDHColor('#1A1A2E',this)"></div>
-      <div class="dh-color" style="background:#E8D5B7" onclick="toggleDHColor('#E8D5B7',this)"></div>
-      <div class="dh-color" style="background:#A8D8B9" onclick="toggleDHColor('#A8D8B9',this)"></div>
-      <div class="dh-color" style="background:#F2C6DE" onclick="toggleDHColor('#F2C6DE',this)"></div>
-      <div class="dh-color" style="background:#C9B1FF" onclick="toggleDHColor('#C9B1FF',this)"></div>
-      <div class="dh-color" style="background:#FFFFFF" onclick="toggleDHColor('#FFFFFF',this)"></div>
-    </div>
-    <div class="dh-section-label" style="margin:14px 0 8px">Must-Haves</div>
-    <div class="dh-musthaves" id="dh-musthaves">
-      <button class="dh-mh-btn" onclick="toggleDHMust('garden',this)">Garden</button>
-      <button class="dh-mh-btn" onclick="toggleDHMust('garage',this)">Garage</button>
-      <button class="dh-mh-btn" onclick="toggleDHMust('pool',this)">Pool</button>
-      <button class="dh-mh-btn" onclick="toggleDHMust('fireplace',this)">Fireplace</button>
-      <button class="dh-mh-btn" onclick="toggleDHMust('office',this)">Home Office</button>
-      <button class="dh-mh-btn" onclick="toggleDHMust('gym',this)">Home Gym</button>
-      <button class="dh-mh-btn" onclick="toggleDHMust('balcony',this)">Balcony</button>
-      <button class="dh-mh-btn" onclick="toggleDHMust('walk-in',this)">Walk-in Closet</button>
-      <button class="dh-mh-btn" onclick="toggleDHMust('bathtub',this)">Bathtub</button>
-      <button class="dh-mh-btn" onclick="toggleDHMust('island',this)">Kitchen Island</button>
-    </div>
-    <button class="dq-submit mt-14 btn-lavender" onclick="saveDHVision()">Save Vision</button>
-  </div>
-  <div id="dh-vision-compare"></div>
-
-  <!-- Room Planner -->
-  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Room by Room</div></div>
-  <div class="dh-rooms" id="dh-rooms">
-    <div class="dh-room card-action" onclick="openRoom('living')">
-      <div class="icon-badge ib-lavender">&#x1F6CB;&#xFE0F;</div>
-      <div><div class="dh-room-name">Living Room</div>
-      <div class="dh-room-ct" id="dh-living-ct">0 ideas</div></div>
-    </div>
-    <div class="dh-room card-action" onclick="openRoom('bedroom')">
-      <div class="icon-badge ib-rose">&#x1F6CF;&#xFE0F;</div>
-      <div><div class="dh-room-name">Bedroom</div>
-      <div class="dh-room-ct" id="dh-bedroom-ct">0 ideas</div></div>
-    </div>
-    <div class="dh-room card-action" onclick="openRoom('kitchen')">
-      <div class="icon-badge ib-amber">&#x1F373;</div>
-      <div><div class="dh-room-name">Kitchen</div>
-      <div class="dh-room-ct" id="dh-kitchen-ct">0 ideas</div></div>
-    </div>
-    <div class="dh-room card-action" onclick="openRoom('bathroom')">
-      <div class="icon-badge ib-teal">&#x1F6C1;</div>
-      <div><div class="dh-room-name">Bathroom</div>
-      <div class="dh-room-ct" id="dh-bathroom-ct">0 ideas</div></div>
-    </div>
-    <div class="dh-room card-action" onclick="openRoom('outdoor')">
-      <div class="icon-badge ib-emerald">&#x1F333;</div>
-      <div><div class="dh-room-name">Outdoor</div>
-      <div class="dh-room-ct" id="dh-outdoor-ct">0 ideas</div></div>
-    </div>
-    <div class="dh-room card-action" onclick="openRoom('office')">
-      <div class="icon-badge ib-gold">&#x1F4BB;</div>
-      <div><div class="dh-room-name">Office</div>
-      <div class="dh-room-ct" id="dh-office-ct">0 ideas</div></div>
-    </div>
-  </div>
-
-  <!-- Room Detail (shown when a room is selected) -->
-  <div id="dh-room-detail" class="d-none">
-    <div class="d-flex items-center gap-10 mb-16">
-      <button class="btn-sm" onclick="closeRoomDetail()">&#x2190; Back</button>
-      <div class="t-lg fw-600 c-cream" id="dh-room-title">Room</div>
-    </div>
-    <div class="card">
-      <textarea id="dh-room-notes" placeholder="Style notes for this room..." class="form-textarea form-textarea-min mb-8"></textarea>
-      <div class="d-flex gap-8 mb-8">
-        <input type="text" id="dh-room-link" placeholder="Inspiration URL" class="flex-2">
-        <input type="number" id="dh-room-budget" placeholder="Budget $" class="flex-1">
-      </div>
-      <div class="d-flex gap-8 mb-8">
-        <select id="dh-room-priority" class="form-input-inline">
-          <option value="must">Must-have</option>
-          <option value="nice">Nice-to-have</option>
-          <option value="dream">Dream</option>
-        </select>
-        <select id="dh-room-timeline" class="form-input-inline">
-          <option value="now">Now</option>
-          <option value="1y">1 Year</option>
-          <option value="3y">3 Years</option>
-          <option value="5y">5+ Years</option>
-        </select>
-      </div>
-      <button class="dq-submit" onclick="addRoomIdea()">Add Idea</button>
-    </div>
-    <div id="dh-room-ideas"><div class="empty">Add ideas for this room</div></div>
-  </div>
-
-  <!-- Wishlist -->
-  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Home Wishlist</div></div>
-  <div class="bl-form">
-    <input type="text" id="dh-wish-name" placeholder="Item name" class="flex-2">
-    <input type="number" id="dh-wish-price" placeholder="$" class="flex-1">
-    <button onclick="addHomeWish()">+</button>
-  </div>
-  <div id="dh-wishlist"><div class="empty">Add items to your home wishlist</div></div>
-
-  <!-- Budget Overview -->
-  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Budget Overview</div></div>
-  <div class="card" id="dh-budget-overview">
-    <div class="dh-budget-text">Add room ideas to see budget summary</div>
-  </div>
-</div>
-</div>
-
 <!-- ===== KNOW YOUR PERSON ===== -->
 <div class="pg" id="pg-knowyou">
 <div class="ctn">
@@ -3330,80 +2248,225 @@
   </div>
 </div>
 </div>
-
-<!-- ===== GROW TOGETHER (Relationship Values) ===== -->
-<div class="pg" id="pg-grow">
+<!-- ===== VALUES ===== -->
+<div class="pg" id="pg-values">
 <div class="ctn">
 
-  <!-- Path Toggle -->
-  <div class="view-toggle" id="grow-toggle" class="view-toggle mb-16">
-    <div class="vt-option active" data-path="her" onclick="setGrowPath('her')">Her Path</div>
-    <div class="vt-option" data-path="his" onclick="setGrowPath('his')">His Path</div>
-    <div class="vt-option" data-path="us" onclick="setGrowPath('us')">Our Path</div>
-    <div class="vt-slider" id="grow-slider"></div>
+  <!-- Section tabs -->
+  <div class="bl-cats" id="val-tabs" style="margin-bottom:16px">
+    <span class="bl-cat on" onclick="showValSection('foundation',this)">Foundation</span>
+    <span class="bl-cat" onclick="showValSection('culture',this)">Culture</span>
+    <span class="bl-cat" onclick="showValSection('spiritual',this)">Spiritual</span>
   </div>
 
-  <!-- Progress summary -->
-  <div class="card-hero grow-progress-card">
-    <div class="d-flex items-center justify-between">
-      <div>
-        <div class="grow-progress-label">Your Progress</div>
-        <div class="grow-progress-val" id="grow-progress-pct">0%</div>
-      </div>
-      <div class="text-right">
-        <div class="grow-lessons-label">Lessons complete</div>
-        <div class="grow-lessons-count" id="grow-progress-count">0 / 0</div>
-      </div>
+  <!-- Foundation section -->
+  <div class="val-section" id="val-foundation">
+    <div class="mod-status" id="fdn-stats"></div>
+
+    <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Our Values</div></div>
+    <div class="fdn-values" id="fdn-values"></div>
+    <div class="bl-form">
+      <input type="text" id="fdn-value-input" placeholder="A value we share...">
+      <button onclick="addValue()">+</button>
+    </div>
+    <div id="fdn-value-list" class="stagger-in"><div class="empty">What do you both stand for?</div></div>
+
+    <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Shared Goals</div></div>
+    <div class="bl-form">
+      <input type="text" id="shared-goal-input" placeholder="A goal for both of us...">
+      <select id="shared-goal-cat" class="select-field">
+        <option value="relationship">Relationship</option>
+        <option value="health">Health</option>
+        <option value="finance">Finance</option>
+        <option value="home">Home</option>
+        <option value="career">Career</option>
+        <option value="personal">Growth</option>
+      </select>
+      <button onclick="addSharedGoal()">+</button>
+    </div>
+    <div id="shared-goals-list" class="stagger-in"><div class="empty">Build your future together</div></div>
+
+    <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Daily Habits</div></div>
+    <div class="bl-form">
+      <input type="text" id="habit-input" placeholder="A daily habit to track...">
+      <button onclick="addHabit()">+</button>
+    </div>
+    <div id="habits-list" class="stagger-in"><div class="empty">Build consistency together</div></div>
+
+    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Relationship Health</div></div>
+    <div id="rel-health-card"></div>
+
+    <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Communication Agreements</div></div>
+    <div class="fdn-agreements" id="fdn-agreements">
+      <div class="fdn-agree-item" onclick="toggleAgreement(this,0)"><span class="fdn-check"></span>We don't go to bed angry</div>
+      <div class="fdn-agree-item" onclick="toggleAgreement(this,1)"><span class="fdn-check"></span>We use "I feel" not "you always"</div>
+      <div class="fdn-agree-item" onclick="toggleAgreement(this,2)"><span class="fdn-check"></span>We take a pause when heated before responding</div>
+      <div class="fdn-agree-item" onclick="toggleAgreement(this,3)"><span class="fdn-check"></span>We validate each other's feelings, even when we disagree</div>
+      <div class="fdn-agree-item" onclick="toggleAgreement(this,4)"><span class="fdn-check"></span>We never bring up past resolved issues</div>
+      <div class="fdn-agree-item" onclick="toggleAgreement(this,5)"><span class="fdn-check"></span>We choose understanding over winning</div>
+    </div>
+    <div class="bl-form mt-12">
+      <input type="text" id="fdn-agree-input" placeholder="Add your own agreement...">
+      <button onclick="addAgreement()">+</button>
+    </div>
+    <div id="fdn-custom-agrees"></div>
+
+    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">When We Disagree</div></div>
+    <div class="fdn-conflict-card">
+      <div class="fdn-conflict-step"><span class="fdn-num">1</span><strong>Pause.</strong> Take 20 minutes apart to cool down. No texting in anger.</div>
+      <div class="fdn-conflict-step"><span class="fdn-num">2</span><strong>Own your part.</strong> Start with "I feel ___ when ___" — no blame.</div>
+      <div class="fdn-conflict-step"><span class="fdn-num">3</span><strong>Listen to understand</strong>, not to respond. Repeat back what you heard.</div>
+      <div class="fdn-conflict-step"><span class="fdn-num">4</span><strong>Find the need.</strong> Behind every complaint is an unmet need. Find it.</div>
+      <div class="fdn-conflict-step"><span class="fdn-num">5</span><strong>Repair.</strong> Say what you'll do differently. Mean it. Follow through.</div>
     </div>
   </div>
 
-  <!-- Module cards (dynamically rendered) -->
-  <div id="grow-modules"></div>
+  <!-- Culture section -->
+  <div class="val-section d-none" id="val-culture">
+    <div class="mod-status" id="cx-stats"></div>
 
-  <!-- Daily reflection -->
-  <div class="sec-head mt-16"><div class="sec-dot sd-lavender"></div><div class="sec-title" id="grow-reflection-title">Daily Reflection</div></div>
-  <div class="card">
-    <div class="t-sm c-t3 mb-8" id="grow-reflection-prompt">What is one thing you can do today to strengthen your relationship?</div>
-    <textarea id="grow-reflection-input" rows="3" placeholder="Write your reflection..." class="form-textarea-sm"></textarea>
-    <button class="dq-submit mt-8" onclick="saveGrowReflection()">Save Reflection</button>
+    <div class="cx-hero">
+      <div class="cx-flag">&#x1F1F9;&#x1F1EC;<span>Togo</span></div>
+      <div class="cx-bridge">&#9825;</div>
+      <div class="cx-flag">&#x1F1FA;&#x1F1F8;<span>Texas</span></div>
+    </div>
+
+    <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Teach Me</div></div>
+    <div class="card">
+      <div class="card-h"><span class="card-t">Language Exchange</span><span class="card-s">Learn each other's words</span></div>
+      <div class="cx-phrase-form">
+        <input type="text" id="cx-word" placeholder="Word or phrase..." class="quiz-q">
+        <input type="text" id="cx-meaning" placeholder="What it means..." class="quiz-q">
+        <select id="cx-lang" class="select-field">
+          <option value="ewe">Ewe (Togo)</option>
+          <option value="french">French</option>
+          <option value="mina">Mina</option>
+          <option value="english">Southern English</option>
+          <option value="slang">Texas Slang</option>
+        </select>
+        <button class="dq-submit mt-8" onclick="addPhrase()">Add Phrase</button>
+      </div>
+      <div id="cx-phrases" class="stagger-in"><div class="empty">Teach each other your languages</div></div>
+    </div>
+
+    <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Our Traditions</div></div>
+    <div class="cx-trad-form">
+      <input type="text" id="cx-trad-title" placeholder="A tradition, food, or custom...">
+      <div class="ms-row">
+        <input type="text" id="cx-trad-emoji" placeholder="&#x1F389;" maxlength="2" class="input-emoji">
+        <select id="cx-trad-origin" class="select-field flex-1">
+          <option value="togo">From Togo</option>
+          <option value="texas">From Texas</option>
+          <option value="ours">Ours (new)</option>
+        </select>
+      </div>
+      <textarea id="cx-trad-desc" class="mood-note" placeholder="Tell the story behind it..."></textarea>
+      <button class="dq-submit" onclick="addTradition()">Save Tradition</button>
+    </div>
+    <div id="cx-traditions" class="stagger-in"><div class="empty">Share your cultural traditions</div></div>
+
+    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Recipes From Home</div></div>
+    <div class="cx-recipe-form">
+      <input type="text" id="cx-recipe-name" placeholder="Dish name...">
+      <div class="ms-row">
+        <input type="text" id="cx-recipe-emoji" placeholder="&#x1F372;" maxlength="2" class="input-emoji">
+        <select id="cx-recipe-origin" class="select-field flex-1">
+          <option value="togo">Togolese</option>
+          <option value="texas">Texan</option>
+          <option value="fusion">Our Fusion</option>
+        </select>
+      </div>
+      <textarea id="cx-recipe-how" class="mood-note" placeholder="Ingredients & how to make it..."></textarea>
+      <button class="dq-submit" onclick="addRecipe()">Save Recipe</button>
+    </div>
+    <div id="cx-recipes" class="stagger-in"><div class="empty">Share recipes from your cultures</div></div>
   </div>
+
+  <!-- Spiritual section -->
+  <div class="val-section d-none" id="val-spiritual">
+    <div class="mod-status" id="sp-stats"></div>
+
+    <div class="sp-devo" id="sp-devo" onclick="nextDevotional()">
+      <div class="sp-devo-label">Daily Reflection</div>
+      <div class="sp-devo-verse" id="sp-devo-verse"></div>
+      <div class="sp-devo-ref" id="sp-devo-ref"></div>
+      <div class="hs-affirm-tap">Tap for another</div>
+    </div>
+
+    <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Prayer Requests</div></div>
+    <div class="sp-prayer-form">
+      <textarea class="mood-note" id="sp-prayer-input" placeholder="What's on your heart..."></textarea>
+      <button class="dq-submit" onclick="addPrayer()">Share Prayer Request</button>
+    </div>
+    <div id="sp-prayers" class="stagger-in"><div class="empty">Share what you need prayer for</div></div>
+
+    <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Blessings Journal</div></div>
+    <div class="sp-bless-form">
+      <textarea class="mood-note" id="sp-bless-input" placeholder="A blessing you're thankful for..."></textarea>
+      <button class="dq-submit" onclick="addBlessing()">Give Thanks</button>
+    </div>
+    <div id="sp-blessings" class="stagger-in"><div class="empty">Count your blessings together</div></div>
+
+    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Our Intentions</div></div>
+    <div class="bl-form">
+      <input type="text" id="sp-intent-input" placeholder="An intention for this season...">
+      <button onclick="addIntention()">+</button>
+    </div>
+    <div id="sp-intentions" class="stagger-in"><div class="empty">Set spiritual intentions together</div></div>
+  </div>
+
 </div>
 </div>
 
-<!-- Lesson View (overlay) -->
-<div class="modal-full" id="grow-lesson-modal">
-<div class="modal-header">
-  <button class="modal-close" onclick="closeGrowLesson()">&larr;</button>
-  <div class="form-label mb-0" id="grow-lesson-progress">Lesson 1 of 4</div>
-  <div class="grow-lesson-spacer"></div>
-</div>
-<div class="modal-body">
-  <div class="ch-progress-bar mb-20">
-    <div class="ch-progress-fill" id="grow-lesson-bar"></div>
+<!-- ===== LISTS ===== -->
+<div class="pg" id="pg-lists">
+<div class="ctn">
+
+  <!-- Section tabs -->
+  <div class="bl-cats" id="lists-tabs" style="margin-bottom:16px">
+    <span class="bl-cat on" onclick="showListSection('bucket',this)">Bucket List</span>
+    <span class="bl-cat" onclick="showListSection('wishlist',this)">Wishlists</span>
   </div>
-  <h2 class="feat-header-title grow-lesson-title-h2" id="grow-lesson-title"></h2>
 
-  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Introduction</div></div>
-  <div class="grow-text" id="grow-lesson-intro"></div>
-
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">The Traditional Value</div></div>
-  <div class="grow-text" id="grow-lesson-traditional"></div>
-
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">The Modern Twist</div></div>
-  <div class="grow-text" id="grow-lesson-modern"></div>
-
-  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Reflect</div></div>
-  <div class="grow-reflection-q" id="grow-lesson-reflection-q"></div>
-  <textarea id="grow-lesson-reflection" rows="3" placeholder="Your thoughts..." class="form-input" style="resize:vertical;margin-bottom:14px"></textarea>
-
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">This Week's Action</div></div>
-  <div class="grow-action-box" id="grow-lesson-action"></div>
-
-  <div class="form-row mt-14">
-    <button class="dq-submit flex-1" onclick="prevGrowLesson()" id="grow-prev-btn" style="background:var(--input-bg);color:var(--t2)" disabled>&larr; Previous</button>
-    <button class="dq-submit flex-1" onclick="completeGrowLesson()" id="grow-complete-btn" style="background:var(--gold)">Mark Complete</button>
-    <button class="dq-submit flex-1" onclick="nextGrowLesson()" id="grow-next-btn">&rarr; Next</button>
+  <!-- Bucket List section -->
+  <div class="list-section" id="list-bucket">
+    <div class="mod-status" id="bl-stats"></div>
+    <div class="bl-form">
+      <input type="text" id="bl-input" placeholder="Something we want to do...">
+      <input type="text" id="bl-emoji" placeholder="&#x1F30D;" maxlength="2" class="input-emoji">
+      <button onclick="addBucketItem()">+</button>
+    </div>
+    <div class="bl-cats" id="bl-cats">
+      <span class="bl-cat on" onclick="filterBucket('all',this)">All</span>
+      <span class="bl-cat" onclick="filterBucket('travel',this)">Travel</span>
+      <span class="bl-cat" onclick="filterBucket('food',this)">Food</span>
+      <span class="bl-cat" onclick="filterBucket('adventure',this)">Adventure</span>
+      <span class="bl-cat" onclick="filterBucket('home',this)">Home</span>
+    </div>
+    <div id="bl-list" class="stagger-in"><div class="empty">What do you two want to do before you're old and gray?</div></div>
   </div>
+
+  <!-- Wishlist section -->
+  <div class="list-section d-none" id="list-wishlist">
+    <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">My Wishlist</div></div>
+    <div class="bl-form">
+      <input type="text" id="wl-input" placeholder="Add something you want...">
+      <button onclick="addWishItem()">+</button>
+    </div>
+    <div class="bl-form mt-neg8">
+      <input type="url" id="wl-link" placeholder="Link (optional)" class="flex-2">
+      <select id="wl-priority" class="select-field">
+        <option value="love">Love it</option>
+        <option value="want">Want it</option>
+        <option value="need">Need it</option>
+      </select>
+    </div>
+    <div id="wl-mine" class="stagger-in"><div class="empty">Drop hints here</div></div>
+
+    <div class="sec-head mt-24"><div class="sec-dot sd-gold"></div><div class="sec-title"><span class="pname"></span>'s Wishlist</div></div>
+    <div id="wl-theirs" class="stagger-in"><div class="empty">Nothing here yet — they're being mysterious</div></div>
+  </div>
+
 </div>
 </div>
 

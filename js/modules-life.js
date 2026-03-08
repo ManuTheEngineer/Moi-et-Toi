@@ -1220,3 +1220,21 @@ async function toggleChore(key, done) {
   await db.ref('homelife/chores/' + key + '/done').set(done);
 }
 
+// ===== VALUES PAGE TAB SWITCHING =====
+function showValSection(section, el) {
+  document.querySelectorAll('#val-tabs .bl-cat').forEach(b => b.classList.remove('on'));
+  if (el) el.classList.add('on');
+  document.querySelectorAll('.val-section').forEach(s => s.classList.add('d-none'));
+  const target = document.getElementById('val-' + section);
+  if (target) target.classList.remove('d-none');
+}
+
+// ===== LISTS PAGE TAB SWITCHING =====
+function showListSection(section, el) {
+  document.querySelectorAll('#lists-tabs .bl-cat').forEach(b => b.classList.remove('on'));
+  if (el) el.classList.add('on');
+  document.querySelectorAll('.list-section').forEach(s => s.classList.add('d-none'));
+  const target = document.getElementById('list-' + section);
+  if (target) target.classList.remove('d-none');
+}
+

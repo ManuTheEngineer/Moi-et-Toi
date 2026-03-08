@@ -2,18 +2,27 @@
 // Map sub-pages to their parent tab
 const TAB_MAP = {
   'dash': 'dash',
-  'together': 'together', 'connect': 'together', 'games': 'together', 'deeptalk': 'together', 'question': 'together', 'datenight': 'together', 'lovelang': 'together', 'checkin': 'together', 'challenges': 'together', 'knowyou': 'together', 'attachment': 'together',
-  'track': 'track', 'mood': 'track', 'fitness': 'track', 'gratitude': 'track', 'w1': 'track', 'w2': 'track', 'w3': 'track', 'nutrition': 'track', 'grow': 'track', 'herspace': 'track', 'hisspace': 'track',
-  'build': 'build', 'dreams': 'build', 'homelife': 'build', 'family': 'build', 'foundation': 'build', 'culture': 'build', 'spiritual': 'build', 'dreamhome': 'build', 'calendar': 'build', 'story': 'build',
-  'explore': 'explore', 'more': 'explore', 'ai': 'explore', 'bucket': 'explore', 'wishlist': 'explore', 'memories': 'explore', 'achievements': 'explore', 'settings': 'explore'
+  'together': 'together', 'connect': 'together', 'games': 'together', 'datenight': 'together', 'checkin': 'together', 'knowyou': 'together',
+  'wellness': 'wellness', 'mood': 'wellness', 'fitness': 'wellness', 'gratitude': 'wellness', 'w1': 'wellness', 'w2': 'wellness', 'w3': 'wellness', 'nutrition': 'wellness',
+  'plan': 'plan', 'dreams': 'plan', 'homelife': 'plan', 'calendar': 'plan', 'story': 'plan', 'values': 'plan', 'lists': 'plan',
+  'more': 'more', 'ai': 'more', 'memories': 'more', 'achievements': 'more', 'settings': 'more'
 };
 
 // Tab ordering for directional transitions and swipe nav
-const TAB_ORDER = ['dash', 'together', 'track', 'build', 'explore'];
-const TAB_LANDINGS = { dash:'dash', together:'together', track:'track', build:'build', explore:'explore' };
+const TAB_ORDER = ['dash', 'together', 'wellness', 'plan', 'more'];
+const TAB_LANDINGS = { dash:'dash', together:'together', wellness:'wellness', plan:'plan', more:'more' };
 
 function go(p) {
-  if (p === 'more') p = 'explore';
+  // Backward compatibility for old page names
+  if (p === 'explore') p = 'more';
+  if (p === 'track') p = 'wellness';
+  if (p === 'build') p = 'plan';
+  if (p === 'deeptalk' || p === 'question' || p === 'challenges') p = 'together';
+  if (p === 'bucket' || p === 'wishlist') p = 'lists';
+  if (p === 'foundation' || p === 'culture' || p === 'spiritual') p = 'values';
+  if (p === 'dreamhome' || p === 'family') p = 'dreams';
+  if (p === 'herspace' || p === 'hisspace' || p === 'grow') p = 'wellness';
+  if (p === 'lovelang' || p === 'attachment') p = 'settings';
   const current = document.querySelector('.pg.on');
   const next = document.getElementById('pg-' + p);
   if (current === next) { closeMenu(); return; }
@@ -155,30 +164,26 @@ const _IC = {
   monitor:_i('<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>')
 };
 const PAGE_META = {
-  dash:{icon:_IC.home,label:'Home'},together:{icon:_IC.heart,label:'Together'},track:{icon:_IC.activity,label:'Track'},build:{icon:_IC.globe,label:'Build'},
-  connect:{icon:_IC.mail,label:'Connect'},games:{icon:_IC.game,label:'Games'},
-  question:{icon:_IC.chat,label:'Daily Q'},deeptalk:{icon:_IC.wave,label:'Deep Talk'},datenight:{icon:_IC.moon,label:'Date Night'},challenges:{icon:_IC.star,label:'Challenges'},
-  lovelang:{icon:_IC.heart,label:'Love Lang'},checkin:{icon:_IC.barChart,label:'Check-in'},gratitude:{icon:_IC.star,label:'Gratitude'},attachment:{icon:_IC.link,label:'Attachment'},
-  knowyou:{icon:_IC.users,label:'Know You'},dreams:{icon:_IC.sparkle,label:'Dreams'},dreamhome:{icon:_IC.house,label:'Dream Home'},
-  homelife:{icon:_IC.dollar,label:'Finances'},family:{icon:_IC.users,label:'Family'},bucket:{icon:_IC.list,label:'Bucket List'},
-  calendar:{icon:_IC.cal,label:'Calendar'},foundation:{icon:_IC.columns,label:'Foundation'},wishlist:{icon:_IC.gift,label:'Wishlists'},
-  memories:{icon:_IC.camera,label:'Memories'},mood:{icon:_IC.sun,label:'Mood'},fitness:{icon:_IC.dumbbell,label:'Fitness'},
-  nutrition:{icon:_IC.apple,label:'Nutrition'},spiritual:{icon:_IC.feather,label:'Spirit'},herspace:{icon:_IC.flower,label:'Her Space'},
-  hisspace:{icon:_IC.zap,label:'His Space'},story:{icon:_IC.book,label:'Timeline'},culture:{icon:_IC.globe,label:'Cultures'},
-  ai:{icon:_IC.cpu,label:'AI Chat'},achievements:{icon:_IC.award,label:'Achievements'},explore:{icon:_IC.compass,label:'Explore'},
-  grow:{icon:_IC.leaf,label:'Growth'},
-  settings:{icon:_IC.list,label:'Settings'}
+  dash:{icon:_IC.home,label:'Home'},
+  together:{icon:_IC.heart,label:'Together'},connect:{icon:_IC.mail,label:'Letters'},games:{icon:_IC.game,label:'Play'},
+  datenight:{icon:_IC.moon,label:'Date Night'},checkin:{icon:_IC.barChart,label:'Check-in'},knowyou:{icon:_IC.users,label:'Know You'},
+  wellness:{icon:_IC.activity,label:'Wellness'},mood:{icon:_IC.sun,label:'Mood'},fitness:{icon:_IC.dumbbell,label:'Fitness'},
+  nutrition:{icon:_IC.apple,label:'Nutrition'},gratitude:{icon:_IC.star,label:'Gratitude'},
+  plan:{icon:_IC.globe,label:'Plan'},dreams:{icon:_IC.sparkle,label:'Dreams'},homelife:{icon:_IC.dollar,label:'Finances'},
+  calendar:{icon:_IC.cal,label:'Calendar'},story:{icon:_IC.book,label:'Timeline'},values:{icon:_IC.columns,label:'Values'},lists:{icon:_IC.gift,label:'Lists'},
+  more:{icon:_IC.compass,label:'More'},memories:{icon:_IC.camera,label:'Memories'},ai:{icon:_IC.cpu,label:'AI Chat'},
+  achievements:{icon:_IC.award,label:'Achievements'},settings:{icon:_IC.list,label:'Settings'},
+  w1:{icon:_IC.dumbbell,label:'Foundation'},w2:{icon:_IC.dumbbell,label:'Elevated'},w3:{icon:_IC.dumbbell,label:'Full Body'}
 };
 
 const CTX_ACTIONS = {
-  dash:[{p:'mood',icon:_IC.sun,label:'Log Mood'},{p:'question',icon:_IC.chat,label:'Daily Q'},{p:'connect',icon:_IC.mail,label:'Letter'},{p:'datenight',icon:_IC.heart,label:'Date Night'}],
+  dash:[{p:'mood',icon:_IC.sun,label:'Log Mood'},{p:'together',icon:_IC.chat,label:'Talk'},{p:'connect',icon:_IC.mail,label:'Letter'},{p:'datenight',icon:_IC.heart,label:'Date Night'}],
   fitness:[{p:'fitness',icon:_IC.dumbbell,label:'Workout',fn:'openWorkoutBuilder'},{p:'fitness',icon:_IC.list,label:'Quick Log',fn:'scrollToQuickLog'},{p:'fitness',icon:_IC.activity,label:'Analytics',fn:'scrollToAnalytics'},{p:'fitness',icon:_IC.trend,label:'Metrics',fn:'scrollToMetrics'}],
   nutrition:[{p:'nutrition',icon:_IC.apple,label:'Log Meal'},{p:'nutrition',icon:_IC.activity,label:'Water'},{p:'nutrition',icon:_IC.list,label:'Recipes'},{p:'nutrition',icon:_IC.list,label:'Grocery'}],
-  connect:[{p:'connect',icon:_IC.mail,label:'Write'},{p:'games',icon:_IC.game,label:'Games'},{p:'deeptalk',icon:_IC.wave,label:'Deep Talk'},{p:'question',icon:_IC.chat,label:'Daily Q'}],
-  games:[{p:'games',icon:_IC.game,label:'New Game'},{p:'connect',icon:_IC.mail,label:'Connect'},{p:'deeptalk',icon:_IC.wave,label:'Deep Talk'},{p:'datenight',icon:_IC.heart,label:'Date'}],
+  connect:[{p:'connect',icon:_IC.mail,label:'Write'},{p:'games',icon:_IC.game,label:'Play'},{p:'together',icon:_IC.wave,label:'Talk'},{p:'datenight',icon:_IC.heart,label:'Date'}],
+  games:[{p:'games',icon:_IC.game,label:'New Game'},{p:'connect',icon:_IC.mail,label:'Letters'},{p:'together',icon:_IC.wave,label:'Talk'},{p:'datenight',icon:_IC.heart,label:'Date'}],
   mood:[{p:'gratitude',icon:_IC.star,label:'Gratitude'},{p:'checkin',icon:_IC.check,label:'Check-in'},{p:'fitness',icon:_IC.dumbbell,label:'Fitness'},{p:'nutrition',icon:_IC.apple,label:'Nutrition'}],
-  grow:[{p:'herspace',icon:_IC.heart,label:'Her Space'},{p:'hisspace',icon:_IC.zap,label:'His Space'},{p:'foundation',icon:_IC.columns,label:'Foundation'},{p:'spiritual',icon:_IC.feather,label:'Spirit'}],
-  _default:[{p:'mood',icon:_IC.sun,label:'Mood'},{p:'fitness',icon:_IC.dumbbell,label:'Fitness'},{p:'connect',icon:_IC.mail,label:'Connect'},{p:'explore',icon:_IC.compass,label:'Explore'}]
+  _default:[{p:'mood',icon:_IC.sun,label:'Mood'},{p:'fitness',icon:_IC.dumbbell,label:'Fitness'},{p:'connect',icon:_IC.mail,label:'Letters'},{p:'more',icon:_IC.compass,label:'More'}]
 };
 
 function trackRecentPage(pageId) {
