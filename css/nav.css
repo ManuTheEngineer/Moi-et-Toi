@@ -37,8 +37,8 @@
 .pcard:first-child:hover{box-shadow:0 12px 40px rgba(184,134,11,.15)}
 .pcard:last-child:hover{box-shadow:0 12px 40px rgba(123,104,174,.15)}
 .pav{width:56px;height:56px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:24px}
-.pcard:first-child .pav{background:rgba(184,134,11,.12);color:#B8860B}
-.pcard:last-child .pav{background:rgba(123,104,174,.12);color:#7B68AE}
+.pcard:first-child .pav{background:rgba(184,134,11,.12);color:var(--gold)}
+.pcard:last-child .pav{background:rgba(123,104,174,.12);color:var(--lavender)}
 .pcard:active{transform:scale(0.95)}
 .pcard h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:#1A1A2E;margin-bottom:4px}
 .pcard p{font-size:11px;color:rgba(26,26,46,.40)}

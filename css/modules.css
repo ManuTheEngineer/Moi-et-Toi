@@ -78,7 +78,7 @@
 .ms-form textarea{resize:none;min-height:50px}
 .ms-row{display:flex;gap:8px}
 .ms-row input{flex:1}
-.ms-save{width:100%;padding:12px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px;box-shadow:0 4px 16px rgba(28,43,74,.12)}
+.ms-save{width:100%;padding:14px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px;box-shadow:0 4px 16px rgba(28,43,74,.12);min-height:44px}
 .ms-save:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(28,43,74,.16)}
 .ms-save:active{transform:scale(0.98)}
 .ms-cancel{text-align:center;margin-top:8px;font-size:11px;color:var(--t3);cursor:pointer}
@@ -162,7 +162,7 @@
 .bl-form input{flex:1;padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;outline:none;transition:box-shadow .2s}
 .bl-form input:focus{box-shadow:var(--focus-ring)}
 .bl-form input::placeholder{color:var(--t3)}
-.bl-form button{padding:10px 18px;border-radius:50px;border:none;background:var(--gold);color:#fff;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;transition:all .2s}
+.bl-form button{padding:10px 18px;border-radius:50px;border:none;background:var(--gold);color:#fff;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;transition:all .2s;min-height:44px}
 .bl-form button:active{transform:scale(0.97)}
 .bl-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .bl-cat{padding:10px 16px;border-radius:50px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:none;color:var(--t3);cursor:pointer;transition:all .2s;background:var(--input-bg);min-height:40px;display:inline-flex;align-items:center}
@@ -305,7 +305,7 @@
 .dn-saved-info{flex:1}
 .dn-saved-title{font-weight:500;font-size:13px}
 .dn-saved-meta{font-size:10px;color:var(--t3);margin-top:2px}
-.dn-done-btn{padding:8px 16px;border-radius:50px;border:none;background:var(--input-bg);color:var(--gold);font-size:11px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;min-height:36px}
+.dn-done-btn{padding:10px 16px;border-radius:50px;border:none;background:var(--input-bg);color:var(--gold);font-size:11px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;min-height:44px}
 
 /* ===== LOVE LANGUAGES ===== */
 .ll-results{margin-bottom:20px}
@@ -511,7 +511,7 @@
 .hl-savings-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:6px}
 .hl-savings-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .6s ease}
 .hl-savings-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--t2)}
-.hl-savings-update{padding:6px 14px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;margin-top:6px}
+.hl-savings-update{padding:10px 14px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;margin-top:6px;min-height:44px}
 .hl-meal-card{display:flex;align-items:center;gap:10px;padding:14px;background:var(--card-bg);border:none;border-radius:16px;margin-bottom:8px;box-shadow:var(--card-shadow)}
 .hl-meal-day{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:600;min-width:40px}
 .hl-meal-name{flex:1;font-size:13px;font-weight:500}
@@ -548,7 +548,7 @@
 .prog-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s ease}
 
 /* ===== DELETE BUTTON ===== */
-.item-delete{width:36px;height:36px;border-radius:50%;border:none;background:transparent;color:var(--t3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;opacity:0}
+.item-delete{width:44px;height:44px;border-radius:50%;border:none;background:transparent;color:var(--t3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;opacity:0}
 .bl-item:hover .item-delete,.dr-card:hover .item-delete,.hl-chore-card:hover .item-delete,.fam-name-card:hover .item-delete,.sp-intent-card:hover .item-delete,.wl-item:hover .item-delete,.hl-meal-card:hover .item-delete{opacity:1}
 .item-delete:hover{background:var(--red-s);color:var(--red)}
 @media(hover:none){.item-delete{opacity:.5}}
@@ -703,7 +703,7 @@
 .meal-add{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;align-items:center}
 .meal-add input[type="text"]{flex:1;min-width:120px}
 .meal-add .meal-cal-input,.meal-add .meal-macro-input{border-radius:10px;text-align:center}
-.meal-add button{background:var(--gold);color:#fff;border-radius:50%;width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex-shrink:0}
+.meal-add button{background:var(--gold);color:#fff;border-radius:50%;width:44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex-shrink:0}
 .meal-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--input-bg);border-radius:12px;margin-bottom:6px;font-size:12px;color:var(--cream)}
 .meal-item .mi-cal{font-size:10px;color:var(--rose);margin-left:auto}
 .hydration-track{display:flex;gap:6px;align-items:center;padding:14px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);margin-bottom:16px}
@@ -808,7 +808,7 @@
 .dh-spec{display:flex;flex-direction:column;gap:4px}
 .dh-spec-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);font-weight:500}
 .dh-stepper{display:flex;align-items:center;gap:0;border-radius:12px;overflow:hidden;border:1px solid var(--bdr-s);background:var(--input-bg)}
-.dh-stepper button{width:36px;height:36px;border:none;background:transparent;color:var(--lavender);font-size:18px;font-weight:600;cursor:pointer;transition:background .15s}
+.dh-stepper button{width:44px;height:44px;border:none;background:transparent;color:var(--lavender);font-size:18px;font-weight:600;cursor:pointer;transition:background .15s}
 .dh-stepper button:active{background:var(--tint)}
 .dh-stepper span{flex:1;text-align:center;font-size:16px;font-weight:600;color:var(--cream)}
 
@@ -831,7 +831,7 @@
 .dh-note-del:hover{opacity:1}
 
 /* Back button */
-.dh-back-btn{width:32px;height:32px;border-radius:10px;border:1px solid var(--bdr-s);background:var(--input-bg);color:var(--cream);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.dh-back-btn{width:44px;height:44px;border-radius:12px;border:1px solid var(--bdr-s);background:var(--input-bg);color:var(--cream);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .dh-back-btn:active{transform:scale(.9)}
 .dh-room-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--cream);font-weight:600;margin:0}
 
@@ -1455,8 +1455,8 @@
 .settings-btn{padding:8px 18px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}
 .settings-btn:hover{background:var(--tint-b)}
 .settings-btn:active{transform:scale(.96)}
-.settings-btn-danger{background:rgba(220,80,80,0.12);color:#dc5050}
-.settings-btn-danger:hover{background:rgba(220,80,80,0.20)}
+.settings-btn-danger{background:var(--red-s);color:var(--red)}
+.settings-btn-danger:hover{background:rgba(212,98,122,0.20)}
 
 /* ===== UX OVERHAUL — DESIGN SYSTEM CLASSES ===== */
 
