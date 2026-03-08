@@ -738,279 +738,717 @@ function _tryUnlock() {
 document.addEventListener('touchstart', _tryUnlock, { passive: true });
 document.addEventListener('click', _tryUnlock);
 
+// ===== SOUND GENERATION ENGINE =====
+// Helper: clamp sample values
+function _clamp(v) { return v > 1 ? 1 : v < -1 ? -1 : v; }
+
+// Helper: generate brown noise into a buffer
+function _brownNoise(d, len, gain) {
+  var b = 0;
+  for (var i = 0; i < len; i++) {
+    b = 0.97 * b + 0.03 * (Math.random() * 2 - 1);
+    d[i] += b * (gain || 1);
+  }
+}
+
+// Helper: generate pink noise into a buffer
+function _pinkNoise(d, len, gain) {
+  var b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+  for (var i = 0; i < len; i++) {
+    var w = Math.random() * 2 - 1;
+    b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
+    b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
+    b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
+    d[i]+=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11*(gain||1); b6=w*0.115926;
+  }
+}
+
+// Helper: add a bird chirp event at position
+function _addBird(d, sr, pos, species) {
+  var PI2 = 2 * Math.PI;
+  var len = d.length;
+  // Different bird species have distinct call patterns
+  var patterns = [
+    // Robin: rapid descending trill
+    function(d, sr, pos) {
+      var notes = 3 + Math.floor(Math.random() * 4);
+      var p = pos;
+      for (var n = 0; n < notes; n++) {
+        var f = 3200 - n * 180 + Math.random() * 300;
+        var nLen = Math.min(Math.floor(sr * (0.06 + Math.random() * 0.08)), len - p);
+        for (var k = 0; k < nLen; k++) {
+          var env = Math.sin(Math.PI * k / nLen); // smooth envelope
+          d[p + k] += Math.sin(PI2 * (f + 400 * Math.sin(PI2 * 12 * k / sr)) * k / sr) * 0.22 * env;
+        }
+        p += nLen + Math.floor(sr * 0.02);
+        if (p >= len) break;
+      }
+    },
+    // Warbler: rising two-tone whistle
+    function(d, sr, pos) {
+      var dur = Math.min(Math.floor(sr * (0.4 + Math.random() * 0.3)), len - pos);
+      for (var k = 0; k < dur; k++) {
+        var t = k / dur;
+        var f = 2400 + t * 1200 + 200 * Math.sin(PI2 * 6 * t);
+        var env = Math.sin(Math.PI * t) * 0.8;
+        d[pos + k] += Math.sin(PI2 * f * k / sr) * 0.18 * env;
+      }
+    },
+    // Sparrow: short repeated peeps
+    function(d, sr, pos) {
+      var peeps = 2 + Math.floor(Math.random() * 3);
+      var p = pos;
+      for (var n = 0; n < peeps; n++) {
+        var f = 3800 + Math.random() * 600;
+        var pLen = Math.min(Math.floor(sr * 0.05), len - p);
+        for (var k = 0; k < pLen; k++) {
+          var env = Math.sin(Math.PI * k / pLen);
+          d[p + k] += Math.sin(PI2 * f * k / sr) * 0.2 * env;
+        }
+        p += pLen + Math.floor(sr * (0.08 + Math.random() * 0.1));
+        if (p >= len) break;
+      }
+    },
+    // Thrush: rich melodic phrase with harmonics
+    function(d, sr, pos) {
+      var dur = Math.min(Math.floor(sr * (0.5 + Math.random() * 0.5)), len - pos);
+      var baseF = 1800 + Math.random() * 400;
+      for (var k = 0; k < dur; k++) {
+        var t = k / dur;
+        var fm = Math.sin(PI2 * 4 * t) * 300;
+        var f = baseF + fm + t * 600 * Math.sin(PI2 * 2 * t);
+        var env = (1 - Math.pow(2 * t - 1, 2)) * 0.7; // bell curve
+        d[pos + k] += (Math.sin(PI2 * f * k / sr) * 0.15 + Math.sin(PI2 * f * 2 * k / sr) * 0.05) * env;
+      }
+    }
+  ];
+  var fn = patterns[species % patterns.length];
+  fn(d, sr, pos);
+}
+
+// Helper: add cricket chirp pattern
+function _addCricketChorus(d, sr, pos) {
+  var PI2 = 2 * Math.PI;
+  var len = d.length;
+  // Realistic: rapid burst of 3-6 pulses at ~4200Hz
+  var pulses = 3 + Math.floor(Math.random() * 4);
+  var p = pos;
+  var baseF = 3800 + Math.random() * 800;
+  for (var n = 0; n < pulses; n++) {
+    var pLen = Math.min(Math.floor(sr * 0.015), len - p);
+    for (var k = 0; k < pLen; k++) {
+      var env = Math.sin(Math.PI * k / pLen);
+      d[p + k] += Math.sin(PI2 * baseF * k / sr) * 0.3 * env;
+    }
+    p += pLen + Math.floor(sr * 0.012);
+    if (p >= len) break;
+  }
+}
+
 function generateNoise(type) {
   if (!WEATHER.audioCtx) return null;
   var ctx = WEATHER.audioCtx;
   var sr = ctx.sampleRate;
-  var len = sr * 3; // 3 seconds loop
-  var buffer = ctx.createBuffer(1, len, sr);
-  var d = buffer.getChannelData(0);
+  var len = sr * 10; // 10-second loops for richness
+  var buffer = ctx.createBuffer(2, len, sr); // stereo
+  var L = buffer.getChannelData(0);
+  var R = buffer.getChannelData(1);
   var PI2 = 2 * Math.PI;
+  var i, k, t;
 
   switch (type) {
-    case 'rain':
-      // Dense noise with sharp droplet transients
-      for (var i = 0; i < len; i++) {
-        d[i] = (Math.random() * 2 - 1) * 0.5;
-        if (Math.random() < 0.005) d[i] = (Math.random() > 0.5 ? 1 : -1) * (0.6 + Math.random() * 0.3);
+    case 'rain': {
+      // Layered rain: base hiss + distinct droplet impacts + puddle splashes
+      _brownNoise(L, len, 0.25);
+      _brownNoise(R, len, 0.25);
+      // Add filtered white noise for hiss
+      for (i = 0; i < len; i++) {
+        var w = (Math.random() * 2 - 1) * 0.35;
+        L[i] += w; R[i] += w * 0.9 + (Math.random() * 2 - 1) * 0.05;
+      }
+      // Droplet impacts — varied sizes, random stereo position
+      for (var drop = 0; drop < 200; drop++) {
+        var pos = Math.floor(Math.random() * (len - sr * 0.05));
+        var size = 0.2 + Math.random() * 0.6; // drop size
+        var dropLen = Math.floor(sr * (0.002 + size * 0.008));
+        var pan = Math.random(); // 0=left, 1=right
+        var freq = 2000 + (1 - size) * 4000; // smaller drops = higher pitch
+        for (k = 0; k < dropLen && pos + k < len; k++) {
+          var s = Math.sin(PI2 * freq * k / sr) * size * 0.4 * Math.exp(-k / (dropLen * 0.3));
+          L[pos + k] += s * (1 - pan * 0.6);
+          R[pos + k] += s * (0.4 + pan * 0.6);
+        }
+      }
+      // Gentle rhythm — waves of intensity
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var intensity = 0.7 + 0.3 * Math.sin(PI2 * 0.15 * t);
+        L[i] *= intensity; R[i] *= intensity;
+        L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
       }
       break;
-    case 'lightRain':
-      for (var i = 0; i < len; i++) {
-        d[i] = (Math.random() * 2 - 1) * 0.3;
-        if (Math.random() < 0.003) d[i] *= 2.5;
+    }
+    case 'lightRain': {
+      _pinkNoise(L, len, 0.15);
+      _pinkNoise(R, len, 0.15);
+      // Sparse gentle drops
+      for (var drop = 0; drop < 60; drop++) {
+        var pos = Math.floor(Math.random() * (len - sr * 0.02));
+        var dLen = Math.floor(sr * (0.003 + Math.random() * 0.006));
+        var pan = Math.random();
+        var freq = 3000 + Math.random() * 3000;
+        for (k = 0; k < dLen && pos + k < len; k++) {
+          var s = Math.sin(PI2 * freq * k / sr) * 0.25 * Math.exp(-k / (dLen * 0.25));
+          L[pos + k] += s * (1 - pan * 0.5);
+          R[pos + k] += s * (0.5 + pan * 0.5);
+        }
       }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
-    case 'wind':
-      // Brown noise (low-pass filtered white noise) — guaranteed audible
-      var b = 0;
-      for (var i = 0; i < len; i++) {
-        b = 0.97 * b + 0.03 * (Math.random() * 2 - 1);
-        d[i] = b * 3.0; // Boost significantly
-        if (d[i] > 1) d[i] = 1;
-        if (d[i] < -1) d[i] = -1;
-      }
-      break;
-    case 'forestWind':
+    }
+    case 'wind': {
+      // Rich wind: layered brown noise with slow modulation (gusts)
       var b0 = 0, b1 = 0;
-      for (var i = 0; i < len; i++) {
-        var w = Math.random() * 2 - 1;
-        b0 = 0.98 * b0 + 0.02 * w;
-        b1 = 0.995 * b1 + 0.005 * w;
-        d[i] = (b0 * 1.5 + b1 * 0.8);
-        // Random leaf rustle bursts
-        if (Math.random() < 0.002) {
-          for (var k = 0; k < Math.min(800, len - i); k++) {
-            d[i + k] += (Math.random() * 2 - 1) * 0.4 * Math.exp(-k / 200);
-          }
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var gust = 0.5 + 0.5 * Math.sin(PI2 * 0.08 * t + Math.sin(PI2 * 0.03 * t) * 2);
+        b0 = 0.97 * b0 + 0.03 * (Math.random() * 2 - 1);
+        b1 = 0.985 * b1 + 0.015 * (Math.random() * 2 - 1);
+        L[i] = (b0 * 2.5 + b1 * 0.8) * gust;
+        R[i] = (b0 * 0.8 + b1 * 2.5) * gust;
+        // Whistling overtones during strong gusts
+        if (gust > 0.75) {
+          var whistle = Math.sin(PI2 * (400 + gust * 200) * t) * 0.04 * (gust - 0.75) * 4;
+          L[i] += whistle; R[i] += whistle * 0.7;
         }
-        if (d[i] > 1) d[i] = 1;
-        if (d[i] < -1) d[i] = -1;
+        L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
       }
       break;
-    case 'waves':
-      // Ocean: low rumble + surf noise
-      for (var i = 0; i < len; i++) {
-        var t = i / sr;
-        // Low frequency ocean swell (audible 60-120 Hz)
-        d[i] = Math.sin(PI2 * 65 * t + Math.sin(PI2 * 0.3 * t) * 3) * 0.25 +
-               Math.sin(PI2 * 90 * t + Math.sin(PI2 * 0.5 * t) * 2) * 0.15 +
-               (Math.random() * 2 - 1) * 0.25; // surf hiss
+    }
+    case 'forestWind': {
+      // Forest breeze + leaf rustles + distant bird + creaking
+      var bw = 0;
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var breeze = 0.4 + 0.3 * Math.sin(PI2 * 0.1 * t) + 0.2 * Math.sin(PI2 * 0.04 * t);
+        bw = 0.98 * bw + 0.02 * (Math.random() * 2 - 1);
+        L[i] = bw * 1.2 * breeze;
+        R[i] = bw * 1.0 * breeze + (Math.random() * 2 - 1) * 0.08 * breeze;
       }
-      break;
-    case 'thunder':
-      // Low rumble with loud cracks
-      var b = 0;
-      for (var i = 0; i < len; i++) {
-        b = 0.98 * b + 0.02 * (Math.random() * 2 - 1);
-        d[i] = b * 1.5;
-        if (Math.random() < 0.0003) {
-          for (var j = 0; j < Math.min(8000, len - i); j++) {
-            d[i + j] += (Math.random() * 2 - 1) * 0.9 * Math.exp(-j / 4000);
-          }
+      // Leaf rustles
+      for (var r = 0; r < 30; r++) {
+        var pos = Math.floor(Math.random() * (len - sr * 0.3));
+        var rLen = Math.floor(sr * (0.05 + Math.random() * 0.2));
+        var pan = Math.random();
+        for (k = 0; k < rLen && pos + k < len; k++) {
+          var s = (Math.random() * 2 - 1) * 0.3 * Math.exp(-k / (rLen * 0.4));
+          L[pos + k] += s * (1 - pan * 0.5); R[pos + k] += s * (0.5 + pan * 0.5);
         }
-        if (d[i] > 1) d[i] = 1;
-        if (d[i] < -1) d[i] = -1;
+      }
+      // A few distant birds
+      for (var b = 0; b < 4; b++) {
+        var bPos = Math.floor(sr * 1.5 + Math.random() * (len - sr * 3));
+        _addBird(L, sr, bPos, b);
+        // Quieter in right channel (distance effect)
+        var tmp = new Float32Array(len);
+        _addBird(tmp, sr, bPos, b);
+        for (i = bPos; i < Math.min(bPos + sr, len); i++) R[i] += tmp[i] * 0.4;
+      }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
+    case 'waves': {
+      // Ocean: rolling surf cycles with undertow, foam hiss, deep rumble
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        // Wave cycle: ~7 seconds per wave
+        var wave = Math.sin(PI2 * 0.14 * t);
+        var surf = Math.max(0, wave); // only positive half = wave crashing
+        var pull = Math.max(0, -wave) * 0.4; // undertow
+        // Deep ocean rumble
+        var rumble = Math.sin(PI2 * 55 * t + Math.sin(PI2 * 0.2 * t) * 3) * 0.08 +
+                     Math.sin(PI2 * 38 * t) * 0.05;
+        // Surf noise (filtered white noise shaped by wave envelope)
+        var noise = (Math.random() * 2 - 1);
+        var surfNoise = noise * (surf * 0.5 + 0.15);
+        var pullNoise = noise * pull * 0.3;
+        // Foam hiss (high frequency, during crash)
+        var foam = (Math.random() * 2 - 1) * surf * surf * 0.3;
+        L[i] = _clamp(rumble + surfNoise + pullNoise + foam * 0.8);
+        R[i] = _clamp(rumble + surfNoise * 0.9 + pullNoise + foam);
       }
       break;
-    case 'crickets':
-      // Chirps at ~4000 Hz with brown noise bed
-      var b = 0;
-      for (var i = 0; i < len; i++) {
-        b = 0.98 * b + 0.02 * (Math.random() * 2 - 1);
-        d[i] = b * 0.6; // background
-        if (Math.random() < 0.002) {
-          for (var k = 0; k < Math.min(1200, len - i); k++) {
-            d[i + k] += Math.sin(PI2 * 4200 * k / sr) * 0.5 * Math.exp(-k / 300);
-          }
+    }
+    case 'thunder': {
+      // Thunderstorm: rain base + rolling thunder + lightning cracks
+      // Rain base
+      for (i = 0; i < len; i++) {
+        var w = (Math.random() * 2 - 1) * 0.25;
+        L[i] = w; R[i] = w * 0.85 + (Math.random() * 2 - 1) * 0.04;
+      }
+      _brownNoise(L, len, 0.2);
+      _brownNoise(R, len, 0.2);
+      // 1-2 thunder events in 10 seconds
+      var numThunder = 1 + Math.floor(Math.random() * 2);
+      for (var th = 0; th < numThunder; th++) {
+        var tPos = Math.floor(sr * (1 + Math.random() * 7));
+        // Lightning crack — sharp transient
+        var crackLen = Math.floor(sr * 0.05);
+        for (k = 0; k < crackLen && tPos + k < len; k++) {
+          var s = (Math.random() * 2 - 1) * 0.8 * Math.exp(-k / (crackLen * 0.15));
+          L[tPos + k] += s; R[tPos + k] += s * 0.9;
         }
-        if (d[i] > 1) d[i] = 1;
-        if (d[i] < -1) d[i] = -1;
-      }
-      break;
-    case 'birdsong':
-      // Bird calls: frequency-modulated chirps at audible range (1500-4000 Hz)
-      var b = 0;
-      for (var i = 0; i < len; i++) {
-        b = 0.985 * b + 0.015 * (Math.random() * 2 - 1);
-        d[i] = b * 0.5; // gentle background breeze
-        // Sparse bird chirps
-        if (Math.random() < 0.001) {
-          var baseFreq = 1800 + Math.random() * 2000; // 1800-3800 Hz
-          var chirpLen = Math.min(1500 + Math.floor(Math.random() * 2000), len - i);
-          for (var k = 0; k < chirpLen; k++) {
-            var freq = baseFreq + 600 * Math.sin(PI2 * 8 * k / sr); // warbling
-            d[i + k] += Math.sin(PI2 * freq * k / sr) * 0.6 * Math.exp(-k / (chirpLen * 0.5));
-          }
+        // Rolling rumble — long decay with low-frequency content
+        var rumbleLen = Math.floor(sr * (2 + Math.random() * 2));
+        var rStart = tPos + crackLen;
+        var bx = 0;
+        for (k = 0; k < rumbleLen && rStart + k < len; k++) {
+          bx = 0.985 * bx + 0.015 * (Math.random() * 2 - 1);
+          var env = Math.exp(-k / (rumbleLen * 0.5));
+          var rumble = bx * 2.5 * env + Math.sin(PI2 * 40 * k / sr) * 0.15 * env;
+          L[rStart + k] += rumble;
+          R[rStart + k] += rumble * (0.7 + 0.3 * Math.sin(PI2 * 0.5 * k / sr)); // pan wander
         }
-        if (d[i] > 1) d[i] = 1;
-        if (d[i] < -1) d[i] = -1;
       }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
-    case 'seagulls':
-      // Gull cries at 800-2000 Hz + ocean noise
-      for (var i = 0; i < len; i++) {
-        d[i] = (Math.random() * 2 - 1) * 0.2; // ocean hiss
-        if (Math.random() < 0.0006) {
-          var gullLen = Math.min(3000, len - i);
-          for (var k = 0; k < gullLen; k++) {
-            var freq = 1200 + 400 * Math.sin(PI2 * 5 * k / sr);
-            d[i + k] += Math.sin(PI2 * freq * k / sr) * 0.55 * Math.exp(-k / 1500);
-          }
+    }
+    case 'crickets': {
+      // Night ambience: multiple crickets at different distances + gentle breeze + tree frogs
+      _brownNoise(L, len, 0.12);
+      _brownNoise(R, len, 0.12);
+      // Near crickets (loud, distinct)
+      for (var c = 0; c < 40; c++) {
+        var cPos = Math.floor(Math.random() * (len - sr));
+        _addCricketChorus(L, sr, cPos);
+        if (Math.random() > 0.5) _addCricketChorus(R, sr, cPos + Math.floor(Math.random() * sr * 0.05));
+      }
+      // Distant cricket bed (continuous, softer)
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var chirp = Math.sin(PI2 * 4100 * t) * Math.max(0, Math.sin(PI2 * 3.5 * t)) * 0.06;
+        L[i] += chirp; R[i] += chirp * 0.7;
+      }
+      // Occasional tree frog
+      for (var f = 0; f < 3; f++) {
+        var fPos = Math.floor(Math.random() * (len - sr * 0.5));
+        var fLen = Math.floor(sr * (0.1 + Math.random() * 0.15));
+        var fFreq = 1200 + Math.random() * 600;
+        for (k = 0; k < fLen && fPos + k < len; k++) {
+          var env = Math.sin(Math.PI * k / fLen);
+          var s = Math.sin(PI2 * fFreq * k / sr) * 0.15 * env;
+          R[fPos + k] += s; L[fPos + k] += s * 0.3;
         }
-        if (d[i] > 1) d[i] = 1;
-        if (d[i] < -1) d[i] = -1;
       }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
-    case 'owls':
-      // Low hoots at 300-500 Hz + quiet night ambience
-      var b = 0;
-      for (var i = 0; i < len; i++) {
-        b = 0.995 * b + 0.005 * (Math.random() * 2 - 1);
-        d[i] = b * 0.4; // quiet night
-        if (Math.random() < 0.0003) {
-          var hootLen = Math.min(6000, len - i);
-          for (var k = 0; k < hootLen; k++) {
-            d[i + k] += Math.sin(PI2 * 380 * k / sr) * 0.6 * Math.exp(-k / 3000);
+    }
+    case 'birdsong': {
+      // Dawn chorus: multiple bird species + gentle breeze + soft ambience
+      _pinkNoise(L, len, 0.08);
+      _pinkNoise(R, len, 0.08);
+      // Layer 8-12 bird events across the 10 seconds
+      var numBirds = 8 + Math.floor(Math.random() * 5);
+      for (var b = 0; b < numBirds; b++) {
+        var bPos = Math.floor(Math.random() * (len - sr * 1.5));
+        var species = Math.floor(Math.random() * 4);
+        var channel = Math.random() > 0.5 ? L : R;
+        _addBird(channel, sr, bPos, species);
+        // Bleed into other channel at lower volume (spatial)
+        var other = channel === L ? R : L;
+        var tmpBuf = new Float32Array(len);
+        _addBird(tmpBuf, sr, bPos, species);
+        var bleed = 0.2 + Math.random() * 0.3;
+        for (i = bPos; i < Math.min(bPos + sr * 2, len); i++) other[i] += tmpBuf[i] * bleed;
+      }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
+    case 'seagulls': {
+      // Beach: ocean surf + gull cries + distant shore ambience
+      // Ocean base
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var wave = Math.sin(PI2 * 0.12 * t);
+        var surf = Math.max(0, wave) * 0.4;
+        var noise = (Math.random() * 2 - 1) * (surf + 0.12);
+        L[i] = noise; R[i] = noise * 0.85 + (Math.random() * 2 - 1) * 0.04;
+      }
+      // Gull calls
+      for (var g = 0; g < 5; g++) {
+        var gPos = Math.floor(Math.random() * (len - sr * 1.5));
+        var gLen = Math.floor(sr * (0.6 + Math.random() * 0.8));
+        var cries = 2 + Math.floor(Math.random() * 3);
+        var p = gPos;
+        var pan = Math.random();
+        for (var c = 0; c < cries; c++) {
+          var cLen = Math.floor(sr * (0.15 + Math.random() * 0.15));
+          for (k = 0; k < cLen && p + k < len; k++) {
+            var freq = 1400 + 500 * Math.sin(PI2 * 4 * k / sr) + c * 100;
+            var env = Math.sin(Math.PI * k / cLen);
+            var s = Math.sin(PI2 * freq * k / sr) * 0.2 * env;
+            L[p + k] += s * (1 - pan * 0.6);
+            R[p + k] += s * (0.4 + pan * 0.6);
           }
+          p += cLen + Math.floor(sr * 0.05);
         }
-        if (d[i] > 1) d[i] = 1;
-        if (d[i] < -1) d[i] = -1;
       }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
+    }
+    case 'owls': {
+      // Night forest: deep quiet + owl hoots + distant rustles + very faint wind
+      _brownNoise(L, len, 0.06);
+      _brownNoise(R, len, 0.06);
+      // 2-3 owl hoot sequences
+      for (var o = 0; o < 2 + Math.floor(Math.random() * 2); o++) {
+        var oPos = Math.floor(sr * (0.5 + Math.random() * 7));
+        var hoots = 2 + Math.floor(Math.random() * 3); // "hoo-hoo-hoooo"
+        var p = oPos;
+        var pan = 0.3 + Math.random() * 0.4;
+        for (var h = 0; h < hoots; h++) {
+          var hLen = Math.floor(sr * (h === hoots - 1 ? 0.5 : 0.2)); // last hoot longer
+          var freq = 320 + Math.random() * 60;
+          for (k = 0; k < hLen && p + k < len; k++) {
+            var env = Math.sin(Math.PI * k / hLen) * (h === hoots - 1 ? 1 : 0.7);
+            var s = (Math.sin(PI2 * freq * k / sr) * 0.3 + Math.sin(PI2 * freq * 2 * k / sr) * 0.08) * env;
+            L[p + k] += s * (1 - pan * 0.5);
+            R[p + k] += s * (0.5 + pan * 0.5);
+          }
+          p += hLen + Math.floor(sr * (h === hoots - 1 ? 0 : 0.15));
+        }
+      }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
     case 'insects':
-    case 'forestAmbient':
-      // Cicada buzz ~2500 Hz + background noise
-      var b = 0;
-      for (var i = 0; i < len; i++) {
-        b = 0.985 * b + 0.015 * (Math.random() * 2 - 1);
-        d[i] = b * 0.5;
-        if (Math.random() < 0.001) {
-          for (var k = 0; k < Math.min(800, len - i); k++) {
-            d[i + k] += Math.sin(PI2 * 2500 * k / sr) * 0.35 * Math.exp(-k / 250);
-          }
+    case 'forestAmbient': {
+      // Summer forest: cicadas + various insects + breeze
+      _pinkNoise(L, len, 0.1);
+      _pinkNoise(R, len, 0.1);
+      // Cicada drone (rises and falls)
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var vol = 0.3 + 0.2 * Math.sin(PI2 * 0.15 * t);
+        var cicada = Math.sin(PI2 * 2800 * t) * vol * 0.08 +
+                     Math.sin(PI2 * 3200 * t + Math.sin(PI2 * 8 * t)) * vol * 0.05;
+        L[i] += cicada; R[i] += cicada * 0.8;
+      }
+      // Scattered insect chirps
+      for (var ins = 0; ins < 20; ins++) {
+        var iPos = Math.floor(Math.random() * (len - sr * 0.1));
+        _addCricketChorus(Math.random() > 0.5 ? L : R, sr, iPos);
+      }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
+
+    // ===== MOOD SOUNDS =====
+    case 'moodRelaxing': {
+      // Warm pad: Dmaj7 chord with slow LFO and soft noise bed
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var lfo = 1 + 0.15 * Math.sin(PI2 * 0.2 * t);
+        var lfo2 = 1 + 0.1 * Math.sin(PI2 * 0.13 * t + 1);
+        L[i] = (Math.sin(PI2 * 146.8 * t) * 0.12 * lfo + // D3
+                Math.sin(PI2 * 185.0 * t) * 0.08 * lfo2 + // F#3
+                Math.sin(PI2 * 220.0 * t) * 0.10 * lfo +  // A3
+                Math.sin(PI2 * 277.2 * t) * 0.06 +          // C#4
+                (Math.random() * 2 - 1) * 0.03);
+        R[i] = (Math.sin(PI2 * 146.8 * t + 0.3) * 0.10 * lfo2 +
+                Math.sin(PI2 * 185.0 * t + 0.5) * 0.10 * lfo +
+                Math.sin(PI2 * 220.0 * t + 0.2) * 0.08 * lfo2 +
+                Math.sin(PI2 * 293.7 * t) * 0.05 +          // D4
+                (Math.random() * 2 - 1) * 0.03);
+      }
+      break;
+    }
+    case 'moodRomantic': {
+      // Intimate: Am7 with gentle vibrato + warmth
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var vib = Math.sin(PI2 * 4.5 * t) * 2;
+        var swell = 0.8 + 0.2 * Math.sin(PI2 * 0.08 * t);
+        L[i] = (Math.sin(PI2 * (220 + vib) * t) * 0.14 +     // A3
+                Math.sin(PI2 * (261.6 + vib) * t) * 0.10 +   // C4
+                Math.sin(PI2 * (329.6 + vib) * t) * 0.10 +   // E4
+                Math.sin(PI2 * (392.0 + vib) * t) * 0.06 +   // G4
+                (Math.random() * 2 - 1) * 0.02) * swell;
+        R[i] = (Math.sin(PI2 * (220 + vib) * t + 0.4) * 0.12 +
+                Math.sin(PI2 * (261.6 + vib) * t + 0.6) * 0.12 +
+                Math.sin(PI2 * (329.6 + vib) * t + 0.3) * 0.08 +
+                Math.sin(PI2 * (440 + vib) * t) * 0.04 +     // A4
+                (Math.random() * 2 - 1) * 0.02) * swell;
+      }
+      break;
+    }
+    case 'moodLively': {
+      // Upbeat: major arpeggios with rhythmic pulse
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var beat = Math.max(0, Math.sin(PI2 * 2 * t)) * 0.3 + 0.7;
+        var note1 = Math.sin(PI2 * 329.6 * t + Math.sin(PI2 * 3 * t) * 0.5); // E4
+        var note2 = Math.sin(PI2 * 415.3 * t); // Ab4
+        var note3 = Math.sin(PI2 * 523.3 * t + Math.sin(PI2 * 5 * t) * 0.3); // C5
+        var bass = Math.sin(PI2 * 164.8 * t) * 0.15; // E3
+        L[i] = (note1 * 0.12 + note2 * 0.08 + note3 * 0.06 + bass +
+                (Math.random() * 2 - 1) * 0.06) * beat;
+        R[i] = (note1 * 0.08 + note2 * 0.12 + note3 * 0.08 + bass +
+                (Math.random() * 2 - 1) * 0.06) * beat;
+      }
+      break;
+    }
+    case 'moodCozy': {
+      // Fireplace: realistic crackling with pops, hiss, and warm low rumble
+      var fb = 0;
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        fb = 0.99 * fb + 0.01 * (Math.random() * 2 - 1);
+        var warmth = Math.sin(PI2 * 80 * t) * 0.03 + Math.sin(PI2 * 120 * t) * 0.02;
+        L[i] = fb * 0.5 + warmth + (Math.random() * 2 - 1) * 0.08;
+        R[i] = fb * 0.4 + warmth + (Math.random() * 2 - 1) * 0.08;
+      }
+      // Crackle events — sharp pops with sizzle tail
+      for (var c = 0; c < 80; c++) {
+        var cPos = Math.floor(Math.random() * (len - sr * 0.1));
+        var pop = Math.random() * 0.6 + 0.2;
+        var cLen = Math.floor(sr * (0.01 + Math.random() * 0.04));
+        var pan = Math.random();
+        for (k = 0; k < cLen && cPos + k < len; k++) {
+          var s = (Math.random() * 2 - 1) * pop * Math.exp(-k / (cLen * 0.2));
+          L[cPos + k] += s * (1 - pan * 0.4);
+          R[cPos + k] += s * (0.6 + pan * 0.4);
         }
-        if (d[i] > 1) d[i] = 1;
-        if (d[i] < -1) d[i] = -1;
-      }
-      break;
-    // Mood sounds
-    case 'moodRelaxing':
-      // Warm drone at audible frequencies + gentle noise
-      for (var i = 0; i < len; i++) {
-        var t = i / sr;
-        d[i] = Math.sin(PI2 * 174 * t) * 0.2 + // D3
-               Math.sin(PI2 * 220 * t) * 0.15 + // A3
-               Math.sin(PI2 * 146 * t) * 0.1 +
-               (Math.random() * 2 - 1) * 0.08;
-      }
-      break;
-    case 'moodRomantic':
-      for (var i = 0; i < len; i++) {
-        var t = i / sr;
-        d[i] = Math.sin(PI2 * 220 * t) * 0.18 + // A3
-               Math.sin(PI2 * 277 * t) * 0.12 + // C#4
-               Math.sin(PI2 * 330 * t) * 0.08 + // E4
-               (Math.random() * 2 - 1) * 0.05;
-      }
-      break;
-    case 'moodLively':
-      for (var i = 0; i < len; i++) {
-        var t = i / sr;
-        d[i] = Math.sin(PI2 * 330 * t) * 0.15 +
-               Math.sin(PI2 * 440 * t + Math.sin(PI2 * 3 * t) * 0.5) * 0.15 +
-               Math.sin(PI2 * 550 * t) * 0.1 +
-               (Math.random() * 2 - 1) * 0.15;
-      }
-      break;
-    case 'moodCozy':
-      // Crackling fire: noise bursts
-      var b = 0;
-      for (var i = 0; i < len; i++) {
-        b = 0.98 * b + 0.02 * (Math.random() * 2 - 1);
-        d[i] = b * 0.8;
-        if (Math.random() < 0.005) {
-          for (var k = 0; k < Math.min(200, len - i); k++) {
-            d[i + k] += (Math.random() * 2 - 1) * 0.6 * Math.exp(-k / 40);
-          }
+        // Sizzle tail
+        var sLen = Math.floor(sr * (0.05 + Math.random() * 0.1));
+        for (k = 0; k < sLen && cPos + cLen + k < len; k++) {
+          var s = (Math.random() * 2 - 1) * pop * 0.2 * Math.exp(-k / (sLen * 0.4));
+          L[cPos + cLen + k] += s;
+          R[cPos + cLen + k] += s * 0.8;
         }
-        if (d[i] > 1) d[i] = 1;
-        if (d[i] < -1) d[i] = -1;
+      }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
+    case 'moodFocused': {
+      // Deep focus: binaural beats (10Hz alpha) + low pad + subtle texture
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var lfo = 0.8 + 0.2 * Math.sin(PI2 * 0.05 * t);
+        L[i] = (Math.sin(PI2 * 200 * t) * 0.15 +     // Left: 200Hz
+                Math.sin(PI2 * 100 * t) * 0.08 +
+                (Math.random() * 2 - 1) * 0.015) * lfo;
+        R[i] = (Math.sin(PI2 * 210 * t) * 0.15 +     // Right: 210Hz (10Hz beat)
+                Math.sin(PI2 * 100.5 * t) * 0.08 +
+                (Math.random() * 2 - 1) * 0.015) * lfo;
       }
       break;
-    case 'moodFocused':
-      // Binaural-like low hum
-      for (var i = 0; i < len; i++) {
-        var t = i / sr;
-        d[i] = Math.sin(PI2 * 100 * t) * 0.2 +
-               Math.sin(PI2 * 104 * t) * 0.2 + // slight beat
-               (Math.random() * 2 - 1) * 0.04;
+    }
+    case 'moodPlayful': {
+      // Whimsical: pentatonic melody fragments + bouncy feel
+      var notes = [392, 440, 523.3, 587.3, 659.3, 784]; // G major pentatonic
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var bounce = Math.abs(Math.sin(PI2 * 1.5 * t));
+        L[i] = (Math.sin(PI2 * 392 * t) * 0.08 + Math.sin(PI2 * 523.3 * t + Math.sin(PI2 * 6 * t) * 1.5) * 0.08 +
+                (Math.random() * 2 - 1) * 0.05) * (0.6 + bounce * 0.4);
+        R[i] = (Math.sin(PI2 * 440 * t) * 0.08 + Math.sin(PI2 * 587.3 * t + Math.sin(PI2 * 4 * t) * 1) * 0.06 +
+                (Math.random() * 2 - 1) * 0.05) * (0.6 + bounce * 0.4);
       }
-      break;
-    case 'moodPlayful':
-      for (var i = 0; i < len; i++) {
-        var t = i / sr;
-        d[i] = Math.sin(PI2 * 392 * t + Math.sin(PI2 * 6 * t) * 2) * 0.15 +
-               Math.sin(PI2 * 523 * t) * 0.1 +
-               (Math.random() * 2 - 1) * 0.12;
-        if (Math.random() < 0.003) {
-          for (var k = 0; k < Math.min(400, len - i); k++) {
-            d[i + k] += Math.sin(PI2 * (600 + Math.random() * 400) * k / sr) * 0.3 * Math.exp(-k / 100);
-          }
+      // Sparkle hits
+      for (var sp = 0; sp < 15; sp++) {
+        var sPos = Math.floor(Math.random() * (len - sr * 0.2));
+        var sNote = notes[Math.floor(Math.random() * notes.length)] * 2;
+        var sLen = Math.floor(sr * 0.1);
+        for (k = 0; k < sLen && sPos + k < len; k++) {
+          var env = Math.exp(-k / (sLen * 0.2));
+          var s = Math.sin(PI2 * sNote * k / sr) * 0.12 * env;
+          L[sPos + k] += s * (Math.random() > 0.5 ? 1 : 0.3);
+          R[sPos + k] += s * (Math.random() > 0.5 ? 1 : 0.3);
         }
-        if (d[i] > 1) d[i] = 1;
-        if (d[i] < -1) d[i] = -1;
+      }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
+    case 'moodDreamy': {
+      // Ethereal: slow evolving pad with shimmer + reverb-like delays
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var drift = Math.sin(PI2 * 0.05 * t);
+        var shimmer = Math.sin(PI2 * 0.3 * t) * 0.5;
+        L[i] = Math.sin(PI2 * (261.6 + drift * 3) * t) * 0.08 +
+               Math.sin(PI2 * (392 + drift * 2) * t + shimmer) * 0.06 +
+               Math.sin(PI2 * (523.3 + drift * 4) * t) * 0.05 +
+               Math.sin(PI2 * (784 + drift * 5) * t) * 0.03 +
+               (Math.random() * 2 - 1) * 0.02;
+        R[i] = Math.sin(PI2 * (261.6 + drift * 3) * t + 1.2) * 0.06 +
+               Math.sin(PI2 * (392 + drift * 2) * t + 0.8 + shimmer) * 0.08 +
+               Math.sin(PI2 * (523.3 + drift * 4) * t + 0.5) * 0.06 +
+               Math.sin(PI2 * (659.3 + drift * 3) * t) * 0.04 +
+               (Math.random() * 2 - 1) * 0.02;
+      }
+      // Soft echo/delay effect
+      var delay = Math.floor(sr * 0.37);
+      for (i = delay; i < len; i++) {
+        L[i] += L[i - delay] * 0.25;
+        R[i] += R[i - delay] * 0.2;
+        L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
       }
       break;
-    default:
-      // White noise fallback — definitely audible
-      for (var i = 0; i < len; i++) {
-        d[i] = (Math.random() * 2 - 1) * 0.4;
+    }
+    case 'moodSerene': {
+      // Meditation: singing bowl resonances + breath-like swell
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var breath = 0.5 + 0.5 * Math.sin(PI2 * 0.1 * t); // 5s breath cycle
+        // Singing bowl harmonics (F4 fundamental)
+        L[i] = (Math.sin(PI2 * 349.2 * t) * 0.12 +
+                Math.sin(PI2 * 349.2 * 2.71 * t) * 0.04 + // inharmonic partial
+                Math.sin(PI2 * 349.2 * 4.16 * t) * 0.02 +
+                (Math.random() * 2 - 1) * 0.01) * breath;
+        R[i] = (Math.sin(PI2 * 349.2 * t + 0.5) * 0.10 +
+                Math.sin(PI2 * 349.2 * 3.0 * t) * 0.04 +
+                Math.sin(PI2 * 523.3 * t) * 0.05 +   // C5 second bowl
+                (Math.random() * 2 - 1) * 0.01) * breath;
       }
       break;
+    }
+    case 'moodSoulful': {
+      // Deep and warm: minor 9th chord + gentle vibrato
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var vib = Math.sin(PI2 * 5 * t) * 1.5;
+        var swell = 0.7 + 0.3 * Math.sin(PI2 * 0.12 * t);
+        L[i] = (Math.sin(PI2 * (130.8 + vib) * t) * 0.12 + // C3
+                Math.sin(PI2 * (155.6 + vib) * t) * 0.10 + // Eb3
+                Math.sin(PI2 * (196 + vib) * t) * 0.08 +   // G3
+                Math.sin(PI2 * (233.1 + vib) * t) * 0.06 + // Bb3
+                Math.sin(PI2 * (293.7 + vib) * t) * 0.04 + // D4
+                (Math.random() * 2 - 1) * 0.02) * swell;
+        R[i] = (Math.sin(PI2 * (130.8 + vib) * t + 0.4) * 0.10 +
+                Math.sin(PI2 * (155.6 + vib) * t + 0.6) * 0.12 +
+                Math.sin(PI2 * (196 + vib) * t + 0.3) * 0.09 +
+                Math.sin(PI2 * (233.1 + vib) * t + 0.5) * 0.05 +
+                Math.sin(PI2 * (311.1 + vib) * t) * 0.04 +   // Eb4
+                (Math.random() * 2 - 1) * 0.02) * swell;
+      }
+      break;
+    }
+    case 'moodTropical': {
+      // Island vibes: steel drum resonances + gentle wave base + warmth
+      _brownNoise(L, len, 0.06);
+      _brownNoise(R, len, 0.06);
+      // Steel drum notes (pentatonic)
+      var tropNotes = [523.3, 587.3, 659.3, 784, 880]; // C5 pentatonic
+      for (var n = 0; n < 20; n++) {
+        var nPos = Math.floor(Math.random() * (len - sr * 0.5));
+        var freq = tropNotes[Math.floor(Math.random() * tropNotes.length)];
+        var nLen = Math.floor(sr * (0.3 + Math.random() * 0.5));
+        var pan = Math.random();
+        for (k = 0; k < nLen && nPos + k < len; k++) {
+          var env = Math.exp(-k / (nLen * 0.3));
+          var s = (Math.sin(PI2 * freq * k / sr) * 0.15 +
+                   Math.sin(PI2 * freq * 2.01 * k / sr) * 0.04 + // inharmonic
+                   Math.sin(PI2 * freq * 3.98 * k / sr) * 0.02) * env;
+          L[nPos + k] += s * (1 - pan * 0.4);
+          R[nPos + k] += s * (0.6 + pan * 0.4);
+        }
+      }
+      // Warm pad underneath
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        L[i] += Math.sin(PI2 * 261.6 * t) * 0.04 + Math.sin(PI2 * 392 * t) * 0.03;
+        R[i] += Math.sin(PI2 * 261.6 * t + 0.5) * 0.03 + Math.sin(PI2 * 329.6 * t) * 0.04;
+      }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
+    case 'moodCampfire': {
+      // Outdoor campfire: fire crackle + night insects + gentle wind
+      // Fire base
+      var fb2 = 0;
+      for (i = 0; i < len; i++) {
+        fb2 = 0.99 * fb2 + 0.01 * (Math.random() * 2 - 1);
+        L[i] = fb2 * 0.4 + (Math.random() * 2 - 1) * 0.06;
+        R[i] = fb2 * 0.35 + (Math.random() * 2 - 1) * 0.06;
+      }
+      // Fire crackles
+      for (var c = 0; c < 50; c++) {
+        var cPos = Math.floor(Math.random() * (len - sr * 0.05));
+        var pop = Math.random() * 0.5 + 0.15;
+        var cLen = Math.floor(sr * (0.008 + Math.random() * 0.02));
+        for (k = 0; k < cLen && cPos + k < len; k++) {
+          var s = (Math.random() * 2 - 1) * pop * Math.exp(-k / (cLen * 0.15));
+          L[cPos + k] += s; R[cPos + k] += s * 0.8;
+        }
+      }
+      // Distant crickets
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var chirp = Math.sin(PI2 * 4000 * t) * Math.max(0, Math.sin(PI2 * 3 * t)) * 0.02;
+        R[i] += chirp;
+      }
+      // Gentle wind
+      _brownNoise(L, len, 0.04);
+      _brownNoise(R, len, 0.04);
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
+    case 'moodRainyNight': {
+      // Cozy rain on window: gentle rain + distant thunder + warm interior feel
+      _pinkNoise(L, len, 0.12);
+      _pinkNoise(R, len, 0.12);
+      // Rain drops on glass (higher pitched, more regular)
+      for (var drop = 0; drop < 120; drop++) {
+        var pos = Math.floor(Math.random() * (len - sr * 0.02));
+        var dLen = Math.floor(sr * (0.001 + Math.random() * 0.004));
+        var freq = 4000 + Math.random() * 4000;
+        for (k = 0; k < dLen && pos + k < len; k++) {
+          var s = Math.sin(PI2 * freq * k / sr) * 0.2 * Math.exp(-k / (dLen * 0.2));
+          L[pos + k] += s; R[pos + k] += s * 0.7;
+        }
+      }
+      // Very distant thunder rumble
+      var tPos = Math.floor(sr * (3 + Math.random() * 4));
+      var bx2 = 0;
+      var rLen = Math.floor(sr * 3);
+      for (k = 0; k < rLen && tPos + k < len; k++) {
+        bx2 = 0.99 * bx2 + 0.01 * (Math.random() * 2 - 1);
+        var env = Math.exp(-k / (rLen * 0.6));
+        var s = bx2 * 0.4 * env;
+        L[tPos + k] += s; R[tPos + k] += s * 0.9;
+      }
+      // Warm low-end bed
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var warm = Math.sin(PI2 * 80 * t) * 0.02;
+        L[i] += warm; R[i] += warm;
+        L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
+      }
+      break;
+    }
+    default: {
+      _brownNoise(L, len, 0.3);
+      _brownNoise(R, len, 0.3);
+      break;
+    }
   }
   return buffer;
 }
 
-// --- SOUND DEFS: oscillators (hardware tone gen) + noise buffers ---
-var SOUND_DEFS = {
-  wind:        { noise: 'brown', nv: 0.6 },
-  forestWind:  { noise: 'brown', nv: 0.45, oscs: [{f:120,t:'sine',v:0.06}] },
-  rain:        { noise: 'white', nv: 0.65 },
-  lightRain:   { noise: 'white', nv: 0.35 },
-  thunder:     { noise: 'brown', nv: 0.7 },
-  waves:       { noise: 'brown', nv: 0.35, oscs: [{f:70,t:'sine',v:0.12},{f:95,t:'sine',v:0.08}] },
-  birdsong:    { noise: 'pink', nv: 0.12, oscs: [{f:2200,t:'sine',v:0.08},{f:3100,t:'triangle',v:0.05}] },
-  crickets:    { noise: 'pink', nv: 0.08, oscs: [{f:4000,t:'square',v:0.05},{f:4400,t:'square',v:0.03}] },
-  seagulls:    { noise: 'white', nv: 0.18, oscs: [{f:1400,t:'sawtooth',v:0.06}] },
-  owls:        { noise: 'brown', nv: 0.12, oscs: [{f:380,t:'sine',v:0.10}] },
-  insects:     { noise: 'pink', nv: 0.15, oscs: [{f:2800,t:'square',v:0.04}] },
-  forestAmbient:{ noise: 'pink', nv: 0.15, oscs: [{f:2800,t:'square',v:0.03}] }
-};
-
+// --- SOUND SYSTEM: uses rich buffer generation with filters ---
 function _makeNoise(noiseType) {
   var ctx = WEATHER.audioCtx;
   var sr = ctx.sampleRate;
-  var len = sr * 2;
+  var len = sr * 4;
   var buf = ctx.createBuffer(1, len, sr);
   var d = buf.getChannelData(0);
   if (noiseType === 'white') {
     for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
   } else if (noiseType === 'pink') {
-    var b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
-    for (var i = 0; i < len; i++) {
-      var w = Math.random() * 2 - 1;
-      b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
-      b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
-      b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
-      d[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11; b6=w*0.115926;
-    }
+    _pinkNoise(d, len, 1);
   } else {
-    var last = 0;
-    for (var i = 0; i < len; i++) {
-      last = (last + 0.02*(Math.random()*2-1)) / 1.02;
-      d[i] = last * 3.5;
-    }
+    _brownNoise(d, len, 2.5);
   }
   return buf;
 }
@@ -1024,49 +1462,24 @@ function playAmbientSound(type, volume) {
     return;
   }
 
-  var def = SOUND_DEFS[type];
   var vol = volume || 0.3;
   var master = ctx.createGain();
   master.gain.value = vol;
   master.connect(ctx.destination);
   var parts = [];
 
-  // Noise layer (buffer source — loops)
-  if (def && def.noise) {
-    var nb = _makeNoise(def.noise);
-    var ns = ctx.createBufferSource();
-    ns.buffer = nb; ns.loop = true;
-    var ng = ctx.createGain();
-    ng.gain.value = def.nv || 0.5;
-    ns.connect(ng); ng.connect(master); ns.start(0);
-    parts.push(ns);
-  }
-
-  // Oscillator layers — hardware-level, guaranteed audible on any device
-  if (def && def.oscs) {
-    for (var i = 0; i < def.oscs.length; i++) {
-      var o = def.oscs[i];
-      var osc = ctx.createOscillator();
-      osc.type = o.t || 'sine';
-      osc.frequency.value = o.f;
-      var og = ctx.createGain();
-      og.gain.value = o.v || 0.05;
-      osc.connect(og); og.connect(master); osc.start(0);
-      parts.push(osc);
-    }
-  }
-
-  // Fallback if no definition
-  if (!def) {
-    var nb = _makeNoise('brown');
-    var ns = ctx.createBufferSource();
-    ns.buffer = nb; ns.loop = true;
-    ns.connect(master); ns.start(0);
-    parts.push(ns);
+  // Generate rich buffer for this sound type
+  var buffer = generateNoise(type);
+  if (buffer) {
+    var src = ctx.createBufferSource();
+    src.buffer = buffer;
+    src.loop = true;
+    src.connect(master);
+    src.start(0);
+    parts.push(src);
   }
 
   WEATHER.audioNodes[type] = { parts: parts, gain: master };
-  console.log('[Audio] Playing:', type, 'vol:', vol, 'parts:', parts.length);
 }
 
 function stopAmbientSound(type) {
@@ -1344,16 +1757,24 @@ function setWeatherScene(sceneName) {
 // ===== MOOD SOUNDS SYSTEM =====
 // Ambient mood sounds for date nights, events, and partner sharing
 var MOOD_SOUNDS = {
-  relaxing:  { label: 'Relaxing',  icon: '🧘', type: 'moodRelaxing',  desc: 'Calm, peaceful ambient' },
-  romantic:  { label: 'Romantic',  icon: '🕯',  type: 'moodRomantic',  desc: 'Warm, intimate tones' },
-  cozy:      { label: 'Cozy',     icon: '☕', type: 'moodCozy',      desc: 'Soft, warm ambience' },
-  focused:   { label: 'Focused',  icon: '🎯', type: 'moodFocused',   desc: 'Minimal, concentration' },
-  lively:    { label: 'Lively',   icon: '🎉', type: 'moodLively',    desc: 'Upbeat, energetic' },
-  playful:   { label: 'Playful',  icon: '🎵', type: 'moodPlayful',   desc: 'Fun, lighthearted' },
-  rain:      { label: 'Rain',     icon: '🌧',  type: 'rain',          desc: 'Rainfall ambience' },
-  ocean:     { label: 'Ocean',    icon: '🌊', type: 'waves',         desc: 'Waves and shore' },
-  night:     { label: 'Night',    icon: '🌙', type: 'crickets',      desc: 'Crickets and evening' },
-  forest:    { label: 'Forest',   icon: '🌲', type: 'forestWind',    desc: 'Wind through trees' }
+  romantic:   { label: 'Romantic',    icon: '🕯',  type: 'moodRomantic',   desc: 'Warm, intimate tones' },
+  relaxing:   { label: 'Relaxing',    icon: '🧘', type: 'moodRelaxing',   desc: 'Calm, peaceful ambient' },
+  dreamy:     { label: 'Dreamy',      icon: '💫', type: 'moodDreamy',     desc: 'Ethereal, floating' },
+  serene:     { label: 'Serene',      icon: '🪷', type: 'moodSerene',     desc: 'Meditation bowls' },
+  cozy:       { label: 'Cozy',        icon: '☕', type: 'moodCozy',       desc: 'Crackling fireplace' },
+  soulful:    { label: 'Soulful',     icon: '🎷', type: 'moodSoulful',    desc: 'Deep, warm tones' },
+  focused:    { label: 'Focused',     icon: '🎯', type: 'moodFocused',    desc: 'Binaural focus' },
+  lively:     { label: 'Lively',      icon: '🎉', type: 'moodLively',     desc: 'Upbeat, energetic' },
+  playful:    { label: 'Playful',     icon: '🎵', type: 'moodPlayful',    desc: 'Fun, lighthearted' },
+  tropical:   { label: 'Tropical',    icon: '🌴', type: 'moodTropical',   desc: 'Island steel drums' },
+  campfire:   { label: 'Campfire',    icon: '🔥', type: 'moodCampfire',   desc: 'Outdoor fire + night' },
+  rainyNight: { label: 'Rainy Night', icon: '🌃', type: 'moodRainyNight', desc: 'Rain on windows' },
+  rain:       { label: 'Rain',        icon: '🌧',  type: 'rain',           desc: 'Rainfall ambience' },
+  ocean:      { label: 'Ocean',       icon: '🌊', type: 'waves',          desc: 'Waves and shore' },
+  night:      { label: 'Night',       icon: '🌙', type: 'crickets',       desc: 'Crickets and frogs' },
+  forest:     { label: 'Forest',      icon: '🌲', type: 'forestWind',     desc: 'Wind, birds, leaves' },
+  birds:      { label: 'Birds',       icon: '🐦', type: 'birdsong',       desc: 'Dawn bird chorus' },
+  thunder:    { label: 'Storm',       icon: '⛈',  type: 'thunder',        desc: 'Thunder and rain' }
 };
 
 WEATHER.moodPlaying = null;
