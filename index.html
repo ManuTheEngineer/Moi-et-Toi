@@ -3227,9 +3227,17 @@
     <div class="form-hint">Download all your shared data as a JSON file for backup</div>
   </div>
 
+  <div class="sec-head"><div class="sec-dot sd-red"></div><div class="sec-title">Danger Zone</div></div>
+  <div class="form-card">
+    <div class="settings-row mb-0">
+      <span class="settings-label">Clear All Data</span>
+      <button onclick="if(confirm('This will erase everything and restart onboarding. Are you sure?'))clearAllData()" class="settings-btn settings-btn-danger">Reset</button>
+    </div>
+    <div class="form-hint">Wipes all data and restarts the onboarding process</div>
+  </div>
+
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">About</div></div>
   <div class="settings-about">
-    <div class="t-xl mb-4">💍</div>
     <div class="t-lg fw-700 c-cream ls-1">Moi et Toi</div>
     <div class="t-sm c-t3 mt-4">A shared space for the two of you</div>
     <div class="t-xs c-t3 mt-12" style="opacity:.6">Built with love</div>
