@@ -45,7 +45,7 @@ async function init() {
         if (needsOnboarding()) {
           startOnboarding();
         } else {
-          showWelcomeGate();
+          finishLogin();
         }
       } else {
         firebase.auth().signOut();
