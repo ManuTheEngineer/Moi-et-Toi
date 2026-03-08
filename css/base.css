@@ -180,13 +180,6 @@ body[data-page="together"]::before{background:radial-gradient(ellipse 70% 50% at
 body[data-page="track"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(196,120,74,0.10) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(184,134,11,0.07) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(61,139,110,0.05) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(212,149,106,0.04) 0%,transparent 70%),var(--bg)}
 body[data-page="build"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(26,58,92,0.10) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(42,143,143,0.07) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(123,111,166,0.05) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(28,43,74,0.04) 0%,transparent 70%),var(--bg)}
 body[data-page="dreamhome"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(123,111,166,0.09) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(168,152,208,0.06) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(176,138,80,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(212,98,122,0.03) 0%,transparent 70%),var(--bg)}
-/* Dark mode — solid background */
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body::before{background:var(--bg);animation:none}
-:root:not([data-theme="light"]) body::after{opacity:0}}
-:root[data-theme="dark"] body::before{background:var(--bg);animation:none}
-:root[data-theme="dark"] body::after{opacity:0}
-
-/* Dark mode page-specific — solid background, no auroras */
 
 ::selection{background:var(--gold);color:#fff}
 

@@ -119,12 +119,7 @@ const SKY = {
   currentScene: null,
   sceneTimer: null,
   shootTimer: null,
-  isDark: function() {
-    const theme = document.documentElement.getAttribute('data-theme');
-    if (theme === 'dark') return true;
-    if (theme === 'light') return false;
-    return window.matchMedia('(prefers-color-scheme:dark)').matches;
-  }
+  isDark: function() { return false; }
 };
 
 // Dark mode scene configs — with texture layers
@@ -699,10 +694,7 @@ document.addEventListener('DOMContentLoaded', function() {
   spawnOrbs();
   addMeshLayer();
   initSkyScene();
-  // Re-render sky when system theme changes (for auto-theme users)
-  window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function() {
-    if (typeof onThemeChange === 'function') onThemeChange();
-  });
+  // Light mode only — no theme change listener needed
   // Re-spawn orbs when time period changes
   setInterval(function() {
     const current = document.body.getAttribute('data-time');
@@ -796,54 +788,19 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
-// ===== THEME =====
-function getThemePref() {
-  return localStorage.getItem('met_theme') || 'auto';
-}
-
-function applyTheme(pref) {
-  const html = document.documentElement;
-  if (pref === 'auto') {
-    html.removeAttribute('data-theme');
-  } else {
-    html.setAttribute('data-theme', pref);
-  }
-  updateThemeColor();
-  updateThemeUI();
-}
-
-function toggleTheme() {
-  const modes = ['auto', 'dark', 'light'];
-  const current = getThemePref();
-  const next = modes[(modes.indexOf(current) + 1) % 3];
-  localStorage.setItem('met_theme', next);
-  applyTheme(next);
-  closeMenu();
-  const labels = { auto: 'System', dark: 'Dark', light: 'Light' };
-  toast('Theme: ' + labels[next]);
-  if (typeof onThemeChange === 'function') onThemeChange();
-}
-
-function updateThemeColor() {
-  const pref = getThemePref();
-  const isDark = pref === 'dark' || (pref === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+// ===== THEME (light only) =====
+function getThemePref() { return 'light'; }
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', 'light');
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = isDark ? '#0C1220' : '#F8F6F3';
-  // Update More page theme label if visible
-  const mts = document.getElementById('more-theme-sub');
-  if (mts) { const labels = { auto: 'Auto', dark: 'Dark', light: 'Light' }; mts.textContent = labels[pref]; }
+  if (meta) meta.content = '#F8F6F3';
 }
-
-function updateThemeUI() {
-  const pref = getThemePref();
-  const icon = document.getElementById('theme-icon');
-  const label = document.getElementById('theme-label');
-  if (icon && label) {
-    if (pref === 'dark') { icon.textContent = '☾'; label.textContent = 'Theme: Dark'; }
-    else if (pref === 'light') { icon.textContent = '☀'; label.textContent = 'Theme: Light'; }
-    else { icon.textContent = '◐'; label.textContent = 'Theme: Auto'; }
-  }
+function toggleTheme() {}
+function updateThemeColor() {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = '#F8F6F3';
 }
+function updateThemeUI() {}
 
 // ===== PULL TO REFRESH =====
 let pullStartY = 0, pulling = false;

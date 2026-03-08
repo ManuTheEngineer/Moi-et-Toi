@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0C1220">
+<meta name="theme-color" content="#F5F0EB">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="M&T">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
@@ -83,9 +83,8 @@
 
   <!-- Account row -->
   <div class="cmd-section-label">Account</div>
-  <div class="cmd-ctx-row grid-2">
+  <div class="cmd-ctx-row">
     <div class="cmd-ctx-item" onclick="closeMenu();go('settings')"><span class="cmd-ctx-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span><span class="cmd-ctx-label">Settings</span></div>
-    <div class="cmd-ctx-item" onclick="toggleTheme();closeMenu()"><span class="cmd-ctx-icon" id="cmd-theme-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></span><span class="cmd-ctx-label" id="cmd-theme-label">Theme</span></div>
   </div>
 
   <div class="cmd-see-all" onclick="closeMenu();go('more')">More ›</div>
@@ -930,14 +929,6 @@
   <!-- Settings -->
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Settings</div></div>
   <div class="hub-list-group mb-20">
-    <div class="hub-list-row" onclick="toggleTheme()">
-      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></div>
-      <div class="hub-list-info">
-        <div class="hub-list-name">Theme</div>
-        <div class="hub-list-sub" id="more-theme-sub">Auto</div>
-      </div>
-    </div>
-    <div class="hub-list-divider"></div>
     <div class="hub-list-row" onclick="go('settings')">
       <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
       <div class="hub-list-info">
@@ -3223,10 +3214,7 @@
 
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Account</div></div>
   <div class="form-card">
-    <div class="settings-row">
-      <span class="settings-label">Theme</span>
-      <button onclick="toggleTheme()" class="settings-btn" id="set-theme-btn">Toggle</button>
-    </div>
+    <!-- Theme: light mode only -->
     <div class="settings-row">
       <span class="settings-label">Switch User</span>
       <button onclick="switchUser()" class="settings-btn">Switch</button>

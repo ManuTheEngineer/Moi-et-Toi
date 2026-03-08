@@ -1,12 +1,7 @@
 // ===== BOOT =====
 document.addEventListener('DOMContentLoaded', () => {
-  // Apply theme immediately
-  applyTheme(getThemePref());
-
-  // Listen for system theme changes
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (getThemePref() === 'auto') updateThemeColor();
-  });
+  // Apply light theme
+  applyTheme();
 
   // Init pull to refresh
   initPullToRefresh();

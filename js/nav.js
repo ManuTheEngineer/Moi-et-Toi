@@ -405,7 +405,6 @@ function replaceEmojisWithIcons() {
 
   // Settings rows (non-go functions)
   var settingsMap = {
-    'toggleTheme': _IC.palette,
     'updateApiKey': _IC.key,
     'switchUser': _IC.userSingle,
     'logout': _IC.logOut
