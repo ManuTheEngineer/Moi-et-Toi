@@ -22,7 +22,9 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
   100%{background-position:100% 100%,0% 100%,50% 0%,60% 70%}}
 
 /* ===== SKY SCENE — living textured background ===== */
-.sky-scene{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;transition:opacity 1.5s ease}
+.sky-scene{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;transition:opacity 1.5s ease;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%)}
 
 /* === TEXTURE LAYERS === */
 /* Nebula haze — large soft color blobs that breathe */

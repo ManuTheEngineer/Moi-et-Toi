@@ -1837,7 +1837,7 @@ body[data-page="build"]{--page-accent:var(--teal)}
 .hub-budget-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .6s ease}
 
 /* ===== HUB STATS CARD (More page journey) ===== */
-.hub-stats-card{background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:18px;padding:18px 16px;box-shadow:var(--card-shadow);margin-bottom:16px}
+.hub-stats-card{background:var(--card-bg);backdrop-filter:blur(12px);border:none;border-radius:18px;padding:18px 16px;box-shadow:var(--card-shadow);margin-bottom:16px}
 .hub-stats-row{display:flex;align-items:center;justify-content:space-between}
 .hub-stats-item{flex:1;text-align:center}
 .hub-stats-num{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;line-height:1}
