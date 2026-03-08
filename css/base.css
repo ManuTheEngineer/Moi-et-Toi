@@ -21,19 +21,59 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
   75%{background-position:50% 80%,60% 10%,20% 50%,40% 40%}
   100%{background-position:100% 100%,0% 100%,50% 0%,60% 70%}}
 
-/* ===== SKY SCENE — living background ===== */
+/* ===== SKY SCENE — living textured background ===== */
 .sky-scene{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;transition:opacity 1.5s ease}
+
+/* === TEXTURE LAYERS === */
+/* Nebula haze — large soft color blobs that breathe */
+.sky-nebula{position:absolute;border-radius:50%;filter:blur(60px);opacity:0;animation:nebulaBreath var(--neb-dur,20s) ease-in-out infinite alternate}
+@keyframes nebulaBreath{
+  0%{opacity:var(--neb-lo,.03);transform:scale(1) translate(0,0)}
+  50%{opacity:var(--neb-hi,.08);transform:scale(1.1) translate(var(--neb-dx,10px),var(--neb-dy,5px))}
+  100%{opacity:var(--neb-lo,.03);transform:scale(.95) translate(calc(var(--neb-dx,10px) * -0.5),calc(var(--neb-dy,5px) * -1))}}
+
+/* Stardust — fine grain haze patches */
+.sky-dust{position:absolute;border-radius:40% 60% 50% 45%;filter:blur(25px);opacity:0;animation:dustDrift var(--dust-dur,35s) ease-in-out infinite alternate}
+@keyframes dustDrift{
+  0%{opacity:var(--dust-lo,.02);transform:translate(0,0) rotate(0deg)}
+  100%{opacity:var(--dust-hi,.06);transform:translate(var(--dust-dx,20px),var(--dust-dy,15px)) rotate(var(--dust-rot,8deg))}}
+
+/* Milky way band — diagonal haze stripe */
+.sky-milkyway{position:absolute;inset:0;opacity:0;animation:milkyFade 4s ease forwards}
+@keyframes milkyFade{0%{opacity:0}100%{opacity:1}}
+
+/* Atmospheric depth layers */
+.sky-atmo{position:absolute;inset:0;pointer-events:none}
+.sky-atmo-haze{position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(to top,var(--atmo-color,rgba(14,10,18,0.5)) 0%,transparent 100%)}
+.sky-atmo-scatter{position:absolute;border-radius:50%;filter:blur(80px);animation:scatterPulse 12s ease-in-out infinite alternate}
+@keyframes scatterPulse{0%{opacity:.4;transform:scale(1)}100%{opacity:.7;transform:scale(1.12)}}
+
+/* Day sky atmospheric haze */
+.sky-atmo-day{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(135,180,235,0.03) 0%,rgba(180,210,240,0.05) 40%,rgba(200,220,245,0.08) 100%)}
+.sky-light-shaft{position:absolute;transform-origin:top center;
+  background:linear-gradient(180deg,rgba(255,240,200,var(--shaft-opacity,.04)),transparent);
+  filter:blur(8px);animation:shaftPulse 8s ease-in-out infinite alternate}
+@keyframes shaftPulse{0%{opacity:.5;transform:rotate(var(--shaft-angle,5deg)) scaleY(.9)}100%{opacity:.8;transform:rotate(var(--shaft-angle,5deg)) scaleY(1.05)}}
 
 /* Moon */
 .sky-moon{position:absolute;border-radius:50%;transition:all 2s ease}
 .sky-moon-glow{position:absolute;border-radius:50%;filter:blur(30px);animation:moonPulse 8s ease-in-out infinite alternate}
+.sky-moon-halo{position:absolute;border-radius:50%;border:1px solid rgba(200,190,255,0.06);animation:moonPulse 12s ease-in-out infinite alternate}
 .sky-moon-body{position:absolute;inset:0;border-radius:50%;overflow:hidden}
 .sky-moon-crater{position:absolute;border-radius:50%;background:rgba(0,0,0,0.06)}
+.sky-moon-texture{position:absolute;inset:0;border-radius:50%;opacity:.15;
+  background:repeating-radial-gradient(circle at 30% 40%,transparent 0px,rgba(0,0,0,.03) 2px,transparent 4px)}
+.sky-moon-light{position:absolute;width:200%;height:200%;border-radius:50%;filter:blur(40px);
+  background:radial-gradient(circle,rgba(200,190,255,.08),transparent 60%);animation:moonLightSway 15s ease-in-out infinite alternate}
+@keyframes moonLightSway{0%{transform:translate(-30%,-30%)}100%{transform:translate(-35%,-25%)}}
 
 /* Stars */
 .sky-star{position:absolute;border-radius:50%;background:#fff}
 .sky-star-twinkle{animation:starTwinkle var(--tw-dur,3s) ease-in-out infinite alternate}
 .sky-star-pulse{animation:starPulse var(--tw-dur,4s) ease-in-out infinite}
+.sky-star-glow{position:absolute;border-radius:50%;filter:blur(3px);animation:starTwinkle var(--tw-dur,3s) ease-in-out infinite alternate}
 .sky-star-cross{position:absolute;background:#fff;border-radius:1px}
 .sky-star-cross::after{content:'';position:absolute;background:#fff;border-radius:1px}
 
@@ -42,6 +82,10 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
   background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.9),rgba(255,255,255,0));
   opacity:0;animation:shootStar var(--shoot-dur,1.5s) ease-out var(--shoot-delay,0s) 1 forwards}
 .sky-shoot::after{content:'';position:absolute;right:0;top:-1px;width:4px;height:4px;border-radius:50%;background:#fff;box-shadow:0 0 6px 2px rgba(255,255,255,0.6)}
+.sky-shoot-trail{position:absolute;height:1px;border-radius:1px;
+  background:linear-gradient(90deg,transparent,rgba(180,160,255,.3),transparent);
+  opacity:0;animation:shootTrail 2s ease-out var(--shoot-delay,0s) 1 forwards}
+@keyframes shootTrail{0%{opacity:0;width:0}20%{opacity:.5}80%{opacity:.3;width:var(--trail-w,100px)}100%{opacity:0}}
 
 /* Constellation lines */
 .sky-const-line{position:absolute;height:1px;background:rgba(255,255,255,0.08);transform-origin:left center;opacity:0;animation:constFade 3s ease forwards}
@@ -51,15 +95,25 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .sky-sun-ray{position:absolute;top:50%;left:50%;transform-origin:left center;height:2px;border-radius:2px;
   background:linear-gradient(90deg,rgba(255,220,100,.5),transparent);animation:sunRay 4s ease-in-out infinite alternate}
 .sky-sun-glow{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,220,100,.15),transparent 70%);animation:sunGlowPulse 6s ease-in-out infinite alternate}
+.sky-sun-corona{position:absolute;border-radius:50%;border:1px solid rgba(255,220,120,.1);animation:sunGlowPulse 8s ease-in-out infinite alternate}
+.sky-sun-flare{position:absolute;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,240,200,.12),transparent 70%);filter:blur(6px);
+  animation:flareDrift 10s ease-in-out infinite alternate}
+@keyframes flareDrift{0%{opacity:.3;transform:translate(0,0) scale(1)}100%{opacity:.6;transform:translate(10px,-5px) scale(1.1)}}
 
-/* Clouds */
+/* Clouds — volumetric */
 .sky-cloud{position:absolute;opacity:0;animation:cloudDrift var(--cloud-dur,60s) linear var(--cloud-delay,0s) infinite}
 .sky-cloud-body{position:relative;background:rgba(255,255,255,.55);border-radius:50%;filter:blur(1px)}
 .sky-cloud-puff{position:absolute;background:rgba(255,255,255,.45);border-radius:50%}
+.sky-cloud-shadow{position:absolute;background:rgba(0,0,0,.04);border-radius:50%;filter:blur(3px)}
+.sky-cloud-highlight{position:absolute;background:rgba(255,255,255,.2);border-radius:50%;filter:blur(2px)}
+.sky-cloud-wisp{position:absolute;border-radius:40% 60% 50% 40%;filter:blur(6px);opacity:.3}
 
 /* Dark mode clouds — wispy */
 .sky-cloud-dark .sky-cloud-body{background:rgba(180,160,220,.08);filter:blur(3px)}
 .sky-cloud-dark .sky-cloud-puff{background:rgba(180,160,220,.06);filter:blur(4px)}
+.sky-cloud-dark .sky-cloud-shadow{display:none}
+.sky-cloud-dark .sky-cloud-highlight{background:rgba(200,180,255,.04)}
 
 /* Birds */
 .sky-bird{position:absolute;opacity:0;animation:birdFly var(--bird-dur,12s) ease-in-out var(--bird-delay,0s) 1 forwards}

@@ -127,21 +127,31 @@ const SKY = {
   }
 };
 
-// Dark mode scene configs
+// Dark mode scene configs — with texture layers
 const DARK_SCENES = [
-  { name:'crescent', moon:'crescent', stars:40, constellations:1, shootInterval:12000 },
-  { name:'fullMoon', moon:'full', stars:25, constellations:0, shootInterval:18000 },
-  { name:'halfMoon', moon:'half', stars:50, constellations:2, shootInterval:10000 },
-  { name:'starfield', moon:'none', stars:70, constellations:3, shootInterval:6000 },
-  { name:'newMoon', moon:'new', stars:55, constellations:1, shootInterval:8000 }
+  { name:'crescent', moon:'crescent', stars:45, constellations:1, shootInterval:12000,
+    nebulas:[{color:'rgba(120,60,160,.06)',x:20,y:30,size:350},{color:'rgba(60,40,120,.05)',x:70,y:15,size:280}],
+    dust:3, milkyway:false, atmoColor:'rgba(30,15,50,0.4)' },
+  { name:'fullMoon', moon:'full', stars:30, constellations:0, shootInterval:18000,
+    nebulas:[{color:'rgba(80,100,180,.05)',x:30,y:25,size:300}],
+    dust:2, milkyway:false, atmoColor:'rgba(20,18,40,0.35)' },
+  { name:'halfMoon', moon:'half', stars:55, constellations:2, shootInterval:10000,
+    nebulas:[{color:'rgba(140,80,180,.05)',x:15,y:20,size:320},{color:'rgba(60,80,140,.04)',x:75,y:45,size:250}],
+    dust:4, milkyway:true, atmoColor:'rgba(25,12,45,0.45)' },
+  { name:'starfield', moon:'none', stars:80, constellations:3, shootInterval:6000,
+    nebulas:[{color:'rgba(180,80,120,.06)',x:25,y:15,size:380},{color:'rgba(60,40,160,.06)',x:60,y:35,size:300},{color:'rgba(40,100,140,.04)',x:80,y:60,size:260}],
+    dust:6, milkyway:true, atmoColor:'rgba(18,10,35,0.5)' },
+  { name:'newMoon', moon:'new', stars:60, constellations:1, shootInterval:8000,
+    nebulas:[{color:'rgba(100,60,140,.05)',x:50,y:20,size:400},{color:'rgba(40,60,120,.04)',x:20,y:50,size:280}],
+    dust:5, milkyway:false, atmoColor:'rgba(14,10,30,0.5)' }
 ];
 
-// Light mode scene configs
+// Light mode scene configs — with atmospheric layers
 const LIGHT_SCENES = [
-  { name:'clearDay', sun:true, clouds:3, birds:2, sunPos:{x:80,y:12} },
-  { name:'partlyCloudy', sun:true, clouds:5, birds:1, sunPos:{x:70,y:18} },
-  { name:'driftClouds', sun:false, clouds:6, birds:3, sunPos:{x:85,y:8} },
-  { name:'goldenHour', sun:true, clouds:2, birds:0, sunPos:{x:30,y:25}, golden:true }
+  { name:'clearDay', sun:true, clouds:3, birds:2, sunPos:{x:80,y:12}, lightShafts:2, haze:true },
+  { name:'partlyCloudy', sun:true, clouds:5, birds:1, sunPos:{x:70,y:18}, lightShafts:3, haze:true },
+  { name:'driftClouds', sun:false, clouds:7, birds:3, sunPos:{x:85,y:8}, lightShafts:0, haze:true },
+  { name:'goldenHour', sun:true, clouds:3, birds:0, sunPos:{x:30,y:25}, golden:true, lightShafts:4, haze:true }
 ];
 
 function initSkyScene() {
@@ -177,33 +187,100 @@ function renderSkyScene(container) {
 
 // ===== NIGHT SKY =====
 function renderNightSky(container, scene) {
-  // Moon
+  // 1. Atmospheric depth — bottom haze
+  var atmo = document.createElement('div');
+  atmo.className = 'sky-atmo';
+  var haze = document.createElement('div');
+  haze.className = 'sky-atmo-haze';
+  haze.style.cssText = 'height:40%;--atmo-color:' + (scene.atmoColor || 'rgba(14,10,18,0.4)');
+  atmo.appendChild(haze);
+  container.appendChild(atmo);
+
+  // 2. Nebula haze blobs — deep color texture
+  if (scene.nebulas) {
+    scene.nebulas.forEach(function(n, i) {
+      var neb = document.createElement('div');
+      neb.className = 'sky-nebula';
+      var dx = (Math.random() - 0.5) * 30;
+      var dy = (Math.random() - 0.5) * 20;
+      neb.style.cssText = 'left:' + n.x + '%;top:' + n.y + '%;width:' + n.size + 'px;height:' + (n.size * 0.7) + 'px;' +
+        'background:' + n.color + ';--neb-dur:' + (18 + i * 7) + 's;--neb-lo:0.4;--neb-hi:0.9;' +
+        '--neb-dx:' + dx + 'px;--neb-dy:' + dy + 'px;animation-delay:' + (i * 3) + 's';
+      container.appendChild(neb);
+    });
+  }
+
+  // 3. Stardust patches — fine grain haze
+  for (var d = 0; d < (scene.dust || 0); d++) {
+    var dust = document.createElement('div');
+    dust.className = 'sky-dust';
+    var dw = 120 + Math.random() * 200;
+    var dh = 60 + Math.random() * 100;
+    dust.style.cssText = 'left:' + (Math.random() * 90) + '%;top:' + (Math.random() * 60) + '%;' +
+      'width:' + dw + 'px;height:' + dh + 'px;' +
+      'background:rgba(' + (140 + Math.random() * 80) + ',' + (120 + Math.random() * 60) + ',' + (180 + Math.random() * 60) + ',0.04);' +
+      '--dust-dur:' + (25 + Math.random() * 20) + 's;--dust-lo:0.3;--dust-hi:0.7;' +
+      '--dust-dx:' + ((Math.random() - 0.5) * 30) + 'px;--dust-dy:' + ((Math.random() - 0.5) * 20) + 'px;' +
+      '--dust-rot:' + ((Math.random() - 0.5) * 15) + 'deg;animation-delay:' + (d * 2) + 's';
+    container.appendChild(dust);
+  }
+
+  // 4. Milky way band — diagonal haze stripe
+  if (scene.milkyway) {
+    var mw = document.createElement('div');
+    mw.className = 'sky-milkyway';
+    var angle = -25 + Math.random() * 15;
+    mw.style.cssText = 'background:linear-gradient(' + angle + 'deg,' +
+      'transparent 25%,' +
+      'rgba(140,120,180,0.03) 35%,' +
+      'rgba(160,140,200,0.05) 42%,' +
+      'rgba(180,160,220,0.06) 48%,' +
+      'rgba(200,180,240,0.05) 52%,' +
+      'rgba(160,140,200,0.04) 58%,' +
+      'rgba(140,120,180,0.02) 65%,' +
+      'transparent 75%)';
+    container.appendChild(mw);
+  }
+
+  // 5. Moon (with enhanced texture)
   if (scene.moon !== 'none') {
     renderMoon(container, scene.moon);
   }
 
-  // Stars
-  for (let i = 0; i < scene.stars; i++) {
+  // 6. Stars (with glow halos on bright ones)
+  for (var i = 0; i < scene.stars; i++) {
     renderStar(container);
   }
 
-  // Constellations
-  for (let c = 0; c < scene.constellations; c++) {
+  // 7. Constellations
+  for (var c = 0; c < scene.constellations; c++) {
     renderConstellation(container);
   }
 
-  // Horizon glow
-  const hz = document.createElement('div');
-  hz.className = 'sky-horizon';
-  hz.style.cssText = 'height:120px;background:linear-gradient(to top,rgba(140,100,180,0.06),transparent)';
-  container.appendChild(hz);
+  // 8. Horizon glow — multi-layer
+  var hz1 = document.createElement('div');
+  hz1.className = 'sky-horizon';
+  hz1.style.cssText = 'height:200px;background:linear-gradient(to top,rgba(100,60,140,0.08),rgba(60,40,100,0.03),transparent)';
+  container.appendChild(hz1);
+  var hz2 = document.createElement('div');
+  hz2.className = 'sky-horizon';
+  hz2.style.cssText = 'height:80px;background:linear-gradient(to top,rgba(212,98,122,0.04),transparent)';
+  container.appendChild(hz2);
 
-  // Wispy night clouds
-  for (let i = 0; i < 2; i++) {
+  // 9. Moon light scatter on atmosphere
+  if (scene.moon === 'full' || scene.moon === 'half') {
+    var scatter = document.createElement('div');
+    scatter.className = 'sky-atmo-scatter';
+    scatter.style.cssText = 'width:300px;height:200px;right:40px;top:5%;background:radial-gradient(circle,rgba(200,190,255,0.06),transparent 70%)';
+    container.appendChild(scatter);
+  }
+
+  // 10. Wispy night clouds
+  for (var i = 0; i < 3; i++) {
     renderCloud(container, true);
   }
 
-  // Schedule shooting stars
+  // 11. Shooting stars
   scheduleShootingStar(container, scene.shootInterval);
 }
 
@@ -248,16 +325,37 @@ function renderMoon(container, phase) {
 
   // Craters (except new moon)
   if (phase !== 'new' && phase !== 'crescent') {
-    var craters = [[25,30,8],[55,20,5],[40,60,6],[65,55,4],[30,75,3]];
+    var craters = [[25,30,8],[55,20,5],[40,60,6],[65,55,4],[30,75,3],[15,55,4],[70,35,3],[45,25,5]];
     craters.forEach(function(c) {
       var cr = document.createElement('div');
       cr.className = 'sky-moon-crater';
-      cr.style.cssText = 'left:' + c[0] + '%;top:' + c[1] + '%;width:' + c[2] + 'px;height:' + c[2] + 'px';
+      cr.style.cssText = 'left:' + c[0] + '%;top:' + c[1] + '%;width:' + c[2] + 'px;height:' + c[2] + 'px;' +
+        'box-shadow:inset 1px 1px 2px rgba(0,0,0,0.08)';
       body.appendChild(cr);
     });
   }
 
+  // Surface texture overlay
+  var tex = document.createElement('div');
+  tex.className = 'sky-moon-texture';
+  body.appendChild(tex);
+
   wrap.appendChild(body);
+
+  // Soft halo ring around moon
+  var halo = document.createElement('div');
+  halo.className = 'sky-moon-halo';
+  var hs = moonSize * 3;
+  halo.style.cssText = 'width:' + hs + 'px;height:' + hs + 'px;top:' + (-(hs - moonSize) / 2) + 'px;left:' + (-(hs - moonSize) / 2) + 'px';
+  wrap.appendChild(halo);
+
+  // Moonlight spill on nearby sky
+  var moonLight = document.createElement('div');
+  moonLight.className = 'sky-moon-light';
+  moonLight.style.cssText = 'width:' + (moonSize * 5) + 'px;height:' + (moonSize * 5) + 'px;' +
+    'top:' + (-(moonSize * 2)) + 'px;left:' + (-(moonSize * 2)) + 'px';
+  wrap.appendChild(moonLight);
+
   container.appendChild(wrap);
 }
 
@@ -290,8 +388,21 @@ function renderStar(container) {
     star.style.cssText = 'left:' + x + '%;top:' + y + '%;width:' + size + 'px;height:' + size + 'px;' +
       '--tw-dur:' + dur + 's;--tw-lo:' + lo + ';--tw-hi:' + hi + ';animation-delay:' + delay + 's;opacity:' + lo;
     // Warmer star colors occasionally
-    if (Math.random() < 0.2) star.style.background = 'rgba(255,220,180,0.9)';
-    if (Math.random() < 0.1) star.style.background = 'rgba(180,200,255,0.9)';
+    var starColor = '#fff';
+    if (Math.random() < 0.2) { starColor = 'rgba(255,220,180,0.9)'; star.style.background = starColor; }
+    else if (Math.random() < 0.1) { starColor = 'rgba(180,200,255,0.9)'; star.style.background = starColor; }
+    else if (Math.random() < 0.08) { starColor = 'rgba(255,180,180,0.9)'; star.style.background = starColor; }
+
+    // Add glow halo to brighter stars
+    if (size > 1.8) {
+      var glow = document.createElement('div');
+      glow.className = 'sky-star-glow';
+      var gs = size * 4;
+      glow.style.cssText = 'width:' + gs + 'px;height:' + gs + 'px;left:' + (-(gs - size) / 2) + 'px;top:' + (-(gs - size) / 2) + 'px;' +
+        'background:' + starColor + ';--tw-dur:' + dur + 's;animation-delay:' + delay + 's';
+      star.style.position = 'relative';
+      star.appendChild(glow);
+    }
   }
 
   container.appendChild(star);
@@ -342,10 +453,21 @@ function scheduleShootingStar(container, interval) {
     const startY = 5 + Math.random() * 35;
     const angle = 15 + Math.random() * 30;
     const dist = 150 + Math.random() * 200;
-    shoot.style.cssText = 'left:' + startX + '%;top:' + startY + '%;transform:rotate(' + angle + 'deg);--shoot-dist:' + dist + 'px;--shoot-dur:' + (1 + Math.random()) + 's';
+    var shootDur = 1 + Math.random();
+    shoot.style.cssText = 'left:' + startX + '%;top:' + startY + '%;transform:rotate(' + angle + 'deg);--shoot-dist:' + dist + 'px;--shoot-dur:' + shootDur + 's';
     container.appendChild(shoot);
+
+    // Lingering trail
+    var trail = document.createElement('div');
+    trail.className = 'sky-shoot-trail';
+    trail.style.cssText = 'left:' + startX + '%;top:' + startY + '%;transform:rotate(' + angle + 'deg);--trail-w:' + (dist * 0.6) + 'px;--shoot-delay:' + (shootDur * 0.2) + 's';
+    container.appendChild(trail);
+
     // Remove after animation
-    setTimeout(function() { if (shoot.parentNode) shoot.remove(); }, 3000);
+    setTimeout(function() {
+      if (shoot.parentNode) shoot.remove();
+      if (trail.parentNode) trail.remove();
+    }, 4000);
     // Schedule next
     SKY.shootTimer = setTimeout(spawnShoot, interval + Math.random() * interval);
   }
@@ -354,30 +476,75 @@ function scheduleShootingStar(container, interval) {
 
 // ===== DAY SKY =====
 function renderDaySky(container, scene) {
-  // Sun
+  // 1. Atmospheric haze layer
+  if (scene.haze) {
+    var atmoDay = document.createElement('div');
+    atmoDay.className = 'sky-atmo-day';
+    if (scene.golden) {
+      atmoDay.style.background = 'linear-gradient(180deg,rgba(255,180,100,0.04) 0%,rgba(255,200,140,0.06) 40%,rgba(255,210,160,0.1) 100%)';
+    }
+    container.appendChild(atmoDay);
+  }
+
+  // 2. Sun
   if (scene.sun) {
     renderSun(container, scene.sunPos, scene.golden);
   }
 
-  // Clouds
-  for (let i = 0; i < scene.clouds; i++) {
+  // 3. Light shafts (god rays from sun)
+  for (var s = 0; s < (scene.lightShafts || 0); s++) {
+    var shaft = document.createElement('div');
+    shaft.className = 'sky-light-shaft';
+    var shaftW = 40 + Math.random() * 60;
+    var shaftH = 150 + Math.random() * 200;
+    var shaftAngle = -15 + Math.random() * 30;
+    var shaftX = scene.sunPos ? (100 - scene.sunPos.x / window.innerWidth * 100 - 10 + Math.random() * 20) : (50 + (Math.random() - 0.5) * 40);
+    var shaftOpacity = scene.golden ? 0.06 : 0.03;
+    shaft.style.cssText = 'width:' + shaftW + 'px;height:' + shaftH + 'px;right:' + shaftX + '%;top:' + (scene.sunPos ? scene.sunPos.y : 10) + '%;' +
+      '--shaft-angle:' + shaftAngle + 'deg;--shaft-opacity:' + shaftOpacity + ';animation-delay:' + (s * 2) + 's';
+    if (scene.golden) {
+      shaft.style.background = 'linear-gradient(180deg,rgba(255,200,120,' + (shaftOpacity * 1.5) + '),transparent)';
+    }
+    container.appendChild(shaft);
+  }
+
+  // 4. Clouds (volumetric with shadows)
+  for (var i = 0; i < scene.clouds; i++) {
     renderCloud(container, false, scene.golden);
   }
 
-  // Birds
-  for (let i = 0; i < (scene.birds || 0); i++) {
-    setTimeout(function() { renderBird(container); }, i * 4000 + Math.random() * 3000);
+  // 5. Birds
+  for (var i = 0; i < (scene.birds || 0); i++) {
+    (function(idx) {
+      setTimeout(function() { renderBird(container); }, idx * 4000 + Math.random() * 3000);
+    })(i);
   }
 
-  // Horizon glow
-  const hz = document.createElement('div');
-  hz.className = 'sky-horizon';
+  // 6. Multi-layer horizon glow
+  var hz1 = document.createElement('div');
+  hz1.className = 'sky-horizon';
   if (scene.golden) {
-    hz.style.cssText = 'height:180px;background:linear-gradient(to top,rgba(255,160,60,0.08),rgba(255,200,100,0.03),transparent)';
+    hz1.style.cssText = 'height:250px;background:linear-gradient(to top,rgba(255,140,50,0.1),rgba(255,180,80,0.05),rgba(255,200,120,0.02),transparent)';
   } else {
-    hz.style.cssText = 'height:100px;background:linear-gradient(to top,rgba(180,200,255,0.04),transparent)';
+    hz1.style.cssText = 'height:150px;background:linear-gradient(to top,rgba(180,200,230,0.06),rgba(200,215,240,0.03),transparent)';
   }
-  container.appendChild(hz);
+  container.appendChild(hz1);
+
+  // Subtle warm undertone
+  var hz2 = document.createElement('div');
+  hz2.className = 'sky-horizon';
+  hz2.style.cssText = 'height:60px;background:linear-gradient(to top,rgba(200,180,160,0.04),transparent)';
+  container.appendChild(hz2);
+
+  // 7. Lens flare near sun
+  if (scene.sun) {
+    var flare = document.createElement('div');
+    flare.className = 'sky-sun-flare';
+    var fs = 100 + Math.random() * 80;
+    flare.style.cssText = 'width:' + fs + 'px;height:' + (fs * 0.5) + 'px;right:' + (scene.sunPos.x - 20) + 'px;top:' + (scene.sunPos.y + 5) + '%';
+    if (scene.golden) flare.style.background = 'radial-gradient(ellipse,rgba(255,200,100,.15),transparent 70%)';
+    container.appendChild(flare);
+  }
 }
 
 function renderSun(container, pos, golden) {
@@ -404,11 +571,27 @@ function renderSun(container, pos, golden) {
   }
 
   // Outer glow
-  const glow = document.createElement('div');
+  var glow = document.createElement('div');
   glow.className = 'sky-sun-glow';
-  const gs = size * 3;
+  var gs = size * 3;
   glow.style.cssText = 'width:' + gs + 'px;height:' + gs + 'px;top:' + (-(gs - size) / 2) + 'px;left:' + (-(gs - size) / 2) + 'px';
   sun.appendChild(glow);
+
+  // Second wider glow layer
+  var glow2 = document.createElement('div');
+  glow2.className = 'sky-sun-glow';
+  var gs2 = size * 5;
+  glow2.style.cssText = 'width:' + gs2 + 'px;height:' + gs2 + 'px;top:' + (-(gs2 - size) / 2) + 'px;left:' + (-(gs2 - size) / 2) + 'px;' +
+    'background:radial-gradient(circle,rgba(255,220,100,.06),transparent 60%);animation-delay:3s';
+  sun.appendChild(glow2);
+
+  // Corona ring
+  var corona = document.createElement('div');
+  corona.className = 'sky-sun-corona';
+  var cs = size * 2;
+  corona.style.cssText = 'width:' + cs + 'px;height:' + cs + 'px;top:' + (-(cs - size) / 2) + 'px;left:' + (-(cs - size) / 2) + 'px';
+  if (golden) corona.style.borderColor = 'rgba(255,180,60,.15)';
+  sun.appendChild(corona);
 
   container.appendChild(sun);
 }
@@ -442,14 +625,42 @@ function renderCloud(container, isDarkMode, isGolden) {
 
   // Puffs
   var puffCount = 3 + Math.floor(Math.random() * 3);
-  for (let p = 0; p < puffCount; p++) {
-    const puff = document.createElement('div');
+  for (var p = 0; p < puffCount; p++) {
+    var puff = document.createElement('div');
     puff.className = 'sky-cloud-puff';
-    const pw = h * (0.8 + Math.random() * 0.6);
-    const px = (w * 0.15) + Math.random() * (w * 0.6);
+    var pw = h * (0.8 + Math.random() * 0.6);
+    var px = (w * 0.15) + Math.random() * (w * 0.6);
     puff.style.cssText = 'width:' + pw + 'px;height:' + pw + 'px;left:' + px + 'px;top:' + (-(pw * 0.4)) + 'px;border-radius:50%';
     if (isGolden && !isDarkMode) puff.style.background = 'rgba(255,220,180,0.35)';
     cloud.appendChild(puff);
+  }
+
+  if (!isDarkMode) {
+    // Bottom shadow for volumetric depth
+    var shadow = document.createElement('div');
+    shadow.className = 'sky-cloud-shadow';
+    shadow.style.cssText = 'width:' + (w * 0.85) + 'px;height:' + (h * 0.5) + 'px;left:' + (w * 0.1) + 'px;bottom:-' + (h * 0.15) + 'px';
+    if (isGolden) shadow.style.background = 'rgba(180,100,40,.06)';
+    cloud.appendChild(shadow);
+
+    // Top highlight for rim lighting
+    var highlight = document.createElement('div');
+    highlight.className = 'sky-cloud-highlight';
+    highlight.style.cssText = 'width:' + (w * 0.6) + 'px;height:' + (h * 0.3) + 'px;left:' + (w * 0.15) + 'px;top:-' + (h * 0.25) + 'px';
+    if (isGolden) highlight.style.background = 'rgba(255,240,200,.15)';
+    cloud.appendChild(highlight);
+
+    // Trailing wisp
+    if (Math.random() < 0.5) {
+      var wisp = document.createElement('div');
+      wisp.className = 'sky-cloud-wisp';
+      var wispW = w * 0.4;
+      wisp.style.cssText = 'width:' + wispW + 'px;height:' + (h * 0.4) + 'px;' +
+        (Math.random() < 0.5 ? 'right:-' + (wispW * 0.3) + 'px' : 'left:-' + (wispW * 0.3) + 'px') +
+        ';top:' + (h * 0.1) + 'px;background:rgba(255,255,255,.2)';
+      if (isGolden) wisp.style.background = 'rgba(255,220,180,.15)';
+      cloud.appendChild(wisp);
+    }
   }
 
   container.appendChild(cloud);
