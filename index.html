@@ -83,6 +83,72 @@
           </label>
         </div>
       </div>
+      <!-- Birthday -->
+      <input type="date" id="ob-birthday" class="login-input ob-input mb16"
+             style="display:none;color-scheme:light" onfocus="obScrollToInput(this)">
+      <!-- Mood baseline -->
+      <div id="ob-mood-baseline" class="ob-baseline-card" style="display:none">
+        <div class="ob-bl-row"><span class="ob-bl-label">How are you feeling right now?</span>
+          <div class="ob-mood-pills" id="ob-mood-pills"></div></div>
+        <div class="ob-bl-row"><span class="ob-bl-label">Energy level today?</span>
+          <div class="ob-energy-pills" id="ob-energy-pills"></div></div>
+        <div class="ob-bl-row"><span class="ob-bl-label">Stress level?</span>
+          <div class="ob-stress-pills" id="ob-stress-pills"></div></div>
+      </div>
+      <!-- Fitness baseline -->
+      <div id="ob-fitness-baseline" class="ob-baseline-card" style="display:none">
+        <div class="ob-bl-row"><span class="ob-bl-label">Height</span>
+          <div class="ob-bl-inline"><input type="number" id="ob-fit-height-ft" class="login-input ob-input-sm" placeholder="ft" min="3" max="8" onfocus="obScrollToInput(this)">
+          <input type="number" id="ob-fit-height-in" class="login-input ob-input-sm" placeholder="in" min="0" max="11" onfocus="obScrollToInput(this)"></div></div>
+        <div class="ob-bl-row"><span class="ob-bl-label">Weight (lbs)</span>
+          <input type="number" id="ob-fit-weight" class="login-input ob-input-sm" placeholder="lbs" onfocus="obScrollToInput(this)"></div>
+        <div class="ob-bl-row"><span class="ob-bl-label">Activity level</span>
+          <div class="ob-activity-pills" id="ob-activity-pills"></div></div>
+        <div class="ob-bl-row"><span class="ob-bl-label">Fitness goal</span>
+          <div class="ob-goal-pills" id="ob-goal-pills"></div></div>
+      </div>
+      <!-- Relationship baseline -->
+      <div id="ob-rel-baseline" class="ob-baseline-card" style="display:none">
+        <div class="ob-bl-row"><span class="ob-bl-label">How would you rate your communication?</span>
+          <div class="ob-rate-pills" id="ob-comm-pills"></div></div>
+        <div class="ob-bl-row"><span class="ob-bl-label">Quality time together?</span>
+          <div class="ob-rate-pills" id="ob-quality-pills"></div></div>
+        <div class="ob-bl-row"><span class="ob-bl-label">How connected do you feel?</span>
+          <div class="ob-rate-pills" id="ob-connected-pills"></div></div>
+      </div>
+      <!-- Relationship agreement -->
+      <div id="ob-agreement" class="ob-baseline-card" style="display:none">
+        <div class="ob-agree-section">
+          <div class="ob-agree-heading">My commitments</div>
+          <div class="ob-agree-hint">What you promise to bring to this relationship</div>
+          <div id="ob-agree-mine" class="ob-agree-list"></div>
+          <div class="ob-agree-add-row">
+            <input type="text" id="ob-agree-mine-input" class="login-input ob-input-agree" placeholder="e.g. I will always communicate openly..." onfocus="obScrollToInput(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();obAddAgreement('mine')}">
+            <button class="ob-agree-add-btn" onclick="obAddAgreement('mine')">+</button>
+          </div>
+        </div>
+        <div class="ob-agree-section" style="margin-top:16px">
+          <div class="ob-agree-heading">Together commitments</div>
+          <div class="ob-agree-hint">Agreements you both share</div>
+          <div id="ob-agree-together" class="ob-agree-list"></div>
+          <div class="ob-agree-add-row">
+            <input type="text" id="ob-agree-together-input" class="login-input ob-input-agree" placeholder="e.g. We will never go to bed angry..." onfocus="obScrollToInput(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();obAddAgreement('together')}">
+            <button class="ob-agree-add-btn" onclick="obAddAgreement('together')">+</button>
+          </div>
+        </div>
+      </div>
+      <!-- Daily morning message preference -->
+      <div id="ob-morning-msg" class="ob-baseline-card" style="display:none">
+        <div class="ob-morning-preview" id="ob-morning-preview"></div>
+        <div class="ob-bl-row" style="margin-top:12px">
+          <span class="ob-bl-label">Enable daily morning messages?</span>
+          <label class="toggle-switch"><input type="checkbox" id="ob-morning-toggle" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="ob-bl-row" style="margin-top:8px">
+          <span class="ob-bl-label">Write a custom message (optional)</span>
+          <textarea id="ob-morning-custom" class="login-input ob-input" rows="2" placeholder="Write something they'll wake up to..." style="display:none;resize:none;height:auto" onfocus="obScrollToInput(this)"></textarea>
+        </div>
+      </div>
       <div id="ob-tour" style="display:none"></div>
       <button id="ob-btn" onclick="onboardNext()" class="login-btn ob-btn">Continue</button>
       <p class="onboard-skip" id="ob-skip" style="display:none" onclick="onboardNext()">Skip for now</p>
@@ -2245,6 +2311,8 @@
 <div class="ctn">
 
 
+  <!-- Baseline info from onboarding -->
+  <div class="fit-baseline-info" id="fit-baseline-info" style="display:none;font-size:12px;color:var(--t3);text-align:center;margin-bottom:8px;letter-spacing:.5px"></div>
   <!-- Weekly Summary -->
   <div class="fit-summary fit-summary-4" id="fit-summary">
     <div class="fit-stat"><div class="fit-stat-num" id="fit-sessions">0</div><div class="fit-stat-label">Sessions</div></div>

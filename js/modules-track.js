@@ -112,8 +112,14 @@ let fitRestDuration = parseInt(localStorage.getItem('met_rest_duration') || '60'
 let builderExercises = [];
 let fitBodyData = {};
 
+var fitBaseline = null;
 function listenFitnessData() {
   if (!db) return;
+  // Load onboarding baseline
+  db.ref('baselines/' + user + '/fitness').once('value', snap => {
+    fitBaseline = snap.val();
+    renderFitnessBaseline();
+  });
   db.ref('fitness/' + user + '/workouts').orderByChild('date').limitToLast(60).on('value', snap => {
     fitnessData = snap.val() || {};
     renderFitnessHub();
@@ -133,6 +139,25 @@ function listenFitnessData() {
   // Populate exercise datalist for quick log
   const dl = document.getElementById('fit-ex-datalist');
   if (dl) dl.innerHTML = EXERCISE_DB.map(e => '<option value="'+esc(e.name)+'">').join('');
+}
+
+function renderFitnessBaseline() {
+  if (!fitBaseline) return;
+  var el = document.getElementById('fit-baseline-info');
+  if (!el) return;
+  var parts = [];
+  if (fitBaseline.heightFt) parts.push(fitBaseline.heightFt + "'" + (fitBaseline.heightIn || 0) + '"');
+  if (fitBaseline.weight) parts.push(fitBaseline.weight + ' lbs');
+  if (fitBaseline.activityLevel) {
+    var labels = ['', 'Sedentary', 'Light', 'Moderate', 'Active', 'Very Active'];
+    parts.push(labels[fitBaseline.activityLevel] || '');
+  }
+  if (fitBaseline.fitnessGoal) {
+    var goals = ['', 'Lose Weight', 'Build Muscle', 'Stay Fit', 'Get Stronger'];
+    parts.push('Goal: ' + (goals[fitBaseline.fitnessGoal] || ''));
+  }
+  el.textContent = parts.join(' · ');
+  el.style.display = parts.length ? '' : 'none';
 }
 
 function renderFitnessHub() {

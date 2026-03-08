@@ -285,6 +285,17 @@
   .confirm-box{max-width:calc(100% - 48px);width:auto;padding:24px 20px}
 }
 
+/* ===== MORNING MESSAGE OVERLAY ===== */
+.morning-overlay{position:fixed;inset:0;z-index:9999;background:var(--overlay-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s ease}
+.morning-overlay.on{opacity:1;pointer-events:all}
+.morning-card{text-align:center;padding:40px 28px;max-width:340px;width:90%;animation:morningIn .8s cubic-bezier(.2,.8,.3,1) both}
+@keyframes morningIn{from{opacity:0;transform:translateY(30px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.morning-icon{font-size:48px;margin-bottom:20px}
+.morning-text{font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1.65;color:var(--t1);white-space:pre-line;margin-bottom:16px}
+.morning-from{font-size:13px;letter-spacing:1px;color:var(--gold);font-weight:500;margin-bottom:28px}
+.morning-close{padding:12px 32px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;letter-spacing:.5px;cursor:pointer;transition:all .2s}
+.morning-close:active{transform:scale(.95)}
+
 /* ===== LISTEN TOGETHER ===== */
 .lt-card{padding:18px 20px}
 .lt-status{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;color:var(--t2)}

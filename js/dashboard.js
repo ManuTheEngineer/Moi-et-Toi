@@ -2239,7 +2239,9 @@ function listenNotifications() {
     if (!notif || notif.read) return;
     // Only show if recent (within last 10 seconds)
     if (Date.now() - notif.timestamp > 10000) return;
-    showNotifToast(notif.fromName || notif.from, notif.message, notif.icon);
+    // Determine which page this notification should navigate to
+    var notifPage = NOTIF_PAGE_MAP[notif.type] || null;
+    showNotifToast(notif.fromName || notif.from, notif.message, notif.icon, notifPage);
     // Mark as read
     db.ref('notifications/' + user + '/' + snap.key + '/read').set(true);
     // If voice note, refresh avatar play button
@@ -2249,7 +2251,23 @@ function listenNotifications() {
   });
 }
 
-function showNotifToast(fromName, message, icon) {
+// Map notification types to the page they should navigate to
+var NOTIF_PAGE_MAP = {
+  'tap': 'connect',
+  'letter': 'connect',
+  'voiceNote': 'connect',
+  'mood-sound': 'connect',
+  'mood': 'mood',
+  'game-invite': 'games',
+  'challenge': 'together',
+  'morning-msg': 'connect',
+  'listen-together': 'connect',
+  'fitness': 'fitness',
+  'checkin': 'mood',
+  'song': 'connect'
+};
+
+function showNotifToast(fromName, message, icon, targetPage) {
   var el = document.getElementById('notif-toast');
   var iconEl = document.getElementById('notif-toast-icon');
   var fromEl = document.getElementById('notif-toast-from');
@@ -2258,6 +2276,17 @@ function showNotifToast(fromName, message, icon) {
   if (iconEl) iconEl.textContent = icon || '💬';
   if (fromEl) fromEl.textContent = 'from ' + fromName;
   if (msgEl) msgEl.textContent = message;
+  // Make tappable — navigate to the relevant page
+  el.onclick = null;
+  if (targetPage && typeof go === 'function') {
+    el.style.cursor = 'pointer';
+    el.onclick = function() {
+      el.classList.remove('show');
+      go(targetPage);
+    };
+  } else {
+    el.style.cursor = '';
+  }
   el.classList.add('show');
   // Auto hide after 4 seconds
   setTimeout(function() { el.classList.remove('show'); }, 4000);
@@ -2294,5 +2323,139 @@ function initVoiceNotes() {
   setInterval(checkPartnerVoiceNote, 30000);
   // Load feed if on connect page
   loadVoiceNoteFeed();
+}
+
+// ===== DAILY MORNING MESSAGE SYSTEM =====
+// Partner wakes up to a compliment, affirmation, or poem "...from [nickname]"
+var MORNING_MESSAGES = {
+  compliments: [
+    "You make every room brighter just by walking in.",
+    "The way you love is something most people only dream about.",
+    "You have the most beautiful soul I've ever known.",
+    "Your smile is my favorite thing in this entire world.",
+    "You are the most incredible person I've ever met.",
+    "Everything about you makes me fall deeper in love.",
+    "You don't even realize how amazing you are, and that's part of your magic.",
+    "I still get butterflies every time I see your face.",
+    "The world doesn't deserve you, but I'm so grateful I get to love you.",
+    "You are beautiful in ways that have nothing to do with how you look."
+  ],
+  affirmations: [
+    "You are enough, exactly as you are right now.",
+    "Your light inspires everyone around you.",
+    "You are worthy of all the love you give to others.",
+    "Today is going to be a beautiful day because you're in it.",
+    "You carry so much grace in everything you do.",
+    "The strength you show every day is extraordinary.",
+    "Your heart is pure and the world is better for it.",
+    "You are becoming everything you were meant to be.",
+    "Never forget how far you've come and how much you've grown.",
+    "You deserve every good thing that's coming your way."
+  ],
+  poems: [
+    "Before the sun, before the dew,\nmy first thought is always you.\nGood morning, love — this day is new,\nand everything's more beautiful because of you.",
+    "Soft light falls on sleepy eyes,\na gentle start beneath the skies.\nI hope you wake and smile because\nyou're loved beyond what language does.",
+    "The morning light can't hold a flame\nto hearing someone speak your name.\nSo here it is, whispered true —\nGood morning, love. I'm thinking of you.",
+    "In quiet hours before the day,\nI send these words across the way —\nthat you are loved, that you are seen,\nand you're the best thing in between.",
+    "Rise and shine, my everything.\nYou're the reason birds still sing.\nNo poem could ever capture right\nhow you make my world so bright."
+  ],
+  words: [
+    "Word of the day: Saudade — the deep, nostalgic longing for someone you love. That's what I feel every moment we're apart.",
+    "Word of the day: Kilig — the rush of butterflies you feel when something romantic happens. You give me this every single day.",
+    "Word of the day: Mamihlapinatapai — a look shared between two people, each wishing the other would start something they both want. Our whole love story.",
+    "Word of the day: Forelsket — the euphoria of falling in love. I'm still falling, every day, with you.",
+    "Word of the day: Merak — the pursuit of small pleasures that make life worth living. You are my merak."
+  ]
+};
+
+function getMorningMessage() {
+  var today = new Date();
+  var dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+  var cats = Object.keys(MORNING_MESSAGES);
+  var catIdx = dayOfYear % cats.length;
+  var cat = cats[catIdx];
+  var msgs = MORNING_MESSAGES[cat];
+  var msgIdx = dayOfYear % msgs.length;
+  return { category: cat, message: msgs[msgIdx] };
+}
+
+function checkMorningMessage() {
+  if (!db || !user) return;
+  var today = localDate();
+  var KEY = 'met_morning_msg_' + user;
+  if (localStorage.getItem(KEY) === today) return;
+
+  // Check if partner has enabled morning messages for us
+  var partnerRole = user === 'her' ? 'him' : 'her';
+  db.ref('settings/morningMsg/' + partnerRole).once('value', function(snap) {
+    var settings = snap.val();
+    if (!settings || !settings.enabled) return;
+
+    var now = new Date();
+    var hour = now.getHours();
+    // Only show between 5am and 11am
+    if (hour < 5 || hour > 11) return;
+
+    var nickname = settings.nickname || NAMES[partnerRole] || 'your love';
+    var msg;
+    if (settings.customMsg) {
+      // Use custom messages (can be multiple separated by |)
+      var customs = settings.customMsg.split('|').map(function(s) { return s.trim(); }).filter(Boolean);
+      var dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+      msg = { category: 'custom', message: customs[dayOfYear % customs.length] };
+    } else {
+      msg = getMorningMessage();
+    }
+
+    // Save to Firebase so it persists and partner can see what was sent
+    db.ref('morningMessages/' + user + '/' + today).set({
+      message: msg.message, category: msg.category, from: partnerRole,
+      fromNickname: nickname, timestamp: Date.now()
+    });
+
+    // Show as notification
+    showMorningMessageOverlay(msg.message, nickname);
+    localStorage.setItem(KEY, today);
+
+    // Also send a browser notification
+    if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+      try {
+        new Notification('Good Morning', {
+          body: msg.message + '\n\n...from ' + nickname,
+          icon: 'icons/icon-192x192.png',
+          badge: 'icons/icon-96x96.png',
+          tag: 'morning-msg',
+          data: { page: 'connect' }
+        });
+      } catch(e) {}
+    }
+  });
+}
+
+function showMorningMessageOverlay(message, nickname) {
+  // Reuse or create overlay
+  var overlay = document.getElementById('morning-msg-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'morning-msg-overlay';
+    overlay.className = 'morning-overlay';
+    overlay.innerHTML = '<div class="morning-card">' +
+      '<div class="morning-icon">☀️</div>' +
+      '<div class="morning-text" id="morning-text"></div>' +
+      '<div class="morning-from" id="morning-from"></div>' +
+      '<button class="morning-close" onclick="closeMorningMessage()">Start my day</button>' +
+    '</div>';
+    document.body.appendChild(overlay);
+  }
+  var textEl = document.getElementById('morning-text');
+  var fromEl = document.getElementById('morning-from');
+  if (textEl) textEl.textContent = message;
+  if (fromEl) fromEl.textContent = '...from ' + nickname;
+  overlay.classList.add('on');
+}
+
+function closeMorningMessage() {
+  var overlay = document.getElementById('morning-msg-overlay');
+  if (overlay) overlay.classList.remove('on');
 }
 

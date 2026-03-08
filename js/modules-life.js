@@ -817,9 +817,21 @@ function listenCustomAgreements() {
     const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
     const el = document.getElementById('fdn-custom-agrees');
     if (!el) return;
-    el.innerHTML = items.map(i =>
-      `<div class="fdn-agree-item agreed"><span class="fdn-check" style="border-color:var(--gold)">✓</span>${i.text}</div>`
-    ).join('');
+    // Also load onboarding agreements
+    db.ref('agreements/onboarding').once('value', obSnap => {
+      var obData = obSnap.val() || {};
+      var obItems = [];
+      Object.keys(obData).forEach(function(role) {
+        var d = obData[role];
+        if (d.personal) d.personal.forEach(function(t) { obItems.push({ text: t, addedBy: role, addedByName: NAMES[role] || role, source: 'personal' }); });
+        if (d.together) d.together.forEach(function(t) { obItems.push({ text: t, addedBy: role, addedByName: NAMES[role] || role, source: 'together' }); });
+      });
+      var allItems = obItems.concat(items);
+      el.innerHTML = allItems.map(function(i) {
+        var label = i.source === 'personal' ? ' <span style="font-size:10px;color:var(--t3)">(' + (i.addedByName || '') + ')</span>' : '';
+        return '<div class="fdn-agree-item agreed"><span class="fdn-check" style="border-color:var(--gold)">\u2713</span>' + esc(i.text) + label + '</div>';
+      }).join('');
+    });
   });
 }
 

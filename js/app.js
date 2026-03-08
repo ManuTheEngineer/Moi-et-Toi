@@ -203,12 +203,28 @@ function needsOnboarding() {
 // keyboards work reliably — iOS won't open keyboards for dynamically
 // injected inputs inside position:fixed containers.
 let onboardStep = 0;
-let onboardData = { name: '', nickname: '', anniversary: '', photo: '', livingSky: true };
-const OB_TOTAL = 8;
+let onboardData = {
+  name: '', nickname: '', anniversary: '', photo: '', livingSky: true,
+  birthday: '',
+  mood: 0, energy: 0, stress: 0,
+  heightFt: '', heightIn: '', weight: '', activityLevel: '', fitnessGoal: '',
+  commRating: 0, qualityRating: 0, connectedRating: 0,
+  agreementsMine: [], agreementsTogether: [],
+  morningMsgEnabled: true, morningCustomMsg: ''
+};
+const OB_TOTAL = 14;
 
 function startOnboarding() {
   onboardStep = 0;
-  onboardData = { name: '', nickname: '', anniversary: '', photo: '', livingSky: true };
+  onboardData = {
+    name: '', nickname: '', anniversary: '', photo: '', livingSky: true,
+    birthday: '',
+    mood: 0, energy: 0, stress: 0,
+    heightFt: '', heightIn: '', weight: '', activityLevel: '', fitnessGoal: '',
+    commRating: 0, qualityRating: 0, connectedRating: 0,
+    agreementsMine: [], agreementsTogether: [],
+    morningMsgEnabled: true, morningCustomMsg: ''
+  };
   // Hide login chrome, show onboard container
   hideEl('login-form');
   hideEl('welcome-gate');
@@ -276,19 +292,60 @@ function transitionStep(setupFn) {
   }, 250);
 }
 
+// Helper: render pill selectors
+function obRenderPills(containerId, labels, dataKey) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = labels.map(function(l, i) {
+    var val = i + 1;
+    var active = onboardData[dataKey] === val ? ' on' : '';
+    return '<button type="button" class="ob-pill' + active + '" data-val="' + val + '" onclick="obSelectPill(this,\'' + dataKey + '\',' + val + ')">' + l + '</button>';
+  }).join('');
+}
+function obSelectPill(btn, key, val) {
+  onboardData[key] = val;
+  var siblings = btn.parentElement.querySelectorAll('.ob-pill');
+  siblings.forEach(function(s) { s.classList.remove('on'); });
+  btn.classList.add('on');
+}
+function obAddAgreement(type) {
+  var inputId = type === 'mine' ? 'ob-agree-mine-input' : 'ob-agree-together-input';
+  var listId = type === 'mine' ? 'ob-agree-mine' : 'ob-agree-together';
+  var arrKey = type === 'mine' ? 'agreementsMine' : 'agreementsTogether';
+  var input = document.getElementById(inputId);
+  if (!input) return;
+  var val = input.value.trim();
+  if (!val) return;
+  onboardData[arrKey].push(val);
+  input.value = '';
+  obRenderAgreementList(listId, arrKey);
+}
+function obRemoveAgreement(type, idx) {
+  var listId = type === 'mine' ? 'ob-agree-mine' : 'ob-agree-together';
+  var arrKey = type === 'mine' ? 'agreementsMine' : 'agreementsTogether';
+  onboardData[arrKey].splice(idx, 1);
+  obRenderAgreementList(listId, arrKey);
+}
+function obRenderAgreementList(listId, arrKey) {
+  var el = document.getElementById(listId);
+  if (!el) return;
+  var type = arrKey === 'agreementsMine' ? 'mine' : 'together';
+  el.innerHTML = onboardData[arrKey].map(function(a, i) {
+    return '<div class="ob-agree-item"><span>' + esc(a) + '</span><span class="ob-agree-rm" onclick="obRemoveAgreement(\'' + type + '\',' + i + ')">x</span></div>';
+  }).join('');
+}
+
 function renderOnboardStep() {
   var isHer = user === 'her';
   var partnerLabel = isHer ? 'him' : 'her';
   var pct = Math.round((onboardStep / (OB_TOTAL - 1)) * 100);
 
-  // Progress bar + dots (update immediately, outside transition)
   var bar = document.getElementById('ob-bar');
   var dots = document.getElementById('ob-dots');
   bar.style.width = pct + '%';
   dots.innerHTML = renderDots(onboardStep);
 
   transitionStep(function() {
-    // References
     var emoji = document.getElementById('ob-emoji');
     var title = document.getElementById('ob-title');
     var sub = document.getElementById('ob-sub');
@@ -300,41 +357,58 @@ function renderOnboardStep() {
     var annivIn = document.getElementById('ob-anniversary');
     var photoWrap = document.getElementById('ob-photo-wrap');
     var skyCard = document.getElementById('ob-living-sky');
+    var birthdayIn = document.getElementById('ob-birthday');
+    var moodBL = document.getElementById('ob-mood-baseline');
+    var fitBL = document.getElementById('ob-fitness-baseline');
+    var relBL = document.getElementById('ob-rel-baseline');
+    var agreeCard = document.getElementById('ob-agreement');
+    var morningCard = document.getElementById('ob-morning-msg');
 
     // Hide all optional elements
-    emoji.style.display = 'none';
-    nameIn.style.display = 'none';
-    nickIn.style.display = 'none';
-    annivIn.style.display = 'none';
-    photoWrap.style.display = 'none';
-    skyCard.style.display = 'none';
-    tour.style.display = 'none';
-    skip.style.display = 'none';
+    [emoji, nameIn, nickIn, annivIn, photoWrap, skyCard, tour, skip,
+     birthdayIn, moodBL, fitBL, relBL, agreeCard, morningCard].forEach(function(el) {
+      if (el) el.style.display = 'none';
+    });
 
-    // Configure each step
+    // Step 0: Welcome
     if (onboardStep === 0) {
       title.textContent = 'Your Space Awaits';
-      sub.innerHTML = "Welcome to <strong>Moi & Toi</strong> — a private space just for you two.<br>Let's get you set up in under a minute.";
+      sub.innerHTML = "Welcome to <strong>Moi & Toi</strong> — a private space just for you two.<br>Let's set up your world together.";
       btn.textContent = "Let's go";
-    } else if (onboardStep === 1) {
+    }
+    // Step 1: Name
+    else if (onboardStep === 1) {
       emoji.textContent = '✨'; emoji.style.display = '';
       title.textContent = "What's your name?";
-      sub.textContent = "Your partner will see this name throughout the app.";
+      sub.textContent = "Your partner will see this throughout the app.";
       nameIn.style.display = ''; nameIn.value = onboardData.name;
       setTimeout(function(){ nameIn.focus(); }, 500);
       btn.textContent = 'Next';
-    } else if (onboardStep === 2) {
+    }
+    // Step 2: Nickname for partner
+    else if (onboardStep === 2) {
       emoji.textContent = '💕'; emoji.style.display = '';
       title.textContent = 'A name for ' + partnerLabel;
-      sub.textContent = "What do you call your partner? A pet name, nickname, or real name — whatever feels right.";
+      sub.textContent = "Pet name, nickname, or real name — whatever feels right.";
       nickIn.placeholder = isHer ? 'e.g. Baby, Babe, His name...' : 'e.g. Babe, Love, Her name...';
       nickIn.style.display = ''; nickIn.value = onboardData.nickname;
       setTimeout(function(){ nickIn.focus(); }, 500);
       btn.textContent = 'Next';
-    } else if (onboardStep === 3) {
+    }
+    // Step 3: Birthday
+    else if (onboardStep === 3) {
+      emoji.textContent = '🎂'; emoji.style.display = '';
+      title.textContent = 'Your birthday';
+      sub.textContent = "We'll celebrate you and remind your partner when the day comes.";
+      birthdayIn.style.display = '';
+      if (onboardData.birthday) birthdayIn.value = onboardData.birthday;
+      btn.textContent = 'Next';
+    }
+    // Step 4: Photo
+    else if (onboardStep === 4) {
       emoji.textContent = '📷'; emoji.style.display = '';
       title.textContent = 'Add a photo';
-      sub.textContent = "Choose a photo of " + partnerLabel + ". This appears on their profile throughout the app.";
+      sub.textContent = "Choose a photo of " + partnerLabel + ". This appears on their profile.";
       photoWrap.style.display = '';
       skip.style.display = '';
       if (onboardData.photo) {
@@ -342,27 +416,104 @@ function renderOnboardStep() {
         prev.innerHTML = '<img src="' + onboardData.photo + '" alt="photo">';
       }
       btn.textContent = 'Next';
-    } else if (onboardStep === 4) {
+    }
+    // Step 5: Anniversary
+    else if (onboardStep === 5) {
       emoji.textContent = '💍'; emoji.style.display = '';
       title.textContent = 'Your anniversary';
-      sub.textContent = "When did your relationship start? We'll track your days together and celebrate milestones.";
+      sub.textContent = "When did your relationship start? We'll track your days together.";
       annivIn.style.display = '';
       skip.style.display = '';
       btn.textContent = 'Next';
-    } else if (onboardStep === 5) {
+    }
+    // Step 6: Mood & mental baseline
+    else if (onboardStep === 6) {
+      emoji.textContent = '🧠'; emoji.style.display = '';
+      title.textContent = 'How are you today?';
+      sub.textContent = "This helps the app understand where you're starting from.";
+      moodBL.style.display = '';
+      obRenderPills('ob-mood-pills', ['😔 Low', '😐 Okay', '🙂 Good', '😊 Great', '🤩 Amazing'], 'mood');
+      obRenderPills('ob-energy-pills', ['🔋 Drained', '😴 Tired', '⚡ Normal', '💪 Energized', '🔥 On Fire'], 'energy');
+      obRenderPills('ob-stress-pills', ['😌 Calm', '😊 Low', '😐 Moderate', '😰 High', '🆘 Overwhelmed'], 'stress');
+      btn.textContent = 'Next';
+    }
+    // Step 7: Fitness baseline
+    else if (onboardStep === 7) {
+      emoji.textContent = '💪'; emoji.style.display = '';
+      title.textContent = 'Your body';
+      sub.textContent = "Optional baselines so your fitness journey starts on day one.";
+      fitBL.style.display = '';
+      skip.style.display = '';
+      if (onboardData.heightFt) document.getElementById('ob-fit-height-ft').value = onboardData.heightFt;
+      if (onboardData.heightIn) document.getElementById('ob-fit-height-in').value = onboardData.heightIn;
+      if (onboardData.weight) document.getElementById('ob-fit-weight').value = onboardData.weight;
+      obRenderPills('ob-activity-pills', ['Sedentary', 'Light', 'Moderate', 'Active', 'Very Active'], 'activityLevel');
+      obRenderPills('ob-goal-pills', ['Lose Weight', 'Build Muscle', 'Stay Fit', 'Get Stronger'], 'fitnessGoal');
+      btn.textContent = 'Next';
+    }
+    // Step 8: Relationship baseline
+    else if (onboardStep === 8) {
+      emoji.textContent = '💑'; emoji.style.display = '';
+      title.textContent = 'Your relationship';
+      sub.textContent = "How do things feel right now? Honest answers help the app grow with you.";
+      relBL.style.display = '';
+      obRenderPills('ob-comm-pills', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], 'commRating');
+      obRenderPills('ob-quality-pills', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], 'qualityRating');
+      obRenderPills('ob-connected-pills', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], 'connectedRating');
+      btn.textContent = 'Next';
+    }
+    // Step 9: Relationship agreement
+    else if (onboardStep === 9) {
+      emoji.textContent = '🤝'; emoji.style.display = '';
+      title.textContent = 'Your agreement';
+      sub.innerHTML = "Build your relationship agreement together. Your partner is setting theirs right now too.";
+      agreeCard.style.display = '';
+      obRenderAgreementList('ob-agree-mine', 'agreementsMine');
+      obRenderAgreementList('ob-agree-together', 'agreementsTogether');
+      skip.style.display = '';
+      btn.textContent = 'Next';
+    }
+    // Step 10: Daily morning message
+    else if (onboardStep === 10) {
+      emoji.textContent = '🌅'; emoji.style.display = '';
+      title.textContent = 'Morning messages';
+      sub.innerHTML = "Every morning, " + partnerLabel + " wakes up to a personalized message — a compliment, affirmation, or poem.";
+      morningCard.style.display = '';
+      document.getElementById('ob-morning-toggle').checked = onboardData.morningMsgEnabled;
+      var customTA = document.getElementById('ob-morning-custom');
+      if (customTA) { customTA.style.display = ''; customTA.value = onboardData.morningCustomMsg; }
+      // Show preview
+      var preview = document.getElementById('ob-morning-preview');
+      if (preview) {
+        var sampleMsgs = [
+          "You are the most beautiful thing that ever happened to me. Every day with you is a gift I'll never take for granted.",
+          "Good morning, sunshine. The world is better because you're in it.",
+          "I hope you slept well. Just know that you're the first thing on my mind today, and every day."
+        ];
+        var sample = sampleMsgs[Math.floor(Math.random() * sampleMsgs.length)];
+        preview.innerHTML = '"' + sample + '"<div class="ob-morning-from">...from ' + esc(onboardData.nickname || 'your love') + '</div>';
+      }
+      btn.textContent = 'Next';
+    }
+    // Step 11: Living Sky
+    else if (onboardStep === 11) {
       emoji.textContent = '🌅'; emoji.style.display = '';
       title.textContent = 'Living Sky';
-      sub.innerHTML = "Your app has a living sky that follows real time — sunrise, sunset, stars at night, birds by day, and fireflies after dark.";
+      sub.innerHTML = "Your app has a living sky — sunrise, sunset, stars, birds, and fireflies that follow real time.";
       skyCard.style.display = '';
       document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
       btn.textContent = 'Next';
-    } else if (onboardStep === 6) {
+    }
+    // Step 12: All set
+    else if (onboardStep === 12) {
       bar.style.width = '95%';
       emoji.textContent = '🎉'; emoji.style.display = '';
       title.textContent = "You're all set!";
-      sub.innerHTML = "Let me give you a quick tour of your new space — it only takes 30 seconds.";
+      sub.innerHTML = "Let me give you a quick tour of your new space — it takes 30 seconds.";
       btn.textContent = 'Start tour';
-    } else if (onboardStep === 7) {
+    }
+    // Step 13: Finish
+    else if (onboardStep === 13) {
       finishOnboarding(true);
       return;
     }
@@ -370,7 +521,7 @@ function renderOnboardStep() {
 }
 
 function onboardNext() {
-  if (obTransitioning) return; // prevent double-tap during transitions
+  if (obTransitioning) return;
   if (onboardStep === 1) {
     var name = document.getElementById('ob-name').value.trim();
     if (!name) { toast('Please enter your name'); return; }
@@ -381,10 +532,34 @@ function onboardNext() {
     if (!nick) { toast('Enter what you call them'); return; }
     onboardData.nickname = nick;
   }
-  // Step 3 is photo — optional, data stored via onboardPhotoPicked
-  if (onboardStep === 4) {
+  if (onboardStep === 3) {
+    var bday = document.getElementById('ob-birthday').value;
+    if (!bday) { toast('Please enter your birthday'); return; }
+    onboardData.birthday = bday;
+  }
+  // Step 4 is photo — optional
+  if (onboardStep === 5) {
     var anniv = document.getElementById('ob-anniversary').value;
     if (anniv) onboardData.anniversary = anniv;
+  }
+  if (onboardStep === 6) {
+    if (!onboardData.mood) { toast('How are you feeling?'); return; }
+    if (!onboardData.energy) { toast('Select your energy level'); return; }
+    if (!onboardData.stress) { toast('Select your stress level'); return; }
+  }
+  if (onboardStep === 7) {
+    var ft = document.getElementById('ob-fit-height-ft').value;
+    var inn = document.getElementById('ob-fit-height-in').value;
+    var wt = document.getElementById('ob-fit-weight').value;
+    if (ft) onboardData.heightFt = ft;
+    if (inn) onboardData.heightIn = inn;
+    if (wt) onboardData.weight = wt;
+  }
+  // Step 8: relationship baseline - ratings optional but encouraged
+  if (onboardStep === 10) {
+    onboardData.morningMsgEnabled = document.getElementById('ob-morning-toggle').checked;
+    var customTA = document.getElementById('ob-morning-custom');
+    if (customTA) onboardData.morningCustomMsg = customTA.value.trim();
   }
   onboardStep++;
   renderOnboardStep();
@@ -423,23 +598,76 @@ async function finishOnboarding(startTour) {
   NAMES[user] = onboardData.name;
   var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
   NICKNAMES[nickKey] = onboardData.nickname;
-  // Set partner display name to the nickname just entered
   if (onboardData.nickname) NAMES[partner] = onboardData.nickname;
   var profileUpdate = { [user]: onboardData.name, [nickKey]: onboardData.nickname };
   await db.ref('profiles').update(profileUpdate);
-  // Save photo of partner — stored under the partner's key so they see it
+
+  // Photo
   if (onboardData.photo) {
-    await db.ref('photos/' + partner).set({
-      data: onboardData.photo, setBy: user, timestamp: Date.now()
-    });
+    await db.ref('photos/' + partner).set({ data: onboardData.photo, setBy: user, timestamp: Date.now() });
   }
+  // Anniversary
   if (onboardData.anniversary) {
     await db.ref('settings/anniversary').set(onboardData.anniversary);
   }
-  // Save Living Sky preference
+  // Birthday
+  if (onboardData.birthday) {
+    await db.ref('settings/birthday/' + user).set(onboardData.birthday);
+  }
+  // Mood baseline
+  if (onboardData.mood) {
+    await db.ref('baselines/' + user + '/mood').set({
+      mood: onboardData.mood, energy: onboardData.energy, stress: onboardData.stress,
+      timestamp: Date.now(), source: 'onboarding'
+    });
+    // Also log as first mood entry
+    await db.ref('moods').push({
+      user: user, mood: onboardData.mood, energy: onboardData.energy,
+      stress: onboardData.stress, date: localDate(), timestamp: Date.now(), source: 'onboarding'
+    });
+  }
+  // Fitness baseline
+  if (onboardData.heightFt || onboardData.weight) {
+    var fitData = { timestamp: Date.now(), source: 'onboarding' };
+    if (onboardData.heightFt) fitData.heightFt = parseInt(onboardData.heightFt);
+    if (onboardData.heightIn) fitData.heightIn = parseInt(onboardData.heightIn);
+    if (onboardData.weight) fitData.weight = parseFloat(onboardData.weight);
+    if (onboardData.activityLevel) fitData.activityLevel = onboardData.activityLevel;
+    if (onboardData.fitnessGoal) fitData.fitnessGoal = onboardData.fitnessGoal;
+    await db.ref('baselines/' + user + '/fitness').set(fitData);
+    // Also log as first body entry
+    if (onboardData.weight) {
+      await db.ref('fitness/' + user + '/body').push({
+        weight: parseFloat(onboardData.weight), timestamp: Date.now(), date: localDate()
+      });
+    }
+  }
+  // Relationship baseline
+  if (onboardData.commRating || onboardData.qualityRating || onboardData.connectedRating) {
+    await db.ref('baselines/' + user + '/relationship').set({
+      communication: onboardData.commRating, qualityTime: onboardData.qualityRating,
+      connection: onboardData.connectedRating, timestamp: Date.now(), source: 'onboarding'
+    });
+  }
+  // Relationship agreements
+  if (onboardData.agreementsMine.length || onboardData.agreementsTogether.length) {
+    var agreeData = { timestamp: Date.now(), by: user };
+    if (onboardData.agreementsMine.length) agreeData.personal = onboardData.agreementsMine;
+    if (onboardData.agreementsTogether.length) agreeData.together = onboardData.agreementsTogether;
+    await db.ref('agreements/onboarding/' + user).set(agreeData);
+  }
+  // Morning message settings
+  await db.ref('settings/morningMsg/' + user).set({
+    enabled: onboardData.morningMsgEnabled,
+    customMsg: onboardData.morningCustomMsg || '',
+    nickname: onboardData.nickname || onboardData.name
+  });
+
+  // Living Sky
   livingSkyEnabled = onboardData.livingSky;
   await db.ref('settings/livingSky/' + user).set(onboardData.livingSky);
   setLivingSky(onboardData.livingSky);
+
   document.getElementById('login').classList.remove('onboard-active');
   finishLogin();
   if (startTour) {
@@ -755,6 +983,8 @@ function finishLogin() {
   setGlobalMode(localStorage.getItem('met_global_mode') || 'us');
   initPresence();
   if (typeof ltStartListening === 'function') ltStartListening();
+  // Morning message check (runs after a short delay so dashboard renders first)
+  setTimeout(function() { if (typeof checkMorningMessage === 'function') checkMorningMessage(); }, 3000);
   // Nav enhancements: swipe gestures, tab indicator, badges
   initSwipeNav();
   initCollapsingHeader();

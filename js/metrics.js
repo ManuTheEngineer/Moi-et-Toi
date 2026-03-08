@@ -733,6 +733,12 @@ function initMetricsEngine() {
     buildFinanceIndex(expenses, budget, goals);
   });
 
+  // Load relationship baselines from onboarding
+  db.ref('baselines').once('value', snap => {
+    var data = snap.val();
+    if (data) window._relBaselines = data;
+  });
+
   // Compute relationship health after a short delay (let indexes build)
   setTimeout(() => computeRelationshipHealth(), 2000);
 }
