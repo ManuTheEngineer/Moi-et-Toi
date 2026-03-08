@@ -154,10 +154,6 @@ function renderSkyScene(container) {
   renderDaySky(container, scene);
 }
 
-// ===== DAY SKY ONLY =====
-// Night sky rendering removed (light mode only)
-function renderNightSky() {} /* stub */
-/* REMOVED: original renderNightSky was here */
 // ===== DAY SKY =====
 function renderDaySky(container, scene) {
   // 1. Atmospheric haze layer
@@ -373,9 +369,6 @@ function renderBird(container) {
   setTimeout(function() { if (bird.parentNode) bird.remove(); }, (dur + 2) * 1000);
 }
 
-// Theme is light-only — no change handler needed
-function onThemeChange() {}
-
 // Init on load
 document.addEventListener('DOMContentLoaded', function() {
   spawnOrbs();
@@ -482,12 +475,11 @@ function applyTheme() {
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.content = '#F8F6F3';
 }
-function toggleTheme() {}
 function updateThemeColor() {
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.content = '#F8F6F3';
 }
-function updateThemeUI() {}
+
 
 // ===== PULL TO REFRESH =====
 let pullStartY = 0, pulling = false;

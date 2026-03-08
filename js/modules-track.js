@@ -1279,15 +1279,6 @@ function renderMealPlan() {
     </div>`).join('');
 }
 
-// Nutrition grocery removed — uses shared addGroceryItem below
-
-async function toggleGrocery(key, checked) {
-  await db.ref('nutrition/groceryList/' + key + '/checked').set(checked);
-}
-async function deleteGrocery(key) {
-  await db.ref('nutrition/groceryList/' + key).remove();
-}
-
 async function saveRecipe() {
   const name = document.getElementById('recipe-name').value.trim();
   const desc = document.getElementById('recipe-desc').value.trim();
