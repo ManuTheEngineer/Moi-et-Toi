@@ -3011,3 +3011,169 @@ async function confirmAbandonChallenge() {
   await db.ref('challenges/active').remove();
   toast('Challenge abandoned');
 }
+
+// ===== LISTEN TOGETHER =====
+// Real-time music sync — when one partner shares a song, both hear it live
+var LT = { active: false, listener: null, embedReady: false };
+
+function ltParseMusicLink(url) {
+  url = (url || '').trim();
+  // Spotify track/album/playlist
+  var sp = url.match(/open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+  if (sp) return { platform: 'spotify', type: sp[1], id: sp[2], embedUrl: 'https://open.spotify.com/embed/' + sp[1] + '/' + sp[2] + '?utm_source=generator&theme=0' };
+  // Spotify URI
+  var spUri = url.match(/spotify:(track|album|playlist):([a-zA-Z0-9]+)/);
+  if (spUri) return { platform: 'spotify', type: spUri[1], id: spUri[2], embedUrl: 'https://open.spotify.com/embed/' + spUri[1] + '/' + spUri[2] + '?utm_source=generator&theme=0' };
+  // YouTube - standard, short, and music URLs
+  var yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|music\.youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/);
+  if (yt) return { platform: 'youtube', type: 'video', id: yt[1], embedUrl: 'https://www.youtube.com/embed/' + yt[1] + '?autoplay=1&rel=0' };
+  // Apple Music
+  var am = url.match(/music\.apple\.com\/([a-z]{2})\/([a-z-]+)\/[^/]+\/(\d+)/);
+  if (am) return { platform: 'apple', type: am[2], id: am[3], embedUrl: 'https://embed.music.apple.com/' + am[1] + '/' + am[2] + '/' + am[3] };
+  return null;
+}
+
+function ltShareSong() {
+  if (!db || !user) { toast('Not connected'); return; }
+  var input = document.getElementById('lt-link-input');
+  if (!input) return;
+  var url = input.value.trim();
+  if (!url) { toast('Paste a music link first'); return; }
+  var parsed = ltParseMusicLink(url);
+  if (!parsed) { toast('Paste a valid Spotify, YouTube, or Apple Music link'); return; }
+  // Write session to Firebase — both partners will pick it up
+  var session = {
+    platform: parsed.platform,
+    type: parsed.type,
+    id: parsed.id,
+    embedUrl: parsed.embedUrl,
+    originalUrl: url,
+    sharedBy: user,
+    sharedByName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
+    startedAt: Date.now(),
+    active: true
+  };
+  db.ref('listenTogether').set(session);
+  input.value = '';
+  toast('Song shared — listening together');
+  if (navigator.vibrate) navigator.vibrate(50);
+}
+
+function ltStartListening() {
+  if (!db) return;
+  if (LT.listener) return; // already listening
+  var firstLoad = true;
+  LT.listener = db.ref('listenTogether').on('value', function(snap) {
+    var data = snap.val();
+    if (!data || !data.active) {
+      if (LT.active) ltClearUI();
+      firstLoad = false;
+      return;
+    }
+    // Notify when partner shares a new song (not on first load)
+    if (!firstLoad && data.sharedBy !== user && data.startedAt && data.startedAt > Date.now() - 8000) {
+      var partnerName = typeof NAMES !== 'undefined' ? NAMES[data.sharedBy] : 'Partner';
+      toast(partnerName + ' wants to listen together');
+      if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+    }
+    firstLoad = false;
+    ltShowSession(data);
+  });
+  // Also listen to partner presence changes to update "listening together" status
+  var partnerRole = user === 'her' ? 'him' : 'her';
+  db.ref('presence/' + partnerRole).on('value', function(snap) {
+    if (!LT.active) return;
+    db.ref('listenTogether').once('value', function(s) {
+      var d = s.val();
+      if (d && d.active) {
+        var p = snap.val() || {};
+        ltUpdateStatus(d, !!p.online);
+      }
+    });
+  });
+}
+
+function ltShowSession(data) {
+  LT.active = true;
+  // Check if partner is online
+  var partnerRole = user === 'her' ? 'him' : 'her';
+  db.ref('presence/' + partnerRole).once('value', function(snap) {
+    var p = snap.val() || {};
+    var bothOnline = !!p.online;
+    ltUpdateStatus(data, bothOnline);
+  });
+  ltLoadEmbed(data);
+  ltUpdateMiniPlayer(data);
+}
+
+function ltUpdateStatus(data, bothOnline) {
+  var dot = document.getElementById('lt-status-dot');
+  var text = document.getElementById('lt-status-text');
+  if (!dot || !text) return;
+  var sharedByMe = data.sharedBy === user;
+  var partnerName = typeof NAMES !== 'undefined' ? NAMES[user === 'her' ? 'him' : 'her'] : 'Partner';
+  if (bothOnline) {
+    dot.className = 'lt-status-dot lt-live';
+    text.textContent = 'Listening together with ' + partnerName;
+  } else {
+    dot.className = 'lt-status-dot lt-solo';
+    text.textContent = sharedByMe ? 'Waiting for ' + partnerName + ' to join...' : (data.sharedByName || 'Partner') + ' shared a song';
+  }
+}
+
+function ltLoadEmbed(data) {
+  var wrap = document.getElementById('lt-embed-wrap');
+  var np = document.getElementById('lt-now-playing');
+  if (!wrap || !np) return;
+  // Show now-playing info
+  np.style.display = 'flex';
+  var nameEl = document.getElementById('lt-track-name');
+  var byEl = document.getElementById('lt-track-by');
+  if (nameEl) nameEl.textContent = data.platform === 'spotify' ? 'Spotify ' + data.type : (data.platform === 'youtube' ? 'YouTube' : 'Apple Music');
+  if (byEl) byEl.textContent = 'Shared by ' + (data.sharedBy === user ? 'you' : (data.sharedByName || 'partner'));
+  // Only reload embed if song changed
+  var currentId = wrap.getAttribute('data-song-id');
+  if (currentId === data.id) return;
+  wrap.setAttribute('data-song-id', data.id);
+  wrap.style.display = 'block';
+  // Build embed
+  var h;
+  if (data.platform === 'spotify') {
+    h = data.type === 'track' ? 152 : 352;
+    wrap.innerHTML = '<iframe src="' + data.embedUrl + '" width="100%" height="' + h + '" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border-radius:12px"></iframe>';
+  } else if (data.platform === 'youtube') {
+    wrap.innerHTML = '<iframe src="' + data.embedUrl + '" width="100%" height="200" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:12px"></iframe>';
+  } else if (data.platform === 'apple') {
+    wrap.innerHTML = '<iframe src="' + data.embedUrl + '" width="100%" height="175" frameBorder="0" allow="autoplay; encrypted-media" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation" style="border-radius:12px"></iframe>';
+  }
+}
+
+function ltUpdateMiniPlayer(data) {
+  var mini = document.getElementById('lt-mini');
+  if (!mini) return;
+  mini.style.display = 'flex';
+  var nameEl = document.getElementById('lt-mini-name');
+  var byEl = document.getElementById('lt-mini-by');
+  if (nameEl) nameEl.textContent = data.platform === 'spotify' ? 'Spotify ' + data.type : (data.platform === 'youtube' ? 'YouTube' : 'Apple Music');
+  if (byEl) byEl.textContent = data.sharedBy === user ? 'You shared' : (data.sharedByName || 'Partner') + ' shared';
+}
+
+function ltClearUI() {
+  LT.active = false;
+  var wrap = document.getElementById('lt-embed-wrap');
+  var np = document.getElementById('lt-now-playing');
+  var mini = document.getElementById('lt-mini');
+  var dot = document.getElementById('lt-status-dot');
+  var text = document.getElementById('lt-status-text');
+  if (wrap) { wrap.innerHTML = ''; wrap.style.display = 'none'; wrap.removeAttribute('data-song-id'); }
+  if (np) np.style.display = 'none';
+  if (mini) mini.style.display = 'none';
+  if (dot) dot.className = 'lt-status-dot';
+  if (text) text.textContent = 'Share a Spotify or YouTube link';
+}
+
+function ltEndSession() {
+  if (!db) return;
+  db.ref('listenTogether').set({ active: false, endedBy: user, endedAt: Date.now() });
+  toast('Listening session ended');
+}

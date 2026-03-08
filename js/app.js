@@ -754,6 +754,7 @@ function finishLogin() {
   initParticles();
   setGlobalMode(localStorage.getItem('met_global_mode') || 'us');
   initPresence();
+  if (typeof ltStartListening === 'function') ltStartListening();
   // Nav enhancements: swipe gestures, tab indicator, badges
   initSwipeNav();
   initCollapsingHeader();

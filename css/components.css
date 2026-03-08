@@ -285,4 +285,46 @@
   .confirm-box{max-width:calc(100% - 48px);width:auto;padding:24px 20px}
 }
 
+/* ===== LISTEN TOGETHER ===== */
+.lt-card{padding:18px 20px}
+.lt-status{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;color:var(--t2)}
+.lt-status-dot{width:8px;height:8px;border-radius:50%;background:var(--t3);flex-shrink:0;transition:background .3s,box-shadow .3s}
+.lt-status-dot.lt-live{background:var(--emerald);box-shadow:0 0 8px var(--emerald)}
+.lt-status-dot.lt-solo{background:var(--gold);box-shadow:0 0 6px var(--glow-gold)}
+.lt-input-row{display:flex;gap:8px;align-items:center}
+.lt-input{flex:1;font-size:13px!important;padding:10px 14px!important;border-radius:12px!important}
+.lt-share-btn{flex-shrink:0;padding:10px 16px;font-size:12px;border-radius:12px;letter-spacing:.5px}
+.lt-now-playing{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding:10px 14px;background:var(--tint);border-radius:14px}
+.lt-track-info{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.lt-track-meta{min-width:0}
+.lt-track-name{font-size:13px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lt-track-by{font-size:11px;color:var(--t3)}
+.lt-controls{display:flex;gap:6px;flex-shrink:0}
+.lt-ctrl-btn{width:32px;height:32px;border-radius:50%;border:none;background:var(--input-bg);color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.lt-ctrl-btn:active{transform:scale(.9);background:var(--tint-b)}
+.lt-embed-wrap{margin-top:12px;border-radius:12px;overflow:hidden}
+.lt-embed-wrap iframe{display:block}
+
+/* Equalizer animation */
+.lt-equalizer{display:flex;align-items:flex-end;gap:2px;height:16px;width:16px;flex-shrink:0}
+.lt-equalizer span{width:3px;background:var(--gold);border-radius:2px;animation:ltEq .8s ease-in-out infinite alternate}
+.lt-equalizer span:nth-child(1){height:6px;animation-delay:0s}
+.lt-equalizer span:nth-child(2){height:12px;animation-delay:.2s}
+.lt-equalizer span:nth-child(3){height:8px;animation-delay:.4s}
+@keyframes ltEq{0%{height:4px}100%{height:16px}}
+
+/* Floating mini-player */
+.lt-mini{position:fixed;bottom:72px;left:12px;right:12px;z-index:790;background:var(--glass-strong);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--bdr);border-radius:16px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);transition:all 2s ease,transform .3s,opacity .3s;animation:ltSlideUp .4s cubic-bezier(.2,.8,.3,1)}
+@keyframes ltSlideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.lt-mini-eq{display:flex;align-items:flex-end;gap:2px;height:14px;flex-shrink:0}
+.lt-mini-eq span{width:2.5px;background:var(--gold);border-radius:1px;animation:ltEq .8s ease-in-out infinite alternate}
+.lt-mini-eq span:nth-child(1){animation-delay:0s}
+.lt-mini-eq span:nth-child(2){animation-delay:.25s}
+.lt-mini-eq span:nth-child(3){animation-delay:.5s}
+.lt-mini-info{flex:1;min-width:0}
+.lt-mini-name{font-size:12px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lt-mini-by{font-size:10px;color:var(--t3)}
+.lt-mini-btn{width:28px;height:28px;border-radius:50%;border:none;background:var(--input-bg);color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.lt-mini-btn:active{transform:scale(.85)}
+
 /* ===== CONNECT PAGE — TAPS & LETTERS ===== */

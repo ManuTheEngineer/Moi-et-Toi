@@ -913,6 +913,35 @@
     <button class="mood-sound-btn" data-mood="tropical" onclick="sendMoodToPartner('tropical')"><span class="msb-icon">🌴</span><span class="msb-label">Tropical</span></button>
   </div>
 
+  <!-- Listen Together -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Listen Together</div></div>
+  <div class="form-hint" style="margin:-6px 0 6px">Share a song — both of you hear it live</div>
+  <div class="lt-card card" id="lt-section">
+    <div class="lt-status" id="lt-status">
+      <span class="lt-status-dot" id="lt-status-dot"></span>
+      <span id="lt-status-text">Share a Spotify or YouTube link</span>
+    </div>
+    <div class="lt-input-row">
+      <input type="text" class="form-input lt-input" id="lt-link-input" placeholder="Paste a Spotify or YouTube link..." autocomplete="off">
+      <button class="btn-gold lt-share-btn" id="lt-share-btn" onclick="ltShareSong()">Share</button>
+    </div>
+    <div class="lt-now-playing" id="lt-now-playing" style="display:none">
+      <div class="lt-track-info">
+        <div class="lt-equalizer"><span></span><span></span><span></span></div>
+        <div class="lt-track-meta">
+          <div class="lt-track-name" id="lt-track-name"></div>
+          <div class="lt-track-by" id="lt-track-by"></div>
+        </div>
+      </div>
+      <div class="lt-controls">
+        <button class="lt-ctrl-btn" id="lt-end-btn" onclick="ltEndSession()" title="End session">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="lt-embed-wrap" id="lt-embed-wrap" style="display:none"></div>
+  </div>
+
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Letters</div></div>
   <div class="letter-feed" id="letter-feed"><div class="empty">Write something only they will read</div></div>
 </div>
@@ -924,6 +953,18 @@
     <div class="tap-big" id="tap-big-emoji"></div>
     <div class="tap-msg" id="tap-big-msg"></div>
   </div>
+</div>
+
+<!-- Listen Together floating mini-player (global, persists across pages) -->
+<div class="lt-mini" id="lt-mini" style="display:none">
+  <div class="lt-mini-eq"><span></span><span></span><span></span></div>
+  <div class="lt-mini-info">
+    <div class="lt-mini-name" id="lt-mini-name"></div>
+    <div class="lt-mini-by" id="lt-mini-by"></div>
+  </div>
+  <button class="lt-mini-btn" onclick="ltEndSession()" title="End">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+  </button>
 </div>
 
 <!-- ===== OUR STORY ===== -->
