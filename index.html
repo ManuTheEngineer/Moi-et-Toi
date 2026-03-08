@@ -63,6 +63,23 @@
     </div>
     <input type="date" id="ob-anniversary" class="login-input mb16"
            style="display:none;color-scheme:light">
+    <div id="ob-living-sky" class="ob-living-sky-card" style="display:none">
+      <div class="ob-sky-preview">
+        <div class="ob-sky-sun"></div>
+        <div class="ob-sky-moon"></div>
+        <div class="ob-sky-bird">
+          <div class="sky-bird-wing sky-bird-wing-l"></div>
+          <div class="sky-bird-wing sky-bird-wing-r"></div>
+        </div>
+      </div>
+      <div class="ob-sky-toggle-row">
+        <span class="ob-sky-label">Enable Living Sky</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="ob-sky-toggle" checked onchange="onboardData.livingSky=this.checked">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
     <div id="ob-tour" style="display:none"></div>
     <button id="ob-btn" onclick="onboardNext()" class="login-btn">Continue</button>
     <p class="onboard-skip" id="ob-skip" style="display:none" onclick="onboardNext()">Skip for now</p>
@@ -3233,6 +3250,20 @@
   </div>
 
   <button onclick="saveSettings()" class="dq-submit w-full mt-8 mb-20">Save Changes</button>
+
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Visuals</div></div>
+  <div class="form-card">
+    <div class="settings-row mb-0">
+      <div>
+        <span class="settings-label">Living Sky</span>
+        <div class="form-hint mt-2">Sun tracks across the sky, moon and stars at night, birds and creatures</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="set-living-sky" checked onchange="toggleLivingSkySetting(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
 
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Account</div></div>
   <div class="form-card">

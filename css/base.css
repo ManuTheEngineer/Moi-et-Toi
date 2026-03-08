@@ -64,6 +64,47 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .sky-bird-wing-l{left:-9px;transform-origin:right center;animation:wingFlap .6s ease-in-out infinite alternate}
 .sky-bird-wing-r{right:-9px;transform:scaleX(-1);transform-origin:left center;animation:wingFlap .6s ease-in-out infinite alternate-reverse}
 
+/* Moon */
+.sky-moon{position:absolute;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#E8E4D8 0%,#D4CFC0 50%,#C8C0B0 100%);box-shadow:0 0 30px rgba(220,210,180,.3),0 0 80px rgba(200,190,160,.15);transform:translate(-50%,-50%)}
+.sky-moon-shadow{position:absolute;width:30px;height:30px;border-radius:50%;background:rgba(100,90,70,.2);top:2px;left:10px;filter:blur(2px)}
+.sky-moon-glow{position:absolute;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(220,210,180,.12),transparent 70%);top:-40px;left:-40px;animation:moonGlow 6s ease-in-out infinite alternate}
+@keyframes moonGlow{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.1);opacity:.8}}
+
+/* Stars */
+.sky-star{position:absolute;border-radius:50%;background:#E8E0D0;animation:starTwinkle ease-in-out infinite alternate}
+@keyframes starTwinkle{0%{opacity:.2;transform:scale(.8)}100%{opacity:.7;transform:scale(1.2)}}
+
+/* Shooting star */
+.sky-shooting-star{position:absolute;width:2px;height:2px;background:#F5F0E0;border-radius:50%;animation:shootingStar 1.2s ease-in 1 forwards}
+.sky-shooting-star::after{content:'';position:absolute;width:40px;height:1px;background:linear-gradient(90deg,rgba(245,240,224,.5),transparent);right:2px;top:0;transform-origin:right center}
+@keyframes shootingStar{0%{opacity:0;transform:translate(0,0)}10%{opacity:1}100%{opacity:0;transform:translate(150px,80px)}}
+
+/* Butterflies */
+.sky-butterfly{position:absolute;opacity:0;animation:bfFloat var(--bf-dur,15s) ease-in-out 1 forwards}
+.sky-bf-wing{position:absolute;width:5px;height:7px;border-radius:50%;background:var(--bf-color,rgba(255,150,200,.7))}
+.sky-bf-wing-l{left:-6px;transform-origin:right center;animation:bfFlap .4s ease-in-out infinite alternate}
+.sky-bf-wing-r{right:-6px;transform:scaleX(-1);transform-origin:left center;animation:bfFlap .4s ease-in-out infinite alternate-reverse}
+@keyframes bfFlap{0%{transform:rotateY(0deg) rotateZ(-20deg)}100%{transform:rotateY(60deg) rotateZ(10deg)}}
+@keyframes bfFloat{
+  0%{transform:translate(0,0);opacity:0}
+  5%{opacity:.7}
+  25%{transform:translate(calc(var(--bf-dx) * .25),calc(var(--bf-dy) * .3 + 10px))}
+  50%{transform:translate(calc(var(--bf-dx) * .5),calc(var(--bf-dy) * .6 - 8px))}
+  75%{transform:translate(calc(var(--bf-dx) * .75),calc(var(--bf-dy) * .8 + 5px))}
+  90%{opacity:.5}
+  100%{transform:translate(var(--bf-dx),var(--bf-dy));opacity:0}}
+
+/* Fireflies */
+.sky-firefly{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,240,150,.8);box-shadow:0 0 6px rgba(255,240,150,.5),0 0 12px rgba(255,220,100,.3);animation:fireflyDrift ease-in-out 1 forwards}
+@keyframes fireflyDrift{
+  0%{opacity:0;transform:translate(0,0)}
+  10%{opacity:.8}
+  30%{opacity:.2}
+  50%{opacity:.9;transform:translate(calc(var(--ff-dx) * .4),calc(var(--ff-dy) * .5))}
+  70%{opacity:.3}
+  90%{opacity:.6}
+  100%{opacity:0;transform:translate(var(--ff-dx),var(--ff-dy))}}
+
 /* Horizon glow (both modes) */
 .sky-horizon{position:absolute;bottom:0;left:0;right:0;pointer-events:none}
 

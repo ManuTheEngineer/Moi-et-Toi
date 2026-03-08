@@ -78,6 +78,18 @@
 .ob-photo-plus{font-size:32px;color:rgba(26,26,46,.25);font-weight:300}
 .ob-photo-hint{font-size:12px;color:rgba(26,26,46,.35);margin-top:8px}
 
+/* Onboarding Living Sky preview */
+.ob-living-sky-card{width:100%;max-width:280px;margin:0 auto 20px}
+.ob-sky-preview{height:100px;border-radius:16px;background:linear-gradient(180deg,#C9DEF4 0%,#E8D5C4 60%,#F0C8A0 100%);position:relative;overflow:hidden;margin-bottom:16px}
+.ob-sky-sun{position:absolute;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle,#FFF4D4,#FFD93D,#F4A300);box-shadow:0 0 20px rgba(255,200,60,.5);right:25%;top:20%;animation:obSunMove 8s ease-in-out infinite alternate}
+.ob-sky-moon{position:absolute;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#E8E4D8,#D4CFC0);box-shadow:0 0 12px rgba(220,210,180,.4);left:20%;top:25%;opacity:0;animation:obMoonMove 8s ease-in-out infinite alternate}
+.ob-sky-bird{position:absolute;left:10%;top:35%;animation:obBirdFly 6s ease-in-out infinite}
+@keyframes obSunMove{0%{right:15%;top:30%;opacity:1}50%{opacity:1}60%{opacity:0}100%{right:80%;top:40%;opacity:0}}
+@keyframes obMoonMove{0%{opacity:0}50%{opacity:0}60%{opacity:.8}100%{opacity:.8;left:65%;top:18%}}
+@keyframes obBirdFly{0%{transform:translate(0,0);opacity:0}10%{opacity:.6}90%{opacity:.4}100%{transform:translate(180px,-20px);opacity:0}}
+.ob-sky-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:0 4px}
+.ob-sky-label{font-size:14px;color:rgba(26,26,46,.6);font-weight:500}
+
 /* Welcome gate photo */
 .welcome-photo{margin-bottom:16px;display:flex;justify-content:center}
 .welcome-photo-img{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid rgba(184,134,11,.3);box-shadow:0 4px 20px rgba(0,0,0,.15);animation:photoFadeIn .6s ease both}

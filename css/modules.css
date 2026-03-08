@@ -1457,6 +1457,12 @@
 .settings-btn:active{transform:scale(.96)}
 .settings-btn-danger{background:var(--red-s);color:var(--red)}
 .settings-btn-danger:hover{background:rgba(212,98,122,0.20)}
+.toggle-switch{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--bg3);border-radius:24px;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle-switch input:checked+.toggle-slider{background:var(--gold)}
+.toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px)}
 
 /* ===== UX OVERHAUL — DESIGN SYSTEM CLASSES ===== */
 

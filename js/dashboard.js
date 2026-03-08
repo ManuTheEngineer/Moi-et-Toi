@@ -1398,6 +1398,25 @@ function loadSettings() {
       if (snap.val()) annivEl.value = snap.val();
     });
   }
+  // Living Sky toggle
+  const skyToggle = document.getElementById('set-living-sky');
+  if (skyToggle && db && user) {
+    db.ref('settings/livingSky/' + user).once('value', snap => {
+      var val = snap.val();
+      var enabled = val !== false; // default to true
+      skyToggle.checked = enabled;
+      livingSkyEnabled = enabled;
+      setLivingSky(enabled);
+    });
+  }
+}
+
+function toggleLivingSkySetting(on) {
+  livingSkyEnabled = on;
+  setLivingSky(on);
+  if (db && user) {
+    db.ref('settings/livingSky/' + user).set(on);
+  }
 }
 
 async function saveSettings() {

@@ -36,6 +36,12 @@ async function init() {
         user = role;
         partner = role === 'her' ? 'him' : 'her';
         await loadProfiles();
+        // Load living sky preference
+        db.ref('settings/livingSky/' + role).once('value', snap => {
+          var val = snap.val();
+          livingSkyEnabled = val !== false;
+          setLivingSky(livingSkyEnabled);
+        });
         if (needsOnboarding()) {
           startOnboarding();
         } else {
@@ -69,7 +75,12 @@ async function doLogin() {
     user = role;
     partner = role === 'her' ? 'him' : 'her';
     await loadProfiles();
-    
+    // Load living sky preference
+    db.ref('settings/livingSky/' + role).once('value', snap => {
+      var val = snap.val();
+      livingSkyEnabled = val !== false;
+      setLivingSky(livingSkyEnabled);
+    });
     if (needsOnboarding()) {
       startOnboarding();
     } else {
@@ -192,8 +203,8 @@ function needsOnboarding() {
 // keyboards work reliably — iOS won't open keyboards for dynamically
 // injected inputs inside position:fixed containers.
 let onboardStep = 0;
-let onboardData = { name: '', nickname: '', anniversary: '', photo: '' };
-const OB_TOTAL = 7;
+let onboardData = { name: '', nickname: '', anniversary: '', photo: '', livingSky: true };
+const OB_TOTAL = 8;
 
 function startOnboarding() {
   onboardStep = 0;
@@ -242,6 +253,7 @@ function renderOnboardStep() {
   dots.innerHTML = renderDots(onboardStep);
 
   const photoWrap = document.getElementById('ob-photo-wrap');
+  const skyCard = document.getElementById('ob-living-sky');
 
   // Hide all optional elements
   emoji.style.display = 'none';
@@ -249,6 +261,7 @@ function renderOnboardStep() {
   nickIn.style.display = 'none';
   annivIn.style.display = 'none';
   photoWrap.style.display = 'none';
+  skyCard.style.display = 'none';
   tour.style.display = 'none';
   skip.style.display = 'none';
 
@@ -299,13 +312,21 @@ function renderOnboardStep() {
     skip.style.display = '';
     btn.textContent = 'Continue';
   } else if (onboardStep === 5) {
+    // Living Sky toggle
+    emoji.textContent = '🌅'; emoji.style.display = '';
+    title.textContent = 'Living Sky';
+    sub.innerHTML = 'The app has a living sky — the sun moves with time, turns to moon at night, birds fly by, fireflies glow.';
+    skyCard.style.display = '';
+    document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
+    btn.textContent = 'Continue';
+  } else if (onboardStep === 6) {
     // Ready screen before interactive tour
     bar.style.width = '90%';
     emoji.textContent = '🏡'; emoji.style.display = '';
     title.textContent = "Let me show you around";
     sub.innerHTML = "I'll walk you through your new space —<br>it'll only take a moment.";
     btn.textContent = 'Show me';
-  } else if (onboardStep === 6) {
+  } else if (onboardStep === 7) {
     // Done — finishOnboarding then launch interactive tour
     finishOnboarding(true);
     return; // tour will launch after app loads
@@ -378,6 +399,10 @@ async function finishOnboarding(startTour) {
   if (onboardData.anniversary) {
     await db.ref('settings/anniversary').set(onboardData.anniversary);
   }
+  // Save Living Sky preference
+  livingSkyEnabled = onboardData.livingSky;
+  await db.ref('settings/livingSky/' + user).set(onboardData.livingSky);
+  setLivingSky(onboardData.livingSky);
   document.getElementById('login').classList.remove('onboard-active');
   finishLogin();
   if (startTour) {
