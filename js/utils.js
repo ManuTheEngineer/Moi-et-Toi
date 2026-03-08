@@ -59,7 +59,15 @@ function getTimeOfDay() {
 }
 
 function updateTimeOfDay() {
-  document.body.setAttribute('data-time', getTimeOfDay());
+  var time = getTimeOfDay();
+  document.body.setAttribute('data-time', time);
+  // Update browser chrome color to match theme
+  var themeColors = {
+    dawn: '#F0E6E8', morning: '#F5F0E6', afternoon: '#EFF3F5',
+    golden: '#F2E8D8', evening: '#2A2440', night: '#1A1828'
+  };
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = themeColors[time] || '#F5F0EB';
 }
 
 // Update every 5 minutes

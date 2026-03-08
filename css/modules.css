@@ -1418,7 +1418,7 @@
 .ch-done-badge{font-size:12px;color:var(--emerald);font-weight:600;margin-top:8px}
 
 /* ===== REUSABLE FORM & LAYOUT CLASSES ===== */
-.form-card{padding:16px 18px;background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:14px}
+.form-card{padding:16px 18px;background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:14px;transition:background 2s ease,box-shadow 2s ease,border-color 2s ease}
 .form-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px;font-weight:500}
 .form-input{width:100%;padding:12px 16px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;box-sizing:border-box;outline:none;transition:box-shadow .2s}
 .form-input:focus{box-shadow:var(--focus-ring)}
