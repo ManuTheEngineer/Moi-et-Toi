@@ -25,7 +25,7 @@ function go(p) {
   if (p === 'lovelang' || p === 'attachment') p = 'settings';
   const current = document.querySelector('.pg.on');
   const next = document.getElementById('pg-' + p);
-  if (current === next) { closeMenu(); return; }
+  if (current === next) return;
 
   if (current) current.classList.remove('on');
   if (next) next.classList.add('on');
@@ -48,7 +48,6 @@ function go(p) {
   // Update page header
   updatePageHeader(p);
 
-  closeMenu();
   window.scrollTo({ top: 0 });
 }
 
@@ -107,7 +106,6 @@ function goBack() {
 // ===== QUICK ACTION SHEET =====
 let recentPages = JSON.parse(localStorage.getItem('met_recent_pages') || '[]');
 let currentPageId = 'dash';
-let favPages = JSON.parse(localStorage.getItem('met_fav_pages') || '["mood","fitness","connect","datenight"]');
 
 // Mini SVG icon helper (Feather-style, matches bottom nav)
 function _i(d){return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';}
@@ -176,16 +174,6 @@ const PAGE_META = {
   w1:{icon:_IC.dumbbell,label:'Foundation'},w2:{icon:_IC.dumbbell,label:'Elevated'},w3:{icon:_IC.dumbbell,label:'Full Body'}
 };
 
-const CTX_ACTIONS = {
-  dash:[{p:'mood',icon:_IC.sun,label:'Log Mood'},{p:'together',icon:_IC.chat,label:'Talk'},{p:'connect',icon:_IC.mail,label:'Letter'},{p:'datenight',icon:_IC.heart,label:'Date Night'}],
-  fitness:[{p:'fitness',icon:_IC.dumbbell,label:'Workout',fn:'openWorkoutBuilder'},{p:'fitness',icon:_IC.list,label:'Quick Log',fn:'scrollToQuickLog'},{p:'fitness',icon:_IC.activity,label:'Analytics',fn:'scrollToAnalytics'},{p:'fitness',icon:_IC.trend,label:'Metrics',fn:'scrollToMetrics'}],
-  nutrition:[{p:'nutrition',icon:_IC.apple,label:'Log Meal'},{p:'nutrition',icon:_IC.activity,label:'Water'},{p:'nutrition',icon:_IC.list,label:'Recipes'},{p:'nutrition',icon:_IC.list,label:'Grocery'}],
-  connect:[{p:'connect',icon:_IC.mail,label:'Write'},{p:'games',icon:_IC.game,label:'Play'},{p:'together',icon:_IC.wave,label:'Talk'},{p:'datenight',icon:_IC.heart,label:'Date'}],
-  games:[{p:'games',icon:_IC.game,label:'New Game'},{p:'connect',icon:_IC.mail,label:'Letters'},{p:'together',icon:_IC.wave,label:'Talk'},{p:'datenight',icon:_IC.heart,label:'Date'}],
-  mood:[{p:'gratitude',icon:_IC.star,label:'Gratitude'},{p:'checkin',icon:_IC.check,label:'Check-in'},{p:'fitness',icon:_IC.dumbbell,label:'Fitness'},{p:'nutrition',icon:_IC.apple,label:'Nutrition'}],
-  _default:[{p:'mood',icon:_IC.sun,label:'Mood'},{p:'fitness',icon:_IC.dumbbell,label:'Fitness'},{p:'connect',icon:_IC.mail,label:'Letters'},{p:'more',icon:_IC.compass,label:'More'}]
-};
-
 function trackRecentPage(pageId) {
   if (!pageId || pageId === 'dash') return;
   recentPages = recentPages.filter(p => p !== pageId);
@@ -194,70 +182,6 @@ function trackRecentPage(pageId) {
   localStorage.setItem('met_recent_pages', JSON.stringify(recentPages));
   currentPageId = pageId;
 }
-
-function toggleMenu() {
-  const cmd = document.getElementById('cmd-center');
-  const backdrop = document.getElementById('cmd-backdrop');
-  if (!cmd) return;
-  const opening = !cmd.classList.contains('on');
-  if (opening) {
-    populateQuickSheet();
-    cmd.classList.add('on');
-    if (backdrop) backdrop.classList.add('on');
-  } else {
-    cmd.classList.remove('on');
-    if (backdrop) backdrop.classList.remove('on');
-  }
-}
-
-function closeMenu() {
-  const cmd = document.getElementById('cmd-center');
-  const backdrop = document.getElementById('cmd-backdrop');
-  if (cmd) cmd.classList.remove('on');
-  if (backdrop) backdrop.classList.remove('on');
-  const search = document.getElementById('cmd-search');
-  if (search) search.value = '';
-  const sr = document.getElementById('cmd-search-results');
-  if (sr) hideEl(sr);
-}
-
-function populateQuickSheet() {
-  // Favorites
-  const favEl = document.getElementById('cmd-favorites');
-  if (favEl) {
-    favEl.innerHTML = favPages.map(p => {
-      const m = PAGE_META[p] || {icon:'📄',label:p};
-      return '<div class="cmd-ctx-item" onclick="closeMenu();go(\''+p+'\')"><span class="cmd-ctx-icon">'+m.icon+'</span><span class="cmd-ctx-label">'+m.label+'</span></div>';
-    }).join('');
-  }
-  // Context actions
-  const ctxEl = document.getElementById('cmd-ctx-actions');
-  if (ctxEl) {
-    const actions = CTX_ACTIONS[currentPageId] || CTX_ACTIONS._default;
-    ctxEl.innerHTML = actions.map(a => {
-      const onclick = a.fn ? a.fn + '();closeMenu()' : 'closeMenu();go(\''+a.p+'\')';
-      return '<div class="cmd-ctx-item" onclick="'+onclick+'"><span class="cmd-ctx-icon">'+a.icon+'</span><span class="cmd-ctx-label">'+a.label+'</span></div>';
-    }).join('');
-  }
-}
-
-function filterQuickSheet(val) {
-  const q = val.toLowerCase().trim();
-  const sr = document.getElementById('cmd-search-results');
-  if (!sr) return;
-  if (!q) { hideEl(sr); return; }
-  const matches = Object.entries(PAGE_META).filter(([k,v]) => v.label.toLowerCase().includes(q));
-  if (matches.length === 0) {
-    sr.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--t3);text-align:center">No matches</div>';
-  } else {
-    sr.innerHTML = matches.slice(0, 6).map(([k,v]) =>
-      '<div class="cmd-ctx-item" onclick="closeMenu();go(\''+k+'\')" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;margin:3px"><span class="cmd-ctx-icon" style="margin:0">'+v.icon+'</span><span class="cmd-ctx-label" style="font-size:12px">'+v.label+'</span></div>'
-    ).join('');
-  }
-  showEl(sr);
-}
-
-function goCmd(page) { closeMenu(); go(page); }
 
 // ===== SWIPE GESTURE NAVIGATION =====
 let _swipeStartX = 0, _swipeStartY = 0, _swipeStartTime = 0, _swipeOnInteractive = false;

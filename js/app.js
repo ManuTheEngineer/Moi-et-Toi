@@ -288,7 +288,7 @@ function submitApiKey() {
   if (key && key.startsWith('sk-ant-')) {
     CLAUDE_API_KEY = key;
     db.ref('profiles/apiKey').set(key);
-    closeModal(); closeMenu(); toast('API key updated');
+    closeModal(); toast('API key updated');
   } else if (key) { toast('Invalid key format'); }
   else { closeModal(); }
 }

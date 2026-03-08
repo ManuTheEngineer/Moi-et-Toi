@@ -57,11 +57,8 @@
 .ph-back{width:32px;height:32px;border:none;background:none;color:var(--gold);cursor:pointer;display:none;align-items:center;justify-content:center;border-radius:50%;transition:all .2s;flex-shrink:0}
 .ph-back.show{display:flex}
 .ph-back:active{background:var(--tint);transform:scale(.88)}
-.ph-title{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;letter-spacing:2px;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ph-title.changing{opacity:0}
-.ph-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.page-header .hbg{position:static;width:32px;height:32px;box-shadow:none;background:none}
-.page-header .hbg span{width:16px}
 /* Non-dash pages: header provides top spacing, ctn needs none */
 .pg .ctn{padding-top:0}
 #pg-dash .ctn{padding-top:calc(12px + env(safe-area-inset-top,20px))}
@@ -85,14 +82,6 @@
 .bn-badge{position:absolute;top:2px;right:6px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--rose);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0);transition:all .35s cubic-bezier(.175,.885,.32,1.275);line-height:1;z-index:2}
 .bn-badge.show{opacity:1;transform:scale(1)}
 
-/* ===== HAMBURGER (inline with page header, not floating) ===== */
-.hbg{position:static;width:36px;height:36px;background:var(--tint);border:none;border-radius:50%;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:all .3s;box-shadow:none}
-.hbg:active{transform:scale(.88);background:var(--bg3)}
-.hbg span{display:block;width:16px;height:1.5px;background:var(--t1);transition:all .3s;border-radius:2px}
-.hbg.on span:nth-child(1){transform:rotate(45deg) translate(4.5px,4.5px)}
-.hbg.on span:nth-child(2){opacity:0}
-.hbg.on span:nth-child(3){transform:rotate(-45deg) translate(4.5px,-4.5px)}
-
 /* ===== PAGES ===== */
 .pg{display:none;position:relative}
 .pg.on{display:block;animation:pgIn .3s ease}
@@ -104,12 +93,10 @@
 /* Phones (up to 430px — iPhone 16 Pro is 393pt, Pro Max is 430pt) */
 @media(max-width:430px){
   .bn .nl{font-size:8px;letter-spacing:.3px}
-  .cmd-center{max-height:65vh}
 }
 
 /* Small phones (375pt and below: iPhone SE, 13 mini) */
 @media(max-width:375px){
   .bn .nl{font-size:7px;letter-spacing:0}
-  .phd h1{font-size:28px;letter-spacing:3px}
-  .phd p{font-size:10px;letter-spacing:1.5px}
+  .ph-title{font-size:20px;letter-spacing:1px}
 }
