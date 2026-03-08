@@ -19,15 +19,72 @@ function initPullToRefresh() {
   document.addEventListener('touchmove', function(e) {
     if (!pulling) return;
     const dy = e.touches[0].clientY - startY;
+    const ptr = document.getElementById('ptr');
+    if (dy > 20 && dy < threshold && window.scrollY === 0 && ptr) {
+      ptr.style.height = Math.min(dy * 0.5, 40) + 'px';
+      ptr.classList.add('show');
+    }
     if (dy > threshold && window.scrollY === 0) {
       pulling = false;
-      location.reload();
+      softRefresh();
     }
   }, { passive: true });
 
   document.addEventListener('touchend', function() {
     pulling = false;
+    const ptr = document.getElementById('ptr');
+    if (ptr) { ptr.style.height = '0'; ptr.classList.remove('show', 'refreshing'); }
   }, { passive: true });
+}
+
+function softRefresh() {
+  var ptr = document.getElementById('ptr');
+  if (ptr) {
+    ptr.style.height = '40px';
+    ptr.classList.add('show', 'refreshing');
+  }
+
+  // Re-render current page data without a full page reload
+  var page = currentPageId || 'dash';
+  try {
+    // Re-render dashboard if on it
+    if (page === 'dash') {
+      if (typeof renderDashHero === 'function') renderDashHero();
+      if (typeof renderDailyTasks === 'function') renderDailyTasks();
+    }
+    // Re-trigger page-specific data load via go()
+    if (typeof go === 'function') go(page);
+
+    // Refresh sky scene
+    if (typeof livingSkyEnabled !== 'undefined' && livingSkyEnabled) {
+      var skyEl = document.getElementById('sky-scene');
+      if (skyEl && typeof renderLivingSky === 'function') renderLivingSky(skyEl);
+    }
+
+    // Refresh weather if available
+    if (typeof WEATHER !== 'undefined' && WEATHER.locationGranted && typeof fetchWeather === 'function') {
+      fetchWeather().then(function() {
+        if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
+      });
+    }
+
+    // Update time of day visuals
+    if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+    if (typeof spawnOrbs === 'function') spawnOrbs();
+
+    toast('Refreshed');
+  } catch(e) {
+    console.error('Soft refresh error:', e);
+  }
+
+  // Hide PTR indicator after a short delay
+  setTimeout(function() {
+    if (ptr) {
+      ptr.classList.remove('refreshing');
+      ptr.style.height = '0';
+      setTimeout(function() { ptr.classList.remove('show'); }, 300);
+    }
+  }, 800);
 }
 
 // ===== MODAL =====
