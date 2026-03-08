@@ -347,19 +347,16 @@ function logout() { firebase.auth().signOut(); location.reload(); }
 async function clearAllData() {
   if (!db) { toast('Not connected'); return; }
   try {
-    // Preserve profiles and API key
-    const profilesSnap = await db.ref('profiles').once('value');
-    const apiSnap = await db.ref('apiKey').once('value');
-    const profiles = profilesSnap.val();
-    const apiKey = apiSnap.val();
+    // Preserve only the API key
+    const snap = await db.ref('profiles/apiKey').once('value');
+    const apiKey = snap.val();
     // Wipe everything
     await db.ref('/').remove();
-    // Restore essentials
-    if (profiles) await db.ref('profiles').set(profiles);
-    if (apiKey) await db.ref('apiKey').set(apiKey);
+    // Restore only API key
+    if (apiKey) await db.ref('profiles/apiKey').set(apiKey);
     // Clear local caches
     ['met_last_reminder', 'met_recent_pages'].forEach(k => localStorage.removeItem(k));
-    toast('All data cleared');
+    toast('All data cleared — onboarding will restart');
     setTimeout(() => location.reload(), 1000);
   } catch (e) {
     toast('Clear failed');
