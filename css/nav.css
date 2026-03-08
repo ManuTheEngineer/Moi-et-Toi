@@ -44,8 +44,8 @@
 .pcard p{font-size:11px;color:rgba(26,26,46,.40)}
 
 /* ===== ONBOARDING ===== */
-/* Fix mobile keyboard: make login scrollable during onboarding */
-.login.onboard-active{align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:max(env(safe-area-inset-top,20px),60px);padding-bottom:40px}
+/* Fix mobile keyboard: break out of position:fixed so keyboard can push content */
+.login.onboard-active{position:absolute;height:auto;min-height:100vh;min-height:100dvh;align-items:center;justify-content:center;overflow-y:visible;padding-top:max(env(safe-area-inset-top,20px),40px);padding-bottom:60px}
 .onboard-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px;margin:auto;animation:onboardIn .5s ease both}
 @keyframes onboardIn{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
 .onboard-progress{width:100%;max-width:200px;height:3px;background:rgba(255,255,255,.25);border-radius:3px;margin-bottom:28px;overflow:hidden}

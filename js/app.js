@@ -243,9 +243,14 @@ function renderOnboardStep() {
 
   el.innerHTML = steps[onboardStep];
 
-  // Auto-focus text inputs (not date)
+  // Auto-focus text inputs and scroll into view for mobile keyboard
   const input = el.querySelector('input[type="text"]');
-  if (input) setTimeout(() => input.focus(), 350);
+  if (input) {
+    setTimeout(() => {
+      input.focus();
+      setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+    }, 350);
+  }
 }
 
 function onboardNext() {
