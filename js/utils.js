@@ -8,6 +8,14 @@
   window.addEventListener('resize', fillScreen);
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) fillScreen(); });
 
+  // Track visual viewport for keyboard-aware layouts
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', function() {
+      document.documentElement.style.setProperty('--vv-h', window.visualViewport.height + 'px');
+    });
+    document.documentElement.style.setProperty('--vv-h', window.visualViewport.height + 'px');
+  }
+
   // Dismiss keyboard on scroll (mobile UX)
   var scrollTick = false;
   window.addEventListener('scroll', function() {

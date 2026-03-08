@@ -208,7 +208,7 @@ const OB_TOTAL = 8;
 
 function startOnboarding() {
   onboardStep = 0;
-  onboardData = { name: '', nickname: '', anniversary: '' };
+  onboardData = { name: '', nickname: '', anniversary: '', photo: '', livingSky: true };
   // Hide login chrome, show onboard container
   hideEl('login-form');
   hideEl('welcome-gate');
@@ -221,6 +221,9 @@ function startOnboarding() {
   showEl('onboard-steps');
   // Switch login from position:fixed to absolute so iOS keyboard works
   document.getElementById('login').classList.add('onboard-active');
+  // Set initial content to enter state
+  var content = document.getElementById('ob-content');
+  if (content) { content.classList.remove('ob-exit'); content.classList.add('ob-enter'); }
   renderOnboardStep();
 }
 
@@ -230,110 +233,146 @@ function renderDots(active) {
   ).join('');
 }
 
+// Smooth scroll for input focus — keeps input visible above keyboard
+function obScrollToInput(el) {
+  setTimeout(function() {
+    var rect = el.getBoundingClientRect();
+    var viewH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    // If input is in the lower third, scroll up
+    if (rect.bottom > viewH * 0.55) {
+      var loginEl = document.getElementById('login');
+      var offset = rect.top - viewH * 0.35;
+      loginEl.scrollTo({ top: loginEl.scrollTop + offset, behavior: 'smooth' });
+    }
+  }, 300);
+}
+
+// Transition between steps: fade out, update, fade in
+let obTransitioning = false;
+function transitionStep(setupFn) {
+  var content = document.getElementById('ob-content');
+  if (!content) { setupFn(); return; }
+
+  obTransitioning = true;
+  // Blur any focused input first (dismisses keyboard smoothly)
+  if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+    document.activeElement.blur();
+  }
+
+  // Fade out
+  content.classList.remove('ob-enter');
+  content.classList.add('ob-exit');
+
+  setTimeout(function() {
+    setupFn();
+    content.classList.remove('ob-exit');
+    // Force reflow to restart animation
+    void content.offsetWidth;
+    content.classList.add('ob-enter');
+    // Scroll back to top of login area smoothly
+    var loginEl = document.getElementById('login');
+    if (loginEl) loginEl.scrollTo({ top: 0, behavior: 'smooth' });
+    obTransitioning = false;
+  }, 250);
+}
+
 function renderOnboardStep() {
-  const isHer = user === 'her';
-  const partnerLabel = isHer ? 'him' : 'her';
-  const pct = Math.round((onboardStep / (OB_TOTAL - 1)) * 100);
+  var isHer = user === 'her';
+  var partnerLabel = isHer ? 'him' : 'her';
+  var pct = Math.round((onboardStep / (OB_TOTAL - 1)) * 100);
 
-  // References
-  const bar = document.getElementById('ob-bar');
-  const emoji = document.getElementById('ob-emoji');
-  const title = document.getElementById('ob-title');
-  const sub = document.getElementById('ob-sub');
-  const btn = document.getElementById('ob-btn');
-  const skip = document.getElementById('ob-skip');
-  const dots = document.getElementById('ob-dots');
-  const tour = document.getElementById('ob-tour');
-  const nameIn = document.getElementById('ob-name');
-  const nickIn = document.getElementById('ob-nickname');
-  const annivIn = document.getElementById('ob-anniversary');
-
-  // Progress
+  // Progress bar + dots (update immediately, outside transition)
+  var bar = document.getElementById('ob-bar');
+  var dots = document.getElementById('ob-dots');
   bar.style.width = pct + '%';
   dots.innerHTML = renderDots(onboardStep);
 
-  const photoWrap = document.getElementById('ob-photo-wrap');
-  const skyCard = document.getElementById('ob-living-sky');
+  transitionStep(function() {
+    // References
+    var emoji = document.getElementById('ob-emoji');
+    var title = document.getElementById('ob-title');
+    var sub = document.getElementById('ob-sub');
+    var btn = document.getElementById('ob-btn');
+    var skip = document.getElementById('ob-skip');
+    var tour = document.getElementById('ob-tour');
+    var nameIn = document.getElementById('ob-name');
+    var nickIn = document.getElementById('ob-nickname');
+    var annivIn = document.getElementById('ob-anniversary');
+    var photoWrap = document.getElementById('ob-photo-wrap');
+    var skyCard = document.getElementById('ob-living-sky');
 
-  // Hide all optional elements
-  emoji.style.display = 'none';
-  nameIn.style.display = 'none';
-  nickIn.style.display = 'none';
-  annivIn.style.display = 'none';
-  photoWrap.style.display = 'none';
-  skyCard.style.display = 'none';
-  tour.style.display = 'none';
-  skip.style.display = 'none';
+    // Hide all optional elements
+    emoji.style.display = 'none';
+    nameIn.style.display = 'none';
+    nickIn.style.display = 'none';
+    annivIn.style.display = 'none';
+    photoWrap.style.display = 'none';
+    skyCard.style.display = 'none';
+    tour.style.display = 'none';
+    skip.style.display = 'none';
 
-  // Configure each step
-  if (onboardStep === 0) {
-    // Welcome
-    title.textContent = isHer ? 'Hey Baby' : 'Welcome';
-    sub.innerHTML = isHer
-      ? "I'm sorry baby, let's start over.<br>Let me set things up right this time."
-      : "Let's build our space together.<br>This only takes a moment.";
-    btn.textContent = isHer ? "Okay, let's go" : "Let's begin";
-  } else if (onboardStep === 1) {
-    // Name
-    emoji.textContent = '👋'; emoji.style.display = '';
-    title.textContent = "What's your name?";
-    sub.textContent = 'This is how your partner will see you in the app.';
-    nameIn.style.display = ''; nameIn.value = onboardData.name;
-    setTimeout(function(){ nameIn.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
-    btn.textContent = 'Continue';
-  } else if (onboardStep === 2) {
-    // Nickname
-    emoji.textContent = isHer ? '💜' : '💛'; emoji.style.display = '';
-    title.textContent = 'What do you call ' + partnerLabel + '?';
-    sub.textContent = 'A pet name, nickname, or their real name — whatever feels like you.';
-    nickIn.placeholder = isHer ? 'Baby, Babe, His name...' : 'Babe, Love, Her name...';
-    nickIn.style.display = ''; nickIn.value = onboardData.nickname;
-    setTimeout(function(){ nickIn.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
-    btn.textContent = 'Continue';
-  } else if (onboardStep === 3) {
-    // Photo of partner
-    emoji.textContent = '📸'; emoji.style.display = '';
-    title.textContent = 'Pick a photo of ' + partnerLabel;
-    sub.textContent = 'This is how ' + partnerLabel + ' will see themselves — choose how you see them today.';
-    photoWrap.style.display = '';
-    skip.style.display = '';
-    // Restore preview if already picked
-    if (onboardData.photo) {
-      var prev = document.getElementById('ob-photo-preview');
-      prev.innerHTML = '<img src="' + onboardData.photo + '" alt="photo">';
+    // Configure each step
+    if (onboardStep === 0) {
+      title.textContent = isHer ? 'Hey Baby' : 'Welcome';
+      sub.innerHTML = isHer
+        ? "I'm sorry baby, let's start over.<br>Let me set things up right this time."
+        : "Let's build our space together.<br>This only takes a moment.";
+      btn.textContent = isHer ? "Okay, let's go" : "Let's begin";
+    } else if (onboardStep === 1) {
+      emoji.textContent = '👋'; emoji.style.display = '';
+      title.textContent = "What's your name?";
+      sub.textContent = 'This is how your partner will see you in the app.';
+      nameIn.style.display = ''; nameIn.value = onboardData.name;
+      setTimeout(function(){ nameIn.focus(); }, 500);
+      btn.textContent = 'Continue';
+    } else if (onboardStep === 2) {
+      emoji.textContent = isHer ? '💜' : '💛'; emoji.style.display = '';
+      title.textContent = 'What do you call ' + partnerLabel + '?';
+      sub.textContent = 'A pet name, nickname, or their real name — whatever feels like you.';
+      nickIn.placeholder = isHer ? 'Baby, Babe, His name...' : 'Babe, Love, Her name...';
+      nickIn.style.display = ''; nickIn.value = onboardData.nickname;
+      setTimeout(function(){ nickIn.focus(); }, 500);
+      btn.textContent = 'Continue';
+    } else if (onboardStep === 3) {
+      emoji.textContent = '📸'; emoji.style.display = '';
+      title.textContent = 'Pick a photo of ' + partnerLabel;
+      sub.textContent = 'This is how ' + partnerLabel + ' will see themselves — choose how you see them today.';
+      photoWrap.style.display = '';
+      skip.style.display = '';
+      if (onboardData.photo) {
+        var prev = document.getElementById('ob-photo-preview');
+        prev.innerHTML = '<img src="' + onboardData.photo + '" alt="photo">';
+      }
+      btn.textContent = 'Continue';
+    } else if (onboardStep === 4) {
+      emoji.textContent = '📅'; emoji.style.display = '';
+      title.textContent = 'When did it start?';
+      sub.textContent = 'The day you two became official. This powers your "Days Together" count.';
+      annivIn.style.display = '';
+      skip.style.display = '';
+      btn.textContent = 'Continue';
+    } else if (onboardStep === 5) {
+      emoji.textContent = '🌅'; emoji.style.display = '';
+      title.textContent = 'Living Sky';
+      sub.innerHTML = 'The app has a living sky — the sun moves with time, turns to moon at night, birds fly by, fireflies glow.';
+      skyCard.style.display = '';
+      document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
+      btn.textContent = 'Continue';
+    } else if (onboardStep === 6) {
+      bar.style.width = '95%';
+      emoji.textContent = '🏡'; emoji.style.display = '';
+      title.textContent = "Let me show you around";
+      sub.innerHTML = "I'll walk you through your new space —<br>it'll only take a moment.";
+      btn.textContent = 'Show me';
+    } else if (onboardStep === 7) {
+      finishOnboarding(true);
+      return;
     }
-    btn.textContent = 'Continue';
-  } else if (onboardStep === 4) {
-    // Anniversary
-    emoji.textContent = '📅'; emoji.style.display = '';
-    title.textContent = 'When did it start?';
-    sub.textContent = 'The day you two became official. This powers your "Days Together" count.';
-    annivIn.style.display = '';
-    skip.style.display = '';
-    btn.textContent = 'Continue';
-  } else if (onboardStep === 5) {
-    // Living Sky toggle
-    emoji.textContent = '🌅'; emoji.style.display = '';
-    title.textContent = 'Living Sky';
-    sub.innerHTML = 'The app has a living sky — the sun moves with time, turns to moon at night, birds fly by, fireflies glow.';
-    skyCard.style.display = '';
-    document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
-    btn.textContent = 'Continue';
-  } else if (onboardStep === 6) {
-    // Ready screen before interactive tour
-    bar.style.width = '90%';
-    emoji.textContent = '🏡'; emoji.style.display = '';
-    title.textContent = "Let me show you around";
-    sub.innerHTML = "I'll walk you through your new space —<br>it'll only take a moment.";
-    btn.textContent = 'Show me';
-  } else if (onboardStep === 7) {
-    // Done — finishOnboarding then launch interactive tour
-    finishOnboarding(true);
-    return; // tour will launch after app loads
-  }
+  });
 }
 
 function onboardNext() {
+  if (obTransitioning) return; // prevent double-tap during transitions
   if (onboardStep === 1) {
     var name = document.getElementById('ob-name').value.trim();
     if (!name) { toast('Please enter your name'); return; }

@@ -45,44 +45,48 @@
   <!-- Onboarding steps (inputs in DOM from load — keyboard works) -->
   <div id="onboard-steps" class="login-inner d-none">
     <div class="onboard-progress"><div class="onboard-bar" id="ob-bar"></div></div>
-    <div id="ob-emoji" class="onboard-emoji" style="display:none"></div>
-    <h1 class="onboard-title" id="ob-title"></h1>
-    <p class="onboard-sub" id="ob-sub"></p>
-    <input type="text" id="ob-name" class="login-input mb16" placeholder="Your first name..."
-           style="display:none" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}">
-    <input type="text" id="ob-nickname" class="login-input mb16" placeholder="Babe, Love, Her name..."
-           style="display:none" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}">
-    <div id="ob-photo-wrap" class="ob-photo-wrap" style="display:none">
-      <label class="ob-photo-picker" id="ob-photo-label">
-        <input type="file" accept="image/*" id="ob-photo" style="display:none" onchange="onboardPhotoPicked(this)">
-        <div class="ob-photo-preview" id="ob-photo-preview">
-          <span class="ob-photo-plus">+</span>
-        </div>
-        <span class="ob-photo-hint">Tap to choose</span>
-      </label>
-    </div>
-    <input type="date" id="ob-anniversary" class="login-input mb16"
-           style="display:none;color-scheme:light">
-    <div id="ob-living-sky" class="ob-living-sky-card" style="display:none">
-      <div class="ob-sky-preview">
-        <div class="ob-sky-sun"></div>
-        <div class="ob-sky-moon"></div>
-        <div class="ob-sky-bird">
-          <div class="sky-bird-wing sky-bird-wing-l"></div>
-          <div class="sky-bird-wing sky-bird-wing-r"></div>
-        </div>
-      </div>
-      <div class="ob-sky-toggle-row">
-        <span class="ob-sky-label">Enable Living Sky</span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="ob-sky-toggle" checked onchange="onboardData.livingSky=this.checked">
-          <span class="toggle-slider"></span>
+    <div class="ob-content ob-enter" id="ob-content">
+      <div id="ob-emoji" class="onboard-emoji" style="display:none"></div>
+      <h1 class="onboard-title" id="ob-title"></h1>
+      <p class="onboard-sub" id="ob-sub"></p>
+      <input type="text" id="ob-name" class="login-input ob-input mb16" placeholder="Your first name..."
+             style="display:none" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}"
+             onfocus="obScrollToInput(this)" autocomplete="off" autocorrect="off" spellcheck="false">
+      <input type="text" id="ob-nickname" class="login-input ob-input mb16" placeholder="Babe, Love, Her name..."
+             style="display:none" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}"
+             onfocus="obScrollToInput(this)" autocomplete="off" autocorrect="off" spellcheck="false">
+      <div id="ob-photo-wrap" class="ob-photo-wrap" style="display:none">
+        <label class="ob-photo-picker" id="ob-photo-label">
+          <input type="file" accept="image/*" id="ob-photo" style="display:none" onchange="onboardPhotoPicked(this)">
+          <div class="ob-photo-preview" id="ob-photo-preview">
+            <span class="ob-photo-plus">+</span>
+          </div>
+          <span class="ob-photo-hint">Tap to choose</span>
         </label>
       </div>
+      <input type="date" id="ob-anniversary" class="login-input ob-input mb16"
+             style="display:none;color-scheme:light" onfocus="obScrollToInput(this)">
+      <div id="ob-living-sky" class="ob-living-sky-card" style="display:none">
+        <div class="ob-sky-preview">
+          <div class="ob-sky-sun"></div>
+          <div class="ob-sky-moon"></div>
+          <div class="ob-sky-bird">
+            <div class="sky-bird-wing sky-bird-wing-l"></div>
+            <div class="sky-bird-wing sky-bird-wing-r"></div>
+          </div>
+        </div>
+        <div class="ob-sky-toggle-row">
+          <span class="ob-sky-label">Enable Living Sky</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="ob-sky-toggle" checked onchange="onboardData.livingSky=this.checked">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div id="ob-tour" style="display:none"></div>
+      <button id="ob-btn" onclick="onboardNext()" class="login-btn ob-btn">Continue</button>
+      <p class="onboard-skip" id="ob-skip" style="display:none" onclick="onboardNext()">Skip for now</p>
     </div>
-    <div id="ob-tour" style="display:none"></div>
-    <button id="ob-btn" onclick="onboardNext()" class="login-btn">Continue</button>
-    <p class="onboard-skip" id="ob-skip" style="display:none" onclick="onboardNext()">Skip for now</p>
     <div class="onboard-dots" id="ob-dots"></div>
   </div>
   <div id="login-err" class="login-err"></div>

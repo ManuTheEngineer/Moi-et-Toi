@@ -45,22 +45,41 @@
 
 /* ===== ONBOARDING ===== */
 /* Switch login overlay from fixed to absolute so iOS keyboard can push content up */
-.login.onboard-active{position:absolute;height:auto;min-height:100vh;min-height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:max(env(safe-area-inset-top,20px),40px);padding-bottom:60px}
-.onboard-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px;margin:auto;animation:onboardIn .5s ease both}
-@keyframes onboardIn{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
+.login.onboard-active{position:absolute;height:auto;min-height:100vh;min-height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:max(env(safe-area-inset-top,20px),40px);padding-bottom:80px;scroll-behavior:smooth}
+.onboard-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px;margin:auto}
 .onboard-progress{width:100%;max-width:200px;height:3px;background:rgba(255,255,255,.25);border-radius:3px;margin-bottom:28px;overflow:hidden}
-.onboard-bar{height:100%;background:linear-gradient(90deg,var(--gold),#D4784A);border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
-.onboard-emoji{font-size:48px;margin-bottom:12px;animation:emojiPop .5s .2s cubic-bezier(.175,.885,.32,1.275) both}
-@keyframes emojiPop{0%{opacity:0;transform:scale(0)}100%{opacity:1;transform:scale(1)}}
-.onboard-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:28px;letter-spacing:3px;text-transform:uppercase;color:#1A1A2E;margin-bottom:8px;text-align:center}
-.onboard-sub{font-size:14px;line-height:1.6;color:rgba(26,26,46,.50);margin-bottom:24px;text-align:center;max-width:280px}
+.onboard-bar{height:100%;background:linear-gradient(90deg,var(--gold),#D4784A);border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* Step content wrapper — handles smooth transitions between steps */
+.ob-content{position:relative;display:flex;flex-direction:column;align-items:center;width:100%}
+.ob-content.ob-exit{animation:obFadeOut .25s ease forwards}
+.ob-content.ob-enter{animation:obFadeIn .4s cubic-bezier(.2,0,.2,1) forwards}
+@keyframes obFadeOut{to{opacity:0;transform:translateY(-12px)}}
+@keyframes obFadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.onboard-emoji{font-size:44px;margin-bottom:14px;opacity:0;transform:scale(0);transition:all .5s cubic-bezier(.175,.885,.32,1.275)}
+.ob-content.ob-enter .onboard-emoji{opacity:1;transform:scale(1);transition-delay:.15s}
+.onboard-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:26px;letter-spacing:2.5px;text-transform:uppercase;color:#1A1A2E;margin-bottom:8px;text-align:center;transition:opacity .3s}
+.onboard-sub{font-size:14px;line-height:1.6;color:rgba(26,26,46,.50);margin-bottom:24px;text-align:center;max-width:280px;transition:opacity .3s}
 .onboard-sub strong{color:#1A1A2E;font-weight:600}
-.onboard-skip{font-size:13px;color:rgba(26,26,46,.35);margin-top:12px;cursor:pointer;letter-spacing:.5px}
+
+/* Inputs — smooth reveal with slight upward slide */
+.login-input.ob-input{transition:all .35s cubic-bezier(.2,0,.2,1);opacity:0;transform:translateY(8px)}
+.ob-content.ob-enter .login-input.ob-input{opacity:1;transform:translateY(0);transition-delay:.2s}
+
+/* Keyboard-aware spacing — extra bottom padding when input is focused */
+.login.onboard-active:has(input:focus){padding-bottom:calc(80px + env(keyboard-inset-height,0px))}
+
+.login-btn.ob-btn{transition:all .35s cubic-bezier(.2,0,.2,1);opacity:0;transform:translateY(8px)}
+.ob-content.ob-enter .login-btn.ob-btn{opacity:1;transform:translateY(0);transition-delay:.3s}
+
+.onboard-skip{font-size:13px;color:rgba(26,26,46,.35);margin-top:10px;cursor:pointer;letter-spacing:.5px;transition:opacity .3s}
 .onboard-skip:active{opacity:.6}
-.onboard-dots{display:flex;gap:6px;margin-top:20px}
-.onboard-dot{width:7px;height:7px;border-radius:50%;background:rgba(26,26,46,.15);transition:all .3s}
-.onboard-dot.active{background:var(--gold);transform:scale(1.3)}
-.onboard-dot.done{background:rgba(184,134,11,.4)}
+.onboard-dots{display:flex;gap:7px;margin-top:20px}
+.onboard-dot{width:6px;height:6px;border-radius:50%;background:rgba(26,26,46,.12);transition:all .4s cubic-bezier(.4,0,.2,1)}
+.onboard-dot.active{background:var(--gold);width:20px;border-radius:3px}
+.onboard-dot.done{background:rgba(184,134,11,.35)}
+
 /* Tour cards */
 .ob-tour-card{width:100%;max-width:320px;background:rgba(255,255,255,.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:20px;padding:16px 18px;margin-bottom:24px;text-align:left}
 .ob-tour-row{display:flex;gap:12px;padding:10px 0;align-items:flex-start}
@@ -70,25 +89,26 @@
 .ob-tour-row strong{color:#1A1A2E;font-weight:600;font-size:14px}
 
 /* Onboarding photo picker */
-.ob-photo-wrap{display:flex;justify-content:center;margin-bottom:20px}
+.ob-photo-wrap{display:flex;justify-content:center;margin-bottom:20px;transition:all .35s}
 .ob-photo-picker{display:flex;flex-direction:column;align-items:center;cursor:pointer}
-.ob-photo-preview{width:120px;height:120px;border-radius:50%;background:rgba(26,26,46,.06);border:3px dashed rgba(26,26,46,.15);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all .3s}
-.ob-photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.ob-photo-preview:has(img){border-style:solid;border-color:var(--gold)}
-.ob-photo-plus{font-size:32px;color:rgba(26,26,46,.25);font-weight:300}
-.ob-photo-hint{font-size:12px;color:rgba(26,26,46,.35);margin-top:8px}
+.ob-photo-preview{width:120px;height:120px;border-radius:50%;background:rgba(26,26,46,.06);border:3px dashed rgba(26,26,46,.12);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all .4s cubic-bezier(.2,0,.2,1)}
+.ob-photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;animation:photoReveal .4s ease both}
+@keyframes photoReveal{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.ob-photo-preview:has(img){border-style:solid;border-color:var(--gold);box-shadow:0 4px 20px rgba(184,134,11,.15)}
+.ob-photo-plus{font-size:28px;color:rgba(26,26,46,.2);font-weight:300}
+.ob-photo-hint{font-size:11px;color:rgba(26,26,46,.3);margin-top:8px;letter-spacing:.5px}
 
 /* Onboarding Living Sky preview */
-.ob-living-sky-card{width:100%;max-width:280px;margin:0 auto 20px}
-.ob-sky-preview{height:100px;border-radius:16px;background:linear-gradient(180deg,#C9DEF4 0%,#E8D5C4 60%,#F0C8A0 100%);position:relative;overflow:hidden;margin-bottom:16px}
-.ob-sky-sun{position:absolute;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle,#FFF4D4,#FFD93D,#F4A300);box-shadow:0 0 20px rgba(255,200,60,.5);right:25%;top:20%;animation:obSunMove 8s ease-in-out infinite alternate}
-.ob-sky-moon{position:absolute;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#E8E4D8,#D4CFC0);box-shadow:0 0 12px rgba(220,210,180,.4);left:20%;top:25%;opacity:0;animation:obMoonMove 8s ease-in-out infinite alternate}
+.ob-living-sky-card{width:100%;max-width:280px;margin:0 auto 20px;transition:all .35s}
+.ob-sky-preview{height:90px;border-radius:16px;background:linear-gradient(180deg,#C9DEF4 0%,#E8D5C4 60%,#F0C8A0 100%);position:relative;overflow:hidden;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.ob-sky-sun{position:absolute;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle,#FFF4D4,#FFD93D,#F4A300);box-shadow:0 0 16px rgba(255,200,60,.5);right:25%;top:20%;animation:obSunMove 8s ease-in-out infinite alternate}
+.ob-sky-moon{position:absolute;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#E8E4D8,#D4CFC0);box-shadow:0 0 10px rgba(220,210,180,.4);left:20%;top:25%;opacity:0;animation:obMoonMove 8s ease-in-out infinite alternate}
 .ob-sky-bird{position:absolute;left:10%;top:35%;animation:obBirdFly 6s ease-in-out infinite}
 @keyframes obSunMove{0%{right:15%;top:30%;opacity:1}50%{opacity:1}60%{opacity:0}100%{right:80%;top:40%;opacity:0}}
 @keyframes obMoonMove{0%{opacity:0}50%{opacity:0}60%{opacity:.8}100%{opacity:.8;left:65%;top:18%}}
 @keyframes obBirdFly{0%{transform:translate(0,0);opacity:0}10%{opacity:.6}90%{opacity:.4}100%{transform:translate(180px,-20px);opacity:0}}
 .ob-sky-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:0 4px}
-.ob-sky-label{font-size:14px;color:rgba(26,26,46,.6);font-weight:500}
+.ob-sky-label{font-size:14px;color:rgba(26,26,46,.55);font-weight:500}
 
 /* Welcome gate photo */
 .welcome-photo{margin-bottom:16px;display:flex;justify-content:center}
