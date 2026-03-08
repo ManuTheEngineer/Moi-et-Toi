@@ -142,6 +142,8 @@ function startOnboarding() {
   if (heading) heading.style.display = 'none';
   if (sub) sub.style.display = 'none';
   showEl('onboard-steps');
+  // Switch login from position:fixed to absolute so iOS keyboard works
+  document.getElementById('login').classList.add('onboard-active');
   renderOnboardStep();
 }
 
@@ -195,6 +197,7 @@ function renderOnboardStep() {
     title.textContent = "What's your name?";
     sub.textContent = 'This is how your partner will see you in the app.';
     nameIn.style.display = ''; nameIn.value = onboardData.name;
+    setTimeout(function(){ nameIn.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
     btn.textContent = 'Continue';
   } else if (onboardStep === 2) {
     // Nickname
@@ -203,6 +206,7 @@ function renderOnboardStep() {
     sub.textContent = 'A pet name, nickname, or their real name — whatever feels like you.';
     nickIn.placeholder = isHer ? 'Baby, Babe, His name...' : 'Babe, Love, Her name...';
     nickIn.style.display = ''; nickIn.value = onboardData.nickname;
+    setTimeout(function(){ nickIn.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
     btn.textContent = 'Continue';
   } else if (onboardStep === 3) {
     // Anniversary
@@ -277,6 +281,7 @@ async function finishOnboarding() {
   if (onboardData.anniversary) {
     await db.ref('settings/anniversary').set(onboardData.anniversary);
   }
+  document.getElementById('login').classList.remove('onboard-active');
   finishLogin();
 }
 
