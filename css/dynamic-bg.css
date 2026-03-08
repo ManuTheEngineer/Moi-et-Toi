@@ -132,3 +132,1124 @@ body[data-time="evening"] .bg-mesh {
 body[data-time="night"] .bg-mesh {
   background: linear-gradient(-45deg, rgba(20,30,80,0.08), rgba(60,40,120,0.05), rgba(0,100,120,0.03), rgba(40,60,140,0.04));
 }
+
+/* ===== WEATHER EFFECTS LAYER ===== */
+.weather-fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+/* --- Weather Overlays --- */
+.weather-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 2s ease;
+}
+.weather-overlay-overcast {
+  background: linear-gradient(180deg, rgba(140,150,160,0.12) 0%, rgba(160,170,180,0.06) 50%, transparent 100%);
+}
+.weather-overlay-rain {
+  background: linear-gradient(180deg, rgba(80,90,110,0.15) 0%, rgba(100,110,130,0.08) 40%, transparent 100%);
+}
+.weather-overlay-storm {
+  background: linear-gradient(180deg, rgba(40,45,60,0.22) 0%, rgba(60,65,80,0.12) 40%, rgba(80,85,100,0.06) 100%);
+}
+.weather-overlay-snow {
+  background: linear-gradient(180deg, rgba(200,210,220,0.10) 0%, rgba(220,225,235,0.06) 50%, transparent 100%);
+}
+.weather-overlay-fog {
+  background: linear-gradient(180deg, rgba(200,200,210,0.18) 0%, rgba(210,210,220,0.14) 40%, rgba(220,220,230,0.08) 80%, transparent 100%);
+  animation: fogDrift 20s ease-in-out infinite alternate;
+}
+.weather-overlay-haze {
+  background: rgba(200,190,170,0.10);
+}
+.weather-overlay-dust {
+  background: linear-gradient(135deg, rgba(180,160,120,0.12), rgba(200,180,140,0.08), transparent);
+  animation: dustDrift 15s ease-in-out infinite alternate;
+}
+
+@keyframes fogDrift {
+  0% { opacity: 0.8; transform: translateX(-3%); }
+  100% { opacity: 1; transform: translateX(3%); }
+}
+@keyframes dustDrift {
+  0% { transform: translateX(-5%) skewX(-2deg); }
+  100% { transform: translateX(5%) skewX(2deg); }
+}
+
+/* --- Weather Particles --- */
+.weather-particle {
+  position: absolute;
+  top: -10px;
+  pointer-events: none;
+}
+
+/* Rain */
+.weather-rain, .weather-drizzle {
+  background: linear-gradient(180deg, rgba(150,170,200,0.6), rgba(150,170,200,0.1));
+  border-radius: 0 0 2px 2px;
+  animation: rainFall linear infinite;
+}
+.weather-drizzle {
+  background: linear-gradient(180deg, rgba(150,170,200,0.4), rgba(150,170,200,0.05));
+}
+@keyframes rainFall {
+  0% { transform: translateY(-10px) translateX(0); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(100vh) translateX(var(--wind-offset, 15px)); opacity: 0; }
+}
+
+/* Snow */
+.weather-snow {
+  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 60%, transparent 100%);
+  border-radius: 50%;
+  animation: snowFall linear infinite;
+}
+@keyframes snowFall {
+  0% { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  50% { transform: translateY(50vh) translateX(calc(var(--wind-offset, 20px) + 30px * sin(var(--snow-phase, 0)))) rotate(180deg); }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(100vh) translateX(var(--wind-offset, 40px)) rotate(360deg); opacity: 0; }
+}
+
+/* Dust/Sand */
+.weather-dust, .weather-sand {
+  background: radial-gradient(circle, rgba(180,160,120,0.6) 0%, rgba(180,160,120,0.1) 100%);
+  border-radius: 50%;
+  animation: dustBlow linear infinite;
+}
+@keyframes dustBlow {
+  0% { transform: translate(-20px, 0) scale(1); opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.3; }
+  100% { transform: translate(calc(100vw + var(--wind-offset, 50px)), 30px) scale(0.5); opacity: 0; }
+}
+
+/* Thunderstorm rain (heavier) */
+.weather-thunderstorm {
+  background: linear-gradient(180deg, rgba(120,140,170,0.7), rgba(120,140,170,0.1));
+  border-radius: 0 0 2px 2px;
+  animation: rainFall linear infinite;
+}
+
+/* Lightning Flash */
+.weather-lightning {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.25);
+  animation: lightningFlash 0.3s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes lightningFlash {
+  0% { opacity: 1; }
+  20% { opacity: 0.6; }
+  40% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* Temperature Tint */
+.weather-temp-tint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: background 3s ease;
+}
+
+/* Wind Streaks */
+.weather-wind-streak {
+  position: absolute;
+  left: -20%;
+  width: 40%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), rgba(255,255,255,0.04), transparent);
+  animation: windStreak linear infinite;
+}
+@keyframes windStreak {
+  0% { transform: translateX(-100%); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 0.6; }
+  100% { transform: translateX(350%); opacity: 0; }
+}
+
+/* ===== SCENE GROUND LAYERS ===== */
+.scene-ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 1;
+}
+.scene-ground-meadow {
+  background: linear-gradient(to top,
+    var(--scene-ground, rgba(120,180,80,0.08)) 0%,
+    var(--scene-accent, rgba(180,220,120,0.04)) 40%,
+    transparent 100%);
+}
+.scene-ground-meadow::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 6px,
+    rgba(80,140,40,0.06) 6px, rgba(80,140,40,0.06) 7px);
+}
+.scene-ground-coastal {
+  background: linear-gradient(to top,
+    var(--scene-ground, rgba(180,200,220,0.08)) 0%,
+    var(--scene-accent, rgba(140,200,240,0.04)) 40%,
+    transparent 100%);
+}
+.scene-ground-coastal::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(180deg, rgba(100,180,220,0.06), rgba(180,200,220,0.03));
+  animation: waveSurge 4s ease-in-out infinite alternate;
+}
+@keyframes waveSurge {
+  0% { transform: translateY(0) scaleY(1); }
+  100% { transform: translateY(-5px) scaleY(1.2); }
+}
+.scene-ground-forest {
+  background: linear-gradient(to top,
+    var(--scene-ground, rgba(30,80,40,0.08)) 0%,
+    var(--scene-accent, rgba(60,100,50,0.04)) 40%,
+    transparent 100%);
+}
+.scene-ground-forest::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 15px,
+    rgba(30,60,20,0.05) 15px, rgba(30,60,20,0.05) 18px);
+}
+
+/* ===== SCENE CREATURES ===== */
+.scene-creature {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Rabbit */
+.creature-rabbit {
+  animation: rabbitHop ease-in-out forwards;
+}
+.rabbit-body {
+  width: 12px;
+  height: 8px;
+  background: rgba(180,160,140,0.5);
+  border-radius: 50%;
+  position: relative;
+}
+.rabbit-ear {
+  position: absolute;
+  width: 3px;
+  height: 8px;
+  background: rgba(180,160,140,0.5);
+  border-radius: 50% 50% 0 0;
+  top: -7px;
+}
+.rabbit-ear-l { left: 2px; transform: rotate(-10deg); }
+.rabbit-ear-r { left: 6px; transform: rotate(10deg); }
+.rabbit-tail {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(220,210,200,0.5);
+  border-radius: 50%;
+  right: -2px;
+  top: 2px;
+}
+@keyframes rabbitHop {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.7; }
+  20% { transform: translate(20px, -15px); }
+  30% { transform: translate(40px, 0); }
+  40% { transform: translate(60px, -12px); }
+  50% { transform: translate(80px, 0); }
+  60% { transform: translate(100px, -15px); }
+  70% { transform: translate(120px, 0); }
+  80% { transform: translate(130px, 0); opacity: 0.7; }
+  100% { transform: translate(160px, 0); opacity: 0; }
+}
+
+/* Bee */
+.creature-bee {
+  animation: beeFloat ease-in-out forwards;
+}
+.bee-body {
+  width: 8px;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, rgba(255,200,0,0.7) 0px, rgba(255,200,0,0.7) 2px, rgba(40,30,0,0.5) 2px, rgba(40,30,0,0.5) 4px);
+  border-radius: 50%;
+  position: relative;
+}
+.bee-wing {
+  position: absolute;
+  width: 6px;
+  height: 4px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 50%;
+  top: -3px;
+  animation: beeWing 0.1s ease-in-out infinite alternate;
+}
+.bee-wing-l { left: 0; transform-origin: bottom right; }
+.bee-wing-r { right: 0; transform-origin: bottom left; }
+@keyframes beeFloat {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.8; }
+  25% { transform: translate(calc(var(--bee-dx, 100px) * 0.3), calc(var(--bee-dy, -20px) * 0.5 - 10px)); }
+  50% { transform: translate(calc(var(--bee-dx, 100px) * 0.6), calc(var(--bee-dy, -20px) * 0.3 + 5px)); }
+  75% { transform: translate(calc(var(--bee-dx, 100px) * 0.8), calc(var(--bee-dy, -20px) * 0.7 - 8px)); }
+  90% { opacity: 0.6; }
+  100% { transform: translate(var(--bee-dx, 100px), var(--bee-dy, -20px)); opacity: 0; }
+}
+@keyframes beeWing {
+  0% { transform: scaleY(1) rotate(-20deg); }
+  100% { transform: scaleY(0.3) rotate(20deg); }
+}
+
+/* Dragonfly */
+.creature-dragonfly {
+  animation: dfFloat ease-in-out forwards;
+}
+.df-body {
+  width: 16px;
+  height: 3px;
+  background: rgba(80,160,200,0.5);
+  border-radius: 2px;
+  position: relative;
+}
+.df-wing {
+  position: absolute;
+  width: 10px;
+  height: 3px;
+  background: rgba(200,220,255,0.3);
+  border-radius: 50%;
+  top: -2px;
+  animation: dfWingBeat 0.08s ease-in-out infinite alternate;
+}
+.df-wing-l { left: 2px; transform-origin: bottom right; }
+.df-wing-r { left: 6px; transform-origin: bottom left; }
+@keyframes dfFloat {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.7; }
+  30% { transform: translate(calc(var(--df-dx, 150px) * 0.3), -20px); }
+  50% { transform: translate(calc(var(--df-dx, 150px) * 0.5), 10px); }
+  70% { transform: translate(calc(var(--df-dx, 150px) * 0.7), -15px); }
+  90% { opacity: 0.5; }
+  100% { transform: translate(var(--df-dx, 150px), 0); opacity: 0; }
+}
+@keyframes dfWingBeat {
+  0% { transform: scaleY(1); }
+  100% { transform: scaleY(0.2); }
+}
+
+/* Deer */
+.creature-deer {
+  animation: deerWalk linear forwards;
+}
+.deer-body {
+  width: 24px;
+  height: 14px;
+  background: rgba(160,120,80,0.45);
+  border-radius: 8px 12px 4px 4px;
+  position: relative;
+}
+.deer-head {
+  position: absolute;
+  width: 10px;
+  height: 8px;
+  background: rgba(160,120,80,0.45);
+  border-radius: 50%;
+  top: -4px;
+  right: -6px;
+}
+.deer-antler {
+  position: absolute;
+  width: 2px;
+  height: 8px;
+  background: rgba(120,90,60,0.4);
+  top: -11px;
+  border-radius: 1px;
+}
+.deer-antler-l { right: -2px; transform: rotate(-15deg); }
+.deer-antler-r { right: -6px; transform: rotate(15deg); }
+.deer-leg {
+  position: absolute;
+  width: 2px;
+  height: 10px;
+  background: rgba(140,100,70,0.4);
+  bottom: -9px;
+  border-radius: 0 0 1px 1px;
+}
+.deer-leg-fl { left: 4px; animation: deerStep 0.8s ease-in-out infinite; }
+.deer-leg-fr { left: 8px; animation: deerStep 0.8s ease-in-out infinite 0.4s; }
+.deer-leg-bl { right: 4px; animation: deerStep 0.8s ease-in-out infinite 0.2s; }
+.deer-leg-br { right: 8px; animation: deerStep 0.8s ease-in-out infinite 0.6s; }
+@keyframes deerWalk {
+  0% { transform: translateX(0); opacity: 0; }
+  5% { opacity: 0.6; }
+  90% { opacity: 0.5; }
+  100% { transform: translateX(var(--deer-dir, 300px)); opacity: 0; }
+}
+@keyframes deerStep {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+}
+
+/* Owl */
+.creature-owl {
+  animation: owlBob 3s ease-in-out infinite;
+}
+.owl-body {
+  width: 14px;
+  height: 16px;
+  background: rgba(120,100,80,0.5);
+  border-radius: 50% 50% 40% 40%;
+  position: relative;
+}
+.owl-eye {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: rgba(255,220,100,0.7);
+  border-radius: 50%;
+  top: 3px;
+  animation: owlBlink 4s ease-in-out infinite;
+}
+.owl-eye-l { left: 2px; }
+.owl-eye-r { right: 2px; }
+.owl-wing {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  background: rgba(100,80,60,0.4);
+  border-radius: 50%;
+  top: 4px;
+}
+.owl-wing-l { left: -4px; }
+.owl-wing-r { right: -4px; }
+@keyframes owlBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes owlBlink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+/* Bat */
+.creature-bat {
+  animation: batFly ease-in-out forwards;
+}
+.bat-body {
+  width: 6px;
+  height: 4px;
+  background: rgba(40,30,30,0.6);
+  border-radius: 50%;
+  position: relative;
+}
+.bat-wing {
+  position: absolute;
+  width: 12px;
+  height: 6px;
+  background: rgba(40,30,30,0.4);
+  top: -2px;
+  border-radius: 50% 50% 0 0;
+  animation: batFlap 0.15s ease-in-out infinite alternate;
+}
+.bat-wing-l { left: -10px; transform-origin: right center; }
+.bat-wing-r { right: -10px; transform-origin: left center; }
+@keyframes batFly {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.7; }
+  30% { transform: translate(calc(var(--bat-dx, 200px) * 0.3), calc(var(--bat-dy, -30px) * 0.4 - 20px)); }
+  60% { transform: translate(calc(var(--bat-dx, 200px) * 0.6), calc(var(--bat-dy, -30px) * 0.7 + 10px)); }
+  90% { opacity: 0.5; }
+  100% { transform: translate(var(--bat-dx, 200px), var(--bat-dy, -30px)); opacity: 0; }
+}
+@keyframes batFlap {
+  0% { transform: scaleY(1) rotate(-30deg); }
+  100% { transform: scaleY(0.3) rotate(30deg); }
+}
+
+/* Fox */
+.creature-fox {
+  animation: foxTrot linear forwards;
+}
+.fox-body {
+  width: 20px;
+  height: 10px;
+  background: rgba(200,100,40,0.5);
+  border-radius: 6px 10px 4px 4px;
+  position: relative;
+}
+.fox-tail {
+  position: absolute;
+  width: 14px;
+  height: 6px;
+  background: rgba(200,100,40,0.4);
+  border-radius: 50%;
+  left: -10px;
+  top: 0;
+  transform: rotate(-20deg);
+  animation: foxTailWag 1s ease-in-out infinite alternate;
+}
+.fox-ear {
+  position: absolute;
+  width: 4px;
+  height: 6px;
+  background: rgba(200,100,40,0.5);
+  border-radius: 50% 50% 0 0;
+  top: -5px;
+}
+.fox-ear-l { right: 4px; }
+.fox-ear-r { right: 0px; }
+@keyframes foxTrot {
+  0% { transform: translateX(0); opacity: 0; }
+  5% { opacity: 0.6; }
+  90% { opacity: 0.5; }
+  100% { transform: translateX(var(--fox-dir, 250px)); opacity: 0; }
+}
+@keyframes foxTailWag {
+  0% { transform: rotate(-20deg); }
+  100% { transform: rotate(-35deg); }
+}
+
+/* Squirrel */
+.creature-squirrel {
+  animation: squirrelScurry ease-in-out forwards;
+}
+.squirrel-body {
+  width: 10px;
+  height: 7px;
+  background: rgba(140,100,60,0.5);
+  border-radius: 50%;
+  position: relative;
+}
+.squirrel-tail {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  background: rgba(140,100,60,0.4);
+  border-radius: 50%;
+  left: -4px;
+  top: -6px;
+  transform: rotate(30deg);
+}
+@keyframes squirrelScurry {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.7; transform: translate(10px, -5px); }
+  25% { transform: translate(30px, 0); }
+  35% { transform: translate(35px, 0); }  /* pause */
+  50% { transform: translate(60px, -8px); }
+  60% { transform: translate(80px, 0); }
+  70% { transform: translate(85px, 0); } /* pause */
+  90% { opacity: 0.5; }
+  100% { transform: translate(120px, -20px); opacity: 0; }
+}
+
+/* Woodpecker */
+.creature-woodpecker {
+  animation: woodpeck 0.4s ease-in-out infinite;
+}
+.wp-body {
+  width: 8px;
+  height: 10px;
+  background: rgba(180,40,40,0.5);
+  border-radius: 50% 50% 30% 30%;
+  position: relative;
+}
+.wp-beak {
+  position: absolute;
+  width: 6px;
+  height: 2px;
+  background: rgba(60,50,40,0.6);
+  right: -5px;
+  top: 2px;
+  border-radius: 0 2px 2px 0;
+}
+@keyframes woodpeck {
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(8deg) translateX(2px); }
+}
+
+/* Seagull */
+.creature-seagull {
+  animation: seagullFly ease-in-out forwards;
+}
+.sg-body {
+  width: 10px;
+  height: 5px;
+  background: rgba(240,240,240,0.6);
+  border-radius: 50%;
+  position: relative;
+}
+.sg-wing {
+  position: absolute;
+  width: 14px;
+  height: 3px;
+  background: rgba(240,240,240,0.5);
+  top: -2px;
+  border-radius: 50%;
+  animation: sgFlap 0.4s ease-in-out infinite alternate;
+}
+.sg-wing-l { left: -12px; transform-origin: right center; }
+.sg-wing-r { right: -12px; transform-origin: left center; }
+@keyframes seagullFly {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.7; }
+  50% { transform: translate(calc(var(--sg-dx, 300px) * 0.5), calc(var(--sg-dy, -20px) * 0.5)); }
+  90% { opacity: 0.5; }
+  100% { transform: translate(var(--sg-dx, 300px), var(--sg-dy, -20px)); opacity: 0; }
+}
+@keyframes sgFlap {
+  0% { transform: rotate(-25deg); }
+  100% { transform: rotate(15deg); }
+}
+
+/* Crab */
+.creature-crab {
+  animation: crabWalk ease-in-out forwards;
+}
+.crab-body {
+  width: 10px;
+  height: 6px;
+  background: rgba(220,80,60,0.5);
+  border-radius: 50% 50% 30% 30%;
+  position: relative;
+}
+.crab-claw {
+  position: absolute;
+  width: 5px;
+  height: 4px;
+  background: rgba(220,80,60,0.4);
+  border-radius: 50%;
+  top: -1px;
+}
+.crab-claw-l { left: -4px; animation: clawSnap 2s ease-in-out infinite; }
+.crab-claw-r { right: -4px; animation: clawSnap 2s ease-in-out infinite 1s; }
+.crab-leg {
+  position: absolute;
+  width: 6px;
+  height: 1px;
+  background: rgba(200,70,50,0.4);
+  bottom: -1px;
+}
+.crab-leg-l { left: -3px; transform: rotate(30deg); }
+.crab-leg-r { right: -3px; transform: rotate(-30deg); }
+@keyframes crabWalk {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.5; }
+  100% { transform: translateX(var(--crab-dir, 120px)); opacity: 0; }
+}
+@keyframes clawSnap {
+  0%, 80%, 100% { transform: rotate(0); }
+  90% { transform: rotate(-20deg); }
+}
+
+/* Dolphin */
+.creature-dolphin {
+  animation: dolphinLeap ease-in-out forwards;
+}
+.dolphin-body {
+  width: 20px;
+  height: 8px;
+  background: rgba(100,140,180,0.5);
+  border-radius: 50% 60% 40% 50%;
+  position: relative;
+}
+.dolphin-fin {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(100,140,180,0.4);
+  border-radius: 0 50% 0 50%;
+  top: -5px;
+  left: 8px;
+  transform: rotate(45deg);
+}
+.dolphin-tail {
+  position: absolute;
+  width: 8px;
+  height: 4px;
+  background: rgba(100,140,180,0.4);
+  border-radius: 50%;
+  left: -5px;
+  top: 2px;
+}
+@keyframes dolphinLeap {
+  0% { transform: translate(0, 0) rotate(0); opacity: 0; }
+  10% { opacity: 0.7; }
+  30% { transform: translate(80px, -40px) rotate(-20deg); }
+  50% { transform: translate(160px, -60px) rotate(-10deg); }
+  70% { transform: translate(240px, -30px) rotate(10deg); }
+  85% { transform: translate(300px, 0) rotate(20deg); opacity: 0.5; }
+  100% { transform: translate(350px, 20px) rotate(25deg); opacity: 0; }
+}
+
+/* Fish */
+.creature-fish {
+  animation: fishSwim linear forwards;
+}
+.fish-body {
+  width: 10px;
+  height: 5px;
+  background: rgba(200,180,100,0.4);
+  border-radius: 50%;
+  position: relative;
+}
+.fish-tail {
+  position: absolute;
+  width: 5px;
+  height: 6px;
+  background: rgba(200,180,100,0.3);
+  border-radius: 0;
+  left: -3px;
+  top: -1px;
+  clip-path: polygon(100% 50%, 0 0, 0 100%);
+  animation: fishTail 0.3s ease-in-out infinite alternate;
+}
+@keyframes fishSwim {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.4; }
+  100% { transform: translateX(120vw); opacity: 0; }
+}
+@keyframes fishTail {
+  0% { transform: rotate(-15deg); }
+  100% { transform: rotate(15deg); }
+}
+
+/* Jellyfish */
+.creature-jellyfish {
+  animation: jellyfishFloat ease-in-out forwards;
+}
+.jf-body {
+  width: 14px;
+  height: 10px;
+  background: rgba(200,160,255,0.3);
+  border-radius: 50% 50% 20% 20%;
+  position: relative;
+}
+.jf-tentacle {
+  position: absolute;
+  width: 1px;
+  height: 12px;
+  background: rgba(200,160,255,0.2);
+  bottom: -11px;
+  animation: jfWiggle 2s ease-in-out infinite alternate;
+}
+.jf-t1 { left: 3px; animation-delay: 0s; }
+.jf-t2 { left: 7px; animation-delay: 0.3s; }
+.jf-t3 { left: 11px; animation-delay: 0.6s; }
+@keyframes jellyfishFloat {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.5; }
+  50% { transform: translateY(-60px); }
+  90% { opacity: 0.3; }
+  100% { transform: translateY(-100px); opacity: 0; }
+}
+@keyframes jfWiggle {
+  0% { transform: rotate(-10deg); }
+  100% { transform: rotate(10deg); }
+}
+
+/* Turtle */
+.creature-turtle {
+  animation: turtleCrawl linear forwards;
+}
+.turtle-shell {
+  width: 14px;
+  height: 10px;
+  background: rgba(80,120,60,0.5);
+  border-radius: 50% 50% 30% 30%;
+  position: relative;
+}
+.turtle-head {
+  position: absolute;
+  width: 5px;
+  height: 4px;
+  background: rgba(100,140,80,0.4);
+  border-radius: 50%;
+  right: -3px;
+  top: 3px;
+}
+.turtle-leg {
+  position: absolute;
+  width: 4px;
+  height: 3px;
+  background: rgba(100,140,80,0.3);
+  border-radius: 50%;
+  bottom: -2px;
+}
+.turtle-leg-fl { right: 0; animation: turtleStep 1.2s ease-in-out infinite; }
+.turtle-leg-fr { right: 4px; animation: turtleStep 1.2s ease-in-out infinite 0.6s; }
+@keyframes turtleCrawl {
+  0% { transform: translateX(0); opacity: 0; }
+  5% { opacity: 0.5; }
+  90% { opacity: 0.4; }
+  100% { transform: translateX(110vw); opacity: 0; }
+}
+@keyframes turtleStep {
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(20deg) translateX(2px); }
+}
+
+/* Whale */
+.creature-whale {
+  animation: whaleGlide linear forwards;
+}
+.whale-body {
+  width: 40px;
+  height: 16px;
+  background: rgba(60,80,120,0.3);
+  border-radius: 50% 60% 40% 50%;
+  position: relative;
+}
+.whale-tail {
+  position: absolute;
+  width: 14px;
+  height: 10px;
+  background: rgba(60,80,120,0.25);
+  border-radius: 50%;
+  left: -8px;
+  top: 3px;
+  animation: whaleTail 3s ease-in-out infinite alternate;
+}
+.whale-spout {
+  position: absolute;
+  width: 4px;
+  height: 0;
+  background: rgba(200,220,255,0.3);
+  top: -2px;
+  right: 10px;
+  border-radius: 2px;
+  animation: whaleSpout 8s ease-in-out infinite;
+}
+@keyframes whaleGlide {
+  0% { transform: translate(0, 0); opacity: 0; }
+  5% { opacity: 0.4; }
+  50% { transform: translate(55vw, -10px); }
+  90% { opacity: 0.3; }
+  100% { transform: translate(120vw, 0); opacity: 0; }
+}
+@keyframes whaleTail {
+  0% { transform: rotate(-5deg); }
+  100% { transform: rotate(5deg); }
+}
+@keyframes whaleSpout {
+  0%, 80%, 100% { height: 0; opacity: 0; }
+  85% { height: 15px; opacity: 0.5; }
+  90% { height: 20px; opacity: 0.3; }
+  95% { height: 10px; opacity: 0; }
+}
+
+/* ===== SCENE PREVIEW ===== */
+.scene-preview-box {
+  width: 100%;
+  height: 200px;
+  border-radius: var(--radius-lg, 16px);
+  overflow: hidden;
+  position: relative;
+  margin: 12px 0;
+  border: 1px solid var(--border-default, rgba(0,0,0,0.06));
+}
+.preview-period-label {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  font-family: Outfit, sans-serif;
+  z-index: 5;
+}
+.preview-weather-label {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  font-family: Outfit, sans-serif;
+  z-index: 5;
+  background: rgba(0,0,0,0.15);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.preview-sun {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: radial-gradient(circle, #FFF8E0, #FFD93D);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(255,200,60,0.5);
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  transition: left 1.5s ease, top 1.5s ease;
+}
+.preview-moon {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle at 35% 35%, #F5F0E0, #E0D8C8);
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(200,200,220,0.3);
+  top: 15%;
+  right: 20%;
+  z-index: 3;
+}
+.preview-star {
+  position: absolute;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  animation: starTwinkle 2s ease-in-out infinite alternate;
+  z-index: 2;
+}
+.preview-rain {
+  position: absolute;
+  top: -5px;
+  width: 1px;
+  height: 8px;
+  background: linear-gradient(180deg, rgba(150,170,200,0.6), transparent);
+  animation: previewRainFall 0.8s linear infinite;
+  z-index: 4;
+}
+@keyframes previewRainFall {
+  0% { transform: translateY(-5px); opacity: 0; }
+  20% { opacity: 0.6; }
+  100% { transform: translateY(200px); opacity: 0; }
+}
+.preview-snow {
+  position: absolute;
+  top: -5px;
+  width: 4px;
+  height: 4px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  animation: previewSnowFall 3s linear infinite;
+  z-index: 4;
+}
+@keyframes previewSnowFall {
+  0% { transform: translateY(-5px) translateX(0); opacity: 0; }
+  20% { opacity: 0.7; }
+  100% { transform: translateY(200px) translateX(20px); opacity: 0; }
+}
+.preview-cloud {
+  position: absolute;
+  height: 12px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 10px;
+  animation: previewCloudDrift 12s linear infinite;
+  left: -40px;
+  z-index: 3;
+}
+@keyframes previewCloudDrift {
+  0% { transform: translateX(-40px); }
+  100% { transform: translateX(calc(100% + 80px)); }
+}
+.preview-ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  z-index: 2;
+}
+.preview-ground.scene-ground-meadow {
+  background: linear-gradient(to top, rgba(100,160,60,0.25), transparent);
+}
+.preview-ground.scene-ground-coastal {
+  background: linear-gradient(to top, rgba(80,150,200,0.2), rgba(200,210,220,0.1), transparent);
+}
+.preview-ground.scene-ground-forest {
+  background: linear-gradient(to top, rgba(30,80,30,0.25), rgba(40,100,50,0.1), transparent);
+}
+.preview-creature {
+  position: absolute;
+  font-size: 18px;
+  z-index: 4;
+  animation: creatureBounce 2s ease-in-out infinite alternate;
+}
+@keyframes creatureBounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-5px); }
+}
+.preview-temp {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  font-family: Outfit, sans-serif;
+  z-index: 5;
+}
+
+/* ===== SETTINGS — SCENE PICKER ===== */
+.scene-options-row {
+  display: flex;
+  gap: 10px;
+  margin: 8px 0 12px;
+}
+.scene-option {
+  flex: 1;
+  padding: 12px 8px;
+  border-radius: var(--radius-md, 12px);
+  border: 2px solid var(--border-default, rgba(0,0,0,0.06));
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--bg2, #FAF5F0);
+}
+.scene-option.active {
+  border-color: var(--gold, #C9A96E);
+  background: rgba(201,169,110,0.08);
+  box-shadow: 0 2px 12px rgba(201,169,110,0.15);
+}
+.scene-option-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+.scene-option-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary, #3D2E22);
+  font-family: Outfit, sans-serif;
+}
+.scene-option-desc {
+  font-size: 10px;
+  color: var(--text-tertiary, #8C7B6B);
+  margin-top: 2px;
+  font-family: Outfit, sans-serif;
+}
+
+/* ===== LOCATION PROMPT ===== */
+.loc-prompt {
+  text-align: center;
+  padding: 20px 16px;
+}
+.loc-prompt-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+.loc-prompt-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary, #3D2E22);
+  margin: 0 0 8px;
+}
+.loc-prompt-desc {
+  font-size: 13px;
+  color: var(--text-secondary, #6B5D4F);
+  line-height: 1.5;
+  margin: 0 0 16px;
+  font-family: Outfit, sans-serif;
+}
+.loc-prompt-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.loc-feat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary, #6B5D4F);
+  font-family: Outfit, sans-serif;
+  padding: 6px 8px;
+  background: var(--bg2, #FAF5F0);
+  border-radius: var(--radius-sm, 8px);
+}
+.loc-feat span {
+  font-size: 16px;
+}
+.loc-prompt-skip {
+  font-size: 13px;
+  color: var(--text-tertiary, #8C7B6B);
+  cursor: pointer;
+  margin-top: 12px;
+  font-family: Outfit, sans-serif;
+}
+.loc-prompt-skip:hover {
+  color: var(--text-primary, #3D2E22);
+}
+
+/* ===== WEATHER INFO DISPLAY ===== */
+.weather-info-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: var(--bg2, #FAF5F0);
+  border-radius: var(--radius-md, 12px);
+  font-size: 12px;
+  font-family: Outfit, sans-serif;
+  color: var(--text-secondary, #6B5D4F);
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+.weather-icon { font-size: 18px; }
+.weather-temp { font-weight: 600; color: var(--text-primary, #3D2E22); }
+.weather-cond { text-transform: capitalize; }
+.weather-wind { opacity: 0.7; }
+
+/* ===== PREVIEW PLAY BUTTON ===== */
+.preview-play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--gold, #C9A96E);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md, 12px);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: Outfit, sans-serif;
+  cursor: pointer;
+  margin: 8px 0;
+  width: 100%;
+  transition: opacity 0.2s;
+}
+.preview-play-btn:active { opacity: 0.8; }
+.preview-play-btn.playing {
+  background: var(--rose, #C97B7B);
+}
+
+/* Star twinkle reuse */
+@keyframes starTwinkle {
+  0% { opacity: 0.3; }
+  100% { opacity: 1; }
+}

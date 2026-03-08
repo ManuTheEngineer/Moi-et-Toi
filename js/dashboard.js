@@ -1465,6 +1465,8 @@ function loadSettings() {
       setLivingSky(enabled);
     });
   }
+  // Weather settings
+  loadWeatherSettings();
 }
 
 function toggleLivingSkySetting(on) {
@@ -1472,6 +1474,61 @@ function toggleLivingSkySetting(on) {
   setLivingSky(on);
   if (db && user) {
     db.ref('settings/livingSky/' + user).set(on);
+  }
+}
+
+// ===== WEATHER SETTINGS =====
+function handleLocationSettingsBtn() {
+  var btn = document.getElementById('set-location-btn');
+  if (WEATHER.locationGranted) {
+    // Already granted — refresh weather
+    fetchWeather().then(function() {
+      updateWeatherInfoUI();
+      var container = document.getElementById('sky-scene');
+      if (container && livingSkyEnabled) renderLivingSky(container);
+      toast('Weather refreshed');
+    });
+  } else {
+    showLocationPrompt();
+  }
+}
+
+function loadWeatherSettings() {
+  // Update location button state
+  var btn = document.getElementById('set-location-btn');
+  if (btn && WEATHER.locationGranted) {
+    btn.textContent = 'Refresh';
+  }
+  // Show weather info if available
+  var infoEl = document.getElementById('weather-info-display');
+  if (infoEl && WEATHER.data) {
+    infoEl.classList.remove('d-none');
+    updateWeatherInfoUI();
+  }
+  // Audio toggle
+  var audioToggle = document.getElementById('set-ambient-audio');
+  if (audioToggle) audioToggle.checked = WEATHER.audioEnabled;
+  // Scene selection
+  document.querySelectorAll('.scene-option').forEach(function(opt) {
+    opt.classList.toggle('active', opt.getAttribute('data-scene') === WEATHER.scene);
+  });
+}
+
+function toggleScenePreview() {
+  var btn = document.getElementById('scene-preview-btn');
+  var box = document.getElementById('scene-preview-box');
+  if (!btn || !box) return;
+
+  if (WEATHER.previewRunning) {
+    stopScenePreview();
+    box.classList.add('d-none');
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Preview Full Day Transition';
+    btn.classList.remove('playing');
+  } else {
+    box.classList.remove('d-none');
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Stop Preview';
+    btn.classList.add('playing');
+    startScenePreview(WEATHER.scene, box);
   }
 }
 

@@ -3269,6 +3269,62 @@
     </div>
   </div>
 
+  <!-- Living Weather -->
+  <div class="form-card">
+    <div class="settings-row">
+      <div>
+        <span class="settings-label">Living Weather</span>
+        <div class="form-hint mt-2">Real weather from your location — rain, snow, sun, wind and more</div>
+      </div>
+      <button class="settings-btn btn-lavender" id="set-location-btn" onclick="handleLocationSettingsBtn()">Enable</button>
+    </div>
+    <div id="weather-info-display" class="weather-info-bar d-none"></div>
+  </div>
+
+  <!-- Ambient Audio -->
+  <div class="form-card">
+    <div class="settings-row mb-0">
+      <div>
+        <span class="settings-label">Nature Sounds</span>
+        <div class="form-hint mt-2">Ambient audio — wind, rain, birdsong, waves and creatures</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="set-ambient-audio" onchange="toggleAmbientAudio(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Scene Selection -->
+  <div class="form-card">
+    <span class="settings-label">Scene</span>
+    <div class="form-hint mt-2">Choose your living background world</div>
+    <div class="scene-options-row" id="scene-options-row">
+      <div class="scene-option active" data-scene="meadow" onclick="setWeatherScene('meadow')">
+        <div class="scene-option-icon">🌾</div>
+        <div class="scene-option-label">Meadow</div>
+        <div class="scene-option-desc">Fields & wildlife</div>
+      </div>
+      <div class="scene-option" data-scene="coastal" onclick="setWeatherScene('coastal')">
+        <div class="scene-option-icon">🌊</div>
+        <div class="scene-option-label">Coastal</div>
+        <div class="scene-option-desc">Ocean & shore</div>
+      </div>
+      <div class="scene-option" data-scene="forest" onclick="setWeatherScene('forest')">
+        <div class="scene-option-icon">🌲</div>
+        <div class="scene-option-label">Forest</div>
+        <div class="scene-option-desc">Woods & trails</div>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <button class="preview-play-btn" id="scene-preview-btn" onclick="toggleScenePreview()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+      Preview Full Day Transition
+    </button>
+    <div class="scene-preview-box d-none" id="scene-preview-box"></div>
+  </div>
+
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Account</div></div>
   <div class="form-card">
     <!-- Theme: light mode only -->
@@ -3384,6 +3440,7 @@
 <script src="js/app.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/weather.js"></script>
 <script src="js/metrics.js"></script>
 <script src="js/modules-core.js"></script>
 <script src="js/modules-social.js"></script>
