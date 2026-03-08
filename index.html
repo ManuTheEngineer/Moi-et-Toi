@@ -298,7 +298,7 @@
 <div class="pg" id="pg-together">
 <div class="ctn">
 
-  <!-- Quick Actions — direct access to sub-features -->
+  <!-- Quick Actions -->
   <div class="hub-actions">
     <button class="hub-action-btn" onclick="go('connect')">
       <div class="hub-action-icon ha-rose"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></div>
@@ -309,7 +309,7 @@
       <span>Play</span>
     </button>
     <button class="hub-action-btn" onclick="go('datenight')">
-      <div class="hub-action-icon ha-red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="hub-action-icon ha-red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
       <span>Date Night</span>
     </button>
     <button class="hub-action-btn" onclick="go('checkin')">
@@ -318,7 +318,18 @@
     </button>
   </div>
 
-  <!-- Daily Question — inline (was pg-question) -->
+  <!-- Connection pulse -->
+  <div class="hub-pulse-strip">
+    <div class="hub-pulse-item"><div class="hub-pulse-num c-gold" id="tog-streak">0</div><div class="hub-pulse-label">Day Streak</div></div>
+    <div class="hub-pulse-divider"></div>
+    <div class="hub-pulse-item"><div class="hub-pulse-num c-rose" id="tog-letters">0</div><div class="hub-pulse-label">Letters</div></div>
+    <div class="hub-pulse-divider"></div>
+    <div class="hub-pulse-item"><div class="hub-pulse-num c-lavender" id="tog-games">0</div><div class="hub-pulse-label">Games</div></div>
+    <div class="hub-pulse-divider"></div>
+    <div class="hub-pulse-item"><div class="hub-pulse-num c-teal" id="tog-dates">0</div><div class="hub-pulse-label">Dates</div></div>
+  </div>
+
+  <!-- Daily Question -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Daily Question</div>
     <div class="streak-bar" id="streak-bar" style="margin-left:auto">
       <span class="streak-fire streak-fire-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1012 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z"/></svg></span>
@@ -333,7 +344,7 @@
     <div class="dq-answers" id="dq-answers"></div>
   </div>
 
-  <!-- Deep Talk — inline (was pg-deeptalk) -->
+  <!-- Deep Talk -->
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Deep Talk</div></div>
   <div class="dt-current" id="dt-current">
     <div class="dt-depth" id="dt-depth">Level 1</div>
@@ -351,10 +362,10 @@
     <span class="bl-cat" onclick="setDTLevel('soul',this)">Soul</span>
   </div>
 
-  <!-- Know Your Person link -->
+  <!-- Know Your Person + Challenges -->
   <div class="hub-list-group" style="margin-top:16px">
     <div class="hub-list-row" onclick="go('knowyou')">
-      <div class="hub-list-icon">&#x2728;</div>
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
       <div class="hub-list-info">
         <div class="hub-list-name">Know Your Person</div>
         <div class="hub-list-sub">Learn everything about each other</div>
@@ -389,33 +400,78 @@
     </button>
   </div>
 
-  <!-- Today's Snapshot -->
-  <div class="hub-card" id="track-today-card">
-    <div class="hub-card-header">
-      <div class="hub-card-dot" style="background:var(--gold)"></div>
-      <div class="hub-card-title">Today</div>
+  <!-- Today at a Glance -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Today</div></div>
+  <div class="hub-today-grid">
+    <div class="hub-today-card htc-mood" onclick="go('mood')">
+      <div class="htc-emoji" id="well-mood-emoji"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+      <div class="htc-value" id="well-mood-val">--</div>
+      <div class="htc-label">Mood</div>
     </div>
-    <div class="hub-snapshot" id="track-snapshot">
-      <div class="hub-snap-item" onclick="go('mood')">
-        <div class="hub-snap-emoji" id="track-snap-mood">&#x2600;&#xFE0F;</div>
-        <div class="hub-snap-label">Mood</div>
-        <div class="hub-snap-value" id="track-snap-mood-val">Not logged</div>
+    <div class="hub-today-card htc-energy" onclick="go('fitness')">
+      <div class="htc-emoji"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <div class="htc-value" id="well-energy-val">--</div>
+      <div class="htc-label">Energy</div>
+    </div>
+    <div class="hub-today-card htc-workout" onclick="go('fitness')">
+      <div class="htc-emoji"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div class="htc-value" id="well-workout-val">--</div>
+      <div class="htc-label">Active</div>
+    </div>
+    <div class="hub-today-card htc-meals" onclick="go('nutrition')">
+      <div class="htc-emoji"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></div>
+      <div class="htc-value" id="well-meals-val">0</div>
+      <div class="htc-label">Meals</div>
+    </div>
+  </div>
+
+  <!-- Weekly Mood Chart -->
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">This Week</div></div>
+  <div class="hub-chart-card">
+    <div class="hub-week-dots" id="well-week-dots">
+      <div class="hub-week-day"><div class="hub-week-dot"></div><span>M</span></div>
+      <div class="hub-week-day"><div class="hub-week-dot"></div><span>T</span></div>
+      <div class="hub-week-day"><div class="hub-week-dot"></div><span>W</span></div>
+      <div class="hub-week-day"><div class="hub-week-dot"></div><span>T</span></div>
+      <div class="hub-week-day"><div class="hub-week-dot"></div><span>F</span></div>
+      <div class="hub-week-day"><div class="hub-week-dot"></div><span>S</span></div>
+      <div class="hub-week-day"><div class="hub-week-dot"></div><span>S</span></div>
+    </div>
+    <div class="hub-chart-stats">
+      <span class="hub-chart-stat"><span class="c-gold" id="well-avg-mood">--</span> avg mood</span>
+      <span class="hub-chart-stat"><span class="c-emerald" id="well-workouts">0</span> workouts</span>
+      <span class="hub-chart-stat"><span class="c-lavender" id="well-gratitudes">0</span> gratitudes</span>
+    </div>
+  </div>
+
+  <!-- Workout Programs -->
+  <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Workout Programs</div></div>
+  <div class="hub-list-group">
+    <div class="hub-list-row" onclick="go('w1')">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Foundation Sculpt</div>
+        <div class="hub-list-sub">Beginner strength &amp; shape</div>
       </div>
-      <div class="hub-snap-item" onclick="go('fitness')">
-        <div class="hub-snap-emoji" id="track-snap-energy">&#x26A1;</div>
-        <div class="hub-snap-label">Energy</div>
-        <div class="hub-snap-value" id="track-snap-energy-val">Not logged</div>
+      <div class="hub-list-arrow">&#x203A;</div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('w2')">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Elevated Sculpt</div>
+        <div class="hub-list-sub">Intermediate power &amp; definition</div>
       </div>
-      <div class="hub-snap-item" onclick="go('fitness')">
-        <div class="hub-snap-emoji">&#x1F3CB;&#xFE0F;</div>
-        <div class="hub-snap-label">Workout</div>
-        <div class="hub-snap-value" id="track-snap-workout-val">Not yet</div>
+      <div class="hub-list-arrow">&#x203A;</div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('w3')">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--lavender)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Full Body Sculpt</div>
+        <div class="hub-list-sub">Complete head-to-toe session</div>
       </div>
-      <div class="hub-snap-item" onclick="go('nutrition')">
-        <div class="hub-snap-emoji">&#x1F957;</div>
-        <div class="hub-snap-label">Meals</div>
-        <div class="hub-snap-value" id="track-snap-meals-val">0 logged</div>
-      </div>
+      <div class="hub-list-arrow">&#x203A;</div>
     </div>
   </div>
 </div>
@@ -436,7 +492,7 @@
       <span>Finances</span>
     </button>
     <button class="hub-action-btn" onclick="go('dreams')">
-      <div class="hub-action-icon ha-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg></div>
+      <div class="hub-action-icon ha-gold"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
       <span>Dreams</span>
     </button>
     <button class="hub-action-btn" onclick="go('lists')">
@@ -445,22 +501,72 @@
     </button>
   </div>
 
-  <!-- Feature Links -->
+  <!-- Upcoming Events Preview -->
+  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Coming Up</div></div>
+  <div class="hub-upcoming" id="plan-upcoming">
+    <div class="hub-upcoming-empty">
+      <div class="c-t3" style="font-size:12px">No upcoming events</div>
+      <button class="hub-upcoming-add" onclick="go('calendar')">Add to Calendar</button>
+    </div>
+  </div>
+
+  <!-- Budget Glimpse -->
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">This Month</div></div>
+  <div class="hub-budget-card" onclick="go('homelife')">
+    <div class="hub-budget-row">
+      <div class="hub-budget-item">
+        <div class="hub-budget-val c-cream" id="plan-spent">$0</div>
+        <div class="hub-budget-label">Spent</div>
+      </div>
+      <div class="hub-budget-divider"></div>
+      <div class="hub-budget-item">
+        <div class="hub-budget-val c-teal" id="plan-budget-left">--</div>
+        <div class="hub-budget-label">Budget Left</div>
+      </div>
+      <div class="hub-budget-divider"></div>
+      <div class="hub-budget-item">
+        <div class="hub-budget-val c-gold" id="plan-top-cat">--</div>
+        <div class="hub-budget-label">Top Category</div>
+      </div>
+    </div>
+    <div class="hub-budget-bar"><div class="hub-budget-fill" id="plan-budget-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Dreams + More -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Building Together</div></div>
   <div class="hub-list-group">
+    <div class="hub-list-row" onclick="go('dreams')">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Our Dreams</div>
+        <div class="hub-list-sub" id="plan-dreams-sub">Vision board &amp; goals</div>
+      </div>
+      <div class="hub-list-arrow">&#x203A;</div>
+    </div>
+    <div class="hub-list-divider"></div>
     <div class="hub-list-row" onclick="go('story')">
-      <div class="hub-list-icon">&#x1F4D6;</div>
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
       <div class="hub-list-info">
         <div class="hub-list-name">Our Timeline</div>
-        <div class="hub-list-sub">Milestones &#38; memories</div>
+        <div class="hub-list-sub">Milestones &amp; memories</div>
       </div>
       <div class="hub-list-arrow">&#x203A;</div>
     </div>
     <div class="hub-list-divider"></div>
     <div class="hub-list-row" onclick="go('values')">
-      <div class="hub-list-icon">&#x1F3DB;&#xFE0F;</div>
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--lavender)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
       <div class="hub-list-info">
         <div class="hub-list-name">Our Values</div>
-        <div class="hub-list-sub">Foundation, culture &#38; spiritual life</div>
+        <div class="hub-list-sub">Foundation, culture &amp; spiritual</div>
+      </div>
+      <div class="hub-list-arrow">&#x203A;</div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('lists')">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Lists</div>
+        <div class="hub-list-sub">Bucket list &amp; wishlists</div>
       </div>
       <div class="hub-list-arrow">&#x203A;</div>
     </div>
@@ -751,6 +857,8 @@
 <!-- ===== EXPLORE ===== -->
 <div class="pg" id="pg-more">
 <div class="ctn">
+
+  <!-- Quick Actions -->
   <div class="hub-actions">
     <button class="hub-action-btn" onclick="go('memories')">
       <div class="hub-action-icon ha-rose"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
@@ -770,12 +878,69 @@
     </button>
   </div>
 
-  <div class="hub-row" onclick="go('memories')"><div class="hub-row-ico">📸</div><div class="hub-row-label">Photo Memories</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-  <div class="hub-row" onclick="go('ai')"><div class="hub-row-ico">🤖</div><div class="hub-row-label">AI Chat</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-  <div class="hub-row" onclick="go('achievements')"><div class="hub-row-ico">🏆</div><div class="hub-row-label">Achievements</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
-  <div class="hub-row" onclick="go('settings')"><div class="hub-row-ico">⚙️</div><div class="hub-row-label">Settings</div><div class="hub-row-status"><span class="hub-chevron">›</span></div></div>
+  <!-- Couple Stats Card -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Our Journey</div></div>
+  <div class="hub-stats-card">
+    <div class="hub-stats-row">
+      <div class="hub-stats-item"><div class="hub-stats-num c-gold" id="more-days-together">--</div><div class="hub-stats-label">Days Together</div></div>
+      <div class="hub-stats-item"><div class="hub-stats-num c-rose" id="more-letters-sent">0</div><div class="hub-stats-label">Letters Sent</div></div>
+      <div class="hub-stats-item"><div class="hub-stats-num c-lavender" id="more-badges">0</div><div class="hub-stats-label">Badges Earned</div></div>
+    </div>
+  </div>
+
+  <!-- Feature Links -->
+  <div class="hub-list-group">
+    <div class="hub-list-row" onclick="go('memories')">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Photo Memories</div>
+        <div class="hub-list-sub">Your shared photo timeline</div>
+      </div>
+      <div class="hub-list-arrow">&#x203A;</div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('ai')">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--lavender)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">AI Chat</div>
+        <div class="hub-list-sub">Relationship advice &amp; ideas</div>
+      </div>
+      <div class="hub-list-arrow">&#x203A;</div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('achievements')">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Achievements</div>
+        <div class="hub-list-sub" id="more-badges-sub">Unlock badges together</div>
+      </div>
+      <div class="hub-list-arrow">&#x203A;</div>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Settings</div></div>
+  <div class="hub-list-group mb-20">
+    <div class="hub-list-row" onclick="toggleTheme()">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Theme</div>
+        <div class="hub-list-sub" id="more-theme-sub">Auto</div>
+      </div>
+    </div>
+    <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('settings')">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">All Settings</div>
+        <div class="hub-list-sub">Profile, API key, log out</div>
+      </div>
+      <div class="hub-list-arrow">&#x203A;</div>
+    </div>
+  </div>
 </div>
 </div>
+
 <!-- ===== GRATITUDE ===== -->
 <div class="pg" id="pg-gratitude">
 <div class="ctn">

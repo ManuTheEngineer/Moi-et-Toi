@@ -1775,3 +1775,73 @@
 body[data-page="together"]{--page-accent:var(--rose)}
 body[data-page="track"]{--page-accent:var(--gold)}
 body[data-page="build"]{--page-accent:var(--teal)}
+
+/* ===== HUB PULSE STRIP (Together page counters) ===== */
+.hub-pulse-strip{display:flex;align-items:center;justify-content:space-between;background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:18px;padding:14px 16px;box-shadow:var(--card-shadow);margin-bottom:16px}
+.hub-pulse-item{flex:1;text-align:center}
+.hub-pulse-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;line-height:1}
+.hub-pulse-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-top:3px}
+.hub-pulse-divider{width:1px;height:28px;background:var(--bdr-s);flex-shrink:0;margin:0 4px}
+
+/* ===== HUB TODAY GRID (Wellness page stats) ===== */
+.hub-today-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.hub-today-card{background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:16px;padding:14px 8px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer;transition:all .2s}
+.hub-today-card:active{transform:scale(.95)}
+.htc-emoji{margin-bottom:6px;display:flex;align-items:center;justify-content:center;color:var(--t2)}
+.htc-emoji svg{width:22px;height:22px}
+.htc-value{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--cream);line-height:1}
+.htc-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-top:4px}
+.htc-mood .htc-emoji{color:var(--gold)}
+.htc-energy .htc-emoji{color:var(--amber)}
+.htc-workout .htc-emoji{color:var(--emerald)}
+.htc-meals .htc-emoji{color:var(--rose)}
+
+/* ===== HUB CHART CARD (Wellness weekly) ===== */
+.hub-chart-card{background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:18px;padding:16px;box-shadow:var(--card-shadow);margin-bottom:16px}
+.hub-week-dots{display:flex;justify-content:space-between;gap:4px;margin-bottom:12px}
+.hub-week-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.hub-week-day span{font-size:9px;letter-spacing:.5px;color:var(--t3);text-transform:uppercase}
+.hub-week-dot{width:18px;height:18px;border-radius:50%;background:var(--bg3);transition:background .3s}
+.hub-week-dot.filled{background:var(--gold)}
+.hub-week-dot.good{background:var(--emerald)}
+.hub-week-dot.ok{background:var(--amber)}
+.hub-week-dot.low{background:var(--rose)}
+.hub-chart-stats{display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--bdr-s)}
+.hub-chart-stat{font-size:11px;color:var(--t2)}
+.hub-chart-stat span{font-weight:600}
+
+/* ===== HUB UPCOMING (Plan page events) ===== */
+.hub-upcoming{background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:18px;padding:16px;box-shadow:var(--card-shadow);margin-bottom:16px}
+.hub-upcoming-empty{text-align:center;padding:8px 0}
+.hub-upcoming-add{margin-top:10px;padding:10px 20px;border-radius:50px;border:none;background:var(--input-bg);color:var(--cream);font-family:'Outfit',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.hub-upcoming-add:hover{background:var(--gold);color:#fff}
+.hub-upcoming-add:active{transform:scale(.96)}
+.hub-upcoming-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr-s)}
+.hub-upcoming-item:last-child{border-bottom:none}
+.hub-upcoming-date{width:36px;height:36px;border-radius:10px;background:var(--tint);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.hub-upcoming-date .up-month{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);line-height:1}
+.hub-upcoming-date .up-day{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--cream);line-height:1}
+.hub-upcoming-info{flex:1;min-width:0}
+.hub-upcoming-name{font-size:13px;font-weight:500;color:var(--cream)}
+.hub-upcoming-time{font-size:10px;color:var(--t3);margin-top:1px}
+
+/* ===== HUB BUDGET CARD (Plan page finances) ===== */
+.hub-budget-card{background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:18px;padding:16px;box-shadow:var(--card-shadow);margin-bottom:16px;cursor:pointer;transition:all .2s}
+.hub-budget-card:active{transform:scale(.98)}
+.hub-budget-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.hub-budget-item{flex:1;text-align:center}
+.hub-budget-val{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;line-height:1}
+.hub-budget-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-top:3px}
+.hub-budget-divider{width:1px;height:28px;background:var(--bdr-s);flex-shrink:0;margin:0 4px}
+.hub-budget-bar{height:6px;border-radius:3px;background:var(--bg3);overflow:hidden}
+.hub-budget-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .6s ease}
+
+/* ===== HUB STATS CARD (More page journey) ===== */
+.hub-stats-card{background:var(--card-bg);backdrop-filter:blur(12px);border:1px solid var(--bdr-s);border-radius:18px;padding:18px 16px;box-shadow:var(--card-shadow);margin-bottom:16px}
+.hub-stats-row{display:flex;align-items:center;justify-content:space-between}
+.hub-stats-item{flex:1;text-align:center}
+.hub-stats-num{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;line-height:1}
+.hub-stats-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-top:4px}
+
+/* ===== UTILITY: mb-20 ===== */
+.mb-20{margin-bottom:20px}
