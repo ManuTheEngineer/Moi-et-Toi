@@ -243,13 +243,15 @@ function renderOnboardStep() {
 
   el.innerHTML = steps[onboardStep];
 
-  // Auto-focus text inputs and scroll into view for mobile keyboard
-  const input = el.querySelector('input[type="text"]');
+  // On mobile, programmatic focus() won't open the keyboard —
+  // only a real user tap does. Scroll input into view and when
+  // they tap it, ensure it stays visible above the keyboard.
+  const input = el.querySelector('input');
   if (input) {
-    setTimeout(() => {
-      input.focus();
-      setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
-    }, 350);
+    setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+    input.addEventListener('focus', () => {
+      setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
+    });
   }
 }
 
