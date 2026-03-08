@@ -111,10 +111,387 @@ function addMeshLayer() {
   document.body.appendChild(mesh);
 }
 
+// ===== SKY SCENE SYSTEM =====
+// Renders living backgrounds: moon/stars/shooting stars (dark), sun/clouds/birds (light)
+// Rotates through different scenes every ~90 seconds
+
+const SKY = {
+  currentScene: null,
+  sceneTimer: null,
+  shootTimer: null,
+  isDark: function() {
+    const theme = document.documentElement.getAttribute('data-theme');
+    if (theme === 'dark') return true;
+    if (theme === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme:dark)').matches;
+  }
+};
+
+// Dark mode scene configs
+const DARK_SCENES = [
+  { name:'crescent', moon:'crescent', stars:40, constellations:1, shootInterval:12000 },
+  { name:'fullMoon', moon:'full', stars:25, constellations:0, shootInterval:18000 },
+  { name:'halfMoon', moon:'half', stars:50, constellations:2, shootInterval:10000 },
+  { name:'starfield', moon:'none', stars:70, constellations:3, shootInterval:6000 },
+  { name:'newMoon', moon:'new', stars:55, constellations:1, shootInterval:8000 }
+];
+
+// Light mode scene configs
+const LIGHT_SCENES = [
+  { name:'clearDay', sun:true, clouds:3, birds:2, sunPos:{x:80,y:12} },
+  { name:'partlyCloudy', sun:true, clouds:5, birds:1, sunPos:{x:70,y:18} },
+  { name:'driftClouds', sun:false, clouds:6, birds:3, sunPos:{x:85,y:8} },
+  { name:'goldenHour', sun:true, clouds:2, birds:0, sunPos:{x:30,y:25}, golden:true }
+];
+
+function initSkyScene() {
+  const container = document.getElementById('sky-scene');
+  if (!container) return;
+  clearInterval(SKY.sceneTimer);
+  clearTimeout(SKY.shootTimer);
+  renderSkyScene(container);
+  // Rotate scenes every 90s
+  SKY.sceneTimer = setInterval(function() { renderSkyScene(container); }, 90000);
+}
+
+function renderSkyScene(container) {
+  container.innerHTML = '';
+  if (SKY.isDark()) {
+    const scenes = DARK_SCENES;
+    const scene = scenes[Math.floor(Math.random() * scenes.length)];
+    SKY.currentScene = scene;
+    renderNightSky(container, scene);
+  } else {
+    const scenes = LIGHT_SCENES;
+    const time = getTimeOfDay();
+    let scene;
+    if (time === 'golden' || time === 'evening') {
+      scene = scenes[3]; // golden hour
+    } else {
+      scene = scenes[Math.floor(Math.random() * 3)];
+    }
+    SKY.currentScene = scene;
+    renderDaySky(container, scene);
+  }
+}
+
+// ===== NIGHT SKY =====
+function renderNightSky(container, scene) {
+  // Moon
+  if (scene.moon !== 'none') {
+    renderMoon(container, scene.moon);
+  }
+
+  // Stars
+  for (let i = 0; i < scene.stars; i++) {
+    renderStar(container);
+  }
+
+  // Constellations
+  for (let c = 0; c < scene.constellations; c++) {
+    renderConstellation(container);
+  }
+
+  // Horizon glow
+  const hz = document.createElement('div');
+  hz.className = 'sky-horizon';
+  hz.style.cssText = 'height:120px;background:linear-gradient(to top,rgba(140,100,180,0.06),transparent)';
+  container.appendChild(hz);
+
+  // Wispy night clouds
+  for (let i = 0; i < 2; i++) {
+    renderCloud(container, true);
+  }
+
+  // Schedule shooting stars
+  scheduleShootingStar(container, scene.shootInterval);
+}
+
+function renderMoon(container, phase) {
+  const moonSize = 50 + Math.random() * 20;
+  const x = 65 + Math.random() * 25;
+  const y = 5 + Math.random() * 15;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'sky-moon';
+  wrap.style.cssText = 'width:' + moonSize + 'px;height:' + moonSize + 'px;right:' + x + 'px;top:' + y + '%';
+
+  // Glow
+  const glow = document.createElement('div');
+  glow.className = 'sky-moon-glow';
+  const gs = moonSize * 2.5;
+  glow.style.cssText = 'width:' + gs + 'px;height:' + gs + 'px;top:' + (-(gs - moonSize) / 2) + 'px;left:' + (-(gs - moonSize) / 2) + 'px;background:radial-gradient(circle,rgba(200,190,255,0.25),rgba(180,160,220,0.08) 50%,transparent 70%)';
+  wrap.appendChild(glow);
+
+  // Moon body
+  const body = document.createElement('div');
+  body.className = 'sky-moon-body';
+
+  if (phase === 'full') {
+    body.style.background = 'radial-gradient(circle at 40% 35%,#F0ECD8,#D4CFC0 60%,#B8B0A0)';
+    body.style.boxShadow = '0 0 20px rgba(200,190,255,0.3),inset -4px -2px 8px rgba(0,0,0,0.1)';
+  } else if (phase === 'crescent') {
+    body.style.background = 'radial-gradient(circle at 30% 40%,#E8E4D4,#C4BCA8)';
+    body.style.boxShadow = '0 0 15px rgba(200,190,255,0.2)';
+    // Shadow overlay for crescent
+    const shadow = document.createElement('div');
+    shadow.style.cssText = 'position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 70% 50%,rgba(14,10,18,0.95) 40%,transparent 70%)';
+    body.appendChild(shadow);
+  } else if (phase === 'half') {
+    body.style.background = 'linear-gradient(90deg,#E0DCD0 50%,rgba(14,10,18,0.9) 50%)';
+    body.style.boxShadow = '0 0 15px rgba(200,190,255,0.2)';
+  } else if (phase === 'new') {
+    body.style.background = 'rgba(40,30,50,0.8)';
+    body.style.boxShadow = '0 0 30px rgba(180,160,220,0.1)';
+    body.style.border = '1px solid rgba(180,160,220,0.1)';
+  }
+
+  // Craters (except new moon)
+  if (phase !== 'new' && phase !== 'crescent') {
+    var craters = [[25,30,8],[55,20,5],[40,60,6],[65,55,4],[30,75,3]];
+    craters.forEach(function(c) {
+      var cr = document.createElement('div');
+      cr.className = 'sky-moon-crater';
+      cr.style.cssText = 'left:' + c[0] + '%;top:' + c[1] + '%;width:' + c[2] + 'px;height:' + c[2] + 'px';
+      body.appendChild(cr);
+    });
+  }
+
+  wrap.appendChild(body);
+  container.appendChild(wrap);
+}
+
+function renderStar(container) {
+  const star = document.createElement('div');
+  const size = Math.random() < 0.15 ? (2 + Math.random() * 2) : (1 + Math.random() * 1.5);
+  const x = Math.random() * 100;
+  const y = Math.random() * 70; // keep stars in upper 70%
+  const dur = 2 + Math.random() * 5;
+  const delay = Math.random() * 5;
+  const lo = 0.1 + Math.random() * 0.3;
+  const hi = 0.5 + Math.random() * 0.5;
+
+  // Occasionally make bright cross-shaped stars
+  if (size > 3) {
+    star.className = 'sky-star-cross';
+    star.style.cssText = 'left:' + x + '%;top:' + y + '%;width:' + (size * 3) + 'px;height:1px;' +
+      '--tw-dur:' + dur + 's;--tw-lo:' + lo + ';--tw-hi:' + hi + ';animation:starTwinkle ' + dur + 's ease-in-out ' + delay + 's infinite alternate;opacity:' + lo;
+    star.style.setProperty('--after-h', size * 3 + 'px');
+    // Cross shape via ::after is in CSS
+    const cs = star.style;
+    cs.background = 'rgba(200,190,255,0.8)';
+    // Add vertical bar manually
+    var vert = document.createElement('div');
+    vert.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:1px;height:' + (size * 3) + 'px;background:rgba(200,190,255,0.8);border-radius:1px';
+    star.appendChild(vert);
+  } else {
+    const anim = Math.random() < 0.6 ? 'sky-star sky-star-twinkle' : 'sky-star sky-star-pulse';
+    star.className = anim;
+    star.style.cssText = 'left:' + x + '%;top:' + y + '%;width:' + size + 'px;height:' + size + 'px;' +
+      '--tw-dur:' + dur + 's;--tw-lo:' + lo + ';--tw-hi:' + hi + ';animation-delay:' + delay + 's;opacity:' + lo;
+    // Warmer star colors occasionally
+    if (Math.random() < 0.2) star.style.background = 'rgba(255,220,180,0.9)';
+    if (Math.random() < 0.1) star.style.background = 'rgba(180,200,255,0.9)';
+  }
+
+  container.appendChild(star);
+}
+
+function renderConstellation(container) {
+  // Small group of connected stars
+  const baseX = 10 + Math.random() * 70;
+  const baseY = 5 + Math.random() * 40;
+  const points = [];
+  const numPts = 4 + Math.floor(Math.random() * 4);
+
+  for (let i = 0; i < numPts; i++) {
+    const px = baseX + (Math.random() - 0.5) * 15;
+    const py = baseY + (Math.random() - 0.5) * 12;
+    points.push({x:px, y:py});
+
+    // Star at each point
+    const s = document.createElement('div');
+    s.className = 'sky-star sky-star-twinkle';
+    const sz = 1.5 + Math.random();
+    s.style.cssText = 'left:' + px + '%;top:' + py + '%;width:' + sz + 'px;height:' + sz + 'px;--tw-dur:' + (3 + Math.random() * 2) + 's;--tw-lo:0.4;--tw-hi:0.9;opacity:0.4;z-index:1';
+    container.appendChild(s);
+  }
+
+  // Lines between adjacent points
+  for (let i = 0; i < points.length - 1; i++) {
+    const a = points[i], b = points[i + 1];
+    // Convert % to approximate px for angle calc
+    const dx = (b.x - a.x);
+    const dy = (b.y - a.y);
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const angle = Math.atan2(dy * (window.innerHeight / 100), dx * (window.innerWidth / 100)) * (180 / Math.PI);
+    const line = document.createElement('div');
+    line.className = 'sky-const-line';
+    line.style.cssText = 'left:' + a.x + '%;top:' + a.y + '%;width:' + (len) + '%;transform:rotate(' + angle + 'deg);animation-delay:' + (i * 0.3) + 's';
+    container.appendChild(line);
+  }
+}
+
+function scheduleShootingStar(container, interval) {
+  clearTimeout(SKY.shootTimer);
+  function spawnShoot() {
+    if (!SKY.isDark()) return;
+    const shoot = document.createElement('div');
+    shoot.className = 'sky-shoot';
+    const startX = 10 + Math.random() * 60;
+    const startY = 5 + Math.random() * 35;
+    const angle = 15 + Math.random() * 30;
+    const dist = 150 + Math.random() * 200;
+    shoot.style.cssText = 'left:' + startX + '%;top:' + startY + '%;transform:rotate(' + angle + 'deg);--shoot-dist:' + dist + 'px;--shoot-dur:' + (1 + Math.random()) + 's';
+    container.appendChild(shoot);
+    // Remove after animation
+    setTimeout(function() { if (shoot.parentNode) shoot.remove(); }, 3000);
+    // Schedule next
+    SKY.shootTimer = setTimeout(spawnShoot, interval + Math.random() * interval);
+  }
+  SKY.shootTimer = setTimeout(spawnShoot, 2000 + Math.random() * interval);
+}
+
+// ===== DAY SKY =====
+function renderDaySky(container, scene) {
+  // Sun
+  if (scene.sun) {
+    renderSun(container, scene.sunPos, scene.golden);
+  }
+
+  // Clouds
+  for (let i = 0; i < scene.clouds; i++) {
+    renderCloud(container, false, scene.golden);
+  }
+
+  // Birds
+  for (let i = 0; i < (scene.birds || 0); i++) {
+    setTimeout(function() { renderBird(container); }, i * 4000 + Math.random() * 3000);
+  }
+
+  // Horizon glow
+  const hz = document.createElement('div');
+  hz.className = 'sky-horizon';
+  if (scene.golden) {
+    hz.style.cssText = 'height:180px;background:linear-gradient(to top,rgba(255,160,60,0.08),rgba(255,200,100,0.03),transparent)';
+  } else {
+    hz.style.cssText = 'height:100px;background:linear-gradient(to top,rgba(180,200,255,0.04),transparent)';
+  }
+  container.appendChild(hz);
+}
+
+function renderSun(container, pos, golden) {
+  const size = golden ? 70 : 55;
+  const sun = document.createElement('div');
+  sun.className = 'sky-sun';
+  sun.style.cssText = 'width:' + size + 'px;height:' + size + 'px;right:' + pos.x + 'px;top:' + pos.y + '%';
+
+  if (golden) {
+    sun.style.background = 'radial-gradient(circle,#FFEECC 0%,#FFB347 40%,#E67E22 100%)';
+    sun.style.boxShadow = '0 0 80px rgba(255,160,40,.5),0 0 160px rgba(255,120,20,.2)';
+  }
+
+  // Rays
+  var numRays = 8;
+  for (let i = 0; i < numRays; i++) {
+    const ray = document.createElement('div');
+    ray.className = 'sky-sun-ray';
+    const angle = (360 / numRays) * i;
+    const len = 30 + Math.random() * 40;
+    ray.style.cssText = 'width:' + len + 'px;--ray-angle:' + angle + 'deg;transform:rotate(' + angle + 'deg);animation-delay:' + (i * 0.3) + 's';
+    if (golden) ray.style.background = 'linear-gradient(90deg,rgba(255,180,60,.4),transparent)';
+    sun.appendChild(ray);
+  }
+
+  // Outer glow
+  const glow = document.createElement('div');
+  glow.className = 'sky-sun-glow';
+  const gs = size * 3;
+  glow.style.cssText = 'width:' + gs + 'px;height:' + gs + 'px;top:' + (-(gs - size) / 2) + 'px;left:' + (-(gs - size) / 2) + 'px';
+  sun.appendChild(glow);
+
+  container.appendChild(sun);
+}
+
+function renderCloud(container, isDarkMode, isGolden) {
+  const cloud = document.createElement('div');
+  cloud.className = 'sky-cloud' + (isDarkMode ? ' sky-cloud-dark' : '');
+
+  // Cloud body made of overlapping puffs
+  const w = 60 + Math.random() * 80;
+  const h = 20 + Math.random() * 15;
+  const y = 8 + Math.random() * 30;
+  const dur = 50 + Math.random() * 50;
+  const delay = Math.random() * 30;
+  const dir = Math.random() < 0.5 ? -1 : 1;
+  const opacity = isDarkMode ? (0.3 + Math.random() * 0.3) : (0.4 + Math.random() * 0.3);
+
+  cloud.style.cssText = 'top:' + y + '%;--cloud-dur:' + dur + 's;--cloud-delay:' + delay + 's;' +
+    '--cloud-start:' + (dir > 0 ? '-' + (w + 50) + 'px' : '110vw') + ';' +
+    '--cloud-end:' + (dir > 0 ? '110vw' : '-' + (w + 50) + 'px') + ';' +
+    '--cloud-opacity:' + opacity;
+
+  // Main body
+  const body = document.createElement('div');
+  body.className = 'sky-cloud-body';
+  body.style.cssText = 'width:' + w + 'px;height:' + h + 'px';
+  if (isGolden && !isDarkMode) {
+    body.style.background = 'rgba(255,220,180,0.4)';
+  }
+  cloud.appendChild(body);
+
+  // Puffs
+  var puffCount = 3 + Math.floor(Math.random() * 3);
+  for (let p = 0; p < puffCount; p++) {
+    const puff = document.createElement('div');
+    puff.className = 'sky-cloud-puff';
+    const pw = h * (0.8 + Math.random() * 0.6);
+    const px = (w * 0.15) + Math.random() * (w * 0.6);
+    puff.style.cssText = 'width:' + pw + 'px;height:' + pw + 'px;left:' + px + 'px;top:' + (-(pw * 0.4)) + 'px;border-radius:50%';
+    if (isGolden && !isDarkMode) puff.style.background = 'rgba(255,220,180,0.35)';
+    cloud.appendChild(puff);
+  }
+
+  container.appendChild(cloud);
+}
+
+function renderBird(container) {
+  const bird = document.createElement('div');
+  bird.className = 'sky-bird';
+  const startX = -20 + Math.random() * 30;
+  const startY = 10 + Math.random() * 25;
+  const dx = 200 + Math.random() * 300;
+  const dy = -(20 + Math.random() * 40);
+  const dur = 10 + Math.random() * 8;
+
+  bird.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--bird-dx:' + dx + 'px;--bird-dy:' + dy + 'px;--bird-dur:' + dur + 's';
+
+  const wl = document.createElement('div');
+  wl.className = 'sky-bird-wing sky-bird-wing-l';
+  const wr = document.createElement('div');
+  wr.className = 'sky-bird-wing sky-bird-wing-r';
+  bird.appendChild(wl);
+  bird.appendChild(wr);
+
+  container.appendChild(bird);
+  // Remove after animation
+  setTimeout(function() { if (bird.parentNode) bird.remove(); }, (dur + 2) * 1000);
+}
+
+// Watch for theme changes
+function onThemeChange() {
+  setTimeout(initSkyScene, 300);
+}
+
 // Init on load
 document.addEventListener('DOMContentLoaded', function() {
   spawnOrbs();
   addMeshLayer();
+  initSkyScene();
+  // Re-render sky when system theme changes (for auto-theme users)
+  window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function() {
+    if (typeof onThemeChange === 'function') onThemeChange();
+  });
   // Re-spawn orbs when time period changes
   setInterval(function() {
     const current = document.body.getAttribute('data-time');
@@ -233,6 +610,7 @@ function toggleTheme() {
   closeMenu();
   const labels = { auto: 'System', dark: 'Dark', light: 'Light' };
   toast('Theme: ' + labels[next]);
+  if (typeof onThemeChange === 'function') onThemeChange();
 }
 
 function updateThemeColor() {
