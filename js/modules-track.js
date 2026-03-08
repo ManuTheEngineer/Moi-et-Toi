@@ -1141,7 +1141,6 @@ function listenNutritionData() {
   });
   db.ref('nutrition/groceryList').on('value', snap => {
     groceryData = snap.val() || {};
-    renderGroceryList();
   });
   db.ref('nutrition/recipes').on('value', snap => {
     recipeData = snap.val() || {};

@@ -512,10 +512,10 @@ function initPullToRefresh() {
       ptr.style.height = h + 'px';
       if (dist > 80) {
         ptr.classList.add('show');
-        document.querySelector('.ptr-text').textContent = 'Release to refresh';
+        const pt1 = document.querySelector('.ptr-text'); if (pt1) pt1.textContent = 'Release to refresh';
       } else {
         ptr.classList.remove('show');
-        document.querySelector('.ptr-text').textContent = 'Pull to refresh';
+        const pt2 = document.querySelector('.ptr-text'); if (pt2) pt2.textContent = 'Pull to refresh';
       }
     }
   }, { passive: true });
@@ -525,7 +525,7 @@ function initPullToRefresh() {
     const ptr = document.getElementById('ptr');
     if (ptr && ptr.classList.contains('show')) {
       ptr.classList.add('refreshing');
-      document.querySelector('.ptr-text').textContent = 'Refreshing...';
+      const pt3 = document.querySelector('.ptr-text'); if (pt3) pt3.textContent = 'Refreshing...';
       listenMoods();
       setTimeout(() => {
         ptr.style.height = '0px';

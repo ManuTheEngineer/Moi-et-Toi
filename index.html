@@ -2442,7 +2442,7 @@
   <div class="us-only">
     <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Grocery List</div></div>
     <div class="bl-form">
-      <input type="text" id="grocery-input" placeholder="Add item...">
+      <input type="text" id="grocery-input" placeholder="Add item..." onkeydown="if(event.key==='Enter')addGroceryItem()">
       <button onclick="addGroceryItem()">+</button>
     </div>
     <div id="grocery-list"><div class="empty">Build your shared grocery list</div></div>
