@@ -764,6 +764,8 @@ function finishLogin() {
   setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); checkAchievements(); updateNavBadges(); initHubPages(); }, 1500);
   // Refresh badges periodically
   setInterval(updateNavBadges, 60000);
+  // Voice notes & in-app notifications
+  if (typeof initVoiceNotes === 'function') setTimeout(initVoiceNotes, 2000);
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }

@@ -866,6 +866,51 @@
   <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Open When...</div></div>
   <div id="ow-letters"><div class="empty">No sealed letters yet</div></div>
 
+  <!-- Voice Notes -->
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Voice Note</div></div>
+  <div class="form-hint" style="margin:-6px 0 6px">Record and send a voice message</div>
+  <div class="vn-record-section">
+    <button class="vn-record-btn" id="vn-record-btn" onclick="toggleVoiceRecord()">
+      <span class="vn-record-dot"></span>
+      <span id="vn-record-label">Hold or tap to record</span>
+    </button>
+    <div class="vn-timer" id="vn-timer"></div>
+    <div class="vn-controls" id="vn-controls">
+      <div class="vn-preview-row">
+        <button class="vn-play-preview" id="vn-play-preview" onclick="previewVoiceNote()">&#9654;</button>
+        <div class="vn-waveform" id="vn-waveform"></div>
+        <span class="vn-duration-label" id="vn-duration-label">0s</span>
+      </div>
+      <div class="vn-send-options">
+        <div class="vn-option-group">
+          <div class="vn-option-label">Disappears after</div>
+          <select class="vn-option-select" id="vn-expiry">
+            <option value="300">5 minutes</option>
+            <option value="3600" selected>1 hour</option>
+            <option value="86400">24 hours</option>
+            <option value="0">Until replayed</option>
+          </select>
+        </div>
+        <div class="vn-option-group">
+          <div class="vn-option-label">Max replays</div>
+          <select class="vn-option-select" id="vn-replays">
+            <option value="1">1 play</option>
+            <option value="3" selected>3 plays</option>
+            <option value="5">5 plays</option>
+            <option value="0">Unlimited</option>
+          </select>
+        </div>
+      </div>
+      <div class="vn-send-row">
+        <button class="vn-discard-btn" onclick="discardVoiceNote()">Discard</button>
+        <button class="vn-send-btn" onclick="sendVoiceNote()">Send Voice Note</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice Note Feed -->
+  <div id="vn-feed" style="margin-top:10px"></div>
+
   <!-- Send a Mood -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Send a Vibe</div></div>
   <div class="form-hint" style="margin:-6px 0 6px">Set the mood on your partner's screen</div>
@@ -3553,6 +3598,15 @@
 </div>
 
 </div><!-- end shell -->
+
+<!-- Notification Toast Banner -->
+<div class="notif-toast" id="notif-toast">
+  <div class="notif-toast-icon" id="notif-toast-icon"></div>
+  <div class="notif-toast-body">
+    <div class="notif-toast-from" id="notif-toast-from"></div>
+    <div class="notif-toast-msg" id="notif-toast-msg"></div>
+  </div>
+</div>
 
 <!-- Toast -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>

@@ -1295,20 +1295,26 @@ function toggleMoodSound(moodKey) {
 }
 
 function sendMoodToPartner(moodKey) {
-  if (typeof db === 'undefined' || !db || typeof user === 'undefined' || !user || typeof partnerUID === 'undefined' || !partnerUID) {
-    toast('Partner not connected');
+  if (typeof db === 'undefined' || !db || typeof user === 'undefined' || !user) {
+    toast('Not connected');
     return;
   }
   var mood = MOOD_SOUNDS[moodKey];
   if (!mood) return;
-  db.ref('notifications/' + partnerUID).push({
+  var partnerRole = user === 'her' ? 'him' : 'her';
+  db.ref('notifications/' + partnerRole).push({
     type: 'mood-sound',
     from: user,
+    fromName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
     mood: moodKey,
     label: mood.label,
     icon: mood.icon,
     ts: Date.now()
   });
+  if (typeof sendInAppNotif === 'function') {
+    var senderName = typeof NAMES !== 'undefined' ? NAMES[user] : user;
+    sendInAppNotif('mood', senderName + ' set the mood to ' + mood.label, mood.icon);
+  }
   toast('Sent ' + mood.label + ' mood to partner');
 }
 

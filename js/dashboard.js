@@ -1484,7 +1484,8 @@ go = function(p) {
   if (p === 'family') updateFAMStats();
   if (p === 'games') updateGamesStats();
   if (p === 'datenight') updateDNStats();
-  if (p === 'dash') { renderDailyTasks(); renderDashHero(); }
+  if (p === 'connect') { loadVoiceNoteFeed(); }
+  if (p === 'dash') { renderDailyTasks(); renderDashHero(); checkPartnerVoiceNote(); }
   if (p === 'settings') { loadSettings(); }
   if (p === 'fitness') renderFitnessHub();
   if (p === 'nutrition') renderNutritionDay();
@@ -1752,5 +1753,378 @@ function _timeAgo(ts) {
   if (diff < 3600) return Math.floor(diff / 60) + 'm';
   if (diff < 86400) return Math.floor(diff / 3600) + 'h';
   return Math.floor(diff / 86400) + 'd';
+}
+
+// ===== VOICE NOTES =====
+var vnRecorder = null;
+var vnChunks = [];
+var vnBlob = null;
+var vnRecording = false;
+var vnTimerInterval = null;
+var vnStartTime = 0;
+var vnPreviewAudio = null;
+var vnAvatarAudio = null;
+var vnAvatarPlaying = false;
+
+function toggleVoiceRecord() {
+  if (vnRecording) {
+    stopVoiceRecord();
+  } else {
+    startVoiceRecord();
+  }
+}
+
+function startVoiceRecord() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    toast('Voice recording not supported on this device');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+    vnChunks = [];
+    vnBlob = null;
+    var options = {};
+    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+      options.mimeType = 'audio/webm;codecs=opus';
+    } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+      options.mimeType = 'audio/webm';
+    } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+      options.mimeType = 'audio/mp4';
+    }
+    vnRecorder = new MediaRecorder(stream, options);
+    vnRecorder.ondataavailable = function(e) {
+      if (e.data.size > 0) vnChunks.push(e.data);
+    };
+    vnRecorder.onstop = function() {
+      vnBlob = new Blob(vnChunks, { type: vnRecorder.mimeType || 'audio/webm' });
+      stream.getTracks().forEach(function(t) { t.stop(); });
+      showVoiceNotePreview();
+    };
+    vnRecorder.start();
+    vnRecording = true;
+    vnStartTime = Date.now();
+    var btn = document.getElementById('vn-record-btn');
+    var label = document.getElementById('vn-record-label');
+    if (btn) btn.classList.add('recording');
+    if (label) label.textContent = 'Recording... tap to stop';
+    document.getElementById('vn-controls').classList.remove('show');
+    vnTimerInterval = setInterval(updateVnTimer, 100);
+    // Auto-stop at 60s
+    setTimeout(function() { if (vnRecording) stopVoiceRecord(); }, 60000);
+  }).catch(function(err) {
+    console.error('Mic access denied:', err);
+    toast('Microphone access denied');
+  });
+}
+
+function stopVoiceRecord() {
+  if (vnRecorder && vnRecorder.state === 'recording') {
+    vnRecorder.stop();
+  }
+  vnRecording = false;
+  clearInterval(vnTimerInterval);
+  var btn = document.getElementById('vn-record-btn');
+  var label = document.getElementById('vn-record-label');
+  if (btn) btn.classList.remove('recording');
+  if (label) label.textContent = 'Hold or tap to record';
+}
+
+function updateVnTimer() {
+  var elapsed = Math.floor((Date.now() - vnStartTime) / 1000);
+  var timerEl = document.getElementById('vn-timer');
+  if (timerEl) timerEl.textContent = elapsed + 's / 60s';
+}
+
+function showVoiceNotePreview() {
+  var controls = document.getElementById('vn-controls');
+  if (controls) controls.classList.add('show');
+  var duration = Math.round((Date.now() - vnStartTime) / 1000);
+  var durLabel = document.getElementById('vn-duration-label');
+  if (durLabel) durLabel.textContent = duration + 's';
+  document.getElementById('vn-timer').textContent = '';
+  // Generate waveform bars
+  var waveform = document.getElementById('vn-waveform');
+  if (waveform) {
+    var bars = '';
+    for (var i = 0; i < 30; i++) {
+      var h = Math.floor(Math.random() * 18) + 6;
+      bars += '<div class="vn-wave-bar" style="height:' + h + 'px"></div>';
+    }
+    waveform.innerHTML = bars;
+  }
+}
+
+function previewVoiceNote() {
+  if (!vnBlob) return;
+  if (vnPreviewAudio) {
+    vnPreviewAudio.pause();
+    vnPreviewAudio = null;
+    return;
+  }
+  var url = URL.createObjectURL(vnBlob);
+  vnPreviewAudio = new Audio(url);
+  vnPreviewAudio.volume = 0.8;
+  vnPreviewAudio.play();
+  vnPreviewAudio.onended = function() { vnPreviewAudio = null; };
+}
+
+function discardVoiceNote() {
+  vnBlob = null;
+  vnChunks = [];
+  var controls = document.getElementById('vn-controls');
+  if (controls) controls.classList.remove('show');
+  document.getElementById('vn-timer').textContent = '';
+  toast('Voice note discarded');
+}
+
+function sendVoiceNote() {
+  if (!vnBlob || !db || !user) return;
+  var expirySelect = document.getElementById('vn-expiry');
+  var replaySelect = document.getElementById('vn-replays');
+  var expirySec = parseInt(expirySelect.value) || 0;
+  var maxReplays = parseInt(replaySelect.value) || 0;
+
+  // Convert blob to base64 for Firebase Realtime DB
+  var reader = new FileReader();
+  reader.onloadend = function() {
+    var base64 = reader.result;
+    var noteData = {
+      from: user,
+      fromName: NAMES[user] || user,
+      audio: base64,
+      mimeType: vnBlob.type || 'audio/webm',
+      duration: Math.round((Date.now() - vnStartTime) / 1000),
+      timestamp: Date.now(),
+      expirySec: expirySec,
+      maxReplays: maxReplays,
+      playCount: 0,
+      expiresAt: expirySec > 0 ? Date.now() + (expirySec * 1000) : 0
+    };
+    db.ref('voiceNotes').push(noteData).then(function() {
+      // Send notification to partner
+      sendInAppNotif('voiceNote', NAMES[user] + ' sent you a voice note', '🎙');
+      toast('Voice note sent');
+      discardVoiceNote();
+      loadVoiceNoteFeed();
+      checkPartnerVoiceNote();
+    });
+  };
+  reader.readAsDataURL(vnBlob);
+}
+
+// ===== VOICE NOTE FEED (on Connect page) =====
+function loadVoiceNoteFeed() {
+  if (!db) return;
+  var feed = document.getElementById('vn-feed');
+  if (!feed) return;
+  db.ref('voiceNotes').orderByChild('timestamp').limitToLast(10).once('value', function(snap) {
+    if (!snap.exists()) { feed.innerHTML = ''; return; }
+    var notes = [];
+    snap.forEach(function(c) {
+      var v = c.val();
+      v._key = c.key;
+      // Check expiry
+      if (v.expiresAt && v.expiresAt > 0 && Date.now() > v.expiresAt) {
+        db.ref('voiceNotes/' + c.key).remove();
+        return;
+      }
+      // Check max replays
+      if (v.maxReplays > 0 && (v.playCount || 0) >= v.maxReplays) {
+        db.ref('voiceNotes/' + c.key).remove();
+        return;
+      }
+      notes.push(v);
+    });
+    notes.reverse();
+    if (notes.length === 0) { feed.innerHTML = ''; return; }
+    feed.innerHTML = notes.map(function(n) {
+      var replaysLeft = n.maxReplays > 0 ? (n.maxReplays - (n.playCount || 0)) + ' plays left' : 'unlimited';
+      var timeAgo = _timeAgo(n.timestamp);
+      return '<div class="vn-feed-item">' +
+        '<button class="vn-feed-play" onclick="playVoiceNoteFeed(\'' + n._key + '\')">&#9654;</button>' +
+        '<div class="vn-feed-info"><div class="vn-feed-from">from ' + (n.fromName || n.from) + '</div>' +
+        '<div class="vn-feed-meta">' + (n.duration || 0) + 's · ' + timeAgo + '</div></div>' +
+        '<div class="vn-feed-replays">' + replaysLeft + '</div></div>';
+    }).join('');
+  });
+}
+
+function playVoiceNoteFeed(key) {
+  if (!db || !key) return;
+  db.ref('voiceNotes/' + key).once('value', function(snap) {
+    if (!snap.exists()) return;
+    var note = snap.val();
+    // Increment play count
+    var newCount = (note.playCount || 0) + 1;
+    db.ref('voiceNotes/' + key + '/playCount').set(newCount);
+    // Check if should be removed after this play
+    if (note.maxReplays > 0 && newCount >= note.maxReplays) {
+      setTimeout(function() { db.ref('voiceNotes/' + key).remove(); loadVoiceNoteFeed(); }, 2000);
+    }
+    // Play audio as background-style
+    playVoiceAudioBackground(note.audio);
+  });
+}
+
+// ===== VOICE NOTE ON PARTNER AVATAR (Dashboard) =====
+function checkPartnerVoiceNote() {
+  if (!db || !user) return;
+  db.ref('voiceNotes').orderByChild('timestamp').limitToLast(5).once('value', function(snap) {
+    var avatar = document.getElementById('dash-partner-avatar');
+    if (!avatar) return;
+    // Remove existing play button
+    var existing = avatar.querySelector('.vn-avatar-play');
+    if (existing) existing.remove();
+    if (!snap.exists()) return;
+    var latestNote = null;
+    snap.forEach(function(c) {
+      var v = c.val();
+      v._key = c.key;
+      // Only show notes FROM partner TO this user
+      if (v.from !== user) {
+        // Check expiry
+        if (v.expiresAt && v.expiresAt > 0 && Date.now() > v.expiresAt) return;
+        // Check replays
+        if (v.maxReplays > 0 && (v.playCount || 0) >= v.maxReplays) return;
+        latestNote = v;
+      }
+    });
+    if (latestNote) {
+      var playBtn = document.createElement('div');
+      playBtn.className = 'vn-avatar-play';
+      playBtn.setAttribute('data-vn-key', latestNote._key);
+      playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+      playBtn.onclick = function(e) {
+        e.stopPropagation();
+        playAvatarVoiceNote(latestNote._key);
+      };
+      avatar.appendChild(playBtn);
+    }
+  });
+}
+
+function playAvatarVoiceNote(key) {
+  if (!db || !key) return;
+  if (vnAvatarPlaying) {
+    // Stop current playback
+    if (vnAvatarAudio) { vnAvatarAudio.pause(); vnAvatarAudio = null; }
+    vnAvatarPlaying = false;
+    var playBtn = document.querySelector('.vn-avatar-play');
+    if (playBtn) playBtn.classList.remove('vn-avatar-playing');
+    return;
+  }
+  db.ref('voiceNotes/' + key).once('value', function(snap) {
+    if (!snap.exists()) return;
+    var note = snap.val();
+    // Increment play count
+    var newCount = (note.playCount || 0) + 1;
+    db.ref('voiceNotes/' + key + '/playCount').set(newCount);
+    // Play as background audio
+    vnAvatarPlaying = true;
+    var playBtn = document.querySelector('.vn-avatar-play');
+    if (playBtn) playBtn.classList.add('vn-avatar-playing');
+    playVoiceAudioBackground(note.audio, function() {
+      vnAvatarPlaying = false;
+      if (playBtn) playBtn.classList.remove('vn-avatar-playing');
+      // Remove play button if max replays reached
+      if (note.maxReplays > 0 && newCount >= note.maxReplays) {
+        if (playBtn) playBtn.remove();
+        db.ref('voiceNotes/' + key).remove();
+      }
+      checkPartnerVoiceNote();
+    });
+  });
+}
+
+// ===== BACKGROUND-STYLE VOICE AUDIO PLAYBACK =====
+function playVoiceAudioBackground(dataUrl, onEnded) {
+  // Use regular Audio element with lower volume for background feel
+  if (vnAvatarAudio) { vnAvatarAudio.pause(); }
+  vnAvatarAudio = new Audio(dataUrl);
+  vnAvatarAudio.volume = 0.45; // Background-level volume
+  vnAvatarAudio.play().catch(function(e) { console.error('Voice playback error:', e); });
+  vnAvatarAudio.onended = function() {
+    vnAvatarAudio = null;
+    if (typeof onEnded === 'function') onEnded();
+  };
+}
+
+// ===== IN-APP NOTIFICATION SYSTEM =====
+function sendInAppNotif(type, message, icon) {
+  if (!db || !user) return;
+  var partnerRole = user === 'her' ? 'him' : 'her';
+  var notifData = {
+    type: type,
+    from: user,
+    fromName: NAMES[user] || user,
+    message: message,
+    icon: icon || '💬',
+    timestamp: Date.now(),
+    read: false
+  };
+  db.ref('notifications/' + partnerRole).push(notifData);
+}
+
+function listenNotifications() {
+  if (!db || !user) return;
+  db.ref('notifications/' + user).orderByChild('timestamp').limitToLast(1).on('child_added', function(snap) {
+    var notif = snap.val();
+    if (!notif || notif.read) return;
+    // Only show if recent (within last 10 seconds)
+    if (Date.now() - notif.timestamp > 10000) return;
+    showNotifToast(notif.fromName || notif.from, notif.message, notif.icon);
+    // Mark as read
+    db.ref('notifications/' + user + '/' + snap.key + '/read').set(true);
+    // If voice note, refresh avatar play button
+    if (notif.type === 'voiceNote') {
+      checkPartnerVoiceNote();
+    }
+  });
+}
+
+function showNotifToast(fromName, message, icon) {
+  var el = document.getElementById('notif-toast');
+  var iconEl = document.getElementById('notif-toast-icon');
+  var fromEl = document.getElementById('notif-toast-from');
+  var msgEl = document.getElementById('notif-toast-msg');
+  if (!el) return;
+  if (iconEl) iconEl.textContent = icon || '💬';
+  if (fromEl) fromEl.textContent = 'from ' + fromName;
+  if (msgEl) msgEl.textContent = message;
+  el.classList.add('show');
+  // Auto hide after 4 seconds
+  setTimeout(function() { el.classList.remove('show'); }, 4000);
+  // Haptic
+  if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+}
+
+// ===== ENHANCED NOTIFICATIONS FOR EXISTING ACTIONS =====
+// Patch sendTap to also send in-app notification
+(function() {
+  if (typeof window._origSendTap === 'undefined') {
+    window._origSendTap = window.sendTap;
+  }
+})();
+// We'll patch after DOM ready since sendTap is in modules-core.js
+function patchSendTapNotif() {
+  if (typeof sendTap === 'function' && !sendTap._patched) {
+    var origSendTap = sendTap;
+    window.sendTap = async function(e, type, emoji) {
+      await origSendTap(e, type, emoji);
+      var TAP_MSGS = { hug:'sent you a hug', kiss:'blew you a kiss', love:'sent you love', miss:'misses you', thinking:'is thinking of you' };
+      sendInAppNotif('tap', (NAMES[user] || user) + ' ' + (TAP_MSGS[type] || 'sent a tap'), emoji || '💕');
+    };
+    window.sendTap._patched = true;
+  }
+}
+
+// ===== INIT VOICE NOTES & NOTIFICATIONS =====
+function initVoiceNotes() {
+  checkPartnerVoiceNote();
+  listenNotifications();
+  patchSendTapNotif();
+  // Refresh avatar play button periodically
+  setInterval(checkPartnerVoiceNote, 30000);
+  // Load feed if on connect page
+  loadVoiceNoteFeed();
 }
 

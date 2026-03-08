@@ -1416,3 +1416,284 @@ body[data-time="night"] .bg-mesh {
   color: #fff;
 }
 
+/* ===== VOICE NOTE UI ===== */
+
+/* Record button on Connect page */
+.vn-record-section {
+  margin-top: 8px;
+}
+.vn-record-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 50px;
+  border: 2px solid var(--rose);
+  background: rgba(193,121,121,0.08);
+  color: var(--cream);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .3s;
+}
+.vn-record-btn:active { transform: scale(.97); }
+.vn-record-btn.recording {
+  border-color: #e74c3c;
+  background: rgba(231,76,60,0.15);
+  animation: vn-pulse 1s infinite;
+}
+@keyframes vn-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.3); }
+  50% { box-shadow: 0 0 0 12px rgba(231,76,60,0); }
+}
+.vn-record-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--rose);
+  transition: all .3s;
+}
+.vn-record-btn.recording .vn-record-dot {
+  background: #e74c3c;
+  animation: vn-dot-pulse 0.8s infinite;
+}
+@keyframes vn-dot-pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.vn-timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--t2);
+  margin-top: 6px;
+  text-align: center;
+}
+.vn-controls {
+  display: none;
+  margin-top: 10px;
+}
+.vn-controls.show { display: block; }
+.vn-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--input-bg);
+  border-radius: 14px;
+  margin-bottom: 10px;
+}
+.vn-play-preview {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gold);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.vn-waveform {
+  flex: 1;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.vn-wave-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+.vn-duration-label {
+  font-size: 11px;
+  color: var(--t3);
+  flex-shrink: 0;
+}
+.vn-send-options {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.vn-option-group {
+  flex: 1;
+}
+.vn-option-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--t3);
+  margin-bottom: 4px;
+}
+.vn-option-select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--bdr-s);
+  background: var(--input-bg);
+  color: var(--cream);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  -webkit-appearance: none;
+}
+.vn-send-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.vn-discard-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 50px;
+  border: 1px solid var(--bdr-s);
+  background: transparent;
+  color: var(--t2);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.vn-send-btn {
+  flex: 2;
+  padding: 12px;
+  border-radius: 50px;
+  border: none;
+  background: var(--gold);
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.vn-send-btn:active { transform: scale(.97); }
+
+/* Voice note play button on partner avatar */
+.dash-partner-avatar .vn-avatar-play {
+  position: absolute;
+  bottom: -4px;
+  left: -4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+  animation: vn-avatar-glow 2s infinite;
+  transition: all .2s;
+}
+.dash-partner-avatar .vn-avatar-play:active { transform: scale(.85); }
+.dash-partner-avatar .vn-avatar-play svg {
+  width: 10px;
+  height: 10px;
+  fill: #fff;
+}
+@keyframes vn-avatar-glow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,169,110,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(201,169,110,0); }
+}
+.vn-avatar-playing {
+  background: var(--rose) !important;
+  animation: none !important;
+}
+
+/* Voice note feed items */
+.vn-feed-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--input-bg);
+  border-radius: 14px;
+  margin-bottom: 6px;
+}
+.vn-feed-play {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gold);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.vn-feed-info {
+  flex: 1;
+  min-width: 0;
+}
+.vn-feed-from {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cream);
+}
+.vn-feed-meta {
+  font-size: 10px;
+  color: var(--t3);
+  margin-top: 2px;
+}
+.vn-feed-replays {
+  font-size: 10px;
+  color: var(--t3);
+  flex-shrink: 0;
+}
+
+/* Notification toast enhanced */
+.notif-toast {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3000;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(30,28,26,0.95), rgba(40,36,32,0.95));
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--bdr-s);
+  transform: translateY(-100%);
+  transition: transform .35s cubic-bezier(.2,.8,.3,1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.notif-toast.show { transform: translateY(0); }
+.notif-toast-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(201,169,110,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.notif-toast-body { flex: 1; min-width: 0; }
+.notif-toast-from {
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.notif-toast-msg {
+  font-size: 13px;
+  color: var(--cream);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
