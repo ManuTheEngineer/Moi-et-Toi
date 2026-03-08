@@ -1493,6 +1493,11 @@
 .c-emerald{color:var(--emerald)}.c-lavender{color:var(--lavender)}.c-t2{color:var(--t2)}.c-t3{color:var(--t3)}
 .c-red{color:var(--red)}
 
+/* --- Page Title (shared style for landing pages) --- */
+.pg-title-row{padding:10px 0 6px}
+.pg-title-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)}
+.pg-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:28px;letter-spacing:2px;color:var(--cream);margin-top:4px}
+
 /* --- Dashboard Components --- */
 .dash-greeting-row{padding:10px 0 6px;display:flex;align-items:center;justify-content:space-between}
 .dash-time-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3)}

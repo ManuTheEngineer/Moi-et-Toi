@@ -71,8 +71,9 @@ function updatePageHeader(p) {
   const backEl = document.getElementById('ph-back');
   if (!header) return;
 
-  // Hide header on dashboard (has its own greeting)
-  header.classList.toggle('hidden', p === 'dash');
+  // Hide header on landing pages (they have their own inline titles)
+  const isLanding = p === 'dash' || (TAB_LANDINGS[p] === p);
+  header.classList.toggle('hidden', isLanding);
 
   // Animate title change
   if (titleEl) {

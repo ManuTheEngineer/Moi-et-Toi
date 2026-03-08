@@ -59,9 +59,10 @@
 .ph-back:active{background:var(--tint);transform:scale(.88)}
 .ph-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;letter-spacing:2px;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ph-title.changing{opacity:0}
-/* Non-dash pages: header provides top spacing, ctn needs none */
+/* Non-landing pages: sticky header provides top spacing, ctn needs none */
 .pg .ctn{padding-top:0}
-#pg-dash .ctn{padding-top:calc(12px + env(safe-area-inset-top,20px))}
+/* Landing pages have inline titles — need their own safe-area top padding */
+#pg-dash .ctn,#pg-together .ctn,#pg-wellness .ctn,#pg-plan .ctn,#pg-more .ctn{padding-top:calc(12px + env(safe-area-inset-top,20px))}
 
 /* ===== BOTTOM NAV (full-width docked tab bar) ===== */
 .bnav{position:fixed;bottom:0;left:0;right:0;z-index:800;background:var(--nav-bg);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-top:1px solid var(--bdr-s);display:flex;justify-content:space-around;padding:8px 0 0;padding-bottom:env(safe-area-inset-bottom,8px)}
