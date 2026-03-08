@@ -676,52 +676,47 @@ function renderPelican(container) {
 }
 
 // ===== AMBIENT AUDIO SYSTEM =====
-// Audio requires user gesture — unlock and keep alive on every tap/click
+// Audio unlock — only needs to happen once per session
 function unlockAudio() {
+  if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') return;
   try {
     if (!WEATHER.audioCtx) {
       WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      console.log('[Audio] Created AudioContext, state:', WEATHER.audioCtx.state);
     }
     var ctx = WEATHER.audioCtx;
-    // Always resume — context can re-suspend on mobile
     if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
       ctx.resume().then(function() {
-        console.log('[Audio] Resumed, state:', ctx.state);
-        _afterAudioReady();
+        WEATHER.audioUnlocked = true;
+        _onAudioReady();
       });
-    } else if (ctx.state === 'running') {
-      if (!WEATHER.audioUnlocked) _afterAudioReady();
+    } else if (ctx.state === 'running' && !WEATHER.audioUnlocked) {
+      WEATHER.audioUnlocked = true;
+      _onAudioReady();
     }
-    // Play silent buffer to force unlock on iOS
-    var buf = ctx.createBuffer(1, 1, 22050);
-    var src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.connect(ctx.destination);
-    src.start(0);
-    WEATHER.audioUnlocked = true;
-  } catch(e) {
-    console.warn('[Audio] Unlock failed:', e);
-  }
+  } catch(e) {}
 }
 
-function _afterAudioReady() {
-  WEATHER.audioUnlocked = true;
+function _onAudioReady() {
   if (WEATHER.audioEnabled && Object.keys(WEATHER.audioNodes).length === 0) {
-    setTimeout(updateAmbientAudio, 50);
+    setTimeout(updateAmbientAudio, 100);
   }
   if (WEATHER.moodPlaying) {
-    setTimeout(function() { playMoodSound(WEATHER.moodPlaying); }, 150);
+    setTimeout(function() { playMoodSound(WEATHER.moodPlaying); }, 200);
   }
 }
 
-// Keep trying on EVERY interaction — context can re-suspend
+// Only listen until unlocked, then remove listeners
 function _tryUnlock() {
+  if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
+    // Done — remove listeners to stop firing on every tap
+    document.removeEventListener('touchstart', _tryUnlock);
+    document.removeEventListener('click', _tryUnlock);
+    return;
+  }
   unlockAudio();
 }
 document.addEventListener('touchstart', _tryUnlock, { passive: true });
 document.addEventListener('click', _tryUnlock);
-document.addEventListener('touchend', _tryUnlock, { passive: true });
 
 function generateNoise(type) {
   if (!WEATHER.audioCtx) return null;
@@ -1004,7 +999,10 @@ function playAmbientSound(type, volume) {
   if (!WEATHER.audioCtx || !WEATHER.audioEnabled) return;
   if (WEATHER.audioNodes[type]) return;
   var ctx = WEATHER.audioCtx;
-  if (ctx.state !== 'running') { ctx.resume(); return; }
+  if (ctx.state !== 'running') {
+    ctx.resume().then(function() { playAmbientSound(type, volume); });
+    return;
+  }
 
   var def = SOUND_DEFS[type];
   var vol = volume || 0.3;
@@ -1069,7 +1067,10 @@ function stopAllSounds() {
 
 function updateAmbientAudio() {
   if (!WEATHER.audioEnabled || !WEATHER.audioCtx) return;
-  if (WEATHER.audioCtx.state !== 'running') { WEATHER.audioCtx.resume(); return; }
+  if (WEATHER.audioCtx.state !== 'running') {
+    WEATHER.audioCtx.resume().then(function() { updateAmbientAudio(); });
+    return;
+  }
 
   var scene = SCENES[WEATHER.scene];
   if (!scene) { playAmbientSound('wind', 0.4); return; }

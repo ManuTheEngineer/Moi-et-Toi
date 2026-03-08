@@ -1804,12 +1804,17 @@ function startVoiceRecord() {
     vnRecorder.start();
     vnRecording = true;
     vnStartTime = Date.now();
+    // Mute ambient audio to prevent static/feedback in recording
+    if (typeof WEATHER !== 'undefined' && WEATHER.audioCtx) {
+      WEATHER._priorAudioState = WEATHER.audioCtx.state;
+      WEATHER.audioCtx.suspend();
+    }
     var btn = document.getElementById('vn-record-btn');
     var label = document.getElementById('vn-record-label');
     if (btn) btn.classList.add('recording');
     if (label) label.textContent = 'Recording... tap to stop';
     document.getElementById('vn-controls').classList.remove('show');
-    vnTimerInterval = setInterval(updateVnTimer, 100);
+    vnTimerInterval = setInterval(updateVnTimer, 500);
     // Auto-stop at 60s
     setTimeout(function() { if (vnRecording) stopVoiceRecord(); }, 60000);
   }).catch(function(err) {
@@ -1824,6 +1829,10 @@ function stopVoiceRecord() {
   }
   vnRecording = false;
   clearInterval(vnTimerInterval);
+  // Resume ambient audio after recording
+  if (typeof WEATHER !== 'undefined' && WEATHER.audioCtx && WEATHER._priorAudioState === 'running') {
+    WEATHER.audioCtx.resume();
+  }
   var btn = document.getElementById('vn-record-btn');
   var label = document.getElementById('vn-record-label');
   if (btn) btn.classList.remove('recording');
