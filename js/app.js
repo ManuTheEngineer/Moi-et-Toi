@@ -246,8 +246,6 @@ function finishLogin() {
   setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); checkAchievements(); updateNavBadges(); initHubPages(); }, 1500);
   // Refresh badges periodically
   setInterval(updateNavBadges, 60000);
-  // ONE-TIME DATA WIPE — remove this block after it runs
-  setTimeout(() => clearAllData(), 3000);
 }
 
 function switchUser() { firebase.auth().signOut(); location.reload(); }
