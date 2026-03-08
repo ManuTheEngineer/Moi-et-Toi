@@ -197,11 +197,11 @@ function initSkyScene() {
   if (!livingSkyEnabled) return;
   renderLivingSky(container);
   startCreatureLoop(container);
-  // Update sky every 2 minutes for sun/moon movement
+  // Update sky every 60 seconds for smoother sun/moon movement
   SKY.sceneTimer = setInterval(function() {
     if (!livingSkyEnabled) return;
     renderLivingSky(container);
-  }, 120000);
+  }, 60000);
 }
 
 // ===== SUN / MOON POSITION BASED ON REAL TIME =====
@@ -427,7 +427,7 @@ function startCreatureLoop(container) {
   SKY.creatureTimer = setInterval(function() {
     if (!livingSkyEnabled) return;
     spawnCreatures(container);
-  }, 12000);
+  }, 8000);
 }
 
 function spawnCreatures(container) {

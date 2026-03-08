@@ -1571,6 +1571,82 @@ function loadWeatherSettings() {
   });
 }
 
+// ===== MUSIC CONNECT =====
+function connectSpotify() {
+  openModal(
+    '<div style="text-align:center;padding:20px">' +
+      '<div style="font-size:40px;margin-bottom:12px">🎵</div>' +
+      '<h2 style="font-family:Cormorant Garamond,serif;font-size:22px;margin:0 0 8px">Connect Spotify</h2>' +
+      '<p style="font-size:13px;color:var(--t2);margin:0 0 16px;line-height:1.5">Share your Spotify profile or playlist link with your partner so you can listen together.</p>' +
+      '<input type="url" id="spotify-link" placeholder="Paste your Spotify link..." class="form-input" style="margin-bottom:12px">' +
+      '<button class="dq-submit w-full" onclick="saveSpotifyLink()">Save Link</button>' +
+      '<div id="spotify-partner-link" style="margin-top:12px;font-size:12px;color:var(--t3)"></div>' +
+    '</div>'
+  );
+  // Load existing links
+  if (db && user) {
+    db.ref('settings/music/' + user + '/spotify').once('value', function(s) {
+      var el = document.getElementById('spotify-link');
+      if (el && s.val()) el.value = s.val();
+    });
+    if (typeof partnerUID !== 'undefined' && partnerUID) {
+      db.ref('settings/music/' + partnerUID + '/spotify').once('value', function(s) {
+        var el = document.getElementById('spotify-partner-link');
+        if (el && s.val()) {
+          el.innerHTML = '<a href="' + s.val() + '" target="_blank" style="color:var(--gold)">Open partner\'s Spotify</a>';
+        }
+      });
+    }
+  }
+}
+
+function saveSpotifyLink() {
+  var link = document.getElementById('spotify-link');
+  if (!link || !link.value.trim()) return;
+  if (db && user) {
+    db.ref('settings/music/' + user + '/spotify').set(link.value.trim());
+    toast('Spotify link saved');
+    closeModal();
+  }
+}
+
+function connectYouTubeMusic() {
+  openModal(
+    '<div style="text-align:center;padding:20px">' +
+      '<div style="font-size:40px;margin-bottom:12px">🎶</div>' +
+      '<h2 style="font-family:Cormorant Garamond,serif;font-size:22px;margin:0 0 8px">Connect YouTube Music</h2>' +
+      '<p style="font-size:13px;color:var(--t2);margin:0 0 16px;line-height:1.5">Share a YouTube Music playlist link with your partner for synced vibes.</p>' +
+      '<input type="url" id="ytm-link" placeholder="Paste your YouTube Music link..." class="form-input" style="margin-bottom:12px">' +
+      '<button class="dq-submit w-full" onclick="saveYTMLink()">Save Link</button>' +
+      '<div id="ytm-partner-link" style="margin-top:12px;font-size:12px;color:var(--t3)"></div>' +
+    '</div>'
+  );
+  if (db && user) {
+    db.ref('settings/music/' + user + '/youtube').once('value', function(s) {
+      var el = document.getElementById('ytm-link');
+      if (el && s.val()) el.value = s.val();
+    });
+    if (typeof partnerUID !== 'undefined' && partnerUID) {
+      db.ref('settings/music/' + partnerUID + '/youtube').once('value', function(s) {
+        var el = document.getElementById('ytm-partner-link');
+        if (el && s.val()) {
+          el.innerHTML = '<a href="' + s.val() + '" target="_blank" style="color:var(--gold)">Open partner\'s YouTube Music</a>';
+        }
+      });
+    }
+  }
+}
+
+function saveYTMLink() {
+  var link = document.getElementById('ytm-link');
+  if (!link || !link.value.trim()) return;
+  if (db && user) {
+    db.ref('settings/music/' + user + '/youtube').set(link.value.trim());
+    toast('YouTube Music link saved');
+    closeModal();
+  }
+}
+
 async function saveSettings() {
   if (!db || !user) return;
   const nameEl = document.getElementById('set-name');

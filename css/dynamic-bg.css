@@ -1320,3 +1320,99 @@ body[data-time="night"] .bg-mesh {
 .weather-cond { text-transform: capitalize; }
 .weather-wind { opacity: 0.7; }
 
+/* ===== MOOD SOUNDS GRID ===== */
+.mood-sounds-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 8px 0;
+}
+.mood-sound-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  background: var(--bg2, #FAF5F0);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md, 12px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: Outfit, sans-serif;
+}
+.mood-sound-btn.active {
+  border-color: var(--gold, #C9A96E);
+  background: rgba(201,169,110,0.12);
+  box-shadow: 0 2px 12px rgba(201,169,110,0.2);
+}
+.mood-sound-btn:active { transform: scale(0.95); }
+.msb-icon { font-size: 20px; }
+.msb-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-secondary, #6B5D4F);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.mood-sound-btn.active .msb-label {
+  color: var(--gold, #C9A96E);
+}
+.mood-send-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--rose, #C97B7B);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md, 12px);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: Outfit, sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.2s;
+}
+.mood-send-btn:active { opacity: 0.8; }
+.mood-stop-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--bg3, #E8DDD0);
+  color: var(--text-secondary, #6B5D4F);
+  border: none;
+  border-radius: var(--radius-md, 12px);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: Outfit, sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* ===== MUSIC CONNECT ===== */
+.music-connect-row {
+  display: flex;
+  gap: 10px;
+}
+.music-connect-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius-md, 12px);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: Outfit, sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.music-connect-btn:active { opacity: 0.8; }
+.music-connect-btn.spotify {
+  background: #1DB954;
+  color: #fff;
+}
+.music-connect-btn.youtube {
+  background: #FF0000;
+  color: #fff;
+}
+

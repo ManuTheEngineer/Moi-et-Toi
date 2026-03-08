@@ -681,6 +681,9 @@ function unlockAudio() {
   if (WEATHER.audioUnlocked) return;
   try {
     WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (WEATHER.audioCtx.state === 'suspended') {
+      WEATHER.audioCtx.resume();
+    }
     // Create and play a silent buffer to unlock
     var buf = WEATHER.audioCtx.createBuffer(1, 1, 22050);
     var src = WEATHER.audioCtx.createBufferSource();
@@ -688,18 +691,27 @@ function unlockAudio() {
     src.connect(WEATHER.audioCtx.destination);
     src.start(0);
     WEATHER.audioUnlocked = true;
+    console.log('[Weather] Audio unlocked successfully');
     // Now start audio if it was enabled
     if (WEATHER.audioEnabled) {
-      updateAmbientAudio();
+      setTimeout(function() { updateAmbientAudio(); }, 100);
+    }
+    // Also start mood audio if it was playing
+    if (WEATHER.moodPlaying) {
+      setTimeout(function() { playMoodSound(WEATHER.moodPlaying); }, 200);
     }
   } catch(e) {
     console.warn('Audio unlock failed:', e);
   }
 }
 
-// Attach unlock to first user interaction
-document.addEventListener('touchstart', unlockAudio, { once: true });
-document.addEventListener('click', unlockAudio, { once: true });
+// Attach unlock to EVERY user interaction until it succeeds
+function _tryUnlock() {
+  if (!WEATHER.audioUnlocked) unlockAudio();
+}
+document.addEventListener('touchstart', _tryUnlock, { passive: true });
+document.addEventListener('click', _tryUnlock);
+document.addEventListener('touchend', _tryUnlock, { passive: true });
 
 function generateNoise(type) {
   if (!WEATHER.audioCtx) return null;
@@ -712,15 +724,14 @@ function generateNoise(type) {
   switch (type) {
     case 'rain':
       for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.035;
-        // Occasional louder drops
-        if (Math.random() < 0.002) data[i] *= 6;
+        data[i] = (Math.random() * 2 - 1) * 0.12;
+        if (Math.random() < 0.003) data[i] *= 4;
       }
       break;
     case 'lightRain':
       for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.015;
-        if (Math.random() < 0.001) data[i] *= 5;
+        data[i] = (Math.random() * 2 - 1) * 0.06;
+        if (Math.random() < 0.002) data[i] *= 4;
       }
       break;
     case 'wind':
@@ -728,7 +739,7 @@ function generateNoise(type) {
       for (var i = 0; i < bufferSize; i++) {
         var white = Math.random() * 2 - 1;
         b0 = 0.993 * b0 + 0.007 * white;
-        data[i] = b0 * 0.10;
+        data[i] = b0 * 0.35;
       }
       break;
     case 'forestWind':
@@ -737,11 +748,10 @@ function generateNoise(type) {
         var white = Math.random() * 2 - 1;
         b0 = 0.996 * b0 + 0.004 * white;
         b1 = 0.999 * b1 + 0.001 * white;
-        data[i] = (b0 * 0.06 + b1 * 0.03);
-        // Subtle rustling
-        if (Math.random() < 0.0005) {
+        data[i] = (b0 * 0.20 + b1 * 0.10);
+        if (Math.random() < 0.001) {
           for (var k = 0; k < Math.min(600, bufferSize - i); k++) {
-            data[i + k] += (Math.random() * 2 - 1) * 0.02 * Math.exp(-k / 200);
+            data[i + k] += (Math.random() * 2 - 1) * 0.08 * Math.exp(-k / 200);
           }
         }
       }
@@ -749,20 +759,18 @@ function generateNoise(type) {
     case 'waves':
       for (var i = 0; i < bufferSize; i++) {
         var t = i / sampleRate;
-        // Layered wave sounds at different frequencies
-        data[i] = Math.sin(t * 0.25) * 0.04 +
-                  Math.sin(t * 0.6 + 1.2) * 0.025 +
-                  Math.sin(t * 1.1 + 2.8) * 0.015 +
-                  (Math.random() * 2 - 1) * 0.008;
+        data[i] = Math.sin(t * 0.25) * 0.15 +
+                  Math.sin(t * 0.6 + 1.2) * 0.10 +
+                  Math.sin(t * 1.1 + 2.8) * 0.06 +
+                  (Math.random() * 2 - 1) * 0.03;
       }
       break;
     case 'thunder':
       for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.04;
-        // Rumbles
-        if (Math.random() < 0.0003) {
+        data[i] = (Math.random() * 2 - 1) * 0.08;
+        if (Math.random() < 0.0005) {
           for (var j = 0; j < Math.min(5000, bufferSize - i); j++) {
-            data[i + j] += (Math.random() * 2 - 1) * 0.25 * Math.exp(-j / 3000);
+            data[i + j] += (Math.random() * 2 - 1) * 0.50 * Math.exp(-j / 3000);
           }
         }
       }
@@ -772,11 +780,10 @@ function generateNoise(type) {
       for (var i = 0; i < bufferSize; i++) {
         var white = Math.random() * 2 - 1;
         b0 = 0.997 * b0 + 0.003 * white;
-        data[i] = b0 * 0.03;
-        // Chirps
-        if (Math.random() < 0.0004) {
+        data[i] = b0 * 0.10;
+        if (Math.random() < 0.0008) {
           for (var k = 0; k < Math.min(800, bufferSize - i); k++) {
-            data[i + k] += Math.sin(k * 0.6) * 0.04 * Math.exp(-k / 150);
+            data[i + k] += Math.sin(k * 0.6) * 0.15 * Math.exp(-k / 150);
           }
         }
       }
@@ -786,12 +793,11 @@ function generateNoise(type) {
       for (var i = 0; i < bufferSize; i++) {
         var white = Math.random() * 2 - 1;
         b0 = 0.998 * b0 + 0.002 * white;
-        data[i] = b0 * 0.02;
-        // Bird calls — warbling frequency sweeps
-        if (Math.random() < 0.00025) {
+        data[i] = b0 * 0.08;
+        if (Math.random() < 0.0005) {
           for (var k = 0; k < Math.min(2500, bufferSize - i); k++) {
             var freq = 0.3 + 0.25 * Math.sin(k / 250);
-            data[i + k] += Math.sin(k * freq) * 0.05 * Math.exp(-k / 1000);
+            data[i + k] += Math.sin(k * freq) * 0.18 * Math.exp(-k / 1000);
           }
         }
       }
@@ -801,12 +807,11 @@ function generateNoise(type) {
       for (var i = 0; i < bufferSize; i++) {
         var white = Math.random() * 2 - 1;
         b0 = 0.998 * b0 + 0.002 * white;
-        data[i] = b0 * 0.015;
-        // Seagull-like calls — higher, more nasal
-        if (Math.random() < 0.0002) {
+        data[i] = b0 * 0.06;
+        if (Math.random() < 0.0004) {
           for (var k = 0; k < Math.min(3000, bufferSize - i); k++) {
             var freq = 0.4 + 0.15 * Math.sin(k / 400);
-            data[i + k] += Math.sin(k * freq) * 0.04 * Math.exp(-k / 1200);
+            data[i + k] += Math.sin(k * freq) * 0.15 * Math.exp(-k / 1200);
           }
         }
       }
@@ -816,11 +821,10 @@ function generateNoise(type) {
       for (var i = 0; i < bufferSize; i++) {
         var white = Math.random() * 2 - 1;
         b0 = 0.999 * b0 + 0.001 * white;
-        data[i] = b0 * 0.02;
-        // Low hooting
-        if (Math.random() < 0.00008) {
+        data[i] = b0 * 0.08;
+        if (Math.random() < 0.00015) {
           for (var k = 0; k < Math.min(4000, bufferSize - i); k++) {
-            data[i + k] += Math.sin(k * 0.08) * 0.06 * Math.exp(-k / 2000);
+            data[i + k] += Math.sin(k * 0.08) * 0.20 * Math.exp(-k / 2000);
           }
         }
       }
@@ -832,18 +836,78 @@ function generateNoise(type) {
         var white = Math.random() * 2 - 1;
         b0 = 0.996 * b0 + 0.004 * white;
         b1 = 0.999 * b1 + 0.001 * white;
-        data[i] = (b0 + b1) * 0.025;
-        // Insect buzzes
-        if (Math.random() < 0.0003) {
+        data[i] = (b0 + b1) * 0.10;
+        if (Math.random() < 0.0006) {
           for (var k = 0; k < Math.min(500, bufferSize - i); k++) {
-            data[i + k] += Math.sin(k * 0.8) * 0.02 * Math.exp(-k / 150);
+            data[i + k] += Math.sin(k * 0.8) * 0.08 * Math.exp(-k / 150);
+          }
+        }
+      }
+      break;
+    // Mood sounds — richer, longer buffers
+    case 'moodRelaxing':
+      for (var i = 0; i < bufferSize; i++) {
+        var t = i / sampleRate;
+        data[i] = Math.sin(t * 0.15) * 0.12 + Math.sin(t * 0.22 + 0.8) * 0.08 +
+                  Math.sin(t * 0.35 + 1.5) * 0.05 + (Math.random() * 2 - 1) * 0.01;
+      }
+      break;
+    case 'moodRomantic':
+      var b0 = 0;
+      for (var i = 0; i < bufferSize; i++) {
+        var t = i / sampleRate;
+        b0 = 0.998 * b0 + 0.002 * (Math.random() * 2 - 1);
+        data[i] = Math.sin(t * 0.12) * 0.10 + Math.sin(t * 0.08 + 2) * 0.06 + b0 * 0.04;
+        if (Math.random() < 0.0002) {
+          for (var k = 0; k < Math.min(3000, bufferSize - i); k++) {
+            data[i + k] += Math.sin(k * 0.15) * 0.08 * Math.exp(-k / 1500);
+          }
+        }
+      }
+      break;
+    case 'moodLively':
+      for (var i = 0; i < bufferSize; i++) {
+        var t = i / sampleRate;
+        data[i] = Math.sin(t * 0.5) * 0.08 + Math.sin(t * 0.8 + 1) * 0.06 +
+                  Math.sin(t * 1.3 + 2) * 0.04 + (Math.random() * 2 - 1) * 0.03;
+        if (Math.random() < 0.001) data[i] += Math.sin(i * 0.3) * 0.12;
+      }
+      break;
+    case 'moodCozy':
+      var b0 = 0;
+      for (var i = 0; i < bufferSize; i++) {
+        var white = Math.random() * 2 - 1;
+        b0 = 0.997 * b0 + 0.003 * white;
+        data[i] = b0 * 0.15;
+        if (Math.random() < 0.0003) {
+          for (var k = 0; k < Math.min(1000, bufferSize - i); k++) {
+            data[i + k] += Math.sin(k * 0.15) * 0.06 * Math.exp(-k / 400);
+          }
+        }
+      }
+      break;
+    case 'moodFocused':
+      for (var i = 0; i < bufferSize; i++) {
+        var t = i / sampleRate;
+        data[i] = Math.sin(t * 0.10) * 0.08 + Math.sin(t * 0.07) * 0.06 +
+                  (Math.random() * 2 - 1) * 0.005;
+      }
+      break;
+    case 'moodPlayful':
+      for (var i = 0; i < bufferSize; i++) {
+        var t = i / sampleRate;
+        data[i] = Math.sin(t * 0.6 + Math.sin(t * 0.1) * 2) * 0.08 +
+                  Math.sin(t * 1.2) * 0.04 + (Math.random() * 2 - 1) * 0.02;
+        if (Math.random() < 0.001) {
+          for (var k = 0; k < Math.min(400, bufferSize - i); k++) {
+            data[i + k] += Math.sin(k * 0.5) * 0.10 * Math.exp(-k / 100);
           }
         }
       }
       break;
     default:
       for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.01;
+        data[i] = (Math.random() * 2 - 1) * 0.04;
       }
       break;
   }
@@ -914,14 +978,14 @@ function updateAmbientAudio() {
     if (keepSounds.indexOf(k) === -1) stopAmbientSound(k);
   });
 
-  // Play sounds
-  playAmbientSound(scene.sounds.base, 0.06);
-  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.10);
+  // Play sounds — boosted volumes for audibility
+  playAmbientSound(scene.sounds.base, 0.25);
+  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.35);
 
   // Weather sounds
   if (WEATHER.data) {
     var wxFx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wxFx && wxFx.sound) playAmbientSound(wxFx.sound, 0.12);
+    if (wxFx && wxFx.sound) playAmbientSound(wxFx.sound, 0.40);
   }
 }
 
@@ -1136,6 +1200,137 @@ function setWeatherScene(sceneName) {
 
   toast(SCENES[sceneName].label + ' activated');
 }
+
+// ===== MOOD SOUNDS SYSTEM =====
+// Ambient mood sounds for date nights, events, and partner sharing
+var MOOD_SOUNDS = {
+  relaxing:  { label: 'Relaxing',  icon: '🧘', type: 'moodRelaxing',  desc: 'Calm, peaceful ambient' },
+  romantic:  { label: 'Romantic',  icon: '🕯',  type: 'moodRomantic',  desc: 'Warm, intimate tones' },
+  cozy:      { label: 'Cozy',     icon: '☕', type: 'moodCozy',      desc: 'Soft, warm ambience' },
+  focused:   { label: 'Focused',  icon: '🎯', type: 'moodFocused',   desc: 'Minimal, concentration' },
+  lively:    { label: 'Lively',   icon: '🎉', type: 'moodLively',    desc: 'Upbeat, energetic' },
+  playful:   { label: 'Playful',  icon: '🎵', type: 'moodPlayful',   desc: 'Fun, lighthearted' },
+  rain:      { label: 'Rain',     icon: '🌧',  type: 'rain',          desc: 'Rainfall ambience' },
+  ocean:     { label: 'Ocean',    icon: '🌊', type: 'waves',         desc: 'Waves and shore' },
+  night:     { label: 'Night',    icon: '🌙', type: 'crickets',      desc: 'Crickets and evening' },
+  forest:    { label: 'Forest',   icon: '🌲', type: 'forestWind',    desc: 'Wind through trees' }
+};
+
+WEATHER.moodPlaying = null;
+WEATHER.moodNode = null;
+
+function playMoodSound(moodKey) {
+  // Stop any existing mood sound
+  stopMoodSound();
+
+  if (!WEATHER.audioUnlocked) {
+    WEATHER.moodPlaying = moodKey;
+    toast('Tap anywhere first, then the sound will play');
+    return;
+  }
+  if (!WEATHER.audioCtx) return;
+  if (WEATHER.audioCtx.state === 'suspended') WEATHER.audioCtx.resume();
+
+  var mood = MOOD_SOUNDS[moodKey];
+  if (!mood) return;
+
+  var buffer = generateNoise(mood.type);
+  if (!buffer) return;
+
+  var source = WEATHER.audioCtx.createBufferSource();
+  source.buffer = buffer;
+  source.loop = true;
+
+  var gain = WEATHER.audioCtx.createGain();
+  gain.gain.setValueAtTime(0, WEATHER.audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.45, WEATHER.audioCtx.currentTime + 1.5);
+
+  source.connect(gain);
+  gain.connect(WEATHER.audioCtx.destination);
+  source.start(0);
+
+  WEATHER.moodNode = { source: source, gain: gain };
+  WEATHER.moodPlaying = moodKey;
+
+  // Update UI
+  document.querySelectorAll('.mood-sound-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-mood') === moodKey);
+  });
+
+  toast(mood.label + ' mood playing');
+}
+
+function stopMoodSound() {
+  if (WEATHER.moodNode) {
+    try {
+      WEATHER.moodNode.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.5);
+      var node = WEATHER.moodNode;
+      setTimeout(function() { try { node.source.stop(); } catch(e) {} }, 600);
+    } catch(e) {}
+    WEATHER.moodNode = null;
+  }
+  WEATHER.moodPlaying = null;
+  document.querySelectorAll('.mood-sound-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+}
+
+function toggleMoodSound(moodKey) {
+  if (WEATHER.moodPlaying === moodKey) {
+    stopMoodSound();
+  } else {
+    playMoodSound(moodKey);
+  }
+  // Update send/stop buttons visibility
+  var sendBtn = document.getElementById('mood-send-btn');
+  var stopBtn = document.getElementById('mood-stop-all');
+  if (sendBtn) {
+    if (WEATHER.moodPlaying) sendBtn.classList.remove('d-none');
+    else sendBtn.classList.add('d-none');
+  }
+  if (stopBtn) {
+    if (WEATHER.moodPlaying) stopBtn.classList.remove('d-none');
+    else stopBtn.classList.add('d-none');
+  }
+}
+
+function sendMoodToPartner(moodKey) {
+  if (typeof db === 'undefined' || !db || typeof user === 'undefined' || !user || typeof partnerUID === 'undefined' || !partnerUID) {
+    toast('Partner not connected');
+    return;
+  }
+  var mood = MOOD_SOUNDS[moodKey];
+  if (!mood) return;
+  db.ref('notifications/' + partnerUID).push({
+    type: 'mood-sound',
+    from: user,
+    mood: moodKey,
+    label: mood.label,
+    icon: mood.icon,
+    ts: Date.now()
+  });
+  toast('Sent ' + mood.label + ' mood to partner');
+}
+
+// ===== DYNAMIC SKY SYNC =====
+// Update body data attributes for CSS transitions and synchronized colors
+function syncSkyState() {
+  var time = getTimeOfDay();
+  var prevTime = document.body.getAttribute('data-time');
+  document.body.setAttribute('data-time', time);
+
+  // If time period changed, refresh the sky
+  if (prevTime && prevTime !== time) {
+    var container = document.getElementById('sky-scene');
+    if (container && livingSkyEnabled) {
+      renderLivingSky(container);
+    }
+    updateAmbientAudio();
+    if (typeof spawnOrbs === 'function') spawnOrbs();
+  }
+}
+// Sync every 30 seconds for smoother transitions
+setInterval(syncSkyState, 30000);
 
 // ===== INIT =====
 function initWeatherSystem() {
