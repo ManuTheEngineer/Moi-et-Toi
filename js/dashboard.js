@@ -1579,11 +1579,12 @@ function connectSpotify() {
       '<div style="font-size:40px;margin-bottom:12px">🎵</div>' +
       '<h2 style="font-family:Cormorant Garamond,serif;font-size:22px;margin:0 0 8px">Connect Spotify</h2>' +
       '<p style="font-size:13px;color:var(--t2);margin:0 0 16px;line-height:1.5">Share your Spotify profile or playlist link with your partner so you can listen together.</p>' +
-      '<input type="url" id="spotify-link" placeholder="Paste your Spotify link..." class="form-input" style="margin-bottom:12px">' +
+      '<input type="text" id="spotify-link" placeholder="Paste your Spotify link..." class="form-input" style="margin-bottom:12px" autocomplete="off" autocorrect="off" autocapitalize="off">' +
       '<button class="dq-submit w-full" onclick="saveSpotifyLink()">Save Link</button>' +
       '<div id="spotify-partner-link" style="margin-top:12px;font-size:12px;color:var(--t3)"></div>' +
     '</div>'
   );
+  setTimeout(function() { var el = document.getElementById('spotify-link'); if (el) el.focus(); }, 350);
   // Load existing links
   if (db && user) {
     db.ref('settings/music/' + user + '/spotify').once('value', function(s) {
@@ -1617,11 +1618,12 @@ function connectYouTubeMusic() {
       '<div style="font-size:40px;margin-bottom:12px">🎶</div>' +
       '<h2 style="font-family:Cormorant Garamond,serif;font-size:22px;margin:0 0 8px">Connect YouTube Music</h2>' +
       '<p style="font-size:13px;color:var(--t2);margin:0 0 16px;line-height:1.5">Share a YouTube Music playlist link with your partner for synced vibes.</p>' +
-      '<input type="url" id="ytm-link" placeholder="Paste your YouTube Music link..." class="form-input" style="margin-bottom:12px">' +
+      '<input type="text" id="ytm-link" placeholder="Paste your YouTube Music link..." class="form-input" style="margin-bottom:12px" autocomplete="off" autocorrect="off" autocapitalize="off">' +
       '<button class="dq-submit w-full" onclick="saveYTMLink()">Save Link</button>' +
       '<div id="ytm-partner-link" style="margin-top:12px;font-size:12px;color:var(--t3)"></div>' +
     '</div>'
   );
+  setTimeout(function() { var el = document.getElementById('ytm-link'); if (el) el.focus(); }, 350);
   if (db && user) {
     db.ref('settings/music/' + user + '/youtube').once('value', function(s) {
       var el = document.getElementById('ytm-link');
