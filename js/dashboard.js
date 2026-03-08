@@ -1781,7 +1781,20 @@ function startVoiceRecord() {
     toast('Voice recording not supported on this device');
     return;
   }
-  navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+  // Suspend ambient audio BEFORE requesting mic to prevent feedback/static
+  if (typeof WEATHER !== 'undefined' && WEATHER.audioCtx) {
+    WEATHER._priorAudioState = WEATHER.audioCtx.state;
+    WEATHER.audioCtx.suspend();
+  }
+  // Request mic with noise suppression + echo cancellation for clean audio
+  var audioConstraints = {
+    echoCancellation: true,
+    noiseSuppression: true,
+    autoGainControl: true,
+    channelCount: 1,
+    sampleRate: 44100
+  };
+  navigator.mediaDevices.getUserMedia({ audio: audioConstraints }).then(function(stream) {
     vnChunks = [];
     vnBlob = null;
     var options = {};
@@ -1801,24 +1814,24 @@ function startVoiceRecord() {
       stream.getTracks().forEach(function(t) { t.stop(); });
       showVoiceNotePreview();
     };
-    vnRecorder.start();
+    vnRecorder.start(250); // collect chunks every 250ms for smoother data
     vnRecording = true;
     vnStartTime = Date.now();
-    // Mute ambient audio to prevent static/feedback in recording
-    if (typeof WEATHER !== 'undefined' && WEATHER.audioCtx) {
-      WEATHER._priorAudioState = WEATHER.audioCtx.state;
-      WEATHER.audioCtx.suspend();
-    }
     var btn = document.getElementById('vn-record-btn');
     var label = document.getElementById('vn-record-label');
     if (btn) btn.classList.add('recording');
     if (label) label.textContent = 'Recording... tap to stop';
-    document.getElementById('vn-controls').classList.remove('show');
+    var vnControls = document.getElementById('vn-controls');
+    if (vnControls) vnControls.classList.remove('show');
     vnTimerInterval = setInterval(updateVnTimer, 500);
     // Auto-stop at 60s
     setTimeout(function() { if (vnRecording) stopVoiceRecord(); }, 60000);
   }).catch(function(err) {
     console.error('Mic access denied:', err);
+    // Resume audio if mic was denied
+    if (typeof WEATHER !== 'undefined' && WEATHER.audioCtx && WEATHER._priorAudioState === 'running') {
+      WEATHER.audioCtx.resume();
+    }
     toast('Microphone access denied');
   });
 }

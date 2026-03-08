@@ -1364,7 +1364,7 @@ function calNav(dir) {
     var diff = e.changedTouches[0].clientX - startX;
     if (Math.abs(diff) > 60) calNav(diff < 0 ? 1 : -1);
     startX = 0;
-  });
+  }, { passive: true });
 })();
 
 function selectCalDay(dateStr) {

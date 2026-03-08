@@ -708,11 +708,12 @@ function _onAudioReady() {
 // Only listen until unlocked, then remove listeners
 function _tryUnlock() {
   if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
-    // Done — remove listeners to stop firing on every tap
     document.removeEventListener('touchstart', _tryUnlock);
     document.removeEventListener('click', _tryUnlock);
     return;
   }
+  // Don't fight AudioContext.suspend() during voice recording
+  if (typeof vnRecording !== 'undefined' && vnRecording) return;
   unlockAudio();
 }
 document.addEventListener('touchstart', _tryUnlock, { passive: true });
@@ -1460,8 +1461,9 @@ setInterval(syncSkyState, 30000);
 
 // Periodic audio retry — if enabled but no sounds playing, try again
 setInterval(function() {
+  // Skip retry during voice recording (AudioContext is deliberately suspended)
+  if (typeof vnRecording !== 'undefined' && vnRecording) return;
   if (WEATHER.audioEnabled && WEATHER.audioCtx && Object.keys(WEATHER.audioNodes).length === 0) {
-    console.log('[Audio] Retry: no sounds playing, attempting to start');
     if (WEATHER.audioCtx.state !== 'running') {
       WEATHER.audioCtx.resume().then(function() { updateAmbientAudio(); });
     } else {
