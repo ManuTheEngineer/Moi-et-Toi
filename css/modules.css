@@ -2010,5 +2010,75 @@ body[data-page="build"]{--page-accent:var(--teal)}
 .hub-stats-num{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;line-height:1}
 .hub-stats-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-top:4px}
 
+/* ===== WAKE UP TOGETHER ===== */
+.wu-hero-card{text-align:center;padding:28px 20px 24px;background:var(--card-bg);border-radius:20px;box-shadow:var(--card-shadow);margin-bottom:20px;position:relative;overflow:hidden}
+.wu-hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--lavender),var(--gold),var(--rose))}
+.wu-hero-icon{margin:0 auto 12px;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(123,104,174,.15),rgba(184,134,11,.15));color:var(--gold)}
+.wu-hero-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--cream);letter-spacing:.5px}
+.wu-hero-sub{font-size:12px;color:var(--t3);margin-top:6px}
+
+.wu-status-card{background:var(--card-bg);border-radius:18px;box-shadow:var(--card-shadow);padding:20px 16px;margin-bottom:16px}
+.wu-partner-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.wu-partner{flex:1;text-align:center}
+.wu-partner-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;color:var(--t2)}
+.wu-avatar-her{background:linear-gradient(135deg,rgba(232,84,122,.15),rgba(232,84,122,.08))}
+.wu-avatar-him{background:linear-gradient(135deg,rgba(26,168,168,.15),rgba(26,168,168,.08))}
+.wu-partner-name{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:4px}
+.wu-partner-status{font-size:18px;font-family:'Cormorant Garamond',serif;color:var(--t3);transition:color .3s}
+.wu-partner-status.set{color:var(--gold);font-weight:500}
+.wu-partner-tz{font-size:10px;color:var(--t3);margin-top:2px;letter-spacing:.5px}
+.wu-bridge{display:flex;align-items:center;flex-shrink:0;padding-top:14px;gap:4px}
+.wu-bridge-line{width:16px;height:1px;background:var(--bdr-s)}
+.wu-bridge-icon{color:var(--rose);opacity:.6}
+.wu-time-diff{text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr-s);font-size:11px;color:var(--t3);display:none}
+
+.wu-alarm-card{background:var(--card-bg);border-radius:18px;box-shadow:var(--card-shadow);padding:18px 16px;margin-bottom:16px}
+.wu-alarm-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+.wu-alarm-row+.wu-alarm-row{border-top:1px solid var(--bdr-s)}
+.wu-alarm-label{font-size:13px;color:var(--cream)}
+.wu-time-input{background:var(--bg3);border:1px solid var(--bdr-s);border-radius:12px;padding:10px 14px;font-family:'Outfit',sans-serif;font-size:18px;font-weight:500;color:var(--cream);color-scheme:dark;-webkit-appearance:none;text-align:center;min-width:120px}
+.wu-time-input:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 2px rgba(184,134,11,.2)}
+.wu-tz-display{font-size:12px;color:var(--t3);text-align:right;max-width:180px}
+.wu-set-btn{width:100%;padding:12px;border:none;border-radius:50px;background:linear-gradient(135deg,var(--lavender),var(--gold));color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;transition:opacity .2s,transform .1s}
+.wu-set-btn:active{transform:scale(.97)}
+.wu-set-btn:disabled{opacity:.6}
+
+.wu-message-card{background:var(--card-bg);border-radius:18px;box-shadow:var(--card-shadow);padding:18px 16px;margin-bottom:16px}
+.wu-message-input{width:100%;min-height:80px;background:var(--bg3);border:1px solid var(--bdr-s);border-radius:14px;padding:12px 14px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--cream);resize:none;box-sizing:border-box}
+.wu-message-input::placeholder{color:var(--t3)}
+.wu-message-input:focus{border-color:var(--rose);outline:none;box-shadow:0 0 0 2px rgba(232,84,122,.15)}
+.wu-quick-msgs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.wu-quick-btn{padding:6px 12px;border:1px solid var(--bdr-s);border-radius:50px;background:var(--bg3);color:var(--t2);font-size:11px;font-family:'Outfit',sans-serif;cursor:pointer;transition:all .2s}
+.wu-quick-btn:active{background:var(--gold);color:#fff;border-color:var(--gold)}
+.wu-send-gn{width:100%;padding:11px;border:none;border-radius:50px;background:var(--rose);color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.wu-send-gn:active{opacity:.8}
+
+.wu-morning-card{background:var(--card-bg);border-radius:18px;box-shadow:var(--card-shadow);padding:20px 16px;margin-bottom:16px}
+.wu-morning-empty{text-align:center;padding:16px 0}
+.wu-morning-icon{color:var(--gold);opacity:.5;margin-bottom:10px}
+.wu-morning-text{font-size:12px;color:var(--t3);line-height:1.5}
+.wu-morning-greeting{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--cream);margin-bottom:10px}
+.wu-gn-label{font-size:11px;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.wu-gn-text{font-size:14px;color:var(--rose);font-style:italic;line-height:1.5;margin-bottom:14px}
+.wu-wake-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:none;border-radius:50px;background:linear-gradient(135deg,var(--gold),#E8A000);color:#fff;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:transform .1s;box-shadow:0 4px 16px rgba(184,134,11,.3)}
+.wu-wake-btn:active{transform:scale(.97)}
+.wu-wake-sent{text-align:center;font-size:13px;color:var(--gold);padding:8px 0}
+
+.wu-ritual-card{background:var(--card-bg);border-radius:18px;box-shadow:var(--card-shadow);padding:14px 16px;margin-bottom:16px}
+.wu-ritual-item{display:flex;align-items:center;gap:12px;padding:11px 0;cursor:pointer;font-size:13px;color:var(--cream);transition:opacity .2s;border-bottom:1px solid var(--bdr-s)}
+.wu-ritual-item:last-child{border-bottom:none}
+.wu-ritual-item.done{opacity:.55}
+.wu-ritual-item.done span{text-decoration:line-through}
+.wu-ritual-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--bdr-s);flex-shrink:0;position:relative;transition:all .3s}
+.wu-ritual-check.checked{border-color:var(--gold);background:var(--gold)}
+.wu-ritual-check.checked::after{content:'';position:absolute;top:4px;left:7px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+
+.wu-history{margin-bottom:24px}
+.wu-history-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--card-bg);border-radius:14px;box-shadow:var(--card-shadow);margin-bottom:8px}
+.wu-history-date{font-size:13px;font-weight:600;color:var(--cream);min-width:90px}
+.wu-history-details{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.wu-history-time{font-size:11px;color:var(--gold);background:rgba(184,134,11,.1);padding:3px 10px;border-radius:50px}
+.wu-history-gn{font-size:11px;color:var(--rose);background:rgba(232,84,122,.1);padding:3px 10px;border-radius:50px}
+
 /* ===== UTILITY: mb-20 ===== */
 .mb-20{margin-bottom:20px}

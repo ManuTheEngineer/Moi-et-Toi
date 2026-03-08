@@ -3177,3 +3177,354 @@ function ltEndSession() {
   db.ref('listenTogether').set({ active: false, endedBy: user, endedAt: Date.now() });
   toast('Listening session ended');
 }
+
+// ===== WAKE UP TOGETHER =====
+
+let wuListener = null;
+let wuRituals = {};
+
+function getMyTimezone() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) { return 'Unknown'; }
+}
+
+function getTimezoneAbbr(tz) {
+  try {
+    const parts = new Intl.DateTimeFormat('en', { timeZone: tz, timeZoneName: 'short' }).formatToParts(new Date());
+    const tzPart = parts.find(p => p.type === 'timeZoneName');
+    return tzPart ? tzPart.value : tz;
+  } catch(e) { return tz; }
+}
+
+function getTimezoneOffset(tz) {
+  try {
+    const now = new Date();
+    const utc = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
+    const local = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+    return (local - utc) / 60000; // minutes
+  } catch(e) { return 0; }
+}
+
+function convertTimeToTimezone(timeStr, fromTz, toTz) {
+  if (!timeStr || !fromTz || !toTz) return '--:--';
+  const [h, m] = timeStr.split(':').map(Number);
+  const fromOffset = getTimezoneOffset(fromTz);
+  const toOffset = getTimezoneOffset(toTz);
+  const diffMin = toOffset - fromOffset;
+  let totalMin = h * 60 + m + diffMin;
+  if (totalMin < 0) totalMin += 1440;
+  if (totalMin >= 1440) totalMin -= 1440;
+  const nh = Math.floor(totalMin / 60);
+  const nm = totalMin % 60;
+  const ampm = nh >= 12 ? 'PM' : 'AM';
+  const h12 = nh === 0 ? 12 : nh > 12 ? nh - 12 : nh;
+  return h12 + ':' + String(nm).padStart(2, '0') + ' ' + ampm;
+}
+
+function formatTime12(timeStr) {
+  if (!timeStr) return '--:--';
+  const [h, m] = timeStr.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return h12 + ':' + String(m).padStart(2, '0') + ' ' + ampm;
+}
+
+function initWakeUp() {
+  if (!db) return;
+  const myTz = getMyTimezone();
+  const tzDisplay = document.getElementById('wu-my-tz');
+  if (tzDisplay) tzDisplay.textContent = getTimezoneAbbr(myTz) + ' (' + myTz.replace(/_/g, ' ') + ')';
+
+  // Set names
+  if (typeof NAMES !== 'undefined') {
+    const herName = document.getElementById('wu-name-her');
+    const himName = document.getElementById('wu-name-him');
+    if (herName) herName.textContent = NAMES.her || 'Her';
+    if (himName) himName.textContent = NAMES.him || 'Him';
+  }
+
+  // Update partner time preview on input change
+  const timeInput = document.getElementById('wu-time-input');
+  if (timeInput) {
+    timeInput.addEventListener('change', updatePartnerTimePreview);
+    updatePartnerTimePreview();
+  }
+
+  // Load today's rituals from localStorage
+  const today = localDate();
+  wuRituals = JSON.parse(localStorage.getItem('met_wu_rituals_' + today) || '{}');
+  Object.keys(wuRituals).forEach(function(key) {
+    if (wuRituals[key]) {
+      var check = document.getElementById('ritual-' + key);
+      if (check) check.classList.add('checked');
+      var item = check ? check.closest('.wu-ritual-item') : null;
+      if (item) item.classList.add('done');
+    }
+  });
+
+  // Listen for wake-up data
+  listenWakeUp();
+}
+
+function updatePartnerTimePreview() {
+  const timeInput = document.getElementById('wu-time-input');
+  const partnerTimeEl = document.getElementById('wu-partner-local-time');
+  if (!timeInput || !partnerTimeEl) return;
+
+  const myTz = getMyTimezone();
+  // Get partner's timezone from firebase data
+  db.ref('wakeup/timezone').once('value', function(snap) {
+    const tzData = snap.val() || {};
+    const partnerTz = tzData[partner] || myTz;
+    const converted = convertTimeToTimezone(timeInput.value, myTz, partnerTz);
+    partnerTimeEl.textContent = converted;
+
+    // Show time difference
+    const diffEl = document.getElementById('wu-time-diff');
+    if (diffEl && partnerTz !== myTz) {
+      const myOffset = getTimezoneOffset(myTz);
+      const partnerOffset = getTimezoneOffset(partnerTz);
+      const diffHours = Math.abs((partnerOffset - myOffset) / 60);
+      const ahead = partnerOffset > myOffset;
+      diffEl.textContent = (typeof NAMES !== 'undefined' ? NAMES[partner] : 'Partner') +
+        ' is ' + diffHours + 'h ' + (ahead ? 'ahead' : 'behind') + ' of you';
+      diffEl.style.display = 'block';
+    }
+  });
+}
+
+function setWakeUpTime() {
+  if (!db || !user) return;
+  const timeInput = document.getElementById('wu-time-input');
+  const btn = document.getElementById('wu-set-btn');
+  if (!timeInput) return;
+
+  const myTz = getMyTimezone();
+  const today = localDate();
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Setting...'; }
+
+  // Save timezone
+  db.ref('wakeup/timezone/' + user).set(myTz);
+
+  // Save alarm
+  db.ref('wakeup/alarms/' + today + '/' + user).set({
+    time: timeInput.value,
+    timezone: myTz,
+    setAt: Date.now(),
+    wokenUp: false,
+    userName: typeof NAMES !== 'undefined' ? NAMES[user] : user
+  }).then(function() {
+    if (btn) { btn.disabled = false; btn.textContent = 'Alarm Set'; }
+    setTimeout(function() { if (btn) btn.textContent = 'Update Alarm'; }, 2000);
+    toast('Alarm set for ' + formatTime12(timeInput.value));
+  });
+}
+
+function sendGoodnightMsg() {
+  if (!db || !user) return;
+  const input = document.getElementById('wu-goodnight-msg');
+  if (!input || !input.value.trim()) { toast('Write a goodnight message first'); return; }
+
+  const today = localDate();
+  db.ref('wakeup/goodnight/' + today + '/' + user).set({
+    message: input.value.trim(),
+    timestamp: Date.now(),
+    from: user,
+    fromName: typeof NAMES !== 'undefined' ? NAMES[user] : user
+  }).then(function() {
+    toast('Goodnight message sent');
+    input.value = '';
+  });
+}
+
+function wuQuickMsg(msg) {
+  var input = document.getElementById('wu-goodnight-msg');
+  if (input) input.value = msg;
+}
+
+function sendWakeUp() {
+  if (!db || !user) return;
+  const today = localDate();
+  const btn = document.getElementById('wu-wake-btn');
+
+  db.ref('wakeup/wakeups/' + today).push({
+    from: user,
+    fromName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
+    to: partner,
+    timestamp: Date.now(),
+    type: 'wake'
+  }).then(function() {
+    if (btn) btn.classList.add('d-none');
+    const resp = document.getElementById('wu-wake-response');
+    if (resp) {
+      resp.classList.remove('d-none');
+      resp.innerHTML = '<div class="wu-wake-sent">Rise and shine! You woke them up</div>';
+    }
+    toast('Wake up sent!');
+
+    // Mark their alarm as woken up
+    db.ref('wakeup/alarms/' + today + '/' + partner + '/wokenUp').set(true);
+  });
+}
+
+function toggleRitual(el, key) {
+  const today = localDate();
+  wuRituals[key] = !wuRituals[key];
+  localStorage.setItem('met_wu_rituals_' + today, JSON.stringify(wuRituals));
+
+  var check = document.getElementById('ritual-' + key);
+  if (check) check.classList.toggle('checked', wuRituals[key]);
+  el.classList.toggle('done', wuRituals[key]);
+
+  // Sync ritual to firebase
+  if (db && user) {
+    db.ref('wakeup/rituals/' + today + '/' + user + '/' + key).set(wuRituals[key]);
+  }
+
+  // Check if all rituals done
+  const allDone = ['said-love', 'shared-day', 'gratitude', 'tomorrow', 'prayer'].every(function(k) { return wuRituals[k]; });
+  if (allDone) toast('Beautiful bedtime ritual complete');
+}
+
+function listenWakeUp() {
+  if (!db) return;
+  const today = localDate();
+
+  // Listen for alarm changes
+  if (wuListener) db.ref('wakeup').off('value', wuListener);
+
+  wuListener = db.ref('wakeup').on('value', function(snap) {
+    const data = snap.val() || {};
+    const alarms = (data.alarms && data.alarms[today]) || {};
+    const goodnights = (data.goodnight && data.goodnight[today]) || {};
+    const timezones = data.timezone || {};
+    const wakeups = (data.wakeups && data.wakeups[today]) || {};
+
+    // Update partner statuses
+    ['her', 'him'].forEach(function(who) {
+      const alarm = alarms[who];
+      const statusEl = document.getElementById('wu-status-' + who);
+      const tzEl = document.getElementById('wu-tz-' + who);
+
+      if (alarm) {
+        if (statusEl) statusEl.textContent = formatTime12(alarm.time);
+        if (statusEl) statusEl.classList.add('set');
+        if (tzEl) tzEl.textContent = getTimezoneAbbr(alarm.timezone || '');
+      } else {
+        if (statusEl) { statusEl.textContent = 'Not set yet'; statusEl.classList.remove('set'); }
+        if (tzEl) tzEl.textContent = '';
+      }
+    });
+
+    // Update hero card based on time of day
+    updateWakeUpHero();
+
+    // Show morning section if partner has goodnight message or alarm
+    const partnerGN = goodnights[partner];
+    const partnerAlarm = alarms[partner];
+    const morningEmpty = document.getElementById('wu-morning-empty');
+    const morningActive = document.getElementById('wu-morning-active');
+    const greetingEl = document.getElementById('wu-morning-greeting');
+    const gnMsgEl = document.getElementById('wu-morning-gn-msg');
+
+    if (partnerGN || partnerAlarm) {
+      if (morningEmpty) morningEmpty.classList.add('d-none');
+      if (morningActive) morningActive.classList.remove('d-none');
+
+      if (greetingEl) {
+        const pName = typeof NAMES !== 'undefined' ? NAMES[partner] : 'Your love';
+        greetingEl.textContent = pName + (partnerAlarm ? ' set their alarm for ' + formatTime12(partnerAlarm.time) : ' is thinking of you');
+      }
+      if (gnMsgEl && partnerGN) {
+        gnMsgEl.innerHTML = '<div class="wu-gn-label">Their goodnight message:</div><div class="wu-gn-text">"' + (typeof esc === 'function' ? esc(partnerGN.message) : partnerGN.message) + '"</div>';
+      }
+
+      // Check if already woken up
+      const alreadyWoke = Object.values(wakeups).some(function(w) { return w.from === user && w.to === partner; });
+      const wakeBtn = document.getElementById('wu-wake-btn');
+      const wakeResp = document.getElementById('wu-wake-response');
+      if (alreadyWoke) {
+        if (wakeBtn) wakeBtn.classList.add('d-none');
+        if (wakeResp) { wakeResp.classList.remove('d-none'); wakeResp.innerHTML = '<div class="wu-wake-sent">You already sent a wake-up today</div>'; }
+      } else {
+        if (wakeBtn) wakeBtn.classList.remove('d-none');
+        if (wakeResp) wakeResp.classList.add('d-none');
+      }
+    } else {
+      if (morningEmpty) morningEmpty.classList.remove('d-none');
+      if (morningActive) morningActive.classList.add('d-none');
+    }
+
+    // Update partner time preview
+    updatePartnerTimePreview();
+
+    // Build history
+    buildWakeUpHistory(data);
+  });
+}
+
+function updateWakeUpHero() {
+  const heroIcon = document.getElementById('wu-hero-icon');
+  const heroTitle = document.getElementById('wu-hero-title');
+  const heroSub = document.getElementById('wu-hero-sub');
+  if (!heroIcon) return;
+
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) {
+    // Morning
+    heroIcon.innerHTML = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>';
+    if (heroTitle) heroTitle.textContent = 'Good Morning';
+    if (heroSub) heroSub.textContent = 'Rise and shine together';
+  } else if (hour >= 18 || hour < 5) {
+    // Night
+    heroIcon.innerHTML = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+    if (heroTitle) heroTitle.textContent = 'Goodnight Ritual';
+    if (heroSub) heroSub.textContent = 'Set your alarms together, even miles apart';
+  } else {
+    // Afternoon
+    heroIcon.innerHTML = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/></svg>';
+    if (heroTitle) heroTitle.textContent = 'Wake Up Together';
+    if (heroSub) heroSub.textContent = 'Plan tonight\'s goodnight ritual';
+  }
+}
+
+function buildWakeUpHistory(data) {
+  const container = document.getElementById('wu-history');
+  if (!container) return;
+
+  const allAlarms = data.alarms || {};
+  const allGoodnights = data.goodnight || {};
+  const dates = Object.keys(allAlarms).sort().reverse().slice(0, 7);
+
+  if (dates.length === 0) {
+    container.innerHTML = '<div class="empty">Your shared nights will appear here</div>';
+    return;
+  }
+
+  let html = '';
+  dates.forEach(function(date) {
+    const alarms = allAlarms[date] || {};
+    const gn = allGoodnights[date] || {};
+    const herAlarm = alarms.her;
+    const himAlarm = alarms.him;
+    const herGN = gn.her;
+    const himGN = gn.him;
+
+    const herName = typeof NAMES !== 'undefined' ? NAMES.her : 'Her';
+    const himName = typeof NAMES !== 'undefined' ? NAMES.him : 'Him';
+
+    // Format date nicely
+    const d = new Date(date + 'T12:00:00');
+    const dayName = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+    html += '<div class="wu-history-item">';
+    html += '<div class="wu-history-date">' + dayName + '</div>';
+    html += '<div class="wu-history-details">';
+    if (herAlarm) html += '<span class="wu-history-time">' + herName + ': ' + formatTime12(herAlarm.time) + '</span>';
+    if (himAlarm) html += '<span class="wu-history-time">' + himName + ': ' + formatTime12(himAlarm.time) + '</span>';
+    if (herGN || himGN) html += '<span class="wu-history-gn">Goodnight messages exchanged</span>';
+    html += '</div></div>';
+  });
+
+  container.innerHTML = html;
+}

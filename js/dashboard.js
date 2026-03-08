@@ -1520,6 +1520,7 @@ go = function(p) {
   if (p === 'calendar') renderCalendar();
   if (p === 'dreamhome') { renderDreamHome(); dhLoadAll(); }
   if (p === 'knowyou') renderKnowYou();
+  if (p === 'wakeup') initWakeUp();
   if (p === 'memories') renderMemories();
   if (p === 'achievements') { renderAchievements(); checkAchievements(); }
   if (p === 'mood') renderStreakCalendar();

@@ -2,7 +2,7 @@
 // Map sub-pages to their parent tab
 const TAB_MAP = {
   'dash': 'dash',
-  'together': 'together', 'connect': 'together', 'games': 'together', 'datenight': 'together', 'checkin': 'together', 'knowyou': 'together',
+  'together': 'together', 'connect': 'together', 'games': 'together', 'datenight': 'together', 'checkin': 'together', 'knowyou': 'together', 'wakeup': 'together',
   'wellness': 'wellness', 'mood': 'wellness', 'fitness': 'wellness', 'gratitude': 'wellness', 'w1': 'wellness', 'w2': 'wellness', 'w3': 'wellness', 'nutrition': 'wellness',
   'plan': 'plan', 'dreams': 'plan', 'dreamhome': 'plan', 'homelife': 'plan', 'calendar': 'plan', 'story': 'plan', 'values': 'plan', 'lists': 'plan',
   'more': 'more', 'ai': 'more', 'memories': 'more', 'achievements': 'more', 'settings': 'more'
@@ -172,6 +172,7 @@ const PAGE_META = {
   calendar:{icon:_IC.cal,label:'Calendar'},story:{icon:_IC.book,label:'Timeline'},values:{icon:_IC.columns,label:'Values'},lists:{icon:_IC.gift,label:'Lists'},
   more:{icon:_IC.compass,label:'More'},memories:{icon:_IC.camera,label:'Memories'},ai:{icon:_IC.cpu,label:'AI Chat'},
   achievements:{icon:_IC.award,label:'Achievements'},settings:{icon:_IC.list,label:'Settings'},
+  wakeup:{icon:_IC.sun,label:'Wake Up Together'},
   w1:{icon:_IC.dumbbell,label:'Foundation'},w2:{icon:_IC.dumbbell,label:'Elevated'},w3:{icon:_IC.dumbbell,label:'Full Body'}
 };
 
