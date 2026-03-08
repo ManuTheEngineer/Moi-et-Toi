@@ -43,6 +43,22 @@
 .pcard h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:#1A1A2E;margin-bottom:4px}
 .pcard p{font-size:11px;color:rgba(26,26,46,.40)}
 
+/* ===== ONBOARDING ===== */
+.onboard-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px;animation:onboardIn .5s ease both}
+@keyframes onboardIn{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
+.onboard-wrap.onboard-enter{animation:onboardIn .5s ease both}
+.onboard-progress{width:100%;max-width:200px;height:3px;background:rgba(255,255,255,.25);border-radius:3px;margin-bottom:28px;overflow:hidden}
+.onboard-bar{height:100%;background:linear-gradient(90deg,var(--gold),#D4784A);border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.onboard-emoji{font-size:48px;margin-bottom:12px;animation:emojiPop .5s .2s cubic-bezier(.175,.885,.32,1.275) both}
+@keyframes emojiPop{0%{opacity:0;transform:scale(0)}100%{opacity:1;transform:scale(1)}}
+.onboard-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:30px;letter-spacing:3px;text-transform:uppercase;color:#1A1A2E;margin-bottom:8px;text-align:center}
+.onboard-sub{font-size:14px;line-height:1.6;color:rgba(26,26,46,.50);margin-bottom:28px;text-align:center;max-width:280px}
+.onboard-sub strong{color:#1A1A2E;font-weight:600}
+.onboard-dots{display:flex;gap:8px;margin-top:24px}
+.onboard-dot{width:8px;height:8px;border-radius:50%;background:rgba(26,26,46,.15);transition:all .3s}
+.onboard-dot.active{background:var(--gold);transform:scale(1.25)}
+.onboard-dot.done{background:rgba(184,134,11,.4)}
+
 /* ===== SHELL ===== */
 .shell{display:none;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh}
 .shell.on{display:block}

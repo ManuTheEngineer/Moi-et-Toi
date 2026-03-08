@@ -8,8 +8,9 @@ try { FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_fb_config')); } cat
 // API key loaded from Firebase - set once, works for both
 let CLAUDE_API_KEY = "";
 
-// Profile names - loaded from Firebase
+// Profile names & nicknames - loaded from Firebase
 let NAMES = { her: "Taylor", him: "Manu" };
+let NICKNAMES = { herCallsHim: "", himCallsHer: "" };
 
 // ==========================================
 
@@ -35,8 +36,11 @@ async function init() {
         user = role;
         partner = role === 'her' ? 'him' : 'her';
         await loadProfiles();
-        // Show welcome gate instead of auto-entering
-        showWelcomeGate();
+        if (needsOnboarding()) {
+          startOnboarding();
+        } else {
+          showWelcomeGate();
+        }
       } else {
         firebase.auth().signOut();
         showError('Account not authorized.');
@@ -66,9 +70,8 @@ async function doLogin() {
     partner = role === 'her' ? 'him' : 'her';
     await loadProfiles();
     
-    // Check if name is set
-    if (!NAMES[user] || NAMES[user] === 'Her' || NAMES[user] === 'Him') {
-      showNameSetup();
+    if (needsOnboarding()) {
+      startOnboarding();
     } else {
       finishLogin();
     }
@@ -100,35 +103,125 @@ async function loadProfiles() {
       if (data) {
         if (data.her) NAMES.her = data.her;
         if (data.him) NAMES.him = data.him;
+        if (data.herCallsHim) NICKNAMES.herCallsHim = data.herCallsHim;
+        if (data.himCallsHer) NICKNAMES.himCallsHer = data.himCallsHer;
         if (data.apiKey) CLAUDE_API_KEY = data.apiKey;
       }
       if (user) {
         document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
         document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
+        const myNick = user === 'her' ? NICKNAMES.herCallsHim : NICKNAMES.himCallsHer;
+        document.querySelectorAll('.partner-nick').forEach(e => e.textContent = myNick || NAMES[partner]);
       }
       resolve();
     });
   });
 }
 
-function showNameSetup() {
-  document.getElementById('login').innerHTML = `
-    <div class="login-logo">M&T</div>
-    <h1>Manu & Taylor</h1>
-    <div class="sub">Almost there</div>
-    <div class="lbl">What should we call you?</div>
-    <input type="text" id="name-input" class="login-input mb16" placeholder="Your name..."
-           onkeydown="if(event.key==='Enter')saveName()">
-    <button onclick="saveName()" class="login-btn">Let's go</button>
-  `;
-  setTimeout(() => document.getElementById('name-input').focus(), 300);
+function needsOnboarding() {
+  return !NAMES[user] || NAMES[user] === 'Her' || NAMES[user] === 'Him';
 }
 
-async function saveName() {
-  const name = document.getElementById('name-input').value.trim();
-  if (!name) { toast('Enter your name'); return; }
-  NAMES[user] = name;
-  await db.ref('profiles/' + user).set(name);
+// ===== ONBOARDING FLOW =====
+let onboardStep = 0;
+let onboardData = { name: '', nickname: '' };
+
+function startOnboarding() {
+  onboardStep = 0;
+  onboardData = { name: '', nickname: '' };
+  renderOnboardStep();
+}
+
+function renderOnboardStep() {
+  const el = document.getElementById('login');
+  const partnerLabel = user === 'him' ? 'her' : 'him';
+
+  const steps = [
+    // Step 0: Welcome
+    `<div class="onboard-wrap">
+      <div class="onboard-progress"><div class="onboard-bar" style="width:10%"></div></div>
+      <div class="login-logo">M&T</div>
+      <h1 class="onboard-title">Welcome</h1>
+      <p class="onboard-sub">Let's set up your space together.<br>This only takes a moment.</p>
+      <button onclick="onboardNext()" class="login-btn">Let's begin</button>
+      <div class="onboard-dots">${renderDots(0)}</div>
+    </div>`,
+
+    // Step 1: Your name
+    `<div class="onboard-wrap">
+      <div class="onboard-progress"><div class="onboard-bar" style="width:40%"></div></div>
+      <div class="onboard-emoji">👋</div>
+      <h1 class="onboard-title">What's your name?</h1>
+      <p class="onboard-sub">This is how your partner will see you.</p>
+      <input type="text" id="ob-name" class="login-input mb16" placeholder="Your name..." autocomplete="off"
+             onkeydown="if(event.key==='Enter')onboardNext()">
+      <button onclick="onboardNext()" class="login-btn">Continue</button>
+      <div class="onboard-dots">${renderDots(1)}</div>
+    </div>`,
+
+    // Step 2: What do you call your partner?
+    `<div class="onboard-wrap">
+      <div class="onboard-progress"><div class="onboard-bar" style="width:75%"></div></div>
+      <div class="onboard-emoji">${user === 'him' ? '💛' : '💜'}</div>
+      <h1 class="onboard-title">What do you call ${partnerLabel}?</h1>
+      <p class="onboard-sub">A pet name, nickname, or just their name — whatever feels right.</p>
+      <input type="text" id="ob-nickname" class="login-input mb16" placeholder="${user === 'him' ? 'Babe, Love, Her name...' : 'Baby, Honey, His name...'}" autocomplete="off"
+             onkeydown="if(event.key==='Enter')onboardNext()">
+      <button onclick="onboardNext()" class="login-btn">Continue</button>
+      <div class="onboard-dots">${renderDots(2)}</div>
+    </div>`,
+
+    // Step 3: Done
+    `<div class="onboard-wrap">
+      <div class="onboard-progress"><div class="onboard-bar" style="width:100%"></div></div>
+      <div class="onboard-emoji">✨</div>
+      <h1 class="onboard-title">You're all set!</h1>
+      <p class="onboard-sub">
+        <strong>${esc(onboardData.name)}</strong>, welcome to your space.<br>
+        We'll call your partner <strong>${esc(onboardData.nickname)}</strong>.
+      </p>
+      <button onclick="finishOnboarding()" class="login-btn">Enter Moi & Toi</button>
+      <div class="onboard-dots">${renderDots(3)}</div>
+    </div>`
+  ];
+
+  el.innerHTML = steps[onboardStep];
+  el.querySelector('.onboard-wrap').classList.add('onboard-enter');
+
+  // Auto-focus inputs
+  const input = el.querySelector('input');
+  if (input) setTimeout(() => input.focus(), 350);
+}
+
+function renderDots(active) {
+  return [0,1,2,3].map(i =>
+    `<span class="onboard-dot${i === active ? ' active' : ''}${i < active ? ' done' : ''}"></span>`
+  ).join('');
+}
+
+function onboardNext() {
+  if (onboardStep === 1) {
+    const name = document.getElementById('ob-name').value.trim();
+    if (!name) { toast('Please enter your name'); return; }
+    onboardData.name = name;
+  }
+  if (onboardStep === 2) {
+    const nick = document.getElementById('ob-nickname').value.trim();
+    if (!nick) { toast('Enter what you call them'); return; }
+    onboardData.nickname = nick;
+  }
+  onboardStep++;
+  renderOnboardStep();
+}
+
+async function finishOnboarding() {
+  NAMES[user] = onboardData.name;
+  const nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
+  NICKNAMES[nickKey] = onboardData.nickname;
+  await db.ref('profiles').update({
+    [user]: onboardData.name,
+    [nickKey]: onboardData.nickname
+  });
   finishLogin();
 }
 
