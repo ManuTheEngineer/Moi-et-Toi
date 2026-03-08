@@ -421,7 +421,7 @@ function renderRabbit(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-rabbit';
   var x = 10 + Math.random() * 70;
-  var dur = 6 + Math.random() * 6;
+  var dur = 12 + Math.random() * 10;
   el.style.cssText = 'left:' + x + '%;bottom:8%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="rabbit-body"></div><div class="rabbit-ear rabbit-ear-l"></div><div class="rabbit-ear rabbit-ear-r"></div><div class="rabbit-tail"></div>';
   container.appendChild(el);
@@ -433,7 +433,7 @@ function renderBee(container) {
   el.className = 'scene-creature creature-bee';
   var x = Math.random() * 80;
   var y = 20 + Math.random() * 40;
-  var dur = 8 + Math.random() * 8;
+  var dur = 16 + Math.random() * 14;
   var dx = 100 + Math.random() * 200;
   var dy = (Math.random() - 0.5) * 80;
   el.style.cssText = 'left:' + x + '%;top:' + y + '%;--bee-dx:' + dx + 'px;--bee-dy:' + dy + 'px;animation-duration:' + dur + 's';
@@ -447,7 +447,7 @@ function renderDragonfly(container) {
   el.className = 'scene-creature creature-dragonfly';
   var x = Math.random() * 80;
   var y = 15 + Math.random() * 35;
-  var dur = 6 + Math.random() * 6;
+  var dur = 12 + Math.random() * 10;
   var dx = 150 + Math.random() * 200;
   el.style.cssText = 'left:' + x + '%;top:' + y + '%;--df-dx:' + dx + 'px;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="df-body"></div><div class="df-wing df-wing-l"></div><div class="df-wing df-wing-r"></div>';
@@ -458,7 +458,7 @@ function renderDragonfly(container) {
 function renderDeer(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-deer';
-  var dur = 12 + Math.random() * 8;
+  var dur = 22 + Math.random() * 14;
   var dir = Math.random() < 0.5 ? 1 : -1;
   el.style.cssText = 'bottom:6%;' + (dir > 0 ? 'left:-5%' : 'right:-5%') + ';--deer-dir:' + (dir * 300) + 'px;animation-duration:' + dur + 's';
   if (dir < 0) el.style.transform = 'scaleX(-1)';
@@ -483,7 +483,7 @@ function renderBat(container) {
   el.className = 'scene-creature creature-bat';
   var x = Math.random() * 20 - 10;
   var y = 10 + Math.random() * 25;
-  var dur = 5 + Math.random() * 5;
+  var dur = 10 + Math.random() * 8;
   var dx = 200 + Math.random() * 300;
   var dy = (Math.random() - 0.5) * 80;
   el.style.cssText = 'left:' + x + '%;top:' + y + '%;--bat-dx:' + dx + 'px;--bat-dy:' + dy + 'px;animation-duration:' + dur + 's';
@@ -495,7 +495,7 @@ function renderBat(container) {
 function renderFox(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-fox';
-  var dur = 10 + Math.random() * 8;
+  var dur = 18 + Math.random() * 14;
   var dir = Math.random() < 0.5 ? 1 : -1;
   el.style.cssText = 'bottom:6%;' + (dir > 0 ? 'left:-5%' : 'right:-5%') + ';--fox-dir:' + (dir * 250) + 'px;animation-duration:' + dur + 's';
   if (dir < 0) el.style.transform = 'scaleX(-1)';
@@ -508,7 +508,7 @@ function renderSquirrel(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-squirrel';
   var x = 20 + Math.random() * 60;
-  var dur = 5 + Math.random() * 5;
+  var dur = 10 + Math.random() * 8;
   el.style.cssText = 'left:' + x + '%;bottom:10%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="squirrel-body"></div><div class="squirrel-tail"></div>';
   container.appendChild(el);
@@ -531,7 +531,7 @@ function renderSeagull(container) {
   el.className = 'scene-creature creature-seagull';
   var x = -10 + Math.random() * 20;
   var y = 8 + Math.random() * 20;
-  var dur = 7 + Math.random() * 8;
+  var dur = 14 + Math.random() * 12;
   var dx = 300 + Math.random() * 300;
   var dy = (Math.random() - 0.5) * 50;
   el.style.cssText = 'left:' + x + '%;top:' + y + '%;--sg-dx:' + dx + 'px;--sg-dy:' + dy + 'px;animation-duration:' + dur + 's';
@@ -543,7 +543,7 @@ function renderSeagull(container) {
 function renderCrab(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-crab';
-  var dur = 8 + Math.random() * 6;
+  var dur = 16 + Math.random() * 10;
   var dir = Math.random() < 0.5 ? 1 : -1;
   el.style.cssText = 'bottom:4%;' + (dir > 0 ? 'left:5%' : 'right:5%') + ';--crab-dir:' + (dir * 120) + 'px;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="crab-body"></div><div class="crab-claw crab-claw-l"></div><div class="crab-claw crab-claw-r"></div>';
@@ -554,7 +554,7 @@ function renderCrab(container) {
 function renderDolphin(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-dolphin';
-  var dur = 6 + Math.random() * 4;
+  var dur = 12 + Math.random() * 8;
   el.style.cssText = 'bottom:12%;left:-10%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="dolphin-body"></div><div class="dolphin-fin"></div><div class="dolphin-tail"></div>';
   container.appendChild(el);
@@ -565,7 +565,7 @@ function renderFish(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-fish';
   var y = 50 + Math.random() * 30;
-  var dur = 5 + Math.random() * 5;
+  var dur = 10 + Math.random() * 10;
   el.style.cssText = 'left:-5%;top:' + y + '%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="fish-body"></div><div class="fish-tail"></div>';
   container.appendChild(el);
@@ -576,7 +576,7 @@ function renderJellyfish(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-jellyfish';
   var x = 20 + Math.random() * 60;
-  var dur = 10 + Math.random() * 8;
+  var dur = 18 + Math.random() * 14;
   el.style.cssText = 'left:' + x + '%;bottom:15%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="jf-body"></div><div class="jf-tentacle jf-t1"></div><div class="jf-tentacle jf-t2"></div><div class="jf-tentacle jf-t3"></div>';
   container.appendChild(el);
@@ -586,7 +586,7 @@ function renderJellyfish(container) {
 function renderTurtle(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-turtle';
-  var dur = 15 + Math.random() * 10;
+  var dur = 28 + Math.random() * 16;
   el.style.cssText = 'bottom:5%;left:-5%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="turtle-shell"></div><div class="turtle-head"></div><div class="turtle-leg turtle-leg-fl"></div><div class="turtle-leg turtle-leg-fr"></div>';
   container.appendChild(el);
@@ -596,7 +596,7 @@ function renderTurtle(container) {
 function renderWhale(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-whale';
-  var dur = 20 + Math.random() * 10;
+  var dur = 35 + Math.random() * 15;
   el.style.cssText = 'bottom:20%;left:-15%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="whale-body"></div><div class="whale-tail"></div><div class="whale-spout"></div>';
   container.appendChild(el);
@@ -609,7 +609,7 @@ function renderHawk(container) {
   el.className = 'scene-creature creature-hawk';
   var startX = -10;
   var startY = 5 + Math.random() * 15;
-  var dur = 10 + Math.random() * 8;
+  var dur = 18 + Math.random() * 14;
   var dx = 350 + Math.random() * 300;
   var dy = -(10 + Math.random() * 20);
   el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--hawk-dx:' + dx + 'px;--hawk-dy:' + dy + 'px;animation-duration:' + dur + 's';
@@ -623,7 +623,7 @@ function renderSwallow(container) {
   el.className = 'scene-creature creature-swallow';
   var startX = Math.random() < 0.5 ? -8 : 108;
   var startY = 10 + Math.random() * 30;
-  var dur = 4 + Math.random() * 4;
+  var dur = 8 + Math.random() * 8;
   var dx = startX < 0 ? (300 + Math.random() * 200) : -(300 + Math.random() * 200);
   var dy = (Math.random() - 0.5) * 120;
   el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--sw-dx:' + dx + 'px;--sw-dy:' + dy + 'px;animation-duration:' + dur + 's';
@@ -638,7 +638,7 @@ function renderSparrow(container) {
   el.className = 'scene-creature creature-sparrow';
   var startX = -5 + Math.random() * 15;
   var startY = 12 + Math.random() * 25;
-  var dur = 6 + Math.random() * 6;
+  var dur = 12 + Math.random() * 10;
   var dx = 200 + Math.random() * 250;
   var dy = -(10 + Math.random() * 30);
   el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--sp-dx:' + dx + 'px;--sp-dy:' + dy + 'px;animation-duration:' + dur + 's';
@@ -650,7 +650,7 @@ function renderSparrow(container) {
 function renderHeron(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-heron';
-  var dur = 14 + Math.random() * 8;
+  var dur = 24 + Math.random() * 14;
   var startX = -10;
   var startY = 8 + Math.random() * 15;
   var dx = 400 + Math.random() * 200;
@@ -664,7 +664,7 @@ function renderHeron(container) {
 function renderPelican(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-pelican';
-  var dur = 10 + Math.random() * 8;
+  var dur = 18 + Math.random() * 14;
   var startX = -10;
   var startY = 10 + Math.random() * 18;
   var dx = 350 + Math.random() * 250;
@@ -676,38 +676,49 @@ function renderPelican(container) {
 }
 
 // ===== AMBIENT AUDIO SYSTEM =====
-// Audio requires user gesture — we unlock on first tap/click
+// Audio requires user gesture — unlock and keep alive on every tap/click
 function unlockAudio() {
-  if (WEATHER.audioUnlocked) return;
   try {
-    WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (WEATHER.audioCtx.state === 'suspended') {
-      WEATHER.audioCtx.resume();
+    if (!WEATHER.audioCtx) {
+      WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      console.log('[Audio] Created AudioContext, state:', WEATHER.audioCtx.state);
     }
-    // Create and play a silent buffer to unlock
-    var buf = WEATHER.audioCtx.createBuffer(1, 1, 22050);
-    var src = WEATHER.audioCtx.createBufferSource();
+    var ctx = WEATHER.audioCtx;
+    // Always resume — context can re-suspend on mobile
+    if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+      ctx.resume().then(function() {
+        console.log('[Audio] Resumed, state:', ctx.state);
+        _afterAudioReady();
+      });
+    } else if (ctx.state === 'running') {
+      if (!WEATHER.audioUnlocked) _afterAudioReady();
+    }
+    // Play silent buffer to force unlock on iOS
+    var buf = ctx.createBuffer(1, 1, 22050);
+    var src = ctx.createBufferSource();
     src.buffer = buf;
-    src.connect(WEATHER.audioCtx.destination);
+    src.connect(ctx.destination);
     src.start(0);
     WEATHER.audioUnlocked = true;
-    console.log('[Weather] Audio unlocked successfully');
-    // Now start audio if it was enabled
-    if (WEATHER.audioEnabled) {
-      setTimeout(function() { updateAmbientAudio(); }, 100);
-    }
-    // Also start mood audio if it was playing
-    if (WEATHER.moodPlaying) {
-      setTimeout(function() { playMoodSound(WEATHER.moodPlaying); }, 200);
-    }
   } catch(e) {
-    console.warn('Audio unlock failed:', e);
+    console.warn('[Audio] Unlock failed:', e);
   }
 }
 
-// Attach unlock to EVERY user interaction until it succeeds
+function _afterAudioReady() {
+  WEATHER.audioUnlocked = true;
+  console.log('[Audio] Ready — audioEnabled:', WEATHER.audioEnabled);
+  if (WEATHER.audioEnabled) {
+    setTimeout(function() { updateAmbientAudio(); }, 50);
+  }
+  if (WEATHER.moodPlaying) {
+    setTimeout(function() { playMoodSound(WEATHER.moodPlaying); }, 150);
+  }
+}
+
+// Keep trying on EVERY interaction — context can re-suspend
 function _tryUnlock() {
-  if (!WEATHER.audioUnlocked) unlockAudio();
+  unlockAudio();
 }
 document.addEventListener('touchstart', _tryUnlock, { passive: true });
 document.addEventListener('click', _tryUnlock);
@@ -915,31 +926,35 @@ function generateNoise(type) {
 }
 
 function playAmbientSound(type, volume) {
-  if (!WEATHER.audioCtx || !WEATHER.audioEnabled || !WEATHER.audioUnlocked) return;
+  if (!WEATHER.audioCtx || !WEATHER.audioEnabled) return;
   if (WEATHER.audioNodes[type]) return;
 
-  // Resume context if suspended
-  if (WEATHER.audioCtx.state === 'suspended') {
-    WEATHER.audioCtx.resume();
+  var ctx = WEATHER.audioCtx;
+  // Always try to resume
+  if (ctx.state !== 'running') {
+    ctx.resume();
+    return; // Will retry on next updateAmbientAudio cycle
   }
 
   var buffer = generateNoise(type);
   if (!buffer) return;
 
-  var source = WEATHER.audioCtx.createBufferSource();
+  var source = ctx.createBufferSource();
   source.buffer = buffer;
   source.loop = true;
 
-  var gain = WEATHER.audioCtx.createGain();
-  var vol = volume || 0.12;
-  gain.gain.setValueAtTime(0, WEATHER.audioCtx.currentTime);
-  gain.gain.linearRampToValueAtTime(vol, WEATHER.audioCtx.currentTime + 2);
+  var gain = ctx.createGain();
+  var vol = volume || 0.20;
+  // Start at low volume and ramp up quickly (0.5s instead of 2s)
+  gain.gain.setValueAtTime(vol * 0.3, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.5);
 
   source.connect(gain);
-  gain.connect(WEATHER.audioCtx.destination);
+  gain.connect(ctx.destination);
   source.start(0);
 
   WEATHER.audioNodes[type] = { source: source, gain: gain };
+  console.log('[Audio] Playing:', type, 'at volume:', vol);
 }
 
 function stopAmbientSound(type) {
@@ -961,10 +976,20 @@ function stopAllSounds() {
 }
 
 function updateAmbientAudio() {
-  if (!WEATHER.audioEnabled || !WEATHER.audioCtx || !WEATHER.audioUnlocked) return;
+  if (!WEATHER.audioEnabled || !WEATHER.audioCtx) return;
+
+  // Try to resume if suspended
+  if (WEATHER.audioCtx.state !== 'running') {
+    WEATHER.audioCtx.resume();
+    return;
+  }
 
   var scene = SCENES[WEATHER.scene];
-  if (!scene) return;
+  if (!scene) {
+    // Fallback: play generic wind if no scene
+    playAmbientSound('wind', 0.50);
+    return;
+  }
   var time = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
   var soundType = scene.sounds[time] || scene.sounds.base;
 
@@ -978,29 +1003,34 @@ function updateAmbientAudio() {
     if (keepSounds.indexOf(k) === -1) stopAmbientSound(k);
   });
 
-  // Play sounds — boosted volumes for audibility
-  playAmbientSound(scene.sounds.base, 0.25);
-  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.35);
+  // Play sounds — high volumes for mobile audibility
+  playAmbientSound(scene.sounds.base, 0.50);
+  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.60);
 
   // Weather sounds
   if (WEATHER.data) {
     var wxFx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wxFx && wxFx.sound) playAmbientSound(wxFx.sound, 0.40);
+    if (wxFx && wxFx.sound) playAmbientSound(wxFx.sound, 0.70);
   }
 }
 
 function toggleAmbientAudio(on) {
   WEATHER.audioEnabled = on;
   if (on) {
-    if (!WEATHER.audioUnlocked) {
-      // Will start when user next taps
-      toast('Sounds will start on next tap');
-    } else {
-      if (WEATHER.audioCtx && WEATHER.audioCtx.state === 'suspended') {
-        WEATHER.audioCtx.resume();
+    // The toggle itself is a user gesture — use it to unlock
+    unlockAudio();
+    // Try to start immediately since this was triggered by user interaction
+    setTimeout(function() {
+      if (WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
+        updateAmbientAudio();
+        console.log('[Audio] Started ambient audio');
+      } else if (WEATHER.audioCtx) {
+        WEATHER.audioCtx.resume().then(function() {
+          updateAmbientAudio();
+          console.log('[Audio] Resumed and started ambient audio');
+        });
       }
-      updateAmbientAudio();
-    }
+    }, 100);
   } else {
     stopAllSounds();
   }
@@ -1052,7 +1082,7 @@ function spawnSceneCreatures(container) {
       var c = scene.creatures[t] || scene.creatures.morning;
       var type = c[Math.floor(Math.random() * c.length)];
       renderSceneCreature(container, type);
-    }, 4000 + Math.random() * 3000);
+    }, 10000 + Math.random() * 8000);
   }
 }
 
@@ -1337,6 +1367,18 @@ function syncSkyState() {
 }
 // Sync every 30 seconds for smoother transitions
 setInterval(syncSkyState, 30000);
+
+// Periodic audio retry — if enabled but no sounds playing, try again
+setInterval(function() {
+  if (WEATHER.audioEnabled && WEATHER.audioCtx && Object.keys(WEATHER.audioNodes).length === 0) {
+    console.log('[Audio] Retry: no sounds playing, attempting to start');
+    if (WEATHER.audioCtx.state !== 'running') {
+      WEATHER.audioCtx.resume().then(function() { updateAmbientAudio(); });
+    } else {
+      updateAmbientAudio();
+    }
+  }
+}, 5000);
 
 // ===== INIT =====
 function initWeatherSystem() {

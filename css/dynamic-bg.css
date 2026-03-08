@@ -1210,43 +1210,6 @@ body[data-time="night"] .bg-mesh {
 }
 
 /* ===== SETTINGS — SCENE PICKER ===== */
-.scene-options-row {
-  display: flex;
-  gap: 10px;
-  margin: 8px 0 12px;
-}
-.scene-option {
-  flex: 1;
-  padding: 12px 8px;
-  border-radius: var(--radius-md, 12px);
-  border: 2px solid var(--border-default, rgba(0,0,0,0.06));
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: var(--bg2, #FAF5F0);
-}
-.scene-option.active {
-  border-color: var(--gold, #C9A96E);
-  background: rgba(201,169,110,0.08);
-  box-shadow: 0 2px 12px rgba(201,169,110,0.15);
-}
-.scene-option-icon {
-  font-size: 24px;
-  margin-bottom: 4px;
-}
-.scene-option-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary, #3D2E22);
-  font-family: Outfit, sans-serif;
-}
-.scene-option-desc {
-  font-size: 10px;
-  color: var(--text-tertiary, #8C7B6B);
-  margin-top: 2px;
-  font-family: Outfit, sans-serif;
-}
-
 /* ===== LOCATION PROMPT ===== */
 .loc-prompt {
   text-align: center;
