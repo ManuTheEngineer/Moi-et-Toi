@@ -15,7 +15,7 @@
       scrollTick = true;
       requestAnimationFrame(function() {
         var active = document.activeElement;
-        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') && !active.closest('.chat-input-wrap')) {
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') && !active.closest('.chat-input-wrap') && !active.closest('#onboard-steps') && !active.closest('#login-form')) {
           if (window.scrollY > 60) active.blur();
         }
         scrollTick = false;
