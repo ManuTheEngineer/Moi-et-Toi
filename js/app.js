@@ -106,11 +106,13 @@ async function loadProfiles() {
       NICKNAMES.herCallsHim = (data && data.herCallsHim) || '';
       NICKNAMES.himCallsHer = (data && data.himCallsHer) || '';
       if (data && data.apiKey) CLAUDE_API_KEY = data.apiKey;
+      // Use the nickname the current user gave their partner as the display name
       if (user) {
+        const nick = user === 'him' ? NICKNAMES.himCallsHer : NICKNAMES.herCallsHim;
+        if (nick) NAMES[partner] = nick;
         document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
         document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
-        const myNick = user === 'her' ? NICKNAMES.herCallsHim : NICKNAMES.himCallsHer;
-        document.querySelectorAll('.partner-nick').forEach(e => e.textContent = myNick || NAMES[partner]);
+        document.querySelectorAll('.partner-nick').forEach(e => e.textContent = NAMES[partner]);
       }
       resolve();
     });
@@ -274,6 +276,8 @@ async function finishOnboarding() {
   NAMES[user] = onboardData.name;
   var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
   NICKNAMES[nickKey] = onboardData.nickname;
+  // Set partner display name to the nickname just entered
+  if (onboardData.nickname) NAMES[partner] = onboardData.nickname;
   await db.ref('profiles').update({
     [user]: onboardData.name,
     [nickKey]: onboardData.nickname
