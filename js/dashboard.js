@@ -1387,7 +1387,7 @@ go = function(p) {
   if (p === 'fitness') renderFitnessHub();
   if (p === 'nutrition') renderNutritionDay();
   if (p === 'calendar') renderCalendar();
-  if (p === 'dreamhome') renderDreamHome();
+  if (p === 'dreamhome') { renderDreamHome(); dhLoadAll(); }
   if (p === 'knowyou') renderKnowYou();
   if (p === 'memories') renderMemories();
   if (p === 'achievements') { renderAchievements(); checkAchievements(); }

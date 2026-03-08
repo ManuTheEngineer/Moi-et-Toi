@@ -4,7 +4,7 @@ const TAB_MAP = {
   'dash': 'dash',
   'together': 'together', 'connect': 'together', 'games': 'together', 'datenight': 'together', 'checkin': 'together', 'knowyou': 'together',
   'wellness': 'wellness', 'mood': 'wellness', 'fitness': 'wellness', 'gratitude': 'wellness', 'w1': 'wellness', 'w2': 'wellness', 'w3': 'wellness', 'nutrition': 'wellness',
-  'plan': 'plan', 'dreams': 'plan', 'homelife': 'plan', 'calendar': 'plan', 'story': 'plan', 'values': 'plan', 'lists': 'plan',
+  'plan': 'plan', 'dreams': 'plan', 'dreamhome': 'plan', 'homelife': 'plan', 'calendar': 'plan', 'story': 'plan', 'values': 'plan', 'lists': 'plan',
   'more': 'more', 'ai': 'more', 'memories': 'more', 'achievements': 'more', 'settings': 'more'
 };
 
@@ -20,7 +20,7 @@ function go(p) {
   if (p === 'deeptalk' || p === 'question' || p === 'challenges') p = 'together';
   if (p === 'bucket' || p === 'wishlist') p = 'lists';
   if (p === 'foundation' || p === 'culture' || p === 'spiritual') p = 'values';
-  if (p === 'dreamhome' || p === 'family') p = 'dreams';
+  if (p === 'family') p = 'dreams';
   if (p === 'herspace' || p === 'hisspace' || p === 'grow') p = 'wellness';
   if (p === 'lovelang' || p === 'attachment') p = 'settings';
   const current = document.querySelector('.pg.on');

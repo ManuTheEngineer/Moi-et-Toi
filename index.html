@@ -544,6 +544,15 @@
       <div class="hub-list-arrow">&#x203A;</div>
     </div>
     <div class="hub-list-divider"></div>
+    <div class="hub-list-row" onclick="go('dreamhome')">
+      <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--lavender)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></div>
+      <div class="hub-list-info">
+        <div class="hub-list-name">Dream Home</div>
+        <div class="hub-list-sub">Plan &amp; design our future home</div>
+      </div>
+      <div class="hub-list-arrow">&#x203A;</div>
+    </div>
+    <div class="hub-list-divider"></div>
     <div class="hub-list-row" onclick="go('story')">
       <div class="hub-list-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
       <div class="hub-list-info">
@@ -1425,6 +1434,348 @@
   </div>
 
   <div id="dr-list" class="stagger-in"><div class="empty">Start mapping out the future you want</div></div>
+</div>
+</div>
+<!-- ===== DREAM HOME ===== -->
+<div class="pg" id="pg-dreamhome">
+<div class="ctn">
+
+  <div class="mod-status" id="dh-stats"></div>
+
+  <!-- Phase Tabs -->
+  <div class="dh-phases">
+    <span class="dh-phase on" onclick="dhPhase('vision',this)">Vision</span>
+    <span class="dh-phase" onclick="dhPhase('design',this)">Design</span>
+    <span class="dh-phase" onclick="dhPhase('rooms',this)">Rooms</span>
+    <span class="dh-phase" onclick="dhPhase('finance',this)">Finance</span>
+  </div>
+
+  <!-- ====== VISION PHASE ====== -->
+  <div class="dh-panel dh-panel-on" id="dh-p-vision">
+
+    <!-- Location -->
+    <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Location</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-field-row">
+        <input type="text" id="dh-location" class="quiz-q" placeholder="City, suburb, or area...">
+        <button class="dh-save-btn" onclick="dhSave('location',document.getElementById('dh-location').value)">Save</button>
+      </div>
+      <div class="dh-tag-row" id="dh-location-prefs">
+        <span class="dh-tag" onclick="dhToggleTag(this,'locPref','Suburbs')">Suburbs</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'locPref','City')">City</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'locPref','Rural')">Rural</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'locPref','Coastal')">Coastal</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'locPref','Mountain')">Mountain</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'locPref','Lake')">Lake</span>
+      </div>
+      <div class="dh-saved-val" id="dh-location-saved"></div>
+    </div>
+
+    <!-- Plot / Land -->
+    <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Plot &amp; Land</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-size-grid">
+        <div class="dh-size-opt" onclick="dhSelectSize(this,'small')"><div class="dh-size-icon">🏘️</div><div class="dh-size-label">Small</div><div class="dh-size-sub">Under 5,000 sq ft</div></div>
+        <div class="dh-size-opt" onclick="dhSelectSize(this,'medium')"><div class="dh-size-icon">🏡</div><div class="dh-size-label">Medium</div><div class="dh-size-sub">5,000–15,000 sq ft</div></div>
+        <div class="dh-size-opt" onclick="dhSelectSize(this,'large')"><div class="dh-size-icon">🏠</div><div class="dh-size-label">Large</div><div class="dh-size-sub">15,000–1 acre</div></div>
+        <div class="dh-size-opt" onclick="dhSelectSize(this,'estate')"><div class="dh-size-icon">🏰</div><div class="dh-size-label">Estate</div><div class="dh-size-sub">1+ acres</div></div>
+      </div>
+      <div class="dh-tag-row" style="margin-top:10px">
+        <span class="dh-tag" onclick="dhToggleTag(this,'terrain','Flat')">Flat</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'terrain','Sloped')">Sloped</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'terrain','Wooded')">Wooded</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'terrain','Waterfront')">Waterfront</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'terrain','Corner lot')">Corner lot</span>
+      </div>
+    </div>
+
+    <!-- Build Type -->
+    <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Build Type</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-build-grid">
+        <div class="dh-build-opt" onclick="dhSelectBuild(this,'new')"><span class="dh-bo-icon">🔨</span><span class="dh-bo-label">New Build</span></div>
+        <div class="dh-build-opt" onclick="dhSelectBuild(this,'reno')"><span class="dh-bo-icon">🔧</span><span class="dh-bo-label">Renovation</span></div>
+        <div class="dh-build-opt" onclick="dhSelectBuild(this,'custom')"><span class="dh-bo-icon">✏️</span><span class="dh-bo-label">Custom Design</span></div>
+        <div class="dh-build-opt" onclick="dhSelectBuild(this,'modular')"><span class="dh-bo-icon">📦</span><span class="dh-bo-label">Modular / Kit</span></div>
+      </div>
+    </div>
+
+    <!-- House Config -->
+    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">House Specs</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-specs-grid">
+        <div class="dh-spec">
+          <label class="dh-spec-label">Stories</label>
+          <div class="dh-stepper"><button onclick="dhStep('stories',-1)">−</button><span id="dh-val-stories">1</span><button onclick="dhStep('stories',1)">+</button></div>
+        </div>
+        <div class="dh-spec">
+          <label class="dh-spec-label">Bedrooms</label>
+          <div class="dh-stepper"><button onclick="dhStep('beds',-1)">−</button><span id="dh-val-beds">3</span><button onclick="dhStep('beds',1)">+</button></div>
+        </div>
+        <div class="dh-spec">
+          <label class="dh-spec-label">Bathrooms</label>
+          <div class="dh-stepper"><button onclick="dhStep('baths',-1)">−</button><span id="dh-val-baths">2</span><button onclick="dhStep('baths',1)">+</button></div>
+        </div>
+        <div class="dh-spec">
+          <label class="dh-spec-label">Garage</label>
+          <div class="dh-stepper"><button onclick="dhStep('garage',-1)">−</button><span id="dh-val-garage">2</span><button onclick="dhStep('garage',1)">+</button></div>
+        </div>
+      </div>
+      <div class="dh-field-row" style="margin-top:10px">
+        <label class="dh-spec-label" style="min-width:80px">Sq Footage</label>
+        <input type="number" id="dh-sqft" class="quiz-q" placeholder="e.g. 2500" style="flex:1">
+        <button class="dh-save-btn" onclick="dhSave('sqft',document.getElementById('dh-sqft').value)">Save</button>
+      </div>
+    </div>
+
+    <!-- Must-Haves -->
+    <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Must-Haves</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-tag-row" id="dh-musthaves">
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Walk-in closet')">Walk-in closet</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Home office')">Home office</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Open plan')">Open plan</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Island kitchen')">Island kitchen</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Double garage')">Double garage</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Laundry room')">Laundry room</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Pantry')">Pantry</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Fireplace')">Fireplace</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Basement')">Basement</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Smart home')">Smart home</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Solar')">Solar</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Pool')">Pool</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Guest suite')">Guest suite</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Gym')">Gym</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'musthave','Media room')">Media room</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== DESIGN PHASE ====== -->
+  <div class="dh-panel" id="dh-p-design">
+
+    <!-- Architectural Style -->
+    <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Architectural Style</div></div>
+    <div class="dh-style-scroll">
+      <div class="dh-arch-card" onclick="dhSelectArch(this,'modern')"><div class="dh-arch-icon">◻️</div><div class="dh-arch-name">Modern</div><div class="dh-arch-desc">Clean lines, flat roofs, walls of glass</div></div>
+      <div class="dh-arch-card" onclick="dhSelectArch(this,'contemporary')"><div class="dh-arch-icon">🔳</div><div class="dh-arch-name">Contemporary</div><div class="dh-arch-desc">Mixed materials, organic shapes</div></div>
+      <div class="dh-arch-card" onclick="dhSelectArch(this,'farmhouse')"><div class="dh-arch-icon">🏚️</div><div class="dh-arch-name">Farmhouse</div><div class="dh-arch-desc">Wraparound porch, gabled roof</div></div>
+      <div class="dh-arch-card" onclick="dhSelectArch(this,'craftsman')"><div class="dh-arch-icon">🪵</div><div class="dh-arch-name">Craftsman</div><div class="dh-arch-desc">Covered porch, exposed beams</div></div>
+      <div class="dh-arch-card" onclick="dhSelectArch(this,'mediterranean')"><div class="dh-arch-icon">🏛️</div><div class="dh-arch-name">Mediterranean</div><div class="dh-arch-desc">Stucco walls, tile roof, arches</div></div>
+      <div class="dh-arch-card" onclick="dhSelectArch(this,'colonial')"><div class="dh-arch-icon">🏠</div><div class="dh-arch-name">Colonial</div><div class="dh-arch-desc">Symmetrical, brick, shutters</div></div>
+      <div class="dh-arch-card" onclick="dhSelectArch(this,'minimalist')"><div class="dh-arch-icon">▫️</div><div class="dh-arch-name">Minimalist</div><div class="dh-arch-desc">Less is more, pure function</div></div>
+      <div class="dh-arch-card" onclick="dhSelectArch(this,'traditional')"><div class="dh-arch-icon">🏡</div><div class="dh-arch-name">Traditional</div><div class="dh-arch-desc">Classic proportions, warm details</div></div>
+    </div>
+    <div class="dh-saved-val" id="dh-arch-saved"></div>
+
+    <!-- Exterior -->
+    <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Exterior</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <label class="dh-spec-label" style="margin-bottom:6px;display:block">Facade Materials</label>
+      <div class="dh-tag-row">
+        <span class="dh-tag" onclick="dhToggleTag(this,'facade','Brick')">Brick</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'facade','Stone')">Stone</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'facade','Stucco')">Stucco</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'facade','Wood siding')">Wood siding</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'facade','Metal')">Metal</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'facade','Glass')">Glass</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'facade','Concrete')">Concrete</span>
+      </div>
+      <label class="dh-spec-label" style="margin:12px 0 6px;display:block">Roof Style</label>
+      <div class="dh-tag-row">
+        <span class="dh-tag" onclick="dhToggleTag(this,'roof','Flat')">Flat</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'roof','Gable')">Gable</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'roof','Hip')">Hip</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'roof','Skillion')">Skillion</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'roof','Metal standing seam')">Metal standing seam</span>
+      </div>
+    </div>
+
+    <!-- Outdoor Living -->
+    <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Outdoor Living</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-tag-row">
+        <span class="dh-tag" onclick="dhToggleTag(this,'outdoor','Covered patio')">Covered patio</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'outdoor','Deck')">Deck</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'outdoor','Pool')">Pool</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'outdoor','BBQ area')">BBQ area</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'outdoor','Fire pit')">Fire pit</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'outdoor','Garden')">Garden</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'outdoor','Outdoor shower')">Outdoor shower</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'outdoor','Pergola')">Pergola</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'outdoor','Courtyard')">Courtyard</span>
+      </div>
+    </div>
+
+    <!-- Interior Style -->
+    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Interior Style</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-tag-row">
+        <span class="dh-tag" onclick="dhToggleTag(this,'intStyle','Scandinavian')">Scandinavian</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'intStyle','Industrial')">Industrial</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'intStyle','Mid-century')">Mid-century</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'intStyle','Bohemian')">Bohemian</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'intStyle','Coastal')">Coastal</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'intStyle','Rustic')">Rustic</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'intStyle','Japandi')">Japandi</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'intStyle','Luxury')">Luxury</span>
+        <span class="dh-tag" onclick="dhToggleTag(this,'intStyle','Transitional')">Transitional</span>
+      </div>
+    </div>
+
+    <!-- Color Palette -->
+    <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Color Palette</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-palette">
+        <div class="dh-color" style="background:#F5F0EB" onclick="dhToggleColor(this,'#F5F0EB')"></div>
+        <div class="dh-color" style="background:#E8DDD3" onclick="dhToggleColor(this,'#E8DDD3')"></div>
+        <div class="dh-color" style="background:#C4A882" onclick="dhToggleColor(this,'#C4A882')"></div>
+        <div class="dh-color" style="background:#8B7355" onclick="dhToggleColor(this,'#8B7355')"></div>
+        <div class="dh-color" style="background:#2C3E50" onclick="dhToggleColor(this,'#2C3E50')"></div>
+        <div class="dh-color" style="background:#1C2B4A" onclick="dhToggleColor(this,'#1C2B4A')"></div>
+        <div class="dh-color" style="background:#4A6741" onclick="dhToggleColor(this,'#4A6741')"></div>
+        <div class="dh-color" style="background:#7B6DAE" onclick="dhToggleColor(this,'#7B6DAE')"></div>
+        <div class="dh-color" style="background:#D4627A" onclick="dhToggleColor(this,'#D4627A')"></div>
+        <div class="dh-color" style="background:#FFFFFF;border:1px solid var(--bdr-s)" onclick="dhToggleColor(this,'#FFFFFF')"></div>
+        <div class="dh-color" style="background:#333333" onclick="dhToggleColor(this,'#333333')"></div>
+        <div class="dh-color" style="background:#B0D4D4" onclick="dhToggleColor(this,'#B0D4D4')"></div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Design Notes</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <textarea id="dh-design-notes" class="mood-note" placeholder="Ideas, inspiration links, notes..." rows="3"></textarea>
+      <button class="dh-save-btn" style="margin-top:8px" onclick="dhSaveNote()">Save Note</button>
+      <div id="dh-notes-list" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- ====== ROOMS PHASE ====== -->
+  <div class="dh-panel" id="dh-p-rooms">
+    <div class="dh-rooms" id="dh-rooms">
+      <div class="dh-room" onclick="openRoom('living')"><div class="dr-icon">🛋️</div><div class="dr-name">Living Room</div><div class="dr-notes" id="dh-living-ct">0 ideas</div></div>
+      <div class="dh-room" onclick="openRoom('kitchen')"><div class="dr-icon">🍳</div><div class="dr-name">Kitchen</div><div class="dr-notes" id="dh-kitchen-ct">0 ideas</div></div>
+      <div class="dh-room" onclick="openRoom('bedroom')"><div class="dr-icon">🛏️</div><div class="dr-name">Master Bedroom</div><div class="dr-notes" id="dh-bedroom-ct">0 ideas</div></div>
+      <div class="dh-room" onclick="openRoom('bathroom')"><div class="dr-icon">🚿</div><div class="dr-name">Bathroom</div><div class="dr-notes" id="dh-bathroom-ct">0 ideas</div></div>
+      <div class="dh-room" onclick="openRoom('office')"><div class="dr-icon">💻</div><div class="dr-name">Home Office</div><div class="dr-notes" id="dh-office-ct">0 ideas</div></div>
+      <div class="dh-room" onclick="openRoom('outdoor')"><div class="dr-icon">🌿</div><div class="dr-name">Outdoor</div><div class="dr-notes" id="dh-outdoor-ct">0 ideas</div></div>
+      <div class="dh-room" onclick="openRoom('nursery')"><div class="dr-icon">🧸</div><div class="dr-name">Nursery / Kids</div><div class="dr-notes" id="dh-nursery-ct">0 ideas</div></div>
+      <div class="dh-room" onclick="openRoom('garage')"><div class="dr-icon">🚗</div><div class="dr-name">Garage</div><div class="dr-notes" id="dh-garage-ct">0 ideas</div></div>
+      <div class="dh-room" onclick="openRoom('laundry')"><div class="dr-icon">🧺</div><div class="dr-name">Laundry</div><div class="dr-notes" id="dh-laundry-ct">0 ideas</div></div>
+      <div class="dh-room" onclick="openRoom('entertainment')"><div class="dr-icon">🎬</div><div class="dr-name">Entertainment</div><div class="dr-notes" id="dh-entertainment-ct">0 ideas</div></div>
+    </div>
+
+    <!-- Room Detail (shown when a room is tapped) -->
+    <div id="dh-room-detail" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <button class="dh-back-btn" onclick="closeRoomDetail()">&larr;</button>
+        <h3 class="dh-room-title" id="dh-room-title">Room</h3>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <textarea id="dh-room-notes" class="mood-note" placeholder="Describe ideas for this room..." rows="2"></textarea>
+        <input type="text" id="dh-room-link" class="quiz-q" placeholder="Inspiration link (optional)" style="margin-top:6px">
+        <div class="dh-field-row" style="margin-top:6px">
+          <input type="number" id="dh-room-budget" class="quiz-q" placeholder="Budget $" style="flex:1">
+          <select id="dh-room-priority" class="select-field" style="flex:1"><option value="must">Must have</option><option value="nice">Nice to have</option><option value="dream">Dream</option></select>
+        </div>
+        <select id="dh-room-timeline" class="select-field" style="margin-top:6px;width:100%"><option value="move-in">Move-in ready</option><option value="year1">Year 1</option><option value="year2-3">Year 2–3</option><option value="someday">Someday</option></select>
+        <button class="dh-save-btn" style="margin-top:8px;width:100%" onclick="addRoomIdea()">Add Idea</button>
+      </div>
+      <div id="dh-room-ideas"></div>
+    </div>
+  </div>
+
+  <!-- ====== FINANCE PHASE ====== -->
+  <div class="dh-panel" id="dh-p-finance">
+
+    <!-- Total Budget -->
+    <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Total Budget</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-field-row">
+        <span style="font-size:18px;color:var(--gold);font-weight:700">$</span>
+        <input type="number" id="dh-total-budget" class="quiz-q" placeholder="Total home budget" style="flex:1;font-size:16px">
+        <button class="dh-save-btn" onclick="dhSave('totalBudget',document.getElementById('dh-total-budget').value)">Set</button>
+      </div>
+      <div id="dh-budget-overview" style="margin-top:12px"></div>
+    </div>
+
+    <!-- Budget Breakdown -->
+    <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Budget Breakdown</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-breakdown" id="dh-breakdown">
+        <div class="dh-break-item">
+          <label>Land / Plot</label>
+          <div class="dh-field-row"><span class="dh-dollar">$</span><input type="number" id="dh-b-land" class="quiz-q" placeholder="0" onchange="dhSaveBudget('land',this.value)"></div>
+        </div>
+        <div class="dh-break-item">
+          <label>Construction</label>
+          <div class="dh-field-row"><span class="dh-dollar">$</span><input type="number" id="dh-b-construction" class="quiz-q" placeholder="0" onchange="dhSaveBudget('construction',this.value)"></div>
+        </div>
+        <div class="dh-break-item">
+          <label>Architect / Design</label>
+          <div class="dh-field-row"><span class="dh-dollar">$</span><input type="number" id="dh-b-architect" class="quiz-q" placeholder="0" onchange="dhSaveBudget('architect',this.value)"></div>
+        </div>
+        <div class="dh-break-item">
+          <label>Interior / Finishes</label>
+          <div class="dh-field-row"><span class="dh-dollar">$</span><input type="number" id="dh-b-interior" class="quiz-q" placeholder="0" onchange="dhSaveBudget('interior',this.value)"></div>
+        </div>
+        <div class="dh-break-item">
+          <label>Landscaping</label>
+          <div class="dh-field-row"><span class="dh-dollar">$</span><input type="number" id="dh-b-landscape" class="quiz-q" placeholder="0" onchange="dhSaveBudget('landscape',this.value)"></div>
+        </div>
+        <div class="dh-break-item">
+          <label>Contingency</label>
+          <div class="dh-field-row"><span class="dh-dollar">$</span><input type="number" id="dh-b-contingency" class="quiz-q" placeholder="0" onchange="dhSaveBudget('contingency',this.value)"></div>
+        </div>
+      </div>
+      <div id="dh-budget-bar-wrap" style="margin-top:12px"></div>
+    </div>
+
+    <!-- Savings Tracker -->
+    <div class="sec-head"><div class="sec-dot sd-emerald"></div><div class="sec-title">Savings Progress</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-field-row">
+        <span class="dh-dollar">$</span>
+        <input type="number" id="dh-saved-amount" class="quiz-q" placeholder="Amount saved so far" style="flex:1">
+        <button class="dh-save-btn" onclick="dhSave('savedAmount',document.getElementById('dh-saved-amount').value)">Update</button>
+      </div>
+      <div id="dh-savings-bar" style="margin-top:12px"></div>
+    </div>
+
+    <!-- Wishlist -->
+    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Home Wishlist</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-field-row">
+        <input type="text" id="dh-wish-name" class="quiz-q" placeholder="Item name" style="flex:2">
+        <input type="number" id="dh-wish-price" class="quiz-q" placeholder="$" style="flex:1">
+        <button class="dh-save-btn" onclick="addHomeWish()">+</button>
+      </div>
+      <div id="dh-wishlist" style="margin-top:10px"><div class="empty">Add items to your home wishlist</div></div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Build Timeline</div></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="dh-timeline-row">
+        <div class="dh-tl-phase" onclick="dhSetTimeline(this,'research')"><div class="dh-tl-dot"></div><div class="dh-tl-name">Research</div></div>
+        <div class="dh-tl-line"></div>
+        <div class="dh-tl-phase" onclick="dhSetTimeline(this,'land')"><div class="dh-tl-dot"></div><div class="dh-tl-name">Land</div></div>
+        <div class="dh-tl-line"></div>
+        <div class="dh-tl-phase" onclick="dhSetTimeline(this,'design')"><div class="dh-tl-dot"></div><div class="dh-tl-name">Design</div></div>
+        <div class="dh-tl-line"></div>
+        <div class="dh-tl-phase" onclick="dhSetTimeline(this,'build')"><div class="dh-tl-dot"></div><div class="dh-tl-name">Build</div></div>
+        <div class="dh-tl-line"></div>
+        <div class="dh-tl-phase" onclick="dhSetTimeline(this,'movein')"><div class="dh-tl-dot"></div><div class="dh-tl-name">Move In</div></div>
+      </div>
+      <div class="dh-field-row" style="margin-top:12px">
+        <input type="text" id="dh-target-date" class="quiz-q" placeholder="Target move-in date (e.g. Dec 2027)" style="flex:1">
+        <button class="dh-save-btn" onclick="dhSave('targetDate',document.getElementById('dh-target-date').value)">Set</button>
+      </div>
+      <div id="dh-target-saved" class="dh-saved-val"></div>
+    </div>
+  </div>
+
 </div>
 </div>
 <!-- ===== HOME BUILDING ===== -->

@@ -1459,7 +1459,7 @@ async function deleteCalEvent(key) {
 // ========================================
 // ===== DREAM HOME MODULE =====
 // ========================================
-let dreamHomeData = {}, dhWishlist = {}, currentRoom = null;
+let dreamHomeData = {}, dhWishlist = {}, currentRoom = null, dhConfig = {};
 
 function listenDreamHome() {
   if (!db) return;
@@ -1467,12 +1467,266 @@ function listenDreamHome() {
     const data = snap.val() || {};
     dreamHomeData = data.rooms || {};
     dhWishlist = data.wishlist || {};
+    dhConfig = data.config || {};
     renderDreamHome();
+    dhRenderFinance();
   });
 }
 
+// Phase tabs
+function dhPhase(phase, el) {
+  document.querySelectorAll('.dh-phase').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.dh-panel').forEach(p => p.classList.remove('dh-panel-on'));
+  const panel = document.getElementById('dh-p-' + phase);
+  if (panel) panel.classList.add('dh-panel-on');
+}
+
+// Load saved config into UI
+function dhLoadAll() {
+  if (!db) return;
+  db.ref('dreamHome/config').once('value').then(snap => {
+    const c = snap.val() || {};
+    dhConfig = c;
+    // Location
+    if (c.location) { const el = document.getElementById('dh-location'); if (el) el.value = c.location; }
+    const locSaved = document.getElementById('dh-location-saved');
+    if (locSaved && c.location) locSaved.textContent = c.location;
+    // Plot size
+    if (c.plotSize) { document.querySelectorAll('.dh-size-opt').forEach(o => { o.classList.toggle('sel', o.onclick.toString().includes("'" + c.plotSize + "'")); }); }
+    // Build type
+    if (c.buildType) { document.querySelectorAll('.dh-build-opt').forEach(o => { o.classList.toggle('sel', o.onclick.toString().includes("'" + c.buildType + "'")); }); }
+    // Specs
+    ['stories','beds','baths','garage'].forEach(k => { const el = document.getElementById('dh-val-' + k); if (el && c[k]) el.textContent = c[k]; });
+    if (c.sqft) { const el = document.getElementById('dh-sqft'); if (el) el.value = c.sqft; }
+    // Tags
+    const tags = c.tags || {};
+    Object.entries(tags).forEach(([group, vals]) => {
+      if (!vals) return;
+      const selected = typeof vals === 'string' ? [vals] : Object.values(vals);
+      document.querySelectorAll('.dh-tag').forEach(t => {
+        if (t.onclick && t.onclick.toString().includes("'" + group + "'") && selected.includes(t.textContent.trim())) t.classList.add('sel');
+      });
+    });
+    // Colors
+    const colors = c.colors || {};
+    Object.values(colors).forEach(hex => {
+      document.querySelectorAll('.dh-color').forEach(el => {
+        if (el.onclick && el.onclick.toString().includes(hex)) el.classList.add('selected');
+      });
+    });
+    // Arch style
+    if (c.archStyle) {
+      document.querySelectorAll('.dh-arch-card').forEach(el => { el.classList.toggle('sel', el.onclick.toString().includes("'" + c.archStyle + "'")); });
+      const as = document.getElementById('dh-arch-saved');
+      if (as) as.textContent = c.archStyle;
+    }
+    // Budget
+    if (c.totalBudget) { const el = document.getElementById('dh-total-budget'); if (el) el.value = c.totalBudget; }
+    const bd = c.budgetBreakdown || {};
+    ['land','construction','architect','interior','landscape','contingency'].forEach(k => {
+      const el = document.getElementById('dh-b-' + k); if (el && bd[k]) el.value = bd[k];
+    });
+    if (c.savedAmount) { const el = document.getElementById('dh-saved-amount'); if (el) el.value = c.savedAmount; }
+    if (c.targetDate) { const el = document.getElementById('dh-target-date'); if (el) el.value = c.targetDate; }
+    const ts = document.getElementById('dh-target-saved');
+    if (ts && c.targetDate) ts.textContent = 'Target: ' + c.targetDate;
+    // Timeline phase
+    if (c.timelinePhase) {
+      const phases = ['research','land','design','build','movein'];
+      const idx = phases.indexOf(c.timelinePhase);
+      document.querySelectorAll('.dh-tl-phase').forEach((el, i) => { el.classList.toggle('done', i <= idx); });
+    }
+    // Design notes
+    dhRenderNotes();
+    dhRenderFinance();
+  });
+}
+
+// Save a single config key
+async function dhSave(key, val) {
+  if (!db || !val) return;
+  await db.ref('dreamHome/config/' + key).set(val);
+  toast('Saved');
+  dhConfig[key] = val;
+  // Update displayed saved values
+  if (key === 'location') { const el = document.getElementById('dh-location-saved'); if (el) el.textContent = val; }
+  if (key === 'targetDate') { const el = document.getElementById('dh-target-saved'); if (el) el.textContent = 'Target: ' + val; }
+  if (key === 'totalBudget' || key === 'savedAmount') dhRenderFinance();
+}
+
+// Stepper controls
+function dhStep(key, dir) {
+  const el = document.getElementById('dh-val-' + key);
+  if (!el) return;
+  let v = parseInt(el.textContent) + dir;
+  if (v < 0) v = 0;
+  if (key === 'stories' && v > 4) v = 4;
+  if (v > 20) v = 20;
+  el.textContent = v;
+  if (db) db.ref('dreamHome/config/' + key).set(v);
+}
+
+// Plot size
+function dhSelectSize(el, size) {
+  document.querySelectorAll('.dh-size-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  if (db) db.ref('dreamHome/config/plotSize').set(size);
+  toast('Plot size: ' + size);
+}
+
+// Build type
+function dhSelectBuild(el, type) {
+  document.querySelectorAll('.dh-build-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  if (db) db.ref('dreamHome/config/buildType').set(type);
+  toast('Build type saved');
+}
+
+// Arch style
+function dhSelectArch(el, style) {
+  document.querySelectorAll('.dh-arch-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  if (db) db.ref('dreamHome/config/archStyle').set(style);
+  const saved = document.getElementById('dh-arch-saved');
+  if (saved) saved.textContent = style;
+  toast('Style: ' + style);
+}
+
+// Toggle tags (multi-select per group)
+function dhToggleTag(el, group, val) {
+  el.classList.toggle('sel');
+  if (!db) return;
+  const ref = db.ref('dreamHome/config/tags/' + group);
+  // Collect all selected in this group
+  const selected = [];
+  document.querySelectorAll('.dh-tag.sel').forEach(t => {
+    if (t.onclick && t.onclick.toString().includes("'" + group + "'")) selected.push(t.textContent.trim());
+  });
+  ref.set(selected.length ? selected : null);
+}
+
+// Toggle color palette
+function dhToggleColor(el, hex) {
+  el.classList.toggle('selected');
+  if (!db) return;
+  const selected = [];
+  document.querySelectorAll('.dh-color.selected').forEach(c => {
+    const match = c.onclick.toString().match(/'(#[A-Fa-f0-9]+)'/);
+    if (match) selected.push(match[1]);
+  });
+  db.ref('dreamHome/config/colors').set(selected.length ? selected : null);
+}
+
+// Design notes
+async function dhSaveNote() {
+  const el = document.getElementById('dh-design-notes');
+  if (!el || !el.value.trim() || !db) return;
+  await db.ref('dreamHome/notes').push({ text: el.value.trim(), user, timestamp: Date.now() });
+  el.value = '';
+  toast('Note saved');
+  dhRenderNotes();
+}
+
+function dhRenderNotes() {
+  const container = document.getElementById('dh-notes-list');
+  if (!container || !db) return;
+  db.ref('dreamHome/notes').orderByChild('timestamp').limitToLast(20).once('value').then(snap => {
+    const notes = [];
+    snap.forEach(c => { const v = c.val(); v._key = c.key; notes.push(v); });
+    notes.reverse();
+    if (!notes.length) { container.innerHTML = ''; return; }
+    container.innerHTML = notes.map(n => `
+      <div class="dh-note-item">
+        <div class="dh-note-text">${esc(n.text)}</div>
+        <div class="dh-note-meta"><span>${NAMES[n.user] || ''}</span><span>${timeAgo(n.timestamp)}</span></div>
+        <button class="dh-note-del" onclick="dhDelNote('${n._key}')">&times;</button>
+      </div>`).join('');
+  });
+}
+
+async function dhDelNote(key) {
+  if (!db) return;
+  await db.ref('dreamHome/notes/' + key).remove();
+  dhRenderNotes();
+}
+
+// Budget breakdown save
+async function dhSaveBudget(cat, val) {
+  if (!db) return;
+  await db.ref('dreamHome/config/budgetBreakdown/' + cat).set(parseInt(val) || 0);
+  dhRenderFinance();
+}
+
+// Timeline phase
+function dhSetTimeline(el, phase) {
+  const phases = ['research','land','design','build','movein'];
+  const idx = phases.indexOf(phase);
+  document.querySelectorAll('.dh-tl-phase').forEach((p, i) => { p.classList.toggle('done', i <= idx); });
+  if (db) db.ref('dreamHome/config/timelinePhase').set(phase);
+  toast('Phase: ' + phase);
+}
+
+// Render finance section
+function dhRenderFinance() {
+  // Budget overview
+  const totalBudget = parseInt(dhConfig.totalBudget) || 0;
+  const bd = dhConfig.budgetBreakdown || {};
+  const allocated = Object.values(bd).reduce((s, v) => s + (parseInt(v) || 0), 0);
+  const wishTotal = Object.values(dhWishlist).reduce((s, i) => s + (i.price || 0), 0);
+  let roomTotal = 0;
+  Object.values(dreamHomeData).forEach(room => { Object.values(room).forEach(idea => { roomTotal += idea.budget || 0; }); });
+
+  const overviewEl = document.getElementById('dh-budget-overview');
+  if (overviewEl && totalBudget > 0) {
+    const spent = allocated + wishTotal + roomTotal;
+    const pct = Math.min(100, Math.round((spent / totalBudget) * 100));
+    const color = pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--gold)' : 'var(--emerald)';
+    overviewEl.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <span style="font-size:11px;color:var(--t3)">Allocated</span>
+        <span style="font-size:18px;font-weight:700;color:var(--gold)">$${spent.toLocaleString()} <span style="font-size:11px;color:var(--t3);font-weight:400">/ $${totalBudget.toLocaleString()}</span></span>
+      </div>
+      <div class="dh-prog-bar"><div class="dh-prog-fill" style="width:${pct}%;background:${color}"></div></div>
+      <div style="font-size:10px;color:var(--t3);text-align:right;margin-top:4px">${pct}% allocated</div>`;
+  }
+
+  // Budget bar breakdown
+  const barWrap = document.getElementById('dh-budget-bar-wrap');
+  if (barWrap && allocated > 0) {
+    const cats = [
+      { key: 'land', label: 'Land', color: 'var(--teal)' },
+      { key: 'construction', label: 'Build', color: 'var(--gold)' },
+      { key: 'architect', label: 'Design', color: 'var(--lavender)' },
+      { key: 'interior', label: 'Interior', color: 'var(--rose)' },
+      { key: 'landscape', label: 'Landscape', color: 'var(--emerald)' },
+      { key: 'contingency', label: 'Buffer', color: 'var(--t3)' }
+    ];
+    const segs = cats.filter(c => bd[c.key] > 0).map(c => {
+      const pct = Math.round(((parseInt(bd[c.key]) || 0) / allocated) * 100);
+      return `<div class="dh-bar-seg" style="width:${pct}%;background:${c.color}" title="${c.label}: $${(parseInt(bd[c.key])||0).toLocaleString()}"></div>`;
+    }).join('');
+    const legend = cats.filter(c => bd[c.key] > 0).map(c => `<span class="dh-bar-legend"><span class="dh-bar-dot" style="background:${c.color}"></span>${c.label} $${(parseInt(bd[c.key])||0).toLocaleString()}</span>`).join('');
+    barWrap.innerHTML = `<div class="dh-bar-track">${segs}</div><div class="dh-bar-legends">${legend}</div>`;
+  }
+
+  // Savings progress
+  const savedAmt = parseInt(dhConfig.savedAmount) || 0;
+  const savingsEl = document.getElementById('dh-savings-bar');
+  if (savingsEl && totalBudget > 0) {
+    const pct = Math.min(100, Math.round((savedAmt / totalBudget) * 100));
+    savingsEl.innerHTML = `
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:11px;color:var(--t3)">Saved</span>
+        <span style="font-size:14px;font-weight:600;color:var(--emerald)">$${savedAmt.toLocaleString()}</span>
+      </div>
+      <div class="dh-prog-bar"><div class="dh-prog-fill" style="width:${pct}%;background:var(--emerald)"></div></div>
+      <div style="font-size:10px;color:var(--t3);text-align:right;margin-top:4px">${pct}% of goal</div>`;
+  }
+}
+
 function renderDreamHome() {
-  const rooms = ['living', 'bedroom', 'kitchen', 'bathroom', 'outdoor', 'office'];
+  const rooms = ['living','kitchen','bedroom','bathroom','office','outdoor','nursery','garage','laundry','entertainment'];
   rooms.forEach(r => {
     const ct = document.getElementById('dh-' + r + '-ct');
     if (ct) {
@@ -1481,61 +1735,23 @@ function renderDreamHome() {
     }
   });
 
-  // Style results
-  const styleEl = document.getElementById('dh-style-result');
-  if (styleEl) {
-    db.ref('dreamHome/style').once('value').then(snap => {
-      const styles = snap.val() || {};
-      const myStyle = styles[user];
-      const partnerStyle = styles[partner];
-      if (myStyle || partnerStyle) {
-        styleEl.innerHTML = `
-          <div style="display:flex;gap:16px;margin-top:8px">
-            ${myStyle ? `<div class="card-data" style="flex:1"><div class="cd-accent" style="background:var(--lavender)"></div><div class="cd-info"><div class="cd-sub">${NAMES[user]}</div><div class="cd-label">${esc(myStyle)}</div></div></div>` : ''}
-            ${partnerStyle ? `<div class="card-data" style="flex:1"><div class="cd-accent" style="background:var(--rose)"></div><div class="cd-info"><div class="cd-sub">${NAMES[partner]}</div><div class="cd-label">${esc(partnerStyle)}</div></div></div>` : ''}
-          </div>
-          ${myStyle && partnerStyle && myStyle === partnerStyle ? '<div style="font-size:12px;color:var(--gold);text-align:center;margin-top:8px">You both chose the same style!</div>' : ''}`;
-      }
-    });
-  }
-
   // Wishlist
   const wlContainer = document.getElementById('dh-wishlist');
   if (wlContainer) {
     const items = Object.entries(dhWishlist);
     if (!items.length) { wlContainer.innerHTML = '<div class="empty">Add items to your home wishlist</div>'; return; }
     wlContainer.innerHTML = items.map(([k, i]) => `
-      <div class="dh-wishlist-item" style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--tint)">
-        <span style="flex:1;font-size:13px;color:var(--cream)">${esc(i.name)}</span>
-        ${i.price ? `<span style="font-size:12px;color:var(--gold)">$${i.price}</span>` : ''}
-        <button onclick="deleteHomeWish('${k}')" style="background:none;border:none;color:var(--red);font-size:16px;cursor:pointer">&times;</button>
+      <div class="dh-wishlist-item">
+        <span class="dwi-name">${esc(i.name)}</span>
+        ${i.price ? `<span class="dwi-price">$${i.price.toLocaleString()}</span>` : ''}
+        <button onclick="deleteHomeWish('${k}')" class="dh-note-del">&times;</button>
       </div>`).join('');
   }
-
-  // Budget overview
-  const budgetEl = document.getElementById('dh-budget-overview');
-  if (budgetEl) {
-    let total = Object.values(dhWishlist).reduce((s, i) => s + (i.price || 0), 0);
-    Object.values(dreamHomeData).forEach(room => {
-      Object.values(room).forEach(idea => { total += idea.budget || 0; });
-    });
-    if (total > 0) {
-      budgetEl.innerHTML = `<div style="text-align:center"><div style="font-size:24px;font-weight:700;color:var(--gold)">$${total.toLocaleString()}</div><div style="font-size:11px;color:var(--t3);margin-top:4px">Estimated total</div></div>`;
-    }
-  }
-}
-
-async function selectHomeStyle(style) {
-  document.querySelectorAll('.dh-style-btn').forEach(b => b.classList.remove('sel'));
-  event.target.classList.add('sel');
-  await db.ref('dreamHome/style/' + user).set(style);
-  toast('Style saved: ' + style);
-  renderDreamHome();
 }
 
 function openRoom(room) {
   currentRoom = room;
-  const names = { living: 'Living Room', bedroom: 'Bedroom', kitchen: 'Kitchen', bathroom: 'Bathroom', outdoor: 'Outdoor', office: 'Office' };
+  const names = { living:'Living Room', bedroom:'Master Bedroom', kitchen:'Kitchen', bathroom:'Bathroom', outdoor:'Outdoor', office:'Home Office', nursery:'Nursery / Kids', garage:'Garage', laundry:'Laundry', entertainment:'Entertainment' };
   document.getElementById('dh-room-title').textContent = names[room] || room;
   showEl('dh-room-detail');
   hideEl('dh-rooms');
@@ -1556,14 +1772,14 @@ function renderRoomIdeas() {
   container.innerHTML = ideas.map(([k, i]) => `
     <div class="card" style="margin-bottom:8px">
       <div style="font-size:13px;color:var(--cream);white-space:pre-wrap">${esc(i.notes || '')}</div>
-      ${i.link ? `<a href="${esc(i.link)}" target="_blank" style="font-size:11px;color:var(--teal)">Inspiration link</a>` : ''}
+      ${i.link ? `<a href="${esc(i.link)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--teal)">Inspiration link</a>` : ''}
       <div style="display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--t3)">
-        ${i.budget ? `<span>$${i.budget}</span>` : ''}
+        ${i.budget ? `<span>$${i.budget.toLocaleString()}</span>` : ''}
         <span>${i.priority || 'nice'}</span>
-        <span>${i.timeline || 'now'}</span>
+        <span>${i.timeline || ''}</span>
         <span>${NAMES[i.user] || ''}</span>
       </div>
-      <button onclick="deleteRoomIdea('${k}')" style="background:none;border:none;color:var(--red);font-size:11px;cursor:pointer;margin-top:4px">Remove</button>
+      <button onclick="deleteRoomIdea('${k}')" class="dh-note-del" style="margin-top:4px">Remove</button>
     </div>`).join('');
 }
 

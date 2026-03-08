@@ -731,6 +731,104 @@
 .dh-wishlist-item .dwi-price{font-size:12px;color:var(--lavender);font-weight:500}
 .dh-wishlist-item .dwi-priority{font-size:9px;padding:2px 8px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase}
 
+/* Dream Home — phase tabs */
+.dh-phases{display:flex;gap:4px;margin-bottom:16px;background:var(--card-bg);border-radius:16px;padding:4px;box-shadow:var(--card-shadow)}
+.dh-phase{flex:1;text-align:center;padding:10px 6px;border-radius:13px;font-size:11px;font-family:'Outfit',sans-serif;font-weight:500;color:var(--t3);cursor:pointer;transition:all .2s;letter-spacing:.3px}
+.dh-phase.on{background:var(--lavender);color:#fff}
+.dh-panel{display:none}
+.dh-panel-on{display:block}
+
+/* Field rows */
+.dh-field-row{display:flex;gap:8px;align-items:center}
+.dh-save-btn{padding:8px 16px;border-radius:12px;border:none;background:var(--lavender);color:#fff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+.dh-save-btn:active{transform:scale(.95)}
+.dh-saved-val{font-size:12px;color:var(--lavender);margin-top:6px;font-weight:500}
+.dh-dollar{font-size:14px;color:var(--gold);font-weight:600}
+
+/* Tags */
+.dh-tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.dh-tag{padding:6px 14px;border-radius:14px;border:1px solid var(--bdr-s);background:var(--input-bg);color:var(--t2);font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;transition:all .2s}
+.dh-tag:hover{border-color:var(--lavender)}
+.dh-tag.sel{background:var(--lavender);color:#fff;border-color:var(--lavender)}
+
+/* Plot size */
+.dh-size-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dh-size-opt{padding:16px 10px;border-radius:16px;text-align:center;cursor:pointer;background:var(--input-bg);border:1px solid var(--bdr-s);transition:all .2s}
+.dh-size-opt:hover{border-color:var(--lavender)}
+.dh-size-opt.sel{border-color:var(--lavender);background:rgba(123,111,166,.12)}
+.dh-size-opt:active{transform:scale(.96)}
+.dh-size-icon{font-size:24px;margin-bottom:6px}
+.dh-size-label{font-size:13px;font-weight:600;color:var(--cream)}
+.dh-size-sub{font-size:10px;color:var(--t3);margin-top:2px}
+
+/* Build type */
+.dh-build-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dh-build-opt{display:flex;align-items:center;gap:8px;padding:14px;border-radius:14px;cursor:pointer;background:var(--input-bg);border:1px solid var(--bdr-s);transition:all .2s}
+.dh-build-opt:hover{border-color:var(--gold)}
+.dh-build-opt.sel{border-color:var(--gold);background:rgba(196,120,74,.1)}
+.dh-build-opt:active{transform:scale(.96)}
+.dh-bo-icon{font-size:18px}
+.dh-bo-label{font-size:12px;font-weight:500;color:var(--cream)}
+
+/* House specs / steppers */
+.dh-specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dh-spec{display:flex;flex-direction:column;gap:4px}
+.dh-spec-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);font-weight:500}
+.dh-stepper{display:flex;align-items:center;gap:0;border-radius:12px;overflow:hidden;border:1px solid var(--bdr-s);background:var(--input-bg)}
+.dh-stepper button{width:36px;height:36px;border:none;background:transparent;color:var(--lavender);font-size:18px;font-weight:600;cursor:pointer;transition:background .15s}
+.dh-stepper button:active{background:var(--tint)}
+.dh-stepper span{flex:1;text-align:center;font-size:16px;font-weight:600;color:var(--cream)}
+
+/* Arch style cards */
+.dh-style-scroll{display:flex;gap:10px;overflow-x:auto;padding:4px 0 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.dh-style-scroll::-webkit-scrollbar{display:none}
+.dh-arch-card{min-width:130px;padding:16px 12px;border-radius:18px;text-align:center;cursor:pointer;background:var(--card-bg);box-shadow:var(--card-shadow);border:1px solid transparent;transition:all .25s;flex-shrink:0}
+.dh-arch-card:hover{border-color:var(--lavender)}
+.dh-arch-card.sel{border-color:var(--lavender);background:rgba(123,111,166,.1)}
+.dh-arch-card:active{transform:scale(.96)}
+.dh-arch-icon{font-size:28px;margin-bottom:8px}
+.dh-arch-name{font-size:13px;font-weight:600;color:var(--cream)}
+.dh-arch-desc{font-size:10px;color:var(--t3);margin-top:4px;line-height:1.3}
+
+/* Design notes */
+.dh-note-item{padding:10px 12px;background:var(--card-bg);border-radius:14px;margin-bottom:6px;box-shadow:var(--card-shadow);position:relative;border-left:3px solid var(--lavender)}
+.dh-note-text{font-size:12px;color:var(--cream);line-height:1.5;white-space:pre-wrap}
+.dh-note-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:6px}
+.dh-note-del{background:none;border:none;color:var(--red);font-size:14px;cursor:pointer;position:absolute;top:8px;right:8px;opacity:.5}
+.dh-note-del:hover{opacity:1}
+
+/* Back button */
+.dh-back-btn{width:32px;height:32px;border-radius:10px;border:1px solid var(--bdr-s);background:var(--input-bg);color:var(--cream);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.dh-back-btn:active{transform:scale(.9)}
+.dh-room-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--cream);font-weight:600;margin:0}
+
+/* Finance — progress bars */
+.dh-prog-bar{height:8px;border-radius:4px;background:var(--bg3);overflow:hidden}
+.dh-prog-fill{height:100%;border-radius:4px;transition:width .6s ease}
+
+/* Budget breakdown */
+.dh-breakdown{display:flex;flex-direction:column;gap:10px}
+.dh-break-item{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dh-break-item label{font-size:11px;color:var(--t2);min-width:100px;font-weight:500}
+.dh-break-item .dh-field-row{flex:1}
+
+/* Bar segments */
+.dh-bar-track{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--bg3)}
+.dh-bar-seg{height:100%;transition:width .4s}
+.dh-bar-legends{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.dh-bar-legend{font-size:10px;color:var(--t3);display:flex;align-items:center;gap:4px}
+.dh-bar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Timeline */
+.dh-timeline-row{display:flex;align-items:center;gap:0;padding:8px 0}
+.dh-tl-phase{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex-shrink:0}
+.dh-tl-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--bdr-s);background:var(--input-bg);transition:all .2s}
+.dh-tl-phase.done .dh-tl-dot{background:var(--lavender);border-color:var(--lavender)}
+.dh-tl-name{font-size:9px;color:var(--t3);white-space:nowrap;letter-spacing:.3px}
+.dh-tl-phase.done .dh-tl-name{color:var(--lavender);font-weight:600}
+.dh-tl-line{flex:1;height:2px;background:var(--bdr-s);min-width:8px}
+.dh-tl-phase.done+.dh-tl-line{background:var(--lavender)}
+
 /* ===== KNOW YOUR PERSON ===== */
 .kyp-section{margin-bottom:20px}
 .kyp-section-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--rose);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
