@@ -38,6 +38,7 @@
   </div>
   <!-- Welcome gate (shown when already authenticated) -->
   <div id="welcome-gate" class="login-inner d-none">
+    <div class="welcome-photo" id="welcome-photo"></div>
     <div class="lbl" id="welcome-greeting"></div>
     <button onclick="finishLogin()" class="login-btn">Enter</button>
   </div>
@@ -51,6 +52,15 @@
            style="display:none" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}">
     <input type="text" id="ob-nickname" class="login-input mb16" placeholder="Babe, Love, Her name..."
            style="display:none" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}">
+    <div id="ob-photo-wrap" class="ob-photo-wrap" style="display:none">
+      <label class="ob-photo-picker" id="ob-photo-label">
+        <input type="file" accept="image/*" id="ob-photo" style="display:none" onchange="onboardPhotoPicked(this)">
+        <div class="ob-photo-preview" id="ob-photo-preview">
+          <span class="ob-photo-plus">+</span>
+        </div>
+        <span class="ob-photo-hint">Tap to choose</span>
+      </label>
+    </div>
     <input type="date" id="ob-anniversary" class="login-input mb16"
            style="display:none;color-scheme:light">
     <div id="ob-tour" style="display:none"></div>
@@ -102,7 +112,9 @@
     </div>
     <div class="dash-partner">
       <div class="dash-partner-link" id="dash-partner-card" onclick="go('connect')">
-        <div class="dash-presence" id="dash-presence-dot"></div>
+        <div class="dash-partner-avatar" id="dash-partner-avatar" onclick="event.stopPropagation();changePartnerPhoto()">
+          <div class="dash-presence" id="dash-presence-dot"></div>
+        </div>
         <div class="dash-partner-name" id="dash-partner-name">...</div>
       </div>
     </div>

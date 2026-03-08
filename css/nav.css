@@ -69,6 +69,20 @@
 .ob-tour-row div{font-size:13px;line-height:1.5;color:rgba(26,26,46,.55)}
 .ob-tour-row strong{color:#1A1A2E;font-weight:600;font-size:14px}
 
+/* Onboarding photo picker */
+.ob-photo-wrap{display:flex;justify-content:center;margin-bottom:20px}
+.ob-photo-picker{display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.ob-photo-preview{width:120px;height:120px;border-radius:50%;background:rgba(26,26,46,.06);border:3px dashed rgba(26,26,46,.15);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all .3s}
+.ob-photo-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.ob-photo-preview:has(img){border-style:solid;border-color:var(--gold)}
+.ob-photo-plus{font-size:32px;color:rgba(26,26,46,.25);font-weight:300}
+.ob-photo-hint{font-size:12px;color:rgba(26,26,46,.35);margin-top:8px}
+
+/* Welcome gate photo */
+.welcome-photo{margin-bottom:16px;display:flex;justify-content:center}
+.welcome-photo-img{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid rgba(184,134,11,.3);box-shadow:0 4px 20px rgba(0,0,0,.15);animation:photoFadeIn .6s ease both}
+@keyframes photoFadeIn{0%{opacity:0;transform:scale(.85)}100%{opacity:1;transform:scale(1)}}
+
 /* ===== SHELL ===== */
 .shell{display:none;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh}
 .shell.on{display:block}

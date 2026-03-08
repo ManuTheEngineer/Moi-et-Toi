@@ -119,6 +119,70 @@ async function loadProfiles() {
   });
 }
 
+// Photo that partner chose for you — listen for changes
+let myPhoto = '';
+function listenPhoto() {
+  if (!db || !user) return;
+  db.ref('photos/' + user).on('value', snap => {
+    const d = snap.val();
+    myPhoto = (d && d.data) || '';
+    applyPhoto();
+  });
+}
+
+function applyPhoto() {
+  // Welcome gate
+  const welcomeEl = document.getElementById('welcome-photo');
+  if (welcomeEl) {
+    welcomeEl.innerHTML = myPhoto
+      ? '<img src="' + myPhoto + '" class="welcome-photo-img" alt="">'
+      : '';
+  }
+  // Dashboard partner avatar (show PARTNER's photo of you — but on your dashboard
+  // you see the photo you chose for THEM, so load partner's photo)
+}
+
+// Load the photo YOU chose for your partner (shown on your dashboard next to their name)
+let partnerPhoto = '';
+function listenPartnerPhoto() {
+  if (!db || !partner) return;
+  db.ref('photos/' + partner).on('value', snap => {
+    const d = snap.val();
+    partnerPhoto = (d && d.data) || '';
+    applyPartnerPhoto();
+  });
+}
+
+function applyPartnerPhoto() {
+  const avatarEl = document.getElementById('dash-partner-avatar');
+  if (avatarEl) {
+    if (partnerPhoto) {
+      avatarEl.style.backgroundImage = 'url(' + partnerPhoto + ')';
+      avatarEl.classList.add('has-photo');
+    } else {
+      avatarEl.style.backgroundImage = '';
+      avatarEl.classList.remove('has-photo');
+    }
+  }
+}
+
+// Change partner photo (daily update from dashboard)
+function changePartnerPhoto() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = function() {
+    if (!input.files || !input.files[0]) return;
+    resizePhoto(input.files[0], function(dataUrl) {
+      db.ref('photos/' + partner).set({
+        data: dataUrl, setBy: user, timestamp: Date.now()
+      });
+      toast('New photo set for ' + NAMES[partner]);
+    });
+  };
+  input.click();
+}
+
 function needsOnboarding() {
   return !NAMES[user] || NAMES[user] === 'Her' || NAMES[user] === 'Him';
 }
@@ -128,8 +192,8 @@ function needsOnboarding() {
 // keyboards work reliably — iOS won't open keyboards for dynamically
 // injected inputs inside position:fixed containers.
 let onboardStep = 0;
-let onboardData = { name: '', nickname: '', anniversary: '' };
-const OB_TOTAL = 7;
+let onboardData = { name: '', nickname: '', anniversary: '', photo: '' };
+const OB_TOTAL = 8;
 
 function startOnboarding() {
   onboardStep = 0;
@@ -177,11 +241,14 @@ function renderOnboardStep() {
   bar.style.width = pct + '%';
   dots.innerHTML = renderDots(onboardStep);
 
+  const photoWrap = document.getElementById('ob-photo-wrap');
+
   // Hide all optional elements
   emoji.style.display = 'none';
   nameIn.style.display = 'none';
   nickIn.style.display = 'none';
   annivIn.style.display = 'none';
+  photoWrap.style.display = 'none';
   tour.style.display = 'none';
   skip.style.display = 'none';
 
@@ -211,6 +278,19 @@ function renderOnboardStep() {
     setTimeout(function(){ nickIn.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
     btn.textContent = 'Continue';
   } else if (onboardStep === 3) {
+    // Photo of partner
+    emoji.textContent = '📸'; emoji.style.display = '';
+    title.textContent = 'Pick a photo of ' + partnerLabel;
+    sub.textContent = 'This is how ' + partnerLabel + ' will see themselves — choose how you see them today.';
+    photoWrap.style.display = '';
+    skip.style.display = '';
+    // Restore preview if already picked
+    if (onboardData.photo) {
+      var prev = document.getElementById('ob-photo-preview');
+      prev.innerHTML = '<img src="' + onboardData.photo + '" alt="photo">';
+    }
+    btn.textContent = 'Continue';
+  } else if (onboardStep === 4) {
     // Anniversary
     emoji.textContent = '📅'; emoji.style.display = '';
     title.textContent = 'When did it start?';
@@ -218,7 +298,7 @@ function renderOnboardStep() {
     annivIn.style.display = '';
     skip.style.display = '';
     btn.textContent = 'Continue';
-  } else if (onboardStep === 4) {
+  } else if (onboardStep === 5) {
     // Tour 1
     title.textContent = 'Your Home';
     sub.textContent = '';
@@ -228,7 +308,7 @@ function renderOnboardStep() {
       + '<div class="ob-tour-row"><span class="ob-tour-ico">💕</span><div><strong>Together</strong><br>Letters, games, date nights, check-ins — everything you do as a couple.</div></div>'
       + '</div>';
     btn.textContent = 'Next';
-  } else if (onboardStep === 5) {
+  } else if (onboardStep === 6) {
     // Tour 2
     title.textContent = 'Your Tools';
     sub.textContent = '';
@@ -239,7 +319,7 @@ function renderOnboardStep() {
       + '<div class="ob-tour-row"><span class="ob-tour-ico">✨</span><div><strong>More</strong><br>AI chat, memories, achievements, and settings.</div></div>'
       + '</div>';
     btn.textContent = 'Got it';
-  } else if (onboardStep === 6) {
+  } else if (onboardStep === 7) {
     // Done
     bar.style.width = '100%';
     emoji.textContent = '✨'; emoji.style.display = '';
@@ -264,12 +344,42 @@ function onboardNext() {
     if (!nick) { toast('Enter what you call them'); return; }
     onboardData.nickname = nick;
   }
-  if (onboardStep === 3) {
+  // Step 3 is photo — optional, data stored via onboardPhotoPicked
+  if (onboardStep === 4) {
     var anniv = document.getElementById('ob-anniversary').value;
     if (anniv) onboardData.anniversary = anniv;
   }
   onboardStep++;
   renderOnboardStep();
+}
+
+function onboardPhotoPicked(input) {
+  if (!input.files || !input.files[0]) return;
+  resizePhoto(input.files[0], function(dataUrl) {
+    onboardData.photo = dataUrl;
+    var prev = document.getElementById('ob-photo-preview');
+    prev.innerHTML = '<img src="' + dataUrl + '" alt="photo">';
+  });
+}
+
+function resizePhoto(file, callback) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var size = 300;
+      var w = img.width, h = img.height;
+      var scale = Math.max(size / w, size / h);
+      var sw = w * scale, sh = h * scale;
+      canvas.width = size; canvas.height = size;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, (size - sw) / 2, (size - sh) / 2, sw, sh);
+      callback(canvas.toDataURL('image/jpeg', 0.7));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 async function finishOnboarding() {
@@ -278,10 +388,14 @@ async function finishOnboarding() {
   NICKNAMES[nickKey] = onboardData.nickname;
   // Set partner display name to the nickname just entered
   if (onboardData.nickname) NAMES[partner] = onboardData.nickname;
-  await db.ref('profiles').update({
-    [user]: onboardData.name,
-    [nickKey]: onboardData.nickname
-  });
+  var profileUpdate = { [user]: onboardData.name, [nickKey]: onboardData.nickname };
+  await db.ref('profiles').update(profileUpdate);
+  // Save photo of partner — stored under the partner's key so they see it
+  if (onboardData.photo) {
+    await db.ref('photos/' + partner).set({
+      data: onboardData.photo, setBy: user, timestamp: Date.now()
+    });
+  }
   if (onboardData.anniversary) {
     await db.ref('settings/anniversary').set(onboardData.anniversary);
   }
@@ -298,6 +412,16 @@ function showWelcomeGate() {
   const h = new Date().getHours();
   const timeLabel = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
   if (greeting) greeting.textContent = timeLabel + ', ' + (NAMES[user] || '');
+  // Show photo partner chose for you on the welcome gate
+  const welcomePhotoEl = document.getElementById('welcome-photo');
+  if (welcomePhotoEl && db) {
+    db.ref('photos/' + user).once('value', snap => {
+      const d = snap.val();
+      if (d && d.data) {
+        welcomePhotoEl.innerHTML = '<img src="' + d.data + '" class="welcome-photo-img" alt="">';
+      }
+    });
+  }
 }
 
 function finishLogin() {
@@ -309,6 +433,8 @@ function finishLogin() {
   // Handle PWA shortcut deep links
   const startPage = new URLSearchParams(window.location.search).get('page');
   go(startPage || 'dash');
+  listenPhoto();
+  listenPartnerPhoto();
   listenMoods();
   listenTaps();
   listenLetters();
