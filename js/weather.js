@@ -727,198 +727,231 @@ document.addEventListener('touchend', _tryUnlock, { passive: true });
 function generateNoise(type) {
   if (!WEATHER.audioCtx) return null;
   var ctx = WEATHER.audioCtx;
-  var sampleRate = ctx.sampleRate;
-  var bufferSize = sampleRate * 3; // 3 seconds loop
-  var buffer = ctx.createBuffer(1, bufferSize, sampleRate);
-  var data = buffer.getChannelData(0);
+  var sr = ctx.sampleRate;
+  var len = sr * 3; // 3 seconds loop
+  var buffer = ctx.createBuffer(1, len, sr);
+  var d = buffer.getChannelData(0);
+  var PI2 = 2 * Math.PI;
 
   switch (type) {
     case 'rain':
-      for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.12;
-        if (Math.random() < 0.003) data[i] *= 4;
+      // Dense noise with sharp droplet transients
+      for (var i = 0; i < len; i++) {
+        d[i] = (Math.random() * 2 - 1) * 0.5;
+        if (Math.random() < 0.005) d[i] = (Math.random() > 0.5 ? 1 : -1) * (0.6 + Math.random() * 0.3);
       }
       break;
     case 'lightRain':
-      for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.06;
-        if (Math.random() < 0.002) data[i] *= 4;
+      for (var i = 0; i < len; i++) {
+        d[i] = (Math.random() * 2 - 1) * 0.3;
+        if (Math.random() < 0.003) d[i] *= 2.5;
       }
       break;
     case 'wind':
-      var b0 = 0;
-      for (var i = 0; i < bufferSize; i++) {
-        var white = Math.random() * 2 - 1;
-        b0 = 0.993 * b0 + 0.007 * white;
-        data[i] = b0 * 0.35;
+      // Brown noise (low-pass filtered white noise) — guaranteed audible
+      var b = 0;
+      for (var i = 0; i < len; i++) {
+        b = 0.97 * b + 0.03 * (Math.random() * 2 - 1);
+        d[i] = b * 3.0; // Boost significantly
+        if (d[i] > 1) d[i] = 1;
+        if (d[i] < -1) d[i] = -1;
       }
       break;
     case 'forestWind':
       var b0 = 0, b1 = 0;
-      for (var i = 0; i < bufferSize; i++) {
-        var white = Math.random() * 2 - 1;
-        b0 = 0.996 * b0 + 0.004 * white;
-        b1 = 0.999 * b1 + 0.001 * white;
-        data[i] = (b0 * 0.20 + b1 * 0.10);
-        if (Math.random() < 0.001) {
-          for (var k = 0; k < Math.min(600, bufferSize - i); k++) {
-            data[i + k] += (Math.random() * 2 - 1) * 0.08 * Math.exp(-k / 200);
+      for (var i = 0; i < len; i++) {
+        var w = Math.random() * 2 - 1;
+        b0 = 0.98 * b0 + 0.02 * w;
+        b1 = 0.995 * b1 + 0.005 * w;
+        d[i] = (b0 * 1.5 + b1 * 0.8);
+        // Random leaf rustle bursts
+        if (Math.random() < 0.002) {
+          for (var k = 0; k < Math.min(800, len - i); k++) {
+            d[i + k] += (Math.random() * 2 - 1) * 0.4 * Math.exp(-k / 200);
           }
         }
+        if (d[i] > 1) d[i] = 1;
+        if (d[i] < -1) d[i] = -1;
       }
       break;
     case 'waves':
-      for (var i = 0; i < bufferSize; i++) {
-        var t = i / sampleRate;
-        data[i] = Math.sin(t * 0.25) * 0.15 +
-                  Math.sin(t * 0.6 + 1.2) * 0.10 +
-                  Math.sin(t * 1.1 + 2.8) * 0.06 +
-                  (Math.random() * 2 - 1) * 0.03;
+      // Ocean: low rumble + surf noise
+      for (var i = 0; i < len; i++) {
+        var t = i / sr;
+        // Low frequency ocean swell (audible 60-120 Hz)
+        d[i] = Math.sin(PI2 * 65 * t + Math.sin(PI2 * 0.3 * t) * 3) * 0.25 +
+               Math.sin(PI2 * 90 * t + Math.sin(PI2 * 0.5 * t) * 2) * 0.15 +
+               (Math.random() * 2 - 1) * 0.25; // surf hiss
       }
       break;
     case 'thunder':
-      for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.08;
-        if (Math.random() < 0.0005) {
-          for (var j = 0; j < Math.min(5000, bufferSize - i); j++) {
-            data[i + j] += (Math.random() * 2 - 1) * 0.50 * Math.exp(-j / 3000);
+      // Low rumble with loud cracks
+      var b = 0;
+      for (var i = 0; i < len; i++) {
+        b = 0.98 * b + 0.02 * (Math.random() * 2 - 1);
+        d[i] = b * 1.5;
+        if (Math.random() < 0.0003) {
+          for (var j = 0; j < Math.min(8000, len - i); j++) {
+            d[i + j] += (Math.random() * 2 - 1) * 0.9 * Math.exp(-j / 4000);
           }
         }
+        if (d[i] > 1) d[i] = 1;
+        if (d[i] < -1) d[i] = -1;
       }
       break;
     case 'crickets':
-      var b0 = 0;
-      for (var i = 0; i < bufferSize; i++) {
-        var white = Math.random() * 2 - 1;
-        b0 = 0.997 * b0 + 0.003 * white;
-        data[i] = b0 * 0.10;
-        if (Math.random() < 0.0008) {
-          for (var k = 0; k < Math.min(800, bufferSize - i); k++) {
-            data[i + k] += Math.sin(k * 0.6) * 0.15 * Math.exp(-k / 150);
+      // Chirps at ~4000 Hz with brown noise bed
+      var b = 0;
+      for (var i = 0; i < len; i++) {
+        b = 0.98 * b + 0.02 * (Math.random() * 2 - 1);
+        d[i] = b * 0.6; // background
+        if (Math.random() < 0.002) {
+          for (var k = 0; k < Math.min(1200, len - i); k++) {
+            d[i + k] += Math.sin(PI2 * 4200 * k / sr) * 0.5 * Math.exp(-k / 300);
           }
         }
+        if (d[i] > 1) d[i] = 1;
+        if (d[i] < -1) d[i] = -1;
       }
       break;
     case 'birdsong':
-      var b0 = 0;
-      for (var i = 0; i < bufferSize; i++) {
-        var white = Math.random() * 2 - 1;
-        b0 = 0.998 * b0 + 0.002 * white;
-        data[i] = b0 * 0.08;
-        if (Math.random() < 0.0005) {
-          for (var k = 0; k < Math.min(2500, bufferSize - i); k++) {
-            var freq = 0.3 + 0.25 * Math.sin(k / 250);
-            data[i + k] += Math.sin(k * freq) * 0.18 * Math.exp(-k / 1000);
+      // Bird calls: frequency-modulated chirps at audible range (1500-4000 Hz)
+      var b = 0;
+      for (var i = 0; i < len; i++) {
+        b = 0.985 * b + 0.015 * (Math.random() * 2 - 1);
+        d[i] = b * 0.5; // gentle background breeze
+        // Sparse bird chirps
+        if (Math.random() < 0.001) {
+          var baseFreq = 1800 + Math.random() * 2000; // 1800-3800 Hz
+          var chirpLen = Math.min(1500 + Math.floor(Math.random() * 2000), len - i);
+          for (var k = 0; k < chirpLen; k++) {
+            var freq = baseFreq + 600 * Math.sin(PI2 * 8 * k / sr); // warbling
+            d[i + k] += Math.sin(PI2 * freq * k / sr) * 0.6 * Math.exp(-k / (chirpLen * 0.5));
           }
         }
+        if (d[i] > 1) d[i] = 1;
+        if (d[i] < -1) d[i] = -1;
       }
       break;
     case 'seagulls':
-      var b0 = 0;
-      for (var i = 0; i < bufferSize; i++) {
-        var white = Math.random() * 2 - 1;
-        b0 = 0.998 * b0 + 0.002 * white;
-        data[i] = b0 * 0.06;
-        if (Math.random() < 0.0004) {
-          for (var k = 0; k < Math.min(3000, bufferSize - i); k++) {
-            var freq = 0.4 + 0.15 * Math.sin(k / 400);
-            data[i + k] += Math.sin(k * freq) * 0.15 * Math.exp(-k / 1200);
+      // Gull cries at 800-2000 Hz + ocean noise
+      for (var i = 0; i < len; i++) {
+        d[i] = (Math.random() * 2 - 1) * 0.2; // ocean hiss
+        if (Math.random() < 0.0006) {
+          var gullLen = Math.min(3000, len - i);
+          for (var k = 0; k < gullLen; k++) {
+            var freq = 1200 + 400 * Math.sin(PI2 * 5 * k / sr);
+            d[i + k] += Math.sin(PI2 * freq * k / sr) * 0.55 * Math.exp(-k / 1500);
           }
         }
+        if (d[i] > 1) d[i] = 1;
+        if (d[i] < -1) d[i] = -1;
       }
       break;
     case 'owls':
-      var b0 = 0;
-      for (var i = 0; i < bufferSize; i++) {
-        var white = Math.random() * 2 - 1;
-        b0 = 0.999 * b0 + 0.001 * white;
-        data[i] = b0 * 0.08;
-        if (Math.random() < 0.00015) {
-          for (var k = 0; k < Math.min(4000, bufferSize - i); k++) {
-            data[i + k] += Math.sin(k * 0.08) * 0.20 * Math.exp(-k / 2000);
+      // Low hoots at 300-500 Hz + quiet night ambience
+      var b = 0;
+      for (var i = 0; i < len; i++) {
+        b = 0.995 * b + 0.005 * (Math.random() * 2 - 1);
+        d[i] = b * 0.4; // quiet night
+        if (Math.random() < 0.0003) {
+          var hootLen = Math.min(6000, len - i);
+          for (var k = 0; k < hootLen; k++) {
+            d[i + k] += Math.sin(PI2 * 380 * k / sr) * 0.6 * Math.exp(-k / 3000);
           }
         }
+        if (d[i] > 1) d[i] = 1;
+        if (d[i] < -1) d[i] = -1;
       }
       break;
     case 'insects':
     case 'forestAmbient':
-      var b0 = 0, b1 = 0;
-      for (var i = 0; i < bufferSize; i++) {
-        var white = Math.random() * 2 - 1;
-        b0 = 0.996 * b0 + 0.004 * white;
-        b1 = 0.999 * b1 + 0.001 * white;
-        data[i] = (b0 + b1) * 0.10;
-        if (Math.random() < 0.0006) {
-          for (var k = 0; k < Math.min(500, bufferSize - i); k++) {
-            data[i + k] += Math.sin(k * 0.8) * 0.08 * Math.exp(-k / 150);
+      // Cicada buzz ~2500 Hz + background noise
+      var b = 0;
+      for (var i = 0; i < len; i++) {
+        b = 0.985 * b + 0.015 * (Math.random() * 2 - 1);
+        d[i] = b * 0.5;
+        if (Math.random() < 0.001) {
+          for (var k = 0; k < Math.min(800, len - i); k++) {
+            d[i + k] += Math.sin(PI2 * 2500 * k / sr) * 0.35 * Math.exp(-k / 250);
           }
         }
+        if (d[i] > 1) d[i] = 1;
+        if (d[i] < -1) d[i] = -1;
       }
       break;
-    // Mood sounds — richer, longer buffers
+    // Mood sounds
     case 'moodRelaxing':
-      for (var i = 0; i < bufferSize; i++) {
-        var t = i / sampleRate;
-        data[i] = Math.sin(t * 0.15) * 0.12 + Math.sin(t * 0.22 + 0.8) * 0.08 +
-                  Math.sin(t * 0.35 + 1.5) * 0.05 + (Math.random() * 2 - 1) * 0.01;
+      // Warm drone at audible frequencies + gentle noise
+      for (var i = 0; i < len; i++) {
+        var t = i / sr;
+        d[i] = Math.sin(PI2 * 174 * t) * 0.2 + // D3
+               Math.sin(PI2 * 220 * t) * 0.15 + // A3
+               Math.sin(PI2 * 146 * t) * 0.1 +
+               (Math.random() * 2 - 1) * 0.08;
       }
       break;
     case 'moodRomantic':
-      var b0 = 0;
-      for (var i = 0; i < bufferSize; i++) {
-        var t = i / sampleRate;
-        b0 = 0.998 * b0 + 0.002 * (Math.random() * 2 - 1);
-        data[i] = Math.sin(t * 0.12) * 0.10 + Math.sin(t * 0.08 + 2) * 0.06 + b0 * 0.04;
-        if (Math.random() < 0.0002) {
-          for (var k = 0; k < Math.min(3000, bufferSize - i); k++) {
-            data[i + k] += Math.sin(k * 0.15) * 0.08 * Math.exp(-k / 1500);
-          }
-        }
+      for (var i = 0; i < len; i++) {
+        var t = i / sr;
+        d[i] = Math.sin(PI2 * 220 * t) * 0.18 + // A3
+               Math.sin(PI2 * 277 * t) * 0.12 + // C#4
+               Math.sin(PI2 * 330 * t) * 0.08 + // E4
+               (Math.random() * 2 - 1) * 0.05;
       }
       break;
     case 'moodLively':
-      for (var i = 0; i < bufferSize; i++) {
-        var t = i / sampleRate;
-        data[i] = Math.sin(t * 0.5) * 0.08 + Math.sin(t * 0.8 + 1) * 0.06 +
-                  Math.sin(t * 1.3 + 2) * 0.04 + (Math.random() * 2 - 1) * 0.03;
-        if (Math.random() < 0.001) data[i] += Math.sin(i * 0.3) * 0.12;
+      for (var i = 0; i < len; i++) {
+        var t = i / sr;
+        d[i] = Math.sin(PI2 * 330 * t) * 0.15 +
+               Math.sin(PI2 * 440 * t + Math.sin(PI2 * 3 * t) * 0.5) * 0.15 +
+               Math.sin(PI2 * 550 * t) * 0.1 +
+               (Math.random() * 2 - 1) * 0.15;
       }
       break;
     case 'moodCozy':
-      var b0 = 0;
-      for (var i = 0; i < bufferSize; i++) {
-        var white = Math.random() * 2 - 1;
-        b0 = 0.997 * b0 + 0.003 * white;
-        data[i] = b0 * 0.15;
-        if (Math.random() < 0.0003) {
-          for (var k = 0; k < Math.min(1000, bufferSize - i); k++) {
-            data[i + k] += Math.sin(k * 0.15) * 0.06 * Math.exp(-k / 400);
+      // Crackling fire: noise bursts
+      var b = 0;
+      for (var i = 0; i < len; i++) {
+        b = 0.98 * b + 0.02 * (Math.random() * 2 - 1);
+        d[i] = b * 0.8;
+        if (Math.random() < 0.005) {
+          for (var k = 0; k < Math.min(200, len - i); k++) {
+            d[i + k] += (Math.random() * 2 - 1) * 0.6 * Math.exp(-k / 40);
           }
         }
+        if (d[i] > 1) d[i] = 1;
+        if (d[i] < -1) d[i] = -1;
       }
       break;
     case 'moodFocused':
-      for (var i = 0; i < bufferSize; i++) {
-        var t = i / sampleRate;
-        data[i] = Math.sin(t * 0.10) * 0.08 + Math.sin(t * 0.07) * 0.06 +
-                  (Math.random() * 2 - 1) * 0.005;
+      // Binaural-like low hum
+      for (var i = 0; i < len; i++) {
+        var t = i / sr;
+        d[i] = Math.sin(PI2 * 100 * t) * 0.2 +
+               Math.sin(PI2 * 104 * t) * 0.2 + // slight beat
+               (Math.random() * 2 - 1) * 0.04;
       }
       break;
     case 'moodPlayful':
-      for (var i = 0; i < bufferSize; i++) {
-        var t = i / sampleRate;
-        data[i] = Math.sin(t * 0.6 + Math.sin(t * 0.1) * 2) * 0.08 +
-                  Math.sin(t * 1.2) * 0.04 + (Math.random() * 2 - 1) * 0.02;
-        if (Math.random() < 0.001) {
-          for (var k = 0; k < Math.min(400, bufferSize - i); k++) {
-            data[i + k] += Math.sin(k * 0.5) * 0.10 * Math.exp(-k / 100);
+      for (var i = 0; i < len; i++) {
+        var t = i / sr;
+        d[i] = Math.sin(PI2 * 392 * t + Math.sin(PI2 * 6 * t) * 2) * 0.15 +
+               Math.sin(PI2 * 523 * t) * 0.1 +
+               (Math.random() * 2 - 1) * 0.12;
+        if (Math.random() < 0.003) {
+          for (var k = 0; k < Math.min(400, len - i); k++) {
+            d[i + k] += Math.sin(PI2 * (600 + Math.random() * 400) * k / sr) * 0.3 * Math.exp(-k / 100);
           }
         }
+        if (d[i] > 1) d[i] = 1;
+        if (d[i] < -1) d[i] = -1;
       }
       break;
     default:
-      for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.04;
+      // White noise fallback — definitely audible
+      for (var i = 0; i < len; i++) {
+        d[i] = (Math.random() * 2 - 1) * 0.4;
       }
       break;
   }
@@ -1017,26 +1050,44 @@ function updateAmbientAudio() {
 function toggleAmbientAudio(on) {
   WEATHER.audioEnabled = on;
   if (on) {
-    // The toggle itself is a user gesture — use it to unlock
+    // The toggle itself IS a user gesture — unlock + start immediately
     unlockAudio();
-    // Try to start immediately since this was triggered by user interaction
+    // Short confirmation tone so user knows audio works
+    _playConfirmTone();
+    // Then start ambient sounds
     setTimeout(function() {
-      if (WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
-        updateAmbientAudio();
-        console.log('[Audio] Started ambient audio');
-      } else if (WEATHER.audioCtx) {
-        WEATHER.audioCtx.resume().then(function() {
+      if (WEATHER.audioCtx) {
+        if (WEATHER.audioCtx.state !== 'running') {
+          WEATHER.audioCtx.resume().then(function() { updateAmbientAudio(); });
+        } else {
           updateAmbientAudio();
-          console.log('[Audio] Resumed and started ambient audio');
-        });
+        }
       }
-    }, 100);
+    }, 200);
   } else {
     stopAllSounds();
   }
   if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
     db.ref('settings/weather/' + user + '/audio').set(on);
   }
+}
+
+function _playConfirmTone() {
+  try {
+    var ctx = WEATHER.audioCtx;
+    if (!ctx) return;
+    if (ctx.state !== 'running') ctx.resume();
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 520;
+    g.gain.setValueAtTime(0.3, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
 }
 
 // ===== SCENE GROUND LAYER =====
