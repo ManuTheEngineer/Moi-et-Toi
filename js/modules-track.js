@@ -1130,7 +1130,7 @@ async function saveGrowReflection() {
 // ========================================
 // ===== NUTRITION MODULE =====
 // ========================================
-let nutritionData = {}, groceryData = {}, recipeData = {}, mealPlanData = {};
+let nutritionData = {}, recipeData = {}, mealPlanData = {};
 
 function listenNutritionData() {
   if (!db) return;
@@ -1138,9 +1138,6 @@ function listenNutritionData() {
   db.ref('nutrition/' + user + '/meals/' + today).on('value', snap => {
     nutritionData = snap.val() || {};
     renderNutritionDay();
-  });
-  db.ref('nutrition/groceryList').on('value', snap => {
-    groceryData = snap.val() || {};
   });
   db.ref('nutrition/recipes').on('value', snap => {
     recipeData = snap.val() || {};
