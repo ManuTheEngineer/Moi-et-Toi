@@ -11,9 +11,7 @@ var WEATHER = {
   audioNodes: {},
   audioEnabled: false,
   audioUnlocked: false,
-  refreshTimer: null,
-  previewTimer: null,
-  previewRunning: false
+  refreshTimer: null
 };
 
 // ===== SCENE DEFINITIONS =====
@@ -24,12 +22,12 @@ var SCENES = {
     icon: '🌾',
     desc: 'Sun-kissed fields, wildflowers, gentle warmth',
     creatures: {
-      dawn: ['rabbit', 'butterfly', 'songbird'],
-      morning: ['bird', 'butterfly', 'bee', 'rabbit'],
-      afternoon: ['bird', 'bee', 'dragonfly'],
-      golden: ['bird', 'deer', 'rabbit'],
-      evening: ['owl', 'bat', 'deer'],
-      night: ['firefly', 'owl']
+      dawn: ['rabbit', 'butterfly', 'songbird', 'sparrow', 'hawk'],
+      morning: ['bird', 'butterfly', 'bee', 'rabbit', 'sparrow', 'swallow', 'hawk'],
+      afternoon: ['bird', 'bee', 'dragonfly', 'hawk', 'swallow', 'butterfly'],
+      golden: ['bird', 'deer', 'rabbit', 'sparrow', 'hawk', 'swallow'],
+      evening: ['owl', 'bat', 'deer', 'fox', 'firefly'],
+      night: ['firefly', 'owl', 'bat', 'fox']
     },
     sounds: {
       base: 'wind',
@@ -54,12 +52,12 @@ var SCENES = {
     icon: '🌊',
     desc: 'Warm tides, sandy breeze, ocean calm',
     creatures: {
-      dawn: ['seagull', 'crab', 'dolphin'],
-      morning: ['seagull', 'fish', 'crab'],
-      afternoon: ['seagull', 'jellyfish', 'turtle'],
-      golden: ['seagull', 'dolphin', 'crab'],
-      evening: ['seagull', 'bat', 'crab'],
-      night: ['firefly', 'crab', 'whale']
+      dawn: ['seagull', 'crab', 'dolphin', 'heron', 'pelican'],
+      morning: ['seagull', 'fish', 'crab', 'pelican', 'dolphin', 'heron'],
+      afternoon: ['seagull', 'jellyfish', 'turtle', 'pelican', 'dolphin'],
+      golden: ['seagull', 'dolphin', 'crab', 'heron', 'pelican'],
+      evening: ['seagull', 'bat', 'crab', 'firefly'],
+      night: ['firefly', 'crab', 'whale', 'bat']
     },
     sounds: {
       base: 'waves',
@@ -84,12 +82,12 @@ var SCENES = {
     icon: '🌲',
     desc: 'Dappled light, mossy trails, woodland peace',
     creatures: {
-      dawn: ['fox', 'songbird', 'butterfly'],
-      morning: ['bird', 'squirrel', 'butterfly', 'woodpecker'],
-      afternoon: ['bird', 'squirrel', 'dragonfly'],
-      golden: ['deer', 'bird', 'fox'],
-      evening: ['owl', 'bat', 'fox'],
-      night: ['firefly', 'owl']
+      dawn: ['fox', 'songbird', 'butterfly', 'sparrow', 'rabbit'],
+      morning: ['bird', 'squirrel', 'butterfly', 'woodpecker', 'hawk', 'sparrow'],
+      afternoon: ['bird', 'squirrel', 'dragonfly', 'hawk', 'butterfly'],
+      golden: ['deer', 'bird', 'fox', 'hawk', 'sparrow', 'swallow'],
+      evening: ['owl', 'bat', 'fox', 'deer', 'firefly'],
+      night: ['firefly', 'owl', 'bat', 'fox']
     },
     sounds: {
       base: 'forestWind',
@@ -401,13 +399,18 @@ function renderSceneCreature(container, type) {
     case 'fox': renderFox(container); break;
     case 'squirrel': renderSquirrel(container); break;
     case 'woodpecker': renderWoodpecker(container); break;
-    case 'seagull': case 'pelican': renderSeagull(container); break;
+    case 'seagull': renderSeagull(container); break;
+    case 'pelican': renderPelican(container); break;
+    case 'heron': renderHeron(container); break;
     case 'crab': renderCrab(container); break;
     case 'dolphin': renderDolphin(container); break;
     case 'fish': renderFish(container); break;
     case 'jellyfish': renderJellyfish(container); break;
     case 'turtle': renderTurtle(container); break;
     case 'whale': renderWhale(container); break;
+    case 'hawk': renderHawk(container); break;
+    case 'swallow': renderSwallow(container); break;
+    case 'sparrow': renderSparrow(container); break;
     case 'songbird': case 'bird': renderBird(container); break;
     case 'butterfly': renderButterfly(container); break;
     case 'firefly': renderFirefly(container); break;
@@ -596,6 +599,78 @@ function renderWhale(container) {
   var dur = 20 + Math.random() * 10;
   el.style.cssText = 'bottom:20%;left:-15%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="whale-body"></div><div class="whale-tail"></div><div class="whale-spout"></div>';
+  container.appendChild(el);
+  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+}
+
+// ===== NEW CREATURE RENDERERS =====
+function renderHawk(container) {
+  var el = document.createElement('div');
+  el.className = 'scene-creature creature-hawk';
+  var startX = -10;
+  var startY = 5 + Math.random() * 15;
+  var dur = 10 + Math.random() * 8;
+  var dx = 350 + Math.random() * 300;
+  var dy = -(10 + Math.random() * 20);
+  el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--hawk-dx:' + dx + 'px;--hawk-dy:' + dy + 'px;animation-duration:' + dur + 's';
+  el.innerHTML = '<div class="hawk-body"></div><div class="hawk-wing hawk-wing-l"></div><div class="hawk-wing hawk-wing-r"></div>';
+  container.appendChild(el);
+  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+}
+
+function renderSwallow(container) {
+  var el = document.createElement('div');
+  el.className = 'scene-creature creature-swallow';
+  var startX = Math.random() < 0.5 ? -8 : 108;
+  var startY = 10 + Math.random() * 30;
+  var dur = 4 + Math.random() * 4;
+  var dx = startX < 0 ? (300 + Math.random() * 200) : -(300 + Math.random() * 200);
+  var dy = (Math.random() - 0.5) * 120;
+  el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--sw-dx:' + dx + 'px;--sw-dy:' + dy + 'px;animation-duration:' + dur + 's';
+  if (startX > 50) el.style.transform = 'scaleX(-1)';
+  el.innerHTML = '<div class="sw-body"></div><div class="sw-wing sw-wing-l"></div><div class="sw-wing sw-wing-r"></div><div class="sw-tail"></div>';
+  container.appendChild(el);
+  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+}
+
+function renderSparrow(container) {
+  var el = document.createElement('div');
+  el.className = 'scene-creature creature-sparrow';
+  var startX = -5 + Math.random() * 15;
+  var startY = 12 + Math.random() * 25;
+  var dur = 6 + Math.random() * 6;
+  var dx = 200 + Math.random() * 250;
+  var dy = -(10 + Math.random() * 30);
+  el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--sp-dx:' + dx + 'px;--sp-dy:' + dy + 'px;animation-duration:' + dur + 's';
+  el.innerHTML = '<div class="sp-body"></div><div class="sp-wing sp-wing-l"></div><div class="sp-wing sp-wing-r"></div>';
+  container.appendChild(el);
+  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+}
+
+function renderHeron(container) {
+  var el = document.createElement('div');
+  el.className = 'scene-creature creature-heron';
+  var dur = 14 + Math.random() * 8;
+  var startX = -10;
+  var startY = 8 + Math.random() * 15;
+  var dx = 400 + Math.random() * 200;
+  var dy = -(5 + Math.random() * 15);
+  el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--hr-dx:' + dx + 'px;--hr-dy:' + dy + 'px;animation-duration:' + dur + 's';
+  el.innerHTML = '<div class="hr-body"></div><div class="hr-wing hr-wing-l"></div><div class="hr-wing hr-wing-r"></div><div class="hr-neck"></div>';
+  container.appendChild(el);
+  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+}
+
+function renderPelican(container) {
+  var el = document.createElement('div');
+  el.className = 'scene-creature creature-pelican';
+  var dur = 10 + Math.random() * 8;
+  var startX = -10;
+  var startY = 10 + Math.random() * 18;
+  var dx = 350 + Math.random() * 250;
+  var dy = (Math.random() - 0.5) * 40;
+  el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--pl-dx:' + dx + 'px;--pl-dy:' + dy + 'px;animation-duration:' + dur + 's';
+  el.innerHTML = '<div class="pl-body"></div><div class="pl-wing pl-wing-l"></div><div class="pl-wing pl-wing-r"></div><div class="pl-beak"></div>';
   container.appendChild(el);
   setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
 }
@@ -893,10 +968,27 @@ function spawnSceneCreatures(container) {
   var time = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
   var creatures = scene.creatures[time] || scene.creatures.morning;
 
-  var count = 1 + Math.floor(Math.random() * 2);
+  // Spawn 3-6 creatures with staggered timing for natural feel
+  var count = 3 + Math.floor(Math.random() * 4);
   for (var i = 0; i < count; i++) {
-    var type = creatures[Math.floor(Math.random() * creatures.length)];
-    renderSceneCreature(container, type);
+    (function(idx) {
+      var delay = idx * (1500 + Math.random() * 2000);
+      setTimeout(function() {
+        var type = creatures[Math.floor(Math.random() * creatures.length)];
+        renderSceneCreature(container, type);
+      }, delay);
+    })(i);
+  }
+
+  // Continuous creature spawning — keep the scene alive
+  if (!WEATHER._creatureInterval) {
+    WEATHER._creatureInterval = setInterval(function() {
+      if (!container.parentNode) { clearInterval(WEATHER._creatureInterval); WEATHER._creatureInterval = null; return; }
+      var t = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
+      var c = scene.creatures[t] || scene.creatures.morning;
+      var type = c[Math.floor(Math.random() * c.length)];
+      renderSceneCreature(container, type);
+    }, 4000 + Math.random() * 3000);
   }
 }
 
@@ -931,7 +1023,14 @@ function spawnSceneCreatures(container) {
     };
 
     window.renderLivingSky = function(container) {
+      // Clear ongoing creature spawning before re-render
+      if (WEATHER._creatureInterval) {
+        clearInterval(WEATHER._creatureInterval);
+        WEATHER._creatureInterval = null;
+      }
+      // Render the base living sky (sun, moon, stars, clouds, gradient)
       if (_origRenderLivingSky) _origRenderLivingSky(container);
+      // Layer scene ground and weather effects on top
       renderSceneGround(container);
       renderWeatherEffects(container);
     };
@@ -943,153 +1042,6 @@ function spawnSceneCreatures(container) {
     patchSkySystem();
   }
 })();
-
-// ===== SCENE PREVIEW SYSTEM =====
-function startScenePreview(sceneName, previewEl) {
-  if (WEATHER.previewRunning) stopScenePreview();
-  WEATHER.previewRunning = true;
-
-  var scene = SCENES[sceneName];
-  if (!scene || !previewEl) return;
-
-  var periods = ['dawn', 'morning', 'afternoon', 'golden', 'evening', 'night'];
-  var idx = 0;
-  var gradients = {
-    dawn: 'linear-gradient(180deg, #2a1f4e 0%, #7b4a8c 25%, #e8836b 50%, #f5c07a 75%, #ffecd2 100%)',
-    morning: 'linear-gradient(180deg, #87CEEB 0%, #B0E0E6 30%, #FFF8DC 70%, #FFFAF0 100%)',
-    afternoon: 'linear-gradient(180deg, #5BA3E6 0%, #87CEEB 30%, #B8D4E8 60%, #F0F4E8 100%)',
-    golden: 'linear-gradient(180deg, #FF8C42 0%, #FFB347 25%, #FFD93D 50%, #FFF0B8 75%, #FFF8E0 100%)',
-    evening: 'linear-gradient(180deg, #2C1654 0%, #6B3FA0 25%, #C46D6D 50%, #E8A87C 75%, #F5DEB3 100%)',
-    night: 'linear-gradient(180deg, #0a0e27 0%, #151d3b 30%, #1a2444 60%, #1f2d50 100%)'
-  };
-
-  var weatherConditions = ['clear', 'clouds', 'rain', 'snow'];
-  var wxIdx = 0;
-
-  function renderPreviewFrame() {
-    if (!WEATHER.previewRunning) return;
-    var period = periods[idx];
-
-    previewEl.innerHTML = '';
-    previewEl.style.background = gradients[period];
-    previewEl.style.transition = 'background 1.5s ease';
-
-    // Period label
-    var label = document.createElement('div');
-    label.className = 'preview-period-label';
-    label.textContent = period.charAt(0).toUpperCase() + period.slice(1);
-    previewEl.appendChild(label);
-
-    // Weather label
-    var wxLabel = document.createElement('div');
-    wxLabel.className = 'preview-weather-label';
-    wxLabel.textContent = weatherConditions[wxIdx].charAt(0).toUpperCase() + weatherConditions[wxIdx].slice(1);
-    previewEl.appendChild(wxLabel);
-
-    // Scene ground
-    var ground = document.createElement('div');
-    ground.className = 'preview-ground scene-ground-' + sceneName;
-    previewEl.appendChild(ground);
-
-    // Sun/Moon
-    if (period === 'night') {
-      var moon = document.createElement('div');
-      moon.className = 'preview-moon';
-      previewEl.appendChild(moon);
-      for (var s = 0; s < 15; s++) {
-        var star = document.createElement('div');
-        star.className = 'preview-star';
-        star.style.cssText = 'left:' + (Math.random() * 90) + '%;top:' + (Math.random() * 50) + '%;width:' + (1 + Math.random() * 2) + 'px;height:' + (1 + Math.random() * 2) + 'px';
-        previewEl.appendChild(star);
-      }
-    } else {
-      var sun = document.createElement('div');
-      sun.className = 'preview-sun';
-      var positions = { dawn: { x: 15, y: 70 }, morning: { x: 30, y: 30 }, afternoon: { x: 60, y: 15 }, golden: { x: 80, y: 50 }, evening: { x: 90, y: 70 } };
-      var sp = positions[period] || { x: 50, y: 30 };
-      sun.style.cssText = 'left:' + sp.x + '%;top:' + sp.y + '%';
-      if (period === 'golden' || period === 'evening') sun.style.background = 'radial-gradient(circle, #FFD700, #FF8C00)';
-      previewEl.appendChild(sun);
-    }
-
-    // Weather particles
-    var wx = weatherConditions[wxIdx];
-    if (wx === 'rain') {
-      for (var r = 0; r < 20; r++) {
-        var drop = document.createElement('div');
-        drop.className = 'preview-rain';
-        drop.style.cssText = 'left:' + (Math.random() * 100) + '%;animation-delay:' + (Math.random() * 1) + 's';
-        previewEl.appendChild(drop);
-      }
-    } else if (wx === 'snow') {
-      for (var s = 0; s < 15; s++) {
-        var flake = document.createElement('div');
-        flake.className = 'preview-snow';
-        flake.style.cssText = 'left:' + (Math.random() * 100) + '%;animation-delay:' + (Math.random() * 2) + 's';
-        previewEl.appendChild(flake);
-      }
-    } else if (wx === 'clouds') {
-      for (var c = 0; c < 3; c++) {
-        var cloud = document.createElement('div');
-        cloud.className = 'preview-cloud';
-        cloud.style.cssText = 'top:' + (10 + c * 15) + '%;animation-delay:' + (c * 2) + 's;width:' + (30 + Math.random() * 30) + 'px';
-        previewEl.appendChild(cloud);
-      }
-    }
-
-    // Creature emoji
-    var creatures = scene.creatures[period];
-    if (creatures && creatures.length > 0) {
-      var c1 = creatures[0];
-      var creatureEl = document.createElement('div');
-      creatureEl.className = 'preview-creature';
-      creatureEl.textContent = getCreatureEmoji(c1);
-      creatureEl.style.cssText = 'bottom:15%;left:' + (20 + Math.random() * 60) + '%';
-      previewEl.appendChild(creatureEl);
-      if (creatures.length > 1) {
-        var c2El = document.createElement('div');
-        c2El.className = 'preview-creature';
-        c2El.textContent = getCreatureEmoji(creatures[1]);
-        c2El.style.cssText = 'bottom:18%;left:' + (10 + Math.random() * 40) + '%;animation-delay:0.5s';
-        previewEl.appendChild(c2El);
-      }
-    }
-
-    // Temperature
-    var tempEl = document.createElement('div');
-    tempEl.className = 'preview-temp';
-    var temps = { dawn: '16°', morning: '20°', afternoon: '27°', golden: '24°', evening: '19°', night: '14°' };
-    tempEl.textContent = temps[period];
-    previewEl.appendChild(tempEl);
-  }
-
-  renderPreviewFrame();
-  WEATHER.previewTimer = setInterval(function() {
-    if (!WEATHER.previewRunning) {
-      clearInterval(WEATHER.previewTimer);
-      return;
-    }
-    wxIdx = (wxIdx + 1) % weatherConditions.length;
-    if (wxIdx === 0) idx = (idx + 1) % periods.length;
-    renderPreviewFrame();
-  }, 2500);
-}
-
-function stopScenePreview() {
-  WEATHER.previewRunning = false;
-  clearInterval(WEATHER.previewTimer);
-}
-
-function getCreatureEmoji(type) {
-  var map = {
-    rabbit: '🐇', bird: '🐦', butterfly: '🦋', bee: '🐝', dragonfly: '🪰',
-    deer: '🦌', owl: '🦉', bat: '🦇', fox: '🦊', squirrel: '🐿',
-    woodpecker: '🪶', firefly: '✨', wolf: '🐺',
-    seagull: '🕊', crab: '🦀', dolphin: '🐬', pelican: '🕊',
-    fish: '🐟', jellyfish: '🪼', turtle: '🐢', whale: '🐋', songbird: '🐦'
-  };
-  return map[type] || '🐾';
-}
 
 // ===== LOCATION PROMPT MODAL =====
 function showLocationPrompt() {
@@ -1181,12 +1133,6 @@ function setWeatherScene(sceneName) {
   document.querySelectorAll('.scene-option').forEach(function(opt) {
     opt.classList.toggle('active', opt.getAttribute('data-scene') === sceneName);
   });
-
-  // If preview is running, restart with new scene
-  if (WEATHER.previewRunning) {
-    var box = document.getElementById('scene-preview-box');
-    if (box) startScenePreview(sceneName, box);
-  }
 
   toast(SCENES[sceneName].label + ' activated');
 }

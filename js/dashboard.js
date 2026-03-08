@@ -1571,24 +1571,6 @@ function loadWeatherSettings() {
   });
 }
 
-function toggleScenePreview() {
-  var btn = document.getElementById('scene-preview-btn');
-  var box = document.getElementById('scene-preview-box');
-  if (!btn || !box) return;
-
-  if (WEATHER.previewRunning) {
-    stopScenePreview();
-    box.classList.add('d-none');
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Preview Full Day Transition';
-    btn.classList.remove('playing');
-  } else {
-    box.classList.remove('d-none');
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Stop Preview';
-    btn.classList.add('playing');
-    startScenePreview(WEATHER.scene, box);
-  }
-}
-
 async function saveSettings() {
   if (!db || !user) return;
   const nameEl = document.getElementById('set-name');
