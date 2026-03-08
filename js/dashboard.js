@@ -1,3 +1,59 @@
+// ===== THEME =====
+function applyTheme() {
+  // Light mode is the default via CSS variables; nothing to do unless dark mode is added
+}
+
+// ===== PULL TO REFRESH =====
+function initPullToRefresh() {
+  let startY = 0;
+  let pulling = false;
+  const threshold = 100;
+
+  document.addEventListener('touchstart', function(e) {
+    if (window.scrollY === 0) {
+      startY = e.touches[0].clientY;
+      pulling = true;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function(e) {
+    if (!pulling) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy > threshold && window.scrollY === 0) {
+      pulling = false;
+      location.reload();
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', function() {
+    pulling = false;
+  }, { passive: true });
+}
+
+// ===== MODAL =====
+function openModal(html) {
+  var el = document.getElementById('generic-modal');
+  var box = document.getElementById('generic-modal-content');
+  if (box) box.innerHTML = html;
+  if (el) { el.classList.remove('d-none'); el.style.display = ''; }
+}
+
+function closeModal() {
+  var el = document.getElementById('generic-modal');
+  if (el) { el.classList.add('d-none'); }
+}
+
+// ===== PRIVACY =====
+function enforcePrivacy() {
+  // Hide partner-only sections when viewing your own private space
+}
+
+// ===== DYNAMIC VISUALS =====
+function initDynamicVisuals() {
+  // Sky scene is initialized separately via initSkyScene
+  if (typeof initSkyScene === 'function') initSkyScene();
+}
+
 // ===== BOOT =====
 document.addEventListener('DOMContentLoaded', () => {
   // Apply light theme
