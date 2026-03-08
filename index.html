@@ -24,11 +24,11 @@
 </head>
 <body>
 
-<!-- ===== LOGIN / WELCOME GATE ===== -->
+<!-- ===== LOGIN / WELCOME GATE / ONBOARDING ===== -->
 <div class="login" id="login">
-  <div class="login-logo">M&T</div>
-  <h1>Manu & Taylor</h1>
-  <div class="sub">Our place</div>
+  <div class="login-logo" id="login-logo">M&T</div>
+  <h1 id="login-heading">Manu & Taylor</h1>
+  <div class="sub" id="login-sub">Our place</div>
   <!-- Sign-in form (shown when not authenticated) -->
   <div id="login-form" class="login-inner">
     <div class="lbl">Sign In</div>
@@ -40,6 +40,23 @@
   <div id="welcome-gate" class="login-inner d-none">
     <div class="lbl" id="welcome-greeting"></div>
     <button onclick="finishLogin()" class="login-btn">Enter</button>
+  </div>
+  <!-- Onboarding steps (inputs in DOM from load — keyboard works) -->
+  <div id="onboard-steps" class="login-inner d-none">
+    <div class="onboard-progress"><div class="onboard-bar" id="ob-bar"></div></div>
+    <div id="ob-emoji" class="onboard-emoji" style="display:none"></div>
+    <h1 class="onboard-title" id="ob-title"></h1>
+    <p class="onboard-sub" id="ob-sub"></p>
+    <input type="text" id="ob-name" class="login-input mb16" placeholder="Your first name..."
+           style="display:none" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}">
+    <input type="text" id="ob-nickname" class="login-input mb16" placeholder="Babe, Love, Her name..."
+           style="display:none" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}">
+    <input type="date" id="ob-anniversary" class="login-input mb16"
+           style="display:none;color-scheme:light">
+    <div id="ob-tour" style="display:none"></div>
+    <button id="ob-btn" onclick="onboardNext()" class="login-btn">Continue</button>
+    <p class="onboard-skip" id="ob-skip" style="display:none" onclick="onboardNext()">Skip for now</p>
+    <div class="onboard-dots" id="ob-dots"></div>
   </div>
   <div id="login-err" class="login-err"></div>
 </div>

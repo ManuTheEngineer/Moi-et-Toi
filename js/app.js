@@ -122,6 +122,9 @@ function needsOnboarding() {
 }
 
 // ===== ONBOARDING FLOW =====
+// Uses DOM elements defined in index.html (not innerHTML) so mobile
+// keyboards work reliably — iOS won't open keyboards for dynamically
+// injected inputs inside position:fixed containers.
 let onboardStep = 0;
 let onboardData = { name: '', nickname: '', anniversary: '' };
 const OB_TOTAL = 7;
@@ -129,13 +132,17 @@ const OB_TOTAL = 7;
 function startOnboarding() {
   onboardStep = 0;
   onboardData = { name: '', nickname: '', anniversary: '' };
-  const el = document.getElementById('login');
-  el.classList.add('onboard-active');
+  // Hide login chrome, show onboard container
+  hideEl('login-form');
+  hideEl('welcome-gate');
+  var logo = document.getElementById('login-logo');
+  var heading = document.getElementById('login-heading');
+  var sub = document.getElementById('login-sub');
+  if (logo) logo.style.display = 'none';
+  if (heading) heading.style.display = 'none';
+  if (sub) sub.style.display = 'none';
+  showEl('onboard-steps');
   renderOnboardStep();
-}
-
-function obProgress() {
-  return Math.round(((onboardStep) / (OB_TOTAL - 1)) * 100);
 }
 
 function renderDots(active) {
@@ -145,129 +152,114 @@ function renderDots(active) {
 }
 
 function renderOnboardStep() {
-  const el = document.getElementById('login');
   const isHer = user === 'her';
   const partnerLabel = isHer ? 'him' : 'her';
-  const pct = obProgress();
+  const pct = Math.round((onboardStep / (OB_TOTAL - 1)) * 100);
 
-  const steps = [
-    // Step 0: Personalized Welcome
-    `<div class="onboard-wrap">
-      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
-      <div class="login-logo">M&T</div>
-      <h1 class="onboard-title">${isHer ? "Hey Baby" : "Welcome"}</h1>
-      <p class="onboard-sub">${isHer
-        ? "I'm sorry baby, let's start over.<br>Let me set things up right this time."
-        : "Let's build our space together.<br>This only takes a moment."
-      }</p>
-      <button onclick="onboardNext()" class="login-btn">${isHer ? "Okay, let's go" : "Let's begin"}</button>
-      <div class="onboard-dots">${renderDots(0)}</div>
-    </div>`,
+  // References
+  const bar = document.getElementById('ob-bar');
+  const emoji = document.getElementById('ob-emoji');
+  const title = document.getElementById('ob-title');
+  const sub = document.getElementById('ob-sub');
+  const btn = document.getElementById('ob-btn');
+  const skip = document.getElementById('ob-skip');
+  const dots = document.getElementById('ob-dots');
+  const tour = document.getElementById('ob-tour');
+  const nameIn = document.getElementById('ob-name');
+  const nickIn = document.getElementById('ob-nickname');
+  const annivIn = document.getElementById('ob-anniversary');
 
-    // Step 1: Your name
-    `<div class="onboard-wrap">
-      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
-      <div class="onboard-emoji">👋</div>
-      <h1 class="onboard-title">What's your name?</h1>
-      <p class="onboard-sub">This is how your partner will see you in the app.</p>
-      <input type="text" id="ob-name" class="login-input mb16" placeholder="Your first name..." autocomplete="off"
-             enterkeyhint="next" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}">
-      <button onclick="onboardNext()" class="login-btn">Continue</button>
-      <div class="onboard-dots">${renderDots(1)}</div>
-    </div>`,
+  // Progress
+  bar.style.width = pct + '%';
+  dots.innerHTML = renderDots(onboardStep);
 
-    // Step 2: Nickname for partner
-    `<div class="onboard-wrap">
-      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
-      <div class="onboard-emoji">${isHer ? '💜' : '💛'}</div>
-      <h1 class="onboard-title">What do you call ${partnerLabel}?</h1>
-      <p class="onboard-sub">A pet name, nickname, or their real name — whatever feels like you.</p>
-      <input type="text" id="ob-nickname" class="login-input mb16"
-             placeholder="${isHer ? 'Baby, Babe, His name...' : 'Babe, Love, Her name...'}" autocomplete="off"
-             enterkeyhint="next" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}">
-      <button onclick="onboardNext()" class="login-btn">Continue</button>
-      <div class="onboard-dots">${renderDots(2)}</div>
-    </div>`,
+  // Hide all optional elements
+  emoji.style.display = 'none';
+  nameIn.style.display = 'none';
+  nickIn.style.display = 'none';
+  annivIn.style.display = 'none';
+  tour.style.display = 'none';
+  skip.style.display = 'none';
 
-    // Step 3: Anniversary
-    `<div class="onboard-wrap">
-      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
-      <div class="onboard-emoji">📅</div>
-      <h1 class="onboard-title">When did it start?</h1>
-      <p class="onboard-sub">The day you two became official. This powers your "Days Together" count.</p>
-      <input type="date" id="ob-anniversary" class="login-input mb16" style="color-scheme:light">
-      <button onclick="onboardNext()" class="login-btn">Continue</button>
-      <p class="onboard-skip" onclick="onboardNext()">Skip for now</p>
-      <div class="onboard-dots">${renderDots(3)}</div>
-    </div>`,
-
-    // Step 4: Tour — Home
-    `<div class="onboard-wrap">
-      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
-      <h1 class="onboard-title">Your Home</h1>
-      <div class="ob-tour-card">
-        <div class="ob-tour-row"><span class="ob-tour-ico">🏠</span><div><strong>Home</strong><br>Your dashboard — mood, daily questions, streaks, and a pulse on your relationship.</div></div>
-        <div class="ob-tour-row"><span class="ob-tour-ico">💕</span><div><strong>Together</strong><br>Letters, games, date nights, check-ins — everything you do as a couple.</div></div>
-      </div>
-      <button onclick="onboardNext()" class="login-btn">Next</button>
-      <div class="onboard-dots">${renderDots(4)}</div>
-    </div>`,
-
-    // Step 5: Tour — Wellness, Plan, More
-    `<div class="onboard-wrap">
-      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
-      <h1 class="onboard-title">Your Tools</h1>
-      <div class="ob-tour-card">
-        <div class="ob-tour-row"><span class="ob-tour-ico">📊</span><div><strong>Wellness</strong><br>Track mood, fitness, nutrition, and gratitude — individually and together.</div></div>
-        <div class="ob-tour-row"><span class="ob-tour-ico">🌍</span><div><strong>Plan</strong><br>Dreams, calendar, finances, your dream home, shared values and wishlists.</div></div>
-        <div class="ob-tour-row"><span class="ob-tour-ico">✨</span><div><strong>More</strong><br>AI chat, memories, achievements, and settings.</div></div>
-      </div>
-      <button onclick="onboardNext()" class="login-btn">Got it</button>
-      <div class="onboard-dots">${renderDots(5)}</div>
-    </div>`,
-
-    // Step 6: Done
-    `<div class="onboard-wrap">
-      <div class="onboard-progress"><div class="onboard-bar" style="width:100%"></div></div>
-      <div class="onboard-emoji">✨</div>
-      <h1 class="onboard-title">${isHer ? "All yours, baby" : "You're all set"}</h1>
-      <p class="onboard-sub">
-        Welcome, <strong>${esc(onboardData.name)}</strong>.<br>
-        Your partner is <strong>${esc(onboardData.nickname)}</strong> in here.
-        ${onboardData.anniversary ? '<br>Counting the days since <strong>' + onboardData.anniversary + '</strong>.' : ''}
-      </p>
-      <button onclick="finishOnboarding()" class="login-btn">Enter Moi & Toi</button>
-      <div class="onboard-dots">${renderDots(6)}</div>
-    </div>`
-  ];
-
-  el.innerHTML = steps[onboardStep];
-
-  // On mobile, programmatic focus() won't open the keyboard —
-  // only a real user tap does. Scroll input into view and when
-  // they tap it, ensure it stays visible above the keyboard.
-  const input = el.querySelector('input');
-  if (input) {
-    setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
-    input.addEventListener('focus', () => {
-      setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
-    });
+  // Configure each step
+  if (onboardStep === 0) {
+    // Welcome
+    title.textContent = isHer ? 'Hey Baby' : 'Welcome';
+    sub.innerHTML = isHer
+      ? "I'm sorry baby, let's start over.<br>Let me set things up right this time."
+      : "Let's build our space together.<br>This only takes a moment.";
+    btn.textContent = isHer ? "Okay, let's go" : "Let's begin";
+  } else if (onboardStep === 1) {
+    // Name
+    emoji.textContent = '👋'; emoji.style.display = '';
+    title.textContent = "What's your name?";
+    sub.textContent = 'This is how your partner will see you in the app.';
+    nameIn.style.display = ''; nameIn.value = onboardData.name;
+    btn.textContent = 'Continue';
+  } else if (onboardStep === 2) {
+    // Nickname
+    emoji.textContent = isHer ? '💜' : '💛'; emoji.style.display = '';
+    title.textContent = 'What do you call ' + partnerLabel + '?';
+    sub.textContent = 'A pet name, nickname, or their real name — whatever feels like you.';
+    nickIn.placeholder = isHer ? 'Baby, Babe, His name...' : 'Babe, Love, Her name...';
+    nickIn.style.display = ''; nickIn.value = onboardData.nickname;
+    btn.textContent = 'Continue';
+  } else if (onboardStep === 3) {
+    // Anniversary
+    emoji.textContent = '📅'; emoji.style.display = '';
+    title.textContent = 'When did it start?';
+    sub.textContent = 'The day you two became official. This powers your "Days Together" count.';
+    annivIn.style.display = '';
+    skip.style.display = '';
+    btn.textContent = 'Continue';
+  } else if (onboardStep === 4) {
+    // Tour 1
+    title.textContent = 'Your Home';
+    sub.textContent = '';
+    tour.style.display = '';
+    tour.innerHTML = '<div class="ob-tour-card">'
+      + '<div class="ob-tour-row"><span class="ob-tour-ico">🏠</span><div><strong>Home</strong><br>Your dashboard — mood, daily questions, streaks, and a pulse on your relationship.</div></div>'
+      + '<div class="ob-tour-row"><span class="ob-tour-ico">💕</span><div><strong>Together</strong><br>Letters, games, date nights, check-ins — everything you do as a couple.</div></div>'
+      + '</div>';
+    btn.textContent = 'Next';
+  } else if (onboardStep === 5) {
+    // Tour 2
+    title.textContent = 'Your Tools';
+    sub.textContent = '';
+    tour.style.display = '';
+    tour.innerHTML = '<div class="ob-tour-card">'
+      + '<div class="ob-tour-row"><span class="ob-tour-ico">📊</span><div><strong>Wellness</strong><br>Track mood, fitness, nutrition, and gratitude — individually and together.</div></div>'
+      + '<div class="ob-tour-row"><span class="ob-tour-ico">🌍</span><div><strong>Plan</strong><br>Dreams, calendar, finances, your dream home, shared values and wishlists.</div></div>'
+      + '<div class="ob-tour-row"><span class="ob-tour-ico">✨</span><div><strong>More</strong><br>AI chat, memories, achievements, and settings.</div></div>'
+      + '</div>';
+    btn.textContent = 'Got it';
+  } else if (onboardStep === 6) {
+    // Done
+    bar.style.width = '100%';
+    emoji.textContent = '✨'; emoji.style.display = '';
+    title.textContent = isHer ? 'All yours, baby' : "You're all set";
+    var msg = 'Welcome, <strong>' + esc(onboardData.name) + '</strong>.<br>'
+      + 'Your partner is <strong>' + esc(onboardData.nickname) + '</strong> in here.';
+    if (onboardData.anniversary) msg += '<br>Counting the days since <strong>' + onboardData.anniversary + '</strong>.';
+    sub.innerHTML = msg;
+    btn.textContent = 'Enter Moi & Toi';
+    btn.onclick = function() { finishOnboarding(); };
   }
 }
 
 function onboardNext() {
   if (onboardStep === 1) {
-    const name = (document.getElementById('ob-name') || {}).value;
-    if (!name || !name.trim()) { toast('Please enter your name'); return; }
-    onboardData.name = name.trim();
+    var name = document.getElementById('ob-name').value.trim();
+    if (!name) { toast('Please enter your name'); return; }
+    onboardData.name = name;
   }
   if (onboardStep === 2) {
-    const nick = (document.getElementById('ob-nickname') || {}).value;
-    if (!nick || !nick.trim()) { toast('Enter what you call them'); return; }
-    onboardData.nickname = nick.trim();
+    var nick = document.getElementById('ob-nickname').value.trim();
+    if (!nick) { toast('Enter what you call them'); return; }
+    onboardData.nickname = nick;
   }
   if (onboardStep === 3) {
-    const anniv = (document.getElementById('ob-anniversary') || {}).value;
+    var anniv = document.getElementById('ob-anniversary').value;
     if (anniv) onboardData.anniversary = anniv;
   }
   onboardStep++;
@@ -276,17 +268,15 @@ function onboardNext() {
 
 async function finishOnboarding() {
   NAMES[user] = onboardData.name;
-  const nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
+  var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
   NICKNAMES[nickKey] = onboardData.nickname;
-  const updates = {
+  await db.ref('profiles').update({
     [user]: onboardData.name,
     [nickKey]: onboardData.nickname
-  };
-  await db.ref('profiles').update(updates);
+  });
   if (onboardData.anniversary) {
     await db.ref('settings/anniversary').set(onboardData.anniversary);
   }
-  document.getElementById('login').classList.remove('onboard-active');
   finishLogin();
 }
 
