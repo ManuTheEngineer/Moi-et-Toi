@@ -123,91 +123,145 @@ function needsOnboarding() {
 
 // ===== ONBOARDING FLOW =====
 let onboardStep = 0;
-let onboardData = { name: '', nickname: '' };
+let onboardData = { name: '', nickname: '', anniversary: '' };
+const OB_TOTAL = 7;
 
 function startOnboarding() {
   onboardStep = 0;
-  onboardData = { name: '', nickname: '' };
+  onboardData = { name: '', nickname: '', anniversary: '' };
+  const el = document.getElementById('login');
+  el.classList.add('onboard-active');
   renderOnboardStep();
+}
+
+function obProgress() {
+  return Math.round(((onboardStep) / (OB_TOTAL - 1)) * 100);
+}
+
+function renderDots(active) {
+  return Array.from({length: OB_TOTAL}, (_, i) =>
+    `<span class="onboard-dot${i === active ? ' active' : ''}${i < active ? ' done' : ''}"></span>`
+  ).join('');
 }
 
 function renderOnboardStep() {
   const el = document.getElementById('login');
-  const partnerLabel = user === 'him' ? 'her' : 'him';
+  const isHer = user === 'her';
+  const partnerLabel = isHer ? 'him' : 'her';
+  const pct = obProgress();
 
   const steps = [
-    // Step 0: Welcome
+    // Step 0: Personalized Welcome
     `<div class="onboard-wrap">
-      <div class="onboard-progress"><div class="onboard-bar" style="width:10%"></div></div>
+      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
       <div class="login-logo">M&T</div>
-      <h1 class="onboard-title">Welcome</h1>
-      <p class="onboard-sub">Let's set up your space together.<br>This only takes a moment.</p>
-      <button onclick="onboardNext()" class="login-btn">Let's begin</button>
+      <h1 class="onboard-title">${isHer ? "Hey Baby" : "Welcome"}</h1>
+      <p class="onboard-sub">${isHer
+        ? "I'm sorry baby, let's start over.<br>Let me set things up right this time."
+        : "Let's build our space together.<br>This only takes a moment."
+      }</p>
+      <button onclick="onboardNext()" class="login-btn">${isHer ? "Okay, let's go" : "Let's begin"}</button>
       <div class="onboard-dots">${renderDots(0)}</div>
     </div>`,
 
     // Step 1: Your name
     `<div class="onboard-wrap">
-      <div class="onboard-progress"><div class="onboard-bar" style="width:40%"></div></div>
+      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
       <div class="onboard-emoji">👋</div>
       <h1 class="onboard-title">What's your name?</h1>
-      <p class="onboard-sub">This is how your partner will see you.</p>
-      <input type="text" id="ob-name" class="login-input mb16" placeholder="Your name..." autocomplete="off"
-             onkeydown="if(event.key==='Enter')onboardNext()">
+      <p class="onboard-sub">This is how your partner will see you in the app.</p>
+      <input type="text" id="ob-name" class="login-input mb16" placeholder="Your first name..." autocomplete="off"
+             enterkeyhint="next" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}">
       <button onclick="onboardNext()" class="login-btn">Continue</button>
       <div class="onboard-dots">${renderDots(1)}</div>
     </div>`,
 
-    // Step 2: What do you call your partner?
+    // Step 2: Nickname for partner
     `<div class="onboard-wrap">
-      <div class="onboard-progress"><div class="onboard-bar" style="width:75%"></div></div>
-      <div class="onboard-emoji">${user === 'him' ? '💛' : '💜'}</div>
+      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
+      <div class="onboard-emoji">${isHer ? '💜' : '💛'}</div>
       <h1 class="onboard-title">What do you call ${partnerLabel}?</h1>
-      <p class="onboard-sub">A pet name, nickname, or just their name — whatever feels right.</p>
-      <input type="text" id="ob-nickname" class="login-input mb16" placeholder="${user === 'him' ? 'Babe, Love, Her name...' : 'Baby, Honey, His name...'}" autocomplete="off"
-             onkeydown="if(event.key==='Enter')onboardNext()">
+      <p class="onboard-sub">A pet name, nickname, or their real name — whatever feels like you.</p>
+      <input type="text" id="ob-nickname" class="login-input mb16"
+             placeholder="${isHer ? 'Baby, Babe, His name...' : 'Babe, Love, Her name...'}" autocomplete="off"
+             enterkeyhint="next" onkeydown="if(event.key==='Enter'){event.preventDefault();onboardNext()}">
       <button onclick="onboardNext()" class="login-btn">Continue</button>
       <div class="onboard-dots">${renderDots(2)}</div>
     </div>`,
 
-    // Step 3: Done
+    // Step 3: Anniversary
+    `<div class="onboard-wrap">
+      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
+      <div class="onboard-emoji">📅</div>
+      <h1 class="onboard-title">When did it start?</h1>
+      <p class="onboard-sub">The day you two became official. This powers your "Days Together" count.</p>
+      <input type="date" id="ob-anniversary" class="login-input mb16" style="color-scheme:light">
+      <button onclick="onboardNext()" class="login-btn">Continue</button>
+      <p class="onboard-skip" onclick="onboardNext()">Skip for now</p>
+      <div class="onboard-dots">${renderDots(3)}</div>
+    </div>`,
+
+    // Step 4: Tour — Home
+    `<div class="onboard-wrap">
+      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
+      <h1 class="onboard-title">Your Home</h1>
+      <div class="ob-tour-card">
+        <div class="ob-tour-row"><span class="ob-tour-ico">🏠</span><div><strong>Home</strong><br>Your dashboard — mood, daily questions, streaks, and a pulse on your relationship.</div></div>
+        <div class="ob-tour-row"><span class="ob-tour-ico">💕</span><div><strong>Together</strong><br>Letters, games, date nights, check-ins — everything you do as a couple.</div></div>
+      </div>
+      <button onclick="onboardNext()" class="login-btn">Next</button>
+      <div class="onboard-dots">${renderDots(4)}</div>
+    </div>`,
+
+    // Step 5: Tour — Wellness, Plan, More
+    `<div class="onboard-wrap">
+      <div class="onboard-progress"><div class="onboard-bar" style="width:${pct}%"></div></div>
+      <h1 class="onboard-title">Your Tools</h1>
+      <div class="ob-tour-card">
+        <div class="ob-tour-row"><span class="ob-tour-ico">📊</span><div><strong>Wellness</strong><br>Track mood, fitness, nutrition, and gratitude — individually and together.</div></div>
+        <div class="ob-tour-row"><span class="ob-tour-ico">🌍</span><div><strong>Plan</strong><br>Dreams, calendar, finances, your dream home, shared values and wishlists.</div></div>
+        <div class="ob-tour-row"><span class="ob-tour-ico">✨</span><div><strong>More</strong><br>AI chat, memories, achievements, and settings.</div></div>
+      </div>
+      <button onclick="onboardNext()" class="login-btn">Got it</button>
+      <div class="onboard-dots">${renderDots(5)}</div>
+    </div>`,
+
+    // Step 6: Done
     `<div class="onboard-wrap">
       <div class="onboard-progress"><div class="onboard-bar" style="width:100%"></div></div>
       <div class="onboard-emoji">✨</div>
-      <h1 class="onboard-title">You're all set!</h1>
+      <h1 class="onboard-title">${isHer ? "All yours, baby" : "You're all set"}</h1>
       <p class="onboard-sub">
-        <strong>${esc(onboardData.name)}</strong>, welcome to your space.<br>
-        We'll call your partner <strong>${esc(onboardData.nickname)}</strong>.
+        Welcome, <strong>${esc(onboardData.name)}</strong>.<br>
+        Your partner is <strong>${esc(onboardData.nickname)}</strong> in here.
+        ${onboardData.anniversary ? '<br>Counting the days since <strong>' + onboardData.anniversary + '</strong>.' : ''}
       </p>
       <button onclick="finishOnboarding()" class="login-btn">Enter Moi & Toi</button>
-      <div class="onboard-dots">${renderDots(3)}</div>
+      <div class="onboard-dots">${renderDots(6)}</div>
     </div>`
   ];
 
   el.innerHTML = steps[onboardStep];
-  el.querySelector('.onboard-wrap').classList.add('onboard-enter');
 
-  // Auto-focus inputs
-  const input = el.querySelector('input');
+  // Auto-focus text inputs (not date)
+  const input = el.querySelector('input[type="text"]');
   if (input) setTimeout(() => input.focus(), 350);
-}
-
-function renderDots(active) {
-  return [0,1,2,3].map(i =>
-    `<span class="onboard-dot${i === active ? ' active' : ''}${i < active ? ' done' : ''}"></span>`
-  ).join('');
 }
 
 function onboardNext() {
   if (onboardStep === 1) {
-    const name = document.getElementById('ob-name').value.trim();
-    if (!name) { toast('Please enter your name'); return; }
-    onboardData.name = name;
+    const name = (document.getElementById('ob-name') || {}).value;
+    if (!name || !name.trim()) { toast('Please enter your name'); return; }
+    onboardData.name = name.trim();
   }
   if (onboardStep === 2) {
-    const nick = document.getElementById('ob-nickname').value.trim();
-    if (!nick) { toast('Enter what you call them'); return; }
-    onboardData.nickname = nick;
+    const nick = (document.getElementById('ob-nickname') || {}).value;
+    if (!nick || !nick.trim()) { toast('Enter what you call them'); return; }
+    onboardData.nickname = nick.trim();
+  }
+  if (onboardStep === 3) {
+    const anniv = (document.getElementById('ob-anniversary') || {}).value;
+    if (anniv) onboardData.anniversary = anniv;
   }
   onboardStep++;
   renderOnboardStep();
@@ -217,10 +271,15 @@ async function finishOnboarding() {
   NAMES[user] = onboardData.name;
   const nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
   NICKNAMES[nickKey] = onboardData.nickname;
-  await db.ref('profiles').update({
+  const updates = {
     [user]: onboardData.name,
     [nickKey]: onboardData.nickname
-  });
+  };
+  await db.ref('profiles').update(updates);
+  if (onboardData.anniversary) {
+    await db.ref('settings/anniversary').set(onboardData.anniversary);
+  }
+  document.getElementById('login').classList.remove('onboard-active');
   finishLogin();
 }
 
