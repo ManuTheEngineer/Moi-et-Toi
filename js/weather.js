@@ -1736,7 +1736,7 @@ function playAmbientSound(type, volume) {
     ctx.resume().catch(function(){});
   }
 
-  var vol = volume || 0.18;
+  var vol = volume || 0.12;
 
   var buffer;
   try {
@@ -1843,7 +1843,8 @@ function updateAmbientAudio() {
 
   var time = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
   var soundType = scene.sounds[time] || scene.sounds.base;
-  var keep = [scene.sounds.base, soundType];
+  // Play only the single best-matching sound for this environment + time
+  var keep = [soundType];
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
     if (wx && wx.sound) keep.push(wx.sound);
@@ -1852,12 +1853,11 @@ function updateAmbientAudio() {
     if (keep.indexOf(k) === -1) stopAmbientSound(k);
   });
 
-  // Ambient volumes: soft, background level
-  playAmbientSound(scene.sounds.base, 0.22);
-  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.18);
+  // Single environment sound — soft and calm
+  playAmbientSound(soundType, 0.12);
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wx && wx.sound) playAmbientSound(wx.sound, 0.2);
+    if (wx && wx.sound) playAmbientSound(wx.sound, 0.10);
   }
 }
 
