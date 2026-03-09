@@ -741,8 +741,8 @@ function obStartSoundPreview(theme) {
   source.buffer = buffer;
   source.loop = true;
   var gain = ctx.createGain();
-  gain.gain.setValueAtTime(0, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.45, ctx.currentTime + 1.0);
+  gain.gain.setValueAtTime(0.15, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 0.6);
   source.connect(gain);
   gain.connect(ctx.destination);
   source.start(0);

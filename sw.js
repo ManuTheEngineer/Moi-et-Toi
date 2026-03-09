@@ -1,4 +1,4 @@
-const CACHE_NAME = 'moiettoi-v128';
+const CACHE_NAME = 'moiettoi-v129';
 
 const ASSETS = [
   './',
@@ -19,6 +19,7 @@ const ASSETS = [
   './js/dashboard.js',
   './js/modules-track.js',
   './js/modules-data.js',
+  './js/weather.js',
   './manifest.json'
 ];
 

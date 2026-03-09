@@ -695,14 +695,31 @@ function unlockAudio() {
   } catch(e) {}
 }
 
-// iOS Safari needs an actual buffer played during user gesture to fully unlock
+// iOS Safari/WKWebView needs actual audio output during user gesture to fully unlock
 function _playSilentBuffer(ctx) {
   try {
-    var buf = ctx.createBuffer(1, 1, 22050);
+    // Use a short (~100ms) near-silent buffer instead of 1 sample — more reliable on iOS
+    var sr = ctx.sampleRate || 44100;
+    var len = Math.floor(sr * 0.1);
+    var buf = ctx.createBuffer(1, len, sr);
+    var d = buf.getChannelData(0);
+    // Fill with near-inaudible noise — true silence may not trigger iOS audio pipeline
+    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.001;
     var src = ctx.createBufferSource();
     src.buffer = buf;
     src.connect(ctx.destination);
     src.start(0);
+  } catch(e) {}
+  // Also prime via HTML Audio element — helps iOS PWAs (WKWebView)
+  try {
+    if (!window._audioPrimed) {
+      var a = document.createElement('audio');
+      a.setAttribute('playsinline', '');
+      a.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+      a.volume = 0.01;
+      a.play().catch(function(){});
+      window._audioPrimed = true;
+    }
   } catch(e) {}
 }
 
@@ -730,6 +747,7 @@ function _tryUnlock() {
   unlockAudio();
 }
 document.addEventListener('touchstart', _tryUnlock, { passive: true });
+document.addEventListener('touchend', _tryUnlock, { passive: true });
 document.addEventListener('click', _tryUnlock);
 
 // ===== SOUND GENERATION ENGINE =====
@@ -1706,12 +1724,12 @@ function updateAmbientAudio() {
     if (keep.indexOf(k) === -1) stopAmbientSound(k);
   });
 
-  // Ambient volumes: audible but not distracting
-  playAmbientSound(scene.sounds.base, 0.22);
-  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.18);
+  // Ambient volumes: clearly audible
+  playAmbientSound(scene.sounds.base, 0.35);
+  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.30);
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wx && wx.sound) playAmbientSound(wx.sound, 0.25);
+    if (wx && wx.sound) playAmbientSound(wx.sound, 0.35);
   }
 }
 
@@ -1738,14 +1756,14 @@ function toggleAmbientAudio(on) {
       var o = ctx.createOscillator();
       var g = ctx.createGain();
       o.type = 'sine'; o.frequency.value = 520;
-      g.gain.setValueAtTime(0.35, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      g.gain.setValueAtTime(0.5, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
       o.connect(g); g.connect(ctx.destination);
-      o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.3);
+      o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.4);
     } catch(e) {}
 
-    // Start ambient sounds - nodes are queued and play when context runs
-    setTimeout(updateAmbientAudio, 350);
+    // Start ambient sounds — short delay lets context finish resuming
+    setTimeout(updateAmbientAudio, 200);
   } else {
     stopAllSounds();
   }
@@ -2092,8 +2110,9 @@ function playMoodSound(moodKey) {
   source.loop = true;
 
   var gain = ctx.createGain();
-  gain.gain.setValueAtTime(0, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.45, ctx.currentTime + 1.5);
+  // Start at audible volume immediately — fade-from-zero felt like nothing was playing
+  gain.gain.setValueAtTime(0.15, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 0.8);
 
   source.connect(gain);
   gain.connect(ctx.destination);
@@ -2215,8 +2234,10 @@ document.addEventListener('visibilitychange', function() {
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
   if (WEATHER.audioCtx && WEATHER.audioEnabled) {
     if (WEATHER.audioCtx.state === 'suspended' || WEATHER.audioCtx.state === 'interrupted') {
-      WEATHER.audioCtx.resume().then(function() { updateAmbientAudio(); });
+      WEATHER.audioCtx.resume();
     }
+    // Retry ambient audio after short delay to let context resume
+    setTimeout(updateAmbientAudio, 300);
   }
 });
 
