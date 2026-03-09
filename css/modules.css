@@ -23,8 +23,8 @@
 .letter-textarea{width:100%;padding:16px 20px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;outline:none;resize:none;min-height:80px;line-height:1.7;transition:box-shadow .2s}
 .letter-textarea:focus{box-shadow:var(--focus-ring)}
 .letter-textarea::placeholder{color:var(--t3)}
-.letter-send{width:100%;padding:16px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .25s;margin-top:10px;box-shadow:0 4px 16px rgba(28,43,74,.12)}
-.letter-send:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(28,43,74,.16)}
+.letter-send{width:100%;padding:16px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .25s;margin-top:10px;box-shadow:0 4px 16px var(--glow-gold,rgba(28,43,74,.12))}
+.letter-send:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--glow-gold,rgba(28,43,74,.16))}
 .letter-send:active{transform:scale(0.97)}
 
 .letter-feed{margin-top:8px}
@@ -78,8 +78,8 @@
 .ms-form textarea{resize:none;min-height:50px}
 .ms-row{display:flex;gap:8px}
 .ms-row input{flex:1}
-.ms-save{width:100%;padding:14px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px;box-shadow:0 4px 16px rgba(28,43,74,.12);min-height:44px}
-.ms-save:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(28,43,74,.16)}
+.ms-save{width:100%;padding:14px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px;box-shadow:0 4px 16px var(--glow-gold,rgba(28,43,74,.12));min-height:44px}
+.ms-save:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--glow-gold,rgba(28,43,74,.16))}
 .ms-save:active{transform:scale(0.98)}
 .ms-cancel{text-align:center;margin-top:8px;font-size:11px;color:var(--t3);cursor:pointer}
 
