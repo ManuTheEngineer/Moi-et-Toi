@@ -167,7 +167,7 @@ body[data-sky-theme="mountain"][data-time="night"]::before {
   position: fixed;
   border-radius: 50%;
   pointer-events: none;
-  filter: blur(60px);
+  filter: blur(30px);
   opacity: 0;
   z-index: -2;
   animation: orbFloat linear infinite;
@@ -316,8 +316,8 @@ body[data-sky-theme="mountain"] .explore-feat:nth-child(2) { background: linear-
   inset: 0;
   z-index: -3;
   pointer-events: none;
-  background-size: 400% 400%;
-  animation: meshMove 45s ease-in-out infinite;
+  background-size: 200% 200%;
+  animation: meshMove 60s ease-in-out infinite;
   opacity: 0.4;
 }
 

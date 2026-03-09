@@ -178,6 +178,7 @@ function toggleEl(id) {
 function spawnOrbs() {
   const container = document.getElementById('particles');
   if (!container) return;
+  if (_prefersReducedMotion) return;
 
   var sky = (typeof currentSkyTheme !== 'undefined' && currentSkyTheme) || 'mixed';
 
@@ -217,10 +218,10 @@ function spawnOrbs() {
   const time = getTimeOfDay();
   const colors = orbColors[time] || orbColors.night;
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 2; i++) {
     const orb = document.createElement('div');
     orb.className = 'bg-orb';
-    const size = 150 + Math.random() * 200;
+    const size = 150 + Math.random() * 150;
     const x = Math.random() * 100;
     const y = Math.random() * 100;
     const duration = 20 + Math.random() * 25;
@@ -277,11 +278,11 @@ function initSkyScene() {
   if (!livingSkyEnabled) return;
   renderLivingSky(container);
   startCreatureLoop(container);
-  // Update sky every 60 seconds for smoother sun/moon movement
+  // Update sky every 2 minutes — sun position changes slowly
   SKY.sceneTimer = setInterval(function() {
     if (!livingSkyEnabled) return;
     renderLivingSky(container);
-  }, 60000);
+  }, 120000);
 }
 
 // ===== SUN / MOON POSITION BASED ON REAL TIME =====
@@ -416,7 +417,7 @@ function renderLivingSky(container) {
     renderSun(container, pos, sunColor, isGolden);
 
     // Light shafts
-    var shaftCount = isGolden ? 4 : (isEvening ? 3 : 2);
+    var shaftCount = isGolden ? 2 : (isEvening ? 1 : 1);
     for (var s = 0; s < shaftCount; s++) {
       var shaft = document.createElement('div');
       shaft.className = 'sky-light-shaft';
@@ -433,10 +434,10 @@ function renderLivingSky(container) {
       container.appendChild(shaft);
     }
 
-    // Clouds - environment-aware count and density
-    var cloudCount = time === 'morning' ? 4 : (isGolden ? 3 : 5);
-    if (skyTheme === 'beach') cloudCount = Math.max(2, cloudCount - 1); // fewer clouds, clearer sky
-    if (skyTheme === 'mountain') cloudCount = cloudCount + 1; // more clouds, misty feel
+    // Clouds - reduced for performance
+    var cloudCount = time === 'morning' ? 2 : (isGolden ? 2 : 3);
+    if (skyTheme === 'beach') cloudCount = Math.max(1, cloudCount - 1);
+    if (skyTheme === 'mountain') cloudCount = Math.min(cloudCount + 1, 3);
     for (var i = 0; i < cloudCount; i++) {
       renderCloud(container, false, isGolden || isEvening);
     }
@@ -489,11 +490,11 @@ function renderSun(container, pos, color, isGolden) {
   sun.style.background = 'radial-gradient(circle,' + color.body + ' 0%,' + color.mid + ' 40%,' + color.edge + ' 100%)';
   sun.style.boxShadow = '0 0 60px ' + color.glow + ',0 0 120px ' + color.glow.replace(/[\d.]+\)$/, '0.2)');
 
-  // Rays
-  for (var i = 0; i < 8; i++) {
+  // Rays - reduced count for performance
+  for (var i = 0; i < 4; i++) {
     var ray = document.createElement('div');
     ray.className = 'sky-sun-ray';
-    var angle = (360 / 8) * i;
+    var angle = (360 / 4) * i;
     var len = 30 + Math.random() * 40;
     ray.style.cssText = 'width:' + len + 'px;--ray-angle:' + angle + 'deg;transform:rotate(' + angle + 'deg);animation-delay:' + (i * 0.3) + 's';
     if (isGolden) ray.style.background = 'linear-gradient(90deg,rgba(255,180,60,.4),transparent)';
@@ -544,8 +545,8 @@ function renderMoon(container, pos) {
 }
 
 function renderStars(container) {
-  // More stars for a richer night sky - layered by brightness
-  var starCount = 70 + Math.floor(Math.random() * 40);
+  // Stars - keep count reasonable for mobile performance
+  var starCount = 30 + Math.floor(Math.random() * 15);
   // Star colors for realism: most white, some blue-white, a few warm
   var starColors = [
     'rgba(255,255,255,', 'rgba(255,255,255,', 'rgba(255,255,255,',
@@ -607,35 +608,34 @@ function startCreatureLoop(container) {
   SKY.creatureTimer = setInterval(function() {
     if (!livingSkyEnabled) return;
     spawnCreatures(container);
-  }, 8000);
+  }, 15000);
 }
 
+var _prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var MAX_SKY_CREATURES = 12;
 function spawnCreatures(container) {
+  if (_prefersReducedMotion) return;
+  // Cap total animated creatures in the DOM to prevent lag
+  var existing = container.querySelectorAll('.sky-bird,.sky-butterfly,.sky-firefly,.scene-creature');
+  if (existing.length >= MAX_SKY_CREATURES) return;
+
   var time = getTimeOfDay();
   var pos = getSunPosition();
 
   if (pos.isNight) {
     // Fireflies at night
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 2; i++) {
       renderFirefly(container);
     }
   } else if (time === 'dawn') {
-    // Butterflies at dawn + a bird or two
     renderButterfly(container);
-    if (Math.random() < 0.5) renderBird(container);
+    if (Math.random() < 0.4) renderBird(container);
   } else if (time === 'evening' || time === 'golden') {
-    // Birds returning home
-    for (var i = 0; i < 2; i++) {
-      renderBird(container);
-    }
+    renderBird(container);
   } else {
-    // Day - birds and occasional butterfly
-    for (var i = 0; i < 2; i++) {
-      (function(idx) {
-        setTimeout(function() { renderBird(container); }, idx * 3000 + Math.random() * 2000);
-      })(i);
-    }
-    if (Math.random() < 0.3) renderButterfly(container);
+    // Day - one bird at a time
+    renderBird(container);
+    if (Math.random() < 0.2) renderButterfly(container);
   }
 }
 

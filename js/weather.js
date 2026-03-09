@@ -1956,18 +1956,25 @@ function renderSceneGround(container) {
 }
 
 // ===== SCENE-AWARE CREATURE SPAWNING =====
+var MAX_SCENE_CREATURES = 10;
 function spawnSceneCreatures(container) {
   var scene = SCENES[WEATHER.scene];
   if (!scene) return;
+
+  // Cap creatures in the DOM
+  var existing = container.querySelectorAll('.scene-creature');
+  if (existing.length >= MAX_SCENE_CREATURES) return;
+
   var time = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
   var creatures = scene.creatures[time] || scene.creatures.morning;
 
-  // Spawn 3-6 creatures with staggered timing for natural feel
-  var count = 3 + Math.floor(Math.random() * 4);
+  // Spawn 1-2 creatures with staggered timing
+  var count = 1 + Math.floor(Math.random() * 2);
   for (var i = 0; i < count; i++) {
     (function(idx) {
-      var delay = idx * (1500 + Math.random() * 2000);
+      var delay = idx * (2000 + Math.random() * 2000);
       setTimeout(function() {
+        if (container.querySelectorAll('.scene-creature').length >= MAX_SCENE_CREATURES) return;
         var type = creatures[Math.floor(Math.random() * creatures.length)];
         renderSceneCreature(container, type);
       }, delay);
@@ -1978,11 +1985,12 @@ function spawnSceneCreatures(container) {
   if (!WEATHER._creatureInterval) {
     WEATHER._creatureInterval = setInterval(function() {
       if (!container.parentNode) { clearInterval(WEATHER._creatureInterval); WEATHER._creatureInterval = null; return; }
+      if (container.querySelectorAll('.scene-creature').length >= MAX_SCENE_CREATURES) return;
       var t = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
       var c = scene.creatures[t] || scene.creatures.morning;
       var type = c[Math.floor(Math.random() * c.length)];
       renderSceneCreature(container, type);
-    }, 10000 + Math.random() * 8000);
+    }, 18000 + Math.random() * 10000);
   }
 }
 
@@ -2443,8 +2451,8 @@ function syncSkyState() {
     if (typeof spawnOrbs === 'function') spawnOrbs();
   }
 }
-// Sync every 30 seconds for smoother transitions
-setInterval(syncSkyState, 30000);
+// Sync every 60 seconds
+setInterval(syncSkyState, 60000);
 
 // Periodic audio retry - if enabled but no sounds playing, try again
 // Does NOT create AudioContext — only works with an existing one
@@ -2462,7 +2470,7 @@ setInterval(function() {
       updateAmbientAudio();
     }
   }
-}, 5000);
+}, 15000);
 
 // Resume audio when page returns from background
 document.addEventListener('visibilitychange', function() {
