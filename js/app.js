@@ -205,6 +205,7 @@ function needsOnboarding() {
 let onboardStep = 0;
 let onboardData = {
   name: '', nickname: '', anniversary: '', photo: '', livingSky: true,
+  skyTheme: 'mixed', natureSoundsEnabled: false,
   birthday: '',
   mood: 0, energy: 0, stress: 0,
   heightFt: '', heightIn: '', weight: '', activityLevel: '', fitnessGoal: '',
@@ -212,12 +213,13 @@ let onboardData = {
   agreementsMine: [], agreementsTogether: [],
   morningMsgEnabled: true, morningCustomMsg: ''
 };
-const OB_TOTAL = 14;
+const OB_TOTAL = 15;
 
 function startOnboarding() {
   onboardStep = 0;
   onboardData = {
     name: '', nickname: '', anniversary: '', photo: '', livingSky: true,
+    skyTheme: 'mixed', natureSoundsEnabled: false,
     birthday: '',
     mood: 0, energy: 0, stress: 0,
     heightFt: '', heightIn: '', weight: '', activityLevel: '', fitnessGoal: '',
@@ -436,10 +438,11 @@ function renderOnboardStep() {
     var relBL = document.getElementById('ob-rel-baseline');
     var agreeCard = document.getElementById('ob-agreement');
     var morningCard = document.getElementById('ob-morning-msg');
+    var skyThemeCard = document.getElementById('ob-sky-theme');
 
     // Hide all optional elements
     [emoji, nameIn, nickIn, annivIn, photoWrap, skyCard, tour, skip,
-     birthdayIn, moodBL, fitBL, relBL, agreeCard, morningCard].forEach(function(el) {
+     birthdayIn, moodBL, fitBL, relBL, agreeCard, morningCard, skyThemeCard].forEach(function(el) {
       if (el) el.style.display = 'none';
     });
 
@@ -577,16 +580,31 @@ function renderOnboardStep() {
       document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
       btn.textContent = 'Next';
     }
-    // Step 12: All set
+    // Step 12: Sky environment + nature sounds
     else if (onboardStep === 12) {
+      emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
+      title.textContent = 'Your environment';
+      sub.innerHTML = "Pick the landscape that feels like home — it shapes your sky, creatures, and sounds.";
+      skyThemeCard.style.display = '';
+      // Pre-select based on user preference
+      var defaultTheme = isHer ? 'beach' : 'mountain';
+      if (!onboardData.skyTheme || onboardData.skyTheme === 'mixed') onboardData.skyTheme = defaultTheme;
+      document.querySelectorAll('#ob-sky-theme-grid .sky-theme-btn').forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-theme') === onboardData.skyTheme);
+      });
+      document.getElementById('ob-nature-toggle').checked = onboardData.natureSoundsEnabled;
+      btn.textContent = 'Next';
+    }
+    // Step 13: All set
+    else if (onboardStep === 13) {
       bar.style.width = '95%';
       emoji.innerHTML = OB_ICONS.party; emoji.style.display = '';
       title.textContent = "You're all set!";
       sub.innerHTML = "Let me give you a quick tour of your new space — it takes 30 seconds.";
       btn.textContent = 'Start tour';
     }
-    // Step 13: Finish
-    else if (onboardStep === 13) {
+    // Step 14: Finish
+    else if (onboardStep === 14) {
       finishOnboarding(true);
       return;
     }
@@ -634,9 +652,20 @@ function onboardNext() {
     var customTA = document.getElementById('ob-morning-custom');
     if (customTA) onboardData.morningCustomMsg = customTA.value.trim();
   }
+  if (onboardStep === 12) {
+    onboardData.natureSoundsEnabled = document.getElementById('ob-nature-toggle').checked;
+  }
   onboardStep++;
   obBroadcastStep();
   renderOnboardStep();
+}
+
+function obSelectSkyTheme(theme, btn) {
+  onboardData.skyTheme = theme;
+  var grid = document.getElementById('ob-sky-theme-grid');
+  if (grid) grid.querySelectorAll('.sky-theme-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-theme') === theme);
+  });
 }
 
 function onboardPhotoPicked(input) {
@@ -742,6 +771,16 @@ async function finishOnboarding(startTour) {
   livingSkyEnabled = onboardData.livingSky;
   await db.ref('settings/livingSky/' + user).set(onboardData.livingSky);
   setLivingSky(onboardData.livingSky);
+
+  // Sky theme
+  await db.ref('settings/skyTheme/' + user).set(onboardData.skyTheme || 'mixed');
+  if (typeof applySkyTheme === 'function') applySkyTheme(onboardData.skyTheme || 'mixed');
+
+  // Nature sounds preference
+  await db.ref('settings/natureSounds/' + user).set(onboardData.natureSoundsEnabled);
+  if (onboardData.natureSoundsEnabled && typeof toggleAmbientAudio === 'function') {
+    toggleAmbientAudio(true);
+  }
 
   document.getElementById('login').classList.remove('onboard-active');
   finishLogin();
@@ -1055,6 +1094,7 @@ function finishLogin() {
   listenGrowData();
   // Render sound grids personalized for user
   if (typeof renderMoodSoundsGrid === 'function') renderMoodSoundsGrid();
+  if (typeof loadSkyTheme === 'function') loadSkyTheme();
   // Particles, global mode, presence
   initParticles();
   setGlobalMode(localStorage.getItem('met_global_mode') || 'us');

@@ -52,13 +52,13 @@ body[data-time="evening"]::before {
     var(--bg) !important;
 }
 
-/* Night (9pm-5am) — deep navy with subtle aurora */
+/* Night (9pm-5am) — deep dark sky with subtle aurora */
 body[data-time="night"]::before {
   background:
-    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(40,60,140,0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(100,60,180,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 60% at 50% 90%, rgba(0,180,160,0.04) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 50% at 60% 20%, rgba(60,40,120,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(15,25,60,0.30) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(40,25,80,0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 90%, rgba(0,80,80,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(8,12,30,0.25) 0%, transparent 80%),
     var(--bg) !important;
 }
 
@@ -1658,5 +1658,137 @@ body[data-time="night"] .bg-mesh {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ===== ENHANCED NIGHT SKY ===== */
+
+/* Milky way — diagonal band of faint light */
+.sky-milky-way {
+  position: absolute;
+  width: 200%;
+  height: 40px;
+  top: 15%;
+  left: -30%;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(200,200,240,0.015) 20%,
+    rgba(220,210,240,0.04) 40%,
+    rgba(200,200,240,0.05) 50%,
+    rgba(220,210,240,0.04) 60%,
+    rgba(200,200,240,0.015) 80%,
+    transparent 100%
+  );
+  transform: rotate(-25deg);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+/* ===== SKY THEME VARIANTS ===== */
+
+/* Beach theme — warmer sky tints */
+body[data-sky-theme="beach"][data-time="morning"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(255,210,120,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 70%, rgba(100,200,230,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 60% 50%, rgba(255,230,190,0.08) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="afternoon"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(60,180,240,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 60%, rgba(255,220,150,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 80%, rgba(40,200,200,0.08) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="golden"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 70%, rgba(255,120,40,0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 30%, rgba(255,80,60,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 40% at 50% 90%, rgba(255,160,80,0.10) 0%, transparent 60%),
+    var(--bg) !important;
+}
+
+/* Mountain theme — cooler, more purple/blue tints */
+body[data-sky-theme="mountain"][data-time="morning"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(200,220,255,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 70%, rgba(180,200,140,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 60% 50%, rgba(220,235,250,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="afternoon"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(80,140,220,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 60%, rgba(160,200,180,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 80%, rgba(100,160,120,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="evening"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(60,40,140,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 70%, rgba(140,80,160,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 50%, rgba(80,60,120,0.08) 0%, transparent 60%),
+    var(--bg) !important;
+}
+
+/* ===== THEMED CREATURES ===== */
+
+/* Seagull — white wings */
+.sky-seagull .sky-bird-wing {
+  border-top-color: rgba(255,255,255,.6);
+}
+
+/* Eagle — larger wingspan, darker color */
+.sky-eagle-wing {
+  width: 12px !important;
+  height: 4px !important;
+  border-top-color: rgba(80,60,40,.5) !important;
+  border-top-width: 3px !important;
+}
+.sky-eagle .sky-bird-wing-l { left: -13px !important; }
+.sky-eagle .sky-bird-wing-r { right: -13px !important; }
+
+/* Crab */
+.sky-crab {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+  animation: crabWalk linear forwards;
+  opacity: 0;
+}
+.crab-body {
+  width: 8px;
+  height: 5px;
+  background: rgba(200,120,80,.5);
+  border-radius: 50% 50% 30% 30%;
+}
+@keyframes crabWalk {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { opacity: .5; }
+  50% { opacity: .4; transform: translateX(calc(var(--crab-dir, 60px) * 0.5)); }
+  90% { opacity: .3; }
+  100% { transform: translateX(var(--crab-dir, 60px)); opacity: 0; }
+}
+
+/* Owl eyes — glowing in the dark */
+.sky-owl-eyes {
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.owl-eye {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255,200,50,.7);
+  box-shadow: 0 0 6px rgba(255,200,50,.4);
+  animation: owlBlink 3s ease-in-out infinite;
+}
+@keyframes owlBlink {
+  0%,45%,55%,100% { opacity: 1; transform: scaleY(1); }
+  50% { opacity: .3; transform: scaleY(.1); }
 }
 

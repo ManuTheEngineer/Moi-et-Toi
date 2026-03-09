@@ -149,6 +149,27 @@
           <textarea id="ob-morning-custom" class="login-input ob-input" rows="2" placeholder="Write something they'll wake up to..." style="display:none;resize:none;height:auto" onfocus="obScrollToInput(this)"></textarea>
         </div>
       </div>
+      <!-- Sky theme + nature sounds -->
+      <div id="ob-sky-theme" class="ob-baseline-card" style="display:none">
+        <div class="sky-theme-grid" id="ob-sky-theme-grid">
+          <button type="button" class="sky-theme-btn" data-theme="beach" onclick="obSelectSkyTheme('beach',this)">
+            <span class="sky-theme-icon">🏖</span><span class="sky-theme-name">Beach</span>
+            <span class="sky-theme-desc">Seagulls, waves, palms</span>
+          </button>
+          <button type="button" class="sky-theme-btn" data-theme="mountain" onclick="obSelectSkyTheme('mountain',this)">
+            <span class="sky-theme-icon">🏔</span><span class="sky-theme-name">Mountain</span>
+            <span class="sky-theme-desc">Eagles, pines, creek</span>
+          </button>
+          <button type="button" class="sky-theme-btn" data-theme="mixed" onclick="obSelectSkyTheme('mixed',this)">
+            <span class="sky-theme-icon">🌅</span><span class="sky-theme-name">Both</span>
+            <span class="sky-theme-desc">Beach + mountain blend</span>
+          </button>
+        </div>
+        <div class="ob-bl-row" style="margin-top:16px">
+          <span class="ob-bl-label">Play nature sounds in the background?</span>
+          <label class="toggle-switch"><input type="checkbox" id="ob-nature-toggle"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
       <div id="ob-tour" style="display:none"></div>
       <button id="ob-btn" onclick="onboardNext()" class="login-btn ob-btn">Continue</button>
       <p class="onboard-skip" id="ob-skip" style="display:none" onclick="onboardNext()">Skip for now</p>
@@ -3586,7 +3607,18 @@
     <input type="text" id="set-name" placeholder="Your name" class="form-input">
   </div>
 
+  <div class="form-card">
+    <label class="form-label">Your Birthday</label>
+    <input type="date" id="set-birthday" class="form-input">
+    <div class="form-hint">We'll remind your partner and celebrate you</div>
+  </div>
+
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Relationship</div></div>
+  <div class="form-card">
+    <label class="form-label">Nickname for Partner</label>
+    <input type="text" id="set-nickname" placeholder="What you call them..." class="form-input">
+    <div class="form-hint">Pet name, nickname, or real name</div>
+  </div>
   <div class="form-card">
     <label class="form-label">Together Since</label>
     <input type="date" id="set-anniversary" class="form-input">
@@ -3612,6 +3644,26 @@
         <input type="checkbox" id="set-living-sky" checked onchange="toggleLivingSkySetting(this.checked)">
         <span class="toggle-slider"></span>
       </label>
+    </div>
+  </div>
+
+  <!-- Sky Theme -->
+  <div class="form-card">
+    <span class="settings-label">Sky Environment</span>
+    <div class="form-hint mt-2">Choose your living sky theme — beach, mountain, or a blend of both</div>
+    <div class="sky-theme-grid mt-8" id="set-sky-theme">
+      <button class="sky-theme-btn" data-theme="beach" onclick="setSkyTheme('beach')">
+        <span class="sky-theme-icon">🏖</span><span class="sky-theme-name">Beach</span>
+        <span class="sky-theme-desc">Seagulls, ocean waves, palm trees</span>
+      </button>
+      <button class="sky-theme-btn" data-theme="mountain" onclick="setSkyTheme('mountain')">
+        <span class="sky-theme-icon">🏔</span><span class="sky-theme-name">Mountain</span>
+        <span class="sky-theme-desc">Eagles, pines, creek, campfire glow</span>
+      </button>
+      <button class="sky-theme-btn" data-theme="mixed" onclick="setSkyTheme('mixed')">
+        <span class="sky-theme-icon">🌅</span><span class="sky-theme-name">Both</span>
+        <span class="sky-theme-desc">A blend of beach and mountain</span>
+      </button>
     </div>
   </div>
 

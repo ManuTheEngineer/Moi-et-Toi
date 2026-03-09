@@ -1534,11 +1534,24 @@ function loadSettings() {
   const nameEl = document.getElementById('set-name');
   const annivEl = document.getElementById('set-anniversary');
   const partnerEl = document.getElementById('set-partner-name');
+  const bdayEl = document.getElementById('set-birthday');
+  const nickEl = document.getElementById('set-nickname');
   if (nameEl) nameEl.value = NAMES[user] || '';
   if (partnerEl) partnerEl.value = NAMES[partner] || '';
+  // Nickname
+  if (nickEl) {
+    var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
+    nickEl.value = NICKNAMES[nickKey] || '';
+  }
   if (annivEl && db) {
     db.ref('settings/anniversary').once('value', snap => {
       if (snap.val()) annivEl.value = snap.val();
+    });
+  }
+  // Birthday
+  if (bdayEl && db && user) {
+    db.ref('settings/birthday/' + user).once('value', snap => {
+      if (snap.val()) bdayEl.value = snap.val();
     });
   }
   // Living Sky toggle
@@ -1550,6 +1563,15 @@ function loadSettings() {
       skyToggle.checked = enabled;
       livingSkyEnabled = enabled;
       setLivingSky(enabled);
+    });
+  }
+  // Sky theme
+  if (db && user) {
+    db.ref('settings/skyTheme/' + user).once('value', snap => {
+      var theme = snap.val() || 'mixed';
+      document.querySelectorAll('#set-sky-theme .sky-theme-btn').forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-theme') === theme);
+      });
     });
   }
   // Weather settings
@@ -1564,6 +1586,18 @@ function toggleLivingSkySetting(on) {
   if (db && user) {
     db.ref('settings/livingSky/' + user).set(on);
   }
+}
+
+function setSkyTheme(theme) {
+  if (db && user) {
+    db.ref('settings/skyTheme/' + user).set(theme);
+  }
+  // Update UI
+  document.querySelectorAll('#set-sky-theme .sky-theme-btn, #ob-sky-theme-grid .sky-theme-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-theme') === theme);
+  });
+  if (typeof applySkyTheme === 'function') applySkyTheme(theme);
+  toast('Sky theme updated');
 }
 
 // ===== WEATHER SETTINGS =====
@@ -1799,8 +1833,12 @@ async function saveSettings() {
   if (!db || !user) return;
   const nameEl = document.getElementById('set-name');
   const annivEl = document.getElementById('set-anniversary');
+  const bdayEl = document.getElementById('set-birthday');
+  const nickEl = document.getElementById('set-nickname');
   const newName = nameEl ? nameEl.value.trim() : '';
   const newAnniv = annivEl ? annivEl.value : '';
+  const newBday = bdayEl ? bdayEl.value : '';
+  const newNick = nickEl ? nickEl.value.trim() : '';
 
   if (newName && newName !== NAMES[user]) {
     NAMES[user] = newName;
@@ -1809,6 +1847,17 @@ async function saveSettings() {
   }
   if (newAnniv) {
     await db.ref('settings/anniversary').set(newAnniv);
+  }
+  if (newBday) {
+    await db.ref('settings/birthday/' + user).set(newBday);
+  }
+  if (newNick) {
+    var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
+    NICKNAMES[nickKey] = newNick;
+    NAMES[partner] = newNick;
+    await db.ref('profiles/' + nickKey).set(newNick);
+    document.querySelectorAll('.pname').forEach(e => e.textContent = newNick);
+    document.querySelectorAll('.partner-nick').forEach(e => e.textContent = newNick);
   }
   toast('Settings saved');
   renderDashHero();

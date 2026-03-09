@@ -288,13 +288,32 @@ function renderLivingSky(container) {
 
   if (pos.isNight) {
     // ===== NIGHT SKY =====
+    // Deep night sky overlay
+    var nightOverlay = document.createElement('div');
+    nightOverlay.className = 'sky-atmo-day';
+    nightOverlay.style.background = 'linear-gradient(180deg,rgba(8,12,30,0.35) 0%,rgba(15,20,50,0.25) 30%,rgba(20,25,60,0.15) 60%,rgba(25,30,55,0.08) 100%)';
+    container.appendChild(nightOverlay);
+
     renderMoon(container, pos);
     renderStars(container);
-    // Horizon glow (moonlit)
+
+    // Theme-specific night horizon
     var hz = document.createElement('div');
     hz.className = 'sky-horizon';
-    hz.style.cssText = 'height:120px;background:linear-gradient(to top,rgba(40,50,100,0.06),rgba(60,70,120,0.03),transparent)';
+    if (currentSkyTheme === 'beach') {
+      hz.style.cssText = 'height:150px;background:linear-gradient(to top,rgba(20,40,80,0.1),rgba(30,50,100,0.06),transparent)';
+    } else if (currentSkyTheme === 'mountain') {
+      // Mountain silhouette glow
+      hz.style.cssText = 'height:180px;background:linear-gradient(to top,rgba(15,25,40,0.12),rgba(20,35,60,0.06),transparent)';
+    } else {
+      hz.style.cssText = 'height:120px;background:linear-gradient(to top,rgba(40,50,100,0.08),rgba(60,70,120,0.04),transparent)';
+    }
     container.appendChild(hz);
+
+    // Night clouds (dark wisps)
+    for (var nc = 0; nc < 2; nc++) {
+      renderCloud(container, true, false);
+    }
   } else {
     // ===== DAY SKY =====
     var sunColor = getSunColor();
@@ -409,18 +428,26 @@ function renderMoon(container, pos) {
 }
 
 function renderStars(container) {
-  var starCount = 25 + Math.floor(Math.random() * 15);
+  // More stars for a richer night sky
+  var starCount = 50 + Math.floor(Math.random() * 30);
   for (var i = 0; i < starCount; i++) {
     var star = document.createElement('div');
     star.className = 'sky-star';
-    var size = 1 + Math.random() * 2;
+    var size = 0.8 + Math.random() * 2.2;
     var x = Math.random() * 100;
-    var y = Math.random() * 50; // upper half only
-    var delay = Math.random() * 5;
-    var dur = 2 + Math.random() * 3;
-    star.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + '%;top:' + y + '%;animation-delay:' + delay + 's;animation-duration:' + dur + 's';
+    var y = Math.random() * 60; // upper 60%
+    var delay = Math.random() * 6;
+    var dur = 2 + Math.random() * 4;
+    // Some brighter stars
+    var brightness = Math.random() < 0.15 ? 1 : (0.4 + Math.random() * 0.4);
+    star.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + '%;top:' + y + '%;animation-delay:' + delay + 's;animation-duration:' + dur + 's;opacity:' + brightness;
     container.appendChild(star);
   }
+
+  // Milky way — subtle diagonal band of tiny stars
+  var milkyBand = document.createElement('div');
+  milkyBand.className = 'sky-milky-way';
+  container.appendChild(milkyBand);
 
   // Shooting star (occasional)
   scheduleShootingStar(container);
@@ -606,6 +633,128 @@ function renderCloud(container, isDarkMode, isGolden) {
 
   container.appendChild(cloud);
 }
+
+// ===== SKY THEME (beach / mountain / mixed) =====
+var currentSkyTheme = 'mixed';
+
+function applySkyTheme(theme) {
+  currentSkyTheme = theme || 'mixed';
+  document.body.setAttribute('data-sky-theme', currentSkyTheme);
+  // Re-render the living sky with the new theme
+  var container = document.getElementById('sky-scene');
+  if (container && livingSkyEnabled) renderLivingSky(container);
+}
+
+// Load sky theme from Firebase on login
+function loadSkyTheme() {
+  if (!db || !user) return;
+  db.ref('settings/skyTheme/' + user).once('value', function(snap) {
+    var theme = snap.val() || 'mixed';
+    applySkyTheme(theme);
+  });
+}
+
+// Beach creatures
+function renderSeagull(container) {
+  var bird = document.createElement('div');
+  bird.className = 'sky-bird sky-seagull';
+  var startX = -5 + Math.random() * 15;
+  var startY = 5 + Math.random() * 20;
+  var dx = 300 + Math.random() * 400;
+  var dy = -(5 + Math.random() * 25);
+  var dur = 10 + Math.random() * 10;
+  bird.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--bird-dx:' + dx + 'px;--bird-dy:' + dy + 'px;--bird-dur:' + dur + 's';
+  var wl = document.createElement('div');
+  wl.className = 'sky-bird-wing sky-bird-wing-l';
+  wl.style.background = 'rgba(255,255,255,.6)';
+  var wr = document.createElement('div');
+  wr.className = 'sky-bird-wing sky-bird-wing-r';
+  wr.style.background = 'rgba(255,255,255,.6)';
+  bird.appendChild(wl);
+  bird.appendChild(wr);
+  container.appendChild(bird);
+  setTimeout(function() { if (bird.parentNode) bird.remove(); }, (dur + 2) * 1000);
+}
+
+function renderCrab(container) {
+  var crab = document.createElement('div');
+  crab.className = 'sky-crab';
+  var startX = Math.random() * 80;
+  var dir = Math.random() < 0.5 ? 1 : -1;
+  var dur = 8 + Math.random() * 6;
+  crab.style.cssText = 'left:' + startX + '%;bottom:4%;--crab-dir:' + (dir * 60) + 'px;animation-duration:' + dur + 's';
+  crab.innerHTML = '<div class="crab-body"></div>';
+  container.appendChild(crab);
+  setTimeout(function() { if (crab.parentNode) crab.remove(); }, (dur + 1) * 1000);
+}
+
+// Mountain creatures
+function renderEagle(container) {
+  var eagle = document.createElement('div');
+  eagle.className = 'sky-bird sky-eagle';
+  var startX = 20 + Math.random() * 50;
+  var startY = 5 + Math.random() * 15;
+  var dx = 200 + Math.random() * 300;
+  var dy = -(10 + Math.random() * 20);
+  var dur = 14 + Math.random() * 10;
+  eagle.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--bird-dx:' + dx + 'px;--bird-dy:' + dy + 'px;--bird-dur:' + dur + 's';
+  var wl = document.createElement('div');
+  wl.className = 'sky-bird-wing sky-bird-wing-l sky-eagle-wing';
+  var wr = document.createElement('div');
+  wr.className = 'sky-bird-wing sky-bird-wing-r sky-eagle-wing';
+  eagle.appendChild(wl);
+  eagle.appendChild(wr);
+  container.appendChild(eagle);
+  setTimeout(function() { if (eagle.parentNode) eagle.remove(); }, (dur + 2) * 1000);
+}
+
+// Night creatures by theme
+function renderOwl(container) {
+  var owl = document.createElement('div');
+  owl.className = 'sky-firefly sky-owl-eyes';
+  var x = 15 + Math.random() * 70;
+  var y = 25 + Math.random() * 30;
+  var dur = 4 + Math.random() * 4;
+  owl.style.cssText = 'left:' + x + '%;top:' + y + '%;animation-duration:' + dur + 's;width:12px;height:6px';
+  owl.innerHTML = '<span class="owl-eye"></span><span class="owl-eye"></span>';
+  container.appendChild(owl);
+  setTimeout(function() { if (owl.parentNode) owl.remove(); }, (dur + 1) * 1000);
+}
+
+// Override spawnCreatures to be theme-aware
+var _origSpawnCreatures = spawnCreatures;
+spawnCreatures = function(container) {
+  var time = getTimeOfDay();
+  var pos = getSunPosition();
+  var theme = currentSkyTheme;
+
+  if (pos.isNight) {
+    // Night creatures based on theme
+    for (var i = 0; i < 3; i++) renderFirefly(container);
+    if (theme === 'mountain' || theme === 'mixed') {
+      if (Math.random() < 0.3) renderOwl(container);
+    }
+  } else if (theme === 'beach') {
+    // Beach day creatures
+    for (var i = 0; i < 2; i++) renderSeagull(container);
+    if (Math.random() < 0.3) renderCrab(container);
+    if (Math.random() < 0.2) renderButterfly(container);
+  } else if (theme === 'mountain') {
+    // Mountain day creatures
+    if (Math.random() < 0.4) renderEagle(container);
+    renderBird(container);
+    if (time === 'dawn' || time === 'morning') {
+      if (Math.random() < 0.4) renderButterfly(container);
+    }
+  } else {
+    // Mixed — use the original behavior plus themed extras
+    _origSpawnCreatures(container);
+    if (Math.random() < 0.2) {
+      if (Math.random() < 0.5) renderSeagull(container);
+      else renderEagle(container);
+    }
+  }
+};
 
 // Init on load
 document.addEventListener('DOMContentLoaded', function() {
