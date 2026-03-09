@@ -1923,6 +1923,7 @@ body[data-sky-theme="mountain"][data-time="night"] .particle { --particle-color:
   z-index: 3000;
   padding: 12px 20px;
   background: linear-gradient(135deg, rgba(30,28,26,0.95), rgba(40,36,32,0.95));
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--bdr-s);
   transform: translateY(-100%);
