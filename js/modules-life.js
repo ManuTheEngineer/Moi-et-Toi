@@ -783,57 +783,324 @@ function listenValues() {
   });
 }
 
-function toggleAgreement(el, idx) {
-  el.classList.toggle('agreed');
-  if (db) db.ref('foundation/agreements/' + user + '/' + idx).set(el.classList.contains('agreed'));
-}
+// ===== AGREEMENT SYSTEM =====
+// Firebase paths:
+//   agreements/active/{pushId} — signed-off agreements
+//   agreements/proposals/{pushId} — pending proposals (new, edit, remove)
+//   agreements/daily/{user}/{date} — daily acknowledgments
 
-function loadAgreements() {
+var _agreeEditingKey = null; // key of agreement being edited
+
+function listenAgreements() {
   if (!db || !user) return;
-  db.ref('foundation/agreements/' + user).once('value', snap => {
-    const data = snap.val() || {};
-    document.querySelectorAll('#fdn-agreements .fdn-agree-item').forEach((el, i) => {
-      if (data[i]) el.classList.add('agreed');
-    });
-  });
-}
 
-async function addAgreement() {
-  if (!db || !user) return;
-  const text = document.getElementById('fdn-agree-input').value.trim();
-  if (!text) return;
-  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-  await db.ref('foundation/customAgreements').push({
-    text, addedBy: user, addedByName: NAMES[user], timestamp: Date.now()
-  });
-  document.getElementById('fdn-agree-input').value = '';
-  document.getElementById('fdn-agree-input').focus();
-  if (btn) { btn.textContent = '\u2713 Added'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Add'; }, 1500); }
-  toast('Agreement added');
-}
+  // Migrate onboarding agreements to active on first load
+  _migrateOnboardingAgreements();
 
-function listenCustomAgreements() {
-  db.ref('foundation/customAgreements').orderByChild('timestamp').on('value', snap => {
-    const items = []; snap.forEach(c => items.push(c.val())); items.reverse();
-    const el = document.getElementById('fdn-custom-agrees');
+  // Listen to active agreements
+  db.ref('agreements/active').orderByChild('timestamp').on('value', function(snap) {
+    var el = document.getElementById('agree-active-list');
     if (!el) return;
-    // Also load onboarding agreements
-    db.ref('agreements/onboarding').once('value', obSnap => {
+    var items = [];
+    snap.forEach(function(c) { items.push({ key: c.key, data: c.val() }); });
+    items.reverse();
+    if (!items.length) {
+      el.innerHTML = '<div class="empty">No agreements yet — propose one below</div>';
+      return;
+    }
+    el.innerHTML = items.map(function(item) {
+      var d = item.data;
+      var byName = d.addedBy === user ? 'You' : (d.addedByName || '');
+      var source = d.source === 'personal' ? ' <span class="agree-item-by">' + byName + '\'s commitment</span>' : '';
+      return '<div class="agree-item">' +
+        '<div class="agree-item-check">✓</div>' +
+        '<div class="agree-item-text">' + esc(d.text) + source + '</div>' +
+        '<div class="agree-item-actions">' +
+          '<button class="agree-item-btn" onclick="openAgreementEdit(\'' + item.key + '\',\'' + esc(d.text).replace(/'/g, "\\'") + '\')" title="Propose change">✎</button>' +
+          '<button class="agree-item-btn" onclick="proposeRemoval(\'' + item.key + '\',\'' + esc(d.text).replace(/'/g, "\\'") + '\')" title="Propose removal">×</button>' +
+        '</div></div>';
+    }).join('');
+  });
+
+  // Listen to proposals
+  db.ref('agreements/proposals').orderByChild('timestamp').on('value', function(snap) {
+    var items = [];
+    snap.forEach(function(c) { items.push({ key: c.key, data: c.val() }); });
+    items.reverse();
+
+    var section = document.getElementById('agree-proposals-section');
+    var list = document.getElementById('agree-proposals-list');
+    var banner = document.getElementById('agree-pending-banner');
+    var bannerText = document.getElementById('agree-pending-text');
+    if (!section || !list) return;
+
+    // Filter to pending only
+    var pending = items.filter(function(i) { return i.data.status === 'pending'; });
+    var forMe = pending.filter(function(i) { return i.data.proposedBy !== user; });
+
+    if (pending.length === 0) {
+      section.classList.add('d-none');
+      if (banner) banner.classList.add('d-none');
+      return;
+    }
+    section.classList.remove('d-none');
+    if (forMe.length > 0 && banner) {
+      banner.classList.remove('d-none');
+      bannerText.textContent = forMe.length + ' proposal' + (forMe.length > 1 ? 's' : '') + ' to review';
+    } else if (banner) {
+      banner.classList.add('d-none');
+    }
+
+    list.innerHTML = pending.map(function(item) {
+      var d = item.data;
+      var isAuthor = d.proposedBy === user;
+      var byName = isAuthor ? 'You' : (d.proposedByName || 'Partner');
+      var typeLabel = d.type === 'new' ? 'New agreement' : d.type === 'edit' ? 'Change proposed' : 'Removal proposed';
+      var changeHtml = '';
+      if (d.type === 'edit' && d.originalText) {
+        changeHtml = '<div class="agree-item-change">Was: "' + esc(d.originalText) + '"</div>';
+      }
+      if (d.type === 'remove') {
+        changeHtml = '<div class="agree-item-change">Proposes removing this agreement</div>';
+      }
+      var actionsHtml = '';
+      if (!isAuthor) {
+        actionsHtml = '<div class="agree-proposal-actions">' +
+          '<button class="agree-proposal-btn approve" onclick="approveProposal(\'' + item.key + '\')">Approve</button>' +
+          '<button class="agree-proposal-btn reject" onclick="rejectProposal(\'' + item.key + '\')">Decline</button>' +
+        '</div>';
+      } else {
+        actionsHtml = '<div style="font-size:10px;color:var(--t3);margin-top:6px">Waiting for partner\'s approval</div>';
+      }
+      return '<div class="agree-item agree-proposal">' +
+        '<div style="flex:1">' +
+          '<div style="font-size:10px;color:var(--gold);font-weight:500;margin-bottom:2px">' + typeLabel + ' · ' + byName + '</div>' +
+          '<div class="agree-item-text">' + esc(d.text) + '</div>' +
+          changeHtml + actionsHtml +
+        '</div></div>';
+    }).join('');
+  });
+}
+
+// Migrate onboarding + old custom agreements to the new active system (one-time)
+function _migrateOnboardingAgreements() {
+  db.ref('agreements/_migrated').once('value', function(snap) {
+    if (snap.val()) return; // already migrated
+
+    var batch = {};
+    var count = 0;
+
+    // Migrate onboarding agreements
+    db.ref('agreements/onboarding').once('value', function(obSnap) {
       var obData = obSnap.val() || {};
-      var obItems = [];
       Object.keys(obData).forEach(function(role) {
         var d = obData[role];
-        if (d.personal) d.personal.forEach(function(t) { obItems.push({ text: t, addedBy: role, addedByName: NAMES[role] || role, source: 'personal' }); });
-        if (d.together) d.together.forEach(function(t) { obItems.push({ text: t, addedBy: role, addedByName: NAMES[role] || role, source: 'together' }); });
+        if (d.personal) d.personal.forEach(function(t) {
+          var key = db.ref('agreements/active').push().key;
+          batch['agreements/active/' + key] = { text: t, addedBy: role, addedByName: NAMES[role] || role, source: 'personal', timestamp: Date.now() - (1000 * count++), signedOff: true };
+        });
+        if (d.together) d.together.forEach(function(t) {
+          var key = db.ref('agreements/active').push().key;
+          batch['agreements/active/' + key] = { text: t, addedBy: role, addedByName: NAMES[role] || role, source: 'together', timestamp: Date.now() - (1000 * count++), signedOff: true };
+        });
       });
-      var allItems = obItems.concat(items);
-      el.innerHTML = allItems.map(function(i) {
-        var label = i.source === 'personal' ? ' <span style="font-size:10px;color:var(--t3)">(' + (i.addedByName || '') + ')</span>' : '';
-        return '<div class="fdn-agree-item agreed"><span class="fdn-check" style="border-color:var(--gold)">\u2713</span>' + esc(i.text) + label + '</div>';
-      }).join('');
+
+      // Also migrate old custom agreements
+      db.ref('foundation/customAgreements').once('value', function(custSnap) {
+        custSnap.forEach(function(c) {
+          var d = c.val();
+          var key = db.ref('agreements/active').push().key;
+          batch['agreements/active/' + key] = { text: d.text, addedBy: d.addedBy, addedByName: d.addedByName, source: 'custom', timestamp: d.timestamp || Date.now(), signedOff: true };
+          count++;
+        });
+
+        // Also migrate the 6 default communication agreements
+        var defaults = [
+          'We don\'t go to bed angry',
+          'We use "I feel" not "you always"',
+          'We take a pause when heated before responding',
+          'We validate each other\'s feelings, even when we disagree',
+          'We never bring up past resolved issues',
+          'We choose understanding over winning'
+        ];
+        defaults.forEach(function(text) {
+          var key = db.ref('agreements/active').push().key;
+          batch['agreements/active/' + key] = { text: text, source: 'default', timestamp: Date.now() - (1000 * count++), signedOff: true };
+        });
+
+        if (count > 0) {
+          batch['agreements/_migrated'] = true;
+          db.ref().update(batch);
+        }
+      });
     });
   });
 }
+
+// Propose a new agreement
+function proposeAgreement() {
+  if (!db || !user) return;
+  var input = document.getElementById('agree-new-input');
+  var text = input.value.trim();
+  if (!text) { toast('Write an agreement first'); return; }
+  db.ref('agreements/proposals').push({
+    type: 'new',
+    text: text,
+    proposedBy: user,
+    proposedByName: NAMES[user] || user,
+    status: 'pending',
+    timestamp: Date.now()
+  });
+  input.value = '';
+  toast('Proposed — waiting for partner');
+}
+
+// Open edit overlay for an existing agreement
+function openAgreementEdit(key, currentText) {
+  _agreeEditingKey = key;
+  var orig = document.getElementById('agree-edit-original');
+  var textarea = document.getElementById('agree-edit-text');
+  var overlay = document.getElementById('agree-edit-overlay');
+  if (orig) orig.textContent = 'Current: "' + currentText + '"';
+  if (textarea) { textarea.value = currentText; textarea.focus(); }
+  if (overlay) overlay.classList.remove('d-none');
+}
+
+function closeAgreementEdit() {
+  var overlay = document.getElementById('agree-edit-overlay');
+  if (overlay) overlay.classList.add('d-none');
+  _agreeEditingKey = null;
+}
+
+// Submit an edit proposal
+function submitAgreementEdit() {
+  if (!db || !user || !_agreeEditingKey) return;
+  var textarea = document.getElementById('agree-edit-text');
+  var newText = textarea.value.trim();
+  if (!newText) return;
+  // Get original text for comparison
+  db.ref('agreements/active/' + _agreeEditingKey).once('value', function(snap) {
+    var orig = snap.val();
+    if (!orig) { toast('Agreement not found'); closeAgreementEdit(); return; }
+    if (newText === orig.text) { toast('No changes made'); closeAgreementEdit(); return; }
+    db.ref('agreements/proposals').push({
+      type: 'edit',
+      targetKey: _agreeEditingKey,
+      text: newText,
+      originalText: orig.text,
+      proposedBy: user,
+      proposedByName: NAMES[user] || user,
+      status: 'pending',
+      timestamp: Date.now()
+    });
+    closeAgreementEdit();
+    toast('Change proposed — waiting for partner');
+  });
+}
+
+// Propose removal of an agreement
+function proposeRemoval(key, text) {
+  if (!db || !user) return;
+  if (!confirm('Propose removing "' + text + '"?')) return;
+  db.ref('agreements/proposals').push({
+    type: 'remove',
+    targetKey: key,
+    text: text,
+    proposedBy: user,
+    proposedByName: NAMES[user] || user,
+    status: 'pending',
+    timestamp: Date.now()
+  });
+  toast('Removal proposed — waiting for partner');
+}
+
+// Approve a proposal
+function approveProposal(proposalKey) {
+  if (!db || !user) return;
+  db.ref('agreements/proposals/' + proposalKey).once('value', function(snap) {
+    var proposal = snap.val();
+    if (!proposal) return;
+
+    if (proposal.type === 'new') {
+      // Add to active
+      db.ref('agreements/active').push({
+        text: proposal.text,
+        addedBy: proposal.proposedBy,
+        addedByName: proposal.proposedByName,
+        source: 'proposed',
+        timestamp: Date.now(),
+        signedOff: true,
+        approvedBy: user
+      });
+    } else if (proposal.type === 'edit' && proposal.targetKey) {
+      // Update existing
+      db.ref('agreements/active/' + proposal.targetKey + '/text').set(proposal.text);
+      db.ref('agreements/active/' + proposal.targetKey + '/lastEditBy').set(proposal.proposedBy);
+      db.ref('agreements/active/' + proposal.targetKey + '/lastEditAt').set(Date.now());
+    } else if (proposal.type === 'remove' && proposal.targetKey) {
+      // Remove from active
+      db.ref('agreements/active/' + proposal.targetKey).remove();
+    }
+    // Mark proposal as approved
+    db.ref('agreements/proposals/' + proposalKey + '/status').set('approved');
+    toast('Approved!');
+  });
+}
+
+// Reject a proposal
+function rejectProposal(proposalKey) {
+  if (!db || !user) return;
+  db.ref('agreements/proposals/' + proposalKey + '/status').set('rejected');
+  toast('Declined');
+}
+
+function scrollToProposals() {
+  var el = document.getElementById('agree-proposals-section');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ===== DAILY AGREEMENT REMINDER =====
+function showDailyAgreement() {
+  if (!db || !user) return;
+  var today = localDate();
+  var KEY = 'met_agree_daily_' + user;
+  // Already acknowledged today
+  if (localStorage.getItem(KEY) === today) return;
+
+  db.ref('agreements/active').once('value', function(snap) {
+    var items = [];
+    snap.forEach(function(c) { items.push(c.val()); });
+    if (!items.length) return;
+
+    // Pick one based on day of year for consistency
+    var dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    var agreement = items[dayOfYear % items.length];
+
+    var card = document.getElementById('agree-daily-card');
+    var text = document.getElementById('agree-daily-text');
+    if (card && text) {
+      text.textContent = agreement.text;
+      card.classList.remove('d-none');
+    }
+  });
+}
+
+function ackDailyAgreement() {
+  var today = localDate();
+  localStorage.setItem('met_agree_daily_' + user, today);
+  var btn = document.getElementById('agree-daily-done');
+  if (btn) { btn.classList.add('done'); btn.textContent = '✓'; }
+  setTimeout(function() {
+    var card = document.getElementById('agree-daily-card');
+    if (card) card.classList.add('d-none');
+  }, 800);
+  // Track in Firebase
+  if (db && user) db.ref('agreements/daily/' + user + '/' + today).set({ ack: true, timestamp: Date.now() });
+}
+
+// Keep old function name for backward compatibility
+function loadAgreements() { listenAgreements(); }
+function listenCustomAgreements() { /* replaced by listenAgreements */ }
 
 // ===== SPIRITUAL SPACE =====
 const DEVOTIONALS = [
