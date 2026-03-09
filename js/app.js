@@ -760,33 +760,46 @@ function obStartSoundPreview(theme) {
   if (!ctx) {
     try { WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); ctx = WEATHER.audioCtx; } catch(e) { return; }
   }
-  if (typeof _resumeCtx === 'function') {
-    _resumeCtx(ctx);
-  } else if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    ctx.resume();
+
+  // Helper to actually start playback once context is running
+  function _startPreviewPlayback() {
+    // Guard: user may have toggled off while we were waiting for resume
+    if (!window._obSoundPreviewing) return;
+
+    var buffer = generateNoise(soundType);
+    if (!buffer) return;
+
+    var source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    var gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.35, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.7, ctx.currentTime + 0.4);
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start(0);
+
+    window._obSoundPreviewNode = { source: source, gain: gain };
   }
-  WEATHER.audioUnlocked = true;
 
-  var buffer = generateNoise(soundType);
-  if (!buffer) return;
-
-  var source = ctx.createBufferSource();
-  source.buffer = buffer;
-  source.loop = true;
-  var gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.35, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.7, ctx.currentTime + 0.4);
-  source.connect(gain);
-  gain.connect(ctx.destination);
-  source.start(0);
-
-  window._obSoundPreviewNode = { source: source, gain: gain };
+  // Set state early so UI updates immediately
   window._obSoundPreviewing = true;
+  WEATHER.audioUnlocked = true;
 
   var btn = document.getElementById('ob-sound-preview-btn');
   var icon = document.getElementById('ob-sound-preview-icon');
   if (btn) btn.classList.add('playing');
   if (icon) icon.textContent = '🔇';
+
+  // Resume context (must happen during user gesture) then start audio
+  if (typeof _resumeCtx === 'function') {
+    _resumeCtx(ctx);
+  }
+  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+    ctx.resume().then(_startPreviewPlayback).catch(function() {});
+  } else {
+    _startPreviewPlayback();
+  }
 }
 
 function obStopSoundPreview() {
