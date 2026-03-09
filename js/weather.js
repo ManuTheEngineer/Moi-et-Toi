@@ -676,41 +676,39 @@ function renderPelican(container) {
 }
 
 // ===== AMBIENT AUDIO SYSTEM =====
-// Audio unlock - requires user gesture on iOS/Safari
-function unlockAudio() {
-  try {
-    if (!WEATHER.audioCtx) {
-      WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    var ctx = WEATHER.audioCtx;
 
-    // Resume synchronously during user gesture - don't defer to .then()
+// Ensure we always have a valid, open AudioContext
+function _ensureAudioCtx() {
+  try {
+    // If context was closed or doesn't exist, create a new one
+    if (!WEATHER.audioCtx || WEATHER.audioCtx.state === 'closed') {
+      WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      _noiseCache = {}; // buffers from old context may be invalid
+    }
+    return WEATHER.audioCtx;
+  } catch(e) {
+    return null;
+  }
+}
+
+// Resume AudioContext — call during user gesture
+function _resumeCtx(ctx) {
+  if (!ctx) return;
+  try {
     if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
       ctx.resume();
     }
-    // Play silent buffer synchronously in gesture context for iOS
-    _playSilentBuffer(ctx);
-    WEATHER.audioUnlocked = true;
-    _onAudioReady();
+    // Play a real oscillator tone (inaudible) to force iOS audio pipeline open
+    // Oscillators are more reliable than silent buffers for iOS unlock
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    g.gain.value = 0.001; // near-silent
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start(0);
+    o.stop(ctx.currentTime + 0.05);
   } catch(e) {}
-}
-
-// iOS Safari/WKWebView needs actual audio output during user gesture to fully unlock
-function _playSilentBuffer(ctx) {
-  try {
-    // Use a short (~100ms) near-silent buffer instead of 1 sample — more reliable on iOS
-    var sr = ctx.sampleRate || 44100;
-    var len = Math.floor(sr * 0.1);
-    var buf = ctx.createBuffer(1, len, sr);
-    var d = buf.getChannelData(0);
-    // Fill with near-inaudible noise — true silence may not trigger iOS audio pipeline
-    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.001;
-    var src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.connect(ctx.destination);
-    src.start(0);
-  } catch(e) {}
-  // Also prime via HTML Audio element — helps iOS PWAs (WKWebView)
+  // Also prime via HTML Audio element for iOS PWAs (WKWebView)
   try {
     if (!window._audioPrimed) {
       var a = document.createElement('audio');
@@ -723,9 +721,17 @@ function _playSilentBuffer(ctx) {
   } catch(e) {}
 }
 
+// Audio unlock - requires user gesture on iOS/Safari
+function unlockAudio() {
+  var ctx = _ensureAudioCtx();
+  if (!ctx) return;
+  _resumeCtx(ctx);
+  WEATHER.audioUnlocked = true;
+  _onAudioReady();
+}
+
 function _onAudioReady() {
   if (WEATHER.audioEnabled) {
-    // Always try to update ambient audio when context becomes ready
     setTimeout(updateAmbientAudio, 100);
   }
   if (WEATHER.moodPlaying) {
@@ -734,14 +740,10 @@ function _onAudioReady() {
 }
 
 // Keep listener alive - AudioContext can re-suspend on mobile (page background, etc.)
-// Debounce to avoid running on every rapid tap
 var _unlockTimer = null;
 function _tryUnlock() {
-  // Don't fight AudioContext.suspend() during voice recording
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
-  // Already running, skip
   if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') return;
-  // Debounce - only run once per 500ms
   if (_unlockTimer) return;
   _unlockTimer = setTimeout(function() { _unlockTimer = null; }, 500);
   unlockAudio();
@@ -1655,22 +1657,22 @@ function _makeNoise(noiseType) {
 }
 
 function playAmbientSound(type, volume) {
-  if (!WEATHER.audioCtx || !WEATHER.audioEnabled) return;
+  if (!WEATHER.audioEnabled) return;
+  var ctx = _ensureAudioCtx();
+  if (!ctx) return;
   if (WEATHER.audioNodes[type]) return;
-  var ctx = WEATHER.audioCtx;
 
-  // Resume if needed - don't return early, schedule sound synchronously
+  // Resume if suspended
   if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
     ctx.resume();
   }
 
-  var vol = volume || 0.3;
+  var vol = volume || 0.4;
   var master = ctx.createGain();
   master.gain.value = vol;
   master.connect(ctx.destination);
   var parts = [];
 
-  // Generate rich buffer for this sound type
   var buffer = generateNoise(type);
   if (buffer) {
     var src = ctx.createBufferSource();
@@ -1705,9 +1707,11 @@ function stopAllSounds() {
 }
 
 function updateAmbientAudio() {
-  if (!WEATHER.audioEnabled || !WEATHER.audioCtx) return;
-  if (WEATHER.audioCtx.state === 'suspended' || WEATHER.audioCtx.state === 'interrupted') {
-    WEATHER.audioCtx.resume();
+  if (!WEATHER.audioEnabled) return;
+  var ctx = _ensureAudioCtx();
+  if (!ctx) return;
+  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+    ctx.resume();
   }
 
   var scene = SCENES[WEATHER.scene];
@@ -1724,46 +1728,41 @@ function updateAmbientAudio() {
     if (keep.indexOf(k) === -1) stopAmbientSound(k);
   });
 
-  // Ambient volumes: clearly audible
-  playAmbientSound(scene.sounds.base, 0.35);
-  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.30);
+  // Ambient volumes: loud enough to hear on phone speakers
+  playAmbientSound(scene.sounds.base, 0.5);
+  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.45);
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wx && wx.sound) playAmbientSound(wx.sound, 0.35);
+    if (wx && wx.sound) playAmbientSound(wx.sound, 0.5);
   }
 }
 
 function toggleAmbientAudio(on) {
   WEATHER.audioEnabled = on;
   if (on) {
-    // Toggle IS a user gesture - create context and start synchronously
-    if (!WEATHER.audioCtx) {
-      try {
-        WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      } catch(e) { toast('Audio not supported'); return; }
-    }
-    var ctx = WEATHER.audioCtx;
-
-    // Resume synchronously during user gesture - critical for iOS
-    if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-      ctx.resume();
-    }
-    _playSilentBuffer(ctx);
+    var ctx = _ensureAudioCtx();
+    if (!ctx) { toast('Audio not supported'); return; }
+    _resumeCtx(ctx);
     WEATHER.audioUnlocked = true;
 
-    // Confirmation beep - proves audio pipeline works
+    // Loud confirmation beep — user MUST hear this or audio is broken
     try {
       var o = ctx.createOscillator();
       var g = ctx.createGain();
       o.type = 'sine'; o.frequency.value = 520;
-      g.gain.setValueAtTime(0.5, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      g.gain.setValueAtTime(0.6, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
       o.connect(g); g.connect(ctx.destination);
-      o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.4);
+      o.start(0); o.stop(ctx.currentTime + 0.35);
     } catch(e) {}
 
-    // Start ambient sounds — short delay lets context finish resuming
+    // Start ambient sounds — retry multiple times in case context takes time to resume
     setTimeout(updateAmbientAudio, 200);
+    setTimeout(function() {
+      if (WEATHER.audioEnabled && Object.keys(WEATHER.audioNodes).length === 0) {
+        updateAmbientAudio();
+      }
+    }, 1000);
   } else {
     stopAllSounds();
   }
@@ -2079,40 +2078,38 @@ function renderMoodSoundsGrid() {
 }
 
 function playMoodSound(moodKey) {
-  // Stop any existing mood sound
   stopMoodSound();
 
-  // Tapping a mood button IS a user gesture - create/resume AudioContext synchronously
-  if (!WEATHER.audioCtx) {
-    try {
-      WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    } catch(e) { toast('Audio not supported'); return; }
-  }
-  var ctx = WEATHER.audioCtx;
-
-  // Resume synchronously during user gesture - critical for iOS/mobile
-  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    ctx.resume();
-  }
-  _playSilentBuffer(ctx);
+  var ctx = _ensureAudioCtx();
+  if (!ctx) { toast('Audio not supported on this device'); return; }
+  _resumeCtx(ctx);
   WEATHER.audioUnlocked = true;
 
   var mood = MOOD_SOUNDS[moodKey];
   if (!mood) return;
 
-  var buffer = generateNoise(mood.type);
-  if (!buffer) return;
+  // Immediate audible beep — instant feedback before heavy buffer generation
+  try {
+    var beep = ctx.createOscillator();
+    var bg = ctx.createGain();
+    beep.type = 'sine';
+    beep.frequency.value = 660;
+    bg.gain.setValueAtTime(0.25, ctx.currentTime);
+    bg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+    beep.connect(bg); bg.connect(ctx.destination);
+    beep.start(0); beep.stop(ctx.currentTime + 0.12);
+  } catch(e) {}
 
-  // Create and connect nodes synchronously during user gesture
-  // Web Audio API queues these and plays when context resumes
+  var buffer = generateNoise(mood.type);
+  if (!buffer) { toast('Could not generate ' + mood.label); return; }
+
   var source = ctx.createBufferSource();
   source.buffer = buffer;
   source.loop = true;
 
   var gain = ctx.createGain();
-  // Start at audible volume immediately — fade-from-zero felt like nothing was playing
-  gain.gain.setValueAtTime(0.15, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 0.8);
+  gain.gain.setValueAtTime(0.35, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.7, ctx.currentTime + 0.5);
 
   source.connect(gain);
   gain.connect(ctx.destination);
@@ -2127,6 +2124,15 @@ function playMoodSound(moodKey) {
   });
 
   toast(mood.label + ' mood playing');
+
+  // Verify audio is actually running after a delay
+  setTimeout(function() {
+    if (ctx.state !== 'running') {
+      toast('Audio blocked (' + ctx.state + ') — check silent mode & volume');
+      // One more try
+      ctx.resume();
+    }
+  }, 800);
 }
 
 function stopMoodSound() {
@@ -2216,13 +2222,12 @@ setInterval(syncSkyState, 30000);
 // Periodic audio retry - if enabled but no sounds playing, try again
 setInterval(function() {
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
-  if (!WEATHER.audioEnabled || !WEATHER.audioCtx) return;
+  if (!WEATHER.audioEnabled) return;
+  var ctx = _ensureAudioCtx();
+  if (!ctx) return;
   var nodeCount = Object.keys(WEATHER.audioNodes).length;
-  // Retry if no ambient nodes are playing, or if context got suspended
-  if (nodeCount === 0 || WEATHER.audioCtx.state !== 'running') {
-    if (WEATHER.audioCtx.state !== 'running') {
-      WEATHER.audioCtx.resume();
-    }
+  if (nodeCount === 0 || ctx.state !== 'running') {
+    if (ctx.state !== 'running') ctx.resume();
     WEATHER.audioUnlocked = true;
     updateAmbientAudio();
   }
@@ -2232,11 +2237,11 @@ setInterval(function() {
 document.addEventListener('visibilitychange', function() {
   if (document.hidden) return;
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
-  if (WEATHER.audioCtx && WEATHER.audioEnabled) {
-    if (WEATHER.audioCtx.state === 'suspended' || WEATHER.audioCtx.state === 'interrupted') {
-      WEATHER.audioCtx.resume();
+  if (WEATHER.audioEnabled) {
+    var ctx = _ensureAudioCtx();
+    if (ctx && (ctx.state === 'suspended' || ctx.state === 'interrupted')) {
+      ctx.resume();
     }
-    // Retry ambient audio after short delay to let context resume
     setTimeout(updateAmbientAudio, 300);
   }
 });
@@ -2262,11 +2267,7 @@ function initWeatherSystem() {
       var audioToggle = document.getElementById('set-ambient-audio');
       if (audioToggle) audioToggle.checked = true;
       // Create AudioContext eagerly so first user gesture can unlock it
-      if (!WEATHER.audioCtx) {
-        try {
-          WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        } catch(e) {}
-      }
+      _ensureAudioCtx();
     }
 
     // Update scene selection UI

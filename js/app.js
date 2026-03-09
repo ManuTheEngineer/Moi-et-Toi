@@ -720,18 +720,16 @@ function obStartSoundPreview(theme) {
   var soundMap = { beach: 'seagulls', mountain: 'forestWind', mixed: 'birdsong' };
   var soundType = soundMap[theme] || 'birdsong';
 
-  // Create audio context if needed (this IS a user gesture)
-  if (!WEATHER.audioCtx) {
-    try {
-      WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    } catch(e) { return; }
+  // Create/resume audio context using weather.js helpers if available
+  var ctx = (typeof _ensureAudioCtx === 'function') ? _ensureAudioCtx() : null;
+  if (!ctx) {
+    try { WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); ctx = WEATHER.audioCtx; } catch(e) { return; }
   }
-  var ctx = WEATHER.audioCtx;
-  // Resume synchronously during user gesture - critical for iOS
-  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+  if (typeof _resumeCtx === 'function') {
+    _resumeCtx(ctx);
+  } else if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
     ctx.resume();
   }
-  _playSilentBuffer(ctx);
   WEATHER.audioUnlocked = true;
 
   var buffer = generateNoise(soundType);
@@ -741,8 +739,8 @@ function obStartSoundPreview(theme) {
   source.buffer = buffer;
   source.loop = true;
   var gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.15, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 0.6);
+  gain.gain.setValueAtTime(0.35, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.7, ctx.currentTime + 0.4);
   source.connect(gain);
   gain.connect(ctx.destination);
   source.start(0);
