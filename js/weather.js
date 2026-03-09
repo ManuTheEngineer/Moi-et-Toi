@@ -1742,7 +1742,17 @@ function playAmbientSound(type, volume) {
   master.connect(ctx.destination);
   var parts = [];
 
-  var buffer = generateNoise(type);
+  var buffer;
+  try {
+    buffer = generateNoise(type);
+  } catch(e) {
+    toast('Buffer gen error (' + type + '): ' + e.message);
+    return;
+  }
+  if (!buffer) {
+    toast('Buffer null for: ' + type);
+    return;
+  }
   if (buffer) {
     var src = ctx.createBufferSource();
     src.buffer = buffer;
@@ -1796,7 +1806,11 @@ function updateAmbientAudio() {
   }
 
   var scene = SCENES[WEATHER.scene];
-  if (!scene) { playAmbientSound('wind', 0.12); return; }
+  if (!scene) {
+    toast('No scene set, playing wind');
+    playAmbientSound('wind', 0.12);
+    return;
+  }
 
   var time = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
   var soundType = scene.sounds[time] || scene.sounds.base;
@@ -1810,62 +1824,101 @@ function updateAmbientAudio() {
   });
 
   // Ambient volumes: loud enough to hear on phone speakers
+  toast('Playing: ' + scene.sounds.base + ' + ' + soundType + ' (ctx:' + ctx.state + ')');
   playAmbientSound(scene.sounds.base, 0.5);
   if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.45);
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
     if (wx && wx.sound) playAmbientSound(wx.sound, 0.5);
   }
+
+  // Report how many nodes are active
+  setTimeout(function() {
+    var n = Object.keys(WEATHER.audioNodes).length;
+    if (n > 0) {
+      toast(n + ' sound(s) active — if silent, check media volume (not ringer)');
+    } else {
+      toast('No sounds started — buffer generation may have failed');
+    }
+  }, 500);
 }
 
 function toggleAmbientAudio(on) {
   WEATHER.audioEnabled = on;
   WEATHER._audioQueued = false;
   if (on) {
-    // Always create fresh context during this user gesture (checkbox toggle)
-    // Reuse existing only if it's already running
-    var ctx = WEATHER.audioCtx;
-    if (!ctx || ctx.state !== 'running') {
-      ctx = _recreateAudioCtx();
-    }
-    if (!ctx) { toast('Audio not supported'); return; }
+    // Always create a FRESH context during this user gesture
+    var ctx = _recreateAudioCtx();
+    if (!ctx) { toast('Audio not supported on this device'); return; }
 
+    toast('Starting audio... (state: ' + ctx.state + ')');
+
+    // Resume context — MUST happen during user gesture
     _resumeCtx(ctx);
     WEATHER.audioUnlocked = true;
 
-    // Start sounds SYNCHRONOUSLY within the user gesture — don't use setTimeout
-    // which breaks the gesture chain on iOS and some Android browsers
+    // Helper: play beep + start ambient sounds
     var startSounds = function() {
-      // Confirmation beep — user MUST hear this or audio is broken
+      toast('Context: ' + ctx.state + ' | Playing sounds...');
+      // Confirmation beep at full volume
       try {
         var o = ctx.createOscillator();
         var g = ctx.createGain();
         o.type = 'sine'; o.frequency.value = 520;
-        g.gain.setValueAtTime(0.6, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        g.gain.setValueAtTime(1.0, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
         o.connect(g); g.connect(ctx.destination);
-        o.start(0); o.stop(ctx.currentTime + 0.35);
-      } catch(e) {}
+        o.start(0); o.stop(ctx.currentTime + 0.5);
+      } catch(e) { toast('Beep error: ' + e.message); }
       updateAmbientAudio();
     };
 
-    // If context needs to resume, chain to the promise; otherwise start immediately
+    // Resume and start — try both promise-based and immediate
     if (ctx.state !== 'running') {
-      var p = ctx.resume();
-      (p || Promise.resolve()).then(startSounds).catch(startSounds);
+      try {
+        var p = ctx.resume();
+        if (p && p.then) {
+          p.then(function() {
+            startSounds();
+          }).catch(function(e) {
+            toast('Resume failed: ' + e.message);
+            startSounds(); // try anyway
+          });
+        } else {
+          startSounds();
+        }
+      } catch(e) {
+        toast('Resume error: ' + e.message);
+        startSounds();
+      }
     } else {
       startSounds();
     }
 
-    // Safety retry — if sounds still didn't start after 1.5s
+    // Also try starting sounds immediately (don't wait for promise)
+    // On some devices the promise never resolves but audio works anyway
     setTimeout(function() {
-      if (WEATHER.audioEnabled && Object.keys(WEATHER.audioNodes).length === 0) {
-        if (WEATHER.audioCtx && WEATHER.audioCtx.state !== 'running') {
-          toast('Audio blocked — tap anywhere to retry');
-        }
+      if (!WEATHER.audioEnabled) return;
+      var c = WEATHER.audioCtx;
+      if (!c) return;
+      var nodes = Object.keys(WEATHER.audioNodes).length;
+      if (nodes === 0) {
+        toast('Retry: state=' + c.state + ', nodes=' + nodes);
+        if (c.state !== 'running') c.resume().catch(function(){});
         updateAmbientAudio();
       }
-    }, 1500);
+    }, 1000);
+
+    // Final retry with full diagnostic
+    setTimeout(function() {
+      if (!WEATHER.audioEnabled) return;
+      var c = WEATHER.audioCtx;
+      var nodes = Object.keys(WEATHER.audioNodes).length;
+      var state = c ? c.state : 'no-ctx';
+      if (nodes === 0) {
+        toast('Audio debug: state=' + state + ' scene=' + WEATHER.scene + ' — check media volume');
+      }
+    }, 3000);
   } else {
     stopAllSounds();
   }
