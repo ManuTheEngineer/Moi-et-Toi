@@ -149,8 +149,9 @@
           <textarea id="ob-morning-custom" class="login-input ob-input" rows="2" placeholder="Write something they'll wake up to..." style="display:none;resize:none;height:auto" onfocus="obScrollToInput(this)"></textarea>
         </div>
       </div>
-      <!-- Sky theme + nature sounds -->
+      <!-- Sky theme + nature sounds with preview -->
       <div id="ob-sky-theme" class="ob-baseline-card" style="display:none">
+        <div id="ob-env-preview" class="ob-env-preview"></div>
         <div class="sky-theme-grid" id="ob-sky-theme-grid">
           <button type="button" class="sky-theme-btn" data-theme="beach" onclick="obSelectSkyTheme('beach',this)">
             <span class="sky-theme-icon">🏖</span><span class="sky-theme-name">Beach</span>
@@ -169,6 +170,9 @@
           <span class="ob-bl-label">Play nature sounds in the background?</span>
           <label class="toggle-switch"><input type="checkbox" id="ob-nature-toggle"><span class="toggle-slider"></span></label>
         </div>
+        <button type="button" class="ob-sound-preview-btn" id="ob-sound-preview-btn" onclick="obToggleSoundPreview()">
+          <span id="ob-sound-preview-icon">🔊</span> Preview sounds
+        </button>
       </div>
       <div id="ob-tour" style="display:none"></div>
       <button id="ob-btn" onclick="onboardNext()" class="login-btn ob-btn">Continue</button>

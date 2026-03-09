@@ -593,6 +593,8 @@ function renderOnboardStep() {
         b.classList.toggle('active', b.getAttribute('data-theme') === onboardData.skyTheme);
       });
       document.getElementById('ob-nature-toggle').checked = onboardData.natureSoundsEnabled;
+      // Render environment preview
+      if (typeof obRenderEnvPreview === 'function') obRenderEnvPreview(onboardData.skyTheme);
       btn.textContent = 'Next';
     }
     // Step 13: All set
@@ -654,6 +656,8 @@ function onboardNext() {
   }
   if (onboardStep === 12) {
     onboardData.natureSoundsEnabled = document.getElementById('ob-nature-toggle').checked;
+    // Stop any sound preview when leaving this step
+    if (typeof obStopSoundPreview === 'function') obStopSoundPreview();
   }
   onboardStep++;
   obBroadcastStep();
@@ -666,6 +670,110 @@ function obSelectSkyTheme(theme, btn) {
   if (grid) grid.querySelectorAll('.sky-theme-btn').forEach(function(b) {
     b.classList.toggle('active', b.getAttribute('data-theme') === theme);
   });
+  // Update environment preview
+  obRenderEnvPreview(theme);
+  // If sound preview is playing, switch to new environment's sound
+  if (window._obSoundPreviewing) {
+    obStopSoundPreview();
+    obStartSoundPreview(theme);
+  }
+}
+
+// ===== ONBOARDING ENVIRONMENT PREVIEW =====
+function obRenderEnvPreview(theme) {
+  var el = document.getElementById('ob-env-preview');
+  if (!el) return;
+  theme = theme || onboardData.skyTheme || 'mixed';
+
+  var gradients = {
+    beach: 'linear-gradient(180deg, #87CEEB 0%, #E0F0FF 30%, #4BA3C7 50%, #2E86AB 65%, #F5DEB3 85%, #DEB887 100%)',
+    mountain: 'linear-gradient(180deg, #6B9BD2 0%, #A8C8E8 25%, #C8D8C0 45%, #4A7C59 60%, #2D5A27 75%, #1A3A1A 100%)',
+    mixed: 'linear-gradient(180deg, #87CEEB 0%, #E8D5B7 25%, #F5DEB3 40%, #90B860 55%, #6B9B4E 70%, #4A7C39 100%)'
+  };
+  var scenes = {
+    beach: '<div class="ob-prev-sun"></div><div class="ob-prev-cloud ob-prev-cloud-1"></div><div class="ob-prev-cloud ob-prev-cloud-2"></div><div class="ob-prev-wave ob-prev-wave-1"></div><div class="ob-prev-wave ob-prev-wave-2"></div><div class="ob-prev-wave ob-prev-wave-3"></div><div class="ob-prev-palm ob-prev-palm-l"></div><div class="ob-prev-palm ob-prev-palm-r"></div><div class="ob-prev-bird ob-prev-bird-1"></div><div class="ob-prev-bird ob-prev-bird-2"></div>',
+    mountain: '<div class="ob-prev-sun"></div><div class="ob-prev-cloud ob-prev-cloud-1"></div><div class="ob-prev-mtn ob-prev-mtn-far"></div><div class="ob-prev-mtn ob-prev-mtn-mid"></div><div class="ob-prev-mtn ob-prev-mtn-near"></div><div class="ob-prev-mist"></div><div class="ob-prev-pine-row"></div><div class="ob-prev-bird ob-prev-bird-1"></div>',
+    mixed: '<div class="ob-prev-sun"></div><div class="ob-prev-cloud ob-prev-cloud-1"></div><div class="ob-prev-cloud ob-prev-cloud-2"></div><div class="ob-prev-hill ob-prev-hill-far"></div><div class="ob-prev-hill ob-prev-hill-near"></div><div class="ob-prev-tree ob-prev-tree-1"></div><div class="ob-prev-tree ob-prev-tree-2"></div><div class="ob-prev-tree ob-prev-tree-3"></div><div class="ob-prev-bird ob-prev-bird-1"></div><div class="ob-prev-bird ob-prev-bird-2"></div><div class="ob-prev-flower-row"></div>'
+  };
+  var labels = { beach: 'Sunset Shore', mountain: 'Whispering Woods', mixed: 'Golden Meadow' };
+
+  el.style.background = gradients[theme] || gradients.mixed;
+  el.innerHTML = (scenes[theme] || scenes.mixed) + '<div class="ob-prev-label">' + (labels[theme] || 'Golden Meadow') + '</div>';
+}
+
+// Sound preview for onboarding
+window._obSoundPreviewing = false;
+window._obSoundPreviewNode = null;
+
+function obToggleSoundPreview() {
+  if (window._obSoundPreviewing) {
+    obStopSoundPreview();
+  } else {
+    obStartSoundPreview(onboardData.skyTheme || 'mixed');
+  }
+}
+
+function obStartSoundPreview(theme) {
+  if (typeof WEATHER === 'undefined' || typeof generateNoise !== 'function') return;
+
+  // Map theme to sound type
+  var soundMap = { beach: 'seagulls', mountain: 'forestWind', mixed: 'birdsong' };
+  var soundType = soundMap[theme] || 'birdsong';
+
+  // Create audio context if needed (this IS a user gesture)
+  if (!WEATHER.audioCtx) {
+    try {
+      WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch(e) { return; }
+  }
+  var ctx = WEATHER.audioCtx;
+  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+    ctx.resume().then(function() {
+      _playSilentBuffer(ctx);
+      WEATHER.audioUnlocked = true;
+      obStartSoundPreview(theme);
+    });
+    return;
+  }
+  WEATHER.audioUnlocked = true;
+
+  var buffer = generateNoise(soundType);
+  if (!buffer) return;
+
+  var source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.loop = true;
+  var gain = ctx.createGain();
+  gain.gain.setValueAtTime(0, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 1.5);
+  source.connect(gain);
+  gain.connect(ctx.destination);
+  source.start(0);
+
+  window._obSoundPreviewNode = { source: source, gain: gain };
+  window._obSoundPreviewing = true;
+
+  var btn = document.getElementById('ob-sound-preview-btn');
+  var icon = document.getElementById('ob-sound-preview-icon');
+  if (btn) btn.classList.add('playing');
+  if (icon) icon.textContent = '🔇';
+}
+
+function obStopSoundPreview() {
+  if (window._obSoundPreviewNode && WEATHER.audioCtx) {
+    try {
+      window._obSoundPreviewNode.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.5);
+      var node = window._obSoundPreviewNode;
+      setTimeout(function() { try { node.source.stop(); } catch(e) {} }, 600);
+    } catch(e) {}
+    window._obSoundPreviewNode = null;
+  }
+  window._obSoundPreviewing = false;
+
+  var btn = document.getElementById('ob-sound-preview-btn');
+  var icon = document.getElementById('ob-sound-preview-icon');
+  if (btn) btn.classList.remove('playing');
+  if (icon) icon.textContent = '🔊';
 }
 
 function onboardPhotoPicked(input) {
@@ -1095,6 +1203,8 @@ function finishLogin() {
   // Render sound grids personalized for user
   if (typeof renderMoodSoundsGrid === 'function') renderMoodSoundsGrid();
   if (typeof loadSkyTheme === 'function') loadSkyTheme();
+  // Initialize weather system (must run after user/db are set)
+  if (typeof initWeatherSystem === 'function') initWeatherSystem();
   // Particles, global mode, presence
   initParticles();
   setGlobalMode(localStorage.getItem('met_global_mode') || 'us');

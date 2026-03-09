@@ -714,7 +714,8 @@ function _playSilentBuffer(ctx) {
 }
 
 function _onAudioReady() {
-  if (WEATHER.audioEnabled && Object.keys(WEATHER.audioNodes).length === 0) {
+  if (WEATHER.audioEnabled) {
+    // Always try to update ambient audio when context becomes ready
     setTimeout(updateAmbientAudio, 100);
   }
   if (WEATHER.moodPlaying) {
@@ -2182,10 +2183,17 @@ setInterval(syncSkyState, 30000);
 // Periodic audio retry - if enabled but no sounds playing, try again
 setInterval(function() {
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
-  if (WEATHER.audioEnabled && WEATHER.audioCtx && Object.keys(WEATHER.audioNodes).length === 0) {
+  if (!WEATHER.audioEnabled || !WEATHER.audioCtx) return;
+  var nodeCount = Object.keys(WEATHER.audioNodes).length;
+  // Retry if no ambient nodes are playing, or if context got suspended
+  if (nodeCount === 0 || WEATHER.audioCtx.state !== 'running') {
     if (WEATHER.audioCtx.state !== 'running') {
-      WEATHER.audioCtx.resume().then(function() { updateAmbientAudio(); });
+      WEATHER.audioCtx.resume().then(function() {
+        WEATHER.audioUnlocked = true;
+        updateAmbientAudio();
+      }).catch(function() {});
     } else {
+      WEATHER.audioUnlocked = true;
       updateAmbientAudio();
     }
   }
@@ -2203,8 +2211,11 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // ===== INIT =====
+var _weatherInitialized = false;
 function initWeatherSystem() {
   if (typeof db === 'undefined' || !db || typeof user === 'undefined' || !user) return;
+  if (_weatherInitialized) return; // prevent double-init
+  _weatherInitialized = true;
 
   db.ref('settings/weather/' + user).once('value', function(snap) {
     var data = snap.val() || {};
@@ -2214,11 +2225,17 @@ function initWeatherSystem() {
       WEATHER.scene = data.scene;
     }
 
-    // Load audio preference
+    // Load audio preference - properly restore saved state
     if (data.audio) {
       WEATHER.audioEnabled = true;
       var audioToggle = document.getElementById('set-ambient-audio');
       if (audioToggle) audioToggle.checked = true;
+      // Create AudioContext eagerly so first user gesture can unlock it
+      if (!WEATHER.audioCtx) {
+        try {
+          WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch(e) {}
+      }
     }
 
     // Update scene selection UI
@@ -2239,33 +2256,48 @@ function initWeatherSystem() {
         var container = document.getElementById('sky-scene');
         if (container && livingSkyEnabled) renderLivingSky(container);
         updateWeatherInfoUI();
-        updateAmbientAudio();
+        // Try to start audio - will work if context is already running
+        if (WEATHER.audioEnabled) {
+          if (WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
+            WEATHER.audioUnlocked = true;
+            updateAmbientAudio();
+          }
+        }
       });
-    } else if (!data.prompted) {
-      // First time - prompt after delay
-      setTimeout(function() {
-        if (livingSkyEnabled) showLocationPrompt();
-      }, 4000);
+    } else {
+      // Even without weather, try to start audio for scene sounds
+      if (WEATHER.audioEnabled && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
+        WEATHER.audioUnlocked = true;
+        updateAmbientAudio();
+      }
+      if (!data.prompted) {
+        // First time - prompt after delay
+        setTimeout(function() {
+          if (livingSkyEnabled) showLocationPrompt();
+        }, 4000);
+      }
     }
   });
 
   // Refresh weather every 15 minutes
-  WEATHER.refreshTimer = setInterval(function() {
-    if (WEATHER.locationGranted) {
-      fetchWeather().then(function() {
-        var container = document.getElementById('sky-scene');
-        if (container && livingSkyEnabled) renderLivingSky(container);
-        updateWeatherInfoUI();
-      });
-    }
-  }, 15 * 60 * 1000);
+  if (!WEATHER.refreshTimer) {
+    WEATHER.refreshTimer = setInterval(function() {
+      if (WEATHER.locationGranted) {
+        fetchWeather().then(function() {
+          var container = document.getElementById('sky-scene');
+          if (container && livingSkyEnabled) renderLivingSky(container);
+          updateWeatherInfoUI();
+        });
+      }
+    }, 15 * 60 * 1000);
+  }
 }
 
-// Hook into app init
+// Hook into app init - fallback for non-finishLogin paths
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(function() {
     if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
       initWeatherSystem();
     }
-  }, 2500);
+  }, 3500);
 });

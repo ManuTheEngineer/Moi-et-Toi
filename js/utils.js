@@ -516,19 +516,33 @@ function renderMoon(container, pos) {
 }
 
 function renderStars(container) {
-  // More stars for a richer night sky
-  var starCount = 50 + Math.floor(Math.random() * 30);
+  // More stars for a richer night sky - layered by brightness
+  var starCount = 70 + Math.floor(Math.random() * 40);
+  // Star colors for realism: most white, some blue-white, a few warm
+  var starColors = [
+    'rgba(255,255,255,', 'rgba(255,255,255,', 'rgba(255,255,255,',
+    'rgba(200,220,255,', 'rgba(220,230,255,', // blue-white
+    'rgba(255,230,200,', 'rgba(255,210,180,'  // warm stars
+  ];
   for (var i = 0; i < starCount; i++) {
     var star = document.createElement('div');
     star.className = 'sky-star';
-    var size = 0.8 + Math.random() * 2.2;
+    var size = 0.6 + Math.random() * 2.5;
     var x = Math.random() * 100;
-    var y = Math.random() * 60; // upper 60%
-    var delay = Math.random() * 6;
-    var dur = 2 + Math.random() * 4;
-    // Some brighter stars
-    var brightness = Math.random() < 0.15 ? 1 : (0.4 + Math.random() * 0.4);
-    star.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + '%;top:' + y + '%;animation-delay:' + delay + 's;animation-duration:' + dur + 's;opacity:' + brightness;
+    var y = Math.random() * 65;
+    var delay = Math.random() * 8;
+    var dur = 2 + Math.random() * 5;
+    // Vary brightness with more bright stars near zenith
+    var zenithFactor = 1 - (y / 65) * 0.3;
+    var brightness = Math.random() < 0.12 ? zenithFactor : ((0.3 + Math.random() * 0.4) * zenithFactor);
+    var color = starColors[Math.floor(Math.random() * starColors.length)];
+    star.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + '%;top:' + y +
+      '%;animation-delay:' + delay + 's;animation-duration:' + dur + 's;opacity:' + brightness +
+      ';background:' + color + '1);border-radius:50%';
+    // Bright stars get a subtle glow
+    if (brightness > 0.8 && size > 1.8) {
+      star.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + color + '0.4)';
+    }
     container.appendChild(star);
   }
 
@@ -806,6 +820,20 @@ function renderMountainTerrain(container) {
   mist2.className = 'terrain-mountain-mist';
   mist2.style.cssText = 'bottom:8%;height:12%;opacity:0.08;animation-delay:-12s';
   container.appendChild(mist2);
+
+  // Snow caps on the highest peaks
+  var snowPositions = [
+    { left: 18, bottom: 38, w: 12, h: 8 },
+    { left: 40, bottom: 40, w: 10, h: 7 },
+    { left: 72, bottom: 42, w: 14, h: 9 }
+  ];
+  for (var s = 0; s < snowPositions.length; s++) {
+    var sp = snowPositions[s];
+    var snow = document.createElement('div');
+    snow.className = 'terrain-snow-cap';
+    snow.style.cssText = 'left:' + sp.left + '%;bottom:' + sp.bottom + '%;width:' + sp.w + 'px;height:' + sp.h + 'px';
+    container.appendChild(snow);
+  }
 }
 
 function renderBeachTerrain(container) {
@@ -867,6 +895,24 @@ function renderBeachTerrain(container) {
   island.className = 'terrain-island';
   island.style.cssText = 'left:60%;bottom:28%;width:60px;height:20px;background:rgba(40,60,40,0.3)';
   container.appendChild(island);
+
+  // Second smaller island
+  var island2 = document.createElement('div');
+  island2.className = 'terrain-island';
+  island2.style.cssText = 'left:45%;bottom:27%;width:30px;height:10px;background:rgba(40,60,40,0.18);filter:blur(1px)';
+  container.appendChild(island2);
+
+  // Footprints in sand
+  var footprints = document.createElement('div');
+  footprints.className = 'terrain-footprints';
+  var fpPositions = [15, 22, 28, 35, 42, 50, 58, 65, 72, 80];
+  for (var fp = 0; fp < fpPositions.length; fp++) {
+    var dot = document.createElement('div');
+    dot.className = 'terrain-footprint';
+    dot.style.cssText = 'left:' + fpPositions[fp] + '%;bottom:' + (Math.random() * 60) + '%';
+    footprints.appendChild(dot);
+  }
+  container.appendChild(footprints);
 }
 
 function renderPalmTree(container, leftPct, heightPct, tiltDeg) {
@@ -990,6 +1036,22 @@ function renderMeadowTerrain(container) {
   var grass = document.createElement('div');
   grass.className = 'terrain-grass-layer';
   container.appendChild(grass);
+
+  // Dappled sunlight spots
+  var dapplePositions = [
+    { left: 12, bottom: 18, w: 30, h: 20 },
+    { left: 38, bottom: 14, w: 25, h: 18 },
+    { left: 60, bottom: 20, w: 35, h: 22 },
+    { left: 82, bottom: 16, w: 28, h: 16 }
+  ];
+  for (var d = 0; d < dapplePositions.length; d++) {
+    var dp = dapplePositions[d];
+    var dapple = document.createElement('div');
+    dapple.className = 'terrain-dapple';
+    dapple.style.cssText = 'left:' + dp.left + '%;bottom:' + dp.bottom + '%;width:' + dp.w + 'px;height:' + dp.h +
+      'px;animation-delay:' + (d * 2) + 's';
+    container.appendChild(dapple);
+  }
 }
 
 // ===== SKY THEME (beach / mountain / mixed) =====
