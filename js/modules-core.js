@@ -947,7 +947,7 @@ function renderOpenWhenLetters(letters) {
   const fromMe = letters.filter(l => l.from === user);
   if (!letters.length) { el.innerHTML = '<div class="empty">No sealed letters yet</div>'; return; }
 
-  const owLabels = { sad: '😢 When you\'re sad', miss: '💭 When you miss me', happy: '😊 When you\'re happy', stressed: '😰 When you\'re stressed', angry: '😤 When you\'re angry at me', bored: '🥱 When you\'re bored', proud: '💪 When you\'re proud', love: '❤️ When you need love', birthday: '🎂 On your birthday', anniversary: '💍 On our anniversary' };
+  const owLabels = { sad: '😢 When you\'re sad', miss: '💭 When you miss me', happy: '😊 When you\'re happy', stressed: '😰 When you\'re stressed', angry: '😤 When you\'re angry at me', bored: '🥱 When you\'re bored', proud: '💪 When you\'re proud', love: '❤️ When you need love', birthday: '🎂 On your birthday', anniversary: 'On our anniversary' };
 
   let html = '';
   if (forMe.length) {

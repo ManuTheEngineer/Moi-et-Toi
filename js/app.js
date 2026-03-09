@@ -240,7 +240,56 @@ function startOnboarding() {
   // Set initial content to enter state
   var content = document.getElementById('ob-content');
   if (content) { content.classList.remove('ob-exit'); content.classList.add('ob-enter'); }
+  // Broadcast onboarding status and listen for partner
+  obBroadcastStep();
+  obListenPartner();
   renderOnboardStep();
+}
+
+// Broadcast current onboarding step to Firebase
+function obBroadcastStep() {
+  if (!db || !user) return;
+  db.ref('onboarding/' + user).set({
+    step: onboardStep,
+    name: onboardData.name || '',
+    timestamp: Date.now(),
+    active: true
+  });
+}
+
+// Listen for partner's onboarding progress
+var obPartnerListener = null;
+function obListenPartner() {
+  if (!db || !partner) return;
+  obPartnerListener = db.ref('onboarding/' + partner);
+  obPartnerListener.on('value', function(snap) {
+    var data = snap.val();
+    var el = document.getElementById('ob-partner-status');
+    if (!el) return;
+    if (data && data.active) {
+      var partnerName = data.name || (user === 'her' ? 'He' : 'She');
+      var isRecent = (Date.now() - (data.timestamp || 0)) < 120000; // 2 min
+      if (isRecent) {
+        el.style.display = '';
+        el.classList.remove('offline');
+        el.innerHTML = '<span class="ob-ps-dot"></span> ' + esc(partnerName) + ' is setting up too';
+      } else {
+        el.style.display = '';
+        el.classList.add('offline');
+        el.innerHTML = '<span class="ob-ps-dot"></span> ' + esc(partnerName) + ' started setup earlier';
+      }
+    } else {
+      el.style.display = '';
+      el.classList.add('offline');
+      el.innerHTML = '<span class="ob-ps-dot"></span> Waiting for your partner to start';
+    }
+  });
+}
+
+// Clean up onboarding status when done
+function obCleanupStatus() {
+  if (db && user) db.ref('onboarding/' + user).update({ active: false });
+  if (obPartnerListener) obPartnerListener.off();
 }
 
 function renderDots(active) {
@@ -335,9 +384,33 @@ function obRenderAgreementList(listId, arrKey) {
   }).join('');
 }
 
+// SVG icon helper for onboarding (inline since nav.js loads after app.js)
+function _obIcon(d,s){s=s||24;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';}
+var OB_ICONS = {
+  sparkle: _obIcon('<path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/>'),
+  heart: _obIcon('<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>'),
+  gift: _obIcon('<rect x="3" y="10" width="18" height="12" rx="1"/><line x1="12" y1="22" x2="12" y2="10"/><path d="M12 10H7.5a2.5 2.5 0 010-5C10 5 12 10 12 10z"/><path d="M12 10h4.5a2.5 2.5 0 000-5C14 5 12 10 12 10z"/>'),
+  camera: _obIcon('<path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>'),
+  calendar: _obIcon('<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'),
+  brain: _obIcon('<path d="M9.5 2A4.5 4.5 0 005 6.5a4.49 4.49 0 00.98 2.81A4.5 4.5 0 003 13.5a4.5 4.5 0 004.5 4.5h1V21h7v-3h1a4.5 4.5 0 004.5-4.5 4.49 4.49 0 00-2.98-4.19A4.49 4.49 0 0019 6.5 4.5 4.5 0 0014.5 2h-5z"/>'),
+  dumbbell: _obIcon('<line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/>'),
+  users: _obIcon('<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>'),
+  handshake: _obIcon('<path d="M11 17l-5-5 1.41-1.42 2.59 2.6 5.59-5.6L17 8.97z"/><circle cx="12" cy="12" r="10"/>'),
+  sunrise: _obIcon('<path d="M17 18a5 5 0 00-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/>'),
+  check: _obIcon('<circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/>'),
+  cake: _obIcon('<path d="M20 21v-8a2 2 0 00-2-2H6a2 2 0 00-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/>'),
+  party: _obIcon('<path d="M5.8 11.3L2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="M22 2l-2.24.75a2.9 2.9 0 00-1.96 3.12v0L18.07 8l2.14-.72a2.9 2.9 0 001.96-3.12L22 2z"/><path d="M9 2l-.75 2.24a2.9 2.9 0 003.12 1.96v0L13.5 5.93l-.72-2.14A2.9 2.9 0 009.66 1.83L9 2z"/>'),
+  muscle: _obIcon('<path d="M7 12.5s1.5-2 4.5-2 4.5 2 4.5 2"/><path d="M3 8a1 1 0 011-1h1a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M18 8a1 1 0 011-1h1a1 1 0 011 1v8a1 1 0 01-1 1h-1a1 1 0 01-1-1V8z"/><line x1="6" y1="12" x2="18" y2="12"/>'),
+  couple: _obIcon('<path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>')
+};
+
 function renderOnboardStep() {
   var isHer = user === 'her';
   var partnerLabel = isHer ? 'him' : 'her';
+  var partnerSubject = isHer ? 'he' : 'she';
+  var partnerPossessive = isHer ? 'his' : 'her';
+  // Use nickname if already entered (steps after step 2)
+  var pNick = onboardData.nickname || partnerLabel;
   var pct = Math.round((onboardStep / (OB_TOTAL - 1)) * 100);
 
   var bar = document.getElementById('ob-bar');
@@ -378,7 +451,7 @@ function renderOnboardStep() {
     }
     // Step 1: Name
     else if (onboardStep === 1) {
-      emoji.textContent = '✨'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.sparkle; emoji.style.display = '';
       title.textContent = "What's your name?";
       sub.textContent = "Your partner will see this throughout the app.";
       nameIn.style.display = ''; nameIn.value = onboardData.name;
@@ -387,8 +460,8 @@ function renderOnboardStep() {
     }
     // Step 2: Nickname for partner
     else if (onboardStep === 2) {
-      emoji.textContent = '💕'; emoji.style.display = '';
-      title.textContent = 'A name for ' + partnerLabel;
+      emoji.innerHTML = OB_ICONS.heart; emoji.style.display = '';
+      title.textContent = 'A name for ' + (isHer ? 'him' : 'her');
       sub.textContent = "Pet name, nickname, or real name — whatever feels right.";
       nickIn.placeholder = isHer ? 'e.g. Baby, Babe, His name...' : 'e.g. Babe, Love, Her name...';
       nickIn.style.display = ''; nickIn.value = onboardData.nickname;
@@ -397,18 +470,18 @@ function renderOnboardStep() {
     }
     // Step 3: Birthday
     else if (onboardStep === 3) {
-      emoji.textContent = '🎂'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.cake; emoji.style.display = '';
       title.textContent = 'Your birthday';
-      sub.textContent = "We'll celebrate you and remind your partner when the day comes.";
+      sub.textContent = "We'll celebrate you and remind " + pNick + " when the day comes.";
       birthdayIn.style.display = '';
       if (onboardData.birthday) birthdayIn.value = onboardData.birthday;
       btn.textContent = 'Next';
     }
     // Step 4: Photo
     else if (onboardStep === 4) {
-      emoji.textContent = '📷'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.camera; emoji.style.display = '';
       title.textContent = 'Add a photo';
-      sub.textContent = "Choose a photo of " + partnerLabel + ". This appears on their profile.";
+      sub.textContent = "Choose a photo of " + pNick + ". This appears on " + partnerPossessive + " profile.";
       photoWrap.style.display = '';
       skip.style.display = '';
       if (onboardData.photo) {
@@ -419,7 +492,7 @@ function renderOnboardStep() {
     }
     // Step 5: Anniversary
     else if (onboardStep === 5) {
-      emoji.textContent = '💍'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.calendar; emoji.style.display = '';
       title.textContent = 'Your anniversary';
       sub.textContent = "When did your relationship start? We'll track your days together.";
       annivIn.style.display = '';
@@ -428,18 +501,18 @@ function renderOnboardStep() {
     }
     // Step 6: Mood & mental baseline
     else if (onboardStep === 6) {
-      emoji.textContent = '🧠'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.brain; emoji.style.display = '';
       title.textContent = 'How are you today?';
       sub.textContent = "This helps the app understand where you're starting from.";
       moodBL.style.display = '';
-      obRenderPills('ob-mood-pills', ['😔 Low', '😐 Okay', '🙂 Good', '😊 Great', '🤩 Amazing'], 'mood');
-      obRenderPills('ob-energy-pills', ['🔋 Drained', '😴 Tired', '⚡ Normal', '💪 Energized', '🔥 On Fire'], 'energy');
-      obRenderPills('ob-stress-pills', ['😌 Calm', '😊 Low', '😐 Moderate', '😰 High', '🆘 Overwhelmed'], 'stress');
+      obRenderPills('ob-mood-pills', ['Low', 'Okay', 'Good', 'Great', 'Amazing'], 'mood');
+      obRenderPills('ob-energy-pills', ['Drained', 'Tired', 'Normal', 'Energized', 'On Fire'], 'energy');
+      obRenderPills('ob-stress-pills', ['Calm', 'Low', 'Moderate', 'High', 'Overwhelmed'], 'stress');
       btn.textContent = 'Next';
     }
     // Step 7: Fitness baseline
     else if (onboardStep === 7) {
-      emoji.textContent = '💪'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.muscle; emoji.style.display = '';
       title.textContent = 'Your body';
       sub.textContent = "Optional baselines so your fitness journey starts on day one.";
       fitBL.style.display = '';
@@ -453,7 +526,7 @@ function renderOnboardStep() {
     }
     // Step 8: Relationship baseline
     else if (onboardStep === 8) {
-      emoji.textContent = '💑'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.couple; emoji.style.display = '';
       title.textContent = 'Your relationship';
       sub.textContent = "How do things feel right now? Honest answers help the app grow with you.";
       relBL.style.display = '';
@@ -464,9 +537,9 @@ function renderOnboardStep() {
     }
     // Step 9: Relationship agreement
     else if (onboardStep === 9) {
-      emoji.textContent = '🤝'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.handshake; emoji.style.display = '';
       title.textContent = 'Your agreement';
-      sub.innerHTML = "Build your relationship agreement together. Your partner is setting theirs right now too.";
+      sub.innerHTML = "Build your relationship agreement together. " + esc(pNick) + " is setting " + partnerPossessive + " right now too.";
       agreeCard.style.display = '';
       obRenderAgreementList('ob-agree-mine', 'agreementsMine');
       obRenderAgreementList('ob-agree-together', 'agreementsTogether');
@@ -475,9 +548,9 @@ function renderOnboardStep() {
     }
     // Step 10: Daily morning message
     else if (onboardStep === 10) {
-      emoji.textContent = '🌅'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
       title.textContent = 'Morning messages';
-      sub.innerHTML = "Every morning, " + partnerLabel + " wakes up to a personalized message — a compliment, affirmation, or poem.";
+      sub.innerHTML = "Every morning, " + esc(pNick) + " wakes up to a personalized message — a compliment, affirmation, or poem.";
       morningCard.style.display = '';
       document.getElementById('ob-morning-toggle').checked = onboardData.morningMsgEnabled;
       var customTA = document.getElementById('ob-morning-custom');
@@ -497,7 +570,7 @@ function renderOnboardStep() {
     }
     // Step 11: Living Sky
     else if (onboardStep === 11) {
-      emoji.textContent = '🌅'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
       title.textContent = 'Living Sky';
       sub.innerHTML = "Your app has a living sky — sunrise, sunset, stars, birds, and fireflies that follow real time.";
       skyCard.style.display = '';
@@ -507,7 +580,7 @@ function renderOnboardStep() {
     // Step 12: All set
     else if (onboardStep === 12) {
       bar.style.width = '95%';
-      emoji.textContent = '🎉'; emoji.style.display = '';
+      emoji.innerHTML = OB_ICONS.party; emoji.style.display = '';
       title.textContent = "You're all set!";
       sub.innerHTML = "Let me give you a quick tour of your new space — it takes 30 seconds.";
       btn.textContent = 'Start tour';
@@ -562,6 +635,7 @@ function onboardNext() {
     if (customTA) onboardData.morningCustomMsg = customTA.value.trim();
   }
   onboardStep++;
+  obBroadcastStep();
   renderOnboardStep();
 }
 
@@ -595,6 +669,7 @@ function resizePhoto(file, callback) {
 }
 
 async function finishOnboarding(startTour) {
+  obCleanupStatus();
   NAMES[user] = onboardData.name;
   var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
   NICKNAMES[nickKey] = onboardData.nickname;
