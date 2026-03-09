@@ -239,6 +239,8 @@ function startOnboarding() {
   showEl('onboard-steps');
   // Switch login from position:fixed to absolute so iOS keyboard works
   document.getElementById('login').classList.add('onboard-active');
+  // Ensure time-of-day is set so onboarding background matches current time
+  if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
   // Set initial content to enter state
   var content = document.getElementById('ob-content');
   if (content) { content.classList.remove('ob-exit'); content.classList.add('ob-enter'); }
@@ -680,25 +682,58 @@ function obSelectSkyTheme(theme, btn) {
 }
 
 // ===== ONBOARDING ENVIRONMENT PREVIEW =====
+// Uses the actual living sky + terrain rendering so users see the real scene
 function obRenderEnvPreview(theme) {
   var el = document.getElementById('ob-env-preview');
   if (!el) return;
   theme = theme || onboardData.skyTheme || 'mixed';
 
-  var gradients = {
-    beach: 'linear-gradient(180deg, #87CEEB 0%, #E0F0FF 30%, #4BA3C7 50%, #2E86AB 65%, #F5DEB3 85%, #DEB887 100%)',
-    mountain: 'linear-gradient(180deg, #6B9BD2 0%, #A8C8E8 25%, #C8D8C0 45%, #4A7C59 60%, #2D5A27 75%, #1A3A1A 100%)',
-    mixed: 'linear-gradient(180deg, #87CEEB 0%, #E8D5B7 25%, #F5DEB3 40%, #90B860 55%, #6B9B4E 70%, #4A7C39 100%)'
-  };
-  var scenes = {
-    beach: '<div class="ob-prev-sun"></div><div class="ob-prev-cloud ob-prev-cloud-1"></div><div class="ob-prev-cloud ob-prev-cloud-2"></div><div class="ob-prev-wave ob-prev-wave-1"></div><div class="ob-prev-wave ob-prev-wave-2"></div><div class="ob-prev-wave ob-prev-wave-3"></div><div class="ob-prev-palm ob-prev-palm-l"></div><div class="ob-prev-palm ob-prev-palm-r"></div><div class="ob-prev-bird ob-prev-bird-1"></div><div class="ob-prev-bird ob-prev-bird-2"></div>',
-    mountain: '<div class="ob-prev-sun"></div><div class="ob-prev-cloud ob-prev-cloud-1"></div><div class="ob-prev-mtn ob-prev-mtn-far"></div><div class="ob-prev-mtn ob-prev-mtn-mid"></div><div class="ob-prev-mtn ob-prev-mtn-near"></div><div class="ob-prev-mist"></div><div class="ob-prev-pine-row"></div><div class="ob-prev-bird ob-prev-bird-1"></div>',
-    mixed: '<div class="ob-prev-sun"></div><div class="ob-prev-cloud ob-prev-cloud-1"></div><div class="ob-prev-cloud ob-prev-cloud-2"></div><div class="ob-prev-hill ob-prev-hill-far"></div><div class="ob-prev-hill ob-prev-hill-near"></div><div class="ob-prev-tree ob-prev-tree-1"></div><div class="ob-prev-tree ob-prev-tree-2"></div><div class="ob-prev-tree ob-prev-tree-3"></div><div class="ob-prev-bird ob-prev-bird-1"></div><div class="ob-prev-bird ob-prev-bird-2"></div><div class="ob-prev-flower-row"></div>'
-  };
+  // Map onboard theme names to internal scene names
+  var sceneMap = { beach: 'coastal', mountain: 'forest', mixed: 'meadow' };
+  var themeMap = { beach: 'beach', mountain: 'mountain', mixed: 'mixed' };
   var labels = { beach: 'Sunset Shore', mountain: 'Whispering Woods', mixed: 'Golden Meadow' };
 
-  el.style.background = gradients[theme] || gradients.mixed;
-  el.innerHTML = (scenes[theme] || scenes.mixed) + '<div class="ob-prev-label">' + (labels[theme] || 'Golden Meadow') + '</div>';
+  // Temporarily set sky theme globals so renderLivingSky uses the right env colors
+  var prevSkyTheme = (typeof currentSkyTheme !== 'undefined') ? currentSkyTheme : 'mixed';
+  currentSkyTheme = themeMap[theme] || 'mixed';
+  var prevScene = WEATHER.scene;
+  WEATHER.scene = sceneMap[theme] || 'meadow';
+
+  el.innerHTML = '';
+
+  // Create sky container inside preview
+  var skyDiv = document.createElement('div');
+  skyDiv.className = 'ob-live-sky';
+  el.appendChild(skyDiv);
+
+  // Render the actual living sky into preview
+  if (typeof renderLivingSky === 'function') {
+    renderLivingSky(skyDiv);
+  }
+
+  // Create terrain container inside preview
+  var terrainDiv = document.createElement('div');
+  terrainDiv.className = 'ob-live-terrain';
+  el.appendChild(terrainDiv);
+
+  // Render actual terrain
+  if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
+    renderMountainTerrain(terrainDiv);
+  } else if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
+    renderBeachTerrain(terrainDiv);
+  } else if (typeof renderMeadowTerrain === 'function') {
+    renderMeadowTerrain(terrainDiv);
+  }
+
+  // Add label overlay
+  var labelDiv = document.createElement('div');
+  labelDiv.className = 'ob-prev-label';
+  labelDiv.textContent = labels[theme] || 'Golden Meadow';
+  el.appendChild(labelDiv);
+
+  // Restore previous globals
+  currentSkyTheme = prevSkyTheme;
+  WEATHER.scene = prevScene;
 }
 
 // Sound preview for onboarding
