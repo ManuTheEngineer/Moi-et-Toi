@@ -684,21 +684,14 @@ function unlockAudio() {
     }
     var ctx = WEATHER.audioCtx;
 
-    // Resume if suspended/interrupted
+    // Resume synchronously during user gesture - don't defer to .then()
     if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-      ctx.resume().then(function() {
-        // iOS requires an actual buffer to be played during a user gesture
-        _playSilentBuffer(ctx);
-        WEATHER.audioUnlocked = true;
-        _onAudioReady();
-      });
-    } else if (ctx.state === 'running') {
-      if (!WEATHER.audioUnlocked) {
-        _playSilentBuffer(ctx);
-        WEATHER.audioUnlocked = true;
-        _onAudioReady();
-      }
+      ctx.resume();
     }
+    // Play silent buffer synchronously in gesture context for iOS
+    _playSilentBuffer(ctx);
+    WEATHER.audioUnlocked = true;
+    _onAudioReady();
   } catch(e) {}
 }
 
@@ -1641,9 +1634,10 @@ function playAmbientSound(type, volume) {
   if (!WEATHER.audioCtx || !WEATHER.audioEnabled) return;
   if (WEATHER.audioNodes[type]) return;
   var ctx = WEATHER.audioCtx;
-  if (ctx.state !== 'running') {
-    ctx.resume().then(function() { playAmbientSound(type, volume); });
-    return;
+
+  // Resume if needed - don't return early, schedule sound synchronously
+  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+    ctx.resume();
   }
 
   var vol = volume || 0.3;
@@ -1670,11 +1664,15 @@ function stopAmbientSound(type) {
   var node = WEATHER.audioNodes[type];
   if (!node) return;
   try {
-    node.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.8);
+    if (WEATHER.audioCtx) {
+      node.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.8);
+    }
     setTimeout(function() {
       try { for (var i = 0; i < node.parts.length; i++) node.parts[i].stop(); } catch(e) {}
     }, 1000);
-  } catch(e) {}
+  } catch(e) {
+    try { for (var i = 0; i < node.parts.length; i++) node.parts[i].stop(); } catch(e2) {}
+  }
   delete WEATHER.audioNodes[type];
 }
 
@@ -1684,9 +1682,8 @@ function stopAllSounds() {
 
 function updateAmbientAudio() {
   if (!WEATHER.audioEnabled || !WEATHER.audioCtx) return;
-  if (WEATHER.audioCtx.state !== 'running') {
-    WEATHER.audioCtx.resume().then(function() { updateAmbientAudio(); });
-    return;
+  if (WEATHER.audioCtx.state === 'suspended' || WEATHER.audioCtx.state === 'interrupted') {
+    WEATHER.audioCtx.resume();
   }
 
   var scene = SCENES[WEATHER.scene];
@@ -1703,42 +1700,46 @@ function updateAmbientAudio() {
     if (keep.indexOf(k) === -1) stopAmbientSound(k);
   });
 
-  // Keep volumes subtle and calming - background ambiance, not foreground
-  playAmbientSound(scene.sounds.base, 0.12);
-  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.10);
+  // Ambient volumes: audible but not distracting
+  playAmbientSound(scene.sounds.base, 0.22);
+  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.18);
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wx && wx.sound) playAmbientSound(wx.sound, 0.15);
+    if (wx && wx.sound) playAmbientSound(wx.sound, 0.25);
   }
 }
 
 function toggleAmbientAudio(on) {
   WEATHER.audioEnabled = on;
   if (on) {
-    // Toggle IS a user gesture - create context and start in one shot
+    // Toggle IS a user gesture - create context and start synchronously
     if (!WEATHER.audioCtx) {
-      WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      try {
+        WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch(e) { toast('Audio not supported'); return; }
     }
     var ctx = WEATHER.audioCtx;
-    var go = function() {
-      WEATHER.audioUnlocked = true;
-      // Confirmation beep - proves audio pipeline works
-      try {
-        var o = ctx.createOscillator();
-        var g = ctx.createGain();
-        o.type = 'sine'; o.frequency.value = 520;
-        g.gain.setValueAtTime(0.25, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-        o.connect(g); g.connect(ctx.destination);
-        o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.3);
-      } catch(e) {}
-      setTimeout(updateAmbientAudio, 350);
-    };
-    if (ctx.state !== 'running') {
-      ctx.resume().then(go).catch(go);
-    } else {
-      go();
+
+    // Resume synchronously during user gesture - critical for iOS
+    if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+      ctx.resume();
     }
+    _playSilentBuffer(ctx);
+    WEATHER.audioUnlocked = true;
+
+    // Confirmation beep - proves audio pipeline works
+    try {
+      var o = ctx.createOscillator();
+      var g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = 520;
+      g.gain.setValueAtTime(0.35, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.3);
+    } catch(e) {}
+
+    // Start ambient sounds - nodes are queued and play when context runs
+    setTimeout(updateAmbientAudio, 350);
   } else {
     stopAllSounds();
   }
@@ -2057,20 +2058,19 @@ function playMoodSound(moodKey) {
   // Stop any existing mood sound
   stopMoodSound();
 
-  // Tapping a mood button IS a user gesture - unlock audio right here
+  // Tapping a mood button IS a user gesture - create/resume AudioContext synchronously
   if (!WEATHER.audioCtx) {
-    WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    try {
+      WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch(e) { toast('Audio not supported'); return; }
   }
   var ctx = WEATHER.audioCtx;
+
+  // Resume synchronously during user gesture - critical for iOS/mobile
   if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    WEATHER.moodPlaying = moodKey;
-    ctx.resume().then(function() {
-      _playSilentBuffer(ctx);
-      WEATHER.audioUnlocked = true;
-      playMoodSound(moodKey); // retry now that we're unlocked
-    });
-    return;
+    ctx.resume();
   }
+  _playSilentBuffer(ctx);
   WEATHER.audioUnlocked = true;
 
   var mood = MOOD_SOUNDS[moodKey];
@@ -2079,16 +2079,18 @@ function playMoodSound(moodKey) {
   var buffer = generateNoise(mood.type);
   if (!buffer) return;
 
-  var source = WEATHER.audioCtx.createBufferSource();
+  // Create and connect nodes synchronously during user gesture
+  // Web Audio API queues these and plays when context resumes
+  var source = ctx.createBufferSource();
   source.buffer = buffer;
   source.loop = true;
 
-  var gain = WEATHER.audioCtx.createGain();
-  gain.gain.setValueAtTime(0, WEATHER.audioCtx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.25, WEATHER.audioCtx.currentTime + 2.0);
+  var gain = ctx.createGain();
+  gain.gain.setValueAtTime(0, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.45, ctx.currentTime + 1.5);
 
   source.connect(gain);
-  gain.connect(WEATHER.audioCtx.destination);
+  gain.connect(ctx.destination);
   source.start(0);
 
   WEATHER.moodNode = { source: source, gain: gain };
@@ -2105,10 +2107,12 @@ function playMoodSound(moodKey) {
 function stopMoodSound() {
   if (WEATHER.moodNode) {
     try {
-      WEATHER.moodNode.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.5);
+      if (WEATHER.audioCtx) {
+        WEATHER.moodNode.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.5);
+      }
       var node = WEATHER.moodNode;
       setTimeout(function() { try { node.source.stop(); } catch(e) {} }, 600);
-    } catch(e) {}
+    } catch(e) { try { WEATHER.moodNode.source.stop(); } catch(e2) {} }
     WEATHER.moodNode = null;
   }
   WEATHER.moodPlaying = null;
@@ -2188,14 +2192,10 @@ setInterval(function() {
   // Retry if no ambient nodes are playing, or if context got suspended
   if (nodeCount === 0 || WEATHER.audioCtx.state !== 'running') {
     if (WEATHER.audioCtx.state !== 'running') {
-      WEATHER.audioCtx.resume().then(function() {
-        WEATHER.audioUnlocked = true;
-        updateAmbientAudio();
-      }).catch(function() {});
-    } else {
-      WEATHER.audioUnlocked = true;
-      updateAmbientAudio();
+      WEATHER.audioCtx.resume();
     }
+    WEATHER.audioUnlocked = true;
+    updateAmbientAudio();
   }
 }, 5000);
 
@@ -2256,18 +2256,14 @@ function initWeatherSystem() {
         var container = document.getElementById('sky-scene');
         if (container && livingSkyEnabled) renderLivingSky(container);
         updateWeatherInfoUI();
-        // Try to start audio - will work if context is already running
-        if (WEATHER.audioEnabled) {
-          if (WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
-            WEATHER.audioUnlocked = true;
-            updateAmbientAudio();
-          }
+        // Queue ambient audio - will play once AudioContext is unlocked by user gesture
+        if (WEATHER.audioEnabled && WEATHER.audioCtx) {
+          updateAmbientAudio();
         }
       });
     } else {
-      // Even without weather, try to start audio for scene sounds
-      if (WEATHER.audioEnabled && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
-        WEATHER.audioUnlocked = true;
+      // Even without weather, queue ambient audio for scene sounds
+      if (WEATHER.audioEnabled && WEATHER.audioCtx) {
         updateAmbientAudio();
       }
       if (!data.prompted) {

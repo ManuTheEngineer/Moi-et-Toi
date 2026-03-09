@@ -727,14 +727,11 @@ function obStartSoundPreview(theme) {
     } catch(e) { return; }
   }
   var ctx = WEATHER.audioCtx;
+  // Resume synchronously during user gesture - critical for iOS
   if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    ctx.resume().then(function() {
-      _playSilentBuffer(ctx);
-      WEATHER.audioUnlocked = true;
-      obStartSoundPreview(theme);
-    });
-    return;
+    ctx.resume();
   }
+  _playSilentBuffer(ctx);
   WEATHER.audioUnlocked = true;
 
   var buffer = generateNoise(soundType);
@@ -745,7 +742,7 @@ function obStartSoundPreview(theme) {
   source.loop = true;
   var gain = ctx.createGain();
   gain.gain.setValueAtTime(0, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 1.5);
+  gain.gain.linearRampToValueAtTime(0.45, ctx.currentTime + 1.0);
   source.connect(gain);
   gain.connect(ctx.destination);
   source.start(0);

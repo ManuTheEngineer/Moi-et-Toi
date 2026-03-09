@@ -1463,6 +1463,11 @@ body[data-sky-theme="mountain"][data-time="night"] .particle { --particle-color:
   border-color: var(--gold, #C9A96E);
   background: rgba(201,169,110,0.12);
   box-shadow: 0 2px 12px rgba(201,169,110,0.2);
+  animation: msbPulse 2s ease-in-out infinite;
+}
+@keyframes msbPulse {
+  0%,100% { box-shadow: 0 2px 12px rgba(201,169,110,0.2); }
+  50% { box-shadow: 0 2px 18px rgba(201,169,110,0.35); }
 }
 .mood-sound-btn:active { transform: scale(0.95); }
 .msb-icon { font-size: 20px; }
