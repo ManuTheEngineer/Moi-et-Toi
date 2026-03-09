@@ -936,7 +936,7 @@ function generateNoise(type) {
   if (_noiseCache[type]) return _noiseCache[type];
   var ctx = WEATHER.audioCtx;
   var sr = ctx.sampleRate;
-  var len = sr * 10; // 10-second loops for richness
+  var len = sr * 30; // 30-second loops for longer, more natural ambience
   var buffer = ctx.createBuffer(2, len, sr); // stereo
   var L = buffer.getChannelData(0);
   var R = buffer.getChannelData(1);
@@ -1736,17 +1736,17 @@ function playAmbientSound(type, volume) {
     ctx.resume().catch(function(){});
   }
 
-  var vol = volume || 0.5;
+  var vol = volume || 0.18;
 
   var buffer;
   try {
     buffer = generateNoise(type);
   } catch(e) {
-    toast('Buffer gen error (' + type + '): ' + e.message);
+    console.warn('Buffer gen error (' + type + '): ' + e.message);
     return;
   }
   if (!buffer) {
-    toast('Buffer null for: ' + type);
+    console.warn('Buffer null for: ' + type);
     return;
   }
 
@@ -1760,7 +1760,7 @@ function playAmbientSound(type, volume) {
     audio.setAttribute('webkit-playsinline', '');
     audio.src = objUrl;
     audio.loop = true;
-    audio.volume = Math.min(1.0, vol * 1.5);
+    audio.volume = Math.min(1.0, vol);
     var playP = audio.play();
     if (playP && playP.then) {
       playP.then(function() {
@@ -1837,8 +1837,7 @@ function updateAmbientAudio() {
 
   var scene = SCENES[WEATHER.scene];
   if (!scene) {
-    toast('No scene set, playing wind');
-    playAmbientSound('wind', 0.12);
+    playAmbientSound('wind', 0.08);
     return;
   }
 
@@ -1853,24 +1852,13 @@ function updateAmbientAudio() {
     if (keep.indexOf(k) === -1) stopAmbientSound(k);
   });
 
-  // Ambient volumes: loud enough to hear on phone speakers
-  toast('Playing: ' + scene.sounds.base + ' + ' + soundType + ' (ctx:' + ctx.state + ')');
-  playAmbientSound(scene.sounds.base, 0.65);
-  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.6);
+  // Ambient volumes: soft, background level
+  playAmbientSound(scene.sounds.base, 0.22);
+  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.18);
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wx && wx.sound) playAmbientSound(wx.sound, 0.65);
+    if (wx && wx.sound) playAmbientSound(wx.sound, 0.2);
   }
-
-  // Report how many nodes are active
-  setTimeout(function() {
-    var n = Object.keys(WEATHER.audioNodes).length;
-    if (n > 0) {
-      toast(n + ' sound(s) active — if silent, check media volume (not ringer)');
-    } else {
-      toast('No sounds started — buffer generation may have failed');
-    }
-  }, 500);
 }
 
 function toggleAmbientAudio(on) {
@@ -1881,25 +1869,12 @@ function toggleAmbientAudio(on) {
     var ctx = _recreateAudioCtx();
     if (!ctx) { toast('Audio not supported on this device'); return; }
 
-    toast('Starting audio... (state: ' + ctx.state + ')');
-
     // Resume context — MUST happen during user gesture
     _resumeCtx(ctx);
     WEATHER.audioUnlocked = true;
 
-    // Helper: play beep + start ambient sounds
+    // Helper: start ambient sounds (no beep)
     var startSounds = function() {
-      toast('Context: ' + ctx.state + ' | Playing sounds...');
-      // Confirmation beep at full volume
-      try {
-        var o = ctx.createOscillator();
-        var g = ctx.createGain();
-        o.type = 'sine'; o.frequency.value = 520;
-        g.gain.setValueAtTime(1.0, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-        o.connect(g); g.connect(ctx.destination);
-        o.start(0); o.stop(ctx.currentTime + 0.5);
-      } catch(e) { toast('Beep error: ' + e.message); }
       updateAmbientAudio();
     };
 
@@ -1911,14 +1886,12 @@ function toggleAmbientAudio(on) {
           p.then(function() {
             startSounds();
           }).catch(function(e) {
-            toast('Resume failed: ' + e.message);
             startSounds(); // try anyway
           });
         } else {
           startSounds();
         }
       } catch(e) {
-        toast('Resume error: ' + e.message);
         startSounds();
       }
     } else {
@@ -1933,7 +1906,6 @@ function toggleAmbientAudio(on) {
       if (!c) return;
       var nodes = Object.keys(WEATHER.audioNodes).length;
       if (nodes === 0) {
-        toast('Retry: state=' + c.state + ', nodes=' + nodes);
         if (c.state !== 'running') c.resume().catch(function(){});
         updateAmbientAudio();
       }
@@ -1966,127 +1938,6 @@ function toggleAmbientAudio(on) {
   }
 }
 
-// ===== AUDIO DEBUG TEST =====
-function testAudioDebug() {
-  var panel = document.getElementById('audio-debug-panel');
-  var log = function(msg) {
-    if (panel) panel.textContent += '\n' + msg;
-    console.log('[AudioDebug] ' + msg);
-  };
-  if (panel) panel.textContent = 'Testing audio...';
-
-  // Test 1: HTML5 Audio element (most compatible)
-  log('Test 1: HTML5 <audio> element');
-  try {
-    var audio = document.createElement('audio');
-    audio.setAttribute('playsinline', '');
-    audio.setAttribute('webkit-playsinline', '');
-    // Generate a short beep as WAV data URL
-    var sampleRate = 22050;
-    var duration = 0.5;
-    var numSamples = Math.floor(sampleRate * duration);
-    var buffer = new ArrayBuffer(44 + numSamples * 2);
-    var view = new DataView(buffer);
-    // WAV header
-    var writeStr = function(offset, str) { for (var i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i)); };
-    writeStr(0, 'RIFF');
-    view.setUint32(4, 36 + numSamples * 2, true);
-    writeStr(8, 'WAVE');
-    writeStr(12, 'fmt ');
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    view.setUint16(22, 1, true);
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, sampleRate * 2, true);
-    view.setUint16(32, 2, true);
-    view.setUint16(34, 16, true);
-    writeStr(36, 'data');
-    view.setUint32(40, numSamples * 2, true);
-    // Generate 440Hz sine wave
-    for (var i = 0; i < numSamples; i++) {
-      var t = i / sampleRate;
-      var val = Math.sin(2 * Math.PI * 440 * t) * 0.8;
-      var fade = Math.min(1, (numSamples - i) / (sampleRate * 0.05));
-      view.setInt16(44 + i * 2, val * fade * 32767, true);
-    }
-    var blob = new Blob([buffer], { type: 'audio/wav' });
-    var url = URL.createObjectURL(blob);
-    audio.src = url;
-    audio.volume = 1.0;
-    var playPromise = audio.play();
-    if (playPromise) {
-      playPromise.then(function() {
-        log('✓ HTML5 Audio playing! If you hear a beep, audio works.');
-        log('  If silent: media volume may be 0.');
-        log('  (Use volume buttons WHILE this plays)');
-      }).catch(function(e) {
-        log('✗ HTML5 Audio blocked: ' + e.message);
-      });
-    }
-  } catch(e) {
-    log('✗ HTML5 Audio error: ' + e.message);
-  }
-
-  // Test 2: Web Audio API
-  log('\nTest 2: Web Audio API');
-  try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
-    log('  Created AudioContext, state: ' + ctx.state);
-    log('  sampleRate: ' + ctx.sampleRate);
-    var resumeAndPlay = function() {
-      log('  After resume, state: ' + ctx.state);
-      try {
-        var osc = ctx.createOscillator();
-        var gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = 660;
-        gain.gain.setValueAtTime(1.0, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(0);
-        osc.stop(ctx.currentTime + 0.8);
-        log('  ✓ Oscillator started at t=' + ctx.currentTime.toFixed(2));
-        log('  If you hear a higher beep, Web Audio works!');
-      } catch(e) {
-        log('  ✗ Oscillator error: ' + e.message);
-      }
-      // Report final state
-      setTimeout(function() {
-        log('\nFinal: ctx.state=' + ctx.state + ', currentTime=' + ctx.currentTime.toFixed(2));
-        if (ctx.currentTime === 0) {
-          log('⚠ currentTime stuck at 0 — context never started');
-        }
-        // Close this test context
-        ctx.close().catch(function(){});
-      }, 1000);
-    };
-    if (ctx.state !== 'running') {
-      var p = ctx.resume();
-      if (p && p.then) {
-        p.then(resumeAndPlay).catch(function(e) {
-          log('  ✗ Resume rejected: ' + e.message);
-          resumeAndPlay(); // try anyway
-        });
-      } else {
-        resumeAndPlay();
-      }
-    } else {
-      resumeAndPlay();
-    }
-  } catch(e) {
-    log('✗ AudioContext error: ' + e.message);
-  }
-
-  // Test 3: Check existing WEATHER context
-  log('\nTest 3: WEATHER state');
-  log('  audioEnabled: ' + WEATHER.audioEnabled);
-  log('  audioUnlocked: ' + WEATHER.audioUnlocked);
-  log('  scene: ' + WEATHER.scene);
-  log('  audioCtx: ' + (WEATHER.audioCtx ? WEATHER.audioCtx.state : 'null'));
-  log('  nodes: ' + Object.keys(WEATHER.audioNodes).length);
-  log('  queued: ' + !!WEATHER._audioQueued);
-}
 
 // ===== SCENE GROUND LAYER =====
 function renderSceneGround(container) {
@@ -2284,17 +2135,15 @@ function setWeatherScene(sceneName) {
 // Ambient mood sounds for date nights, events, and partner sharing
 var MOOD_SOUNDS = {
   romantic:   { label: 'Romantic',    icon: '🕯',  type: 'moodRomantic',   desc: 'Warm, intimate tones' },
-  relaxing:   { label: 'Relaxing',    icon: '🧘', type: 'moodRelaxing',   desc: 'Calm, peaceful ambient' },
   dreamy:     { label: 'Dreamy',      icon: '💫', type: 'moodDreamy',     desc: 'Ethereal, floating' },
-  serene:     { label: 'Serene',      icon: '🪷', type: 'moodSerene',     desc: 'Meditation bowls' },
   cozy:       { label: 'Cozy',        icon: '☕', type: 'moodCozy',       desc: 'Crackling fireplace' },
   soulful:    { label: 'Soulful',     icon: '🎷', type: 'moodSoulful',    desc: 'Deep, warm tones' },
-  focused:    { label: 'Focused',     icon: '🎯', type: 'moodFocused',    desc: 'Binaural focus' },
-  lively:     { label: 'Lively',      icon: '🎉', type: 'moodLively',     desc: 'Upbeat, energetic' },
-  playful:    { label: 'Playful',     icon: '🎵', type: 'moodPlayful',    desc: 'Fun, lighthearted' },
-  tropical:   { label: 'Tropical',    icon: '🌴', type: 'moodTropical',   desc: 'Island steel drums' },
-  campfire:   { label: 'Campfire',    icon: '🔥', type: 'moodCampfire',   desc: 'Outdoor fire + night' },
+  serene:     { label: 'Serene',      icon: '🪷', type: 'moodSerene',     desc: 'Meditation bowls' },
+  relaxing:   { label: 'Relaxing',    icon: '🧘', type: 'moodRelaxing',   desc: 'Calm, peaceful ambient' },
   rainyNight: { label: 'Rainy Night', icon: '🌃', type: 'moodRainyNight', desc: 'Rain on windows' },
+  campfire:   { label: 'Campfire',    icon: '🔥', type: 'moodCampfire',   desc: 'Outdoor fire + night' },
+  tropical:   { label: 'Tropical',    icon: '🌴', type: 'moodTropical',   desc: 'Island steel drums' },
+  lively:     { label: 'Lively',      icon: '🎉', type: 'moodLively',     desc: 'Upbeat, energetic' },
   rain:       { label: 'Rain',        icon: '🌧',  type: 'rain',           desc: 'Rainfall ambience' },
   ocean:      { label: 'Ocean',       icon: '🌊', type: 'waves',          desc: 'Waves and shore' },
   night:      { label: 'Night',       icon: '🌙', type: 'crickets',       desc: 'Crickets and frogs' },
@@ -2320,7 +2169,7 @@ var NATURE_ORDER_HIM = [
   'birds', 'rain', 'night', 'thunder',
   'ocean', 'beachBreeze', 'seagulls', 'tropical'
 ];
-var MOOD_ORDER = ['romantic', 'relaxing', 'dreamy', 'serene', 'cozy', 'soulful', 'focused', 'lively', 'playful', 'tropical', 'rainyNight'];
+var MOOD_ORDER = ['romantic', 'dreamy', 'cozy', 'soulful', 'serene', 'relaxing', 'rainyNight', 'campfire', 'tropical', 'lively'];
 
 WEATHER.moodPlaying = null;
 WEATHER.moodNode = null;
@@ -2439,18 +2288,6 @@ function _startMoodPlayback(ctx, mood, moodKey) {
     if (!ctx) return;
   }
 
-  // Immediate audible beep — instant feedback
-  try {
-    var beep = ctx.createOscillator();
-    var bg = ctx.createGain();
-    beep.type = 'sine';
-    beep.frequency.value = 660;
-    bg.gain.setValueAtTime(0.25, ctx.currentTime);
-    bg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
-    beep.connect(bg); bg.connect(ctx.destination);
-    beep.start(0); beep.stop(ctx.currentTime + 0.12);
-  } catch(e) {}
-
   var buffer = generateNoise(mood.type);
   if (!buffer) { toast('Could not generate ' + mood.label); return; }
 
@@ -2463,13 +2300,12 @@ function _startMoodPlayback(ctx, mood, moodKey) {
     audio.setAttribute('webkit-playsinline', '');
     audio.src = objUrl;
     audio.loop = true;
-    audio.volume = 1.0;
+    audio.volume = 0.35;
     var playP = audio.play();
     if (playP && playP.then) {
       playP.then(function() {
         if (WEATHER.moodPlaying !== moodKey) { audio.pause(); URL.revokeObjectURL(objUrl); return; }
         WEATHER.moodNode = { audio: audio, objUrl: objUrl };
-        toast(mood.label + ' mood playing');
       }).catch(function() {
         URL.revokeObjectURL(objUrl);
         // Fallback to Web Audio API
@@ -2507,8 +2343,8 @@ function _startMoodWebAudio(ctx, buffer, mood, moodKey) {
   source.loop = true;
 
   var gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.5, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.85, ctx.currentTime + 0.5);
+  gain.gain.setValueAtTime(0.2, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.5);
 
   source.connect(gain);
   gain.connect(ctx.destination);

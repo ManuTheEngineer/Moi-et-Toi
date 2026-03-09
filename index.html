@@ -1007,13 +1007,15 @@
   <div class="form-hint" style="margin:-6px 0 6px">Set the mood on your partner's screen</div>
   <div class="mood-sounds-grid" id="send-vibe-moods">
     <button class="mood-sound-btn" data-mood="romantic" onclick="sendMoodToPartner('romantic')"><span class="msb-icon">🕯</span><span class="msb-label">Romantic</span></button>
-    <button class="mood-sound-btn" data-mood="relaxing" onclick="sendMoodToPartner('relaxing')"><span class="msb-icon">🧘</span><span class="msb-label">Relaxing</span></button>
     <button class="mood-sound-btn" data-mood="dreamy" onclick="sendMoodToPartner('dreamy')"><span class="msb-icon">💫</span><span class="msb-label">Dreamy</span></button>
     <button class="mood-sound-btn" data-mood="cozy" onclick="sendMoodToPartner('cozy')"><span class="msb-icon">☕</span><span class="msb-label">Cozy</span></button>
     <button class="mood-sound-btn" data-mood="soulful" onclick="sendMoodToPartner('soulful')"><span class="msb-icon">🎷</span><span class="msb-label">Soulful</span></button>
-    <button class="mood-sound-btn" data-mood="lively" onclick="sendMoodToPartner('lively')"><span class="msb-icon">🎉</span><span class="msb-label">Lively</span></button>
-    <button class="mood-sound-btn" data-mood="playful" onclick="sendMoodToPartner('playful')"><span class="msb-icon">🎵</span><span class="msb-label">Playful</span></button>
+    <button class="mood-sound-btn" data-mood="serene" onclick="sendMoodToPartner('serene')"><span class="msb-icon">🪷</span><span class="msb-label">Serene</span></button>
+    <button class="mood-sound-btn" data-mood="relaxing" onclick="sendMoodToPartner('relaxing')"><span class="msb-icon">🧘</span><span class="msb-label">Relaxing</span></button>
+    <button class="mood-sound-btn" data-mood="rainyNight" onclick="sendMoodToPartner('rainyNight')"><span class="msb-icon">🌃</span><span class="msb-label">Rainy Night</span></button>
+    <button class="mood-sound-btn" data-mood="campfire" onclick="sendMoodToPartner('campfire')"><span class="msb-icon">🔥</span><span class="msb-label">Campfire</span></button>
     <button class="mood-sound-btn" data-mood="tropical" onclick="sendMoodToPartner('tropical')"><span class="msb-icon">🌴</span><span class="msb-label">Tropical</span></button>
+    <button class="mood-sound-btn" data-mood="lively" onclick="sendMoodToPartner('lively')"><span class="msb-icon">🎉</span><span class="msb-label">Lively</span></button>
   </div>
 
   <!-- Listen Together -->
@@ -3722,10 +3724,6 @@
         <span class="toggle-slider"></span>
       </label>
     </div>
-    <div style="padding:8px 16px">
-      <button type="button" onclick="testAudioDebug()" style="padding:12px 20px;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;width:100%">🔊 Test Sound (tap here)</button>
-      <div id="audio-debug-panel" style="margin-top:8px;padding:10px;background:rgba(0,0,0,0.06);border-radius:8px;font-size:11px;font-family:monospace;color:#555;min-height:60px;white-space:pre-wrap;line-height:1.5">Tap "Test Sound" to diagnose audio</div>
-    </div>
   </div>
 
   <!-- Mood Sounds in Settings -->
@@ -3734,23 +3732,15 @@
     <div class="form-hint mt-2">Ambient sounds for date nights, events, and relaxation</div>
     <div class="mood-sounds-grid mt-8" id="settings-mood-sounds">
       <button class="mood-sound-btn" data-mood="romantic" onclick="toggleMoodSound('romantic')"><span class="msb-icon">🕯</span><span class="msb-label">Romantic</span></button>
-      <button class="mood-sound-btn" data-mood="relaxing" onclick="toggleMoodSound('relaxing')"><span class="msb-icon">🧘</span><span class="msb-label">Relaxing</span></button>
       <button class="mood-sound-btn" data-mood="dreamy" onclick="toggleMoodSound('dreamy')"><span class="msb-icon">💫</span><span class="msb-label">Dreamy</span></button>
-      <button class="mood-sound-btn" data-mood="serene" onclick="toggleMoodSound('serene')"><span class="msb-icon">🪷</span><span class="msb-label">Serene</span></button>
       <button class="mood-sound-btn" data-mood="cozy" onclick="toggleMoodSound('cozy')"><span class="msb-icon">☕</span><span class="msb-label">Cozy</span></button>
       <button class="mood-sound-btn" data-mood="soulful" onclick="toggleMoodSound('soulful')"><span class="msb-icon">🎷</span><span class="msb-label">Soulful</span></button>
-      <button class="mood-sound-btn" data-mood="focused" onclick="toggleMoodSound('focused')"><span class="msb-icon">🎯</span><span class="msb-label">Focused</span></button>
-      <button class="mood-sound-btn" data-mood="lively" onclick="toggleMoodSound('lively')"><span class="msb-icon">🎉</span><span class="msb-label">Lively</span></button>
-      <button class="mood-sound-btn" data-mood="playful" onclick="toggleMoodSound('playful')"><span class="msb-icon">🎵</span><span class="msb-label">Playful</span></button>
-      <button class="mood-sound-btn" data-mood="tropical" onclick="toggleMoodSound('tropical')"><span class="msb-icon">🌴</span><span class="msb-label">Tropical</span></button>
-      <button class="mood-sound-btn" data-mood="campfire" onclick="toggleMoodSound('campfire')"><span class="msb-icon">🔥</span><span class="msb-label">Campfire</span></button>
+      <button class="mood-sound-btn" data-mood="serene" onclick="toggleMoodSound('serene')"><span class="msb-icon">🪷</span><span class="msb-label">Serene</span></button>
+      <button class="mood-sound-btn" data-mood="relaxing" onclick="toggleMoodSound('relaxing')"><span class="msb-icon">🧘</span><span class="msb-label">Relaxing</span></button>
       <button class="mood-sound-btn" data-mood="rainyNight" onclick="toggleMoodSound('rainyNight')"><span class="msb-icon">🌃</span><span class="msb-label">Rainy Night</span></button>
-      <button class="mood-sound-btn" data-mood="rain" onclick="toggleMoodSound('rain')"><span class="msb-icon">🌧</span><span class="msb-label">Rain</span></button>
-      <button class="mood-sound-btn" data-mood="ocean" onclick="toggleMoodSound('ocean')"><span class="msb-icon">🌊</span><span class="msb-label">Ocean</span></button>
-      <button class="mood-sound-btn" data-mood="night" onclick="toggleMoodSound('night')"><span class="msb-icon">🌙</span><span class="msb-label">Night</span></button>
-      <button class="mood-sound-btn" data-mood="forest" onclick="toggleMoodSound('forest')"><span class="msb-icon">🌲</span><span class="msb-label">Forest</span></button>
-      <button class="mood-sound-btn" data-mood="birds" onclick="toggleMoodSound('birds')"><span class="msb-icon">🐦</span><span class="msb-label">Birds</span></button>
-      <button class="mood-sound-btn" data-mood="thunder" onclick="toggleMoodSound('thunder')"><span class="msb-icon">⛈</span><span class="msb-label">Storm</span></button>
+      <button class="mood-sound-btn" data-mood="campfire" onclick="toggleMoodSound('campfire')"><span class="msb-icon">🔥</span><span class="msb-label">Campfire</span></button>
+      <button class="mood-sound-btn" data-mood="tropical" onclick="toggleMoodSound('tropical')"><span class="msb-icon">🌴</span><span class="msb-label">Tropical</span></button>
+      <button class="mood-sound-btn" data-mood="lively" onclick="toggleMoodSound('lively')"><span class="msb-icon">🎉</span><span class="msb-label">Lively</span></button>
     </div>
     <button class="mood-stop-btn d-none" id="mood-stop-all" onclick="stopMoodSound()">Stop All Sounds</button>
   </div>
