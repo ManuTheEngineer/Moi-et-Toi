@@ -3897,5 +3897,10 @@
 <script src="js/dashboard.js"></script>
 <script src="js/modules-track.js"></script>
 <script src="js/modules-data.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function(e) { console.warn('SW registration failed:', e); });
+}
+</script>
 </body>
 </html>
