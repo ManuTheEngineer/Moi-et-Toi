@@ -65,7 +65,7 @@ function softRefresh() {
     if (typeof WEATHER !== 'undefined' && WEATHER.locationGranted && typeof fetchWeather === 'function') {
       fetchWeather().then(function() {
         if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
-      });
+      }).catch(function() {});
     }
 
     // Update time of day visuals
@@ -2134,7 +2134,7 @@ function sendVoiceNote() {
       discardVoiceNote();
       loadVoiceNoteFeed();
       checkPartnerVoiceNote();
-    });
+    }).catch(function(e) { console.error('Voice note save failed:', e); toast('Failed to send'); });
   };
   reader.readAsDataURL(vnBlob);
 }
