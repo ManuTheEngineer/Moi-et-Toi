@@ -779,6 +779,7 @@ function unlockAudio() {
 }
 
 function _onAudioReady() {
+  WEATHER._audioQueued = false; // context is ready, clear queued flag
   if (WEATHER.audioEnabled) {
     setTimeout(updateAmbientAudio, 100);
   }
@@ -789,25 +790,31 @@ function _onAudioReady() {
 
 // Keep listener alive - AudioContext can re-suspend on mobile (page background, etc.)
 var _unlockTimer = null;
-var _unlockAttempts = 0;
 function _tryUnlock() {
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
   if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
-    _unlockAttempts = 0;
+    // Context is healthy — if sounds were queued, start them now
+    if (WEATHER._audioQueued && WEATHER.audioEnabled) {
+      WEATHER._audioQueued = false;
+      updateAmbientAudio();
+    }
     return;
   }
   if (_unlockTimer) return;
-  _unlockTimer = setTimeout(function() { _unlockTimer = null; }, 500);
+  _unlockTimer = setTimeout(function() { _unlockTimer = null; }, 300);
 
-  // If we've tried to unlock 3+ times and the context is still suspended,
-  // the context was likely created without a user gesture (iOS restriction).
-  // Recreate it fresh during this user gesture so it can actually be resumed.
-  _unlockAttempts++;
-  if (_unlockAttempts >= 3 && WEATHER.audioCtx && WEATHER.audioCtx.state === 'suspended') {
+  // If context exists but is stuck suspended, it was likely created outside a user gesture.
+  // Recreate immediately during THIS user gesture so it can actually be resumed.
+  if (WEATHER.audioCtx && WEATHER.audioCtx.state === 'suspended') {
     _recreateAudioCtx();
-    _unlockAttempts = 0;
   }
   unlockAudio();
+
+  // If sounds were queued (from Firebase init), start them now that we have a valid context
+  if (WEATHER._audioQueued && WEATHER.audioEnabled) {
+    WEATHER._audioQueued = false;
+    setTimeout(updateAmbientAudio, 150);
+  }
 }
 document.addEventListener('touchstart', _tryUnlock, { passive: true });
 document.addEventListener('touchend', _tryUnlock, { passive: true });
@@ -1719,17 +1726,15 @@ function _makeNoise(noiseType) {
 
 function playAmbientSound(type, volume) {
   if (!WEATHER.audioEnabled) return;
-  var ctx = _ensureAudioCtx();
-  if (!ctx) return;
+  // Don't create AudioContext here — wait for user gesture via _tryUnlock
+  if (!WEATHER.audioCtx || WEATHER.audioCtx.state === 'closed') return;
+  var ctx = WEATHER.audioCtx;
   if (WEATHER.audioNodes[type]) return;
 
   // Resume if suspended or interrupted (iOS)
   if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
     ctx.resume().catch(function(){});
   }
-
-  // If context is closed, it's permanently broken — skip (will be recreated on next gesture)
-  if (ctx.state === 'closed') return;
 
   var vol = volume || 0.4;
   var master = ctx.createGain();
@@ -1778,10 +1783,16 @@ function stopAllSounds() {
 
 function updateAmbientAudio() {
   if (!WEATHER.audioEnabled) return;
-  var ctx = _ensureAudioCtx();
-  if (!ctx) return;
+  // Do NOT create AudioContext here — this function can be called from Firebase init
+  // (outside a user gesture). On iOS, contexts created outside gestures are permanently broken.
+  // Only use an existing context, or wait for _tryUnlock to create one during a gesture.
+  if (!WEATHER.audioCtx || WEATHER.audioCtx.state === 'closed') {
+    WEATHER._audioQueued = true; // flag: play sounds once context is available
+    return;
+  }
+  var ctx = WEATHER.audioCtx;
   if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    ctx.resume();
+    ctx.resume().catch(function(){});
   }
 
   var scene = SCENES[WEATHER.scene];
@@ -1809,24 +1820,23 @@ function updateAmbientAudio() {
 
 function toggleAmbientAudio(on) {
   WEATHER.audioEnabled = on;
+  WEATHER._audioQueued = false;
   if (on) {
-    var ctx = _ensureAudioCtx();
-    if (!ctx) { toast('Audio not supported'); return; }
-
-    // If context is suspended, recreate it fresh during this user gesture
-    // This fixes iOS/PWA where contexts created outside user gestures never resume
-    if (ctx.state === 'suspended') {
+    // Always create fresh context during this user gesture (checkbox toggle)
+    // Reuse existing only if it's already running
+    var ctx = WEATHER.audioCtx;
+    if (!ctx || ctx.state !== 'running') {
       ctx = _recreateAudioCtx();
-      if (!ctx) { toast('Audio not supported'); return; }
     }
+    if (!ctx) { toast('Audio not supported'); return; }
 
     _resumeCtx(ctx);
     WEATHER.audioUnlocked = true;
 
-    // Chain sound playback to the resume() Promise so sounds start after context is running
-    var resumePromise = (ctx.state !== 'running') ? ctx.resume() : Promise.resolve();
-    (resumePromise || Promise.resolve()).then(function() {
-      // Loud confirmation beep — user MUST hear this or audio is broken
+    // Start sounds SYNCHRONOUSLY within the user gesture — don't use setTimeout
+    // which breaks the gesture chain on iOS and some Android browsers
+    var startSounds = function() {
+      // Confirmation beep — user MUST hear this or audio is broken
       try {
         var o = ctx.createOscillator();
         var g = ctx.createGain();
@@ -1836,20 +1846,26 @@ function toggleAmbientAudio(on) {
         o.connect(g); g.connect(ctx.destination);
         o.start(0); o.stop(ctx.currentTime + 0.35);
       } catch(e) {}
+      updateAmbientAudio();
+    };
 
-      // Start ambient sounds after context is confirmed running
-      setTimeout(updateAmbientAudio, 200);
-    }).catch(function() {
-      // Resume failed — try starting sounds anyway with retries
-      setTimeout(updateAmbientAudio, 200);
-    });
+    // If context needs to resume, chain to the promise; otherwise start immediately
+    if (ctx.state !== 'running') {
+      var p = ctx.resume();
+      (p || Promise.resolve()).then(startSounds).catch(startSounds);
+    } else {
+      startSounds();
+    }
 
-    // Retry in case the promise-based approach didn't work
+    // Safety retry — if sounds still didn't start after 1.5s
     setTimeout(function() {
       if (WEATHER.audioEnabled && Object.keys(WEATHER.audioNodes).length === 0) {
+        if (WEATHER.audioCtx && WEATHER.audioCtx.state !== 'running') {
+          toast('Audio blocked — tap anywhere to retry');
+        }
         updateAmbientAudio();
       }
-    }, 1000);
+    }, 1500);
   } else {
     stopAllSounds();
   }
@@ -2334,25 +2350,20 @@ function syncSkyState() {
 setInterval(syncSkyState, 30000);
 
 // Periodic audio retry - if enabled but no sounds playing, try again
-var _periodicRetryCount = 0;
+// Does NOT create AudioContext — only works with an existing one
 setInterval(function() {
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
   if (!WEATHER.audioEnabled && !WEATHER.moodPlaying) return;
-  var ctx = _ensureAudioCtx();
-  if (!ctx) return;
+  var ctx = WEATHER.audioCtx;
+  if (!ctx || ctx.state === 'closed') return; // wait for user gesture to create
   var nodeCount = Object.keys(WEATHER.audioNodes).length;
   if (nodeCount === 0 || ctx.state !== 'running') {
-    _periodicRetryCount++;
-    if (ctx.state !== 'running') {
-      ctx.resume();
-      // After several retries, the context may be permanently broken — recreate on next user gesture
+    if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+      ctx.resume().catch(function(){});
     }
-    if (WEATHER.audioEnabled) {
-      WEATHER.audioUnlocked = true;
+    if (WEATHER.audioEnabled && ctx.state === 'running') {
       updateAmbientAudio();
     }
-  } else {
-    _periodicRetryCount = 0;
   }
 }, 5000);
 
