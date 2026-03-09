@@ -2125,6 +2125,13 @@ function stopMoodSound() {
   document.querySelectorAll('.mood-sound-btn').forEach(function(btn) {
     btn.classList.remove('active');
   });
+  // Hide send/stop buttons
+  var sendBtn = document.getElementById('mood-send-btn');
+  var stopBtn = document.getElementById('mood-stop-all');
+  var stopMain = document.getElementById('mood-stop-main');
+  if (sendBtn) sendBtn.classList.add('d-none');
+  if (stopBtn) stopBtn.classList.add('d-none');
+  if (stopMain) stopMain.classList.add('d-none');
 }
 
 function toggleMoodSound(moodKey) {
@@ -2136,14 +2143,11 @@ function toggleMoodSound(moodKey) {
   // Update send/stop buttons visibility
   var sendBtn = document.getElementById('mood-send-btn');
   var stopBtn = document.getElementById('mood-stop-all');
-  if (sendBtn) {
-    if (WEATHER.moodPlaying) sendBtn.classList.remove('d-none');
-    else sendBtn.classList.add('d-none');
-  }
-  if (stopBtn) {
-    if (WEATHER.moodPlaying) stopBtn.classList.remove('d-none');
-    else stopBtn.classList.add('d-none');
-  }
+  var stopMain = document.getElementById('mood-stop-main');
+  var playing = !!WEATHER.moodPlaying;
+  if (sendBtn) sendBtn.classList.toggle('d-none', !playing);
+  if (stopBtn) stopBtn.classList.toggle('d-none', !playing);
+  if (stopMain) stopMain.classList.toggle('d-none', !playing);
 }
 
 function sendMoodToPartner(moodKey) {

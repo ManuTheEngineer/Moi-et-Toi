@@ -1084,6 +1084,13 @@ function applySkyTheme(theme) {
       }
       // Update ambient audio to match environment
       if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
+      // Stop mood sound if it belongs to a different environment
+      if (typeof WEATHER !== 'undefined' && WEATHER.moodPlaying && typeof MOOD_SOUNDS !== 'undefined') {
+        var moodDef = MOOD_SOUNDS[WEATHER.moodPlaying];
+        if (moodDef && moodDef.env && moodDef.env !== currentSkyTheme) {
+          if (typeof stopMoodSound === 'function') stopMoodSound();
+        }
+      }
     }
   }
   // Re-render mood sounds grid to prioritize environment-matching sounds

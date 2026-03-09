@@ -1446,6 +1446,9 @@ body[data-sky-theme="mountain"][data-time="night"] .particle { --particle-color:
   gap: 8px;
   margin: 8px 0;
 }
+@media (max-width: 374px) {
+  .mood-sounds-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+}
 .mood-sound-btn {
   display: flex;
   flex-direction: column;
@@ -1456,14 +1459,35 @@ body[data-sky-theme="mountain"][data-time="night"] .particle { --particle-color:
   border: 2px solid transparent;
   border-radius: var(--radius-md, 12px);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   font-family: Outfit, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 .mood-sound-btn.active {
   border-color: var(--gold, #C9A96E);
   background: rgba(201,169,110,0.12);
   box-shadow: 0 2px 12px rgba(201,169,110,0.2);
   animation: msbPulse 2s ease-in-out infinite;
+}
+/* Environment-aware highlighting for matching mood sounds */
+[data-sky-theme="beach"] .mood-sound-btn[data-mood="ocean"],
+[data-sky-theme="beach"] .mood-sound-btn[data-mood="beachBreeze"],
+[data-sky-theme="beach"] .mood-sound-btn[data-mood="seagulls"],
+[data-sky-theme="beach"] .mood-sound-btn[data-mood="tropical"] {
+  border-color: rgba(78,165,210,0.25);
+  background: rgba(78,165,210,0.06);
+}
+[data-sky-theme="mountain"] .mood-sound-btn[data-mood="forest"],
+[data-sky-theme="mountain"] .mood-sound-btn[data-mood="mountainCreek"],
+[data-sky-theme="mountain"] .mood-sound-btn[data-mood="mountainWind"],
+[data-sky-theme="mountain"] .mood-sound-btn[data-mood="campfire"] {
+  border-color: rgba(74,124,57,0.25);
+  background: rgba(74,124,57,0.06);
+}
+/* Active overrides the environment hint */
+.mood-sound-btn.active {
+  border-color: var(--gold, #C9A96E) !important;
+  background: rgba(201,169,110,0.12) !important;
 }
 @keyframes msbPulse {
   0%,100% { box-shadow: 0 2px 12px rgba(201,169,110,0.2); }

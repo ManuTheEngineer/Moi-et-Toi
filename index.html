@@ -1005,7 +1005,7 @@
   <!-- Send a Mood -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Send a Vibe</div></div>
   <div class="form-hint" style="margin:-6px 0 6px">Set the mood on your partner's screen</div>
-  <div class="mood-sounds-grid">
+  <div class="mood-sounds-grid" id="send-vibe-moods">
     <button class="mood-sound-btn" data-mood="romantic" onclick="sendMoodToPartner('romantic')"><span class="msb-icon">🕯</span><span class="msb-label">Romantic</span></button>
     <button class="mood-sound-btn" data-mood="relaxing" onclick="sendMoodToPartner('relaxing')"><span class="msb-icon">🧘</span><span class="msb-label">Relaxing</span></button>
     <button class="mood-sound-btn" data-mood="dreamy" onclick="sendMoodToPartner('dreamy')"><span class="msb-icon">💫</span><span class="msb-label">Dreamy</span></button>
@@ -1615,7 +1615,10 @@
     <button class="mood-sound-btn" data-mood="birds" onclick="toggleMoodSound('birds')"><span class="msb-icon">🐦</span><span class="msb-label">Birds</span></button>
     <button class="mood-sound-btn" data-mood="thunder" onclick="toggleMoodSound('thunder')"><span class="msb-icon">⛈</span><span class="msb-label">Storm</span></button>
   </div>
-  <button class="mood-send-btn d-none" id="mood-send-btn" onclick="sendMoodToPartner(WEATHER.moodPlaying)">Send mood to partner</button>
+  <div style="display:flex;gap:8px;margin-top:6px">
+    <button class="mood-stop-btn d-none" id="mood-stop-main" onclick="stopMoodSound()" style="flex:1">Stop Sound</button>
+    <button class="mood-send-btn d-none" id="mood-send-btn" onclick="sendMoodToPartner(WEATHER.moodPlaying)" style="flex:1">Send mood to partner</button>
+  </div>
 
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Filter by vibe</div></div>
   <div class="bl-cats" id="dn-cats">
