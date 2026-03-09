@@ -1428,7 +1428,7 @@ function initNotifications() {
 
 function scheduleDailyReminder() {
   const REMINDER_KEY = 'met_last_reminder';
-  const CHECK_INTERVAL = 60 * 60 * 1000; // Check every hour (not 30 min — less aggressive)
+  const CHECK_INTERVAL = 60 * 60 * 1000; // Check every hour (not 30 min - less aggressive)
 
   function check() {
     if (!db || !user) return;
@@ -1438,7 +1438,7 @@ function scheduleDailyReminder() {
 
     const now = new Date();
     const hour = now.getHours();
-    // Only remind between 10am and 8pm — respect quiet hours
+    // Only remind between 10am and 8pm - respect quiet hours
     if (hour < 10 || hour > 20) return;
 
     // Check the two most important daily tasks (mood + daily question)
@@ -1604,7 +1604,7 @@ function setSkyTheme(theme) {
 function handleLocationSettingsBtn() {
   var btn = document.getElementById('set-location-btn');
   if (WEATHER.locationGranted) {
-    // Already granted — refresh weather
+    // Already granted - refresh weather
     fetchWeather().then(function() {
       updateWeatherInfoUI();
       var container = document.getElementById('sky-scene');
@@ -1863,7 +1863,7 @@ async function saveSettings() {
   renderDashHero();
 }
 
-// ===== HUB PAGES — Live data for Together, Track, Build =====
+// ===== HUB PAGES - Live data for Together, Track, Build =====
 function initHubPages() {
   if (!db) return;
   const today = localDate();
@@ -1935,7 +1935,7 @@ function initHubPages() {
     if (el) el.textContent = snap.numChildren() || 0;
   });
 
-  // Together hero title — personalized
+  // Together hero title - personalized
   const heroTitle = document.getElementById('together-hero-title');
   if (heroTitle && NAMES[partner]) {
     heroTitle.textContent = 'You & ' + NAMES[partner];
@@ -2326,7 +2326,7 @@ function showNotifToast(fromName, message, icon, targetPage) {
   if (iconEl) iconEl.textContent = icon || '💬';
   if (fromEl) fromEl.textContent = 'from ' + fromName;
   if (msgEl) msgEl.textContent = message;
-  // Make tappable — navigate to the relevant page
+  // Make tappable - navigate to the relevant page
   el.onclick = null;
   if (targetPage && typeof go === 'function') {
     el.style.cursor = 'pointer';
@@ -2403,18 +2403,18 @@ var MORNING_MESSAGES = {
     "You deserve every good thing that's coming your way."
   ],
   poems: [
-    "Before the sun, before the dew,\nmy first thought is always you.\nGood morning, love — this day is new,\nand everything's more beautiful because of you.",
+    "Before the sun, before the dew,\nmy first thought is always you.\nGood morning, love - this day is new,\nand everything's more beautiful because of you.",
     "Soft light falls on sleepy eyes,\na gentle start beneath the skies.\nI hope you wake and smile because\nyou're loved beyond what language does.",
-    "The morning light can't hold a flame\nto hearing someone speak your name.\nSo here it is, whispered true —\nGood morning, love. I'm thinking of you.",
-    "In quiet hours before the day,\nI send these words across the way —\nthat you are loved, that you are seen,\nand you're the best thing in between.",
+    "The morning light can't hold a flame\nto hearing someone speak your name.\nSo here it is, whispered true -\nGood morning, love. I'm thinking of you.",
+    "In quiet hours before the day,\nI send these words across the way -\nthat you are loved, that you are seen,\nand you're the best thing in between.",
     "Rise and shine, my everything.\nYou're the reason birds still sing.\nNo poem could ever capture right\nhow you make my world so bright."
   ],
   words: [
-    "Word of the day: Saudade — the deep, nostalgic longing for someone you love. That's what I feel every moment we're apart.",
-    "Word of the day: Kilig — the rush of butterflies you feel when something romantic happens. You give me this every single day.",
-    "Word of the day: Mamihlapinatapai — a look shared between two people, each wishing the other would start something they both want. Our whole love story.",
-    "Word of the day: Forelsket — the euphoria of falling in love. I'm still falling, every day, with you.",
-    "Word of the day: Merak — the pursuit of small pleasures that make life worth living. You are my merak."
+    "Word of the day: Saudade - the deep, nostalgic longing for someone you love. That's what I feel every moment we're apart.",
+    "Word of the day: Kilig - the rush of butterflies you feel when something romantic happens. You give me this every single day.",
+    "Word of the day: Mamihlapinatapai - a look shared between two people, each wishing the other would start something they both want. Our whole love story.",
+    "Word of the day: Forelsket - the euphoria of falling in love. I'm still falling, every day, with you.",
+    "Word of the day: Merak - the pursuit of small pleasures that make life worth living. You are my merak."
   ]
 };
 

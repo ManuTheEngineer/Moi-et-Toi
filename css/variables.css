@@ -1,4 +1,4 @@
-/* ===== VARIABLES — LIGHT MODE ===== */
+/* ===== VARIABLES - LIGHT MODE ===== */
 :root {
   color-scheme: light;
   --bg: #F5F0EB; --bg2: #EDE7E0; --bg3: #E2DCD5;
@@ -90,7 +90,7 @@
   --radius-full: 9999px;
 }
 /* ===== TIME-OF-DAY THEME OVERRIDES ===== */
-/* Dawn (5-7am) — soft rose, lavender warmth, waking up */
+/* Dawn (5-7am) - soft rose, lavender warmth, waking up */
 body[data-time="dawn"] {
   --bg: #F0E6E8; --bg2: #E8DDE0; --bg3: #DDD2D6;
   --card-bg: rgba(255,240,242,.75); --input-bg: rgba(180,120,140,.06);
@@ -103,7 +103,7 @@ body[data-time="dawn"] {
   --card-shadow: 0 2px 8px rgba(140,80,100,.05), 0 12px 36px rgba(140,80,100,.07);
 }
 
-/* Morning (7-11am) — warm gold sunshine, energetic */
+/* Morning (7-11am) - warm gold sunshine, energetic */
 body[data-time="morning"] {
   --bg: #F5F0E6; --bg2: #EDE7D8; --bg3: #E2DCCC;
   --card-bg: rgba(255,250,235,.75); --input-bg: rgba(184,134,11,.05);
@@ -113,7 +113,7 @@ body[data-time="morning"] {
   --gold: #B8860B; --gold-l: #D4A017;
 }
 
-/* Afternoon (11am-4pm) — clean bright, slight cool tones */
+/* Afternoon (11am-4pm) - clean bright, slight cool tones */
 body[data-time="afternoon"] {
   --bg: #EFF3F5; --bg2: #E6EBED; --bg3: #DBE1E4;
   --card-bg: rgba(245,250,255,.72); --input-bg: rgba(40,80,120,.04);
@@ -123,7 +123,7 @@ body[data-time="afternoon"] {
   --gold: #A08030; --gold-l: #C0A050;
 }
 
-/* Golden hour (4-6pm) — rich amber, deep warm glow */
+/* Golden hour (4-6pm) - rich amber, deep warm glow */
 body[data-time="golden"] {
   --bg: #F2E8D8; --bg2: #EAE0CE; --bg3: #DED4C2;
   --card-bg: rgba(255,245,225,.75); --input-bg: rgba(180,100,30,.06);
@@ -135,7 +135,7 @@ body[data-time="golden"] {
   --card-shadow: 0 2px 8px rgba(140,80,20,.06), 0 12px 36px rgba(140,80,20,.08);
 }
 
-/* Evening (6-9pm) — deep indigo, warm amber accents, winding down */
+/* Evening (6-9pm) - deep indigo, warm amber accents, winding down */
 body[data-time="evening"] {
   --bg: #2A2440; --bg2: #342E4A; --bg3: #3E3854;
   --t1: #F0E8E0; --t2: #C0B8B0; --t3: #8A8290;
@@ -153,7 +153,7 @@ body[data-time="evening"] {
   --cream: #F0E8E0; --cream-d: #C8C0B8;
 }
 
-/* Night (9pm-5am) — deep navy, starlit, calm and intimate */
+/* Night (9pm-5am) - deep navy, starlit, calm and intimate */
 body[data-time="night"] {
   --bg: #1A1828; --bg2: #242236; --bg3: #2E2C42;
   --t1: #E8E2DA; --t2: #A8A0B0; --t3: #706878;
@@ -173,9 +173,79 @@ body[data-time="night"] {
   --shadow-lg: 0 8px 48px rgba(0,0,0,.25);
 }
 
+/* ===== SKY THEME + TIME OVERRIDES ===== */
+/* Beach theme - warmer, sandier, tropical feel */
+body[data-sky-theme="beach"][data-time="dawn"] {
+  --bg: #F2E4E0; --bg2: #EAD9D4; --bg3: #DFD0CA;
+  --card-bg: rgba(255,238,230,.76); --nav-bg: rgba(242,228,224,.82);
+  --gold: #D07040; --gold-l: #E08858;
+}
+body[data-sky-theme="beach"][data-time="morning"] {
+  --bg: #F8F0E2; --bg2: #F0E8D6; --bg3: #E6DECC;
+  --card-bg: rgba(255,248,230,.76); --nav-bg: rgba(248,240,226,.83);
+  --gold: #C88818; --gold-l: #E0A030;
+}
+body[data-sky-theme="beach"][data-time="afternoon"] {
+  --bg: #ECF4F6; --bg2: #E2ECF0; --bg3: #D8E6EA;
+  --card-bg: rgba(235,248,255,.74); --nav-bg: rgba(236,244,246,.82);
+  --gold: #1A98A8; --gold-l: #28B0B8;
+  --t2: #3A6A7A; --t3: #6A9AA8;
+}
+body[data-sky-theme="beach"][data-time="golden"] {
+  --bg: #F4E4D0; --bg2: #ECDCC4; --bg3: #E2D2B8;
+  --card-bg: rgba(255,240,210,.76); --nav-bg: rgba(244,228,208,.84);
+  --gold: #D47010; --gold-l: #E88828;
+}
+body[data-sky-theme="beach"][data-time="evening"] {
+  --bg: #28223E; --bg2: #322C48; --bg3: #3C3654;
+  --card-bg: rgba(50,42,65,.74); --nav-bg: rgba(40,34,62,.86);
+  --gold: #E0A040; --gold-l: #F0B858;
+}
+body[data-sky-theme="beach"][data-time="night"] {
+  --bg: #181828; --bg2: #222036; --bg3: #2C2A42;
+  --card-bg: rgba(35,34,55,.76); --nav-bg: rgba(24,24,40,.88);
+  --gold: #D8A848; --gold-l: #ECB858;
+}
+
+/* Mountain theme - cooler, crisper, alpine feel */
+body[data-sky-theme="mountain"][data-time="dawn"] {
+  --bg: #E8E6F0; --bg2: #DED8E6; --bg3: #D4D0DC;
+  --card-bg: rgba(240,238,252,.76); --nav-bg: rgba(232,230,240,.82);
+  --gold: #8A70B0; --gold-l: #A088C8;
+}
+body[data-sky-theme="mountain"][data-time="morning"] {
+  --bg: #EEF0E8; --bg2: #E4E8DE; --bg3: #DADDD2;
+  --card-bg: rgba(242,248,238,.76); --nav-bg: rgba(238,240,232,.83);
+  --gold: #5A8A40; --gold-l: #70A458;
+  --t2: #4A5A3A; --t3: #7A8A6A;
+}
+body[data-sky-theme="mountain"][data-time="afternoon"] {
+  --bg: #EAF0F6; --bg2: #E0E8F0; --bg3: #D6DEE8;
+  --card-bg: rgba(238,245,255,.74); --nav-bg: rgba(234,240,246,.82);
+  --gold: #4A78A0; --gold-l: #608EB8;
+  --t2: #3A5A78; --t3: #6A8AA0;
+}
+body[data-sky-theme="mountain"][data-time="golden"] {
+  --bg: #EEE4D8; --bg2: #E6DCCe; --bg3: #DCD2C2;
+  --card-bg: rgba(248,240,225,.76); --nav-bg: rgba(238,228,216,.84);
+  --gold: #B87420; --gold-l: #D08C38;
+}
+body[data-sky-theme="mountain"][data-time="evening"] {
+  --bg: #242040; --bg2: #2E2A4C; --bg3: #383458;
+  --card-bg: rgba(44,40,68,.74); --nav-bg: rgba(36,32,64,.86);
+  --gold: #C89840; --gold-l: #E0B058;
+  --t1: #E8E4F0; --t2: #B8B0C8; --t3: #807898;
+}
+body[data-sky-theme="mountain"][data-time="night"] {
+  --bg: #161826; --bg2: #202234; --bg3: #2A2C44;
+  --card-bg: rgba(32,34,52,.76); --nav-bg: rgba(22,24,38,.88);
+  --gold: #C8A050; --gold-l: #E0B868;
+  --t1: #E4E0E8; --t2: #A0A0B8; --t3: #686880;
+}
+
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;scrollbar-width:none}
 *::-webkit-scrollbar{display:none}
-/* Global form element reset — prevents white flash on dark backgrounds */
+/* Global form element reset - prevents white flash on dark backgrounds */
 input,textarea,select{background:var(--input-bg);color:var(--t1);border:none;border-radius:var(--radius-sm);font-family:'Outfit',sans-serif;font-size:13px;padding:10px 14px;outline:none;transition:box-shadow .2s,border-color .2s}
 input::placeholder,textarea::placeholder{color:var(--t3)}
 select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A09585' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}

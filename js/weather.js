@@ -153,9 +153,9 @@ function requestLocationPermission() {
       function(err) {
         WEATHER.locationGranted = false;
         if (err.code === 1) {
-          toast('Location permission denied — you can enable it in settings later');
+          toast('Location permission denied - you can enable it in settings later');
         } else {
-          toast('Could not get location — try again later');
+          toast('Could not get location - try again later');
         }
         resolve(false);
       },
@@ -676,7 +676,7 @@ function renderPelican(container) {
 }
 
 // ===== AMBIENT AUDIO SYSTEM =====
-// Audio unlock — requires user gesture on iOS/Safari
+// Audio unlock - requires user gesture on iOS/Safari
 function unlockAudio() {
   try {
     if (!WEATHER.audioCtx) {
@@ -722,7 +722,7 @@ function _onAudioReady() {
   }
 }
 
-// Keep listener alive — AudioContext can re-suspend on mobile (page background, etc.)
+// Keep listener alive - AudioContext can re-suspend on mobile (page background, etc.)
 // Debounce to avoid running on every rapid tap
 var _unlockTimer = null;
 function _tryUnlock() {
@@ -730,7 +730,7 @@ function _tryUnlock() {
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
   // Already running, skip
   if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') return;
-  // Debounce — only run once per 500ms
+  // Debounce - only run once per 500ms
   if (_unlockTimer) return;
   _unlockTimer = setTimeout(function() { _unlockTimer = null; }, 500);
   unlockAudio();
@@ -866,7 +866,7 @@ function generateNoise(type) {
         var w = (Math.random() * 2 - 1) * 0.35;
         L[i] += w; R[i] += w * 0.9 + (Math.random() * 2 - 1) * 0.05;
       }
-      // Droplet impacts — varied sizes, random stereo position
+      // Droplet impacts - varied sizes, random stereo position
       for (var drop = 0; drop < 200; drop++) {
         var pos = Math.floor(Math.random() * (len - sr * 0.05));
         var size = 0.2 + Math.random() * 0.6; // drop size
@@ -879,7 +879,7 @@ function generateNoise(type) {
           R[pos + k] += s * (0.4 + pan * 0.6);
         }
       }
-      // Gentle rhythm — waves of intensity
+      // Gentle rhythm - waves of intensity
       for (i = 0; i < len; i++) {
         t = i / sr;
         var intensity = 0.7 + 0.3 * Math.sin(PI2 * 0.15 * t);
@@ -992,13 +992,13 @@ function generateNoise(type) {
       var numThunder = 1 + Math.floor(Math.random() * 2);
       for (var th = 0; th < numThunder; th++) {
         var tPos = Math.floor(sr * (1 + Math.random() * 7));
-        // Lightning crack — sharp transient
+        // Lightning crack - sharp transient
         var crackLen = Math.floor(sr * 0.05);
         for (k = 0; k < crackLen && tPos + k < len; k++) {
           var s = (Math.random() * 2 - 1) * 0.8 * Math.exp(-k / (crackLen * 0.15));
           L[tPos + k] += s; R[tPos + k] += s * 0.9;
         }
-        // Rolling rumble — long decay with low-frequency content
+        // Rolling rumble - long decay with low-frequency content
         var rumbleLen = Math.floor(sr * (2 + Math.random() * 2));
         var rStart = tPos + crackLen;
         var bx = 0;
@@ -1146,7 +1146,7 @@ function generateNoise(type) {
     // ===== ENVIRONMENT-THEMED NATURE SOUNDS =====
     case 'mountainCreek': {
       // Mountain creek: babbling water over rocks + gentle wind through pines
-      // Water base — filtered noise with rhythmic burbling
+      // Water base - filtered noise with rhythmic burbling
       for (i = 0; i < len; i++) {
         t = i / sr;
         var flow = 0.12 + 0.06 * Math.sin(PI2 * 0.3 * t) + 0.04 * Math.sin(PI2 * 0.7 * t);
@@ -1158,7 +1158,7 @@ function generateNoise(type) {
         L[i] = water + sparkle + deep;
         R[i] = water * 0.85 + sparkle * 1.1 + deep + (Math.random() * 2 - 1) * 0.03;
       }
-      // Burble events — small splashes
+      // Burble events - small splashes
       for (var b = 0; b < 40; b++) {
         var bPos = Math.floor(Math.random() * (len - sr * 0.15));
         var bLen = Math.floor(sr * (0.03 + Math.random() * 0.08));
@@ -1180,7 +1180,7 @@ function generateNoise(type) {
       // Beach breeze: gentle ocean surf + warm wind + distant shore sounds
       for (i = 0; i < len; i++) {
         t = i / sr;
-        // Slow, gentle waves (longer period than 'waves' — more relaxing)
+        // Slow, gentle waves (longer period than 'waves' - more relaxing)
         var wave = Math.sin(PI2 * 0.09 * t);
         var surf = Math.max(0, wave) * 0.3;
         var pull = Math.max(0, -wave) * 0.15;
@@ -1210,7 +1210,7 @@ function generateNoise(type) {
       // High altitude wind: deep gusts through mountain passes + distant eagle
       _brownNoise(L, len, 0.12);
       _brownNoise(R, len, 0.12);
-      // Wind gusts — swelling and fading
+      // Wind gusts - swelling and fading
       for (i = 0; i < len; i++) {
         t = i / sr;
         var gust = 0.5 + 0.5 * Math.sin(PI2 * 0.12 * t + Math.sin(PI2 * 0.04 * t) * 2);
@@ -1340,7 +1340,7 @@ function generateNoise(type) {
         L[i] = fb * 0.5 + warmth + (Math.random() * 2 - 1) * 0.08;
         R[i] = fb * 0.4 + warmth + (Math.random() * 2 - 1) * 0.08;
       }
-      // Crackle events — sharp pops with sizzle tail
+      // Crackle events - sharp pops with sizzle tail
       for (var c = 0; c < 80; c++) {
         var cPos = Math.floor(Math.random() * (len - sr * 0.1));
         var pop = Math.random() * 0.6 + 0.2;
@@ -1702,7 +1702,7 @@ function updateAmbientAudio() {
     if (keep.indexOf(k) === -1) stopAmbientSound(k);
   });
 
-  // Keep volumes subtle and calming — background ambiance, not foreground
+  // Keep volumes subtle and calming - background ambiance, not foreground
   playAmbientSound(scene.sounds.base, 0.12);
   if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.10);
   if (WEATHER.data) {
@@ -1714,14 +1714,14 @@ function updateAmbientAudio() {
 function toggleAmbientAudio(on) {
   WEATHER.audioEnabled = on;
   if (on) {
-    // Toggle IS a user gesture — create context and start in one shot
+    // Toggle IS a user gesture - create context and start in one shot
     if (!WEATHER.audioCtx) {
       WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
     var ctx = WEATHER.audioCtx;
     var go = function() {
       WEATHER.audioUnlocked = true;
-      // Confirmation beep — proves audio pipeline works
+      // Confirmation beep - proves audio pipeline works
       try {
         var o = ctx.createOscillator();
         var g = ctx.createGain();
@@ -1781,7 +1781,7 @@ function spawnSceneCreatures(container) {
     })(i);
   }
 
-  // Continuous creature spawning — keep the scene alive
+  // Continuous creature spawning - keep the scene alive
   if (!WEATHER._creatureInterval) {
     WEATHER._creatureInterval = setInterval(function() {
       if (!container.parentNode) { clearInterval(WEATHER._creatureInterval); WEATHER._creatureInterval = null; return; }
@@ -1854,7 +1854,7 @@ function showLocationPrompt() {
     '<div class="loc-prompt">' +
       '<div class="loc-prompt-icon">🌍</div>' +
       '<h2 class="loc-prompt-title">Living Weather</h2>' +
-      '<p class="loc-prompt-desc">Allow location access to bring your real weather to life — rain, snow, sunshine, wind and more, right in your background.</p>' +
+      '<p class="loc-prompt-desc">Allow location access to bring your real weather to life - rain, snow, sunshine, wind and more, right in your background.</p>' +
       '<div class="loc-prompt-features">' +
         '<div class="loc-feat"><span>🌧</span> Real weather effects</div>' +
         '<div class="loc-feat"><span>🌅</span> Actual sunrise & sunset</div>' +
@@ -1875,7 +1875,7 @@ function handleLocationAllow() {
   toast('Requesting location...');
   requestLocationPermission().then(function(granted) {
     if (granted) {
-      toast('Location enabled — fetching weather...');
+      toast('Location enabled - fetching weather...');
       fetchWeather().then(function(data) {
         if (data) {
           var container = document.getElementById('sky-scene');
@@ -2042,7 +2042,7 @@ function playMoodSound(moodKey) {
   // Stop any existing mood sound
   stopMoodSound();
 
-  // Tapping a mood button IS a user gesture — unlock audio right here
+  // Tapping a mood button IS a user gesture - unlock audio right here
   if (!WEATHER.audioCtx) {
     WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
@@ -2165,7 +2165,7 @@ function syncSkyState() {
 // Sync every 30 seconds for smoother transitions
 setInterval(syncSkyState, 30000);
 
-// Periodic audio retry — if enabled but no sounds playing, try again
+// Periodic audio retry - if enabled but no sounds playing, try again
 setInterval(function() {
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
   if (WEATHER.audioEnabled && WEATHER.audioCtx && Object.keys(WEATHER.audioNodes).length === 0) {
@@ -2228,7 +2228,7 @@ function initWeatherSystem() {
         updateAmbientAudio();
       });
     } else if (!data.prompted) {
-      // First time — prompt after delay
+      // First time - prompt after delay
       setTimeout(function() {
         if (livingSkyEnabled) showLocationPrompt();
       }, 4000);

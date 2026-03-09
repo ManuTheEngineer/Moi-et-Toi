@@ -676,7 +676,7 @@ function renderTimeMachine(containerId, dateStr) {
   let workoutHtml = '';
   if (data.workouts.length) {
     workoutHtml = data.workouts.map(w =>
-      `<div style="font-size:11px;color:var(--cream)">${w.userName || w.user} — ${w.workoutType || 'Workout'} (${(w.exercises || []).length} exercises)</div>`
+      `<div style="font-size:11px;color:var(--cream)">${w.userName || w.user} - ${w.workoutType || 'Workout'} (${(w.exercises || []).length} exercises)</div>`
     ).join('');
   }
 

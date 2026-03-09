@@ -577,7 +577,7 @@ const DEEP_PROMPTS = {
     "What's a pattern in our relationship you want to break?",
   ],
   soul: [
-    "If I could see every version of you — past, present, future — what would you want me to understand?",
+    "If I could see every version of you - past, present, future - what would you want me to understand?",
     "What does your soul need right now that nobody is giving it?",
     "What kind of old people do you want us to become together?",
     "What are you most afraid of losing in this life?",
@@ -860,7 +860,7 @@ function loadDevotional() {
   const vEl = document.getElementById('sp-devo-verse');
   const rEl = document.getElementById('sp-devo-ref');
   if (vEl) vEl.textContent = d.verse;
-  if (rEl) rEl.textContent = '— ' + d.ref;
+  if (rEl) rEl.textContent = '- ' + d.ref;
 }
 
 function nextDevotional() { devIdx++; loadDevotional(); }

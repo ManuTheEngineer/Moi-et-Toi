@@ -1,4 +1,4 @@
-/* ===== CONNECT PAGE — TAPS & LETTERS ===== */
+/* ===== CONNECT PAGE - TAPS & LETTERS ===== */
 .tap-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:20px}
 .tap-btn{padding:16px 4px;border-radius:20px;text-align:center;cursor:pointer;border:none;background:var(--card-bg);box-shadow:var(--card-shadow);transition:all .25s}
 .tap-btn:hover{transform:translateY(-3px);box-shadow:var(--card-hover)}
@@ -46,7 +46,7 @@
 @keyframes tapFloat{0%{transform:scale(0.3);opacity:0}30%{transform:scale(1.2);opacity:1}60%{transform:scale(1);opacity:1}100%{transform:scale(1) translateY(-20px);opacity:0}}
 @keyframes tapFadeIn{0%{opacity:0;transform:translateY(10px)}50%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
 
-/* ===== OUR STORY — TIMELINE & COUNTDOWNS ===== */
+/* ===== OUR STORY - TIMELINE & COUNTDOWNS ===== */
 .countdown-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
 .cd-card{background:var(--card-bg);border:none;border-radius:22px;padding:20px;text-align:center;box-shadow:var(--card-shadow)}
 .cd-emoji{font-size:24px;margin-bottom:6px}
@@ -343,7 +343,7 @@
 .ci-card-a{font-size:12px;color:var(--t1);margin-bottom:8px;padding-left:8px;border-left:2px solid var(--bdr)}
 
 /* ===== DREAM BOARD ===== */
-/* Dreams — hero progress */
+/* Dreams - hero progress */
 .dr-hero{display:flex;align-items:center;gap:16px;padding:18px 20px;background:var(--card-bg);border-radius:22px;margin-bottom:14px;box-shadow:var(--card-shadow)}
 .dr-ring-wrap{position:relative;width:72px;height:72px;flex-shrink:0}
 .dr-ring{width:100%;height:100%}
@@ -355,7 +355,7 @@
 .dr-hs-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--cream)}
 .dr-hs-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3)}
 
-/* Dreams — home link card */
+/* Dreams - home link card */
 .dr-home-link{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card-bg);border-radius:18px;margin-bottom:14px;box-shadow:var(--card-shadow);cursor:pointer;transition:all .2s;border:1px solid var(--bdr-s)}
 .dr-home-link:active{transform:scale(.98)}
 .dr-hl-icon{font-size:24px;flex-shrink:0}
@@ -364,12 +364,12 @@
 .dr-hl-sub{font-size:10px;color:var(--t3);margin-top:1px}
 .dr-hl-arrow{font-size:20px;color:var(--t3)}
 
-/* Dreams — form */
+/* Dreams - form */
 .dr-form{background:var(--card-bg);border:none;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:var(--card-shadow)}
 .dr-form-header{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px}
 .dr-form-row{display:flex;gap:8px;margin-top:8px}
 
-/* Dreams — cards */
+/* Dreams - cards */
 .dr-card{background:var(--card-bg);border:none;border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:var(--card-shadow);display:flex;gap:12px;align-items:flex-start;transition:all .2s;position:relative}
 .dr-card:active{transform:scale(.99)}
 .dr-card.achieved{opacity:.55}
@@ -764,7 +764,7 @@
 .dh-wishlist-item .dwi-price{font-size:12px;color:var(--lavender);font-weight:500}
 .dh-wishlist-item .dwi-priority{font-size:9px;padding:2px 8px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase}
 
-/* Dream Home — phase tabs */
+/* Dream Home - phase tabs */
 .dh-phases{display:flex;gap:4px;margin-bottom:16px;background:var(--card-bg);border-radius:16px;padding:4px;box-shadow:var(--card-shadow)}
 .dh-phase{flex:1;text-align:center;padding:10px 6px;border-radius:13px;font-size:11px;font-family:'Outfit',sans-serif;font-weight:500;color:var(--t3);cursor:pointer;transition:all .2s;letter-spacing:.3px}
 .dh-phase.on{background:var(--lavender);color:#fff}
@@ -836,7 +836,7 @@
 .dh-back-btn:active{transform:scale(.9)}
 .dh-room-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--cream);font-weight:600;margin:0}
 
-/* Finance — progress bars */
+/* Finance - progress bars */
 .dh-prog-bar{height:8px;border-radius:4px;background:var(--bg3);overflow:hidden}
 .dh-prog-fill{height:100%;border-radius:4px;transition:width .6s ease}
 
@@ -863,7 +863,7 @@
 .dh-tl-line{flex:1;height:2px;background:var(--bdr-s);min-width:8px}
 .dh-tl-phase.done+.dh-tl-line{background:var(--lavender)}
 
-/* Dream Home — summary card */
+/* Dream Home - summary card */
 .dh-summary{background:var(--card-bg);border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)}
 .dh-sum-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .dh-sum-icon{font-size:28px}
@@ -875,7 +875,7 @@
 .dh-sum-progress{margin-top:4px}
 .dh-sum-prog-label{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:4px}
 
-/* Dream Home — mortgage */
+/* Dream Home - mortgage */
 .dh-mortgage-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dh-mort-field{display:flex;flex-direction:column;gap:4px}
 .dh-mort-result{margin-top:14px;border-top:1px solid var(--bdr-s);padding-top:12px}
@@ -885,7 +885,7 @@
 .dh-mort-highlight{background:rgba(196,120,74,.08);margin:4px -8px;padding:10px 8px;border-radius:10px;border-bottom:none}
 .dh-mort-highlight span:last-child{font-size:16px;color:var(--gold);font-weight:700}
 
-/* Dream Home — checklist */
+/* Dream Home - checklist */
 .dh-check-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--tint-xs);cursor:pointer;transition:opacity .2s}
 .dh-check-item:last-child{border-bottom:none}
 .dh-check-item span{font-size:12px;color:var(--cream);transition:all .2s}
@@ -977,7 +977,7 @@
 
 /* ===== RESPONSIVE ===== */
 
-/* iPhone 16 Pro (393pt) and similar — comfortable spacing, full layouts */
+/* iPhone 16 Pro (393pt) and similar - comfortable spacing, full layouts */
 @media(max-width:430px){
   .ctn{padding:20px 20px 28px}
   .mood-grid{gap:8px}
@@ -1465,7 +1465,7 @@
 .toggle-switch input:checked+.toggle-slider{background:var(--gold)}
 .toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px)}
 
-/* ===== UX OVERHAUL — DESIGN SYSTEM CLASSES ===== */
+/* ===== UX OVERHAUL - DESIGN SYSTEM CLASSES ===== */
 
 /* --- Layout Utilities --- */
 .d-flex{display:flex}.d-grid{display:grid}.d-none{display:none}
@@ -1833,7 +1833,7 @@
 .c-vio{color:var(--vio)}
 .mt-neg8{margin-top:-8px}
 
-/* ===== HUB PAGES — Together, Track, Build ===== */
+/* ===== HUB PAGES - Together, Track, Build ===== */
 
 /* Hub Hero */
 .hub-hero{position:relative;border-radius:22px;padding:24px 20px 16px;margin-bottom:14px;overflow:hidden;text-align:center}
@@ -1903,7 +1903,7 @@
 .hub-list-arrow{color:var(--t3);font-size:18px;flex-shrink:0}
 .hub-list-divider{height:1px;background:var(--tint);margin:0 16px 0 56px}
 
-/* Explore Redesign — Spotlight Carousel */
+/* Explore Redesign - Spotlight Carousel */
 .explore-spotlight{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 0 14px;margin-bottom:6px;scrollbar-width:none}
 .explore-spotlight::-webkit-scrollbar{display:none}
 .explore-spot-card{flex:0 0 68%;scroll-snap-align:start;border-radius:20px;padding:20px 18px;color:#fff;cursor:pointer;transition:transform .2s;position:relative;overflow:hidden;min-height:110px}

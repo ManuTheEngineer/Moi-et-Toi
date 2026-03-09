@@ -118,7 +118,7 @@ function checkQuizAnswer(input, correct) {
   const answer = correct.toLowerCase();
   const parent = input.closest('.quiz-item');
   if (guess === answer) {
-    parent.innerHTML += '<div class="quiz-item-a correct">Correct — ' + correct.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
+    parent.innerHTML += '<div class="quiz-item-a correct">Correct - ' + correct.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
     input.remove();
     toast('Correct');
   } else {
@@ -242,7 +242,7 @@ function listenWishlists() {
     items.reverse();
     const el = document.getElementById('wl-theirs');
     if (!el) return;
-    if (!items.length) { el.innerHTML = '<div class="empty">Nothing here yet — someone is being mysterious</div>'; return; }
+    if (!items.length) { el.innerHTML = '<div class="empty">Nothing here yet - someone is being mysterious</div>'; return; }
     el.innerHTML = items.map(i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
       <div class="wl-info">
         <div class="wl-title">${esc(i.title)}</div>
@@ -480,7 +480,7 @@ function renderLLTips(myData, theirData) {
   const theirPrimary = LL_NAMES[theirData.scores.indexOf(Math.max(...theirData.scores))];
   const tips = {
     'Words of Affirmation': 'Leave notes, send texts saying what you appreciate. Be specific: "I loved how you handled that" means more than "you\'re great."',
-    'Quality Time': 'Put the phone away. Plan intentional time. It\'s not about quantity — it\'s about being fully present.',
+    'Quality Time': 'Put the phone away. Plan intentional time. It\'s not about quantity - it\'s about being fully present.',
     'Receiving Gifts': 'It\'s not about price. It\'s about "I saw this and thought of you." Small, thoughtful tokens matter most.',
     'Acts of Service': 'Do something they usually do themselves. Take a task off their plate. Actions speak louder than words.',
     'Physical Touch': 'Hold hands walking. Touch their back passing by. A long hug when they get home. Proximity matters.'
@@ -641,7 +641,7 @@ function renderDreams(items) {
   else filtered = items.filter(i => i.category === dreamFilter && !i.achieved);
 
   if (!filtered.length) {
-    el.innerHTML = `<div class="empty">${dreamFilter === 'achieved' ? 'No achieved dreams yet — keep going!' : 'No dreams in this category yet'}</div>`;
+    el.innerHTML = `<div class="empty">${dreamFilter === 'achieved' ? 'No achieved dreams yet - keep going!' : 'No dreams in this category yet'}</div>`;
     updateDRStats(items);
     return;
   }
@@ -713,11 +713,11 @@ const AS_QUIZ = [
   {q:'When my partner is away, I usually...', a:['Feel fine and trust them','Worry about what they\'re doing','Enjoy the alone time','Alternate between missing them and feeling relieved'], s:[0,1,2,3]},
   {q:'When we have a conflict, I tend to...', a:['Talk it through calmly','Need reassurance things are ok','Withdraw and process alone','Shut down or get overwhelmed'], s:[0,1,2,3]},
   {q:'How do you feel about sharing deep emotions?', a:['I\'m comfortable being vulnerable','I want to share everything, maybe too much','I prefer to keep things to myself','I want to but it feels risky'], s:[0,1,2,3]},
-  {q:'When your partner needs space, you...', a:['Respect it without worrying','Feel anxious about why','Understand completely — I need it too','Feel confused — do they still care?'], s:[0,1,2,3]},
+  {q:'When your partner needs space, you...', a:['Respect it without worrying','Feel anxious about why','Understand completely - I need it too','Feel confused - do they still care?'], s:[0,1,2,3]},
   {q:'How do you handle relationship uncertainty?', a:['Stay grounded and communicate','Seek constant reassurance','Act like it doesn\'t bother me','Swing between clinging and pulling away'], s:[0,1,2,3]},
   {q:'Your partner says "we need to talk." You feel...', a:['Curious and open','Immediately worried','Slightly annoyed','Panicked but try to hide it'], s:[0,1,2,3]},
   {q:'After a fight, you usually...', a:['Reach out to reconnect when ready','Apologize quickly, even if not my fault','Need time alone before talking','Want to reconnect but don\'t know how'], s:[0,1,2,3]},
-  {q:'How comfortable are you depending on your partner?', a:['Very — we\'re a team','I lean on them a lot','I prefer self-reliance','I want to but it feels unsafe'], s:[0,1,2,3]},
+  {q:'How comfortable are you depending on your partner?', a:['Very - we\'re a team','I lean on them a lot','I prefer self-reliance','I want to but it feels unsafe'], s:[0,1,2,3]},
   {q:'When things are going well in your relationship...', a:['I feel content and grateful','I worry it won\'t last','I start creating distance','I enjoy it but brace for the other shoe'], s:[0,1,2,3]},
   {q:'What best describes your relationship ideal?', a:['Close, balanced partnership','Deep emotional fusion','Respectful independence','Intimacy without losing myself'], s:[0,1,2,3]},
 ];
@@ -826,16 +826,16 @@ function getComboTips(a, b) {
   // Normalize order for symmetric lookup
   const key = [a, b].sort().join('+');
   const combos = {
-    'Secure+Secure': { summary: 'The golden pair. You both bring stability, trust, and open communication.', tips: ['Keep nurturing what you have — don\'t take it for granted', 'Push each other to grow even when comfortable', 'Model healthy conflict resolution together'] },
+    'Secure+Secure': { summary: 'The golden pair. You both bring stability, trust, and open communication.', tips: ['Keep nurturing what you have - don\'t take it for granted', 'Push each other to grow even when comfortable', 'Model healthy conflict resolution together'] },
     'Anxious+Secure': { summary: 'The secure partner anchors the relationship. With patience, the anxious partner feels safe to relax.', tips: ['Secure: offer reassurance proactively, not just when asked', 'Anxious: trust actions over your worries', 'Set check-in rituals to build predictable closeness'] },
     'Avoidant+Secure': { summary: 'The secure partner creates space for connection without pressure. The avoidant partner can slowly open up.', tips: ['Secure: respect their need for space without taking it personally', 'Avoidant: practice sharing one vulnerable thing per week', 'Find activities you both enjoy doing together in parallel'] },
-    'Fearful-Avoidant+Secure': { summary: 'The secure partner provides a stable base. The FA partner is learning that closeness is safe.', tips: ['Secure: be consistent — your predictability is their medicine', 'FA: notice when you push-pull and name it', 'Build trust through small, repeated positive experiences'] },
+    'Fearful-Avoidant+Secure': { summary: 'The secure partner provides a stable base. The FA partner is learning that closeness is safe.', tips: ['Secure: be consistent - your predictability is their medicine', 'FA: notice when you push-pull and name it', 'Build trust through small, repeated positive experiences'] },
     'Anxious+Anxious': { summary: 'Deep emotional connection but can spiral into mutual worry. You understand each other\'s needs deeply.', tips: ['Create rituals of reassurance for both of you', 'When both anxious, take a breath before reacting', 'Build individual hobbies to avoid codependency'] },
     'Anxious+Avoidant': { summary: 'The classic push-pull dynamic. Different needs, but understanding the pattern is the first step.', tips: ['Anxious: give space without interpreting it as rejection', 'Avoidant: small gestures of connection go a huge distance', 'Agree on a signal for "I need space" vs "I need closeness"'] },
-    'Anxious+Fearful-Avoidant': { summary: 'Both crave connection but express it differently. Communication is key.', tips: ['Be explicit about needs — don\'t assume the other knows', 'When triggered, say "I need a moment" instead of reacting', 'Celebrate the small moments of vulnerability together'] },
-    'Avoidant+Avoidant': { summary: 'You respect each other\'s independence. The challenge is building deeper emotional intimacy.', tips: ['Schedule intentional connection time — it won\'t happen organically', 'Practice sharing one feeling per day, even small ones', 'Physical proximity (cooking together, walks) builds closeness without pressure'] },
-    'Avoidant+Fearful-Avoidant': { summary: 'Both tend to withdraw but for different reasons. Building trust happens through small consistent gestures.', tips: ['Create low-pressure ways to be close (side-by-side activities)', 'FA: your need for closeness is valid — voice it', 'Avoidant: lean into connection when it feels uncomfortable'] },
-    'Fearful-Avoidant+Fearful-Avoidant': { summary: 'You deeply understand each other\'s push-pull. Together, you can build the safety you both need.', tips: ['Name the pattern when you see it: "I\'m pulling away because I\'m scared"', 'Create a safe word for when either feels overwhelmed', 'Celebrate every moment of vulnerability — it\'s brave'] },
+    'Anxious+Fearful-Avoidant': { summary: 'Both crave connection but express it differently. Communication is key.', tips: ['Be explicit about needs - don\'t assume the other knows', 'When triggered, say "I need a moment" instead of reacting', 'Celebrate the small moments of vulnerability together'] },
+    'Avoidant+Avoidant': { summary: 'You respect each other\'s independence. The challenge is building deeper emotional intimacy.', tips: ['Schedule intentional connection time - it won\'t happen organically', 'Practice sharing one feeling per day, even small ones', 'Physical proximity (cooking together, walks) builds closeness without pressure'] },
+    'Avoidant+Fearful-Avoidant': { summary: 'Both tend to withdraw but for different reasons. Building trust happens through small consistent gestures.', tips: ['Create low-pressure ways to be close (side-by-side activities)', 'FA: your need for closeness is valid - voice it', 'Avoidant: lean into connection when it feels uncomfortable'] },
+    'Fearful-Avoidant+Fearful-Avoidant': { summary: 'You deeply understand each other\'s push-pull. Together, you can build the safety you both need.', tips: ['Name the pattern when you see it: "I\'m pulling away because I\'m scared"', 'Create a safe word for when either feels overwhelmed', 'Celebrate every moment of vulnerability - it\'s brave'] },
   };
   return combos[key] || { summary: 'Your unique combination brings growth opportunities.', tips: ['Practice open communication daily', 'Be patient with different emotional speeds', 'Remember you\'re on the same team'] };
 }
@@ -1287,7 +1287,7 @@ function renderC4(data, key) {
     html += `<div class="game-status">${msg}</div>`;
     html += `<div class="game-actions"><button class="game-btn" onclick="newC4()">Rematch</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
   } else {
-    html += `<div class="game-status turn">${isMyTurn ? 'Your turn — tap a column' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
+    html += `<div class="game-status turn">${isMyTurn ? 'Your turn - tap a column' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
   }
   el.innerHTML = html;
 }
@@ -1359,7 +1359,7 @@ async function flipMemCard(idx) {
           await db.ref('games/sessions/' + activeGameKey).update(updates);
         }
       } else {
-        // No match — flip back, switch turns
+        // No match - flip back, switch turns
         fg.revealed[a] = false;
         fg.revealed[b] = false;
         await db.ref('games/sessions/' + activeGameKey).update({
@@ -1401,7 +1401,7 @@ function renderMemory(data, key) {
     html += `<div class="game-status">${msg}</div>`;
     html += `<div class="game-actions"><button class="game-btn" onclick="newMemory()">Rematch</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
   } else {
-    html += `<div class="game-status turn">${isMyTurn ? 'Your turn — find a pair!' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
+    html += `<div class="game-status turn">${isMyTurn ? 'Your turn - find a pair!' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
   }
   el.innerHTML = html;
 }
@@ -1481,7 +1481,7 @@ function renderRPS(data, key) {
     const lr = data.lastResult;
     const msg = lr.winner === 'draw' ? 'Draw!' : lr.winner === user ? 'You won!' : NAMES[partner] + ' won!';
     html += `<div class="rps-last">
-      <span>${RPS_ICONS[lr.him]}</span> vs <span>${RPS_ICONS[lr.her]}</span> — ${msg}
+      <span>${RPS_ICONS[lr.him]}</span> vs <span>${RPS_ICONS[lr.her]}</span> - ${msg}
     </div>`;
   }
 
@@ -1715,7 +1715,7 @@ function render21Q(data, key) {
   if (data.phase === 'setup') {
     if (isThinker) {
       html += `<div class="q21-setup">
-        <div class="game-status">Think of something — a person, place, or thing</div>
+        <div class="game-status">Think of something - a person, place, or thing</div>
         <input id="q21-answer-input" class="quiz-q" placeholder="Type your secret answer..." onkeydown="if(event.key==='Enter')set21QAnswer()">
         <button class="game-btn" onclick="set21QAnswer()">Lock it in</button>
       </div>`;
@@ -1757,7 +1757,7 @@ function render21Q(data, key) {
       </div>`;
     } else if (!isThinker && data.questionsLeft <= 0) {
       html += `<div class="q21-guess-section">
-        <div class="game-status">No questions left — make your guess!</div>
+        <div class="game-status">No questions left - make your guess!</div>
         <input id="q21-final-guess" class="quiz-q" placeholder="Your final guess...">
         <button class="game-btn" onclick="guess21Q()">Final Guess</button>
       </div>`;
@@ -1968,7 +1968,7 @@ function renderWordChain(data, key) {
       </div>`;
       html += `<button class="game-btn secondary" onclick="passWordChain()" style="margin-top:8px;width:100%">I give up</button>`;
     } else {
-      html += `<div class="game-status turn">Waiting for ${NAMES[partner]} — next letter: "${nextLetter}"</div>`;
+      html += `<div class="game-status turn">Waiting for ${NAMES[partner]} - next letter: "${nextLetter}"</div>`;
     }
   } else {
     html += `<div class="game-status">${data.winner === user ? 'You won!' : NAMES[partner] + ' won!'} Chain: ${words.length - 1} words</div>`;
@@ -2035,7 +2035,7 @@ async function answerTrivia(answer) {
 
   let updates = { scores, answers };
   if (partnerAnswered) {
-    // Both answered — move to next question
+    // Both answered - move to next question
     if (data.current + 1 >= data.questions.length) {
       // Game over
       const w = scores[user] > scores[partner] ? user : scores[partner] > scores[user] ? partner : 'draw';
@@ -2090,7 +2090,7 @@ function renderTrivia(data, key) {
     // Finished
     const w = data.winner;
     html += `<div class="game-status">${w === 'draw' ? "It's a tie!" : (w === user ? 'You won!' : NAMES[partner] + ' won!')}</div>`;
-    html += `<div style="text-align:center;font-size:14px;color:var(--t2);margin:8px 0">${scores[user] || 0} — ${scores[partner] || 0}</div>`;
+    html += `<div style="text-align:center;font-size:14px;color:var(--t2);margin:8px 0">${scores[user] || 0} - ${scores[partner] || 0}</div>`;
     html += `<div class="game-actions"><button class="game-btn" onclick="newTrivia()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
   }
   el.innerHTML = html;
@@ -2205,7 +2205,7 @@ function renderWar(data, key) {
   html += '</div>';
 
   if (data.lastWinner && data.phase === 'flip') {
-    const msg = data.lastWinner === 'war' ? 'WAR! Tied — play again!' : ((data.lastWinner === 'p1') === isP1 ? 'You won the round!' : NAMES[partner] + ' won the round!');
+    const msg = data.lastWinner === 'war' ? 'WAR! Tied - play again!' : ((data.lastWinner === 'p1') === isP1 ? 'You won the round!' : NAMES[partner] + ' won the round!');
     html += `<div class="war-result">${msg}</div>`;
   }
 
@@ -2439,7 +2439,7 @@ async function askGoFish(rank) {
     const newMyHand = [...myHand, ...found];
     hands[user] = newMyHand;
     hands[partner] = notFound;
-    action = `${NAMES[user]} asked for ${rank}s — got ${found.length}!`;
+    action = `${NAMES[user]} asked for ${rank}s - got ${found.length}!`;
     const result = checkBooks(hands[user]);
     const bks = data.books || { him: 0, her: 0 };
     bks[user] += result.books;
@@ -2453,7 +2453,7 @@ async function askGoFish(rank) {
       await db.ref('games/sessions/' + activeGameKey).update(updates);
     }
   } else {
-    action = `${NAMES[user]} asked for ${rank}s — Go Fish!`;
+    action = `${NAMES[user]} asked for ${rank}s - Go Fish!`;
     if (deck.length) {
       const drawn = deck.shift();
       myHand.push(drawn);
@@ -2511,7 +2511,7 @@ function renderGoFish(data, key) {
     html += '</div>';
   } else {
     html += `<div class="game-status">${data.winner === 'draw' ? "It's a tie!" : (data.winner === user ? 'You won!' : NAMES[partner] + ' won!')}</div>`;
-    html += `<div style="text-align:center;font-size:14px;color:var(--t2);margin:8px 0">${books[user]} — ${books[partner]} books</div>`;
+    html += `<div style="text-align:center;font-size:14px;color:var(--t2);margin:8px 0">${books[user]} - ${books[partner]} books</div>`;
     html += `<div class="game-actions"><button class="game-btn" onclick="newGoFish()">Play Again</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
   }
   el.innerHTML = html;
@@ -2719,7 +2719,7 @@ function renderBattleship(data, key) {
   </div>`;
 
   if (data.status === 'active') {
-    html += `<div class="game-status${isMyTurn ? '' : ' turn'}">${isMyTurn ? 'Your turn — fire!' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
+    html += `<div class="game-status${isMyTurn ? '' : ' turn'}">${isMyTurn ? 'Your turn - fire!' : 'Waiting for ' + NAMES[partner] + '...'}</div>`;
   }
 
   // Enemy grid (where I shoot)
@@ -2786,7 +2786,7 @@ const CHALLENGE_PACKS = {
   comm14: {
     name: '14-Day Communication', emoji: '💬', days: 14,
     tasks: [
-      'Share your high and low of the day — listen without fixing',
+      'Share your high and low of the day - listen without fixing',
       'Ask "What can I do to make your day better?"',
       'Share a childhood memory you\'ve never told them',
       'Practice active listening: repeat back what they said',
@@ -2814,7 +2814,7 @@ const CHALLENGE_PACKS = {
       'Try a new workout or stretch routine together',
       'Visit a local shop you\'ve never been to',
       'Cook a dish from a country you want to visit',
-      'Have a picnic — even if it\'s indoors',
+      'Have a picnic - even if it\'s indoors',
       'Stargaze or watch the sunset together',
       'Draw portraits of each other (no skill required!)',
       'Create a time capsule with items from today',
@@ -2825,7 +2825,7 @@ const CHALLENGE_PACKS = {
       'Rearrange a room in your home together',
       'Learn a TikTok dance or song together',
       'Do each other\'s morning routine for a day',
-      'Plan your dream trip — no budget limits!'
+      'Plan your dream trip - no budget limits!'
     ]
   },
   intimacy30: {
@@ -2834,7 +2834,7 @@ const CHALLENGE_PACKS = {
       'Hold hands for an entire walk', 'Give a 10-minute massage',
       'Slow dance in the kitchen to a love song', 'Share your favorite physical touch',
       'Fall asleep holding each other', 'Express one thing that attracts you to them',
-      'Create a "date jar" with ideas for just the two of you', 'Kiss for 30 seconds — slowly',
+      'Create a "date jar" with ideas for just the two of you', 'Kiss for 30 seconds - slowly',
       'Shower or bath together', 'Write a letter about what intimacy means to you',
       'Share a fantasy or dream you have', 'Touch foreheads and breathe together for 2 min',
       'Try a new form of affection you haven\'t tried', 'Tell them 3 things about their body you love',
@@ -2869,7 +2869,7 @@ const CHALLENGE_PACKS = {
       'Create a TikTok or silly video together', 'Have a themed dinner night',
       'Go on a scavenger hunt around your neighborhood', 'Play truth or dare',
       'Have a bake-off challenge', 'Learn a magic trick and perform for each other',
-      'Have a photo shoot — dress up fancy!', 'Write and perform a 2-person skit'
+      'Have a photo shoot - dress up fancy!', 'Write and perform a 2-person skit'
     ]
   }
 };
@@ -2888,7 +2888,7 @@ function renderChallenges(data) {
 
   const active = data.active;
   if (!active) {
-    activeEl.innerHTML = '<div class="empty">No active challenge — start one below!</div>';
+    activeEl.innerHTML = '<div class="empty">No active challenge - start one below!</div>';
   } else {
     const pack = CHALLENGE_PACKS[active.packId];
     if (!pack) { activeEl.innerHTML = ''; return; }
@@ -3013,7 +3013,7 @@ async function confirmAbandonChallenge() {
 }
 
 // ===== LISTEN TOGETHER =====
-// Real-time music sync — when one partner shares a song, both hear it live
+// Real-time music sync - when one partner shares a song, both hear it live
 var LT = { active: false, listener: null, embedReady: false };
 
 function ltParseMusicLink(url) {
@@ -3041,7 +3041,7 @@ function ltShareSong() {
   if (!url) { toast('Paste a music link first'); return; }
   var parsed = ltParseMusicLink(url);
   if (!parsed) { toast('Paste a valid Spotify, YouTube, or Apple Music link'); return; }
-  // Write session to Firebase — both partners will pick it up
+  // Write session to Firebase - both partners will pick it up
   var session = {
     platform: parsed.platform,
     type: parsed.type,
@@ -3055,7 +3055,7 @@ function ltShareSong() {
   };
   db.ref('listenTogether').set(session);
   input.value = '';
-  toast('Song shared — listening together');
+  toast('Song shared - listening together');
   if (navigator.vibrate) navigator.vibrate(50);
 }
 

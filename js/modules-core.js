@@ -473,12 +473,12 @@ function buildAISystemPrompt() {
 WHO THEY ARE:
 - ${NAMES.him} (him) is from Togo, West Africa. Ewe, Mina, French. Togolese traditions, values, and food.
 - ${NAMES.her} (her) is from Texas. Southern roots, Texan culture, American traditions.
-- They're an intercultural couple — young, ambitious, building toward marriage and family.
+- They're an intercultural couple - young, ambitious, building toward marriage and family.
 
 YOUR ROLE:
 - Their trusted friend. Part of the inner circle. Not a chatbot.
 - Be warm, honest, direct, and concise. Use their names.
-- You have TOOLS that let you read and write data in the app. Use them proactively when the conversation calls for it — don't just chat, take action.
+- You have TOOLS that let you read and write data in the app. Use them proactively when the conversation calls for it - don't just chat, take action.
 - When a user tells you how they feel, log their mood. When they mention spending, log an expense. Be proactive.`;
 
   // Add context-specific data
@@ -831,7 +831,7 @@ function listenTaps() {
 function renderTapFeed(taps) {
   const el = document.getElementById('tap-feed');
   if (!el) return;
-  if (!taps.length) { el.innerHTML = '<div class="empty">Send a quick tap — let them know you are thinking of them</div>'; return; }
+  if (!taps.length) { el.innerHTML = '<div class="empty">Send a quick tap - let them know you are thinking of them</div>'; return; }
   el.innerHTML = taps.slice(0, 15).map(t => {
     const time = new Date(t.timestamp);
     const ts = timeAgo(time);

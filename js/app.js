@@ -130,7 +130,7 @@ async function loadProfiles() {
   });
 }
 
-// Photo that partner chose for you — listen for changes
+// Photo that partner chose for you - listen for changes
 let myPhoto = '';
 function listenPhoto() {
   if (!db || !user) return;
@@ -149,7 +149,7 @@ function applyPhoto() {
       ? '<img src="' + myPhoto + '" class="welcome-photo-img" alt="">'
       : '';
   }
-  // Dashboard partner avatar (show PARTNER's photo of you — but on your dashboard
+  // Dashboard partner avatar (show PARTNER's photo of you - but on your dashboard
   // you see the photo you chose for THEM, so load partner's photo)
 }
 
@@ -200,7 +200,7 @@ function needsOnboarding() {
 
 // ===== ONBOARDING FLOW =====
 // Uses DOM elements defined in index.html (not innerHTML) so mobile
-// keyboards work reliably — iOS won't open keyboards for dynamically
+// keyboards work reliably - iOS won't open keyboards for dynamically
 // injected inputs inside position:fixed containers.
 let onboardStep = 0;
 let onboardData = {
@@ -300,7 +300,7 @@ function renderDots(active) {
   ).join('');
 }
 
-// Smooth scroll for input focus — keeps input visible above keyboard
+// Smooth scroll for input focus - keeps input visible above keyboard
 function obScrollToInput(el) {
   setTimeout(function() {
     var rect = el.getBoundingClientRect();
@@ -449,7 +449,7 @@ function renderOnboardStep() {
     // Step 0: Welcome
     if (onboardStep === 0) {
       title.textContent = 'Your Space Awaits';
-      sub.innerHTML = "Welcome to <strong>Moi & Toi</strong> — a private space just for you two.<br>Let's set up your world together.";
+      sub.innerHTML = "Welcome to <strong>Moi & Toi</strong>, a private space just for you two.<br>Let's set up your world together.";
       btn.textContent = "Let's go";
     }
     // Step 1: Name
@@ -465,7 +465,7 @@ function renderOnboardStep() {
     else if (onboardStep === 2) {
       emoji.innerHTML = OB_ICONS.heart; emoji.style.display = '';
       title.textContent = 'A name for ' + (isHer ? 'him' : 'her');
-      sub.textContent = "Pet name, nickname, or real name — whatever feels right.";
+      sub.textContent = "Pet name, nickname, or real name. Whatever feels right.";
       nickIn.placeholder = isHer ? 'e.g. Baby, Babe, His name...' : 'e.g. Babe, Love, Her name...';
       nickIn.style.display = ''; nickIn.value = onboardData.nickname;
       setTimeout(function(){ nickIn.focus(); }, 500);
@@ -553,7 +553,7 @@ function renderOnboardStep() {
     else if (onboardStep === 10) {
       emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
       title.textContent = 'Morning messages';
-      sub.innerHTML = "Every morning, " + esc(pNick) + " wakes up to a personalized message — a compliment, affirmation, or poem.";
+      sub.innerHTML = "Every morning, " + esc(pNick) + " wakes up to a personalized message: a compliment, affirmation, or poem.";
       morningCard.style.display = '';
       document.getElementById('ob-morning-toggle').checked = onboardData.morningMsgEnabled;
       var customTA = document.getElementById('ob-morning-custom');
@@ -575,7 +575,7 @@ function renderOnboardStep() {
     else if (onboardStep === 11) {
       emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
       title.textContent = 'Living Sky';
-      sub.innerHTML = "Your app has a living sky — sunrise, sunset, stars, birds, and fireflies that follow real time.";
+      sub.innerHTML = "Your app has a living sky: sunrise, sunset, stars, birds, and fireflies that follow real time.";
       skyCard.style.display = '';
       document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
       btn.textContent = 'Next';
@@ -584,7 +584,7 @@ function renderOnboardStep() {
     else if (onboardStep === 12) {
       emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
       title.textContent = 'Your environment';
-      sub.innerHTML = "Pick the landscape that feels like home — it shapes your sky, creatures, and sounds.";
+      sub.innerHTML = "Pick the landscape that feels like home. It shapes your sky, creatures, and sounds.";
       skyThemeCard.style.display = '';
       // Pre-select based on user preference
       var defaultTheme = isHer ? 'beach' : 'mountain';
@@ -600,7 +600,7 @@ function renderOnboardStep() {
       bar.style.width = '95%';
       emoji.innerHTML = OB_ICONS.party; emoji.style.display = '';
       title.textContent = "You're all set!";
-      sub.innerHTML = "Let me give you a quick tour of your new space — it takes 30 seconds.";
+      sub.innerHTML = "Let me give you a quick tour of your new space. It takes 30 seconds.";
       btn.textContent = 'Start tour';
     }
     // Step 14: Finish
@@ -628,7 +628,7 @@ function onboardNext() {
     if (!bday) { toast('Please enter your birthday'); return; }
     onboardData.birthday = bday;
   }
-  // Step 4 is photo — optional
+  // Step 4 is photo - optional
   if (onboardStep === 5) {
     var anniv = document.getElementById('ob-anniversary').value;
     if (anniv) onboardData.anniversary = anniv;
@@ -802,7 +802,7 @@ const TOUR_STEPS = [
   {
     target: '.hero-card-us',
     title: 'Your Pulse',
-    text: 'See your relationship at a glance — days together, daily streak, and how you\'re both feeling. Tap it for more detail.',
+    text: 'See your relationship at a glance: days together, daily streak, and how you\'re both feeling. Tap it for more detail.',
     position: 'bottom',
     page: 'dash'
   },
@@ -824,7 +824,7 @@ const TOUR_STEPS = [
   {
     target: '[data-p="together"]',
     title: 'Together Tab',
-    text: 'Your couple activities — love letters, date night ideas, fun games, quizzes, and relationship check-ins.',
+    text: 'Your couple activities: love letters, date night ideas, fun games, quizzes, and relationship check-ins.',
     position: 'top',
     page: 'dash',
     navigate: 'together'
@@ -847,7 +847,7 @@ const TOUR_STEPS = [
   {
     target: '[data-p="plan"]',
     title: 'Plan Tab',
-    text: 'Shared calendar, bucket list, finances, and dream home planning — build your future together.',
+    text: 'Shared calendar, bucket list, finances, and dream home planning. Build your future together.',
     position: 'top',
     page: 'wellness',
     navigate: 'plan'
@@ -895,7 +895,7 @@ function positionTourStep(step) {
   var textEl = document.getElementById('tour-text');
   var countEl = document.getElementById('tour-count');
 
-  // Find target — try multiple selectors separated by comma
+  // Find target - try multiple selectors separated by comma
   var target = null;
   var selectors = step.target.split(',');
   for (var i = 0; i < selectors.length; i++) {
@@ -932,7 +932,7 @@ function positionTourStep(step) {
       positionTooltip(tooltip, r2, step.position);
     }, 350);
   } else {
-    // No visible target — center the tooltip, hide spotlight
+    // No visible target - center the tooltip, hide spotlight
     spotlight.style.display = 'none';
     tooltip.style.top = '50%';
     tooltip.style.left = '50%';
@@ -1129,7 +1129,7 @@ async function clearAllData() {
     if (apiKey) await db.ref('profiles/apiKey').set(apiKey);
     // Clear local caches
     ['met_last_reminder', 'met_recent_pages'].forEach(k => localStorage.removeItem(k));
-    toast('All data cleared — onboarding will restart');
+    toast('All data cleared - onboarding will restart');
     setTimeout(() => location.reload(), 1000);
   } catch (e) {
     toast('Clear failed');

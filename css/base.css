@@ -8,12 +8,12 @@ button,a,[onclick],[role="button"]{touch-action:manipulation}
 /* Hide bottom nav when keyboard is open so it doesn't overlay content */
 body.keyboard-open .bnav{transform:translateY(100%);pointer-events:none}
 body.keyboard-open .shell{padding-bottom:0}
-/* Lock body scroll when modal is open — prevents iOS from scrolling behind fixed overlay */
+/* Lock body scroll when modal is open - prevents iOS from scrolling behind fixed overlay */
 body.modal-open{overflow:hidden;position:fixed;width:100%;height:100%}
 /* Reposition modal to top when keyboard opens so input stays visible */
 body.keyboard-open .generic-modal-overlay{align-items:flex-start;padding-top:20px}
 body.keyboard-open .generic-modal-box{max-height:calc(var(--vv-h, 50vh) - 40px)}
-/* ===== IMMERSIVE BACKGROUND — aurora + particles + noise ===== */
+/* ===== IMMERSIVE BACKGROUND - aurora + particles + noise ===== */
 body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:
     radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196,120,74,0.08) 0%, transparent 70%),
@@ -35,7 +35,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
   75%{background-position:50% 80%,60% 10%,20% 50%,40% 40%}
   100%{background-position:100% 100%,0% 100%,50% 0%,60% 70%}}
 
-/* ===== SKY SCENE — living textured background ===== */
+/* ===== SKY SCENE - living textured background ===== */
 .sky-scene{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;transition:opacity 1.5s ease;
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%);
   mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%)}
@@ -63,7 +63,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
   animation:flareDrift 10s ease-in-out infinite alternate}
 @keyframes flareDrift{0%{opacity:.3;transform:translate(0,0) scale(1)}100%{opacity:.6;transform:translate(10px,-5px) scale(1.1)}}
 
-/* Clouds — volumetric */
+/* Clouds - volumetric */
 .sky-cloud{position:absolute;opacity:0;animation:cloudDrift var(--cloud-dur,60s) linear var(--cloud-delay,0s) infinite}
 .sky-cloud-body{position:relative;background:rgba(255,255,255,.55);border-radius:50%;filter:blur(1px)}
 .sky-cloud-puff{position:absolute;background:rgba(255,255,255,.45);border-radius:50%}
@@ -146,7 +146,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
   90%{opacity:.4}
   100%{transform:translateY(-10vh) scale(1);opacity:0}}
 
-/* Page-specific ambient moods — richer aurora colors */
+/* Page-specific ambient moods - richer aurora colors */
 body[data-page="mood"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(196,120,74,0.12) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(212,148,106,0.09) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(176,138,80,0.05) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(224,168,130,0.04) 0%,transparent 70%),var(--bg)}
 body[data-page="games"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(58,40,96,0.10) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(92,72,136,0.08) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(212,98,122,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(123,111,166,0.05) 0%,transparent 70%),var(--bg)}
 body[data-page="connect"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(212,98,122,0.08) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(196,120,74,0.08) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(176,138,80,0.05) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(140,66,40,0.04) 0%,transparent 70%),var(--bg)}
@@ -203,7 +203,7 @@ body[data-mode="us"] .me-only{display:none!important}
 .card-hero .ch-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-top:6px;position:relative;z-index:1}
 .card-hero .ch-sub{font-size:13px;opacity:.85;margin-top:6px;line-height:1.5;position:relative;z-index:1}
 
-/* ===== ICON BADGES — styled emoji wrappers ===== */
+/* ===== ICON BADGES - styled emoji wrappers ===== */
 .icon-badge{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:14px;font-size:18px;flex-shrink:0;transition:transform .2s cubic-bezier(.2,.8,.3,1)}
 .icon-badge:active{transform:scale(1.1)}
 .icon-badge.ib-gold{background:linear-gradient(135deg,rgba(28,43,74,.08),rgba(28,43,74,.03));border:1px solid rgba(28,43,74,.06)}
@@ -213,14 +213,14 @@ body[data-mode="us"] .me-only{display:none!important}
 .icon-badge.ib-lavender{background:linear-gradient(135deg,rgba(123,111,166,.10),rgba(123,111,166,.03));border:1px solid rgba(123,111,166,.08)}
 .icon-badge.ib-amber{background:linear-gradient(135deg,rgba(176,138,80,.10),rgba(176,138,80,.03));border:1px solid rgba(176,138,80,.08)}
 
-/* Card entrance removed — was causing twitching on page switch */
+/* Card entrance removed - was causing twitching on page switch */
 
 /* ===== MICRO-INTERACTIONS ===== */
 button:active,.dq-submit:active,.lbtn:active,.mood-submit:active,.letter-send:active,.chat-send:active,.wl-buy:active,.ms-save:active,.lsubmit:active,.dn-action:active{transform:scale(0.96)!important;transition:transform .1s cubic-bezier(.2,.8,.3,1)}
 input:focus,textarea:focus,select:focus{box-shadow:var(--focus-ring);animation:focusPulse .3s ease}
 @keyframes focusPulse{0%{box-shadow:0 0 0 0 rgba(28,43,74,.2)}50%{box-shadow:0 0 0 6px rgba(28,43,74,.08)}100%{box-shadow:var(--focus-ring)}}
 
-/* Staggered list item entry — applied to dynamic lists and hub grids */
+/* Staggered list item entry - applied to dynamic lists and hub grids */
 @keyframes itemSlideIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
 .stagger-in>*,.hub-feature-grid>*,.hub-list-group>*,.explore-quick-grid>*{animation:itemSlideIn .3s ease both}
 .stagger-in>*:nth-child(1),.hub-feature-grid>*:nth-child(1),.hub-list-group>*:nth-child(1),.explore-quick-grid>*:nth-child(1){animation-delay:0s}
@@ -241,12 +241,12 @@ input:focus,textarea:focus,select:focus{box-shadow:var(--focus-ring);animation:f
 .bl-card:active,.wl-card:active{transform:scale(.98);transition:transform .1s}
 .dash-card:active{transform:scale(.985);transition:transform .1s}
 
-/* Checkbox/toggle tap area boost — minimum 44px touch target */
+/* Checkbox/toggle tap area boost - minimum 44px touch target */
 .fdn-agree-item{min-height:44px;display:flex;align-items:center}
 .pg-goal{min-height:44px;display:flex;align-items:center}
 .fam-discuss-item{min-height:44px}
 
-/* Empty state styling — defined in components.css */
+/* Empty state styling - defined in components.css */
 
 /* Success pulse for completed items */
 @keyframes successPulse{0%{box-shadow:0 0 0 0 rgba(45,138,86,.3)}100%{box-shadow:0 0 0 12px transparent}}
@@ -259,4 +259,4 @@ input:focus,textarea:focus,select:focus{box-shadow:var(--focus-ring);animation:f
 /* Mood-reactive glow on dashboard */
 .pg.on .ctn{box-shadow:inset 0 0 80px var(--mood-glow, transparent)}
 
-/* Enhanced page transitions — overridden by directional transitions in nav.css */
+/* Enhanced page transitions - overridden by directional transitions in nav.css */

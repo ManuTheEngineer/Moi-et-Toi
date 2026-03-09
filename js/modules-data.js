@@ -762,7 +762,7 @@ function initPresence() {
   // Listen to partner presence (green dot only when online, hidden when offline)
   db.ref('presence/' + partner).on('value', snap => {
     const p = snap.val() || {};
-    // Dashboard dot — green when online, hidden when offline
+    // Dashboard dot - green when online, hidden when offline
     const dashDot = document.getElementById('dash-presence-dot');
     if (dashDot) dashDot.classList.toggle('online', !!p.online);
     const phName = document.getElementById('ph-presence-name');
@@ -781,14 +781,14 @@ const ID_QUIZ_QUESTIONS = [
   { id: 'love_give', q: 'How do you prefer to show love?', type: 'choice', opts: ['Words of affirmation', 'Acts of service', 'Physical touch', 'Quality time', 'Gift giving'] },
   { id: 'love_receive', q: 'How do you prefer to receive love?', type: 'choice', opts: ['Words of affirmation', 'Acts of service', 'Physical touch', 'Quality time', 'Receiving gifts'] },
   { id: 'morning', q: 'Are you a morning or night person?', type: 'choice', opts: ['Early bird', 'Night owl', 'Depends on the day'] },
-  { id: 'social_battery', q: 'How quickly does your social battery drain?', type: 'choice', opts: ['Very fast — need lots of alone time', 'Moderate — balanced', 'Slow — love being around people'] },
+  { id: 'social_battery', q: 'How quickly does your social battery drain?', type: 'choice', opts: ['Very fast - need lots of alone time', 'Moderate - balanced', 'Slow - love being around people'] },
   { id: 'stress_relief', q: 'What helps you de-stress?', type: 'multi', opts: ['Exercise', 'Being alone', 'Talking to someone', 'Music', 'Nature', 'Sleep', 'Creative outlet', 'Food'] },
   { id: 'apology', q: 'What matters most in an apology?', type: 'choice', opts: ["Hearing 'I\\'m sorry'", 'Understanding what went wrong', 'Changed behavior', 'Making amends/gestures'] },
   { id: 'values', q: 'Your top 3 values?', type: 'multi', opts: ['Family', 'Honesty', 'Loyalty', 'Adventure', 'Faith', 'Growth', 'Freedom', 'Security', 'Creativity', 'Kindness'] },
   { id: 'dream_life', q: 'Your ideal life in 5 years?', type: 'text' },
   { id: 'dealbreaker', q: "What's a relationship dealbreaker for you?", type: 'text' },
   { id: 'happiest', q: 'When are you happiest?', type: 'text' },
-  { id: 'attachment', q: 'How would you describe your attachment style?', type: 'choice', opts: ['Secure — comfortable with closeness', 'Anxious — crave reassurance', 'Avoidant — value independence', 'Not sure'] },
+  { id: 'attachment', q: 'How would you describe your attachment style?', type: 'choice', opts: ['Secure - comfortable with closeness', 'Anxious - crave reassurance', 'Avoidant - value independence', 'Not sure'] },
   { id: 'communication', q: 'Preferred communication style?', type: 'choice', opts: ['Direct and blunt', 'Gentle and diplomatic', 'Through humor', 'Through actions more than words'] },
   { id: 'energy', q: 'Perfect weekend?', type: 'choice', opts: ['Stay in, relax, recharge', 'Go out, explore, socialize', 'Mix of both', 'Whatever my partner wants'] }
 ];

@@ -42,7 +42,7 @@
     <div class="lbl" id="welcome-greeting"></div>
     <button onclick="finishLogin()" class="login-btn">Enter</button>
   </div>
-  <!-- Onboarding steps (inputs in DOM from load — keyboard works) -->
+  <!-- Onboarding steps (inputs in DOM from load, keyboard works) -->
   <div id="onboard-steps" class="login-inner d-none">
     <div class="onboard-progress"><div class="onboard-bar" id="ob-bar"></div></div>
     <div class="ob-content ob-enter" id="ob-content">
@@ -198,7 +198,7 @@
     <div class="ph-title" id="ph-title"></div>
   </div>
 </header>
-<!-- Bottom Nav — restructured with 5 new groups -->
+<!-- Bottom Nav - restructured with 5 new groups -->
 <nav class="bnav" role="navigation" aria-label="Main navigation">
   <div class="bnav-indicator" id="bnav-indicator"></div>
   <button class="bn on" data-p="dash" onclick="go('dash')"><span class="ni"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V14h6v7"/></svg></span><span class="nl">Home</span><span class="bn-badge" id="badge-dash"></span></button>
@@ -882,7 +882,7 @@
   </div>
 
   <div class="chat-messages" id="chat-messages">
-    <div class="chat-msg ai"><div class="msg-from">Claude</div>Hey! I'm your shared AI assistant. I can take actions in the app — log moods, track expenses, send notes, check stats, and more. Try asking me something or switch my context above for specialized help.</div>
+    <div class="chat-msg ai"><div class="msg-from">Claude</div>Hey! I'm your shared AI assistant. I can take actions in the app: log moods, track expenses, send notes, check stats, and more. Try asking me something or switch my context above for specialized help.</div>
   </div>
   <div class="typing" id="typing">Claude is thinking...</div>
   <div class="chat-input-row">
@@ -1011,7 +1011,7 @@
 
   <!-- Listen Together -->
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Listen Together</div></div>
-  <div class="form-hint" style="margin:-6px 0 6px">Share a song — both of you hear it live</div>
+  <div class="form-hint" style="margin:-6px 0 6px">Share a song. Both of you hear it live</div>
   <div class="lt-card card" id="lt-section">
     <div class="lt-status" id="lt-status">
       <span class="lt-status-dot" id="lt-status-dot"></span>
@@ -1212,7 +1212,7 @@
   <div class="wyr-card" id="wyr-card">
     <div class="dq-category">Would You Rather</div>
     <button class="wyr-option" id="wyr-a" onclick="pickWYR('A')"></button>
-    <div class="wyr-vs">— or —</div>
+    <div class="wyr-vs">or</div>
     <button class="wyr-option" id="wyr-b" onclick="pickWYR('B')"></button>
     <div class="wyr-result" id="wyr-result"></div>
   </div>
@@ -3314,7 +3314,7 @@
     <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">When We Disagree</div></div>
     <div class="fdn-conflict-card">
       <div class="fdn-conflict-step"><span class="fdn-num">1</span><strong>Pause.</strong> Take 20 minutes apart to cool down. No texting in anger.</div>
-      <div class="fdn-conflict-step"><span class="fdn-num">2</span><strong>Own your part.</strong> Start with "I feel ___ when ___" — no blame.</div>
+      <div class="fdn-conflict-step"><span class="fdn-num">2</span><strong>Own your part.</strong> Start with "I feel ___ when ___." No blame.</div>
       <div class="fdn-conflict-step"><span class="fdn-num">3</span><strong>Listen to understand</strong>, not to respond. Repeat back what you heard.</div>
       <div class="fdn-conflict-step"><span class="fdn-num">4</span><strong>Find the need.</strong> Behind every complaint is an unmet need. Find it.</div>
       <div class="fdn-conflict-step"><span class="fdn-num">5</span><strong>Repair.</strong> Say what you'll do differently. Mean it. Follow through.</div>
@@ -3465,7 +3465,7 @@
     <div id="wl-mine" class="stagger-in"><div class="empty">Drop hints here</div></div>
 
     <div class="sec-head mt-24"><div class="sec-dot sd-gold"></div><div class="sec-title"><span class="pname"></span>'s Wishlist</div></div>
-    <div id="wl-theirs" class="stagger-in"><div class="empty">Nothing here yet — they're being mysterious</div></div>
+    <div id="wl-theirs" class="stagger-in"><div class="empty">Nothing here yet. They're being mysterious</div></div>
   </div>
 
 </div>
@@ -3650,7 +3650,7 @@
   <!-- Sky Theme -->
   <div class="form-card">
     <span class="settings-label">Sky Environment</span>
-    <div class="form-hint mt-2">Choose your living sky theme — beach, mountain, or a blend of both</div>
+    <div class="form-hint mt-2">Choose your living sky theme: beach, mountain, or a blend of both</div>
     <div class="sky-theme-grid mt-8" id="set-sky-theme">
       <button class="sky-theme-btn" data-theme="beach" onclick="setSkyTheme('beach')">
         <span class="sky-theme-icon">🏖</span><span class="sky-theme-name">Beach</span>
@@ -3672,7 +3672,7 @@
     <div class="settings-row">
       <div>
         <span class="settings-label">Living Weather</span>
-        <div class="form-hint mt-2">Real weather from your location — rain, snow, sun, wind and more</div>
+        <div class="form-hint mt-2">Real weather from your location: rain, snow, sun, wind and more</div>
       </div>
       <button class="settings-btn btn-lavender" id="set-location-btn" onclick="handleLocationSettingsBtn()">Enable</button>
     </div>
@@ -3684,7 +3684,7 @@
     <div class="settings-row mb-0">
       <div>
         <span class="settings-label">Nature Sounds</span>
-        <div class="form-hint mt-2">Ambient audio — wind, rain, birdsong, waves and creatures</div>
+        <div class="form-hint mt-2">Ambient audio: wind, rain, birdsong, waves and creatures</div>
       </div>
       <label class="toggle-switch">
         <input type="checkbox" id="set-ambient-audio" onchange="toggleAmbientAudio(this.checked)">

@@ -24,7 +24,7 @@
     onVVResize();
   }
 
-  // Dismiss keyboard on scroll — only on main page, not in modals or forms
+  // Dismiss keyboard on scroll - only on main page, not in modals or forms
   var scrollTick = false;
   window.addEventListener('scroll', function() {
     if (!scrollTick) {
@@ -60,14 +60,20 @@ function getTimeOfDay() {
 
 function updateTimeOfDay() {
   var time = getTimeOfDay();
+  var prev = document.body.getAttribute('data-time');
   document.body.setAttribute('data-time', time);
-  // Update browser chrome color to match theme
+  // Update browser chrome color to match theme + sky theme
   var themeColors = {
-    dawn: '#F0E6E8', morning: '#F5F0E6', afternoon: '#EFF3F5',
-    golden: '#F2E8D8', evening: '#2A2440', night: '#1A1828'
+    mixed:    { dawn: '#F0E6E8', morning: '#F5F0E6', afternoon: '#EFF3F5', golden: '#F2E8D8', evening: '#2A2440', night: '#1A1828' },
+    beach:    { dawn: '#F2E4E0', morning: '#F8F0E2', afternoon: '#ECF4F6', golden: '#F4E4D0', evening: '#28223E', night: '#181828' },
+    mountain: { dawn: '#E8E6F0', morning: '#EEF0E8', afternoon: '#EAF0F6', golden: '#EEE4D8', evening: '#242040', night: '#161826' }
   };
+  var sky = (typeof currentSkyTheme !== 'undefined' && currentSkyTheme) || 'mixed';
+  var colors = themeColors[sky] || themeColors.mixed;
   var meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = themeColors[time] || '#F5F0EB';
+  if (meta) meta.content = colors[time] || '#F5F0EB';
+  // Re-render orbs when time changes to match new palette
+  if (prev && prev !== time && typeof spawnOrbs === 'function') spawnOrbs();
 }
 
 // Update every 5 minutes
@@ -145,14 +151,37 @@ function spawnOrbs() {
   const container = document.getElementById('particles');
   if (!container) return;
 
-  const orbColors = {
-    dawn: ['rgba(255,120,150,0.12)', 'rgba(180,140,255,0.10)', 'rgba(255,200,140,0.08)'],
-    morning: ['rgba(255,200,100,0.10)', 'rgba(255,160,80,0.08)', 'rgba(255,220,160,0.07)'],
-    afternoon: ['rgba(100,180,255,0.08)', 'rgba(80,200,200,0.07)', 'rgba(160,220,255,0.06)'],
-    golden: ['rgba(255,140,50,0.12)', 'rgba(255,100,80,0.10)', 'rgba(255,180,60,0.08)'],
-    evening: ['rgba(120,80,200,0.10)', 'rgba(200,100,150,0.08)', 'rgba(212,149,106,0.07)'],
-    night: ['rgba(60,80,180,0.08)', 'rgba(100,60,180,0.07)', 'rgba(0,140,140,0.05)']
+  var sky = (typeof currentSkyTheme !== 'undefined' && currentSkyTheme) || 'mixed';
+
+  // Theme-aware orb palettes
+  const orbPalettes = {
+    mixed: {
+      dawn: ['rgba(255,120,150,0.12)', 'rgba(180,140,255,0.10)', 'rgba(255,200,140,0.08)'],
+      morning: ['rgba(255,200,100,0.10)', 'rgba(255,160,80,0.08)', 'rgba(255,220,160,0.07)'],
+      afternoon: ['rgba(100,180,255,0.08)', 'rgba(80,200,200,0.07)', 'rgba(160,220,255,0.06)'],
+      golden: ['rgba(255,140,50,0.12)', 'rgba(255,100,80,0.10)', 'rgba(255,180,60,0.08)'],
+      evening: ['rgba(120,80,200,0.10)', 'rgba(200,100,150,0.08)', 'rgba(212,149,106,0.07)'],
+      night: ['rgba(60,80,180,0.08)', 'rgba(100,60,180,0.07)', 'rgba(0,140,140,0.05)']
+    },
+    beach: {
+      dawn: ['rgba(255,160,120,0.14)', 'rgba(255,200,140,0.10)', 'rgba(200,140,100,0.08)'],
+      morning: ['rgba(255,220,130,0.12)', 'rgba(100,210,230,0.10)', 'rgba(255,240,180,0.08)'],
+      afternoon: ['rgba(60,200,240,0.10)', 'rgba(40,220,220,0.09)', 'rgba(200,240,250,0.07)'],
+      golden: ['rgba(255,130,40,0.14)', 'rgba(255,100,50,0.12)', 'rgba(255,180,80,0.10)'],
+      evening: ['rgba(100,60,160,0.10)', 'rgba(180,100,120,0.08)', 'rgba(60,100,140,0.06)'],
+      night: ['rgba(30,60,140,0.08)', 'rgba(60,40,120,0.07)', 'rgba(20,80,100,0.05)']
+    },
+    mountain: {
+      dawn: ['rgba(180,160,220,0.12)', 'rgba(160,180,220,0.10)', 'rgba(200,180,240,0.08)'],
+      morning: ['rgba(180,220,140,0.10)', 'rgba(140,200,160,0.08)', 'rgba(200,230,180,0.07)'],
+      afternoon: ['rgba(80,150,220,0.10)', 'rgba(100,180,160,0.08)', 'rgba(140,200,220,0.06)'],
+      golden: ['rgba(220,140,60,0.12)', 'rgba(200,100,80,0.10)', 'rgba(180,120,40,0.08)'],
+      evening: ['rgba(100,70,180,0.10)', 'rgba(140,80,160,0.08)', 'rgba(80,60,120,0.06)'],
+      night: ['rgba(40,50,150,0.08)', 'rgba(80,50,160,0.07)', 'rgba(20,100,100,0.05)']
+    }
   };
+
+  const orbColors = orbPalettes[sky] || orbPalettes.mixed;
 
   // Remove existing orbs
   container.querySelectorAll('.bg-orb').forEach(o => o.remove());
@@ -240,7 +269,7 @@ function getSunPosition() {
   var dayLength = sunset - sunrise;
 
   if (t < sunrise || t >= sunset) {
-    // Night — return moon position
+    // Night - return moon position
     var nightT = t < sunrise ? (t + 24 - sunset) : (t - sunset);
     var nightLen = 24 - dayLength;
     var nx = 15 + (nightT / nightLen) * 70; // moon drifts across
@@ -444,7 +473,7 @@ function renderStars(container) {
     container.appendChild(star);
   }
 
-  // Milky way — subtle diagonal band of tiny stars
+  // Milky way - subtle diagonal band of tiny stars
   var milkyBand = document.createElement('div');
   milkyBand.className = 'sky-milky-way';
   container.appendChild(milkyBand);
@@ -499,7 +528,7 @@ function spawnCreatures(container) {
       renderBird(container);
     }
   } else {
-    // Day — birds and occasional butterfly
+    // Day - birds and occasional butterfly
     for (var i = 0; i < 2; i++) {
       (function(idx) {
         setTimeout(function() { renderBird(container); }, idx * 3000 + Math.random() * 2000);
@@ -643,6 +672,9 @@ function applySkyTheme(theme) {
   // Re-render the living sky with the new theme
   var container = document.getElementById('sky-scene');
   if (container && livingSkyEnabled) renderLivingSky(container);
+  // Refresh orbs and meta color to match new theme
+  spawnOrbs();
+  updateTimeOfDay();
 }
 
 // Load sky theme from Firebase on login
@@ -747,7 +779,7 @@ spawnCreatures = function(container) {
       if (Math.random() < 0.4) renderButterfly(container);
     }
   } else {
-    // Mixed — use the original behavior plus themed extras
+    // Mixed - use the original behavior plus themed extras
     _origSpawnCreatures(container);
     if (Math.random() < 0.2) {
       if (Math.random() < 0.5) renderSeagull(container);
@@ -761,13 +793,12 @@ document.addEventListener('DOMContentLoaded', function() {
   spawnOrbs();
   addMeshLayer();
   initSkyScene();
-  // Re-spawn orbs when time period changes
+  // Re-render sky when time period changes (orbs handled by updateTimeOfDay)
   setInterval(function() {
-    const current = document.body.getAttribute('data-time');
-    const now = getTimeOfDay();
+    var current = document.body.getAttribute('data-time');
+    var now = getTimeOfDay();
     if (current !== now) {
-      spawnOrbs();
-      // Re-render sky when time period changes
+      updateTimeOfDay();
       var container = document.getElementById('sky-scene');
       if (container && livingSkyEnabled) renderLivingSky(container);
     }

@@ -50,7 +50,7 @@
 .onboard-progress{width:100%;max-width:220px;height:4px;background:rgba(26,26,46,.08);border-radius:4px;margin-bottom:32px;overflow:hidden}
 .onboard-bar{height:100%;background:linear-gradient(90deg,var(--gold),#D4784A);border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1)}
 
-/* Step content wrapper — handles smooth transitions between steps */
+/* Step content wrapper - handles smooth transitions between steps */
 .ob-content{position:relative;display:flex;flex-direction:column;align-items:center;width:100%}
 .ob-content.ob-exit{animation:obFadeOut .25s ease forwards}
 .ob-content.ob-enter{animation:obFadeIn .4s cubic-bezier(.2,0,.2,1) forwards}
@@ -64,11 +64,11 @@
 .onboard-sub{font-size:15px;line-height:1.65;color:rgba(26,26,46,.55);margin-bottom:28px;text-align:center;max-width:290px;transition:opacity .3s}
 .onboard-sub strong{color:#1A1A2E;font-weight:600}
 
-/* Inputs — smooth reveal with slight upward slide */
+/* Inputs - smooth reveal with slight upward slide */
 .login-input.ob-input{transition:all .35s cubic-bezier(.2,0,.2,1);opacity:0;transform:translateY(8px)}
 .ob-content.ob-enter .login-input.ob-input{opacity:1;transform:translateY(0);transition-delay:.2s}
 
-/* Keyboard-aware spacing — extra bottom padding when input is focused */
+/* Keyboard-aware spacing - extra bottom padding when input is focused */
 .login.onboard-active:has(input:focus){padding-bottom:calc(80px + env(keyboard-inset-height,0px))}
 
 .login-btn.ob-btn{transition:all .35s cubic-bezier(.2,0,.2,1);opacity:0;transform:translateY(8px)}
@@ -197,7 +197,7 @@ body.touring .bn{pointer-events:none}
 .ph-title.changing{opacity:0}
 /* Non-landing pages: sticky header provides top spacing, ctn needs none */
 .pg .ctn{padding-top:0}
-/* Landing pages have inline titles — need their own safe-area top padding */
+/* Landing pages have inline titles - need their own safe-area top padding */
 #pg-dash .ctn,#pg-together .ctn,#pg-wellness .ctn,#pg-plan .ctn,#pg-more .ctn{padding-top:calc(12px + env(safe-area-inset-top,20px))}
 
 /* ===== BOTTOM NAV (full-width docked tab bar) ===== */
@@ -227,7 +227,7 @@ body.touring .bn{pointer-events:none}
 
 /* ===== MOBILE RESPONSIVE ===== */
 
-/* Phones (up to 430px — iPhone 16 Pro is 393pt, Pro Max is 430pt) */
+/* Phones (up to 430px - iPhone 16 Pro is 393pt, Pro Max is 430pt) */
 @media(max-width:430px){
   .bn .nl{font-size:8px;letter-spacing:.3px}
 }
