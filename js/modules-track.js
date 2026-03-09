@@ -1530,12 +1530,45 @@ function dhLoadAll() {
       const idx = phases.indexOf(c.timelinePhase);
       document.querySelectorAll('.dh-tl-phase').forEach((el, i) => { el.classList.toggle('done', i <= idx); });
     }
+    // Personalize location placeholder based on user preference
+    dhPersonalize();
     // Design notes
     dhRenderNotes();
     dhRenderFinance();
     dhRenderSummary();
     dhLoadChecklist();
   });
+}
+
+// Personalize dream home hints based on user's environment preference
+function dhPersonalize() {
+  var locInput = document.getElementById('dh-location');
+  if (locInput && !locInput.value) {
+    if (typeof user !== 'undefined') {
+      locInput.placeholder = user === 'her'
+        ? 'e.g. Coastal town, beachside community...'
+        : 'e.g. Mountain town, cabin community...';
+    }
+  }
+  // Add "suggested" hint to preferred tags based on user's taste
+  if (typeof user !== 'undefined') {
+    var isHer = user === 'her';
+    // Location: Coastal for her, Mountain for him
+    var locPref = isHer ? 'Coastal' : 'Mountain';
+    document.querySelectorAll('#dh-location-prefs .dh-tag').forEach(function(t) {
+      if (t.textContent.trim() === locPref && !t.classList.contains('sel')) {
+        t.setAttribute('data-hint', 'suggested');
+      }
+    });
+    // Terrain: Waterfront for her, Wooded for him
+    var terrainPref = isHer ? 'Waterfront' : 'Wooded';
+    document.querySelectorAll('.dh-tag').forEach(function(t) {
+      if (t.onclick && t.onclick.toString().includes("'terrain'") &&
+          t.textContent.trim() === terrainPref && !t.classList.contains('sel')) {
+        t.setAttribute('data-hint', 'suggested');
+      }
+    });
+  }
 }
 
 // Save a single config key

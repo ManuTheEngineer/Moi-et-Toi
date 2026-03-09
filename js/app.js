@@ -1053,6 +1053,8 @@ function finishLogin() {
   listenMemories();
   listenAchievements();
   listenGrowData();
+  // Render sound grids personalized for user
+  if (typeof renderMoodSoundsGrid === 'function') renderMoodSoundsGrid();
   // Particles, global mode, presence
   initParticles();
   setGlobalMode(localStorage.getItem('met_global_mode') || 'us');

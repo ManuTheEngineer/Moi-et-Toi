@@ -1143,6 +1143,97 @@ function generateNoise(type) {
       break;
     }
 
+    // ===== ENVIRONMENT-THEMED NATURE SOUNDS =====
+    case 'mountainCreek': {
+      // Mountain creek: babbling water over rocks + gentle wind through pines
+      // Water base — filtered noise with rhythmic burbling
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var flow = 0.12 + 0.06 * Math.sin(PI2 * 0.3 * t) + 0.04 * Math.sin(PI2 * 0.7 * t);
+        var water = (Math.random() * 2 - 1) * flow;
+        // High-frequency sparkle (water over rocks)
+        var sparkle = Math.sin(PI2 * (2200 + 400 * Math.sin(PI2 * 1.5 * t)) * t) * 0.03 * flow;
+        // Low rumble of deeper water
+        var deep = Math.sin(PI2 * 65 * t) * 0.04 + Math.sin(PI2 * 90 * t) * 0.02;
+        L[i] = water + sparkle + deep;
+        R[i] = water * 0.85 + sparkle * 1.1 + deep + (Math.random() * 2 - 1) * 0.03;
+      }
+      // Burble events — small splashes
+      for (var b = 0; b < 40; b++) {
+        var bPos = Math.floor(Math.random() * (len - sr * 0.15));
+        var bLen = Math.floor(sr * (0.03 + Math.random() * 0.08));
+        var pan = Math.random();
+        for (k = 0; k < bLen && bPos + k < len; k++) {
+          var env = Math.exp(-k / (bLen * 0.3));
+          var s = (Math.random() * 2 - 1) * 0.25 * env;
+          L[bPos + k] += s * (1 - pan * 0.5);
+          R[bPos + k] += s * (0.5 + pan * 0.5);
+        }
+      }
+      // Gentle pine wind
+      _pinkNoise(L, len, 0.04);
+      _pinkNoise(R, len, 0.04);
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
+    case 'beachBreeze': {
+      // Beach breeze: gentle ocean surf + warm wind + distant shore sounds
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        // Slow, gentle waves (longer period than 'waves' — more relaxing)
+        var wave = Math.sin(PI2 * 0.09 * t);
+        var surf = Math.max(0, wave) * 0.3;
+        var pull = Math.max(0, -wave) * 0.15;
+        // Warm wind through palms
+        var wind = (Math.random() * 2 - 1) * (0.06 + 0.03 * Math.sin(PI2 * 0.15 * t));
+        // Surf foam
+        var foam = (Math.random() * 2 - 1) * surf * 0.4;
+        // Deep warmth
+        var warmth = Math.sin(PI2 * 50 * t) * 0.03;
+        L[i] = surf * (Math.random() * 2 - 1) * 0.5 + pull * (Math.random() * 2 - 1) * 0.3 + wind + foam * 0.7 + warmth;
+        R[i] = surf * (Math.random() * 2 - 1) * 0.45 + pull * (Math.random() * 2 - 1) * 0.3 + wind * 0.9 + foam + warmth;
+      }
+      // Occasional palm frond rustle
+      for (var r = 0; r < 8; r++) {
+        var rPos = Math.floor(Math.random() * (len - sr * 0.3));
+        var rLen = Math.floor(sr * (0.1 + Math.random() * 0.2));
+        for (k = 0; k < rLen && rPos + k < len; k++) {
+          var env = Math.sin(Math.PI * k / rLen);
+          var s = (Math.random() * 2 - 1) * 0.08 * env;
+          L[rPos + k] += s; R[rPos + k] += s * 0.6;
+        }
+      }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
+    case 'mountainWind': {
+      // High altitude wind: deep gusts through mountain passes + distant eagle
+      _brownNoise(L, len, 0.12);
+      _brownNoise(R, len, 0.12);
+      // Wind gusts — swelling and fading
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var gust = 0.5 + 0.5 * Math.sin(PI2 * 0.12 * t + Math.sin(PI2 * 0.04 * t) * 2);
+        L[i] *= gust; R[i] *= gust * 0.9;
+        // Whistling through rocks
+        var whistle = Math.sin(PI2 * (800 + 200 * Math.sin(PI2 * 0.3 * t)) * t) * 0.02 * gust;
+        L[i] += whistle * 0.7; R[i] += whistle;
+      }
+      // Eagle cry (1-2 distant calls)
+      for (var e = 0; e < 1 + Math.floor(Math.random() * 2); e++) {
+        var ePos = Math.floor(sr * (2 + Math.random() * 6));
+        var eLen = Math.floor(sr * (0.8 + Math.random() * 0.5));
+        for (k = 0; k < eLen && ePos + k < len; k++) {
+          var env = Math.sin(Math.PI * k / eLen);
+          var freq = 1800 - 400 * (k / eLen); // descending cry
+          var s = Math.sin(PI2 * freq * k / sr) * 0.08 * env;
+          L[ePos + k] += s * 0.6; R[ePos + k] += s;
+        }
+      }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      break;
+    }
+
     // ===== MOOD SOUNDS =====
     case 'moodRelaxing': {
       // Soft piano: slow arpeggiated Dmaj7 with sustain pedal feel
@@ -1867,11 +1958,85 @@ var MOOD_SOUNDS = {
   night:      { label: 'Night',       icon: '🌙', type: 'crickets',       desc: 'Crickets and frogs' },
   forest:     { label: 'Forest',      icon: '🌲', type: 'forestWind',     desc: 'Wind, birds, leaves' },
   birds:      { label: 'Birds',       icon: '🐦', type: 'birdsong',       desc: 'Dawn bird chorus' },
-  thunder:    { label: 'Storm',       icon: '⛈',  type: 'thunder',        desc: 'Thunder and rain' }
+  thunder:    { label: 'Storm',       icon: '⛈',  type: 'thunder',        desc: 'Thunder and rain' },
+  // Beach environment (her favorites)
+  beachBreeze:  { label: 'Beach Breeze',  icon: '🏖', type: 'beachBreeze',    desc: 'Warm wind, gentle surf', env: 'beach' },
+  seagulls:     { label: 'Seagulls',      icon: '🕊', type: 'seagulls',       desc: 'Shore birds and waves', env: 'beach' },
+  // Mountain environment (his favorites)
+  mountainCreek: { label: 'Mountain Creek', icon: '🏔', type: 'mountainCreek', desc: 'Babbling water over rocks', env: 'mountain' },
+  mountainWind:  { label: 'Mountain Wind',  icon: '🦅', type: 'mountainWind',  desc: 'Alpine gusts and eagles', env: 'mountain' }
 };
+
+// Nature sound order per user: beach-first for her, mountain-first for him
+var NATURE_ORDER_HER = [
+  'ocean', 'beachBreeze', 'seagulls', 'tropical',
+  'rain', 'night', 'forest', 'birds', 'thunder',
+  'mountainCreek', 'mountainWind', 'campfire'
+];
+var NATURE_ORDER_HIM = [
+  'forest', 'mountainCreek', 'mountainWind', 'campfire',
+  'birds', 'rain', 'night', 'thunder',
+  'ocean', 'beachBreeze', 'seagulls', 'tropical'
+];
+var MOOD_ORDER = ['romantic', 'relaxing', 'dreamy', 'serene', 'cozy', 'soulful', 'focused', 'lively', 'playful', 'rainyNight'];
 
 WEATHER.moodPlaying = null;
 WEATHER.moodNode = null;
+
+// Dynamically render sound grids based on user role
+function renderMoodSoundsGrid() {
+  var role = typeof user !== 'undefined' ? user : null;
+  var natureOrder = role === 'her' ? NATURE_ORDER_HER : NATURE_ORDER_HIM;
+
+  // Main sounds page grid (toggleMoodSound)
+  var mainGrid = document.getElementById('mood-sounds-grid');
+  if (mainGrid) {
+    var html = '';
+    // Mood sounds first
+    for (var m = 0; m < MOOD_ORDER.length; m++) {
+      var k = MOOD_ORDER[m];
+      var s = MOOD_SOUNDS[k];
+      if (s) html += '<button class="mood-sound-btn" data-mood="' + k + '" onclick="toggleMoodSound(\'' + k + '\')"><span class="msb-icon">' + s.icon + '</span><span class="msb-label">' + s.label + '</span></button>';
+    }
+    // Nature sounds in user-preferred order
+    for (var n = 0; n < natureOrder.length; n++) {
+      var k = natureOrder[n];
+      var s = MOOD_SOUNDS[k];
+      if (s) html += '<button class="mood-sound-btn" data-mood="' + k + '" onclick="toggleMoodSound(\'' + k + '\')"><span class="msb-icon">' + s.icon + '</span><span class="msb-label">' + s.label + '</span></button>';
+    }
+    mainGrid.innerHTML = html;
+  }
+
+  // Settings grid
+  var settingsGrid = document.getElementById('settings-mood-sounds');
+  if (settingsGrid) {
+    var html = '';
+    for (var m = 0; m < MOOD_ORDER.length; m++) {
+      var k = MOOD_ORDER[m];
+      var s = MOOD_SOUNDS[k];
+      if (s) html += '<button class="mood-sound-btn" data-mood="' + k + '" onclick="toggleMoodSound(\'' + k + '\')"><span class="msb-icon">' + s.icon + '</span><span class="msb-label">' + s.label + '</span></button>';
+    }
+    for (var n = 0; n < natureOrder.length; n++) {
+      var k = natureOrder[n];
+      var s = MOOD_SOUNDS[k];
+      if (s) html += '<button class="mood-sound-btn" data-mood="' + k + '" onclick="toggleMoodSound(\'' + k + '\')"><span class="msb-icon">' + s.icon + '</span><span class="msb-label">' + s.label + '</span></button>';
+    }
+    settingsGrid.innerHTML = html;
+  }
+
+  // Date night / send-to-partner grid (sendMoodToPartner)
+  var sendGrids = document.querySelectorAll('.mood-sounds-grid:not(#mood-sounds-grid):not(#settings-mood-sounds)');
+  sendGrids.forEach(function(grid) {
+    var html = '';
+    var allKeys = MOOD_ORDER.concat(natureOrder);
+    for (var i = 0; i < allKeys.length; i++) {
+      var k = allKeys[i];
+      var s = MOOD_SOUNDS[k];
+      if (s) html += '<button class="mood-sound-btn" data-mood="' + k + '" onclick="sendMoodToPartner(\'' + k + '\')"><span class="msb-icon">' + s.icon + '</span><span class="msb-label">' + s.label + '</span></button>';
+    }
+    grid.innerHTML = html;
+  });
+}
 
 function playMoodSound(moodKey) {
   // Stop any existing mood sound
