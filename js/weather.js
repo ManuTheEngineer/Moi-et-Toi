@@ -1983,10 +1983,24 @@ var MOOD_ORDER = ['romantic', 'relaxing', 'dreamy', 'serene', 'cozy', 'soulful',
 WEATHER.moodPlaying = null;
 WEATHER.moodNode = null;
 
-// Dynamically render sound grids based on user role
+// Dynamically render sound grids based on user role + environment
 function renderMoodSoundsGrid() {
   var role = typeof user !== 'undefined' ? user : null;
-  var natureOrder = role === 'her' ? NATURE_ORDER_HER : NATURE_ORDER_HIM;
+  var baseOrder = role === 'her' ? NATURE_ORDER_HER : NATURE_ORDER_HIM;
+  // Reorder nature sounds to prioritize current environment
+  var sky = (typeof currentSkyTheme !== 'undefined') ? currentSkyTheme : 'mixed';
+  var natureOrder = baseOrder.slice();
+  if (sky === 'beach') {
+    // Prioritize beach/ocean sounds
+    var beachSounds = ['ocean', 'beachBreeze', 'seagulls', 'tropical'];
+    var rest = natureOrder.filter(function(s) { return beachSounds.indexOf(s) === -1; });
+    natureOrder = beachSounds.concat(rest);
+  } else if (sky === 'mountain') {
+    // Prioritize mountain/forest sounds
+    var mtSounds = ['forest', 'mountainCreek', 'mountainWind', 'campfire', 'birds'];
+    var rest = natureOrder.filter(function(s) { return mtSounds.indexOf(s) === -1; });
+    natureOrder = mtSounds.concat(rest);
+  }
 
   // Main sounds page grid (toggleMoodSound)
   var mainGrid = document.getElementById('mood-sounds-grid');

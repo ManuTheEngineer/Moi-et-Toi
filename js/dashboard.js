@@ -1597,7 +1597,14 @@ function setSkyTheme(theme) {
     b.classList.toggle('active', b.getAttribute('data-theme') === theme);
   });
   if (typeof applySkyTheme === 'function') applySkyTheme(theme);
-  toast('Sky theme updated');
+  // Update scene selection UI to match the synced scene
+  var sceneMap = { beach: 'coastal', mountain: 'forest', mixed: 'meadow' };
+  var scene = sceneMap[theme] || 'meadow';
+  document.querySelectorAll('.scene-option').forEach(function(opt) {
+    opt.classList.toggle('active', opt.getAttribute('data-scene') === scene);
+  });
+  var envNames = { beach: 'Beach', mountain: 'Mountain', mixed: 'Mixed' };
+  toast((envNames[theme] || 'Mixed') + ' environment activated');
 }
 
 // ===== WEATHER SETTINGS =====

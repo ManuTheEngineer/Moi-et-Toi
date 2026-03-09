@@ -65,8 +65,8 @@ function updateTimeOfDay() {
   // Update browser chrome color to match theme + sky theme
   var themeColors = {
     mixed:    { dawn: '#F0E6E8', morning: '#F5F0E6', afternoon: '#EFF3F5', golden: '#F2E8D8', evening: '#2A2440', night: '#1A1828' },
-    beach:    { dawn: '#F2E4E0', morning: '#F8F0E2', afternoon: '#ECF4F6', golden: '#F4E4D0', evening: '#28223E', night: '#181828' },
-    mountain: { dawn: '#E8E6F0', morning: '#EEF0E8', afternoon: '#EAF0F6', golden: '#EEE4D8', evening: '#242040', night: '#161826' }
+    beach:    { dawn: '#F4E0D8', morning: '#F8EEE0', afternoon: '#E4F2F4', golden: '#F6E2C8', evening: '#26203A', night: '#161824' },
+    mountain: { dawn: '#E6E8E4', morning: '#E8EEE2', afternoon: '#E2ECF0', golden: '#ECE2D4', evening: '#202838', night: '#141C24' }
   };
   var sky = (typeof currentSkyTheme !== 'undefined' && currentSkyTheme) || 'mixed';
   var colors = themeColors[sky] || themeColors.mixed;
@@ -164,20 +164,20 @@ function spawnOrbs() {
       night: ['rgba(60,80,180,0.08)', 'rgba(100,60,180,0.07)', 'rgba(0,140,140,0.05)']
     },
     beach: {
-      dawn: ['rgba(255,160,120,0.14)', 'rgba(255,200,140,0.10)', 'rgba(200,140,100,0.08)'],
-      morning: ['rgba(255,220,130,0.12)', 'rgba(100,210,230,0.10)', 'rgba(255,240,180,0.08)'],
-      afternoon: ['rgba(60,200,240,0.10)', 'rgba(40,220,220,0.09)', 'rgba(200,240,250,0.07)'],
-      golden: ['rgba(255,130,40,0.14)', 'rgba(255,100,50,0.12)', 'rgba(255,180,80,0.10)'],
-      evening: ['rgba(100,60,160,0.10)', 'rgba(180,100,120,0.08)', 'rgba(60,100,140,0.06)'],
-      night: ['rgba(30,60,140,0.08)', 'rgba(60,40,120,0.07)', 'rgba(20,80,100,0.05)']
+      dawn: ['rgba(255,170,130,0.14)', 'rgba(255,210,150,0.12)', 'rgba(220,150,110,0.10)', 'rgba(255,190,160,0.08)'],
+      morning: ['rgba(255,230,140,0.12)', 'rgba(80,210,230,0.10)', 'rgba(255,240,190,0.09)', 'rgba(200,170,90,0.07)'],
+      afternoon: ['rgba(40,210,240,0.12)', 'rgba(60,230,230,0.10)', 'rgba(200,240,250,0.08)', 'rgba(100,220,240,0.07)'],
+      golden: ['rgba(255,140,40,0.16)', 'rgba(255,110,50,0.14)', 'rgba(255,190,90,0.12)', 'rgba(255,160,60,0.10)'],
+      evening: ['rgba(100,60,150,0.10)', 'rgba(180,110,130,0.08)', 'rgba(60,100,140,0.07)', 'rgba(140,80,120,0.06)'],
+      night: ['rgba(20,50,130,0.09)', 'rgba(50,30,110,0.08)', 'rgba(15,70,100,0.06)', 'rgba(30,60,120,0.05)']
     },
     mountain: {
-      dawn: ['rgba(180,160,220,0.12)', 'rgba(160,180,220,0.10)', 'rgba(200,180,240,0.08)'],
-      morning: ['rgba(180,220,140,0.10)', 'rgba(140,200,160,0.08)', 'rgba(200,230,180,0.07)'],
-      afternoon: ['rgba(80,150,220,0.10)', 'rgba(100,180,160,0.08)', 'rgba(140,200,220,0.06)'],
-      golden: ['rgba(220,140,60,0.12)', 'rgba(200,100,80,0.10)', 'rgba(180,120,40,0.08)'],
-      evening: ['rgba(100,70,180,0.10)', 'rgba(140,80,160,0.08)', 'rgba(80,60,120,0.06)'],
-      night: ['rgba(40,50,150,0.08)', 'rgba(80,50,160,0.07)', 'rgba(20,100,100,0.05)']
+      dawn: ['rgba(140,180,120,0.14)', 'rgba(120,160,100,0.12)', 'rgba(180,200,150,0.10)', 'rgba(100,150,80,0.08)'],
+      morning: ['rgba(100,200,80,0.12)', 'rgba(80,180,60,0.10)', 'rgba(160,220,120,0.09)', 'rgba(120,190,90,0.07)'],
+      afternoon: ['rgba(70,150,210,0.10)', 'rgba(80,180,150,0.08)', 'rgba(100,170,200,0.07)', 'rgba(60,140,120,0.06)'],
+      golden: ['rgba(200,150,60,0.14)', 'rgba(180,120,40,0.12)', 'rgba(160,180,80,0.10)', 'rgba(140,110,30,0.08)'],
+      evening: ['rgba(40,70,120,0.10)', 'rgba(60,100,80,0.08)', 'rgba(30,50,100,0.07)', 'rgba(50,80,60,0.06)'],
+      night: ['rgba(20,40,80,0.09)', 'rgba(30,50,40,0.07)', 'rgba(15,30,60,0.06)', 'rgba(20,60,50,0.05)']
     }
   };
 
@@ -287,14 +287,33 @@ function getSunPosition() {
 
 function getSunColor() {
   var time = getTimeOfDay();
-  switch(time) {
-    case 'dawn': return { body: '#FFEEDD', mid: '#FFB070', edge: '#E67E22', glow: 'rgba(255,160,60,.4)', size: 50 };
-    case 'morning': return { body: '#FFF8E0', mid: '#FFE066', edge: '#F4A300', glow: 'rgba(255,200,60,.35)', size: 55 };
-    case 'afternoon': return { body: '#FFF4D4', mid: '#FFD93D', edge: '#F4A300', glow: 'rgba(255,200,60,.3)', size: 55 };
-    case 'golden': return { body: '#FFEECC', mid: '#FFB347', edge: '#E67E22', glow: 'rgba(255,140,40,.5)', size: 65 };
-    case 'evening': return { body: '#FFCCAA', mid: '#FF8844', edge: '#CC4400', glow: 'rgba(255,100,30,.4)', size: 55 };
-    default: return null; // night
-  }
+  var sky = (typeof currentSkyTheme !== 'undefined') ? currentSkyTheme : 'mixed';
+  // Environment-aware sun tints
+  var sunColors = {
+    mixed: {
+      dawn: { body: '#FFEEDD', mid: '#FFB070', edge: '#E67E22', glow: 'rgba(255,160,60,.4)', size: 50 },
+      morning: { body: '#FFF8E0', mid: '#FFE066', edge: '#F4A300', glow: 'rgba(255,200,60,.35)', size: 55 },
+      afternoon: { body: '#FFF4D4', mid: '#FFD93D', edge: '#F4A300', glow: 'rgba(255,200,60,.3)', size: 55 },
+      golden: { body: '#FFEECC', mid: '#FFB347', edge: '#E67E22', glow: 'rgba(255,140,40,.5)', size: 65 },
+      evening: { body: '#FFCCAA', mid: '#FF8844', edge: '#CC4400', glow: 'rgba(255,100,30,.4)', size: 55 }
+    },
+    beach: {
+      dawn: { body: '#FFE8D0', mid: '#FFB880', edge: '#E08040', glow: 'rgba(255,180,80,.45)', size: 55 },
+      morning: { body: '#FFF8E0', mid: '#FFE870', edge: '#E8A800', glow: 'rgba(255,220,80,.40)', size: 60 },
+      afternoon: { body: '#FFF6D8', mid: '#FFE050', edge: '#E8A000', glow: 'rgba(255,210,70,.35)', size: 58 },
+      golden: { body: '#FFECC0', mid: '#FFB040', edge: '#D87018', glow: 'rgba(255,150,40,.55)', size: 70 },
+      evening: { body: '#FFD0A0', mid: '#FF9040', edge: '#C84000', glow: 'rgba(255,120,40,.45)', size: 58 }
+    },
+    mountain: {
+      dawn: { body: '#FFF0E0', mid: '#F0C080', edge: '#C09040', glow: 'rgba(240,180,80,.35)', size: 48 },
+      morning: { body: '#FFF8E8', mid: '#FFE880', edge: '#D8A020', glow: 'rgba(240,210,80,.30)', size: 52 },
+      afternoon: { body: '#FFF8E0', mid: '#F0D858', edge: '#C8A020', glow: 'rgba(220,200,80,.28)', size: 52 },
+      golden: { body: '#FFF0C8', mid: '#E8B048', edge: '#C08020', glow: 'rgba(220,150,50,.48)', size: 60 },
+      evening: { body: '#F0C8A0', mid: '#D08840', edge: '#A06020', glow: 'rgba(200,120,40,.38)', size: 50 }
+    }
+  };
+  var palette = sunColors[sky] || sunColors.mixed;
+  return palette[time] || null;
 }
 
 function renderLivingSky(container) {
@@ -305,13 +324,32 @@ function renderLivingSky(container) {
   var isEvening = time === 'evening';
   var isDawn = time === 'dawn';
 
-  // 1. Atmospheric haze
+  // 1. Atmospheric haze - environment-aware
   var atmo = document.createElement('div');
   atmo.className = 'sky-atmo-day';
-  if (isGolden || isEvening) {
-    atmo.style.background = 'linear-gradient(180deg,rgba(255,180,100,0.04) 0%,rgba(255,200,140,0.06) 40%,rgba(255,210,160,0.1) 100%)';
-  } else if (isDawn) {
-    atmo.style.background = 'linear-gradient(180deg,rgba(180,140,255,0.03) 0%,rgba(255,160,140,0.05) 50%,rgba(255,200,150,0.08) 100%)';
+  var skyTheme = (typeof currentSkyTheme !== 'undefined') ? currentSkyTheme : 'mixed';
+  if (skyTheme === 'beach') {
+    if (isGolden || isEvening) {
+      atmo.style.background = 'linear-gradient(180deg,rgba(255,160,80,0.06) 0%,rgba(255,190,120,0.08) 40%,rgba(255,200,140,0.12) 100%)';
+    } else if (isDawn) {
+      atmo.style.background = 'linear-gradient(180deg,rgba(255,180,140,0.04) 0%,rgba(255,200,160,0.06) 50%,rgba(255,220,180,0.10) 100%)';
+    } else {
+      atmo.style.background = 'linear-gradient(180deg,rgba(80,200,220,0.04) 0%,rgba(120,220,240,0.06) 40%,rgba(200,235,245,0.08) 100%)';
+    }
+  } else if (skyTheme === 'mountain') {
+    if (isGolden || isEvening) {
+      atmo.style.background = 'linear-gradient(180deg,rgba(180,140,60,0.04) 0%,rgba(160,180,80,0.06) 40%,rgba(140,160,100,0.08) 100%)';
+    } else if (isDawn) {
+      atmo.style.background = 'linear-gradient(180deg,rgba(140,180,120,0.03) 0%,rgba(160,200,140,0.05) 50%,rgba(180,210,160,0.08) 100%)';
+    } else {
+      atmo.style.background = 'linear-gradient(180deg,rgba(100,160,200,0.03) 0%,rgba(120,180,160,0.05) 40%,rgba(140,200,180,0.07) 100%)';
+    }
+  } else {
+    if (isGolden || isEvening) {
+      atmo.style.background = 'linear-gradient(180deg,rgba(255,180,100,0.04) 0%,rgba(255,200,140,0.06) 40%,rgba(255,210,160,0.1) 100%)';
+    } else if (isDawn) {
+      atmo.style.background = 'linear-gradient(180deg,rgba(180,140,255,0.03) 0%,rgba(255,160,140,0.05) 50%,rgba(255,200,150,0.08) 100%)';
+    }
   }
   container.appendChild(atmo);
 
@@ -329,11 +367,12 @@ function renderLivingSky(container) {
     // Theme-specific night horizon
     var hz = document.createElement('div');
     hz.className = 'sky-horizon';
-    if (currentSkyTheme === 'beach') {
-      hz.style.cssText = 'height:150px;background:linear-gradient(to top,rgba(20,40,80,0.1),rgba(30,50,100,0.06),transparent)';
-    } else if (currentSkyTheme === 'mountain') {
-      // Mountain silhouette glow
-      hz.style.cssText = 'height:180px;background:linear-gradient(to top,rgba(15,25,40,0.12),rgba(20,35,60,0.06),transparent)';
+    if (skyTheme === 'beach') {
+      // Ocean reflection glow at night
+      hz.style.cssText = 'height:180px;background:linear-gradient(to top,rgba(15,35,70,0.14),rgba(25,45,90,0.08),rgba(20,50,80,0.04),transparent)';
+    } else if (skyTheme === 'mountain') {
+      // Deep forest silhouette
+      hz.style.cssText = 'height:200px;background:linear-gradient(to top,rgba(10,20,15,0.16),rgba(15,30,25,0.08),rgba(20,35,30,0.04),transparent)';
     } else {
       hz.style.cssText = 'height:120px;background:linear-gradient(to top,rgba(40,50,100,0.08),rgba(60,70,120,0.04),transparent)';
     }
@@ -366,21 +405,41 @@ function renderLivingSky(container) {
       container.appendChild(shaft);
     }
 
-    // Clouds
+    // Clouds - environment-aware count and density
     var cloudCount = time === 'morning' ? 4 : (isGolden ? 3 : 5);
+    if (skyTheme === 'beach') cloudCount = Math.max(2, cloudCount - 1); // fewer clouds, clearer sky
+    if (skyTheme === 'mountain') cloudCount = cloudCount + 1; // more clouds, misty feel
     for (var i = 0; i < cloudCount; i++) {
       renderCloud(container, false, isGolden || isEvening);
     }
 
-    // Horizon glow
+    // Horizon glow - environment-aware
     var hz1 = document.createElement('div');
     hz1.className = 'sky-horizon';
-    if (isGolden || isEvening) {
-      hz1.style.cssText = 'height:250px;background:linear-gradient(to top,rgba(255,140,50,0.1),rgba(255,180,80,0.05),rgba(255,200,120,0.02),transparent)';
-    } else if (isDawn) {
-      hz1.style.cssText = 'height:200px;background:linear-gradient(to top,rgba(255,150,120,0.08),rgba(255,180,160,0.04),transparent)';
+    if (skyTheme === 'beach') {
+      if (isGolden || isEvening) {
+        hz1.style.cssText = 'height:280px;background:linear-gradient(to top,rgba(255,130,40,0.14),rgba(255,170,70,0.08),rgba(255,200,120,0.04),transparent)';
+      } else if (isDawn) {
+        hz1.style.cssText = 'height:220px;background:linear-gradient(to top,rgba(255,180,140,0.10),rgba(255,200,170,0.06),transparent)';
+      } else {
+        hz1.style.cssText = 'height:180px;background:linear-gradient(to top,rgba(100,210,230,0.08),rgba(160,225,240,0.04),transparent)';
+      }
+    } else if (skyTheme === 'mountain') {
+      if (isGolden || isEvening) {
+        hz1.style.cssText = 'height:260px;background:linear-gradient(to top,rgba(180,130,50,0.10),rgba(140,160,80,0.06),rgba(120,140,100,0.03),transparent)';
+      } else if (isDawn) {
+        hz1.style.cssText = 'height:200px;background:linear-gradient(to top,rgba(120,160,100,0.08),rgba(140,180,120,0.04),transparent)';
+      } else {
+        hz1.style.cssText = 'height:170px;background:linear-gradient(to top,rgba(80,140,120,0.07),rgba(100,160,140,0.04),transparent)';
+      }
     } else {
-      hz1.style.cssText = 'height:150px;background:linear-gradient(to top,rgba(180,200,230,0.06),rgba(200,215,240,0.03),transparent)';
+      if (isGolden || isEvening) {
+        hz1.style.cssText = 'height:250px;background:linear-gradient(to top,rgba(255,140,50,0.1),rgba(255,180,80,0.05),rgba(255,200,120,0.02),transparent)';
+      } else if (isDawn) {
+        hz1.style.cssText = 'height:200px;background:linear-gradient(to top,rgba(255,150,120,0.08),rgba(255,180,160,0.04),transparent)';
+      } else {
+        hz1.style.cssText = 'height:150px;background:linear-gradient(to top,rgba(180,200,230,0.06),rgba(200,215,240,0.03),transparent)';
+      }
     }
     container.appendChild(hz1);
 
@@ -675,6 +734,26 @@ function applySkyTheme(theme) {
   // Refresh orbs and meta color to match new theme
   spawnOrbs();
   updateTimeOfDay();
+  // Auto-sync weather scene to match environment
+  // beach→coastal, mountain→forest, mixed→meadow
+  if (typeof WEATHER !== 'undefined' && typeof SCENES !== 'undefined') {
+    var sceneMap = { beach: 'coastal', mountain: 'forest', mixed: 'meadow' };
+    var targetScene = sceneMap[currentSkyTheme] || 'meadow';
+    if (WEATHER.scene !== targetScene && SCENES[targetScene]) {
+      WEATHER.scene = targetScene;
+      if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
+        db.ref('settings/weather/' + user + '/scene').set(targetScene);
+      }
+      // Re-render scene ground and creatures
+      if (container && livingSkyEnabled) {
+        if (typeof renderSceneGround === 'function') renderSceneGround(container);
+      }
+      // Update ambient audio to match environment
+      if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
+    }
+  }
+  // Re-render mood sounds grid to prioritize environment-matching sounds
+  if (typeof renderMoodSoundsGrid === 'function') renderMoodSoundsGrid();
 }
 
 // Load sky theme from Firebase on login
