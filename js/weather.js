@@ -685,11 +685,32 @@ function _ensureAudioCtx() {
       WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       _noiseCache = {}; // buffers from old context may be invalid
       WEATHER.audioNodes = {}; // nodes from old context are invalid
+      _attachCtxStateListener(WEATHER.audioCtx);
     }
     return WEATHER.audioCtx;
   } catch(e) {
     return null;
   }
+}
+
+// Listen for AudioContext state changes (iOS interruptions, background, etc.)
+function _attachCtxStateListener(ctx) {
+  if (!ctx) return;
+  ctx.onstatechange = function() {
+    // When iOS interrupts audio (phone call, Siri, etc.) and then returns,
+    // the context goes interrupted -> suspended -> running. Auto-resume it.
+    if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+      // Try to resume — this will succeed if we're in a user gesture or
+      // if the interruption has ended
+      ctx.resume().catch(function(){});
+    }
+    // If context recovered to running, restart sounds
+    if (ctx.state === 'running' && WEATHER.audioEnabled) {
+      if (Object.keys(WEATHER.audioNodes).length === 0) {
+        setTimeout(updateAmbientAudio, 200);
+      }
+    }
+  };
 }
 
 // Force-recreate AudioContext (for when existing context is permanently broken)
@@ -701,6 +722,7 @@ function _recreateAudioCtx() {
     WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     _noiseCache = {};
     WEATHER.audioNodes = {};
+    _attachCtxStateListener(WEATHER.audioCtx);
     return WEATHER.audioCtx;
   } catch(e) {
     return null;
@@ -724,16 +746,26 @@ function _resumeCtx(ctx) {
     o.start(0);
     o.stop(ctx.currentTime + 0.05);
   } catch(e) {}
-  // Also prime via HTML Audio element for iOS PWAs (WKWebView)
+  // Prime via HTML Audio element for iOS PWAs (WKWebView)
+  // Must re-prime every time — iOS resets audio session after background/interruption
+  _primeHtmlAudio();
+}
+
+// iOS PWA audio session primer — plays a tiny WAV via <audio> element
+// This switches iOS audio session from "ambient" (respects silent switch)
+// to "playback" (ignores silent switch). Must be called during user gesture.
+var _htmlAudioEl = null;
+function _primeHtmlAudio() {
   try {
-    if (!window._audioPrimed) {
-      var a = document.createElement('audio');
-      a.setAttribute('playsinline', '');
-      a.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
-      a.volume = 0.01;
-      a.play().catch(function(){});
-      window._audioPrimed = true;
+    if (!_htmlAudioEl) {
+      _htmlAudioEl = document.createElement('audio');
+      _htmlAudioEl.setAttribute('playsinline', '');
+      _htmlAudioEl.setAttribute('webkit-playsinline', '');
+      _htmlAudioEl.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
     }
+    _htmlAudioEl.volume = 0.01;
+    _htmlAudioEl.currentTime = 0;
+    _htmlAudioEl.play().catch(function(){});
   } catch(e) {}
 }
 
@@ -1691,10 +1723,13 @@ function playAmbientSound(type, volume) {
   if (!ctx) return;
   if (WEATHER.audioNodes[type]) return;
 
-  // Resume if suspended
+  // Resume if suspended or interrupted (iOS)
   if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    ctx.resume();
+    ctx.resume().catch(function(){});
   }
+
+  // If context is closed, it's permanently broken — skip (will be recreated on next gesture)
+  if (ctx.state === 'closed') return;
 
   var vol = volume || 0.4;
   var master = ctx.createGain();
@@ -2328,9 +2363,32 @@ document.addEventListener('visibilitychange', function() {
   if (WEATHER.audioEnabled) {
     var ctx = _ensureAudioCtx();
     if (ctx && (ctx.state === 'suspended' || ctx.state === 'interrupted')) {
-      ctx.resume();
+      ctx.resume().catch(function(){});
     }
-    setTimeout(updateAmbientAudio, 300);
+    // On iOS PWA, context may be permanently broken after background — recreate if needed
+    setTimeout(function() {
+      if (!WEATHER.audioEnabled) return;
+      var c = WEATHER.audioCtx;
+      if (c && c.state !== 'running') {
+        // Context didn't resume — recreate it (will need user gesture to actually play)
+        _recreateAudioCtx();
+      }
+      // Restart sounds if they were lost
+      if (Object.keys(WEATHER.audioNodes).length === 0) {
+        updateAmbientAudio();
+      }
+    }, 500);
+  }
+});
+
+// iOS fires 'pageshow' when returning to a PWA from the app switcher
+// This is more reliable than visibilitychange for iOS standalone mode
+window.addEventListener('pageshow', function(e) {
+  if (!WEATHER.audioEnabled) return;
+  if (typeof vnRecording !== 'undefined' && vnRecording) return;
+  var ctx = WEATHER.audioCtx;
+  if (ctx && (ctx.state === 'suspended' || ctx.state === 'interrupted')) {
+    ctx.resume().catch(function(){});
   }
 });
 

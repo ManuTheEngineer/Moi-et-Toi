@@ -2088,8 +2088,10 @@ function previewVoiceNote() {
   }
   var url = URL.createObjectURL(vnBlob);
   vnPreviewAudio = new Audio(url);
+  vnPreviewAudio.setAttribute('playsinline', '');
+  vnPreviewAudio.setAttribute('webkit-playsinline', '');
   vnPreviewAudio.volume = 0.8;
-  vnPreviewAudio.play();
+  vnPreviewAudio.play().catch(function(e) { console.warn('Voice preview blocked:', e); });
   vnPreviewAudio.onended = function() { vnPreviewAudio = null; };
 }
 
@@ -2266,6 +2268,8 @@ function playVoiceAudioBackground(dataUrl, onEnded) {
   // Use regular Audio element with lower volume for background feel
   if (vnAvatarAudio) { vnAvatarAudio.pause(); }
   vnAvatarAudio = new Audio(dataUrl);
+  vnAvatarAudio.setAttribute('playsinline', '');
+  vnAvatarAudio.setAttribute('webkit-playsinline', '');
   vnAvatarAudio.volume = 0.45; // Background-level volume
   vnAvatarAudio.play().catch(function(e) { console.error('Voice playback error:', e); });
   vnAvatarAudio.onended = function() {
