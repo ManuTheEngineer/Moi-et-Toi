@@ -2306,6 +2306,10 @@ function listenNotifications() {
     if (notif.type === 'voiceNote') {
       checkPartnerVoiceNote();
     }
+    // If mood sound from partner, play it
+    if (notif.type === 'mood-sound' && notif.mood && typeof playMoodSound === 'function') {
+      playMoodSound(notif.mood);
+    }
   });
 }
 
