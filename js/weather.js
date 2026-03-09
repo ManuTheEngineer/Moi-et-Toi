@@ -684,7 +684,23 @@ function _ensureAudioCtx() {
     if (!WEATHER.audioCtx || WEATHER.audioCtx.state === 'closed') {
       WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       _noiseCache = {}; // buffers from old context may be invalid
+      WEATHER.audioNodes = {}; // nodes from old context are invalid
     }
+    return WEATHER.audioCtx;
+  } catch(e) {
+    return null;
+  }
+}
+
+// Force-recreate AudioContext (for when existing context is permanently broken)
+function _recreateAudioCtx() {
+  try {
+    if (WEATHER.audioCtx) {
+      try { WEATHER.audioCtx.close(); } catch(e) {}
+    }
+    WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    _noiseCache = {};
+    WEATHER.audioNodes = {};
     return WEATHER.audioCtx;
   } catch(e) {
     return null;
@@ -741,11 +757,24 @@ function _onAudioReady() {
 
 // Keep listener alive - AudioContext can re-suspend on mobile (page background, etc.)
 var _unlockTimer = null;
+var _unlockAttempts = 0;
 function _tryUnlock() {
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
-  if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') return;
+  if (WEATHER.audioUnlocked && WEATHER.audioCtx && WEATHER.audioCtx.state === 'running') {
+    _unlockAttempts = 0;
+    return;
+  }
   if (_unlockTimer) return;
   _unlockTimer = setTimeout(function() { _unlockTimer = null; }, 500);
+
+  // If we've tried to unlock 3+ times and the context is still suspended,
+  // the context was likely created without a user gesture (iOS restriction).
+  // Recreate it fresh during this user gesture so it can actually be resumed.
+  _unlockAttempts++;
+  if (_unlockAttempts >= 3 && WEATHER.audioCtx && WEATHER.audioCtx.state === 'suspended') {
+    _recreateAudioCtx();
+    _unlockAttempts = 0;
+  }
   unlockAudio();
 }
 document.addEventListener('touchstart', _tryUnlock, { passive: true });
@@ -1683,7 +1712,13 @@ function playAmbientSound(type, volume) {
     parts.push(src);
   }
 
-  WEATHER.audioNodes[type] = { parts: parts, gain: master };
+  // Only register node if we actually have playing sources
+  // Otherwise retries will think the sound is already playing
+  if (parts.length > 0) {
+    WEATHER.audioNodes[type] = { parts: parts, gain: master };
+  } else {
+    try { master.disconnect(); } catch(e) {}
+  }
 }
 
 function stopAmbientSound(type) {
@@ -1742,22 +1777,39 @@ function toggleAmbientAudio(on) {
   if (on) {
     var ctx = _ensureAudioCtx();
     if (!ctx) { toast('Audio not supported'); return; }
+
+    // If context is suspended, recreate it fresh during this user gesture
+    // This fixes iOS/PWA where contexts created outside user gestures never resume
+    if (ctx.state === 'suspended') {
+      ctx = _recreateAudioCtx();
+      if (!ctx) { toast('Audio not supported'); return; }
+    }
+
     _resumeCtx(ctx);
     WEATHER.audioUnlocked = true;
 
-    // Loud confirmation beep — user MUST hear this or audio is broken
-    try {
-      var o = ctx.createOscillator();
-      var g = ctx.createGain();
-      o.type = 'sine'; o.frequency.value = 520;
-      g.gain.setValueAtTime(0.6, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
-      o.connect(g); g.connect(ctx.destination);
-      o.start(0); o.stop(ctx.currentTime + 0.35);
-    } catch(e) {}
+    // Chain sound playback to the resume() Promise so sounds start after context is running
+    var resumePromise = (ctx.state !== 'running') ? ctx.resume() : Promise.resolve();
+    (resumePromise || Promise.resolve()).then(function() {
+      // Loud confirmation beep — user MUST hear this or audio is broken
+      try {
+        var o = ctx.createOscillator();
+        var g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = 520;
+        g.gain.setValueAtTime(0.6, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(0); o.stop(ctx.currentTime + 0.35);
+      } catch(e) {}
 
-    // Start ambient sounds — retry multiple times in case context takes time to resume
-    setTimeout(updateAmbientAudio, 200);
+      // Start ambient sounds after context is confirmed running
+      setTimeout(updateAmbientAudio, 200);
+    }).catch(function() {
+      // Resume failed — try starting sounds anyway with retries
+      setTimeout(updateAmbientAudio, 200);
+    });
+
+    // Retry in case the promise-based approach didn't work
     setTimeout(function() {
       if (WEATHER.audioEnabled && Object.keys(WEATHER.audioNodes).length === 0) {
         updateAmbientAudio();
@@ -2082,13 +2134,47 @@ function playMoodSound(moodKey) {
 
   var ctx = _ensureAudioCtx();
   if (!ctx) { toast('Audio not supported on this device'); return; }
+
+  // If context is suspended, recreate it during this user gesture (iOS fix)
+  if (ctx.state === 'suspended') {
+    ctx = _recreateAudioCtx();
+    if (!ctx) { toast('Audio not supported on this device'); return; }
+  }
+
   _resumeCtx(ctx);
   WEATHER.audioUnlocked = true;
 
   var mood = MOOD_SOUNDS[moodKey];
   if (!mood) return;
 
-  // Immediate audible beep — instant feedback before heavy buffer generation
+  // Set playing state and UI immediately for responsiveness
+  WEATHER.moodPlaying = moodKey;
+  document.querySelectorAll('.mood-sound-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-mood') === moodKey);
+  });
+
+  // Chain sound creation to resume() Promise so context is running first
+  var resumePromise = (ctx.state !== 'running') ? ctx.resume() : Promise.resolve();
+  (resumePromise || Promise.resolve()).then(function() {
+    // Check if user cancelled while we were waiting
+    if (WEATHER.moodPlaying !== moodKey) return;
+
+    _startMoodPlayback(ctx, mood, moodKey);
+  }).catch(function() {
+    // Fallback: try playing anyway
+    if (WEATHER.moodPlaying !== moodKey) return;
+    _startMoodPlayback(ctx, mood, moodKey);
+  });
+}
+
+function _startMoodPlayback(ctx, mood, moodKey) {
+  // Re-check context is still valid
+  if (!ctx || ctx.state === 'closed') {
+    ctx = _ensureAudioCtx();
+    if (!ctx) return;
+  }
+
+  // Immediate audible beep — instant feedback
   try {
     var beep = ctx.createOscillator();
     var bg = ctx.createGain();
@@ -2116,12 +2202,6 @@ function playMoodSound(moodKey) {
   source.start(0);
 
   WEATHER.moodNode = { source: source, gain: gain };
-  WEATHER.moodPlaying = moodKey;
-
-  // Update UI
-  document.querySelectorAll('.mood-sound-btn').forEach(function(btn) {
-    btn.classList.toggle('active', btn.getAttribute('data-mood') === moodKey);
-  });
 
   toast(mood.label + ' mood playing');
 
@@ -2129,7 +2209,6 @@ function playMoodSound(moodKey) {
   setTimeout(function() {
     if (ctx.state !== 'running') {
       toast('Audio blocked (' + ctx.state + ') — check silent mode & volume');
-      // One more try
       ctx.resume();
     }
   }, 800);
@@ -2220,16 +2299,25 @@ function syncSkyState() {
 setInterval(syncSkyState, 30000);
 
 // Periodic audio retry - if enabled but no sounds playing, try again
+var _periodicRetryCount = 0;
 setInterval(function() {
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
-  if (!WEATHER.audioEnabled) return;
+  if (!WEATHER.audioEnabled && !WEATHER.moodPlaying) return;
   var ctx = _ensureAudioCtx();
   if (!ctx) return;
   var nodeCount = Object.keys(WEATHER.audioNodes).length;
   if (nodeCount === 0 || ctx.state !== 'running') {
-    if (ctx.state !== 'running') ctx.resume();
-    WEATHER.audioUnlocked = true;
-    updateAmbientAudio();
+    _periodicRetryCount++;
+    if (ctx.state !== 'running') {
+      ctx.resume();
+      // After several retries, the context may be permanently broken — recreate on next user gesture
+    }
+    if (WEATHER.audioEnabled) {
+      WEATHER.audioUnlocked = true;
+      updateAmbientAudio();
+    }
+  } else {
+    _periodicRetryCount = 0;
   }
 }, 5000);
 
@@ -2266,8 +2354,9 @@ function initWeatherSystem() {
       WEATHER.audioEnabled = true;
       var audioToggle = document.getElementById('set-ambient-audio');
       if (audioToggle) audioToggle.checked = true;
-      // Create AudioContext eagerly so first user gesture can unlock it
-      _ensureAudioCtx();
+      // Do NOT create AudioContext eagerly — on iOS/mobile, contexts created
+      // outside a user gesture can never be properly resumed. The first user
+      // touch/click will create and unlock it via _tryUnlock.
     }
 
     // Update scene selection UI
@@ -2289,13 +2378,13 @@ function initWeatherSystem() {
         if (container && livingSkyEnabled) renderLivingSky(container);
         updateWeatherInfoUI();
         // Queue ambient audio - will play once AudioContext is unlocked by user gesture
-        if (WEATHER.audioEnabled && WEATHER.audioCtx) {
+        if (WEATHER.audioEnabled) {
           updateAmbientAudio();
         }
       });
     } else {
       // Even without weather, queue ambient audio for scene sounds
-      if (WEATHER.audioEnabled && WEATHER.audioCtx) {
+      if (WEATHER.audioEnabled) {
         updateAmbientAudio();
       }
       if (!data.prompted) {
