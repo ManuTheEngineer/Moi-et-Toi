@@ -738,7 +738,7 @@ function obRenderEnvPreview(theme) {
 
 // Sound preview for onboarding
 window._obSoundPreviewing = false;
-window._obSoundPreviewNode = null;
+window._obSoundPreviewNode = null;   // { audio, objUrl } for HTML5 path, or { source, gain } for WebAudio path
 
 function obToggleSoundPreview() {
   if (window._obSoundPreviewing) {
@@ -748,15 +748,50 @@ function obToggleSoundPreview() {
   }
 }
 
+// Convert an AudioBuffer (stereo Float32) → WAV Blob for HTML5 <audio> playback
+function _audioBufferToWav(audioBuffer) {
+  var numCh = audioBuffer.numberOfChannels;
+  var sr = audioBuffer.sampleRate;
+  var len = audioBuffer.length;
+  var bytesPerSample = 2; // 16-bit
+  var dataBytes = len * numCh * bytesPerSample;
+  var buf = new ArrayBuffer(44 + dataBytes);
+  var v = new DataView(buf);
+  var writeStr = function(off, s) { for (var i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); };
+  writeStr(0, 'RIFF');
+  v.setUint32(4, 36 + dataBytes, true);
+  writeStr(8, 'WAVE');
+  writeStr(12, 'fmt ');
+  v.setUint32(16, 16, true);
+  v.setUint16(20, 1, true); // PCM
+  v.setUint16(22, numCh, true);
+  v.setUint32(24, sr, true);
+  v.setUint32(28, sr * numCh * bytesPerSample, true);
+  v.setUint16(32, numCh * bytesPerSample, true);
+  v.setUint16(34, 16, true);
+  writeStr(36, 'data');
+  v.setUint32(40, dataBytes, true);
+  // Interleave channels into 16-bit samples
+  var channels = [];
+  for (var ch = 0; ch < numCh; ch++) channels.push(audioBuffer.getChannelData(ch));
+  var off = 44;
+  for (var i = 0; i < len; i++) {
+    for (var ch = 0; ch < numCh; ch++) {
+      var s = Math.max(-1, Math.min(1, channels[ch][i]));
+      v.setInt16(off, s * 32767, true);
+      off += 2;
+    }
+  }
+  return new Blob([buf], { type: 'audio/wav' });
+}
+
 function obStartSoundPreview(theme) {
   if (typeof WEATHER === 'undefined' || typeof generateNoise !== 'function') return;
 
-  // Map theme to sound type
   var soundMap = { beach: 'seagulls', mountain: 'forestWind', mixed: 'birdsong' };
   var soundType = soundMap[theme] || 'birdsong';
 
-  // Always create a FRESH audio context during this user gesture
-  // (reusing an old context often fails on mobile — mirrors toggleAmbientAudio pattern)
+  // Need an AudioContext to generate the buffer (even if we play via HTML5 Audio)
   var ctx;
   if (typeof _recreateAudioCtx === 'function') {
     ctx = _recreateAudioCtx();
@@ -769,80 +804,108 @@ function obStartSoundPreview(theme) {
   }
   if (!ctx) return;
 
-  // Set state early so UI updates immediately
+  // UI updates immediately
   window._obSoundPreviewing = true;
   WEATHER.audioUnlocked = true;
-
   var btn = document.getElementById('ob-sound-preview-btn');
   var icon = document.getElementById('ob-sound-preview-icon');
   if (btn) btn.classList.add('playing');
   if (icon) icon.textContent = '🔇';
 
-  // Resume context — MUST happen during user gesture for iOS/mobile
-  if (typeof _resumeCtx === 'function') {
-    _resumeCtx(ctx);
+  // Unlock iOS audio pipeline during this user gesture
+  if (typeof _resumeCtx === 'function') _resumeCtx(ctx);
+
+  // Generate the audio buffer
+  var buffer = generateNoise(soundType);
+  if (!buffer) {
+    obStopSoundPreview();
+    return;
   }
 
-  // Helper to actually start playback
-  function _startPreviewPlayback() {
-    if (!window._obSoundPreviewing) return;
-    // Already have a playing node — don't double-start
-    if (window._obSoundPreviewNode) return;
+  // PRIMARY: HTML5 <audio> with WAV blob — most reliable on mobile
+  try {
+    var wav = _audioBufferToWav(buffer);
+    var objUrl = URL.createObjectURL(wav);
+    var audio = document.createElement('audio');
+    audio.setAttribute('playsinline', '');
+    audio.setAttribute('webkit-playsinline', '');
+    audio.src = objUrl;
+    audio.loop = true;
+    audio.volume = 1.0;
+    var playP = audio.play();
+    if (playP && playP.then) {
+      playP.then(function() {
+        if (!window._obSoundPreviewing) { audio.pause(); URL.revokeObjectURL(objUrl); return; }
+        window._obSoundPreviewNode = { audio: audio, objUrl: objUrl };
+      }).catch(function() {
+        URL.revokeObjectURL(objUrl);
+        // HTML5 Audio blocked — fall back to Web Audio API
+        _obWebAudioFallback(ctx, buffer);
+      });
+    } else {
+      window._obSoundPreviewNode = { audio: audio, objUrl: objUrl };
+    }
+  } catch(e) {
+    // WAV conversion or HTML5 Audio failed — fall back to Web Audio API
+    _obWebAudioFallback(ctx, buffer);
+  }
+}
 
+// Fallback: play via Web Audio API if HTML5 Audio fails
+function _obWebAudioFallback(ctx, buffer) {
+  if (!window._obSoundPreviewing) return;
+  if (window._obSoundPreviewNode) return;
+
+  function _tryPlay() {
+    if (!window._obSoundPreviewing || window._obSoundPreviewNode) return;
     var c = WEATHER.audioCtx;
     if (!c) return;
-
-    var buffer = generateNoise(soundType);
-    if (!buffer) return;
-
     var source = c.createBufferSource();
     source.buffer = buffer;
     source.loop = true;
     var gain = c.createGain();
-    gain.gain.setValueAtTime(0.35, c.currentTime);
-    gain.gain.linearRampToValueAtTime(0.7, c.currentTime + 0.4);
+    gain.gain.setValueAtTime(0.5, c.currentTime);
+    gain.gain.linearRampToValueAtTime(1.0, c.currentTime + 0.3);
     source.connect(gain);
     gain.connect(c.destination);
     source.start(0);
-
     window._obSoundPreviewNode = { source: source, gain: gain };
   }
 
-  // Try both promise-based and immediate — on some devices the promise
-  // never resolves but audio works anyway (mirrors toggleAmbientAudio)
   if (ctx.state !== 'running') {
     try {
       var p = ctx.resume();
       if (p && p.then) {
-        p.then(function() { _startPreviewPlayback(); }).catch(function() { _startPreviewPlayback(); });
-      } else {
-        _startPreviewPlayback();
-      }
-    } catch(e) {
-      _startPreviewPlayback();
-    }
+        p.then(_tryPlay).catch(_tryPlay);
+      } else { _tryPlay(); }
+    } catch(e) { _tryPlay(); }
   } else {
-    _startPreviewPlayback();
+    _tryPlay();
   }
-
-  // Fallback retry — if promise never resolved or audio didn't start
+  // Retry after 800ms
   setTimeout(function() {
-    if (!window._obSoundPreviewing) return;
-    if (window._obSoundPreviewNode) return;
-    var c = WEATHER.audioCtx;
-    if (!c) return;
-    if (c.state !== 'running') c.resume().catch(function() {});
-    _startPreviewPlayback();
+    if (!window._obSoundPreviewing || window._obSoundPreviewNode) return;
+    if (WEATHER.audioCtx && WEATHER.audioCtx.state !== 'running') WEATHER.audioCtx.resume().catch(function(){});
+    _tryPlay();
   }, 800);
 }
 
 function obStopSoundPreview() {
-  if (window._obSoundPreviewNode && WEATHER.audioCtx) {
-    try {
-      window._obSoundPreviewNode.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.5);
-      var node = window._obSoundPreviewNode;
-      setTimeout(function() { try { node.source.stop(); } catch(e) {} }, 600);
-    } catch(e) {}
+  var node = window._obSoundPreviewNode;
+  if (node) {
+    // HTML5 Audio path
+    if (node.audio) {
+      try { node.audio.pause(); node.audio.src = ''; } catch(e) {}
+      if (node.objUrl) try { URL.revokeObjectURL(node.objUrl); } catch(e) {}
+    }
+    // Web Audio path
+    if (node.source && WEATHER.audioCtx) {
+      try {
+        node.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.5);
+        var s = node.source;
+        setTimeout(function() { try { s.stop(); } catch(e) {} }, 600);
+      } catch(e) {}
+    }
     window._obSoundPreviewNode = null;
   }
   window._obSoundPreviewing = false;
