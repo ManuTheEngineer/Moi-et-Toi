@@ -755,32 +755,19 @@ function obStartSoundPreview(theme) {
   var soundMap = { beach: 'seagulls', mountain: 'forestWind', mixed: 'birdsong' };
   var soundType = soundMap[theme] || 'birdsong';
 
-  // Create/resume audio context using weather.js helpers if available
-  var ctx = (typeof _ensureAudioCtx === 'function') ? _ensureAudioCtx() : null;
-  if (!ctx) {
-    try { WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); ctx = WEATHER.audioCtx; } catch(e) { return; }
+  // Always create a FRESH audio context during this user gesture
+  // (reusing an old context often fails on mobile — mirrors toggleAmbientAudio pattern)
+  var ctx;
+  if (typeof _recreateAudioCtx === 'function') {
+    ctx = _recreateAudioCtx();
+  } else {
+    try {
+      if (WEATHER.audioCtx) { try { WEATHER.audioCtx.close(); } catch(e) {} }
+      WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      ctx = WEATHER.audioCtx;
+    } catch(e) { return; }
   }
-
-  // Helper to actually start playback once context is running
-  function _startPreviewPlayback() {
-    // Guard: user may have toggled off while we were waiting for resume
-    if (!window._obSoundPreviewing) return;
-
-    var buffer = generateNoise(soundType);
-    if (!buffer) return;
-
-    var source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.loop = true;
-    var gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.35, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.7, ctx.currentTime + 0.4);
-    source.connect(gain);
-    gain.connect(ctx.destination);
-    source.start(0);
-
-    window._obSoundPreviewNode = { source: source, gain: gain };
-  }
+  if (!ctx) return;
 
   // Set state early so UI updates immediately
   window._obSoundPreviewing = true;
@@ -791,15 +778,62 @@ function obStartSoundPreview(theme) {
   if (btn) btn.classList.add('playing');
   if (icon) icon.textContent = '🔇';
 
-  // Resume context (must happen during user gesture) then start audio
+  // Resume context — MUST happen during user gesture for iOS/mobile
   if (typeof _resumeCtx === 'function') {
     _resumeCtx(ctx);
   }
-  if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    ctx.resume().then(_startPreviewPlayback).catch(function() {});
+
+  // Helper to actually start playback
+  function _startPreviewPlayback() {
+    if (!window._obSoundPreviewing) return;
+    // Already have a playing node — don't double-start
+    if (window._obSoundPreviewNode) return;
+
+    var c = WEATHER.audioCtx;
+    if (!c) return;
+
+    var buffer = generateNoise(soundType);
+    if (!buffer) return;
+
+    var source = c.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    var gain = c.createGain();
+    gain.gain.setValueAtTime(0.35, c.currentTime);
+    gain.gain.linearRampToValueAtTime(0.7, c.currentTime + 0.4);
+    source.connect(gain);
+    gain.connect(c.destination);
+    source.start(0);
+
+    window._obSoundPreviewNode = { source: source, gain: gain };
+  }
+
+  // Try both promise-based and immediate — on some devices the promise
+  // never resolves but audio works anyway (mirrors toggleAmbientAudio)
+  if (ctx.state !== 'running') {
+    try {
+      var p = ctx.resume();
+      if (p && p.then) {
+        p.then(function() { _startPreviewPlayback(); }).catch(function() { _startPreviewPlayback(); });
+      } else {
+        _startPreviewPlayback();
+      }
+    } catch(e) {
+      _startPreviewPlayback();
+    }
   } else {
     _startPreviewPlayback();
   }
+
+  // Fallback retry — if promise never resolved or audio didn't start
+  setTimeout(function() {
+    if (!window._obSoundPreviewing) return;
+    if (window._obSoundPreviewNode) return;
+    var c = WEATHER.audioCtx;
+    if (!c) return;
+    if (c.state !== 'running') c.resume().catch(function() {});
+    _startPreviewPlayback();
+  }, 800);
 }
 
 function obStopSoundPreview() {
