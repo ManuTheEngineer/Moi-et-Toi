@@ -3012,33 +3012,34 @@ body[data-time="night"] .ob-env-preview { background: linear-gradient(180deg, #0
 
 /* ===== ONBOARDING TIME-OF-DAY BACKGROUND ===== */
 /* Override the login background during onboarding to match current time of day */
+/* Gradients aligned with app theme from variables.css --bg values */
 body[data-time="dawn"] .login.onboard-active {
-  background: linear-gradient(160deg, #1A1A2E 0%, #2D1B4E 20%, #8B4570 45%, #E87D5E 70%, #FFB57A 90%, #FFE4B5 100%) !important;
+  background: linear-gradient(160deg, #E8D0D6 0%, #E0C0C8 15%, #D8A8B0 35%, #E0A090 55%, #F0C0A0 75%, #F0E6E8 100%) !important;
   background-size: 200% 200% !important;
   animation: loginBgShift 12s ease-in-out infinite alternate !important;
 }
 body[data-time="morning"] .login.onboard-active {
-  background: linear-gradient(160deg, #1A1A2E 0%, #3A3070 15%, #5B9BD5 40%, #87CEEB 65%, #FFFACD 85%, #FFF8E0 100%) !important;
+  background: linear-gradient(160deg, #F5F0E6 0%, #EDE4C8 15%, #E8D8A0 35%, #F0E0B0 55%, #FFFACD 75%, #FFF8E0 100%) !important;
   background-size: 200% 200% !important;
   animation: loginBgShift 12s ease-in-out infinite alternate !important;
 }
 body[data-time="afternoon"] .login.onboard-active {
-  background: linear-gradient(160deg, #1A1A2E 0%, #2A3A6E 15%, #4A90D9 40%, #87CEEB 65%, #B0D4F1 85%, #E8F4FD 100%) !important;
+  background: linear-gradient(160deg, #D0E4F0 0%, #D8E8F4 15%, #E0F0F8 35%, #E8F4FD 55%, #EFF3F5 75%, #F4F8FA 100%) !important;
   background-size: 200% 200% !important;
   animation: loginBgShift 12s ease-in-out infinite alternate !important;
 }
 body[data-time="golden"] .login.onboard-active {
-  background: linear-gradient(160deg, #1A1A2E 0%, #4A2040 15%, #C0392B 35%, #E67E22 55%, #F39C12 75%, #FFD700 100%) !important;
+  background: linear-gradient(160deg, #E0C8A0 0%, #E8C890 15%, #F0C878 35%, #F5D080 55%, #F8E0A8 75%, #F2E8D8 100%) !important;
   background-size: 200% 200% !important;
   animation: loginBgShift 12s ease-in-out infinite alternate !important;
 }
 body[data-time="evening"] .login.onboard-active {
-  background: linear-gradient(160deg, #0A0A1A 0%, #1A1A3E 20%, #2C1654 40%, #6B3FA0 60%, #D4784A 80%, #FFB347 100%) !important;
+  background: linear-gradient(160deg, #1A1830 0%, #2A2440 20%, #342E50 40%, #3E3860 60%, #4A4070 80%, #2A2440 100%) !important;
   background-size: 200% 200% !important;
   animation: loginBgShift 12s ease-in-out infinite alternate !important;
 }
 body[data-time="night"] .login.onboard-active {
-  background: linear-gradient(160deg, #05050F 0%, #0A0A1A 20%, #0F1530 40%, #1A1F3A 60%, #1E2548 80%, #252D5C 100%) !important;
+  background: linear-gradient(160deg, #0E0C1A 0%, #141228 20%, #1A1828 40%, #1E1C32 60%, #242236 80%, #1A1828 100%) !important;
   background-size: 200% 200% !important;
   animation: loginBgShift 12s ease-in-out infinite alternate !important;
 }
