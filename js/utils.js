@@ -722,6 +722,276 @@ function renderCloud(container, isDarkMode, isGolden) {
   container.appendChild(cloud);
 }
 
+// ===== IMMERSIVE TERRAIN RENDERING =====
+// Creates environment-specific silhouettes (mountains, beach, meadow)
+// rendered into a separate unmasked container for full visibility
+
+function renderTerrain(theme) {
+  var container = document.getElementById('terrain-scene');
+  if (!container) return;
+  container.innerHTML = '';
+
+  theme = theme || (typeof currentSkyTheme !== 'undefined' ? currentSkyTheme : 'mixed');
+
+  if (theme === 'mountain') {
+    renderMountainTerrain(container);
+  } else if (theme === 'beach') {
+    renderBeachTerrain(container);
+  } else {
+    renderMeadowTerrain(container);
+  }
+}
+
+function renderMountainTerrain(container) {
+  // Far mountain range
+  var far = document.createElement('div');
+  far.className = 'terrain-mountain-far';
+  container.appendChild(far);
+
+  // Mist between far and mid ranges
+  var mist = document.createElement('div');
+  mist.className = 'terrain-mountain-mist';
+  container.appendChild(mist);
+
+  // Mid mountain range
+  var mid = document.createElement('div');
+  mid.className = 'terrain-mountain-mid';
+  container.appendChild(mid);
+
+  // Waterfall on the mid range
+  var wf = document.createElement('div');
+  wf.className = 'terrain-waterfall';
+  wf.style.cssText = 'left:28%;bottom:22%;height:14%';
+  container.appendChild(wf);
+
+  // Second waterfall on opposite side
+  var wf2 = document.createElement('div');
+  wf2.className = 'terrain-waterfall';
+  wf2.style.cssText = 'left:72%;bottom:18%;height:10%';
+  container.appendChild(wf2);
+
+  // Near foothills (tree-line silhouette)
+  var near = document.createElement('div');
+  near.className = 'terrain-mountain-near';
+  container.appendChild(near);
+
+  // Scattered pine trees along the foothills
+  var pinePositions = [
+    { left: 5, h: 28, w: 7 },
+    { left: 12, h: 22, w: 6 },
+    { left: 18, h: 32, w: 8 },
+    { left: 25, h: 26, w: 7 },
+    { left: 33, h: 20, w: 5 },
+    { left: 38, h: 30, w: 8 },
+    { left: 45, h: 24, w: 6 },
+    { left: 52, h: 34, w: 9 },
+    { left: 58, h: 22, w: 6 },
+    { left: 63, h: 28, w: 7 },
+    { left: 70, h: 26, w: 7 },
+    { left: 76, h: 32, w: 8 },
+    { left: 82, h: 20, w: 5 },
+    { left: 88, h: 28, w: 7 },
+    { left: 93, h: 24, w: 6 }
+  ];
+  for (var i = 0; i < pinePositions.length; i++) {
+    var pp = pinePositions[i];
+    var pine = document.createElement('div');
+    pine.className = 'terrain-pine';
+    pine.style.cssText = 'left:' + pp.left + '%;--pine-w:' + pp.w + 'px;--pine-h:' + pp.h + 'px';
+    container.appendChild(pine);
+  }
+
+  // Second mist layer (lower, subtler)
+  var mist2 = document.createElement('div');
+  mist2.className = 'terrain-mountain-mist';
+  mist2.style.cssText = 'bottom:8%;height:12%;opacity:0.08;animation-delay:-12s';
+  container.appendChild(mist2);
+}
+
+function renderBeachTerrain(container) {
+  // Ocean water body
+  var ocean = document.createElement('div');
+  ocean.className = 'terrain-ocean';
+
+  var oceanBody = document.createElement('div');
+  oceanBody.className = 'terrain-ocean-body';
+  ocean.appendChild(oceanBody);
+
+  // Wave crests
+  var w1 = document.createElement('div');
+  w1.className = 'terrain-wave terrain-wave-1';
+  ocean.appendChild(w1);
+
+  var w2 = document.createElement('div');
+  w2.className = 'terrain-wave terrain-wave-2';
+  ocean.appendChild(w2);
+
+  var w3 = document.createElement('div');
+  w3.className = 'terrain-wave terrain-wave-3';
+  ocean.appendChild(w3);
+
+  // Foam lines
+  var foam1 = document.createElement('div');
+  foam1.className = 'terrain-foam';
+  foam1.style.top = '26%';
+  ocean.appendChild(foam1);
+
+  var foam2 = document.createElement('div');
+  foam2.className = 'terrain-foam';
+  foam2.style.cssText = 'top:34%;animation-delay:1.5s';
+  ocean.appendChild(foam2);
+
+  // Sun/moon shimmer on water
+  var shimmer = document.createElement('div');
+  shimmer.className = 'terrain-ocean-shimmer';
+  ocean.appendChild(shimmer);
+
+  container.appendChild(ocean);
+
+  // Sandy shore
+  var shore = document.createElement('div');
+  shore.className = 'terrain-shore';
+  container.appendChild(shore);
+
+  // Palm tree left side
+  renderPalmTree(container, 8, 28, -8);
+
+  // Palm tree right side
+  renderPalmTree(container, 85, 32, 6);
+
+  // Small palm in mid-ground
+  renderPalmTree(container, 18, 22, -5);
+
+  // Distant island
+  var island = document.createElement('div');
+  island.className = 'terrain-island';
+  island.style.cssText = 'left:60%;bottom:28%;width:60px;height:20px;background:rgba(40,60,40,0.3)';
+  container.appendChild(island);
+}
+
+function renderPalmTree(container, leftPct, heightPct, tiltDeg) {
+  var palm = document.createElement('div');
+  palm.className = 'terrain-palm';
+  palm.style.left = leftPct + '%';
+
+  // Trunk
+  var trunk = document.createElement('div');
+  trunk.className = 'terrain-palm-trunk';
+  var trunkH = heightPct * 0.7;
+  trunk.style.cssText = 'height:' + trunkH + '%;background:rgba(70,45,20,0.5);transform:rotate(' + tiltDeg + 'deg)';
+  palm.appendChild(trunk);
+
+  // Frond canopy at top of trunk
+  var canopy = document.createElement('div');
+  canopy.className = 'terrain-palm-canopy';
+  // Position canopy at top of trunk, accounting for tilt
+  var radians = tiltDeg * Math.PI / 180;
+  var canopyBottom = trunkH;
+  var canopyLeft = Math.sin(radians) * trunkH * 0.5;
+  canopy.style.cssText = 'bottom:' + canopyBottom + '%;left:' + canopyLeft + 'px';
+
+  // 6 fronds radiating outward
+  var frondSizes = [
+    { w: 22, h: 18 },
+    { w: 20, h: 16 },
+    { w: 18, h: 14 },
+    { w: 18, h: 14 },
+    { w: 16, h: 12 },
+    { w: 16, h: 12 }
+  ];
+  for (var i = 0; i < 6; i++) {
+    var frond = document.createElement('div');
+    frond.className = 'terrain-palm-frond terrain-palm-frond-' + (i + 1);
+    frond.style.cssText = '--frond-w:' + frondSizes[i].w + 'px;--frond-h:' + frondSizes[i].h + 'px';
+    canopy.appendChild(frond);
+  }
+
+  palm.appendChild(canopy);
+  container.appendChild(palm);
+}
+
+function renderMeadowTerrain(container) {
+  // Far rolling hill
+  var hillFar = document.createElement('div');
+  hillFar.className = 'terrain-hill-far';
+  hillFar.style.cssText = 'left:-10%;right:40%';
+  container.appendChild(hillFar);
+
+  // Second far hill
+  var hillFar2 = document.createElement('div');
+  hillFar2.className = 'terrain-hill-far';
+  hillFar2.style.cssText = 'left:30%;right:-10%;height:20%;border-radius:55% 45% 0 0';
+  container.appendChild(hillFar2);
+
+  // Mid rolling hill
+  var hillMid = document.createElement('div');
+  hillMid.className = 'terrain-hill-mid';
+  hillMid.style.cssText = 'left:-5%;right:20%';
+  container.appendChild(hillMid);
+
+  // Second mid hill
+  var hillMid2 = document.createElement('div');
+  hillMid2.className = 'terrain-hill-mid';
+  hillMid2.style.cssText = 'left:40%;right:-5%;height:15%;border-radius:40% 60% 0 0';
+  container.appendChild(hillMid2);
+
+  // Near gentle hill
+  var hillNear = document.createElement('div');
+  hillNear.className = 'terrain-hill-near';
+  container.appendChild(hillNear);
+
+  // Scattered deciduous trees
+  var treePositions = [
+    { left: 10, canopyW: 18, canopyH: 16, trunkH: 12, bottom: 14 },
+    { left: 22, canopyW: 14, canopyH: 12, trunkH: 10, bottom: 16 },
+    { left: 35, canopyW: 20, canopyH: 18, trunkH: 14, bottom: 12 },
+    { left: 55, canopyW: 16, canopyH: 14, trunkH: 11, bottom: 15 },
+    { left: 68, canopyW: 22, canopyH: 18, trunkH: 15, bottom: 11 },
+    { left: 80, canopyW: 14, canopyH: 12, trunkH: 10, bottom: 16 },
+    { left: 90, canopyW: 18, canopyH: 16, trunkH: 12, bottom: 13 }
+  ];
+  for (var i = 0; i < treePositions.length; i++) {
+    var tp = treePositions[i];
+    var tree = document.createElement('div');
+    tree.className = 'terrain-tree';
+    tree.style.cssText = 'left:' + tp.left + '%;bottom:' + tp.bottom + '%';
+
+    var trunk = document.createElement('div');
+    trunk.className = 'terrain-tree-trunk';
+    trunk.style.height = tp.trunkH + 'px';
+    tree.appendChild(trunk);
+
+    var canopy = document.createElement('div');
+    canopy.className = 'terrain-tree-canopy';
+    canopy.style.cssText = 'width:' + tp.canopyW + 'px;height:' + tp.canopyH + 'px;bottom:' + (tp.trunkH - 3) + 'px';
+    tree.appendChild(canopy);
+
+    container.appendChild(tree);
+  }
+
+  // Wildflower dots
+  var flowers = document.createElement('div');
+  flowers.className = 'terrain-flowers';
+  var flowerColors = [
+    'rgba(255,180,100,0.4)', 'rgba(255,140,160,0.4)', 'rgba(200,160,255,0.35)',
+    'rgba(255,220,100,0.35)', 'rgba(180,220,255,0.3)', 'rgba(255,160,120,0.35)'
+  ];
+  for (var f = 0; f < 20; f++) {
+    var dot = document.createElement('div');
+    dot.className = 'terrain-flower-dot';
+    dot.style.cssText = 'left:' + (5 + Math.random() * 90) + '%;bottom:' + (Math.random() * 80) +
+      '%;background:' + flowerColors[f % flowerColors.length] +
+      ';animation-delay:' + (Math.random() * 4) + 's';
+    flowers.appendChild(dot);
+  }
+  container.appendChild(flowers);
+
+  // Grass blade layer
+  var grass = document.createElement('div');
+  grass.className = 'terrain-grass-layer';
+  container.appendChild(grass);
+}
+
 // ===== SKY THEME (beach / mountain / mixed) =====
 var currentSkyTheme = 'mixed';
 
@@ -731,6 +1001,8 @@ function applySkyTheme(theme) {
   // Re-render the living sky with the new theme
   var container = document.getElementById('sky-scene');
   if (container && livingSkyEnabled) renderLivingSky(container);
+  // Render immersive terrain silhouettes
+  renderTerrain(currentSkyTheme);
   // Refresh orbs and meta color to match new theme
   spawnOrbs();
   updateTimeOfDay();
@@ -872,6 +1144,8 @@ document.addEventListener('DOMContentLoaded', function() {
   spawnOrbs();
   addMeshLayer();
   initSkyScene();
+  // Render terrain for current theme
+  renderTerrain();
   // Re-render sky when time period changes (orbs handled by updateTimeOfDay)
   setInterval(function() {
     var current = document.body.getAttribute('data-time');

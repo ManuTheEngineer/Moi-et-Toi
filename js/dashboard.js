@@ -71,6 +71,7 @@ function softRefresh() {
     // Update time of day visuals
     if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
     if (typeof spawnOrbs === 'function') spawnOrbs();
+    if (typeof renderTerrain === 'function') renderTerrain();
 
     toast('Refreshed');
   } catch(e) {
