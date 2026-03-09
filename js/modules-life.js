@@ -1059,45 +1059,6 @@ function scrollToProposals() {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ===== DAILY AGREEMENT REMINDER =====
-function showDailyAgreement() {
-  if (!db || !user) return;
-  var today = localDate();
-  var KEY = 'met_agree_daily_' + user;
-  // Already acknowledged today
-  if (localStorage.getItem(KEY) === today) return;
-
-  db.ref('agreements/active').once('value', function(snap) {
-    var items = [];
-    snap.forEach(function(c) { items.push(c.val()); });
-    if (!items.length) return;
-
-    // Pick one based on day of year for consistency
-    var dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-    var agreement = items[dayOfYear % items.length];
-
-    var card = document.getElementById('agree-daily-card');
-    var text = document.getElementById('agree-daily-text');
-    if (card && text) {
-      text.textContent = agreement.text;
-      card.classList.remove('d-none');
-    }
-  });
-}
-
-function ackDailyAgreement() {
-  var today = localDate();
-  localStorage.setItem('met_agree_daily_' + user, today);
-  var btn = document.getElementById('agree-daily-done');
-  if (btn) { btn.classList.add('done'); btn.textContent = '✓'; }
-  setTimeout(function() {
-    var card = document.getElementById('agree-daily-card');
-    if (card) card.classList.add('d-none');
-  }, 800);
-  // Track in Firebase
-  if (db && user) db.ref('agreements/daily/' + user + '/' + today).set({ ack: true, timestamp: Date.now() });
-}
-
 // Keep old function name for backward compatibility
 function loadAgreements() { listenAgreements(); }
 function listenCustomAgreements() { /* replaced by listenAgreements */ }

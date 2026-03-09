@@ -511,15 +511,6 @@
 .agree-edit-cancel{padding:8px 18px;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--t2);font-size:12px;cursor:pointer}
 .agree-edit-submit{padding:8px 18px;border-radius:20px;border:none;background:var(--gold);color:#fff;font-size:12px;font-weight:500;cursor:pointer}
 
-/* Daily reminder card on dashboard */
-.agree-daily-card{display:flex;align-items:center;gap:12px;padding:16px;background:var(--card-bg);border-radius:18px;box-shadow:var(--card-shadow);margin-bottom:16px;border-left:3px solid var(--gold)}
-.agree-daily-icon{font-size:22px;flex-shrink:0}
-.agree-daily-body{flex:1;min-width:0}
-.agree-daily-label{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--gold);font-weight:600;margin-bottom:2px}
-.agree-daily-text{font-size:13px;color:var(--t1);line-height:1.4}
-.agree-daily-done{width:36px;height:36px;border-radius:50%;border:2px solid var(--gold);background:transparent;color:var(--gold);font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.agree-daily-done.done{background:var(--gold);color:#fff;border-color:var(--gold)}
-
 .fdn-conflict-card{background:var(--card-bg);border:none;border-radius:20px;padding:22px;box-shadow:var(--card-shadow)}
 .fdn-conflict-step{display:flex;gap:10px;margin-bottom:14px;font-size:12px;color:var(--t2);line-height:1.5;align-items:flex-start}
 .fdn-conflict-step:last-child{margin-bottom:0}

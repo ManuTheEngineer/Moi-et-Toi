@@ -1207,8 +1207,6 @@ function finishLogin() {
   if (typeof ltStartListening === 'function') ltStartListening();
   // Morning message check (runs after a short delay so dashboard renders first)
   setTimeout(function() { if (typeof checkMorningMessage === 'function') checkMorningMessage(); }, 3000);
-  // Daily agreement reminder
-  setTimeout(function() { if (typeof showDailyAgreement === 'function') showDailyAgreement(); }, 2000);
   // Nav enhancements: swipe gestures, tab indicator, badges
   initSwipeNav();
   initCollapsingHeader();

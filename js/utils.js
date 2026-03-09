@@ -47,6 +47,15 @@
   }, { passive: true });
 })();
 
+// ===== EARLY THEME APPLICATION =====
+// Apply cached sky theme immediately so login page shows the right environment
+(function() {
+  try {
+    var cached = localStorage.getItem('met_sky_theme');
+    if (cached) document.body.setAttribute('data-sky-theme', cached);
+  } catch(e) {}
+})();
+
 // ===== DYNAMIC TIME-OF-DAY SYSTEM =====
 function getTimeOfDay() {
   const h = new Date().getHours();
@@ -1060,6 +1069,8 @@ var currentSkyTheme = 'mixed';
 function applySkyTheme(theme) {
   currentSkyTheme = theme || 'mixed';
   document.body.setAttribute('data-sky-theme', currentSkyTheme);
+  // Cache for instant apply on next load (login page, before Firebase)
+  try { localStorage.setItem('met_sky_theme', currentSkyTheme); } catch(e) {}
   // Re-render the living sky with the new theme
   var container = document.getElementById('sky-scene');
   if (container && livingSkyEnabled) renderLivingSky(container);

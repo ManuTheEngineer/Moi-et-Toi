@@ -196,6 +196,124 @@ body[data-time="golden"] .particle { --particle-color: rgba(255,160,60,0.35); }
 body[data-time="evening"] .particle { --particle-color: rgba(160,120,255,0.3); }
 body[data-time="night"] .particle { --particle-color: rgba(100,140,255,0.25); }
 
+/* ===== ENVIRONMENT-AWARE PARTICLES ===== */
+body[data-sky-theme="beach"] .particle { --particle-color: rgba(78,195,230,0.3) !important; }
+body[data-sky-theme="mountain"] .particle { --particle-color: rgba(80,160,80,0.3) !important; }
+body[data-sky-theme="beach"][data-time="evening"] .particle { --particle-color: rgba(120,160,220,0.3) !important; }
+body[data-sky-theme="beach"][data-time="night"] .particle { --particle-color: rgba(60,120,180,0.25) !important; }
+body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-color: rgba(60,100,80,0.3) !important; }
+body[data-sky-theme="mountain"][data-time="night"] .particle { --particle-color: rgba(40,80,60,0.25) !important; }
+
+/* ===== ENVIRONMENT CSS VARIABLE OVERRIDES ===== */
+/* Beach: turquoise tints, sandy warmth, coral accents */
+body[data-sky-theme="beach"] {
+  --env-accent: rgba(78,165,210,0.12);
+  --env-accent-s: rgba(78,165,210,0.06);
+  --env-glow: rgba(78,195,230,0.18);
+  --env-border: rgba(78,165,210,0.10);
+}
+body[data-sky-theme="beach"] .bnav {
+  border-top-color: rgba(78,165,210,0.10);
+}
+body[data-sky-theme="beach"] .bnav-indicator {
+  background: linear-gradient(90deg, #4EA5D2, #5BC0BE);
+}
+body[data-sky-theme="beach"] .bn.on { color: #4EA5D2; }
+body[data-sky-theme="beach"] .login {
+  background: linear-gradient(160deg, var(--bg) 0%, #E8F4F8 25%, #D4EEF4 45%, #4EA5D2 70%, #3B8EAF 85%, #2A6D8A 100%) !important;
+  background-size: 200% 200% !important;
+  animation: loginBgShift 12s ease-in-out infinite alternate !important;
+}
+body[data-sky-theme="beach"] .login-btn {
+  background: linear-gradient(135deg, #4EA5D2, #5BC0BE) !important;
+  box-shadow: 0 4px 24px rgba(78,165,210,0.25) !important;
+}
+body[data-sky-theme="beach"] .login-logo {
+  border-color: rgba(78,165,210,0.25);
+  background: rgba(78,165,210,0.08);
+}
+body[data-sky-theme="beach"] .sec-dot { background: #4EA5D2 !important; }
+body[data-sky-theme="beach"] .hub-pulse-num.c-teal { color: #3B8EAF !important; }
+
+/* Mountain: forest greens, earthy browns, alpine blues */
+body[data-sky-theme="mountain"] {
+  --env-accent: rgba(74,124,57,0.12);
+  --env-accent-s: rgba(74,124,57,0.06);
+  --env-glow: rgba(80,160,80,0.18);
+  --env-border: rgba(74,124,57,0.10);
+}
+body[data-sky-theme="mountain"] .bnav {
+  border-top-color: rgba(74,124,57,0.10);
+}
+body[data-sky-theme="mountain"] .bnav-indicator {
+  background: linear-gradient(90deg, #4A7C39, #6B8F5E);
+}
+body[data-sky-theme="mountain"] .bn.on { color: #4A7C39; }
+body[data-sky-theme="mountain"] .login {
+  background: linear-gradient(160deg, var(--bg) 0%, #E8F0E4 25%, #D4E4CC 45%, #4A7C39 70%, #3A6530 85%, #2A4E22 100%) !important;
+  background-size: 200% 200% !important;
+  animation: loginBgShift 12s ease-in-out infinite alternate !important;
+}
+body[data-sky-theme="mountain"] .login-btn {
+  background: linear-gradient(135deg, #4A7C39, #6B8F5E) !important;
+  box-shadow: 0 4px 24px rgba(74,124,57,0.25) !important;
+}
+body[data-sky-theme="mountain"] .login-logo {
+  border-color: rgba(74,124,57,0.25);
+  background: rgba(74,124,57,0.08);
+}
+body[data-sky-theme="mountain"] .sec-dot { background: #4A7C39 !important; }
+
+/* ===== ENVIRONMENT-THEMED CARDS & UI ELEMENTS ===== */
+/* Card accent border for beach */
+body[data-sky-theme="beach"] .dq-card,
+body[data-sky-theme="beach"] .dt-current,
+body[data-sky-theme="beach"] .form-card,
+body[data-sky-theme="beach"] .agree-daily-card {
+  border-left: 3px solid rgba(78,165,210,0.25);
+}
+body[data-sky-theme="beach"] .hub-today-card {
+  border-top: 2px solid rgba(78,165,210,0.12);
+}
+/* Card accent border for mountain */
+body[data-sky-theme="mountain"] .dq-card,
+body[data-sky-theme="mountain"] .dt-current,
+body[data-sky-theme="mountain"] .form-card,
+body[data-sky-theme="mountain"] .agree-daily-card {
+  border-left: 3px solid rgba(74,124,57,0.25);
+}
+body[data-sky-theme="mountain"] .hub-today-card {
+  border-top: 2px solid rgba(74,124,57,0.12);
+}
+
+/* ===== ENVIRONMENT HEADER ACCENTS ===== */
+body[data-sky-theme="beach"] #page-header {
+  border-bottom-color: rgba(78,165,210,0.08);
+}
+body[data-sky-theme="mountain"] #page-header {
+  border-bottom-color: rgba(74,124,57,0.08);
+}
+
+/* ===== ENVIRONMENT ONBOARDING ===== */
+body[data-sky-theme="beach"] .ob-progress-fill { background: #4EA5D2 !important; }
+body[data-sky-theme="mountain"] .ob-progress-fill { background: #4A7C39 !important; }
+body[data-sky-theme="beach"] .ob-next-btn { background: linear-gradient(135deg, #4EA5D2, #5BC0BE) !important; }
+body[data-sky-theme="mountain"] .ob-next-btn { background: linear-gradient(135deg, #4A7C39, #6B8F5E) !important; }
+
+/* ===== ENVIRONMENT BUTTON/INTERACTIVE ACCENTS ===== */
+body[data-sky-theme="beach"] .streak-fire-icon svg { stroke: #4EA5D2 !important; }
+body[data-sky-theme="mountain"] .streak-fire-icon svg { stroke: #4A7C39 !important; }
+body[data-sky-theme="beach"] .agree-pending-dot { background: #4EA5D2 !important; }
+body[data-sky-theme="mountain"] .agree-pending-dot { background: #4A7C39 !important; }
+body[data-sky-theme="beach"] .agree-item-check { background: #4EA5D2 !important; }
+body[data-sky-theme="mountain"] .agree-item-check { background: #4A7C39 !important; }
+
+/* ===== ENVIRONMENT EXPLORE PAGE ===== */
+body[data-sky-theme="beach"] .explore-feat:first-child { background: linear-gradient(135deg, #4EA5D2, #3B8EAF) !important; }
+body[data-sky-theme="beach"] .explore-feat:nth-child(2) { background: linear-gradient(135deg, #5BC0BE, #4EA5D2) !important; }
+body[data-sky-theme="mountain"] .explore-feat:first-child { background: linear-gradient(135deg, #4A7C39, #3A6530) !important; }
+body[data-sky-theme="mountain"] .explore-feat:nth-child(2) { background: linear-gradient(135deg, #6B8F5E, #4A7C39) !important; }
+
 /* ===== MOVING GRADIENT MESH (secondary layer) ===== */
 .bg-mesh {
   position: fixed;
