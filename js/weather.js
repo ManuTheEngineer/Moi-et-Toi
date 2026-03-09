@@ -839,8 +839,13 @@ function _addCricketChorus(d, sr, pos) {
   }
 }
 
+// Cache generated buffers to avoid CPU-heavy re-generation on every play
+var _noiseCache = {};
+
 function generateNoise(type) {
   if (!WEATHER.audioCtx) return null;
+  // Return cached buffer if available (ambient/nature sounds loop the same buffer)
+  if (_noiseCache[type]) return _noiseCache[type];
   var ctx = WEATHER.audioCtx;
   var sr = ctx.sampleRate;
   var len = sr * 10; // 10-second loops for richness
@@ -1610,6 +1615,7 @@ function generateNoise(type) {
       break;
     }
   }
+  _noiseCache[type] = buffer;
   return buffer;
 }
 
@@ -1980,7 +1986,7 @@ var NATURE_ORDER_HIM = [
   'birds', 'rain', 'night', 'thunder',
   'ocean', 'beachBreeze', 'seagulls', 'tropical'
 ];
-var MOOD_ORDER = ['romantic', 'relaxing', 'dreamy', 'serene', 'cozy', 'soulful', 'focused', 'lively', 'playful', 'rainyNight'];
+var MOOD_ORDER = ['romantic', 'relaxing', 'dreamy', 'serene', 'cozy', 'soulful', 'focused', 'lively', 'playful', 'tropical', 'rainyNight'];
 
 WEATHER.moodPlaying = null;
 WEATHER.moodNode = null;
