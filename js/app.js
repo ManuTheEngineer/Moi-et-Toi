@@ -786,7 +786,10 @@ function _audioBufferToWav(audioBuffer) {
 }
 
 function obStartSoundPreview(theme) {
-  if (typeof WEATHER === 'undefined' || typeof generateNoise !== 'function') return;
+  if (typeof WEATHER === 'undefined' || typeof generateNoise !== 'function') {
+    toast('Audio system not loaded yet — try again');
+    return;
+  }
 
   var soundMap = { beach: 'seagulls', mountain: 'forestWind', mixed: 'birdsong' };
   var soundType = soundMap[theme] || 'birdsong';
@@ -800,9 +803,9 @@ function obStartSoundPreview(theme) {
       if (WEATHER.audioCtx) { try { WEATHER.audioCtx.close(); } catch(e) {} }
       WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       ctx = WEATHER.audioCtx;
-    } catch(e) { return; }
+    } catch(e) { toast('Audio not supported on this device'); return; }
   }
-  if (!ctx) return;
+  if (!ctx) { toast('Could not create audio context'); return; }
 
   // UI updates immediately
   window._obSoundPreviewing = true;
@@ -816,8 +819,14 @@ function obStartSoundPreview(theme) {
   if (typeof _resumeCtx === 'function') _resumeCtx(ctx);
 
   // Generate the audio buffer
-  var buffer = generateNoise(soundType);
+  var buffer;
+  try {
+    buffer = generateNoise(soundType);
+  } catch(e) {
+    toast('Buffer error: ' + e.message);
+  }
   if (!buffer) {
+    toast('Sound buffer failed (ctx: ' + (ctx ? ctx.state : 'null') + ') — check media volume (not ringer)');
     obStopSoundPreview();
     return;
   }
@@ -837,15 +846,19 @@ function obStartSoundPreview(theme) {
       playP.then(function() {
         if (!window._obSoundPreviewing) { audio.pause(); URL.revokeObjectURL(objUrl); return; }
         window._obSoundPreviewNode = { audio: audio, objUrl: objUrl };
-      }).catch(function() {
+        toast('Playing ' + soundType + ' — if silent, check media volume (not ringer)');
+      }).catch(function(e) {
         URL.revokeObjectURL(objUrl);
+        toast('HTML5 audio blocked: ' + e.message + ' — trying Web Audio');
         // HTML5 Audio blocked — fall back to Web Audio API
         _obWebAudioFallback(ctx, buffer);
       });
     } else {
       window._obSoundPreviewNode = { audio: audio, objUrl: objUrl };
+      toast('Playing ' + soundType + ' — if silent, check media volume (not ringer)');
     }
   } catch(e) {
+    toast('WAV failed: ' + e.message + ' — trying Web Audio');
     // WAV conversion or HTML5 Audio failed — fall back to Web Audio API
     _obWebAudioFallback(ctx, buffer);
   }
@@ -870,6 +883,7 @@ function _obWebAudioFallback(ctx, buffer) {
     gain.connect(c.destination);
     source.start(0);
     window._obSoundPreviewNode = { source: source, gain: gain };
+    toast('Web Audio playing (ctx: ' + c.state + ') — if silent, check media volume');
   }
 
   if (ctx.state !== 'running') {
