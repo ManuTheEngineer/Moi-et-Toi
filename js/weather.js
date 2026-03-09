@@ -1736,11 +1736,7 @@ function playAmbientSound(type, volume) {
     ctx.resume().catch(function(){});
   }
 
-  var vol = volume || 0.4;
-  var master = ctx.createGain();
-  master.gain.value = vol;
-  master.connect(ctx.destination);
-  var parts = [];
+  var vol = volume || 0.5;
 
   var buffer;
   try {
@@ -1753,36 +1749,70 @@ function playAmbientSound(type, volume) {
     toast('Buffer null for: ' + type);
     return;
   }
-  if (buffer) {
-    var src = ctx.createBufferSource();
-    src.buffer = buffer;
-    src.loop = true;
-    src.connect(master);
-    src.start(0);
-    parts.push(src);
-  }
 
-  // Only register node if we actually have playing sources
-  // Otherwise retries will think the sound is already playing
-  if (parts.length > 0) {
-    WEATHER.audioNodes[type] = { parts: parts, gain: master };
-  } else {
-    try { master.disconnect(); } catch(e) {}
+  // PRIMARY: HTML5 <audio> with WAV blob — most reliable on mobile
+  // Falls back to Web Audio API if HTML5 Audio fails
+  try {
+    var wav = _audioBufferToWav(buffer);
+    var objUrl = URL.createObjectURL(wav);
+    var audio = document.createElement('audio');
+    audio.setAttribute('playsinline', '');
+    audio.setAttribute('webkit-playsinline', '');
+    audio.src = objUrl;
+    audio.loop = true;
+    audio.volume = Math.min(1.0, vol * 1.5);
+    var playP = audio.play();
+    if (playP && playP.then) {
+      playP.then(function() {
+        if (!WEATHER.audioEnabled) { audio.pause(); URL.revokeObjectURL(objUrl); return; }
+        WEATHER.audioNodes[type] = { parts: [], gain: null, audio: audio, objUrl: objUrl };
+      }).catch(function() {
+        URL.revokeObjectURL(objUrl);
+        // Fallback to Web Audio API
+        _playAmbientWebAudio(ctx, type, buffer, vol);
+      });
+    } else {
+      WEATHER.audioNodes[type] = { parts: [], gain: null, audio: audio, objUrl: objUrl };
+    }
+  } catch(e) {
+    _playAmbientWebAudio(ctx, type, buffer, vol);
   }
+}
+
+// Fallback: play ambient sound via Web Audio API
+function _playAmbientWebAudio(ctx, type, buffer, vol) {
+  if (!ctx || ctx.state === 'closed') return;
+  if (WEATHER.audioNodes[type]) return;
+  var master = ctx.createGain();
+  master.gain.value = vol;
+  master.connect(ctx.destination);
+  var src = ctx.createBufferSource();
+  src.buffer = buffer;
+  src.loop = true;
+  src.connect(master);
+  src.start(0);
+  WEATHER.audioNodes[type] = { parts: [src], gain: master };
 }
 
 function stopAmbientSound(type) {
   var node = WEATHER.audioNodes[type];
   if (!node) return;
-  try {
-    if (WEATHER.audioCtx) {
+  // HTML5 Audio path
+  if (node.audio) {
+    try { node.audio.pause(); node.audio.src = ''; } catch(e) {}
+    if (node.objUrl) try { URL.revokeObjectURL(node.objUrl); } catch(e) {}
+  }
+  // Web Audio path
+  if (node.gain && WEATHER.audioCtx) {
+    try {
       node.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.8);
+      var parts = node.parts;
+      setTimeout(function() {
+        try { for (var i = 0; i < parts.length; i++) parts[i].stop(); } catch(e) {}
+      }, 1000);
+    } catch(e) {
+      try { for (var i = 0; i < node.parts.length; i++) node.parts[i].stop(); } catch(e2) {}
     }
-    setTimeout(function() {
-      try { for (var i = 0; i < node.parts.length; i++) node.parts[i].stop(); } catch(e) {}
-    }, 1000);
-  } catch(e) {
-    try { for (var i = 0; i < node.parts.length; i++) node.parts[i].stop(); } catch(e2) {}
   }
   delete WEATHER.audioNodes[type];
 }
@@ -1825,11 +1855,11 @@ function updateAmbientAudio() {
 
   // Ambient volumes: loud enough to hear on phone speakers
   toast('Playing: ' + scene.sounds.base + ' + ' + soundType + ' (ctx:' + ctx.state + ')');
-  playAmbientSound(scene.sounds.base, 0.5);
-  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.45);
+  playAmbientSound(scene.sounds.base, 0.65);
+  if (soundType !== scene.sounds.base) playAmbientSound(soundType, 0.6);
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wx && wx.sound) playAmbientSound(wx.sound, 0.5);
+    if (wx && wx.sound) playAmbientSound(wx.sound, 0.65);
   }
 
   // Report how many nodes are active
@@ -1909,14 +1939,23 @@ function toggleAmbientAudio(on) {
       }
     }, 1000);
 
-    // Final retry with full diagnostic
+    // Final retry — recreate context and try one more time
     setTimeout(function() {
       if (!WEATHER.audioEnabled) return;
       var c = WEATHER.audioCtx;
       var nodes = Object.keys(WEATHER.audioNodes).length;
       var state = c ? c.state : 'no-ctx';
       if (nodes === 0) {
-        toast('Audio debug: state=' + state + ' scene=' + WEATHER.scene + ' — check media volume');
+        // Last resort: recreate context and try again
+        if (state !== 'running') {
+          c = _recreateAudioCtx();
+          if (c) {
+            _resumeCtx(c);
+            c.resume().then(function() { updateAmbientAudio(); }).catch(function() { updateAmbientAudio(); });
+          }
+        } else {
+          updateAmbientAudio();
+        }
       }
     }, 3000);
   } else {
@@ -2415,24 +2454,41 @@ function _startMoodPlayback(ctx, mood, moodKey) {
   var buffer = generateNoise(mood.type);
   if (!buffer) { toast('Could not generate ' + mood.label); return; }
 
-  var source = ctx.createBufferSource();
-  source.buffer = buffer;
-  source.loop = true;
-
-  var gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.35, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.7, ctx.currentTime + 0.5);
-
-  source.connect(gain);
-  gain.connect(ctx.destination);
-  source.start(0);
-
-  WEATHER.moodNode = { source: source, gain: gain };
-
-  toast(mood.label + ' mood playing');
+  // PRIMARY: HTML5 <audio> with WAV blob — most reliable on mobile
+  try {
+    var wav = _audioBufferToWav(buffer);
+    var objUrl = URL.createObjectURL(wav);
+    var audio = document.createElement('audio');
+    audio.setAttribute('playsinline', '');
+    audio.setAttribute('webkit-playsinline', '');
+    audio.src = objUrl;
+    audio.loop = true;
+    audio.volume = 1.0;
+    var playP = audio.play();
+    if (playP && playP.then) {
+      playP.then(function() {
+        if (WEATHER.moodPlaying !== moodKey) { audio.pause(); URL.revokeObjectURL(objUrl); return; }
+        WEATHER.moodNode = { audio: audio, objUrl: objUrl };
+        toast(mood.label + ' mood playing');
+      }).catch(function() {
+        URL.revokeObjectURL(objUrl);
+        // Fallback to Web Audio API
+        _startMoodWebAudio(ctx, buffer, mood, moodKey);
+      });
+    } else {
+      WEATHER.moodNode = { audio: audio, objUrl: objUrl };
+      toast(mood.label + ' mood playing');
+    }
+  } catch(e) {
+    _startMoodWebAudio(ctx, buffer, mood, moodKey);
+  }
 
   // Verify audio is actually running after a delay
   setTimeout(function() {
+    if (!WEATHER.moodNode && WEATHER.moodPlaying === moodKey) {
+      // Neither HTML5 nor Web Audio started — try Web Audio as last resort
+      _startMoodWebAudio(ctx, buffer, mood, moodKey);
+    }
     if (ctx.state !== 'running') {
       toast('Audio blocked (' + ctx.state + ') — check silent mode & volume');
       ctx.resume();
@@ -2440,15 +2496,45 @@ function _startMoodPlayback(ctx, mood, moodKey) {
   }, 800);
 }
 
+// Fallback: play mood sound via Web Audio API
+function _startMoodWebAudio(ctx, buffer, mood, moodKey) {
+  if (!ctx || ctx.state === 'closed') return;
+  if (WEATHER.moodPlaying !== moodKey) return;
+  if (WEATHER.moodNode) return;
+
+  var source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.loop = true;
+
+  var gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.5, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.85, ctx.currentTime + 0.5);
+
+  source.connect(gain);
+  gain.connect(ctx.destination);
+  source.start(0);
+
+  WEATHER.moodNode = { source: source, gain: gain };
+  toast(mood.label + ' mood playing');
+}
+
 function stopMoodSound() {
   if (WEATHER.moodNode) {
-    try {
-      if (WEATHER.audioCtx) {
-        WEATHER.moodNode.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.5);
-      }
-      var node = WEATHER.moodNode;
-      setTimeout(function() { try { node.source.stop(); } catch(e) {} }, 600);
-    } catch(e) { try { WEATHER.moodNode.source.stop(); } catch(e2) {} }
+    var node = WEATHER.moodNode;
+    // HTML5 Audio path
+    if (node.audio) {
+      try { node.audio.pause(); node.audio.src = ''; } catch(e) {}
+      if (node.objUrl) try { URL.revokeObjectURL(node.objUrl); } catch(e) {}
+    }
+    // Web Audio path
+    if (node.source) {
+      try {
+        if (node.gain && WEATHER.audioCtx) {
+          node.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.5);
+        }
+        setTimeout(function() { try { node.source.stop(); } catch(e) {} }, 600);
+      } catch(e) { try { node.source.stop(); } catch(e2) {} }
+    }
     WEATHER.moodNode = null;
   }
   WEATHER.moodPlaying = null;
