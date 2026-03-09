@@ -56,6 +56,25 @@
   } catch(e) {}
 })();
 
+// ===== RENDER LIVING SKY ON LOGIN PAGE =====
+function renderLoginSky() {
+  var skyC = document.getElementById('login-sky-scene');
+  var terrC = document.getElementById('login-terrain-scene');
+  if (!skyC || !terrC) return;
+  if (typeof renderLivingSky === 'function') renderLivingSky(skyC);
+  var theme = (typeof currentSkyTheme !== 'undefined') ? currentSkyTheme : 'mixed';
+  terrC.innerHTML = '';
+  if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
+    renderMountainTerrain(terrC);
+  } else if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
+    renderBeachTerrain(terrC);
+  } else if (typeof renderMeadowTerrain === 'function') {
+    renderMeadowTerrain(terrC);
+  }
+}
+// Render login sky immediately (scripts are at bottom of body, DOM is ready)
+renderLoginSky();
+
 // ===== DYNAMIC TIME-OF-DAY SYSTEM =====
 function getTimeOfDay() {
   const h = new Date().getHours();
@@ -1076,6 +1095,8 @@ function applySkyTheme(theme) {
   if (container && livingSkyEnabled) renderLivingSky(container);
   // Render immersive terrain silhouettes
   renderTerrain(currentSkyTheme);
+  // Also update login page sky/terrain if visible
+  renderLoginSky();
   // Refresh orbs and meta color to match new theme
   spawnOrbs();
   updateTimeOfDay();

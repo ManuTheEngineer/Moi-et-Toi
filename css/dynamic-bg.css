@@ -220,9 +220,7 @@ body[data-sky-theme="beach"] .bnav-indicator {
 }
 body[data-sky-theme="beach"] .bn.on { color: #4EA5D2; }
 body[data-sky-theme="beach"] .login {
-  background: linear-gradient(160deg, var(--bg) 0%, #E8F4F8 25%, #D4EEF4 45%, #4EA5D2 70%, #3B8EAF 85%, #2A6D8A 100%) !important;
-  background-size: 200% 200% !important;
-  animation: loginBgShift 12s ease-in-out infinite alternate !important;
+  background: linear-gradient(to bottom, transparent 0%, #E8F4F8 60%) !important;
 }
 body[data-sky-theme="beach"] .login-btn {
   background: linear-gradient(135deg, #4EA5D2, #5BC0BE) !important;
@@ -250,9 +248,7 @@ body[data-sky-theme="mountain"] .bnav-indicator {
 }
 body[data-sky-theme="mountain"] .bn.on { color: #4A7C39; }
 body[data-sky-theme="mountain"] .login {
-  background: linear-gradient(160deg, var(--bg) 0%, #E8F0E4 25%, #D4E4CC 45%, #4A7C39 70%, #3A6530 85%, #2A4E22 100%) !important;
-  background-size: 200% 200% !important;
-  animation: loginBgShift 12s ease-in-out infinite alternate !important;
+  background: linear-gradient(to bottom, transparent 0%, #E8F0E4 60%) !important;
 }
 body[data-sky-theme="mountain"] .login-btn {
   background: linear-gradient(135deg, #4A7C39, #6B8F5E) !important;
