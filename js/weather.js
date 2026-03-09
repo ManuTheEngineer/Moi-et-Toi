@@ -1927,6 +1927,128 @@ function toggleAmbientAudio(on) {
   }
 }
 
+// ===== AUDIO DEBUG TEST =====
+function testAudioDebug() {
+  var panel = document.getElementById('audio-debug-panel');
+  var log = function(msg) {
+    if (panel) panel.textContent += '\n' + msg;
+    console.log('[AudioDebug] ' + msg);
+  };
+  if (panel) panel.textContent = 'Testing audio...';
+
+  // Test 1: HTML5 Audio element (most compatible)
+  log('Test 1: HTML5 <audio> element');
+  try {
+    var audio = document.createElement('audio');
+    audio.setAttribute('playsinline', '');
+    audio.setAttribute('webkit-playsinline', '');
+    // Generate a short beep as WAV data URL
+    var sampleRate = 22050;
+    var duration = 0.5;
+    var numSamples = Math.floor(sampleRate * duration);
+    var buffer = new ArrayBuffer(44 + numSamples * 2);
+    var view = new DataView(buffer);
+    // WAV header
+    var writeStr = function(offset, str) { for (var i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i)); };
+    writeStr(0, 'RIFF');
+    view.setUint32(4, 36 + numSamples * 2, true);
+    writeStr(8, 'WAVE');
+    writeStr(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeStr(36, 'data');
+    view.setUint32(40, numSamples * 2, true);
+    // Generate 440Hz sine wave
+    for (var i = 0; i < numSamples; i++) {
+      var t = i / sampleRate;
+      var val = Math.sin(2 * Math.PI * 440 * t) * 0.8;
+      var fade = Math.min(1, (numSamples - i) / (sampleRate * 0.05));
+      view.setInt16(44 + i * 2, val * fade * 32767, true);
+    }
+    var blob = new Blob([buffer], { type: 'audio/wav' });
+    var url = URL.createObjectURL(blob);
+    audio.src = url;
+    audio.volume = 1.0;
+    var playPromise = audio.play();
+    if (playPromise) {
+      playPromise.then(function() {
+        log('✓ HTML5 Audio playing! If you hear a beep, audio works.');
+        log('  If silent: media volume may be 0.');
+        log('  (Use volume buttons WHILE this plays)');
+      }).catch(function(e) {
+        log('✗ HTML5 Audio blocked: ' + e.message);
+      });
+    }
+  } catch(e) {
+    log('✗ HTML5 Audio error: ' + e.message);
+  }
+
+  // Test 2: Web Audio API
+  log('\nTest 2: Web Audio API');
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    log('  Created AudioContext, state: ' + ctx.state);
+    log('  sampleRate: ' + ctx.sampleRate);
+    var resumeAndPlay = function() {
+      log('  After resume, state: ' + ctx.state);
+      try {
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 660;
+        gain.gain.setValueAtTime(1.0, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(0);
+        osc.stop(ctx.currentTime + 0.8);
+        log('  ✓ Oscillator started at t=' + ctx.currentTime.toFixed(2));
+        log('  If you hear a higher beep, Web Audio works!');
+      } catch(e) {
+        log('  ✗ Oscillator error: ' + e.message);
+      }
+      // Report final state
+      setTimeout(function() {
+        log('\nFinal: ctx.state=' + ctx.state + ', currentTime=' + ctx.currentTime.toFixed(2));
+        if (ctx.currentTime === 0) {
+          log('⚠ currentTime stuck at 0 — context never started');
+        }
+        // Close this test context
+        ctx.close().catch(function(){});
+      }, 1000);
+    };
+    if (ctx.state !== 'running') {
+      var p = ctx.resume();
+      if (p && p.then) {
+        p.then(resumeAndPlay).catch(function(e) {
+          log('  ✗ Resume rejected: ' + e.message);
+          resumeAndPlay(); // try anyway
+        });
+      } else {
+        resumeAndPlay();
+      }
+    } else {
+      resumeAndPlay();
+    }
+  } catch(e) {
+    log('✗ AudioContext error: ' + e.message);
+  }
+
+  // Test 3: Check existing WEATHER context
+  log('\nTest 3: WEATHER state');
+  log('  audioEnabled: ' + WEATHER.audioEnabled);
+  log('  audioUnlocked: ' + WEATHER.audioUnlocked);
+  log('  scene: ' + WEATHER.scene);
+  log('  audioCtx: ' + (WEATHER.audioCtx ? WEATHER.audioCtx.state : 'null'));
+  log('  nodes: ' + Object.keys(WEATHER.audioNodes).length);
+  log('  queued: ' + !!WEATHER._audioQueued);
+}
+
 // ===== SCENE GROUND LAYER =====
 function renderSceneGround(container) {
   var existing = container.querySelector('.scene-ground');
