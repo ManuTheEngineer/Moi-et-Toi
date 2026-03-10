@@ -22,10 +22,58 @@ let db, user, partner, authUser, selectedMood = 0, logExercises = [], logType = 
 // Map email to profile role — loaded from Firebase at init
 let EMAIL_MAP = {};
 
+// ===== FIREBASE LISTENER REGISTRY =====
+// Tracks all .on() listeners so they can be cleaned up per-page or globally
+const _fbListeners = []; // { ref, event, callback, page }
+
+function fbOn(ref, event, callback, page) {
+  page = page || '_global';
+  ref.on(event, callback);
+  _fbListeners.push({ ref, event, callback, page });
+}
+
+function fbOff(page) {
+  for (let i = _fbListeners.length - 1; i >= 0; i--) {
+    if (_fbListeners[i].page === page) {
+      _fbListeners[i].ref.off(_fbListeners[i].event, _fbListeners[i].callback);
+      _fbListeners.splice(i, 1);
+    }
+  }
+}
+
+function fbOffAll() {
+  _fbListeners.forEach(l => l.ref.off(l.event, l.callback));
+  _fbListeners.length = 0;
+}
+
+// ===== CONNECTION STATE MONITOR =====
+let _isOnline = true;
+function initConnectionMonitor() {
+  if (!db) return;
+  const connRef = db.ref('.info/connected');
+  connRef.on('value', snap => {
+    _isOnline = snap.val() === true;
+    const banner = document.getElementById('offline-banner');
+    if (banner) banner.classList.toggle('show', !_isOnline);
+    document.body.classList.toggle('app-offline', !_isOnline);
+  });
+}
+function isOnline() { return _isOnline; }
+
 // ===== INIT =====
 async function init() {
   firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.database();
+
+  // Enable offline persistence — caches data locally so app works offline
+  try { db.goOnline(); } catch(e) {}
+  // Keep key refs synced for offline access
+  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles'].forEach(function(p) {
+    db.ref(p).keepSynced(true);
+  });
+
+  // Start connection state monitoring
+  initConnectionMonitor();
 
   // Load email-to-role mapping from Firebase (keeps emails out of source code)
   try {
@@ -1369,8 +1417,8 @@ function finishLogin() {
   if (typeof initVoiceNotes === 'function') setTimeout(initVoiceNotes, 2000);
 }
 
-function switchUser() { firebase.auth().signOut(); location.reload(); }
-function logout() { firebase.auth().signOut(); location.reload(); }
+function switchUser() { fbOffAll(); firebase.auth().signOut(); location.reload(); }
+function logout() { fbOffAll(); firebase.auth().signOut(); location.reload(); }
 
 async function clearAllData() {
   if (!db) { toast('Not connected'); return; }

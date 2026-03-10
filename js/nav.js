@@ -27,6 +27,12 @@ function go(p) {
   const next = document.getElementById('pg-' + p);
   if (current === next) return;
 
+  // Clean up Firebase listeners tied to the previous page
+  if (current && typeof fbOff === 'function') {
+    const prevPage = current.id.replace('pg-', '');
+    fbOff(prevPage);
+  }
+
   if (current) current.classList.remove('on');
   if (next) next.classList.add('on');
 
