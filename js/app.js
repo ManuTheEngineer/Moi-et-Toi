@@ -76,33 +76,16 @@ async function init() {
   initConnectionMonitor();
 
   // Load email-to-role mapping from Firebase (keeps emails out of source code)
-  // Falls back to localStorage cache when offline or Firebase is unreachable
-  try {
-    const snap = await db.ref('config/emailMap').once('value');
-    const val = snap.val();
-    if (val && Object.keys(val).length > 0) {
-      EMAIL_MAP = val;
-      try { localStorage.setItem('met_email_map', JSON.stringify(val)); } catch(e) {}
-    } else {
-      // Firebase returned empty — try localStorage cache
-      try {
-        const cached = JSON.parse(localStorage.getItem('met_email_map'));
-        if (cached) EMAIL_MAP = cached;
-      } catch(e) {}
-    }
-  } catch(e) {
-    console.warn('Could not load email map from Firebase:', e);
-    // Fall back to localStorage cache
-    try {
-      const cached = JSON.parse(localStorage.getItem('met_email_map'));
-      if (cached) EMAIL_MAP = cached;
-    } catch(e2) {}
-  }
+  await loadEmailMap();
 
   // Check if already signed in
   firebase.auth().onAuthStateChanged(async (fbUser) => {
     if (fbUser) {
       authUser = fbUser;
+      // Retry loading email map if it's empty — Firebase rules may require auth
+      if (Object.keys(EMAIL_MAP).length === 0) {
+        await loadEmailMap();
+      }
       const role = EMAIL_MAP[fbUser.email];
       if (role) {
         user = role;
@@ -129,6 +112,26 @@ async function init() {
   });
 }
 
+// Load email-to-role mapping from Firebase, with localStorage fallback
+async function loadEmailMap() {
+  try {
+    const snap = await db.ref('config/emailMap').once('value');
+    const val = snap.val();
+    if (val && Object.keys(val).length > 0) {
+      EMAIL_MAP = val;
+      try { localStorage.setItem('met_email_map', JSON.stringify(val)); } catch(e) {}
+      return;
+    }
+  } catch(e) {
+    console.warn('Could not load email map from Firebase:', e);
+  }
+  // Fall back to localStorage cache
+  try {
+    const cached = JSON.parse(localStorage.getItem('met_email_map'));
+    if (cached && Object.keys(cached).length > 0) EMAIL_MAP = cached;
+  } catch(e) {}
+}
+
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value;
@@ -138,8 +141,12 @@ async function doLogin() {
   try {
     const result = await firebase.auth().signInWithEmailAndPassword(email, pass);
     authUser = result.user;
+    // Reload email map now that we're authenticated (rules may require auth)
+    if (Object.keys(EMAIL_MAP).length === 0) {
+      await loadEmailMap();
+    }
     const role = EMAIL_MAP[email];
-    
+
     if (!role) {
       firebase.auth().signOut();
       showError(Object.keys(EMAIL_MAP).length === 0
