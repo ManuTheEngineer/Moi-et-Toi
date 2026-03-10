@@ -13,11 +13,11 @@
 .explore-dir-item .edi-label{font-size:9px;font-weight:500;color:var(--cream);letter-spacing:.3px}
 
 /* ===== LOGIN ===== */
-.login{position:fixed;top:0;left:0;width:100%;height:var(--real-h,100vh);z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:transparent;padding:env(safe-area-inset-top,0px) 32px env(safe-area-inset-bottom,0px);box-sizing:border-box;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.login-sky-scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+.login{position:absolute;top:0;left:0;width:100%;min-height:100%;min-height:100dvh;z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:var(--bg);padding:env(safe-area-inset-top,0px) 32px env(safe-area-inset-bottom,0px);box-sizing:border-box;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.login-sky-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%);
   mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%)}
-.login-terrain-scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.login-terrain-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .login > *:not(.login-sky-scene):not(.login-terrain-scene){position:relative;z-index:1}
 @keyframes loginBgShift{0%{background-position:0% 0%}100%{background-position:100% 100%}}
 .login.h{display:none}
