@@ -2,9 +2,13 @@
 (function(){
   var fullH = 0;
   function fillScreen(){
-    var h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    document.documentElement.style.setProperty('--real-h', h + 'px');
-    if (h > fullH) fullH = h; // Track max height (before keyboard)
+    // Use window.innerHeight (not visualViewport) for the stable page height.
+    // visualViewport.height shrinks when the keyboard opens, which would cause
+    // the entire layout to jump. innerHeight stays stable on iOS/Android PWAs.
+    var h = window.innerHeight;
+    if (h > fullH) fullH = h;
+    // Always use the largest known height so the page never shrinks for the keyboard
+    document.documentElement.style.setProperty('--real-h', fullH + 'px');
   }
   fillScreen();
   var _resizeTimer;
