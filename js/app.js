@@ -1778,31 +1778,40 @@ function applyDarkMode(mode) {
   var isDark = false;
   if (mode === 'dark') isDark = true;
   else if (mode === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) isDark = true;
+  else if (mode === 'light') isDark = false;
   var meta = document.querySelector('meta[name="theme-color"]');
   if (isDark) {
     document.body.setAttribute('data-theme', 'dark');
     if (meta) meta.setAttribute('content', '#121218');
   } else {
     document.body.removeAttribute('data-theme');
-    if (meta) meta.setAttribute('content', '#F5F0EB');
+    // Restore correct theme-color for current time of day
+    var time = document.body.getAttribute('data-time');
+    if (time === 'night' || time === 'evening') {
+      if (meta) meta.setAttribute('content', time === 'night' ? '#1A1828' : '#2A2440');
+    } else {
+      if (meta) meta.setAttribute('content', '#F5F0EB');
+    }
   }
   // Re-render sky and orbs to pick up new --bg variable
   if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
   if (typeof spawnOrbs === 'function') spawnOrbs();
+  // Re-render terrain in case sky needs refresh
+  if (typeof renderTerrain === 'function' && typeof currentSkyTheme !== 'undefined') renderTerrain(currentSkyTheme);
 }
 
-// ===== SETTINGS COLLAPSIBLE SECTIONS =====
-function toggleSettingsSection(header) {
-  var body = header.nextElementSibling;
-  if (!body || !body.classList.contains('sec-body')) return;
-  var isOpen = !body.classList.contains('collapsed');
-  if (isOpen) {
-    body.classList.add('collapsed');
-    header.classList.remove('open');
-  } else {
-    body.classList.remove('collapsed');
-    header.classList.add('open');
-  }
+// ===== SETTINGS TABS =====
+function switchSettingsTab(tab) {
+  document.querySelectorAll('.stab').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-stab') === tab);
+  });
+  document.querySelectorAll('.stab-panel').forEach(function(p) {
+    p.classList.toggle('active', p.id === 'stab-' + tab);
+  });
+  // Scroll to top of settings page
+  var pg = document.getElementById('pg-settings');
+  if (pg) pg.scrollTop = 0;
+  window.scrollTo({ top: 0 });
 }
 
 // ===== BIOMETRIC SETTINGS =====

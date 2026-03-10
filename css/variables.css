@@ -213,7 +213,7 @@ body[data-sky-theme="beach"][data-time="afternoon"] {
   --sheet-bg: rgba(235,248,250,.94);
   --glass: rgba(225,245,248,.58); --glass-strong: rgba(230,246,248,.84);
   --gold: #18A0B0; --gold-l: #28B8C0;
-  --t2: #3A6878; --t3: #6898A8;
+  --t1: #1A2E30; --t2: #2A4E58; --t3: #4A7080;
   --rose: #E06070; --teal: #10A8B8; --emerald: #28A890; --lavender: #8870B0;
   --card-shadow: 0 2px 8px rgba(20,140,160,.05), 0 12px 36px rgba(20,140,160,.07);
   --grad-love: linear-gradient(135deg,#B83050 0%,#E06878 100%);
@@ -229,7 +229,7 @@ body[data-sky-theme="beach"][data-time="golden"] {
   --overlay-bg: rgba(50,20,5,.55); --sheet-bg: rgba(255,244,220,.95);
   --glass: rgba(255,236,210,.60); --glass-strong: rgba(255,240,218,.86);
   --gold: #D47010; --gold-l: #E88828;
-  --t2: #6A4A30; --t3: #9A7A58;
+  --t2: #5A3E28; --t3: #7A6040;
   --card-shadow: 0 2px 8px rgba(200,110,30,.07), 0 12px 36px rgba(200,110,30,.10);
   --grad-love: linear-gradient(135deg,#C03838 0%,#E06048 100%);
   --grad-mood: linear-gradient(135deg,#D08040 0%,#F0A060 100%);
@@ -292,7 +292,7 @@ body[data-sky-theme="mountain"][data-time="morning"] {
   --sheet-bg: rgba(244,250,238,.94);
   --glass: rgba(238,248,230,.58); --glass-strong: rgba(240,248,234,.84);
   --gold: #4A8A38; --gold-l: #60A450;
-  --t2: #3A5A30; --t3: #6A8A5A;
+  --t2: #2E4828; --t3: #4E6E42;
   --rose: #D06870; --teal: #28A098; --emerald: #288A50; --lavender: #7868A0;
   --card-shadow: 0 2px 8px rgba(70,120,50,.05), 0 12px 36px rgba(70,120,50,.07);
   --grad-love: linear-gradient(135deg,#8B2848 0%,#B84868 100%);
@@ -307,7 +307,7 @@ body[data-sky-theme="mountain"][data-time="afternoon"] {
   --sheet-bg: rgba(238,248,252,.94);
   --glass: rgba(228,242,248,.58); --glass-strong: rgba(232,244,250,.84);
   --gold: #3A78A0; --gold-l: #5090B8;
-  --t2: #305870; --t3: #6088A0;
+  --t2: #284860; --t3: #446A82;
   --rose: #D06878; --teal: #20A0A8; --emerald: #288A58; --lavender: #7068A8;
   --card-shadow: 0 2px 8px rgba(40,80,110,.05), 0 12px 36px rgba(40,80,110,.07);
   --grad-love: linear-gradient(135deg,#8B2848 0%,#B84868 100%);
@@ -324,7 +324,7 @@ body[data-sky-theme="mountain"][data-time="golden"] {
   --overlay-bg: rgba(30,20,10,.52); --sheet-bg: rgba(250,244,228,.95);
   --glass: rgba(244,238,220,.60); --glass-strong: rgba(246,240,226,.86);
   --gold: #B07020; --gold-l: #C88838;
-  --t2: #5A4830; --t3: #8A7858;
+  --t2: #4A3C28; --t3: #6A5C40;
   --card-shadow: 0 2px 8px rgba(160,90,30,.07), 0 12px 36px rgba(160,90,30,.10);
   --grad-love: linear-gradient(135deg,#8B2040 0%,#B84060 100%);
   --grad-mood: linear-gradient(135deg,#A08040 0%,#C0A060 100%);
@@ -405,34 +405,68 @@ body[data-theme="dark"] {
   --lavender: #9080C0; --lavender-s: rgba(144,128,192,.12); --lavender-glow: rgba(144,128,192,.22);
   --emerald: #40B888; --emerald-s: rgba(64,184,136,.12); --emerald-glow: rgba(64,184,136,.22);
 }
-/* Dark mode overrides time-of-day background tones but preserves accents */
+/* Dark mode overrides ALL time-of-day and sky-theme combos */
 body[data-theme="dark"][data-time="dawn"],
 body[data-theme="dark"][data-time="morning"],
 body[data-theme="dark"][data-time="afternoon"],
-body[data-theme="dark"][data-time="golden"] {
+body[data-theme="dark"][data-time="golden"],
+body[data-theme="dark"][data-time="evening"],
+body[data-theme="dark"][data-time="night"] {
+  --bg: #121218; --bg2: #1C1C26; --bg3: #262632;
+  --card-bg: rgba(30,30,42,.72); --input-bg: rgba(200,190,220,.08);
+  --nav-bg: rgba(18,18,24,.88); --nav-shadow: 0 -1px 0 rgba(200,190,220,.06), 0 -4px 20px rgba(0,0,0,.22);
+  --sheet-bg: rgba(30,30,44,.95); --overlay-bg: rgba(6,6,12,.70);
+  --glass: rgba(40,38,56,.55); --glass-strong: rgba(38,36,52,.82);
+  --t1: #E8E4E0; --t2: #A8A4B0; --t3: #6A6878;
+  --cream: #E8E4E0; --cream-d: #B0ACC0;
+  --bdr: rgba(200,190,220,.08); --bdr-s: rgba(200,190,220,.04);
+  --tint: rgba(200,190,220,.05); --tint-s: rgba(200,190,220,.03);
+  --card-shadow: 0 2px 8px rgba(0,0,0,.20), 0 12px 36px rgba(0,0,0,.24);
+  --gold: #D4A840; --gold-l: #E8C060; --amber: #B8A070; --amber-s: #9A8860;
+  --focus-ring: 0 0 0 3px rgba(212,168,64,.22);
+  --glow-gold: rgba(212,168,64,.25);
+}
+/* Dark mode + sky theme combos (specificity must beat body[sky][time]) */
+body[data-theme="dark"][data-sky-theme="beach"],
+body[data-theme="dark"][data-sky-theme="mountain"],
+body[data-theme="dark"][data-sky-theme="mixed"] {
   --bg: #121218; --bg2: #1C1C26; --bg3: #262632;
   --card-bg: rgba(30,30,42,.72); --input-bg: rgba(200,190,220,.08);
   --nav-bg: rgba(18,18,24,.88); --sheet-bg: rgba(30,30,44,.95);
   --glass: rgba(40,38,56,.55); --glass-strong: rgba(38,36,52,.82);
   --t1: #E8E4E0; --t2: #A8A4B0; --t3: #6A6878;
+  --cream: #E8E4E0; --cream-d: #B0ACC0;
   --bdr: rgba(200,190,220,.08); --bdr-s: rgba(200,190,220,.04);
   --card-shadow: 0 2px 8px rgba(0,0,0,.20), 0 12px 36px rgba(0,0,0,.24);
 }
-/* Dark mode aurora - boost radial gradient opacity for dark base */
+/* Triple specificity: dark + sky + time (beats all natural time overrides) */
+body[data-theme="dark"][data-sky-theme][data-time] {
+  --bg: #121218; --bg2: #1C1C26; --bg3: #262632;
+  --t1: #E8E4E0; --t2: #A8A4B0; --t3: #6A6878;
+  --cream: #E8E4E0; --cream-d: #B0ACC0;
+  --card-bg: rgba(30,30,42,.72); --input-bg: rgba(200,190,220,.08);
+  --nav-bg: rgba(18,18,24,.88); --sheet-bg: rgba(30,30,44,.95);
+  --glass: rgba(40,38,56,.55); --glass-strong: rgba(38,36,52,.82);
+  --bdr: rgba(200,190,220,.08); --bdr-s: rgba(200,190,220,.04);
+  --card-shadow: 0 2px 8px rgba(0,0,0,.20), 0 12px 36px rgba(0,0,0,.24);
+  --gold: #D4A840; --gold-l: #E8C060; --amber: #B8A070; --amber-s: #9A8860;
+}
+/* Dark mode aurora - uniform dark aurora for all environments */
 body[data-theme="dark"]::before {
   background:
     radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196,120,74,0.14) 0%, transparent 70%),
     radial-gradient(ellipse 60% 60% at 80% 15%, rgba(28,43,74,0.12) 0%, transparent 70%),
     radial-gradient(ellipse 80% 40% at 50% 90%, rgba(176,138,80,0.10) 0%, transparent 70%),
     radial-gradient(ellipse 50% 50% at 60% 50%, rgba(212,98,122,0.06) 0%, transparent 70%),
-    var(--bg) !important;
+    #121218 !important;
 }
 body[data-theme="dark"]::after { opacity: 0.04; }
 /* Dark mode toggle button group */
-.dark-mode-toggle-group{display:flex;gap:2px;background:var(--input-bg);border-radius:var(--radius-sm);padding:2px}
-.dm-btn{border:none;background:none;color:var(--t3);font-family:'Outfit',sans-serif;font-size:11px;font-weight:400;
-  padding:5px 10px;border-radius:8px;cursor:pointer;transition:all .2s}
-.dm-btn.sel{background:var(--gold);color:#fff;font-weight:600}
+.dark-mode-toggle-group{display:flex;gap:2px;background:var(--input-bg);border-radius:var(--radius-sm);padding:3px}
+.dm-btn{border:none;background:none;color:var(--t2);font-family:'Outfit',sans-serif;font-size:12px;font-weight:400;
+  padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s}
+.dm-btn:active{transform:scale(.95)}
+.dm-btn.sel{background:var(--gold);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(184,134,11,.25)}
 
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;scrollbar-width:none}
 *::-webkit-scrollbar{display:none}

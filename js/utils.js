@@ -52,10 +52,18 @@
 })();
 
 // ===== EARLY THEME APPLICATION =====
-// If user has a saved sky theme preference, apply it immediately (returning users).
-// Otherwise default to "mixed" (Both) for first-time / no preference.
+// Apply dark mode and sky theme immediately to avoid flash of wrong theme.
 (function() {
   try {
+    // Dark mode — apply before first paint
+    var dm = localStorage.getItem('met_dark_mode') || 'auto';
+    var isDark = dm === 'dark' || (dm === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (isDark) {
+      document.body.setAttribute('data-theme', 'dark');
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', '#121218');
+    }
+    // Sky theme — apply for returning users
     var saved = localStorage.getItem('met_sky_theme');
     window._cachedSkyTheme = saved;
     if (saved) {

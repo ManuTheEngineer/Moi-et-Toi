@@ -1490,7 +1490,15 @@
 .ob-loc-feat{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--t2);padding:8px 12px;background:var(--glass,rgba(255,255,255,.35));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:12px}
 .ob-loc-feat span{font-size:18px;flex-shrink:0}
 
-/* Settings page - sections always visible */
+/* Settings page - tabbed layout */
+.stabs{display:flex;gap:4px;padding:4px;background:var(--input-bg);border-radius:14px;margin-bottom:16px;position:sticky;top:0;z-index:2}
+.stab{flex:1;border:none;background:none;color:var(--t3);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;
+  padding:10px 6px;border-radius:10px;cursor:pointer;transition:all .2s;letter-spacing:.3px}
+.stab:active{transform:scale(.96)}
+.stab.active{background:var(--card-bg);color:var(--cream);box-shadow:0 2px 8px rgba(0,0,0,.08);font-weight:600}
+.stab-panel{display:none}
+.stab-panel.active{display:block;animation:stabFadeIn .25s ease}
+@keyframes stabFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .sec-body{overflow:visible}
 /* Profile card - grouped fields in a single card */
 .settings-profile-card{display:flex;flex-direction:column;gap:16px}

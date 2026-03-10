@@ -3656,40 +3656,48 @@
 <div class="pg" id="pg-settings">
 <div class="ctn">
 
-  <!-- Profile & Relationship -->
-  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Profile</div></div>
-  <div class="form-card settings-profile-card">
-    <div class="settings-field-group">
-      <label class="form-label">Your Name</label>
-      <input type="text" id="set-name" placeholder="Your name" class="form-input">
-    </div>
-    <div class="settings-field-group">
-      <label class="form-label">Your Birthday</label>
-      <input type="date" id="set-birthday" class="form-input">
-      <div class="form-hint">We'll remind your partner and celebrate you</div>
-    </div>
-    <div class="settings-field-group">
-      <label class="form-label">Nickname for Partner</label>
-      <input type="text" id="set-nickname" placeholder="What you call them..." class="form-input">
-      <div class="form-hint">Pet name, nickname, or real name</div>
-    </div>
-    <div class="settings-field-row">
-      <div class="settings-field-group" style="flex:1">
-        <label class="form-label">Together Since</label>
-        <input type="date" id="set-anniversary" class="form-input">
-      </div>
-      <div class="settings-field-group" style="flex:1">
-        <label class="form-label">Partner's Name</label>
-        <input type="text" id="set-partner-name" placeholder="Partner's name" class="form-input" disabled>
-        <div class="form-hint">Set by your partner</div>
-      </div>
-    </div>
-    <button onclick="saveSettings()" class="dq-submit w-full mt-8">Save Changes</button>
+  <!-- Settings tab bar -->
+  <div class="stabs" id="settings-tabs">
+    <button class="stab active" data-stab="profile" onclick="switchSettingsTab('profile')">Profile</button>
+    <button class="stab" data-stab="appearance" onclick="switchSettingsTab('appearance')">Look</button>
+    <button class="stab" data-stab="sounds" onclick="switchSettingsTab('sounds')">Sound</button>
+    <button class="stab" data-stab="account" onclick="switchSettingsTab('account')">Account</button>
   </div>
 
-  <!-- Appearance -->
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Appearance</div></div>
-  <div class="sec-body">
+  <!-- TAB: Profile -->
+  <div class="stab-panel active" id="stab-profile">
+    <div class="form-card settings-profile-card">
+      <div class="settings-field-group">
+        <label class="form-label">Your Name</label>
+        <input type="text" id="set-name" placeholder="Your name" class="form-input">
+      </div>
+      <div class="settings-field-group">
+        <label class="form-label">Your Birthday</label>
+        <input type="date" id="set-birthday" class="form-input">
+        <div class="form-hint">We'll remind your partner and celebrate you</div>
+      </div>
+      <div class="settings-field-group">
+        <label class="form-label">Nickname for Partner</label>
+        <input type="text" id="set-nickname" placeholder="What you call them..." class="form-input">
+        <div class="form-hint">Pet name, nickname, or real name</div>
+      </div>
+      <div class="settings-field-row">
+        <div class="settings-field-group" style="flex:1">
+          <label class="form-label">Together Since</label>
+          <input type="date" id="set-anniversary" class="form-input">
+        </div>
+        <div class="settings-field-group" style="flex:1">
+          <label class="form-label">Partner's Name</label>
+          <input type="text" id="set-partner-name" placeholder="Partner's name" class="form-input" disabled>
+          <div class="form-hint">Set by your partner</div>
+        </div>
+      </div>
+      <button onclick="saveSettings()" class="dq-submit w-full mt-8">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- TAB: Appearance -->
+  <div class="stab-panel" id="stab-appearance">
     <div class="form-card">
       <div class="settings-row mb-0">
         <div>
@@ -3742,11 +3750,20 @@
       </div>
       <div id="weather-info-display" class="weather-info-bar d-none"></div>
     </div>
+    <div class="form-card">
+      <div class="settings-row mb-0">
+        <div>
+          <span class="settings-label">Push Notifications</span>
+          <div class="form-hint mt-2">Get notified when your partner sends you something</div>
+        </div>
+        <button class="settings-btn btn-lavender" id="set-notif-btn" onclick="togglePushNotifications()">Enable</button>
+      </div>
+      <div id="notif-status" class="form-hint mt-4 d-none"></div>
+    </div>
   </div>
 
-  <!-- Sounds & Music -->
-  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Sounds & Music</div></div>
-  <div class="sec-body">
+  <!-- TAB: Sounds -->
+  <div class="stab-panel" id="stab-sounds">
     <div class="form-card">
       <div class="settings-row mb-0">
         <div>
@@ -3794,24 +3811,8 @@
     </div>
   </div>
 
-  <!-- Notifications -->
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Notifications</div></div>
-  <div class="sec-body">
-    <div class="form-card">
-      <div class="settings-row mb-0">
-        <div>
-          <span class="settings-label">Push Notifications</span>
-          <div class="form-hint mt-2">Get notified when your partner sends letters, taps, or messages</div>
-        </div>
-        <button class="settings-btn btn-lavender" id="set-notif-btn" onclick="togglePushNotifications()">Enable</button>
-      </div>
-      <div id="notif-status" class="form-hint mt-4 d-none"></div>
-    </div>
-  </div>
-
-  <!-- Account & Data -->
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Account & Data</div></div>
-  <div class="sec-body">
+  <!-- TAB: Account -->
+  <div class="stab-panel" id="stab-account">
     <div class="form-card" id="biometric-settings-card" style="display:none">
       <div class="settings-row mb-0">
         <div>
@@ -3822,16 +3823,6 @@
           <input type="checkbox" id="set-biometric" onchange="toggleBiometricSetting(this.checked)">
           <span class="toggle-slider"></span>
         </label>
-      </div>
-    </div>
-    <div class="form-card">
-      <div class="settings-row">
-        <span class="settings-label">Switch User</span>
-        <button onclick="switchUser()" class="settings-btn">Switch</button>
-      </div>
-      <div class="settings-row mb-0">
-        <span class="settings-label">Log Out</span>
-        <button onclick="logout()" class="settings-btn settings-btn-danger">Log Out</button>
       </div>
     </div>
     <div class="form-card">
@@ -3849,11 +3840,23 @@
       <div class="form-hint">Download all your shared data as a JSON file for backup</div>
     </div>
     <div class="form-card">
+      <div class="settings-row">
+        <span class="settings-label">Switch User</span>
+        <button onclick="switchUser()" class="settings-btn">Switch</button>
+      </div>
+    </div>
+    <div class="form-card">
       <div class="settings-row mb-0">
         <span class="settings-label">Clear All Data</span>
         <button onclick="if(confirm('This will erase everything and restart onboarding. Are you sure?'))clearAllData()" class="settings-btn settings-btn-danger">Reset</button>
       </div>
       <div class="form-hint">Wipes all data and restarts the onboarding process</div>
+    </div>
+    <div class="form-card">
+      <div class="settings-row mb-0">
+        <span class="settings-label">Log Out</span>
+        <button onclick="logout()" class="settings-btn settings-btn-danger">Log Out</button>
+      </div>
     </div>
   </div>
 
