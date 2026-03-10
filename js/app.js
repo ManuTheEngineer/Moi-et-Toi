@@ -68,7 +68,7 @@ async function init() {
   // Enable offline persistence — caches data locally so app works offline
   try { db.goOnline(); } catch(e) {}
   // Keep key refs synced for offline access
-  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles'].forEach(function(p) {
+  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles', 'config/emailMap'].forEach(function(p) {
     db.ref(p).keepSynced(true);
   });
 
@@ -76,10 +76,28 @@ async function init() {
   initConnectionMonitor();
 
   // Load email-to-role mapping from Firebase (keeps emails out of source code)
+  // Falls back to localStorage cache when offline or Firebase is unreachable
   try {
     const snap = await db.ref('config/emailMap').once('value');
-    EMAIL_MAP = snap.val() || {};
-  } catch(e) { console.warn('Could not load email map:', e); }
+    const val = snap.val();
+    if (val && Object.keys(val).length > 0) {
+      EMAIL_MAP = val;
+      try { localStorage.setItem('met_email_map', JSON.stringify(val)); } catch(e) {}
+    } else {
+      // Firebase returned empty — try localStorage cache
+      try {
+        const cached = JSON.parse(localStorage.getItem('met_email_map'));
+        if (cached) EMAIL_MAP = cached;
+      } catch(e) {}
+    }
+  } catch(e) {
+    console.warn('Could not load email map from Firebase:', e);
+    // Fall back to localStorage cache
+    try {
+      const cached = JSON.parse(localStorage.getItem('met_email_map'));
+      if (cached) EMAIL_MAP = cached;
+    } catch(e2) {}
+  }
 
   // Check if already signed in
   firebase.auth().onAuthStateChanged(async (fbUser) => {
@@ -103,7 +121,9 @@ async function init() {
         }
       } else {
         firebase.auth().signOut();
-        showError('Account not authorized.');
+        showError(Object.keys(EMAIL_MAP).length === 0
+          ? 'Could not verify account. Check your connection and try again.'
+          : 'Account not authorized.');
       }
     }
   });
@@ -120,10 +140,12 @@ async function doLogin() {
     authUser = result.user;
     const role = EMAIL_MAP[email];
     
-    if (!role) { 
+    if (!role) {
       firebase.auth().signOut();
-      showError('Account not authorized.'); 
-      return; 
+      showError(Object.keys(EMAIL_MAP).length === 0
+        ? 'Could not verify account. Check your connection and try again.'
+        : 'Account not authorized.');
+      return;
     }
     
     user = role;
