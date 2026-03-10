@@ -13,7 +13,7 @@
 .explore-dir-item .edi-label{font-size:9px;font-weight:500;color:var(--cream);letter-spacing:.3px}
 
 /* ===== LOGIN ===== */
-.login{position:absolute;top:0;left:0;width:100%;min-height:100%;min-height:100dvh;z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:var(--bg);padding:env(safe-area-inset-top,0px) 32px env(safe-area-inset-bottom,0px);box-sizing:border-box;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.login{position:relative;width:100%;min-height:100vh;min-height:100dvh;z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:var(--bg);padding:env(safe-area-inset-top,0px) 32px env(safe-area-inset-bottom,0px);box-sizing:border-box}
 .login-sky-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%);
   mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%)}
@@ -50,8 +50,8 @@
 .pcard p{font-size:11px;color:var(--t3,rgba(26,26,46,.40))}
 
 /* ===== ONBOARDING ===== */
-/* Switch login overlay from fixed to absolute so iOS keyboard can push content up */
-.login.onboard-active{position:absolute;height:auto;min-height:100vh;min-height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:max(env(safe-area-inset-top,20px),40px);padding-bottom:80px;scroll-behavior:smooth}
+/* Onboarding mode: top-align content and allow scrolling */
+.login.onboard-active{align-items:center;justify-content:flex-start;padding-top:max(env(safe-area-inset-top,20px),40px);padding-bottom:80px;scroll-behavior:smooth}
 .onboard-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px;margin:auto}
 .onboard-progress{width:100%;max-width:220px;height:4px;background:var(--tint,rgba(26,26,46,.08));border-radius:4px;margin-bottom:32px;overflow:hidden}
 .onboard-bar{height:100%;background:linear-gradient(90deg,var(--gold),#D4784A);border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1)}
