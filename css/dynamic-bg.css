@@ -2136,7 +2136,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   top: 0;
   left: 0;
   right: 0;
-  bottom: calc(-1 * env(safe-area-inset-bottom, 40px));
+  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
