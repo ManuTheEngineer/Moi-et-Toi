@@ -923,6 +923,49 @@ function renderMountainTerrain(container) {
     snow.style.cssText = 'left:' + sp.left + '%;bottom:' + sp.bottom + '%;width:' + sp.w + 'px;height:' + sp.h + 'px';
     container.appendChild(snow);
   }
+
+  // Alpine lake nestled between foothills
+  var lake = document.createElement('div');
+  lake.className = 'terrain-lake';
+  container.appendChild(lake);
+
+  // Lake shimmer reflection
+  var lakeShimmer = document.createElement('div');
+  lakeShimmer.className = 'terrain-lake-shimmer';
+  container.appendChild(lakeShimmer);
+
+  // Eagles soaring above the peaks
+  var eaglePositions = [
+    { left: 25, bottom: 55, size: 12, delay: 0 },
+    { left: 65, bottom: 60, size: 10, delay: 4 },
+    { left: 45, bottom: 65, size: 8, delay: 8 }
+  ];
+  for (var e = 0; e < eaglePositions.length; e++) {
+    var ep = eaglePositions[e];
+    var eagle = document.createElement('div');
+    eagle.className = 'terrain-eagle';
+    eagle.style.cssText = 'left:' + ep.left + '%;bottom:' + ep.bottom + '%;--eagle-size:' + ep.size + 'px;animation-delay:' + ep.delay + 's';
+    container.appendChild(eagle);
+  }
+
+  // Small cabin in the foothills
+  var cabin = document.createElement('div');
+  cabin.className = 'terrain-cabin';
+  container.appendChild(cabin);
+
+  // Rocky outcrops on mid range
+  var rockPositions = [
+    { left: 15, bottom: 24, w: 8, h: 5 },
+    { left: 55, bottom: 22, w: 10, h: 6 },
+    { left: 82, bottom: 20, w: 7, h: 4 }
+  ];
+  for (var r = 0; r < rockPositions.length; r++) {
+    var rp = rockPositions[r];
+    var rock = document.createElement('div');
+    rock.className = 'terrain-rock';
+    rock.style.cssText = 'left:' + rp.left + '%;bottom:' + rp.bottom + '%;width:' + rp.w + 'px;height:' + rp.h + 'px';
+    container.appendChild(rock);
+  }
 }
 
 function renderBeachTerrain(container) {
@@ -1002,6 +1045,47 @@ function renderBeachTerrain(container) {
     footprints.appendChild(dot);
   }
   container.appendChild(footprints);
+
+  // Seagulls gliding over the ocean
+  var gullPositions = [
+    { left: 20, bottom: 52, size: 10, delay: 0 },
+    { left: 40, bottom: 58, size: 8, delay: 3 },
+    { left: 70, bottom: 55, size: 11, delay: 6 },
+    { left: 55, bottom: 62, size: 7, delay: 9 }
+  ];
+  for (var g = 0; g < gullPositions.length; g++) {
+    var gp = gullPositions[g];
+    var gull = document.createElement('div');
+    gull.className = 'terrain-seagull';
+    gull.style.cssText = 'left:' + gp.left + '%;bottom:' + gp.bottom + '%;--gull-size:' + gp.size + 'px;animation-delay:' + gp.delay + 's';
+    container.appendChild(gull);
+  }
+
+  // Sailboat on the horizon
+  var sailboat = document.createElement('div');
+  sailboat.className = 'terrain-sailboat';
+  container.appendChild(sailboat);
+
+  // Lighthouse on distant shore
+  var lighthouse = document.createElement('div');
+  lighthouse.className = 'terrain-lighthouse';
+  container.appendChild(lighthouse);
+
+  // Seashells scattered on the shore
+  var shellPositions = [
+    { left: 25, bottom: 4 },
+    { left: 42, bottom: 3 },
+    { left: 60, bottom: 5 },
+    { left: 75, bottom: 3.5 },
+    { left: 35, bottom: 6 }
+  ];
+  for (var sh = 0; sh < shellPositions.length; sh++) {
+    var sp = shellPositions[sh];
+    var shell = document.createElement('div');
+    shell.className = 'terrain-seashell';
+    shell.style.cssText = 'left:' + sp.left + '%;bottom:' + sp.bottom + '%;transform:rotate(' + (Math.random() * 360) + 'deg)';
+    container.appendChild(shell);
+  }
 }
 
 function renderPalmTree(container, leftPct, heightPct, tiltDeg) {
@@ -1125,6 +1209,50 @@ function renderMeadowTerrain(container) {
   var grass = document.createElement('div');
   grass.className = 'terrain-grass-layer';
   container.appendChild(grass);
+
+  // Winding stream through the meadow
+  var stream = document.createElement('div');
+  stream.className = 'terrain-stream';
+  container.appendChild(stream);
+
+  // Stream sparkle reflections
+  var streamSparkle = document.createElement('div');
+  streamSparkle.className = 'terrain-stream-sparkle';
+  container.appendChild(streamSparkle);
+
+  // Butterflies fluttering above flowers
+  var bflyPositions = [
+    { left: 15, bottom: 22, delay: 0, color: 'rgba(255,180,80,0.5)' },
+    { left: 38, bottom: 28, delay: 2, color: 'rgba(200,140,255,0.45)' },
+    { left: 62, bottom: 20, delay: 4, color: 'rgba(255,160,180,0.5)' },
+    { left: 80, bottom: 25, delay: 6, color: 'rgba(180,220,255,0.45)' },
+    { left: 48, bottom: 32, delay: 8, color: 'rgba(255,200,100,0.4)' }
+  ];
+  for (var b = 0; b < bflyPositions.length; b++) {
+    var bp = bflyPositions[b];
+    var bfly = document.createElement('div');
+    bfly.className = 'terrain-butterfly';
+    bfly.style.cssText = 'left:' + bp.left + '%;bottom:' + bp.bottom + '%;background:' + bp.color + ';animation-delay:' + bp.delay + 's';
+    container.appendChild(bfly);
+  }
+
+  // Stone path winding through the meadow
+  var pathStones = [
+    { left: 44, bottom: 3 }, { left: 46, bottom: 5 }, { left: 45, bottom: 7 },
+    { left: 47, bottom: 9 }, { left: 48, bottom: 11 }, { left: 47, bottom: 13 },
+    { left: 46, bottom: 15 }
+  ];
+  for (var ps = 0; ps < pathStones.length; ps++) {
+    var stone = document.createElement('div');
+    stone.className = 'terrain-path-stone';
+    stone.style.cssText = 'left:' + pathStones[ps].left + '%;bottom:' + pathStones[ps].bottom + '%';
+    container.appendChild(stone);
+  }
+
+  // Rustic wooden fence along the near hill
+  var fence = document.createElement('div');
+  fence.className = 'terrain-fence';
+  container.appendChild(fence);
 
   // Dappled sunlight spots
   var dapplePositions = [
