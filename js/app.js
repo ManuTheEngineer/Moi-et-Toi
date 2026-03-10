@@ -596,6 +596,16 @@ function renderOnboardStep() {
       if (el) el.style.display = 'none';
     });
 
+    // Toggle sky-visible mode: full sky background on steps 11 & 12
+    var loginEl = document.querySelector('.login');
+    if (loginEl) {
+      if (onboardStep === 11 || onboardStep === 12) {
+        loginEl.classList.add('ob-sky-visible');
+      } else {
+        loginEl.classList.remove('ob-sky-visible');
+      }
+    }
+
     // Step 0: Welcome
     if (onboardStep === 0) {
       title.textContent = 'Your Space Awaits';
@@ -721,20 +731,22 @@ function renderOnboardStep() {
       }
       btn.textContent = 'Next';
     }
-    // Step 11: Living Sky
+    // Step 11: Living Sky — actual background is the demo
     else if (onboardStep === 11) {
       emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
       title.textContent = 'Living Sky';
-      sub.innerHTML = "Your app has a living sky: sunrise, sunset, stars, birds, and fireflies that follow real time.";
+      sub.innerHTML = "Your sky is alive — sunrise, sunset, stars, birds, and fireflies that follow real time. Toggle it now.";
       skyCard.style.display = '';
       document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
+      // Ensure the actual sky is visible based on current toggle state
+      obToggleLiveSky(onboardData.livingSky);
       btn.textContent = 'Next';
     }
-    // Step 12: Sky environment + nature sounds
+    // Step 12: Sky environment + nature sounds — live background changes
     else if (onboardStep === 12) {
       emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
       title.textContent = 'Your environment';
-      sub.innerHTML = "Pick the landscape that feels like home. It shapes your sky, creatures, and sounds.";
+      sub.innerHTML = "Tap a landscape — watch your world transform behind you.";
       skyThemeCard.style.display = '';
       // Pre-select based on user preference
       var defaultTheme = isHer ? 'beach' : 'mountain';
@@ -814,14 +826,24 @@ function onboardNext() {
   renderOnboardStep();
 }
 
+// Toggle the real living sky on/off during onboarding
+function obToggleLiveSky(on) {
+  onboardData.livingSky = on;
+  // Toggle the ACTUAL login sky scene so the user sees the real effect
+  var skyScene = document.getElementById('login-sky-scene');
+  var terrScene = document.getElementById('login-terrain-scene');
+  if (skyScene) skyScene.style.opacity = on ? '1' : '0';
+  if (terrScene) terrScene.style.opacity = on ? '1' : '0';
+}
+
 function obSelectSkyTheme(theme, btn) {
   onboardData.skyTheme = theme;
   var grid = document.getElementById('ob-sky-theme-grid');
   if (grid) grid.querySelectorAll('.sky-theme-btn').forEach(function(b) {
     b.classList.toggle('active', b.getAttribute('data-theme') === theme);
   });
-  // Update environment preview
-  obRenderEnvPreview(theme);
+  // Apply to the REAL background so user sees the change live
+  obApplyLiveTheme(theme);
   // If sound preview is playing, switch to new environment's sound
   if (window._obSoundPreviewing) {
     obStopSoundPreview();
@@ -829,59 +851,35 @@ function obSelectSkyTheme(theme, btn) {
   }
 }
 
-// ===== ONBOARDING ENVIRONMENT PREVIEW =====
-// Uses the actual living sky + terrain rendering so users see the real scene
-function obRenderEnvPreview(theme) {
-  var el = document.getElementById('ob-env-preview');
-  if (!el) return;
+// ===== ONBOARDING: LIVE BACKGROUND CHANGES =====
+// Apply sky theme directly to the actual background during onboarding
+function obApplyLiveTheme(theme) {
   theme = theme || onboardData.skyTheme || 'mixed';
-
-  // Map onboard theme names to internal scene names
-  var sceneMap = { beach: 'coastal', mountain: 'forest', mixed: 'meadow' };
-  var themeMap = { beach: 'beach', mountain: 'mountain', mixed: 'mixed' };
-  var labels = { beach: 'Sunset Shore', mountain: 'Whispering Woods', mixed: 'Golden Meadow' };
-
-  // Temporarily set sky theme globals so renderLivingSky uses the right env colors
-  var prevSkyTheme = (typeof currentSkyTheme !== 'undefined') ? currentSkyTheme : 'mixed';
-  currentSkyTheme = themeMap[theme] || 'mixed';
-  var prevScene = WEATHER.scene;
-  WEATHER.scene = sceneMap[theme] || 'meadow';
-
-  el.innerHTML = '';
-
-  // Create sky container inside preview
-  var skyDiv = document.createElement('div');
-  skyDiv.className = 'ob-live-sky';
-  el.appendChild(skyDiv);
-
-  // Render the actual living sky into preview
-  if (typeof renderLivingSky === 'function') {
-    renderLivingSky(skyDiv);
+  // Set the body attribute so CSS variables change
+  document.body.setAttribute('data-sky-theme', theme);
+  // Update the login page sky scene
+  var skyC = document.getElementById('login-sky-scene');
+  if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
+  // Update login terrain
+  var terrC = document.getElementById('login-terrain-scene');
+  if (terrC) {
+    terrC.innerHTML = '';
+    if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
+      renderBeachTerrain(terrC);
+    } else if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
+      renderMountainTerrain(terrC);
+    } else if (typeof renderMeadowTerrain === 'function') {
+      renderMeadowTerrain(terrC);
+    }
   }
+  // Update orbs and time-of-day colors
+  if (typeof spawnOrbs === 'function') spawnOrbs();
+  if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+}
 
-  // Create terrain container inside preview
-  var terrainDiv = document.createElement('div');
-  terrainDiv.className = 'ob-live-terrain';
-  el.appendChild(terrainDiv);
-
-  // Render actual terrain
-  if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
-    renderMountainTerrain(terrainDiv);
-  } else if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
-    renderBeachTerrain(terrainDiv);
-  } else if (typeof renderMeadowTerrain === 'function') {
-    renderMeadowTerrain(terrainDiv);
-  }
-
-  // Add label overlay
-  var labelDiv = document.createElement('div');
-  labelDiv.className = 'ob-prev-label';
-  labelDiv.textContent = labels[theme] || 'Golden Meadow';
-  el.appendChild(labelDiv);
-
-  // Restore previous globals
-  currentSkyTheme = prevSkyTheme;
-  WEATHER.scene = prevScene;
+// Legacy compat — called from showTourStep, no longer renders a preview box
+function obRenderEnvPreview(theme) {
+  obApplyLiveTheme(theme);
 }
 
 // Sound preview for onboarding
@@ -1093,6 +1091,8 @@ function resizePhoto(file, callback) {
 }
 
 async function finishOnboarding(startTour) {
+  var loginEl = document.querySelector('.login');
+  if (loginEl) loginEl.classList.remove('ob-sky-visible');
   obCleanupStatus();
   NAMES[user] = onboardData.name;
   var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';

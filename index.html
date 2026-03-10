@@ -89,18 +89,10 @@
       <input type="date" id="ob-anniversary" class="login-input ob-input mb16"
              style="display:none;color-scheme:light" onfocus="obScrollToInput(this)">
       <div id="ob-living-sky" class="ob-living-sky-card" style="display:none">
-        <div class="ob-sky-preview">
-          <div class="ob-sky-sun"></div>
-          <div class="ob-sky-moon"></div>
-          <div class="ob-sky-bird">
-            <div class="sky-bird-wing sky-bird-wing-l"></div>
-            <div class="sky-bird-wing sky-bird-wing-r"></div>
-          </div>
-        </div>
         <div class="ob-sky-toggle-row">
-          <span class="ob-sky-label">Enable Living Sky</span>
+          <span class="ob-sky-label">Living Sky</span>
           <label class="toggle-switch">
-            <input type="checkbox" id="ob-sky-toggle" checked onchange="onboardData.livingSky=this.checked">
+            <input type="checkbox" id="ob-sky-toggle" checked onchange="obToggleLiveSky(this.checked)">
             <span class="toggle-slider"></span>
           </label>
         </div>
@@ -171,25 +163,21 @@
           <textarea id="ob-morning-custom" class="login-input ob-input" rows="2" placeholder="Write something they'll wake up to..." style="display:none;resize:none;height:auto" onfocus="obScrollToInput(this)"></textarea>
         </div>
       </div>
-      <!-- Sky theme + nature sounds with preview -->
+      <!-- Sky theme + nature sounds — live background changes -->
       <div id="ob-sky-theme" class="ob-baseline-card" style="display:none">
-        <div id="ob-env-preview" class="ob-env-preview"></div>
         <div class="sky-theme-grid" id="ob-sky-theme-grid">
           <button type="button" class="sky-theme-btn" data-theme="beach" onclick="obSelectSkyTheme('beach',this)">
             <span class="sky-theme-icon">🏖</span><span class="sky-theme-name">Beach</span>
-            <span class="sky-theme-desc">Seagulls, waves, palms</span>
           </button>
           <button type="button" class="sky-theme-btn" data-theme="mountain" onclick="obSelectSkyTheme('mountain',this)">
             <span class="sky-theme-icon">🏔</span><span class="sky-theme-name">Mountain</span>
-            <span class="sky-theme-desc">Eagles, pines, creek</span>
           </button>
           <button type="button" class="sky-theme-btn" data-theme="mixed" onclick="obSelectSkyTheme('mixed',this)">
             <span class="sky-theme-icon">🌅</span><span class="sky-theme-name">Both</span>
-            <span class="sky-theme-desc">Beach + mountain blend</span>
           </button>
         </div>
         <div class="ob-bl-row" style="margin-top:16px">
-          <span class="ob-bl-label">Play nature sounds in the background?</span>
+          <span class="ob-bl-label">Nature sounds?</span>
           <label class="toggle-switch"><input type="checkbox" id="ob-nature-toggle"><span class="toggle-slider"></span></label>
         </div>
         <button type="button" class="ob-sound-preview-btn" id="ob-sound-preview-btn" onclick="obToggleSoundPreview()">

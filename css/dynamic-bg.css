@@ -3063,6 +3063,64 @@ body[data-time="night"] .login .lbl,
 body[data-time="evening"] .login .lbl {
   color: rgba(200,210,200,0.50) !important;
 }
+/* Night/evening/dawn/golden onboarding text legibility */
+body[data-time="night"] .onboard-title,
+body[data-time="evening"] .onboard-title {
+  color: #F0ECE6 !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.35) !important;
+}
+body[data-time="night"] .onboard-sub,
+body[data-time="evening"] .onboard-sub {
+  color: rgba(220,225,220,0.75) !important;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.30) !important;
+}
+body[data-time="night"] .onboard-sub strong,
+body[data-time="evening"] .onboard-sub strong {
+  color: #F0ECE6 !important;
+}
+body[data-time="night"] .onboard-skip,
+body[data-time="evening"] .onboard-skip {
+  color: rgba(200,210,200,0.55) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
+}
+body[data-time="night"] .ob-sky-label,
+body[data-time="evening"] .ob-sky-label {
+  color: rgba(220,225,220,0.80) !important;
+}
+body[data-time="night"] .ob-sky-hint,
+body[data-time="evening"] .ob-sky-hint {
+  color: rgba(200,210,200,0.55) !important;
+}
+body[data-time="night"] .ob-bl-label,
+body[data-time="evening"] .ob-bl-label {
+  color: rgba(200,210,200,0.60) !important;
+}
+body[data-time="night"] .sky-theme-name,
+body[data-time="evening"] .sky-theme-name {
+  color: #F0ECE6 !important;
+}
+body[data-time="dawn"] .onboard-title {
+  color: #F4ECE8 !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+}
+body[data-time="dawn"] .onboard-sub {
+  color: rgba(240,220,220,0.70) !important;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.20) !important;
+}
+body[data-time="dawn"] .onboard-sub strong {
+  color: #F4ECE8 !important;
+}
+body[data-time="golden"] .onboard-title {
+  color: #FFF4E4 !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+}
+body[data-time="golden"] .onboard-sub {
+  color: rgba(255,240,210,0.70) !important;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.20) !important;
+}
+body[data-time="golden"] .onboard-sub strong {
+  color: #FFF4E4 !important;
+}
 
 /* Night/evening login logo: subtle glow */
 body[data-time="night"] .login-logo,
