@@ -1327,7 +1327,7 @@ function renderSmartNudges() {
         const diff = Math.ceil((new Date(cd.date + 'T00:00:00') - new Date()) / 86400000);
         if (diff > 0 && diff < nearestDays) { nearestDays = diff; nearest = cd; }
       });
-      if (nearest) nudges.push({ text: nearestDays + 'd to ' + nearest.title, page: 'story', countdown: true });
+      if (nearest) nudges.push({ text: nearestDays + 'd to ' + esc(nearest.title), page: 'story', countdown: true });
     }
 
     container.innerHTML = nudges.slice(0, 6).map(n => {
@@ -1823,14 +1823,15 @@ function loadSharedMusicFeed() {
       var embedUrl = song.platform === 'spotify' ? getSpotifyEmbedUrl(song.url) : getYouTubeEmbedUrl(song.url);
       html += '<div style="background:var(--input-bg);border-radius:14px;padding:12px;margin-bottom:8px">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
-          '<span style="font-size:13px;font-weight:500;color:var(--t1)">' + icon + ' ' + (song.fromName || song.from) + '</span>' +
+          '<span style="font-size:13px;font-weight:500;color:var(--t1)">' + icon + ' ' + esc(song.fromName || song.from || '') + '</span>' +
           '<span style="font-size:11px;color:var(--t3)">' + ago + '</span>' +
         '</div>';
       if (embedUrl) {
         var h = song.platform === 'spotify' ? '80' : '150';
         html += '<iframe src="' + embedUrl + '" width="100%" height="' + h + '" frameborder="0" allow="encrypted-media" style="border-radius:10px"></iframe>';
       }
-      html += '<a href="' + song.url + '" target="_blank" style="display:block;margin-top:6px;font-size:11px;color:var(--gold)">Open in app</a>';
+      var safeUrl = /^https?:\/\//.test(song.url || '') ? esc(song.url) : '';
+      if (safeUrl) html += '<a href="' + safeUrl + '" target="_blank" rel="noopener" style="display:block;margin-top:6px;font-size:11px;color:var(--gold)">Open in app</a>';
       html += '</div>';
     });
     feed.innerHTML = html;

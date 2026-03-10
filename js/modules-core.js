@@ -845,7 +845,7 @@ function renderTapFeed(taps) {
     const isMe = t.from === user;
     return `<div class="tap-item">
       <div class="tap-type">${emoji}</div>
-      <div class="tap-from">${isMe ? 'You' : t.fromName} <span style="color:var(--t3);font-weight:300;font-size:10px">${TAP_MSGS[t.type] || ''}</span></div>
+      <div class="tap-from">${isMe ? 'You' : esc(t.fromName || '')} <span style="color:var(--t3);font-weight:300;font-size:10px">${TAP_MSGS[t.type] || ''}</span></div>
       <div class="tap-time">${ts}</div>
     </div>`;
   }).join('');
@@ -959,7 +959,7 @@ function renderOpenWhenLetters(letters) {
   if (forMe.length) {
     html += forMe.map(l => {
       if (l.opened) {
-        return `<div class="ow-card opened"><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-msg">${formatLetterText(l.message)}</div><div class="ow-from">From ${l.fromName} · ${timeAgo(l.timestamp)}</div></div>`;
+        return `<div class="ow-card opened"><div class="ow-tag">${owLabels[l.openWhen] || esc(l.openWhen || '')}</div><div class="ow-msg">${formatLetterText(l.message)}</div><div class="ow-from">From ${esc(l.fromName || '')} · ${timeAgo(l.timestamp)}</div></div>`;
       }
       return `<div class="ow-card sealed" onclick="openSealedLetter('${l._key}')"><div class="ow-seal">💌</div><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-hint">Tap to open</div></div>`;
     }).join('');
@@ -1305,8 +1305,8 @@ function renderGratitude(entries) {
     const ts = timeAgo(time);
     const isMe = g.from === user;
     return `<div class="grat-card">
-      <div class="grat-from">${isMe ? 'You' : g.fromName} · ${ts}</div>
-      <div class="grat-msg">${g.message.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="grat-from">${isMe ? 'You' : esc(g.fromName || '')} · ${ts}</div>
+      <div class="grat-msg">${esc(g.message)}</div>
     </div>`;
   }).join('');
 }
