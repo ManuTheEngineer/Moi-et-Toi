@@ -1736,7 +1736,7 @@ function playAmbientSound(type, volume) {
     ctx.resume().catch(function(){});
   }
 
-  var vol = volume || 0.012;
+  var vol = volume || 0.0012;
 
   var buffer;
   try {
@@ -1837,7 +1837,7 @@ function updateAmbientAudio() {
 
   var scene = SCENES[WEATHER.scene];
   if (!scene) {
-    playAmbientSound('wind', 0.008);
+    playAmbientSound('wind', 0.0008);
     return;
   }
 
@@ -1854,10 +1854,10 @@ function updateAmbientAudio() {
   });
 
   // Single environment sound — soft and calm
-  playAmbientSound(soundType, 0.012);
+  playAmbientSound(soundType, 0.0012);
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wx && wx.sound) playAmbientSound(wx.sound, 0.010);
+    if (wx && wx.sound) playAmbientSound(wx.sound, 0.001);
   }
 }
 
@@ -2302,7 +2302,7 @@ function _startMoodPlayback(ctx, mood, moodKey) {
     audio.setAttribute('webkit-playsinline', '');
     audio.src = objUrl;
     audio.loop = true;
-    audio.volume = 0.035;
+    audio.volume = 0.0035;
     var playP = audio.play();
     if (playP && playP.then) {
       playP.then(function() {

@@ -3406,18 +3406,24 @@ body[data-time="night"] .offline-banner.show {
 
 /* Sound preview button */
 .ob-sound-preview-btn {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 12px auto 0;
-  padding: 8px 20px;
-  border: 1px solid rgba(180,160,140,0.3);
+  padding: 8px 18px;
+  border: 1px solid rgba(255,255,255,.2);
   border-radius: 20px;
-  background: rgba(255,255,255,0.6);
-  color: var(--c-text, #5a4e3c);
-  font-size: 13px;
-  font-family: var(--f-body, 'Outfit', sans-serif);
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255,255,255,.7);
+  font-size: 12px;
+  font-family: 'Outfit', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-shadow: 0 1px 3px rgba(0,0,0,.3);
 }
+.ob-sound-preview-btn svg { flex-shrink:0; }
 .ob-sound-preview-btn:active {
   transform: scale(0.96);
 }

@@ -805,17 +805,21 @@ function onboardNext() {
 // Toggle the real living sky on/off during onboarding
 function obToggleLiveSky(on) {
   onboardData.livingSky = on;
-  // Toggle the ACTUAL login sky scene so the user sees the real effect
-  var skyScene = document.getElementById('login-sky-scene');
-  var terrScene = document.getElementById('login-terrain-scene');
-  if (skyScene) skyScene.style.opacity = on ? '1' : '0';
-  if (terrScene) terrScene.style.opacity = on ? '1' : '0';
+  // Toggle ob-sky-visible class which controls sky/terrain opacity via CSS
+  var loginEl = document.querySelector('.login');
+  if (loginEl) {
+    if (on) {
+      loginEl.classList.add('ob-sky-visible');
+    } else {
+      loginEl.classList.remove('ob-sky-visible');
+    }
+  }
 }
 
 function obSelectSkyTheme(theme, btn) {
   onboardData.skyTheme = theme;
   var grid = document.getElementById('ob-sky-theme-grid');
-  if (grid) grid.querySelectorAll('.sky-theme-btn').forEach(function(b) {
+  if (grid) grid.querySelectorAll('.ob-env-btn,.sky-theme-btn').forEach(function(b) {
     b.classList.toggle('active', b.getAttribute('data-theme') === theme);
   });
   // Apply to the REAL background so user sees the change live
@@ -954,7 +958,7 @@ function obStartSoundPreview(theme) {
     audio.setAttribute('webkit-playsinline', '');
     audio.src = objUrl;
     audio.loop = true;
-    audio.volume = 0.1;
+    audio.volume = 0.01;
     var playP = audio.play();
     if (playP && playP.then) {
       playP.then(function() {

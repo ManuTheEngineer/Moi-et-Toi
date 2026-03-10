@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#F5F0EB">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -177,23 +177,26 @@
       </div>
       <!-- Sky theme + nature sounds — live background changes -->
       <div id="ob-sky-theme" class="ob-baseline-card" style="display:none">
-        <div class="sky-theme-grid" id="ob-sky-theme-grid">
-          <button type="button" class="sky-theme-btn" data-theme="beach" onclick="obSelectSkyTheme('beach',this)">
-            <span class="sky-theme-icon">🏖</span><span class="sky-theme-name">Beach</span>
+        <div class="ob-env-grid" id="ob-sky-theme-grid">
+          <button type="button" class="ob-env-btn" data-theme="beach" onclick="obSelectSkyTheme('beach',this)">
+            <span class="ob-env-name">Beach</span>
+            <span class="ob-env-desc">Waves and warm light</span>
           </button>
-          <button type="button" class="sky-theme-btn" data-theme="mountain" onclick="obSelectSkyTheme('mountain',this)">
-            <span class="sky-theme-icon">🏔</span><span class="sky-theme-name">Mountain</span>
+          <button type="button" class="ob-env-btn" data-theme="mountain" onclick="obSelectSkyTheme('mountain',this)">
+            <span class="ob-env-name">Mountain</span>
+            <span class="ob-env-desc">Peaks and forest air</span>
           </button>
-          <button type="button" class="sky-theme-btn" data-theme="mixed" onclick="obSelectSkyTheme('mixed',this)">
-            <span class="sky-theme-icon">🌅</span><span class="sky-theme-name">Both</span>
+          <button type="button" class="ob-env-btn active" data-theme="mixed" onclick="obSelectSkyTheme('mixed',this)">
+            <span class="ob-env-name">Both</span>
+            <span class="ob-env-desc">Changes with the day</span>
           </button>
         </div>
-        <div class="ob-bl-row" style="margin-top:16px">
-          <span class="ob-bl-label">Nature sounds?</span>
+        <div class="ob-env-sound-row">
+          <span class="ob-bl-label">Nature sounds</span>
           <label class="toggle-switch"><input type="checkbox" id="ob-nature-toggle"><span class="toggle-slider"></span></label>
         </div>
         <button type="button" class="ob-sound-preview-btn" id="ob-sound-preview-btn" onclick="obToggleSoundPreview()">
-          <span id="ob-sound-preview-icon">🔊</span> Preview sounds
+          <span id="ob-sound-preview-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span> Preview
         </button>
       </div>
       <div id="ob-tour" style="display:none"></div>

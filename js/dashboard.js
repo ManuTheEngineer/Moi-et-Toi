@@ -2098,7 +2098,7 @@ function previewVoiceNote() {
   vnPreviewAudio = new Audio(url);
   vnPreviewAudio.setAttribute('playsinline', '');
   vnPreviewAudio.setAttribute('webkit-playsinline', '');
-  vnPreviewAudio.volume = 0.8;
+  vnPreviewAudio.volume = 0.08;
   vnPreviewAudio.play().catch(function(e) { console.warn('Voice preview blocked:', e); });
   vnPreviewAudio.onended = function() { vnPreviewAudio = null; };
 }
@@ -2278,7 +2278,7 @@ function playVoiceAudioBackground(dataUrl, onEnded) {
   vnAvatarAudio = new Audio(dataUrl);
   vnAvatarAudio.setAttribute('playsinline', '');
   vnAvatarAudio.setAttribute('webkit-playsinline', '');
-  vnAvatarAudio.volume = 0.45; // Background-level volume
+  vnAvatarAudio.volume = 0.045; // Background-level volume
   vnAvatarAudio.play().catch(function(e) { console.error('Voice playback error:', e); });
   vnAvatarAudio.onended = function() {
     vnAvatarAudio = null;
