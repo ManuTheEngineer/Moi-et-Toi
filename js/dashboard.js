@@ -161,9 +161,10 @@ function showConfigSetup() {
     <h1>Manu & Taylor</h1>
     <div class="sub">One-time setup</div>
     <div class="lbl" style="margin-bottom:14px">Paste your connection key</div>
-    <input type="password" id="config-input" class="login-input mb16" placeholder="Paste key here..."
-      onkeydown="if(event.key==='Enter')saveConfig()">
-    <button onclick="saveConfig()" class="login-btn">Connect ♡</button>
+    <input type="text" id="config-input" class="login-input mb16" placeholder="Paste key here..."
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+      inputmode="text" onkeydown="if(event.key==='Enter')saveConfig()">
+    <button onclick="saveConfig()" class="login-btn">Connect</button>
     <div id="config-err" class="login-err"></div>
     <div style="margin-top:20px;font-size:11px;color:var(--t3);text-align:center;max-width:280px;line-height:1.5">
       Ask Manu for the connection key. You only need to do this once on each device.</div>
