@@ -420,6 +420,13 @@ function renderDashHero() {
     greeting.textContent = greetText;
   }
 
+  // Update partner name and photo on dashboard
+  const partnerNameEl = document.getElementById('dash-partner-name');
+  if (partnerNameEl && typeof NAMES !== 'undefined' && NAMES[partner]) {
+    partnerNameEl.textContent = NAMES[partner];
+  }
+  if (typeof applyPartnerPhoto === 'function') applyPartnerPhoto();
+
   // Calculate "together since" from settings/anniversary
   const togetherNum = document.getElementById('dash-together-num');
   if (togetherNum && db) {

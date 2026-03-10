@@ -1471,6 +1471,7 @@ async function verifyBiometric() {
     var assertion = await navigator.credentials.get({
       publicKey: {
         challenge: challenge,
+        rpId: location.hostname,
         allowCredentials: [{
           type: 'public-key',
           id: rawId,
@@ -1489,6 +1490,14 @@ async function verifyBiometric() {
 
 // Called when user taps Enter on welcome gate
 async function enterApp() {
+  // Guard: wait for Firebase auth to complete and user to be set
+  if (!user || !authUser) {
+    toast('Still loading...');
+    var enterBtn = document.getElementById('welcome-enter-btn');
+    if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
+    return;
+  }
+
   var enterBtn = document.getElementById('welcome-enter-btn');
   if (enterBtn) {
     enterBtn.textContent = 'Verifying...';

@@ -1612,7 +1612,7 @@
 .dash-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:28px;letter-spacing:2px;color:var(--cream);margin-top:4px}
 .dash-partner{display:flex;align-items:center;gap:8px}
 .dash-partner-link{display:flex;align-items:center;gap:6px;cursor:pointer}
-.dash-partner-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;background-size:cover;background-position:center;transition:all .3s;cursor:pointer}
+.dash-partner-avatar{width:36px;height:36px;border-radius:50%;background:var(--input-bg);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;background-size:cover;background-position:center;transition:all .3s;cursor:pointer}
 .dash-partner-avatar.has-photo{border:2px solid rgba(184,134,11,.4);box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .dash-partner-avatar:active{transform:scale(.9)}
 .dash-presence{width:8px;height:8px;flex-shrink:0;border-radius:50%;background:var(--t3);transition:background .3s;position:absolute;bottom:-1px;right:-1px;border:2px solid var(--bg)}
