@@ -279,13 +279,37 @@ const SKY = {
 function setLivingSky(on) {
   livingSkyEnabled = on;
   const container = document.getElementById('sky-scene');
-  if (!container) return;
   if (on) {
-    renderLivingSky(container);
-    startCreatureLoop(container);
+    // Show terrain and particles
+    var terrain = document.getElementById('terrain-scene');
+    if (terrain) terrain.style.opacity = '';
+    var particles = document.getElementById('particles');
+    if (particles) particles.style.display = '';
+    // Render sky and terrain
+    if (container) {
+      renderLivingSky(container);
+      startCreatureLoop(container);
+      // Restart periodic sky refresh
+      clearInterval(SKY.sceneTimer);
+      SKY.sceneTimer = setInterval(function() {
+        if (!livingSkyEnabled || document.hidden) return;
+        renderLivingSky(container);
+      }, 120000);
+    }
+    if (typeof renderTerrain === 'function') renderTerrain();
+    spawnOrbs();
   } else {
-    container.innerHTML = '';
+    // Clear sky scene
+    if (container) container.innerHTML = '';
     clearInterval(SKY.creatureTimer);
+    clearInterval(SKY.sceneTimer);
+    SKY.sceneTimer = null;
+    // Hide terrain
+    var terrain = document.getElementById('terrain-scene');
+    if (terrain) { terrain.innerHTML = ''; terrain.style.opacity = '0'; }
+    // Remove orbs and particles
+    var particles = document.getElementById('particles');
+    if (particles) particles.style.display = 'none';
   }
 }
 
