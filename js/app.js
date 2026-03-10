@@ -109,6 +109,10 @@ async function init() {
           ? 'Could not verify account. Check your connection and try again.'
           : 'Account not authorized.');
       }
+    } else {
+      // Not authenticated — ensure login form is visible (undo early biometric gate)
+      showEl('login-form');
+      hideEl('welcome-gate');
     }
   });
 }
@@ -950,7 +954,7 @@ function obStartSoundPreview(theme) {
     audio.setAttribute('webkit-playsinline', '');
     audio.src = objUrl;
     audio.loop = true;
-    audio.volume = 1.0;
+    audio.volume = 0.1;
     var playP = audio.play();
     if (playP && playP.then) {
       playP.then(function() {
@@ -981,8 +985,8 @@ function _obWebAudioFallback(ctx, buffer) {
     source.buffer = buffer;
     source.loop = true;
     var gain = c.createGain();
-    gain.gain.setValueAtTime(0.5, c.currentTime);
-    gain.gain.linearRampToValueAtTime(1.0, c.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.05, c.currentTime);
+    gain.gain.linearRampToValueAtTime(0.1, c.currentTime + 0.3);
     source.connect(gain);
     gain.connect(c.destination);
     source.start(0);
@@ -1668,8 +1672,6 @@ function finishLogin() {
   setInterval(function() { if (!document.hidden) updateNavBadges(); }, 60000);
   // Voice notes & in-app notifications
   if (typeof initVoiceNotes === 'function') setTimeout(initVoiceNotes, 2000);
-  // Initialize dark mode from saved preference
-  initDarkMode();
   // Update push notification button state
   updateNotifButton();
   // Initialize biometric settings toggle
@@ -1741,61 +1743,6 @@ function submitApiKey() {
   else { closeModal(); }
 }
 
-// ===== DARK MODE (#17) =====
-function initDarkMode() {
-  var pref = localStorage.getItem('met_dark_mode') || 'auto';
-  applyDarkMode(pref);
-  // Highlight the active button
-  document.querySelectorAll('.dm-btn').forEach(function(b) {
-    b.classList.toggle('sel', b.dataset.dm === pref);
-  });
-  // Listen for system preference changes when in auto mode
-  if (window.matchMedia) {
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-      if ((localStorage.getItem('met_dark_mode') || 'auto') === 'auto') {
-        applyDarkMode('auto');
-      }
-    });
-  }
-}
-
-function setDarkMode(mode) {
-  localStorage.setItem('met_dark_mode', mode);
-  applyDarkMode(mode);
-  document.querySelectorAll('.dm-btn').forEach(function(b) {
-    b.classList.toggle('sel', b.dataset.dm === mode);
-  });
-  // Save preference to Firebase
-  if (db && user) {
-    db.ref('settings/darkMode/' + user).set(mode);
-  }
-}
-
-function applyDarkMode(mode) {
-  var isDark = false;
-  if (mode === 'dark') isDark = true;
-  else if (mode === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) isDark = true;
-  else if (mode === 'light') isDark = false;
-  var meta = document.querySelector('meta[name="theme-color"]');
-  if (isDark) {
-    document.body.setAttribute('data-theme', 'dark');
-    if (meta) meta.setAttribute('content', '#121218');
-  } else {
-    document.body.removeAttribute('data-theme');
-    // Restore correct theme-color for current time of day
-    var time = document.body.getAttribute('data-time');
-    if (time === 'night' || time === 'evening') {
-      if (meta) meta.setAttribute('content', time === 'night' ? '#1A1828' : '#2A2440');
-    } else {
-      if (meta) meta.setAttribute('content', '#F5F0EB');
-    }
-  }
-  // Re-render sky and orbs to pick up new --bg variable
-  if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
-  if (typeof spawnOrbs === 'function') spawnOrbs();
-  // Re-render terrain in case sky needs refresh
-  if (typeof renderTerrain === 'function' && typeof currentSkyTheme !== 'undefined') renderTerrain(currentSkyTheme);
-}
 
 // ===== SETTINGS TABS =====
 function switchSettingsTab(tab) {

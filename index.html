@@ -50,6 +50,26 @@
     <div class="welcome-bio-hint" id="welcome-bio-hint" style="display:none"></div>
     <button onclick="enterApp()" class="login-btn" id="welcome-enter-btn">Enter</button>
   </div>
+  <script>
+  // Early biometric gate: if user has a stored biometric credential,
+  // immediately show the welcome gate instead of login form (avoids flash)
+  (function() {
+    try {
+      var hasHer = localStorage.getItem('met_bio_cred_her');
+      var hasHim = localStorage.getItem('met_bio_cred_him');
+      if (hasHer || hasHim) {
+        var form = document.getElementById('login-form');
+        var gate = document.getElementById('welcome-gate');
+        if (form) form.classList.add('d-none');
+        if (gate) gate.classList.remove('d-none');
+        var h = new Date().getHours();
+        var greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+        var el = document.getElementById('welcome-greeting');
+        if (el) el.textContent = greet;
+      }
+    } catch(e) {}
+  })();
+  </script>
   <!-- First-time location prompt (shown before onboarding) -->
   <div id="first-location-prompt" class="login-inner d-none">
     <h1 class="onboard-title">Your Living World</h1>
@@ -3680,19 +3700,6 @@
     <div class="form-card">
       <div class="settings-row mb-0">
         <div>
-          <span class="settings-label">Dark Mode</span>
-          <div class="form-hint mt-2">Follows system preference by default</div>
-        </div>
-        <div class="dark-mode-toggle-group">
-          <button class="dm-btn" data-dm="auto" onclick="setDarkMode('auto')">Auto</button>
-          <button class="dm-btn" data-dm="light" onclick="setDarkMode('light')">Light</button>
-          <button class="dm-btn" data-dm="dark" onclick="setDarkMode('dark')">Dark</button>
-        </div>
-      </div>
-    </div>
-    <div class="form-card">
-      <div class="settings-row mb-0">
-        <div>
           <span class="settings-label">Living Sky</span>
           <div class="form-hint mt-2">Animated sky, sun, moon, stars, birds and creatures</div>
         </div>
@@ -3942,16 +3949,6 @@ if ('serviceWorker' in navigator) {
     }
   });
 }
-// Apply dark mode immediately to prevent flash
-(function() {
-  var dm = localStorage.getItem('met_dark_mode') || 'auto';
-  var isDark = dm === 'dark' || (dm === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  if (isDark) {
-    document.body.setAttribute('data-theme', 'dark');
-    var tc = document.querySelector('meta[name="theme-color"]');
-    if (tc) tc.setAttribute('content', '#121218');
-  }
-})();
 </script>
 </body>
 </html>

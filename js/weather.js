@@ -740,7 +740,7 @@ function _resumeCtx(ctx) {
     // Oscillators are more reliable than silent buffers for iOS unlock
     var o = ctx.createOscillator();
     var g = ctx.createGain();
-    g.gain.value = 0.001; // near-silent
+    g.gain.value = 0.0001; // near-silent
     o.connect(g);
     g.connect(ctx.destination);
     o.start(0);
@@ -763,7 +763,7 @@ function _primeHtmlAudio() {
       _htmlAudioEl.setAttribute('webkit-playsinline', '');
       _htmlAudioEl.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
     }
-    _htmlAudioEl.volume = 0.01;
+    _htmlAudioEl.volume = 0.001;
     _htmlAudioEl.currentTime = 0;
     _htmlAudioEl.play().catch(function(){});
   } catch(e) {}
@@ -1736,7 +1736,7 @@ function playAmbientSound(type, volume) {
     ctx.resume().catch(function(){});
   }
 
-  var vol = volume || 0.12;
+  var vol = volume || 0.012;
 
   var buffer;
   try {
@@ -1837,7 +1837,7 @@ function updateAmbientAudio() {
 
   var scene = SCENES[WEATHER.scene];
   if (!scene) {
-    playAmbientSound('wind', 0.08);
+    playAmbientSound('wind', 0.008);
     return;
   }
 
@@ -1854,10 +1854,10 @@ function updateAmbientAudio() {
   });
 
   // Single environment sound — soft and calm
-  playAmbientSound(soundType, 0.12);
+  playAmbientSound(soundType, 0.012);
   if (WEATHER.data) {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
-    if (wx && wx.sound) playAmbientSound(wx.sound, 0.10);
+    if (wx && wx.sound) playAmbientSound(wx.sound, 0.010);
   }
 }
 
@@ -2302,7 +2302,7 @@ function _startMoodPlayback(ctx, mood, moodKey) {
     audio.setAttribute('webkit-playsinline', '');
     audio.src = objUrl;
     audio.loop = true;
-    audio.volume = 0.35;
+    audio.volume = 0.035;
     var playP = audio.play();
     if (playP && playP.then) {
       playP.then(function() {
@@ -2345,8 +2345,8 @@ function _startMoodWebAudio(ctx, buffer, mood, moodKey) {
   source.loop = true;
 
   var gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.2, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.5);
+  gain.gain.setValueAtTime(0.02, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.035, ctx.currentTime + 0.5);
 
   source.connect(gain);
   gain.connect(ctx.destination);
