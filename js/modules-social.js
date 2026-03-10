@@ -1625,7 +1625,7 @@ function renderEmoji(data, key) {
       </div>`;
     } else {
       html += `<div class="emoji-clue-giver">
-        <div class="game-status turn">The answer is: <strong>${data.answer}</strong></div>
+        <div class="game-status turn">The answer is: <strong>${esc(data.answer)}</strong></div>
         <div style="font-size:12px;color:var(--t3);margin:8px 0">Waiting for ${NAMES[partner]} to guess...</div>
         <input id="emoji-custom-clue" class="quiz-q" placeholder="Send an extra emoji clue...">
         <button class="game-btn secondary" onclick="sendCustomEmoji()">Send Hint</button>
@@ -1634,7 +1634,7 @@ function renderEmoji(data, key) {
   } else {
     const msg = data.winner === user ? 'You won! 🎉' : NAMES[partner] + ' won!';
     html += `<div class="game-status">${msg}</div>`;
-    html += `<div class="emoji-answer">The answer was: <strong>${data.answer}</strong></div>`;
+    html += `<div class="emoji-answer">The answer was: <strong>${esc(data.answer)}</strong></div>`;
     html += `<div class="game-actions"><button class="game-btn" onclick="newEmojiGame()">New Round</button><button class="game-btn secondary" onclick="showGameLobby()">Back</button></div>`;
   }
   el.innerHTML = html;

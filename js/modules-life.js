@@ -222,7 +222,7 @@ function listenPersonalGoals(who) {
       const ts = timeAgo(new Date(i.timestamp));
       return `<div class="pg-goal ${i.done?'done':''}">
         <div class="pg-goal-check" onclick="toggleGoal('${who}','${i._key}',${!i.done})">${i.done?'✓':''}</div>
-        <div class="pg-goal-text">${i.title}</div>
+        <div class="pg-goal-text">${esc(i.title)}</div>
         <div class="pg-goal-date">${ts}</div>
         <button class="item-delete" onclick="event.stopPropagation();deletePersonalGoal('${who}','${i._key}')">×</button>
       </div>`;
@@ -739,7 +739,7 @@ function listenFamilyGoals() {
     if (!items.length) { el.innerHTML = '<div class="empty">Set goals for your future family</div>'; return; }
     el.innerHTML = items.map(i => `<div class="pg-goal ${i.done?'done':''}">
       <div class="pg-goal-check" onclick="toggleFamGoal('${i._key}',${!i.done})">${i.done?'✓':''}</div>
-      <div class="pg-goal-text">${i.title}</div>
+      <div class="pg-goal-text">${esc(i.title)}</div>
       <button class="item-delete" onclick="event.stopPropagation();deleteFamilyGoal('${i._key}')">×</button>
     </div>`).join('');
   });
