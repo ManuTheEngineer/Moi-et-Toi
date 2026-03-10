@@ -52,21 +52,13 @@
   </div>
   <!-- First-time location prompt (shown before onboarding) -->
   <div id="first-location-prompt" class="login-inner d-none">
-    <div class="ob-loc-icon">🌍</div>
-    <h1 class="onboard-title">Enable Your Living World</h1>
-    <p class="onboard-sub">Allow location access so your app mirrors the real world — live weather, actual sunrise &amp; sunset, and nature sounds that match your sky.</p>
-    <div class="ob-loc-features">
-      <div class="ob-loc-feat"><span>🌧</span> Real weather effects</div>
-      <div class="ob-loc-feat"><span>🌅</span> Actual sunrise &amp; sunset</div>
-      <div class="ob-loc-feat"><span>🌡</span> Temperature-matched colors</div>
-      <div class="ob-loc-feat"><span>🔊</span> Nature sounds for your area</div>
-    </div>
+    <h1 class="onboard-title">Your Living World</h1>
+    <p class="onboard-sub">Your sky, weather, and sounds mirror reality when location is enabled.</p>
     <button onclick="handleFirstLocationAllow()" class="login-btn" style="margin-top:24px">Allow Location</button>
     <div class="onboard-skip" onclick="handleFirstLocationSkip()" style="margin-top:12px">Maybe later</div>
   </div>
   <!-- Onboarding steps (inputs in DOM from load, keyboard works) -->
   <div id="onboard-steps" class="login-inner d-none">
-    <div class="onboard-progress"><div class="onboard-bar" id="ob-bar"></div></div>
     <div class="ob-content ob-enter" id="ob-content">
       <div id="ob-emoji" class="onboard-emoji" style="display:none"></div>
       <h1 class="onboard-title" id="ob-title"></h1>
@@ -188,7 +180,6 @@
       <button id="ob-btn" onclick="onboardNext()" class="login-btn ob-btn">Continue</button>
       <p class="onboard-skip" id="ob-skip" style="display:none" onclick="onboardNext()">Skip for now</p>
     </div>
-    <div class="onboard-dots" id="ob-dots"></div>
     <div id="ob-partner-status" class="ob-partner-status" style="display:none"></div>
   </div>
   <div id="login-err" class="login-err"></div>

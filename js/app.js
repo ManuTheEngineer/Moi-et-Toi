@@ -444,11 +444,7 @@ function obCleanupStatus() {
   if (obPartnerListener) obPartnerListener.off();
 }
 
-function renderDots(active) {
-  return Array.from({length: OB_TOTAL}, (_, i) =>
-    `<span class="onboard-dot${i === active ? ' active' : ''}${i < active ? ' done' : ''}"></span>`
-  ).join('');
-}
+// renderDots removed — progress bar/dots no longer used in onboarding
 
 // Smooth scroll for input focus - keeps input visible above keyboard
 function obScrollToInput(el) {
@@ -563,13 +559,6 @@ function renderOnboardStep() {
   var partnerPossessive = isHer ? 'his' : 'her';
   // Use nickname if already entered (steps after step 2)
   var pNick = onboardData.nickname || partnerLabel;
-  var pct = Math.round((onboardStep / (OB_TOTAL - 1)) * 100);
-
-  var bar = document.getElementById('ob-bar');
-  var dots = document.getElementById('ob-dots');
-  bar.style.width = pct + '%';
-  dots.innerHTML = renderDots(onboardStep);
-
   transitionStep(function() {
     var emoji = document.getElementById('ob-emoji');
     var title = document.getElementById('ob-title');
@@ -608,24 +597,22 @@ function renderOnboardStep() {
 
     // Step 0: Welcome
     if (onboardStep === 0) {
-      title.textContent = 'Your Space Awaits';
-      sub.innerHTML = "Welcome to <strong>Moi & Toi</strong>, a private space just for you two.<br>Let's set up your world together.";
-      btn.textContent = "Let's go";
+      title.textContent = 'Moi & Toi';
+      sub.innerHTML = "A private world for you two.";
+      btn.textContent = "Begin";
     }
     // Step 1: Name
     else if (onboardStep === 1) {
-      emoji.innerHTML = OB_ICONS.sparkle; emoji.style.display = '';
-      title.textContent = "What's your name?";
-      sub.textContent = "Your partner will see this throughout the app.";
+      title.textContent = "Your name";
+      sub.textContent = "How your partner sees you.";
       nameIn.style.display = ''; nameIn.value = onboardData.name;
       setTimeout(function(){ nameIn.focus(); }, 500);
       btn.textContent = 'Next';
     }
     // Step 2: Nickname for partner
     else if (onboardStep === 2) {
-      emoji.innerHTML = OB_ICONS.heart; emoji.style.display = '';
       title.textContent = 'A name for ' + (isHer ? 'him' : 'her');
-      sub.textContent = "Pet name, nickname, or real name. Whatever feels right.";
+      sub.textContent = "Whatever feels right.";
       nickIn.placeholder = isHer ? 'e.g. Baby, Babe, His name...' : 'e.g. Babe, Love, Her name...';
       nickIn.style.display = ''; nickIn.value = onboardData.nickname;
       setTimeout(function(){ nickIn.focus(); }, 500);
@@ -633,18 +620,16 @@ function renderOnboardStep() {
     }
     // Step 3: Birthday
     else if (onboardStep === 3) {
-      emoji.innerHTML = OB_ICONS.cake; emoji.style.display = '';
       title.textContent = 'Your birthday';
-      sub.textContent = "We'll celebrate you and remind " + pNick + " when the day comes.";
+      sub.textContent = "So " + pNick + " never forgets.";
       birthdayIn.style.display = '';
       if (onboardData.birthday) birthdayIn.value = onboardData.birthday;
       btn.textContent = 'Next';
     }
     // Step 4: Photo
     else if (onboardStep === 4) {
-      emoji.innerHTML = OB_ICONS.camera; emoji.style.display = '';
-      title.textContent = 'Add a photo';
-      sub.textContent = "Choose a photo of " + pNick + ". This appears on " + partnerPossessive + " profile.";
+      title.textContent = 'A photo of ' + pNick;
+      sub.textContent = "This lives on " + partnerPossessive + " profile.";
       photoWrap.style.display = '';
       skip.style.display = '';
       if (onboardData.photo) {
@@ -655,18 +640,16 @@ function renderOnboardStep() {
     }
     // Step 5: Anniversary
     else if (onboardStep === 5) {
-      emoji.innerHTML = OB_ICONS.calendar; emoji.style.display = '';
       title.textContent = 'Your anniversary';
-      sub.textContent = "When did your relationship start? We'll track your days together.";
+      sub.textContent = "When did it all begin?";
       annivIn.style.display = '';
       skip.style.display = '';
       btn.textContent = 'Next';
     }
     // Step 6: Mood & mental baseline
     else if (onboardStep === 6) {
-      emoji.innerHTML = OB_ICONS.brain; emoji.style.display = '';
-      title.textContent = 'How are you today?';
-      sub.textContent = "This helps the app understand where you're starting from.";
+      title.textContent = 'Right now';
+      sub.textContent = "Your starting point.";
       moodBL.style.display = '';
       obRenderPills('ob-mood-pills', ['Low', 'Okay', 'Good', 'Great', 'Amazing'], 'mood');
       obRenderPills('ob-energy-pills', ['Drained', 'Tired', 'Normal', 'Energized', 'On Fire'], 'energy');
@@ -675,9 +658,8 @@ function renderOnboardStep() {
     }
     // Step 7: Fitness baseline
     else if (onboardStep === 7) {
-      emoji.innerHTML = OB_ICONS.muscle; emoji.style.display = '';
       title.textContent = 'Your body';
-      sub.textContent = "Optional baselines so your fitness journey starts on day one.";
+      sub.textContent = "Optional. Skip if you'd like.";
       fitBL.style.display = '';
       skip.style.display = '';
       if (onboardData.heightFt) document.getElementById('ob-fit-height-ft').value = onboardData.heightFt;
@@ -689,9 +671,8 @@ function renderOnboardStep() {
     }
     // Step 8: Relationship baseline
     else if (onboardStep === 8) {
-      emoji.innerHTML = OB_ICONS.couple; emoji.style.display = '';
-      title.textContent = 'Your relationship';
-      sub.textContent = "How do things feel right now? Honest answers help the app grow with you.";
+      title.textContent = 'You two';
+      sub.textContent = "Be honest. This helps us grow with you.";
       relBL.style.display = '';
       obRenderPills('ob-comm-pills', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], 'commRating');
       obRenderPills('ob-quality-pills', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], 'qualityRating');
@@ -700,9 +681,8 @@ function renderOnboardStep() {
     }
     // Step 9: Relationship agreement
     else if (onboardStep === 9) {
-      emoji.innerHTML = OB_ICONS.handshake; emoji.style.display = '';
-      title.textContent = 'Your agreement';
-      sub.innerHTML = "Build your relationship agreement together. " + esc(pNick) + " is setting " + partnerPossessive + " right now too.";
+      title.textContent = 'Your promises';
+      sub.innerHTML = "What you both commit to.";
       agreeCard.style.display = '';
       obRenderAgreementList('ob-agree-mine', 'agreementsMine');
       obRenderAgreementList('ob-agree-together', 'agreementsTogether');
@@ -711,9 +691,8 @@ function renderOnboardStep() {
     }
     // Step 10: Daily morning message
     else if (onboardStep === 10) {
-      emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
-      title.textContent = 'Morning messages';
-      sub.innerHTML = "Every morning, " + esc(pNick) + " wakes up to a personalized message: a compliment, affirmation, or poem.";
+      title.textContent = 'Good morning';
+      sub.innerHTML = esc(pNick) + " wakes up to a love note from you, every day.";
       morningCard.style.display = '';
       document.getElementById('ob-morning-toggle').checked = onboardData.morningMsgEnabled;
       var customTA = document.getElementById('ob-morning-custom');
@@ -722,50 +701,43 @@ function renderOnboardStep() {
       var preview = document.getElementById('ob-morning-preview');
       if (preview) {
         var sampleMsgs = [
-          "You are the most beautiful thing that ever happened to me. Every day with you is a gift I'll never take for granted.",
+          "Every day with you is a gift I'll never take for granted.",
           "Good morning, sunshine. The world is better because you're in it.",
-          "I hope you slept well. Just know that you're the first thing on my mind today, and every day."
+          "You're the first thing on my mind today, and every day."
         ];
         var sample = sampleMsgs[Math.floor(Math.random() * sampleMsgs.length)];
-        preview.innerHTML = '"' + sample + '"<div class="ob-morning-from">...from ' + esc(onboardData.nickname || 'your love') + '</div>';
+        preview.innerHTML = '"' + sample + '"<div class="ob-morning-from">\u2014 ' + esc(onboardData.nickname || 'your love') + '</div>';
       }
       btn.textContent = 'Next';
     }
     // Step 11: Living Sky — actual background is the demo
     else if (onboardStep === 11) {
-      emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
       title.textContent = 'Living Sky';
-      sub.innerHTML = "Your sky is alive — sunrise, sunset, stars, birds, and fireflies that follow real time. Toggle it now.";
+      sub.innerHTML = "This sky follows the real sun. Toggle and see.";
       skyCard.style.display = '';
       document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
-      // Ensure the actual sky is visible based on current toggle state
       obToggleLiveSky(onboardData.livingSky);
       btn.textContent = 'Next';
     }
-    // Step 12: Sky environment + nature sounds — live background changes
+    // Step 12: Sky environment + nature sounds
     else if (onboardStep === 12) {
-      emoji.innerHTML = OB_ICONS.sunrise; emoji.style.display = '';
-      title.textContent = 'Your environment';
-      sub.innerHTML = "Tap a landscape — watch your world transform behind you.";
+      title.textContent = 'Your world';
+      sub.innerHTML = "Tap — watch it change.";
       skyThemeCard.style.display = '';
-      // Pre-select based on user preference
       var defaultTheme = isHer ? 'beach' : 'mountain';
       if (!onboardData.skyTheme || onboardData.skyTheme === 'mixed') onboardData.skyTheme = defaultTheme;
       document.querySelectorAll('#ob-sky-theme-grid .sky-theme-btn').forEach(function(b) {
         b.classList.toggle('active', b.getAttribute('data-theme') === onboardData.skyTheme);
       });
       document.getElementById('ob-nature-toggle').checked = onboardData.natureSoundsEnabled;
-      // Render environment preview
       if (typeof obRenderEnvPreview === 'function') obRenderEnvPreview(onboardData.skyTheme);
       btn.textContent = 'Next';
     }
     // Step 13: All set
     else if (onboardStep === 13) {
-      bar.style.width = '95%';
-      emoji.innerHTML = OB_ICONS.party; emoji.style.display = '';
-      title.textContent = "You're all set!";
-      sub.innerHTML = "Let me give you a quick tour of your new space. It takes 30 seconds.";
-      btn.textContent = 'Start tour';
+      title.textContent = "You're in";
+      sub.innerHTML = "Quick tour of your space?";
+      btn.textContent = 'Show me';
     }
     // Step 14: Finish
     else if (onboardStep === 14) {
@@ -1190,75 +1162,71 @@ const TOUR_STEPS = [
   {
     target: '.dash-greeting-row',
     title: 'Home',
-    text: 'Your dashboard updates throughout the day with personalized greetings, weather, and your relationship status.',
+    text: 'Your daily pulse. Updates with the time of day.',
     position: 'bottom',
     page: 'dash'
   },
   {
     target: '.hero-card-us',
     title: 'Your Pulse',
-    text: 'See your relationship at a glance: days together, daily streak, and how you\'re both feeling. Tap it for more detail.',
+    text: 'Days together, streaks, how you\'re both feeling.',
     position: 'bottom',
     page: 'dash'
   },
   {
     target: '#dash-daily-q, .dash-card',
     title: 'Daily Question',
-    text: 'A new question appears every day for both of you. Answer daily to build your streak and discover new things about each other.',
+    text: 'A new one every day. Answer together.',
     position: 'top',
     page: 'dash',
     fallbackText: true
   },
   {
     target: '.view-toggle',
-    title: 'Us & Me Views',
-    text: '"Us" shows your relationship together. "Me" is your personal space for individual growth, goals, and wellness.',
+    title: 'Us & Me',
+    text: '"Us" is your relationship. "Me" is your personal space.',
     position: 'bottom',
     page: 'dash'
   },
   {
     target: '[data-p="together"]',
-    title: 'Together Tab',
-    text: 'Your couple activities: love letters, date night ideas, fun games, quizzes, and relationship check-ins.',
+    title: 'Together',
+    text: 'Letters, dates, games, check-ins. All synced.',
     position: 'top',
     page: 'dash',
     navigate: 'together'
   },
   {
-    target: '.hub-action-btn, .hub-list-row',
-    title: 'Activities',
-    text: 'Write letters, plan date nights, play couple games, and more. Everything syncs in real-time with your partner.',
-    position: 'bottom',
-    page: 'together'
-  },
-  {
     target: '[data-p="wellness"]',
-    title: 'Wellness Tab',
-    text: 'Track mood, fitness, nutrition, sleep, and gratitude. See how you\'re both doing side by side.',
+    title: 'Wellness',
+    text: 'Mood, fitness, sleep, gratitude. Side by side.',
     position: 'top',
     page: 'together',
     navigate: 'wellness'
   },
   {
     target: '[data-p="plan"]',
-    title: 'Plan Tab',
-    text: 'Shared calendar, bucket list, finances, and dream home planning. Build your future together.',
+    title: 'Plan',
+    text: 'Calendar, bucket list, finances, dream home.',
     position: 'top',
     page: 'wellness',
     navigate: 'plan'
   },
   {
     target: '[data-p="more"]',
-    title: 'More Tab',
-    text: 'AI assistant, photo memories, music, achievements, ambient sounds, and settings.',
+    title: 'More',
+    text: 'AI, photos, music, sounds, settings.',
     position: 'top',
     page: 'plan',
     navigate: 'more'
   }
 ];
 
+var _tourTransitioning = false;
+
 function startAppTour() {
   tourStep = 0;
+  _tourTransitioning = false;
   var overlay = document.getElementById('tour-overlay');
   if (!overlay) return;
   overlay.classList.add('on');
@@ -1270,27 +1238,38 @@ function showTourStep() {
   var step = TOUR_STEPS[tourStep];
   if (!step) { endTour(); return; }
 
+  var tooltip = document.getElementById('tour-tooltip');
+  var spotlight = document.getElementById('tour-spotlight');
+
+  // Fade out current tooltip before transitioning
+  if (tooltip) {
+    tooltip.classList.remove('tour-tooltip-in');
+    tooltip.classList.add('tour-tooltip-out');
+  }
+  if (spotlight) spotlight.classList.add('tour-spot-moving');
+
+  var delay = 80;
+
   // Navigate if needed
   if (step.navigate) {
     go(step.navigate);
-    setTimeout(function() { positionTourStep(step); }, 350);
+    delay = 450;
   } else if (step.page) {
     go(step.page);
-    setTimeout(function() { positionTourStep(step); }, 100);
-  } else {
-    positionTourStep(step);
+    delay = 200;
   }
+
+  setTimeout(function() { positionTourStep(step); }, delay);
 }
 
 function positionTourStep(step) {
-  var overlay = document.getElementById('tour-overlay');
   var spotlight = document.getElementById('tour-spotlight');
   var tooltip = document.getElementById('tour-tooltip');
   var titleEl = document.getElementById('tour-title');
   var textEl = document.getElementById('tour-text');
   var countEl = document.getElementById('tour-count');
 
-  // Find target - try multiple selectors separated by comma
+  // Find target
   var target = null;
   var selectors = step.target.split(',');
   for (var i = 0; i < selectors.length; i++) {
@@ -1301,43 +1280,44 @@ function positionTourStep(step) {
   // Set content
   titleEl.textContent = step.title;
   textEl.textContent = step.text;
-  countEl.textContent = (tourStep + 1) + ' / ' + TOUR_STEPS.length;
+  countEl.textContent = (tourStep + 1) + ' of ' + TOUR_STEPS.length;
+
+  tooltip.classList.remove('tour-tooltip-out');
 
   if (target) {
-    var rect = target.getBoundingClientRect();
-    var pad = 8;
-    spotlight.style.display = '';
-    spotlight.style.top = (rect.top - pad) + 'px';
-    spotlight.style.left = (rect.left - pad) + 'px';
-    spotlight.style.width = (rect.width + pad * 2) + 'px';
-    spotlight.style.height = (rect.height + pad * 2) + 'px';
-    spotlight.style.borderRadius = getComputedStyle(target).borderRadius || '12px';
-
-    // Scroll target into view first
+    // Scroll into view first, then position
     target.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setTimeout(function() {
-      // Recalculate after scroll
-      var r2 = target.getBoundingClientRect();
-      spotlight.style.top = (r2.top - pad) + 'px';
-      spotlight.style.left = (r2.left - pad) + 'px';
-      spotlight.style.width = (r2.width + pad * 2) + 'px';
-      spotlight.style.height = (r2.height + pad * 2) + 'px';
+      var rect = target.getBoundingClientRect();
+      var pad = 10;
+      spotlight.style.display = '';
+      spotlight.classList.remove('tour-spot-moving');
+      spotlight.style.top = (rect.top - pad) + 'px';
+      spotlight.style.left = (rect.left - pad) + 'px';
+      spotlight.style.width = (rect.width + pad * 2) + 'px';
+      spotlight.style.height = (rect.height + pad * 2) + 'px';
+      spotlight.style.borderRadius = getComputedStyle(target).borderRadius || '12px';
 
-      // Position tooltip
-      positionTooltip(tooltip, r2, step.position);
-    }, 350);
+      positionTooltip(tooltip, rect, step.position);
+
+      // Animate tooltip in
+      tooltip.classList.remove('tour-tooltip-in');
+      void tooltip.offsetWidth;
+      tooltip.classList.add('tour-tooltip-in');
+      _tourTransitioning = false;
+    }, 300);
   } else {
-    // No visible target - center the tooltip, hide spotlight
     spotlight.style.display = 'none';
+    spotlight.classList.remove('tour-spot-moving');
     tooltip.style.top = '50%';
     tooltip.style.left = '50%';
+    tooltip.style.right = 'auto';
     tooltip.style.transform = 'translate(-50%, -50%)';
+    tooltip.classList.remove('tour-tooltip-in');
+    void tooltip.offsetWidth;
+    tooltip.classList.add('tour-tooltip-in');
+    _tourTransitioning = false;
   }
-
-  // Animate in
-  tooltip.classList.remove('tour-tooltip-in');
-  void tooltip.offsetWidth;
-  tooltip.classList.add('tour-tooltip-in');
 }
 
 function positionTooltip(tooltip, rect, position) {
@@ -1357,6 +1337,8 @@ function positionTooltip(tooltip, rect, position) {
 }
 
 function tourNext() {
+  if (_tourTransitioning) return;
+  _tourTransitioning = true;
   tourStep++;
   if (tourStep >= TOUR_STEPS.length) {
     endTour();
@@ -1366,11 +1348,15 @@ function tourNext() {
 }
 
 function endTour() {
+  _tourTransitioning = false;
   var overlay = document.getElementById('tour-overlay');
-  if (overlay) overlay.classList.remove('on');
+  if (overlay) {
+    overlay.style.transition = 'opacity .4s ease';
+    overlay.classList.remove('on');
+  }
   document.body.classList.remove('touring');
   go('dash');
-  toast('Welcome home! Enjoy your space together.');
+  toast('Welcome home.');
 }
 
 function showWelcomeGate() {
