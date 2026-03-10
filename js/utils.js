@@ -48,27 +48,23 @@
 })();
 
 // ===== EARLY THEME APPLICATION =====
-// Apply cached sky theme immediately so login page shows the right environment
+// Login/onboarding always show default "Both" (mixed) environment.
+// The user's saved sky theme is applied later via loadSkyTheme() after auth.
 (function() {
-  try {
-    var cached = localStorage.getItem('met_sky_theme');
-    if (cached) document.body.setAttribute('data-sky-theme', cached);
-  } catch(e) {}
+  // Cache theme in memory for post-login use, but don't apply to body yet
+  try { window._cachedSkyTheme = localStorage.getItem('met_sky_theme'); } catch(e) {}
 })();
 
 // ===== RENDER LIVING SKY ON LOGIN PAGE =====
+// Login/onboarding always use the "Both" (mixed/meadow) environment
 function renderLoginSky() {
   var skyC = document.getElementById('login-sky-scene');
   var terrC = document.getElementById('login-terrain-scene');
   if (!skyC || !terrC) return;
   if (typeof renderLivingSky === 'function') renderLivingSky(skyC);
-  var theme = (typeof currentSkyTheme !== 'undefined') ? currentSkyTheme : 'mixed';
   terrC.innerHTML = '';
-  if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
-    renderMountainTerrain(terrC);
-  } else if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
-    renderBeachTerrain(terrC);
-  } else if (typeof renderMeadowTerrain === 'function') {
+  // Always render meadow terrain on login (the "Both" environment)
+  if (typeof renderMeadowTerrain === 'function') {
     renderMeadowTerrain(terrC);
   }
 }
