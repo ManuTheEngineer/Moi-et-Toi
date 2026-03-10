@@ -1084,7 +1084,7 @@
     <div class="cd-add" onclick="toggleCdForm()"><span>+</span><div>Add Countdown</div></div>
   </div>
   <div class="cd-form" id="cd-form">
-    <input type="text" id="cd-title" placeholder="What are you counting down to?">
+    <input type="text" id="cd-title" placeholder="What are you counting down to?" class="quiz-q">
     <div class="ms-row">
       <input type="date" id="cd-date">
       <input type="text" id="cd-emoji" placeholder="Emoji" maxlength="2" class="input-sm">
@@ -1097,7 +1097,7 @@
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Milestones</div></div>
   <button class="mood-submit mb-16" onclick="toggleMsForm()">+ Add Milestone</button>
   <div class="ms-form" id="ms-form">
-    <input type="text" id="ms-title" placeholder="Milestone title (e.g. First Date)">
+    <input type="text" id="ms-title" placeholder="Milestone title (e.g. First Date)" class="quiz-q">
     <div class="ms-row">
       <input type="date" id="ms-date">
       <input type="text" id="ms-emoji" placeholder="Emoji" maxlength="2" class="input-sm">
@@ -2306,10 +2306,10 @@
   <!-- Shared Budget -->
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Money Goals</div></div>
   <div class="hl-budget-form">
-    <input type="text" id="hl-goal-name" placeholder="Saving for...">
+    <input type="text" id="hl-goal-name" placeholder="Saving for..." class="quiz-q">
     <div class="ms-row">
-      <input type="number" id="hl-goal-target" placeholder="Target $" class="flex-1">
-      <input type="number" id="hl-goal-saved" placeholder="Saved $" class="flex-1">
+      <input type="number" id="hl-goal-target" placeholder="Target $" class="quiz-q flex-1">
+      <input type="number" id="hl-goal-saved" placeholder="Saved $" class="quiz-q flex-1">
     </div>
     <button class="dq-submit" onclick="addSavingsGoal()">Add Goal</button>
   </div>
@@ -2318,7 +2318,7 @@
   <!-- Meal Planning -->
   <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Meal Ideas</div></div>
   <div class="bl-form">
-    <input type="text" id="hl-meal-input" placeholder="What should we cook?">
+    <input type="text" id="hl-meal-input" placeholder="What should we cook?" class="quiz-q">
     <select id="hl-meal-day" class="select-field">
       <option value="anytime">Anytime</option>
       <option value="mon">Monday</option>
@@ -2336,7 +2336,7 @@
   <!-- Chore Rotation -->
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Household Tasks</div></div>
   <div class="bl-form">
-    <input type="text" id="hl-chore-input" placeholder="Add a task...">
+    <input type="text" id="hl-chore-input" placeholder="Add a task..." class="quiz-q">
     <select id="hl-chore-who" class="select-field">
       <option value="shared">Shared</option>
       <option value="her">Her</option>
@@ -2638,7 +2638,7 @@
 
   <!-- Hydration -->
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Hydration</div></div>
-  <div class="card text-center">
+  <div class="card">
     <div class="hydration-track" id="hydration-track">
       <div class="hydration-glass" onclick="logWater(1)">&#x1F4A7;</div>
       <div class="hydration-glass" onclick="logWater(2)">&#x1F4A7;</div>
@@ -2649,7 +2649,7 @@
       <div class="hydration-glass" onclick="logWater(7)">&#x1F4A7;</div>
       <div class="hydration-glass" onclick="logWater(8)">&#x1F4A7;</div>
     </div>
-    <div class="hydration-label"><span id="water-count">0</span>/8 glasses</div>
+    <div class="hydration-label"><span id="water-count">0</span> / 8 glasses</div>
   </div>
 
   <!-- Meal Log -->
@@ -2661,7 +2661,7 @@
       </div>
       <div class="meal-section-body" id="meal-breakfast"></div>
       <div class="meal-add">
-        <input type="text" id="meal-breakfast-input" placeholder="What did you eat?">
+        <input type="text" id="meal-breakfast-input" placeholder="What did you eat?" class="quiz-q">
         <input type="number" id="meal-breakfast-cal" placeholder="Cal" class="meal-cal-input">
         <input type="number" id="meal-breakfast-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
         <input type="number" id="meal-breakfast-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
@@ -2675,7 +2675,7 @@
       </div>
       <div class="meal-section-body" id="meal-lunch"></div>
       <div class="meal-add">
-        <input type="text" id="meal-lunch-input" placeholder="What did you eat?">
+        <input type="text" id="meal-lunch-input" placeholder="What did you eat?" class="quiz-q">
         <input type="number" id="meal-lunch-cal" placeholder="Cal" class="meal-cal-input">
         <input type="number" id="meal-lunch-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
         <input type="number" id="meal-lunch-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
@@ -2689,7 +2689,7 @@
       </div>
       <div class="meal-section-body" id="meal-dinner"></div>
       <div class="meal-add">
-        <input type="text" id="meal-dinner-input" placeholder="What did you eat?">
+        <input type="text" id="meal-dinner-input" placeholder="What did you eat?" class="quiz-q">
         <input type="number" id="meal-dinner-cal" placeholder="Cal" class="meal-cal-input">
         <input type="number" id="meal-dinner-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
         <input type="number" id="meal-dinner-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
@@ -2703,7 +2703,7 @@
       </div>
       <div class="meal-section-body" id="meal-snacks"></div>
       <div class="meal-add">
-        <input type="text" id="meal-snacks-input" placeholder="Snack item">
+        <input type="text" id="meal-snacks-input" placeholder="Snack item" class="quiz-q">
         <input type="number" id="meal-snacks-cal" placeholder="Cal" class="meal-cal-input">
         <input type="number" id="meal-snacks-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
         <input type="number" id="meal-snacks-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
@@ -2718,7 +2718,7 @@
     <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Meal Planning</div></div>
     <div class="card">
       <div class="d-flex gap-8 mb-10">
-        <input type="text" id="mealplan-name" placeholder="Meal name" class="flex-2">
+        <input type="text" id="mealplan-name" placeholder="Meal name" class="quiz-q flex-2">
         <select id="mealplan-day" class="form-input-inline">
           <option value="mon">Mon</option><option value="tue">Tue</option><option value="wed">Wed</option>
           <option value="thu">Thu</option><option value="fri">Fri</option><option value="sat">Sat</option><option value="sun">Sun</option>
@@ -2733,7 +2733,7 @@
   <div class="us-only">
     <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Grocery List</div></div>
     <div class="bl-form">
-      <input type="text" id="grocery-input" placeholder="Add item..." onkeydown="if(event.key==='Enter')addGroceryItem()">
+      <input type="text" id="grocery-input" class="quiz-q" placeholder="Add item..." onkeydown="if(event.key==='Enter')addGroceryItem()">
       <button onclick="addGroceryItem()">+</button>
     </div>
     <div id="grocery-list"><div class="empty">Build your shared grocery list</div></div>
@@ -2742,7 +2742,7 @@
   <!-- Recipes -->
   <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Saved Recipes</div></div>
   <div class="card">
-    <input type="text" id="recipe-name" placeholder="Recipe name" class="mb-8">
+    <input type="text" id="recipe-name" placeholder="Recipe name" class="quiz-q mb-8">
     <textarea id="recipe-desc" placeholder="Ingredients &amp; instructions..." class="form-textarea form-textarea-min mb-8"></textarea>
     <button class="dq-submit" onclick="saveRecipe()">Save Recipe</button>
   </div>
@@ -2783,7 +2783,7 @@
   <!-- Add Event -->
   <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Add Event</div></div>
   <div class="card">
-    <input type="text" id="cal-event-title" placeholder="Event title" class="mb-8">
+    <input type="text" id="cal-event-title" placeholder="Event title" class="quiz-q mb-8">
     <div class="d-flex gap-8 mb-8">
       <input type="date" id="cal-event-date" class="form-input-inline">
       <input type="time" id="cal-event-time" class="form-input-inline">
@@ -2986,7 +2986,7 @@
   <!-- Remember This -->
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Remember This</div></div>
   <div class="bl-form">
-    <input type="text" id="kyp-note-input" placeholder="Something to remember about them...">
+    <input type="text" id="kyp-note-input" placeholder="Something to remember about them..." class="quiz-q">
     <button onclick="addKYPNote()">+</button>
   </div>
   <div id="kyp-notes"><div class="empty">Jot down things to remember</div></div>
@@ -3279,14 +3279,14 @@
     <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Our Values</div></div>
     <div class="fdn-values" id="fdn-values"></div>
     <div class="bl-form">
-      <input type="text" id="fdn-value-input" placeholder="A value we share...">
+      <input type="text" id="fdn-value-input" placeholder="A value we share..." class="quiz-q">
       <button onclick="addValue()">+</button>
     </div>
     <div id="fdn-value-list" class="stagger-in"><div class="empty">What do you both stand for?</div></div>
 
     <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Shared Goals</div></div>
     <div class="bl-form">
-      <input type="text" id="shared-goal-input" placeholder="A goal for both of us...">
+      <input type="text" id="shared-goal-input" placeholder="A goal for both of us..." class="quiz-q">
       <select id="shared-goal-cat" class="select-field">
         <option value="relationship">Relationship</option>
         <option value="health">Health</option>
@@ -3301,7 +3301,7 @@
 
     <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Daily Habits</div></div>
     <div class="bl-form">
-      <input type="text" id="habit-input" placeholder="A daily habit to track...">
+      <input type="text" id="habit-input" class="quiz-q" placeholder="A daily habit to track...">
       <button onclick="addHabit()">+</button>
     </div>
     <div id="habits-list" class="stagger-in"><div class="empty">Build consistency together</div></div>
@@ -3322,7 +3322,7 @@
 
     <!-- Add new agreement -->
     <div class="bl-form mt-12">
-      <input type="text" id="agree-new-input" placeholder="Propose a new agreement...">
+      <input type="text" id="agree-new-input" class="quiz-q" placeholder="Propose a new agreement...">
       <button onclick="proposeAgreement()">Propose</button>
     </div>
 
@@ -3385,7 +3385,7 @@
 
     <div class="sec-head"><div class="sec-dot sd-green"></div><div class="sec-title">Our Traditions</div></div>
     <div class="cx-trad-form">
-      <input type="text" id="cx-trad-title" placeholder="A tradition, food, or custom...">
+      <input type="text" id="cx-trad-title" class="quiz-q" placeholder="A tradition, food, or custom...">
       <div class="ms-row">
         <input type="text" id="cx-trad-emoji" placeholder="&#x1F389;" maxlength="2" class="input-emoji">
         <select id="cx-trad-origin" class="select-field flex-1">
@@ -3401,7 +3401,7 @@
 
     <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Recipes From Home</div></div>
     <div class="cx-recipe-form">
-      <input type="text" id="cx-recipe-name" placeholder="Dish name...">
+      <input type="text" id="cx-recipe-name" class="quiz-q" placeholder="Dish name...">
       <div class="ms-row">
         <input type="text" id="cx-recipe-emoji" placeholder="&#x1F372;" maxlength="2" class="input-emoji">
         <select id="cx-recipe-origin" class="select-field flex-1">
@@ -3443,7 +3443,7 @@
 
     <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Our Intentions</div></div>
     <div class="bl-form">
-      <input type="text" id="sp-intent-input" placeholder="An intention for this season...">
+      <input type="text" id="sp-intent-input" class="quiz-q" placeholder="An intention for this season...">
       <button onclick="addIntention()">+</button>
     </div>
     <div id="sp-intentions" class="stagger-in"><div class="empty">Set spiritual intentions together</div></div>
@@ -3467,7 +3467,7 @@
   <div class="list-section" id="list-bucket">
     <div class="mod-status" id="bl-stats"></div>
     <div class="bl-form">
-      <input type="text" id="bl-input" placeholder="Something we want to do...">
+      <input type="text" id="bl-input" class="quiz-q" placeholder="Something we want to do...">
       <input type="text" id="bl-emoji" placeholder="&#x1F30D;" maxlength="2" class="input-emoji">
       <button onclick="addBucketItem()">+</button>
     </div>
@@ -3485,7 +3485,7 @@
   <div class="list-section d-none" id="list-wishlist">
     <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">My Wishlist</div></div>
     <div class="bl-form">
-      <input type="text" id="wl-input" placeholder="Add something you want...">
+      <input type="text" id="wl-input" class="quiz-q" placeholder="Add something you want...">
       <button onclick="addWishItem()">+</button>
     </div>
     <div class="bl-form mt-neg8">

@@ -2484,17 +2484,28 @@ function checkMorningMessage() {
     showMorningMessageOverlay(msg.message, nickname);
     localStorage.setItem(KEY, today);
 
-    // Also send a browser notification
+    // Send notification via service worker for reliability
     if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
       try {
-        new Notification('Good Morning', {
-          body: msg.message + '\n\n...from ' + nickname,
-          icon: 'icons/icon-192x192.png',
-          badge: 'icons/icon-96x96.png',
-          tag: 'morning-msg',
-          data: { page: 'connect' }
+        navigator.serviceWorker.ready.then(function(reg) {
+          reg.showNotification(nickname, {
+            body: msg.message,
+            icon: 'icons/icon-192x192.png',
+            badge: 'icons/icon-96x96.png',
+            tag: 'morning-msg',
+            renotify: true,
+            vibrate: [100, 50, 100],
+            data: './'
+          });
         });
-      } catch(e) {}
+      } catch(e) {
+        try {
+          new Notification(nickname, {
+            body: msg.message,
+            icon: 'icons/icon-192x192.png'
+          });
+        } catch(e2) {}
+      }
     }
   });
 }

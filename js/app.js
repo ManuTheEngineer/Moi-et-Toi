@@ -1133,6 +1133,10 @@ async function finishOnboarding(startTour) {
     customMsg: onboardData.morningCustomMsg || '',
     nickname: onboardData.nickname || onboardData.name
   });
+  // Request notification permission for morning messages
+  if (onboardData.morningMsgEnabled && 'Notification' in window && Notification.permission === 'default') {
+    try { await Notification.requestPermission(); } catch(e) {}
+  }
 
   // Living Sky
   livingSkyEnabled = onboardData.livingSky;
