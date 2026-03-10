@@ -3294,6 +3294,202 @@ body[data-time="afternoon"] .login {
   ) !important;
 }
 
+/* ===== NIGHT/EVENING APP-WIDE ENHANCEMENTS ===== */
+/* Bottom nav: deeper glass with subtle sage tint at night */
+body[data-time="night"] .bnav {
+  background: rgba(14,12,26,0.92) !important;
+  border-top-color: rgba(140,170,130,0.08) !important;
+  box-shadow: 0 -2px 20px rgba(0,0,0,0.25) !important;
+}
+body[data-time="evening"] .bnav {
+  background: rgba(26,22,48,0.90) !important;
+  border-top-color: rgba(160,150,200,0.08) !important;
+  box-shadow: 0 -2px 20px rgba(0,0,0,0.20) !important;
+}
+body[data-time="night"] .bnav-indicator {
+  background: linear-gradient(90deg, #6A9A68, #88B880) !important;
+  box-shadow: 0 0 12px rgba(106,154,104,0.30) !important;
+}
+body[data-time="evening"] .bnav-indicator {
+  background: linear-gradient(90deg, #C4964A, #D4A858) !important;
+  box-shadow: 0 0 12px rgba(196,150,74,0.25) !important;
+}
+body[data-time="night"] .bn.on { color: #88B880 !important; }
+body[data-time="evening"] .bn.on { color: #D4A858 !important; }
+
+/* Page headers: frosted glass at night/evening */
+body[data-time="night"] .page-header.compact,
+body[data-time="evening"] .page-header.compact {
+  background: rgba(14,12,26,0.65) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
+  backdrop-filter: blur(16px) saturate(1.2) !important;
+}
+
+/* Dashboard cards: deeper glass surfaces at night */
+body[data-time="night"] .dash-card,
+body[data-time="night"] .act-item,
+body[data-time="night"] .dash-gratitude,
+body[data-time="night"] .dash-goal-item,
+body[data-time="night"] .me-care-card {
+  background: rgba(22,20,38,0.72) !important;
+  border-color: rgba(140,170,130,0.06) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18), 0 0 0 1px rgba(140,170,130,0.04) !important;
+}
+body[data-time="evening"] .dash-card,
+body[data-time="evening"] .act-item,
+body[data-time="evening"] .dash-gratitude,
+body[data-time="evening"] .dash-goal-item,
+body[data-time="evening"] .me-care-card {
+  background: rgba(36,30,58,0.72) !important;
+  border-color: rgba(200,180,160,0.06) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.14), 0 0 0 1px rgba(200,180,160,0.04) !important;
+}
+
+/* Hero cards at night: deeper tones */
+body[data-time="night"] .hero-card-us {
+  background: linear-gradient(135deg, rgba(140,170,130,0.10), rgba(100,140,100,0.06)) !important;
+}
+body[data-time="night"] .hero-card-me {
+  background: linear-gradient(135deg, rgba(100,120,180,0.10), rgba(80,100,160,0.06)) !important;
+}
+body[data-time="evening"] .hero-card-us {
+  background: linear-gradient(135deg, rgba(196,120,74,0.10), rgba(176,138,80,0.06)) !important;
+}
+body[data-time="evening"] .hero-card-me {
+  background: linear-gradient(135deg, rgba(100,80,160,0.10), rgba(123,104,174,0.06)) !important;
+}
+
+/* Stat mini cards: subtle sage glow at night */
+body[data-time="night"] .stat-mini {
+  background: rgba(140,170,130,0.06) !important;
+}
+body[data-time="evening"] .stat-mini {
+  background: rgba(200,180,160,0.06) !important;
+}
+
+/* Hub section cards at night/evening */
+body[data-time="night"] .dq-card,
+body[data-time="night"] .dt-current {
+  background: rgba(22,20,38,0.78) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18), 0 0 20px rgba(140,170,130,0.03) !important;
+}
+body[data-time="evening"] .dq-card,
+body[data-time="evening"] .dt-current {
+  background: rgba(36,30,58,0.78) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.14), 0 0 20px rgba(200,160,100,0.03) !important;
+}
+
+/* Form cards at night */
+body[data-time="night"] .form-card {
+  background: rgba(22,20,38,0.75) !important;
+  border-color: rgba(140,170,130,0.06) !important;
+}
+body[data-time="evening"] .form-card {
+  background: rgba(36,30,58,0.75) !important;
+  border-color: rgba(200,180,160,0.06) !important;
+}
+
+/* Inputs inside app (not login) at night: subtler glass */
+body[data-time="night"] .pg input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+body[data-time="night"] .pg textarea,
+body[data-time="night"] .pg select {
+  background: rgba(100,110,140,0.14) !important;
+  border: 1px solid rgba(140,170,130,0.08) !important;
+}
+body[data-time="night"] .pg input:focus,
+body[data-time="night"] .pg textarea:focus {
+  background: rgba(110,120,150,0.18) !important;
+  border-color: rgba(140,170,130,0.16) !important;
+  box-shadow: 0 0 0 3px rgba(140,170,130,0.10) !important;
+}
+body[data-time="evening"] .pg input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+body[data-time="evening"] .pg textarea,
+body[data-time="evening"] .pg select {
+  background: rgba(120,100,150,0.12) !important;
+  border: 1px solid rgba(200,180,160,0.08) !important;
+}
+body[data-time="evening"] .pg input:focus,
+body[data-time="evening"] .pg textarea:focus {
+  background: rgba(130,110,160,0.16) !important;
+  border-color: rgba(200,180,160,0.14) !important;
+  box-shadow: 0 0 0 3px rgba(200,160,100,0.10) !important;
+}
+
+/* Buttons at night: sage green accents */
+body[data-time="night"] .form-card .login-btn,
+body[data-time="night"] .modal .login-btn {
+  background: linear-gradient(135deg, #5A7A4A 0%, #6B8F5E 40%, #7DA068 100%) !important;
+  box-shadow: 0 4px 16px rgba(90,122,74,0.25) !important;
+}
+
+/* Modals and sheets at night */
+body[data-time="night"] .modal-inner,
+body[data-time="night"] .sheet-body {
+  background: rgba(22,20,40,0.96) !important;
+  border: 1px solid rgba(140,170,130,0.06) !important;
+}
+body[data-time="evening"] .modal-inner,
+body[data-time="evening"] .sheet-body {
+  background: rgba(36,30,60,0.96) !important;
+  border: 1px solid rgba(200,180,160,0.06) !important;
+}
+
+/* Affirmation card at night: sage-tinted */
+body[data-time="night"] .dash-affirmation {
+  background: linear-gradient(135deg, rgba(140,170,130,0.08), rgba(100,140,100,0.04)) !important;
+  border-color: rgba(140,170,130,0.06) !important;
+}
+
+/* Activity feed empty state */
+body[data-time="night"] .activity-empty {
+  background: rgba(22,20,38,0.65) !important;
+  border-color: rgba(140,170,130,0.06) !important;
+}
+
+/* Quick tap buttons at night */
+body[data-time="night"] .qt-btn {
+  background: rgba(140,170,130,0.08) !important;
+  border-color: rgba(140,170,130,0.10) !important;
+}
+body[data-time="night"] .qt-btn:active {
+  background: rgba(140,170,130,0.16) !important;
+}
+body[data-time="evening"] .qt-btn {
+  background: rgba(200,180,160,0.08) !important;
+  border-color: rgba(200,180,160,0.10) !important;
+}
+
+/* Hub action buttons at night */
+body[data-time="night"] .hub-action-btn {
+  background: rgba(140,170,130,0.06) !important;
+  border-color: rgba(140,170,130,0.08) !important;
+}
+body[data-time="evening"] .hub-action-btn {
+  background: rgba(200,180,160,0.06) !important;
+  border-color: rgba(200,180,160,0.08) !important;
+}
+
+/* Explore/More page items at night */
+body[data-time="night"] .explore-dir-item {
+  background: rgba(22,20,38,0.72) !important;
+  border-color: rgba(140,170,130,0.06) !important;
+}
+body[data-time="evening"] .explore-dir-item {
+  background: rgba(36,30,58,0.72) !important;
+  border-color: rgba(200,180,160,0.06) !important;
+}
+
+/* Toast at night */
+body[data-time="night"] #toast-msg {
+  background: rgba(140,170,130,0.85) !important;
+  color: #0E0C1A !important;
+}
+
+/* Offline banner at night */
+body[data-time="night"] .offline-banner.show {
+  background: rgba(200,120,80,0.90) !important;
+}
+
 /* Sound preview button */
 .ob-sound-preview-btn {
   display: block;
