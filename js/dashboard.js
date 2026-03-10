@@ -156,11 +156,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function showConfigSetup() {
-  // Show static config form, hide login form (static HTML avoids iOS keyboard issues)
+  // Show static config form, hide everything else
   var loginForm = document.getElementById('login-form');
   var configForm = document.getElementById('config-setup');
+  var welcomeGate = document.getElementById('welcome-gate');
   if (loginForm) loginForm.classList.add('d-none');
+  if (welcomeGate) welcomeGate.classList.add('d-none');
   if (configForm) configForm.classList.remove('d-none');
+  // Hide sky/terrain overlays — WKWebView (Chrome, PWA) blocks touch events
+  // on inputs behind position:fixed elements even with pointer-events:none
+  var sky = document.getElementById('login-sky-scene');
+  var terr = document.getElementById('login-terrain-scene');
+  if (sky) sky.style.display = 'none';
+  if (terr) terr.style.display = 'none';
 }
 
 function saveConfig() {
