@@ -296,7 +296,7 @@ body[data-sky-theme="mountain"] .sky-bf-wing{background:rgba(150,220,180,.7)}
    html must be full viewport height (not --real-h) so position:fixed nav reaches screen bottom. */
 @media (display-mode: standalone){
   html{height:100%;overflow:hidden}
-  body{height:var(--real-h,100dvh);overflow:hidden;overflow-y:auto}
+  body{height:100%;overflow:hidden;overflow-y:auto}
 }
 
 /* Enhanced page transitions - overridden by directional transitions in nav.css */

@@ -805,13 +805,21 @@ function onboardNext() {
 // Toggle the real living sky on/off during onboarding
 function obToggleLiveSky(on) {
   onboardData.livingSky = on;
-  // Toggle ob-sky-visible class which controls sky/terrain opacity via CSS
   var loginEl = document.querySelector('.login');
+  var skyC = document.getElementById('login-sky-scene');
+  var terrC = document.getElementById('login-terrain-scene');
   if (loginEl) {
     if (on) {
       loginEl.classList.add('ob-sky-visible');
+      // Show background animations and render sky/terrain
+      if (skyC) skyC.style.display = '';
+      if (terrC) terrC.style.display = '';
+      obApplyLiveTheme(onboardData.skyTheme);
     } else {
       loginEl.classList.remove('ob-sky-visible');
+      // Hide background animations
+      if (skyC) skyC.style.display = 'none';
+      if (terrC) terrC.style.display = 'none';
     }
   }
 }
