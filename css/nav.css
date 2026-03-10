@@ -52,6 +52,7 @@
 /* ===== ONBOARDING ===== */
 /* Onboarding mode: top-align content and allow scrolling */
 .login.onboard-active{align-items:center;justify-content:flex-start;padding-top:max(env(safe-area-inset-top,20px),40px);padding-bottom:80px;scroll-behavior:smooth}
+.login.onboard-active>.login-inner{margin:auto 0}
 .onboard-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px;margin:auto}
 .onboard-progress{width:100%;max-width:220px;height:4px;background:var(--tint,rgba(26,26,46,.08));border-radius:4px;margin-bottom:32px;overflow:hidden}
 .onboard-bar{height:100%;background:linear-gradient(90deg,var(--gold),#D4784A);border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1)}
