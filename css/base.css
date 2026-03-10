@@ -1,4 +1,4 @@
-html{overscroll-behavior:none}
+html{overscroll-behavior:none;background:var(--bg)}
 body{margin:0;padding:0}
 /* Reduce motion for better mobile perf */
 @media (prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
