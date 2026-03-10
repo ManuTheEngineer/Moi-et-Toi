@@ -1655,6 +1655,9 @@ function finishLogin() {
   if (typeof loadSkyTheme === 'function') loadSkyTheme();
   // Initialize weather system (must run after user/db are set)
   if (typeof initWeatherSystem === 'function') initWeatherSystem();
+  // AI Background Service — content curator, relationship monitor, etc.
+  setTimeout(() => { if (typeof initAIBackgroundService === 'function') initAIBackgroundService(); }, 5000);
+  setTimeout(() => { if (typeof loadAIDailyContent === 'function') loadAIDailyContent(); }, 3000);
   // Particles, global mode, presence
   initParticles();
   setGlobalMode(localStorage.getItem('met_global_mode') || 'us');

@@ -2229,3 +2229,141 @@ body[data-page="build"]{--page-accent:var(--teal)}
   /* Fitness workout grid */
   .ws-ex-grid{grid-template-columns:repeat(2,1fr)}
 }
+
+/* ===== NUTRITION PAGE - Apple Health Style ===== */
+
+/* Hero Calorie Ring */
+.nh-hero{display:flex;flex-direction:column;align-items:center;padding:8px 0 20px;position:relative}
+.nh-ring-wrap{position:relative;width:170px;height:170px}
+.nh-ring-svg{width:100%;height:100%}
+.nh-ring-svg circle:last-of-type{transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1)}
+.nh-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.nh-ring-num{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;color:var(--cream);line-height:1}
+.nh-ring-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-top:2px}
+.nh-ring-target{font-size:11px;color:var(--t3);margin-top:2px}
+.nh-score-badge{position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--emerald),var(--teal));color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;box-shadow:0 4px 16px rgba(45,138,86,.25)}
+
+/* Macro Ring Cards */
+.nh-macros{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.nh-macro-card{background:var(--card-bg);border-radius:20px;padding:16px 8px 12px;text-align:center;box-shadow:var(--card-shadow)}
+.nh-macro-ring{width:48px;height:48px;margin:0 auto 6px}
+.nh-macro-ring circle:last-of-type{transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1)}
+.nh-macro-val{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--cream);line-height:1}
+.nh-macro-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-top:2px;font-weight:500}
+.nh-macro-target{font-size:10px;color:var(--t3);opacity:.7}
+
+/* Stats Row */
+.nh-stats-row{display:flex;align-items:center;justify-content:center;gap:0;background:var(--card-bg);border-radius:16px;padding:14px 12px;margin-bottom:20px;box-shadow:var(--card-shadow)}
+.nh-stat{flex:1;text-align:center}
+.nh-stat-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--cream);line-height:1}
+.nh-stat-lbl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-top:2px}
+.nh-stat-divider{width:1px;height:28px;background:var(--bdr);margin:0 4px;opacity:.5}
+
+/* Section Labels */
+.nh-section-label{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:10px;padding-left:4px}
+
+/* Quick Add Row */
+.nh-quick-row{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:2px 0 16px;scroll-snap-type:x proximity}
+.nh-quick-row::-webkit-scrollbar{display:none}
+.nh-quick-chip{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:50px;border:none;background:var(--card-bg);box-shadow:var(--card-shadow);color:var(--cream);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;scroll-snap-align:start;white-space:nowrap}
+.nh-quick-chip span{font-size:16px}
+.nh-quick-chip:active{transform:scale(.92);background:var(--tint)}
+
+/* Hydration Card */
+.nh-hydration-card{background:var(--card-bg);border-radius:20px;padding:18px 16px;margin-bottom:20px;box-shadow:var(--card-shadow)}
+.nh-water-drops{display:flex;gap:6px;justify-content:center;margin-bottom:10px}
+.nh-water-drop{width:36px;height:36px;border-radius:12px;border:1.5px solid rgba(120,180,160,.25);background:var(--input-bg);color:var(--t3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s cubic-bezier(.2,.8,.3,1);padding:0}
+.nh-water-drop svg{width:18px;height:18px}
+.nh-water-drop:active{transform:scale(.85)}
+.nh-water-drop.filled{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:0 2px 10px rgba(120,180,160,.3)}
+.nh-water-label{font-size:12px;color:var(--t3);text-align:center;font-weight:500}
+
+/* Meal List */
+.nh-meal-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.nh-meal-group{background:var(--card-bg);border-radius:18px;box-shadow:var(--card-shadow);overflow:hidden}
+.nh-meal-header{display:flex;align-items:center;gap:10px;width:100%;padding:14px 16px;border:none;background:transparent;cursor:pointer;font-family:'Outfit',sans-serif;color:var(--cream);transition:background .15s}
+.nh-meal-header:active{background:var(--tint-xs)}
+.nh-meal-icon{font-size:18px;flex-shrink:0}
+.nh-meal-name{flex:1;font-size:14px;font-weight:500;text-align:left}
+.nh-meal-badge{min-width:22px;height:22px;border-radius:11px;background:rgba(184,134,11,.12);color:var(--gold);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 6px}
+.nh-meal-chevron{width:16px;height:16px;color:var(--t3);flex-shrink:0;transition:transform .2s}
+.nh-meal-body{padding:0 16px}
+.nh-meal-body:empty{padding:0}
+.nh-meal-add{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px 14px;align-items:center}
+
+/* Meal Input Fields */
+.nh-meal-input{flex:1;min-width:80px;background:var(--input-bg);border:none;border-radius:12px;padding:10px 14px;font-size:13px;color:var(--cream);font-family:'Outfit',sans-serif;outline:none;transition:box-shadow .2s}
+.nh-meal-input:focus{box-shadow:var(--focus-ring)}
+.nh-meal-input::placeholder{color:var(--t3)}
+.nh-meal-num{width:44px;background:var(--input-bg);border:none;border-radius:10px;text-align:center;padding:10px 4px;font-size:12px;color:var(--cream);font-family:'Outfit',sans-serif;outline:none;transition:box-shadow .2s}
+.nh-meal-num:focus{box-shadow:var(--focus-ring)}
+.nh-meal-num::placeholder{color:var(--t3)}
+.nh-num-cal{width:52px}
+.nh-meal-add-btn{background:var(--gold);color:#fff;border:none;border-radius:50%;width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;flex-shrink:0;cursor:pointer;transition:all .2s}
+.nh-meal-add-btn:active{transform:scale(.88)}
+
+/* Food Items */
+.nh-food-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr-s,rgba(255,255,255,.04))}
+.nh-food-item:last-child{border-bottom:none}
+.nh-food-name{font-size:13px;color:var(--cream);font-weight:500}
+.nh-food-meta{font-size:11px;color:var(--t3);white-space:nowrap}
+
+/* Plan/Recipe Cards */
+.nh-plan-card{background:var(--card-bg);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:var(--card-shadow)}
+.nh-action-btn{width:100%;padding:14px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px var(--glow-gold,rgba(28,43,74,.12))}
+.nh-action-btn:active{transform:scale(.97)}
+.nh-grocery-form{display:flex;gap:8px;margin-bottom:12px}
+.nh-recipe-textarea{width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--cream);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;min-height:60px;outline:none;box-sizing:border-box}
+.nh-recipe-textarea:focus{box-shadow:var(--focus-ring)}
+.nh-recipe-textarea::placeholder{color:var(--t3)}
+
+/* ===== GAME LOBBY POLISH ===== */
+
+/* Polished game picker cards */
+.game-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.game-pick-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 8px 16px;border-radius:20px;border:none;background:var(--card-bg);box-shadow:var(--card-shadow);cursor:pointer;transition:all .3s cubic-bezier(.2,.8,.3,1);font-family:'Outfit',sans-serif;position:relative;overflow:hidden}
+.game-pick-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(184,134,11,.08),rgba(199,113,131,.06));opacity:0;transition:opacity .3s}
+.game-pick-btn:hover::before,.game-pick-btn:active::before{opacity:1}
+.game-pick-btn:hover{transform:translateY(-3px);box-shadow:var(--card-hover)}
+.game-pick-btn:active{transform:scale(0.94)}
+.gpb-icon{font-size:28px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.1))}
+.gpb-name{font-size:11px;letter-spacing:.5px;color:var(--cream);font-weight:500;text-align:center}
+
+/* Game View polish */
+.game-view{animation:fadeIn .3s ease}
+.gv-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:4px 0}
+.gv-back{padding:10px 16px;border-radius:14px;border:none;background:var(--card-bg);color:var(--cream);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;box-shadow:var(--card-shadow)}
+.gv-back:hover{background:var(--tint)}
+.gv-back:active{transform:scale(.95)}
+.gv-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--cream);font-weight:400;letter-spacing:.5px}
+
+/* Game Status & Actions polish */
+.game-status{text-align:center;padding:16px;font-size:15px;font-weight:500;color:var(--cream);margin-top:14px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow)}
+.game-status.turn{font-size:13px;color:var(--t2);font-weight:400;background:transparent;box-shadow:none}
+.game-actions{display:flex;gap:10px;justify-content:center;margin-top:12px}
+.game-btn{padding:14px 32px;border-radius:50px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s cubic-bezier(.2,.8,.3,1);box-shadow:0 4px 16px var(--glow-gold,rgba(28,43,74,.12))}
+.game-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(28,43,74,.2)}
+.game-btn:active{transform:scale(0.96)}
+.game-btn.secondary{background:var(--card-bg);color:var(--cream);box-shadow:var(--card-shadow)}
+
+/* Stats board polish */
+.gs-summary{text-align:center;padding:20px;background:var(--card-bg);border-radius:22px;box-shadow:var(--card-shadow);margin-bottom:18px}
+.gs-num{font-family:'Cormorant Garamond',serif;font-size:40px;color:var(--gold);display:block;line-height:1}
+.gs-item{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow)}
+.gs-icon{font-size:20px;min-width:32px;text-align:center}
+.gs-name{font-size:13px;color:var(--cream);font-weight:500;min-width:85px}
+
+/* ===== AI NUDGE CARDS ===== */
+.ai-nudge-card{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;background:linear-gradient(135deg,rgba(123,111,166,.08),rgba(196,120,74,.06));border:1px solid rgba(123,111,166,.12);border-radius:18px;margin-bottom:10px;animation:fadeIn .4s ease;position:relative}
+.ai-nudge-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.ai-nudge-text{flex:1;font-size:13px;color:var(--cream);line-height:1.5;padding-right:20px}
+.ai-nudge-dismiss{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;border:none;background:rgba(255,255,255,.06);color:var(--t3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;padding:0}
+.ai-nudge-dismiss:active{transform:scale(.85);background:rgba(255,255,255,.12)}
+
+/* AI Daily Content Card */
+.ai-daily-card{background:linear-gradient(135deg,rgba(123,111,166,.06),rgba(196,120,74,.04));border:1px solid rgba(123,111,166,.1)}
+.ai-daily-items{display:flex;flex-direction:column;gap:12px}
+.ai-daily-item{display:flex;align-items:flex-start;gap:10px}
+.ai-daily-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.ai-daily-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--lavender);font-weight:600;margin-bottom:2px}
+.ai-daily-text{font-size:13px;color:var(--cream);line-height:1.5}

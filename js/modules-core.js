@@ -1311,3 +1311,392 @@ function renderGratitude(entries) {
   }).join('');
 }
 
+// ========================================
+// ===== AI BACKGROUND SERVICE =====
+// ========================================
+// Defines roles the AI fills behind the scenes to keep the app fresh and current.
+// These run silently — no chat UI needed. The AI writes data directly to Firebase.
+
+const AI_ROLES = {
+  // 1. Content Curator — keeps daily questions, prompts, and activities fresh
+  contentCurator: {
+    name: 'Content Curator',
+    desc: 'Generates fresh daily questions, conversation starters, date ideas, and affirmations',
+    interval: 24 * 60 * 60 * 1000, // daily
+    lastRunKey: 'ai_role_content_curator'
+  },
+  // 2. Relationship Monitor — watches mood patterns and flags concerns
+  relationshipMonitor: {
+    name: 'Relationship Monitor',
+    desc: 'Analyzes mood trends, detects low streaks, and sends gentle nudges',
+    interval: 12 * 60 * 60 * 1000, // twice daily
+    lastRunKey: 'ai_role_rel_monitor'
+  },
+  // 3. Milestone Tracker — remembers dates and creates reminders
+  milestoneTracker: {
+    name: 'Milestone Tracker',
+    desc: 'Tracks anniversaries, birthdays, and special dates; creates countdown reminders',
+    interval: 24 * 60 * 60 * 1000,
+    lastRunKey: 'ai_role_milestone'
+  },
+  // 4. Goal Coach — checks progress on goals and provides encouragement
+  goalCoach: {
+    name: 'Goal Coach',
+    desc: 'Reviews personal and shared goals, sends progress updates and motivation',
+    interval: 24 * 60 * 60 * 1000,
+    lastRunKey: 'ai_role_goals'
+  },
+  // 5. Wellness Advisor — nutrition, fitness, and health insights
+  wellnessAdvisor: {
+    name: 'Wellness Advisor',
+    desc: 'Analyzes nutrition and fitness data, suggests improvements, celebrates streaks',
+    interval: 24 * 60 * 60 * 1000,
+    lastRunKey: 'ai_role_wellness'
+  },
+  // 6. Finance Guardian — budget alerts and spending insights
+  financeGuardian: {
+    name: 'Finance Guardian',
+    desc: 'Monitors spending patterns, alerts on budget overruns, suggests savings tips',
+    interval: 24 * 60 * 60 * 1000,
+    lastRunKey: 'ai_role_finance'
+  }
+};
+
+// AI nudge storage — small, non-intrusive messages the AI writes for the dashboard
+let aiNudges = [];
+
+function initAIBackgroundService() {
+  if (!db || !CLAUDE_API_KEY) return;
+  // Check each role and run if overdue
+  Object.entries(AI_ROLES).forEach(([key, role]) => {
+    db.ref('ai/roles/' + role.lastRunKey).once('value', snap => {
+      const lastRun = snap.val() || 0;
+      const now = Date.now();
+      if (now - lastRun > role.interval) {
+        // Schedule with random delay to avoid burst (5-30s after login)
+        const delay = 5000 + Math.random() * 25000;
+        setTimeout(() => runAIRole(key, role), delay);
+      }
+    });
+  });
+  // Listen for nudges
+  db.ref('ai/nudges/' + user).orderByChild('timestamp').limitToLast(5).on('value', snap => {
+    aiNudges = [];
+    snap.forEach(c => {
+      const n = c.val();
+      if (n && !n.dismissed) aiNudges.push({ ...n, key: c.key });
+    });
+    renderAINudges();
+  });
+}
+
+async function runAIRole(roleKey, role) {
+  if (!CLAUDE_API_KEY || !db) return;
+  const now = Date.now();
+
+  try {
+    let prompt = '';
+    let data = {};
+
+    switch (roleKey) {
+      case 'contentCurator':
+        prompt = buildContentCuratorPrompt();
+        break;
+      case 'relationshipMonitor':
+        data = await gatherMoodData();
+        prompt = buildRelMonitorPrompt(data);
+        break;
+      case 'milestoneTracker':
+        data = await gatherMilestoneData();
+        prompt = buildMilestonePrompt(data);
+        break;
+      case 'goalCoach':
+        data = await gatherGoalData();
+        prompt = buildGoalCoachPrompt(data);
+        break;
+      case 'wellnessAdvisor':
+        data = await gatherWellnessData();
+        prompt = buildWellnessPrompt(data);
+        break;
+      case 'financeGuardian':
+        data = await gatherFinanceData();
+        prompt = buildFinancePrompt(data);
+        break;
+      default:
+        return;
+    }
+
+    const result = await callAIBackground(prompt);
+    if (result) {
+      await processAIRoleResult(roleKey, result);
+      await db.ref('ai/roles/' + role.lastRunKey).set(now);
+    }
+  } catch (e) {
+    console.warn('AI role ' + roleKey + ' failed:', e);
+  }
+}
+
+function buildContentCuratorPrompt() {
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  return `You are the AI content curator for Moi et Toi, a couples app for ${NAMES.him} and ${NAMES.her}.
+
+Today is ${today}. Generate fresh content for the app. Return a JSON object with these keys:
+- "dailyQuestion": A thoughtful relationship question for them to answer together
+- "dateIdea": A creative date night idea (consider both Togolese/West African and Texan influences)
+- "affirmation": A personalized affirmation for the day
+- "conversationStarter": A fun/deep conversation topic
+- "challenge": A small couples challenge for the day (e.g., "Cook a meal together from a new cuisine")
+
+Keep each value to 1-2 sentences. Be warm, specific, and culturally aware. Return ONLY valid JSON, no markdown.`;
+}
+
+function buildRelMonitorPrompt(data) {
+  return `You are the relationship wellness monitor for ${NAMES.him} and ${NAMES.her}'s app.
+
+Here is their recent mood data:
+${JSON.stringify(data)}
+
+Analyze their mood patterns. Return a JSON object:
+- "status": "good" | "attention" | "concern"
+- "insight": A brief insight about their emotional patterns (1 sentence)
+- "nudgeHim": A gentle, supportive message for ${NAMES.him} (or null if not needed)
+- "nudgeHer": A gentle, supportive message for ${NAMES.her} (or null if not needed)
+- "suggestion": One actionable suggestion to strengthen their connection
+
+Be warm and empathetic, never judgmental. Return ONLY valid JSON.`;
+}
+
+function buildMilestonePrompt(data) {
+  return `You are the milestone tracker for ${NAMES.him} and ${NAMES.her}'s relationship app.
+
+Here are their upcoming dates and milestones:
+${JSON.stringify(data)}
+
+Today is ${new Date().toISOString().split('T')[0]}.
+
+Return a JSON object:
+- "upcoming": Array of { "event": string, "daysAway": number, "reminder": string } for anything within 14 days
+- "suggestion": A thoughtful way to celebrate the nearest milestone (or null if nothing soon)
+
+Return ONLY valid JSON.`;
+}
+
+function buildGoalCoachPrompt(data) {
+  return `You are the goal coach for ${NAMES.him} and ${NAMES.her}'s couples app.
+
+Their current goals and progress:
+${JSON.stringify(data)}
+
+Return a JSON object:
+- "nudgeHim": Motivational message about ${NAMES.him}'s goals (or null)
+- "nudgeHer": Motivational message about ${NAMES.her}'s goals (or null)
+- "sharedInsight": Comment on their shared goals progress (or null)
+- "tip": One productivity or goal-setting tip
+
+Keep it concise and encouraging. Return ONLY valid JSON.`;
+}
+
+function buildWellnessPrompt(data) {
+  return `You are the wellness advisor for ${NAMES.him} and ${NAMES.her}'s app.
+
+Recent wellness data:
+${JSON.stringify(data)}
+
+Return a JSON object:
+- "nutritionTip": A nutrition insight or tip based on their tracking
+- "fitnessTip": A fitness insight based on their workout data
+- "celebration": Something to celebrate (a streak, a PR, consistency) or null
+- "nudge": A gentle wellness nudge if something needs attention, or null
+
+Be supportive and specific. Return ONLY valid JSON.`;
+}
+
+function buildFinancePrompt(data) {
+  return `You are the finance guardian for ${NAMES.him} and ${NAMES.her}'s shared finances.
+
+Recent spending data:
+${JSON.stringify(data)}
+
+Return a JSON object:
+- "status": "on_track" | "watch" | "over_budget"
+- "insight": Brief spending pattern insight
+- "tip": A money-saving tip relevant to their spending
+- "alert": An alert message if overspending detected, or null
+
+Be helpful and non-judgmental. Return ONLY valid JSON.`;
+}
+
+async function gatherMoodData() {
+  if (!db) return {};
+  const snap = await db.ref('moods').orderByChild('timestamp').limitToLast(30).once('value');
+  const moods = [];
+  snap.forEach(c => moods.push(c.val()));
+  return { recentMoods: moods, count: moods.length };
+}
+
+async function gatherMilestoneData() {
+  if (!db) return {};
+  const [msSnap, cdSnap, calSnap] = await Promise.all([
+    db.ref('milestones').once('value'),
+    db.ref('countdowns').once('value'),
+    db.ref('calendar').once('value')
+  ]);
+  return {
+    milestones: msSnap.val() || {},
+    countdowns: cdSnap.val() || {},
+    calendarEvents: calSnap.val() || {}
+  };
+}
+
+async function gatherGoalData() {
+  if (!db) return {};
+  const [herGoals, himGoals, shared] = await Promise.all([
+    db.ref('personalGoals/her').once('value'),
+    db.ref('personalGoals/him').once('value'),
+    db.ref('personalGoals/shared').once('value')
+  ]);
+  return {
+    her: herGoals.val() || {},
+    him: himGoals.val() || {},
+    shared: shared.val() || {}
+  };
+}
+
+async function gatherWellnessData() {
+  if (!db) return {};
+  const today = new Date().toISOString().split('T')[0];
+  const [nutrSnap, fitSnap] = await Promise.all([
+    db.ref('nutrition/' + user + '/meals/' + today).once('value'),
+    db.ref('fitness/workouts').orderByChild('timestamp').limitToLast(10).once('value')
+  ]);
+  const workouts = [];
+  fitSnap.forEach(c => workouts.push(c.val()));
+  return { todayMeals: nutrSnap.val() || {}, recentWorkouts: workouts };
+}
+
+async function gatherFinanceData() {
+  if (!db) return {};
+  const snap = await db.ref('finances/expenses').orderByChild('timestamp').limitToLast(30).once('value');
+  const expenses = [];
+  snap.forEach(c => expenses.push(c.val()));
+  return { recentExpenses: expenses };
+}
+
+async function callAIBackground(prompt) {
+  if (!CLAUDE_API_KEY) return null;
+  const headers = AI_PROXY_URL
+    ? { 'Content-Type': 'application/json' }
+    : { 'Content-Type': 'application/json', 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' };
+  const endpoint = AI_PROXY_URL || 'https://api.anthropic.com/v1/messages';
+
+  const resp = await fetch(endpoint, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 512,
+      system: 'You are a background service for a couples app. Return ONLY valid JSON, no explanation or markdown.',
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await resp.json();
+  const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+  try { return JSON.parse(text); } catch { return null; }
+}
+
+async function processAIRoleResult(roleKey, result) {
+  if (!db || !result) return;
+  const now = Date.now();
+
+  switch (roleKey) {
+    case 'contentCurator': {
+      // Write fresh content to Firebase
+      const today = new Date().toISOString().split('T')[0];
+      if (result.dailyQuestion) await db.ref('ai/content/' + today + '/dailyQuestion').set(result.dailyQuestion);
+      if (result.dateIdea) await db.ref('ai/content/' + today + '/dateIdea').set(result.dateIdea);
+      if (result.affirmation) await db.ref('ai/content/' + today + '/affirmation').set(result.affirmation);
+      if (result.conversationStarter) await db.ref('ai/content/' + today + '/conversationStarter').set(result.conversationStarter);
+      if (result.challenge) await db.ref('ai/content/' + today + '/challenge').set(result.challenge);
+      break;
+    }
+    case 'relationshipMonitor': {
+      if (result.nudgeHim) await db.ref('ai/nudges/him').push({ message: result.nudgeHim, type: 'relationship', timestamp: now });
+      if (result.nudgeHer) await db.ref('ai/nudges/her').push({ message: result.nudgeHer, type: 'relationship', timestamp: now });
+      if (result.insight) await db.ref('ai/insights/relationship').push({ insight: result.insight, status: result.status, timestamp: now });
+      break;
+    }
+    case 'milestoneTracker': {
+      if (result.upcoming && result.upcoming.length > 0) {
+        result.upcoming.forEach(async (item) => {
+          if (item.daysAway <= 3) {
+            await db.ref('ai/nudges/him').push({ message: item.reminder, type: 'milestone', timestamp: now });
+            await db.ref('ai/nudges/her').push({ message: item.reminder, type: 'milestone', timestamp: now });
+          }
+        });
+      }
+      break;
+    }
+    case 'goalCoach': {
+      if (result.nudgeHim) await db.ref('ai/nudges/him').push({ message: result.nudgeHim, type: 'goals', timestamp: now });
+      if (result.nudgeHer) await db.ref('ai/nudges/her').push({ message: result.nudgeHer, type: 'goals', timestamp: now });
+      break;
+    }
+    case 'wellnessAdvisor': {
+      const nudge = result.celebration || result.nudge;
+      if (nudge) {
+        await db.ref('ai/nudges/him').push({ message: nudge, type: 'wellness', timestamp: now });
+        await db.ref('ai/nudges/her').push({ message: nudge, type: 'wellness', timestamp: now });
+      }
+      break;
+    }
+    case 'financeGuardian': {
+      if (result.alert) {
+        await db.ref('ai/nudges/him').push({ message: result.alert, type: 'finance', timestamp: now });
+        await db.ref('ai/nudges/her').push({ message: result.alert, type: 'finance', timestamp: now });
+      } else if (result.tip) {
+        await db.ref('ai/nudges/him').push({ message: result.tip, type: 'finance', timestamp: now });
+        await db.ref('ai/nudges/her').push({ message: result.tip, type: 'finance', timestamp: now });
+      }
+      break;
+    }
+  }
+}
+
+function renderAINudges() {
+  const container = document.getElementById('ai-nudges');
+  if (!container) return;
+  if (!aiNudges.length) { container.innerHTML = ''; return; }
+  const typeIcons = { relationship: '💕', milestone: '📅', goals: '🎯', wellness: '💪', finance: '💰' };
+  container.innerHTML = aiNudges.map(n => `
+    <div class="ai-nudge-card">
+      <span class="ai-nudge-icon">${typeIcons[n.type] || '✨'}</span>
+      <div class="ai-nudge-text">${esc(n.message)}</div>
+      <button class="ai-nudge-dismiss" onclick="dismissAINudge('${n.key}')" aria-label="Dismiss">&times;</button>
+    </div>
+  `).join('');
+}
+
+async function dismissAINudge(key) {
+  if (!db) return;
+  await db.ref('ai/nudges/' + user + '/' + key + '/dismissed').set(true);
+}
+
+// Load AI-generated daily content for dashboard
+async function loadAIDailyContent() {
+  if (!db) return;
+  const today = new Date().toISOString().split('T')[0];
+  const snap = await db.ref('ai/content/' + today).once('value');
+  const content = snap.val();
+  if (!content) return;
+  // Show the card
+  const card = document.getElementById('dash-ai-daily');
+  if (card) card.classList.remove('d-none');
+  // Populate dashboard elements if they exist
+  const aiDateIdea = document.getElementById('ai-date-idea');
+  if (aiDateIdea && content.dateIdea) aiDateIdea.textContent = content.dateIdea;
+  const aiChallenge = document.getElementById('ai-challenge');
+  if (aiChallenge && content.challenge) aiChallenge.textContent = content.challenge;
+  const aiConvo = document.getElementById('ai-convo-starter');
+  if (aiConvo && content.conversationStarter) aiConvo.textContent = content.conversationStarter;
+}
+

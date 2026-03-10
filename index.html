@@ -241,6 +241,9 @@
 <div class="ctn">
   <div class="ptr" id="ptr"><span class="ptr-spinner"></span><span class="ptr-text">Pull to refresh</span></div>
 
+  <!-- AI Nudges (background service messages) -->
+  <div id="ai-nudges"></div>
+
   <!-- Greeting + Partner Row -->
   <div class="dash-greeting-row">
     <div>
@@ -329,6 +332,27 @@
         <div class="dash-card-status" id="dash-dq-status"></div>
       </div>
       <div class="t-body c-cream" id="dash-dq-text"></div>
+    </div>
+
+    <!-- AI Daily Content -->
+    <div class="dash-card ai-daily-card d-none" id="dash-ai-daily">
+      <div class="dash-card-header mb-8">
+        <div class="dash-card-title c-lavender">AI Picks for Today</div>
+      </div>
+      <div class="ai-daily-items">
+        <div class="ai-daily-item" id="ai-date-idea-wrap">
+          <span class="ai-daily-icon">💡</span>
+          <div><div class="ai-daily-label">Date Idea</div><div class="ai-daily-text" id="ai-date-idea">Loading...</div></div>
+        </div>
+        <div class="ai-daily-item" id="ai-challenge-wrap">
+          <span class="ai-daily-icon">⚡</span>
+          <div><div class="ai-daily-label">Daily Challenge</div><div class="ai-daily-text" id="ai-challenge">Loading...</div></div>
+        </div>
+        <div class="ai-daily-item" id="ai-convo-wrap">
+          <span class="ai-daily-icon">💬</span>
+          <div><div class="ai-daily-label">Talk About</div><div class="ai-daily-text" id="ai-convo-starter">Loading...</div></div>
+        </div>
+      </div>
     </div>
 
     <!-- Recent activity feed -->
@@ -2608,163 +2632,205 @@
 <div class="pg" id="pg-nutrition">
 <div class="ctn">
 
-
-  <!-- Daily Summary -->
-  <div class="fit-summary fit-summary-4" id="nutr-summary">
-    <div class="fit-stat"><div class="fit-stat-num" id="nutr-meals">0</div><div class="fit-stat-label">Meals</div></div>
-    <div class="fit-stat"><div class="fit-stat-num" id="nutr-cals">0</div><div class="fit-stat-label">Calories</div></div>
-    <div class="fit-stat"><div class="fit-stat-num" id="nutr-water">0</div><div class="fit-stat-label">Water</div></div>
-    <div class="fit-stat"><div class="fit-stat-num" id="nutr-score">--</div><div class="fit-stat-label">Score</div></div>
-  </div>
-
-  <!-- Macro Targets -->
-  <div class="card mb-14">
-    <div class="nutr-targets-label mb-8">Daily Targets</div>
-    <div class="nutr-macro-grid">
-      <div class="nutr-macro-item">
-        <div class="nutr-macro-label">Protein</div>
-        <div class="nutr-macro-val c-emerald" id="nutr-protein">0g</div>
-        <div class="nutr-bar-wrap mt-4"><div class="nutr-bar-fill" style="background:var(--emerald)" id="nutr-protein-bar"></div></div>
-      </div>
-      <div class="nutr-macro-item">
-        <div class="nutr-macro-label">Carbs</div>
-        <div class="nutr-macro-val c-gold" id="nutr-carbs">0g</div>
-        <div class="nutr-bar-wrap mt-4"><div class="nutr-bar-fill" style="background:var(--gold)" id="nutr-carbs-bar"></div></div>
-      </div>
-      <div class="nutr-macro-item">
-        <div class="nutr-macro-label">Fats</div>
-        <div class="nutr-macro-val c-rose" id="nutr-fats">0g</div>
-        <div class="nutr-bar-wrap mt-4"><div class="nutr-bar-fill" style="background:var(--rose)" id="nutr-fats-bar"></div></div>
+  <!-- Calorie Ring Hero (Apple Health style) -->
+  <div class="nh-hero">
+    <div class="nh-ring-wrap">
+      <svg class="nh-ring-svg" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="62" fill="none" stroke="var(--bg3)" stroke-width="10" opacity=".3"/>
+        <circle cx="80" cy="80" r="62" fill="none" stroke="url(#nutrRingGrad)" stroke-width="10" stroke-linecap="round"
+          stroke-dasharray="389.6" id="nutr-cal-ring" stroke-dashoffset="389.6" transform="rotate(-90 80 80)"/>
+        <defs><linearGradient id="nutrRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="var(--emerald)"/><stop offset="100%" stop-color="var(--gold)"/>
+        </linearGradient></defs>
+      </svg>
+      <div class="nh-ring-inner">
+        <div class="nh-ring-num" id="nutr-cals">0</div>
+        <div class="nh-ring-label">calories</div>
+        <div class="nh-ring-target">of <span id="nutr-cal-target">2000</span></div>
       </div>
     </div>
-    <div class="nutr-cal-summary mt-8"><span id="nutr-cal-total">0</span> / <span id="nutr-cal-target">2000</span> cal</div>
-    <div class="nutr-cal-bar mt-4"><div class="nutr-cal-fill" id="nutr-cal-bar"></div></div>
+    <div class="nh-score-badge" id="nutr-score">--</div>
   </div>
 
-  <!-- Quick Add Common Foods -->
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Quick Add</div></div>
-  <div class="nutr-quick-scroll" id="nutr-quick-add">
-    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Chicken Breast',165,31,0,3.6)"><span class="cmd-ctx-icon">🍗</span><span class="cmd-ctx-label">Chicken</span></div>
-    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Rice (1 cup)',206,4,45,0.4)"><span class="cmd-ctx-icon">🍚</span><span class="cmd-ctx-label">Rice</span></div>
-    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Eggs (2)',143,13,1,10)"><span class="cmd-ctx-icon">🥚</span><span class="cmd-ctx-label">Eggs</span></div>
-    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Banana',105,1,27,0.4)"><span class="cmd-ctx-icon">🍌</span><span class="cmd-ctx-label">Banana</span></div>
-    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Oatmeal',150,5,27,3)"><span class="cmd-ctx-icon">🥣</span><span class="cmd-ctx-label">Oatmeal</span></div>
-    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Greek Yogurt',100,17,6,0.7)"><span class="cmd-ctx-icon">🥛</span><span class="cmd-ctx-label">Yogurt</span></div>
-    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Salmon',208,20,0,13)"><span class="cmd-ctx-icon">🐟</span><span class="cmd-ctx-label">Salmon</span></div>
-    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Sweet Potato',103,2,24,0.1)"><span class="cmd-ctx-icon">🍠</span><span class="cmd-ctx-label">Sw. Potato</span></div>
-    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Avocado',240,3,12,22)"><span class="cmd-ctx-icon">🥑</span><span class="cmd-ctx-label">Avocado</span></div>
-    <div class="cmd-ctx-item nutr-quick-item" onclick="quickAddFood('Protein Shake',120,25,3,1)"><span class="cmd-ctx-icon">🥤</span><span class="cmd-ctx-label">Shake</span></div>
+  <!-- Macro Rings Row -->
+  <div class="nh-macros">
+    <div class="nh-macro-card">
+      <svg viewBox="0 0 48 48" class="nh-macro-ring">
+        <circle cx="24" cy="24" r="18" fill="none" stroke="var(--bg3)" stroke-width="5" opacity=".2"/>
+        <circle cx="24" cy="24" r="18" fill="none" stroke="var(--emerald)" stroke-width="5" stroke-linecap="round"
+          stroke-dasharray="113.1" id="nutr-protein-ring" stroke-dashoffset="113.1" transform="rotate(-90 24 24)"/>
+      </svg>
+      <div class="nh-macro-val" id="nutr-protein">0g</div>
+      <div class="nh-macro-lbl">Protein</div>
+      <div class="nh-macro-target">/ 150g</div>
+    </div>
+    <div class="nh-macro-card">
+      <svg viewBox="0 0 48 48" class="nh-macro-ring">
+        <circle cx="24" cy="24" r="18" fill="none" stroke="var(--bg3)" stroke-width="5" opacity=".2"/>
+        <circle cx="24" cy="24" r="18" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round"
+          stroke-dasharray="113.1" id="nutr-carbs-ring" stroke-dashoffset="113.1" transform="rotate(-90 24 24)"/>
+      </svg>
+      <div class="nh-macro-val" id="nutr-carbs">0g</div>
+      <div class="nh-macro-lbl">Carbs</div>
+      <div class="nh-macro-target">/ 250g</div>
+    </div>
+    <div class="nh-macro-card">
+      <svg viewBox="0 0 48 48" class="nh-macro-ring">
+        <circle cx="24" cy="24" r="18" fill="none" stroke="var(--bg3)" stroke-width="5" opacity=".2"/>
+        <circle cx="24" cy="24" r="18" fill="none" stroke="var(--rose)" stroke-width="5" stroke-linecap="round"
+          stroke-dasharray="113.1" id="nutr-fats-ring" stroke-dashoffset="113.1" transform="rotate(-90 24 24)"/>
+      </svg>
+      <div class="nh-macro-val" id="nutr-fats">0g</div>
+      <div class="nh-macro-lbl">Fats</div>
+      <div class="nh-macro-target">/ 65g</div>
+    </div>
+  </div>
+
+  <!-- Summary Stats Row -->
+  <div class="nh-stats-row">
+    <div class="nh-stat"><div class="nh-stat-num" id="nutr-meals">0</div><div class="nh-stat-lbl">Meals</div></div>
+    <div class="nh-stat-divider"></div>
+    <div class="nh-stat"><div class="nh-stat-num" id="nutr-water">0</div><div class="nh-stat-lbl">Glasses</div></div>
+    <div class="nh-stat-divider"></div>
+    <div class="nh-stat"><div class="nh-stat-num" id="nutr-cal-total">0</div><div class="nh-stat-lbl">Cal eaten</div></div>
+  </div>
+
+  <!-- Quick Add -->
+  <div class="nh-section-label">Quick Add</div>
+  <div class="nh-quick-row" id="nutr-quick-add">
+    <button class="nh-quick-chip" onclick="quickAddFood('Chicken Breast',165,31,0,3.6)"><span>🍗</span>Chicken</button>
+    <button class="nh-quick-chip" onclick="quickAddFood('Rice (1 cup)',206,4,45,0.4)"><span>🍚</span>Rice</button>
+    <button class="nh-quick-chip" onclick="quickAddFood('Eggs (2)',143,13,1,10)"><span>🥚</span>Eggs</button>
+    <button class="nh-quick-chip" onclick="quickAddFood('Banana',105,1,27,0.4)"><span>🍌</span>Banana</button>
+    <button class="nh-quick-chip" onclick="quickAddFood('Oatmeal',150,5,27,3)"><span>🥣</span>Oatmeal</button>
+    <button class="nh-quick-chip" onclick="quickAddFood('Greek Yogurt',100,17,6,0.7)"><span>🥛</span>Yogurt</button>
+    <button class="nh-quick-chip" onclick="quickAddFood('Salmon',208,20,0,13)"><span>🐟</span>Salmon</button>
+    <button class="nh-quick-chip" onclick="quickAddFood('Sweet Potato',103,2,24,0.1)"><span>🍠</span>Sw. Potato</button>
+    <button class="nh-quick-chip" onclick="quickAddFood('Avocado',240,3,12,22)"><span>🥑</span>Avocado</button>
+    <button class="nh-quick-chip" onclick="quickAddFood('Protein Shake',120,25,3,1)"><span>🥤</span>Shake</button>
   </div>
 
   <!-- Hydration -->
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Hydration</div></div>
-  <div class="card">
-    <div class="hydration-track" id="hydration-track">
-      <div class="hydration-glass" onclick="logWater(1)">&#x1F4A7;</div>
-      <div class="hydration-glass" onclick="logWater(2)">&#x1F4A7;</div>
-      <div class="hydration-glass" onclick="logWater(3)">&#x1F4A7;</div>
-      <div class="hydration-glass" onclick="logWater(4)">&#x1F4A7;</div>
-      <div class="hydration-glass" onclick="logWater(5)">&#x1F4A7;</div>
-      <div class="hydration-glass" onclick="logWater(6)">&#x1F4A7;</div>
-      <div class="hydration-glass" onclick="logWater(7)">&#x1F4A7;</div>
-      <div class="hydration-glass" onclick="logWater(8)">&#x1F4A7;</div>
+  <div class="nh-section-label">Hydration</div>
+  <div class="nh-hydration-card">
+    <div class="nh-water-drops" id="hydration-track">
+      <button class="nh-water-drop" onclick="logWater(1)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></button>
+      <button class="nh-water-drop" onclick="logWater(2)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></button>
+      <button class="nh-water-drop" onclick="logWater(3)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></button>
+      <button class="nh-water-drop" onclick="logWater(4)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></button>
+      <button class="nh-water-drop" onclick="logWater(5)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></button>
+      <button class="nh-water-drop" onclick="logWater(6)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></button>
+      <button class="nh-water-drop" onclick="logWater(7)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></button>
+      <button class="nh-water-drop" onclick="logWater(8)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></button>
     </div>
-    <div class="hydration-label"><span id="water-count">0</span> / 8 glasses</div>
+    <div class="nh-water-label"><span id="water-count">0</span> / 8 glasses</div>
   </div>
 
   <!-- Meal Log -->
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Today's Meals</div></div>
-  <div class="meal-sections">
-    <div class="meal-section">
-      <div class="meal-section-head" onclick="toggleMealSection('breakfast')">
-        <span>&#x1F305; Breakfast</span><span class="meal-count" id="meal-breakfast-ct">0</span>
-      </div>
-      <div class="meal-section-body" id="meal-breakfast"></div>
-      <div class="meal-add">
-        <input type="text" id="meal-breakfast-input" placeholder="What did you eat?" class="quiz-q">
-        <input type="number" id="meal-breakfast-cal" placeholder="Cal" class="meal-cal-input">
-        <input type="number" id="meal-breakfast-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
-        <input type="number" id="meal-breakfast-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
-        <input type="number" id="meal-breakfast-fats" placeholder="F" class="meal-macro-input" title="Fats (g)">
-        <button onclick="addMealItem('breakfast')">+</button>
-      </div>
-    </div>
-    <div class="meal-section">
-      <div class="meal-section-head" onclick="toggleMealSection('lunch')">
-        <span>&#x2600;&#xFE0F; Lunch</span><span class="meal-count" id="meal-lunch-ct">0</span>
-      </div>
-      <div class="meal-section-body" id="meal-lunch"></div>
-      <div class="meal-add">
-        <input type="text" id="meal-lunch-input" placeholder="What did you eat?" class="quiz-q">
-        <input type="number" id="meal-lunch-cal" placeholder="Cal" class="meal-cal-input">
-        <input type="number" id="meal-lunch-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
-        <input type="number" id="meal-lunch-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
-        <input type="number" id="meal-lunch-fats" placeholder="F" class="meal-macro-input" title="Fats (g)">
-        <button onclick="addMealItem('lunch')">+</button>
+  <div class="nh-section-label">Today's Meals</div>
+  <div class="nh-meal-list">
+    <div class="nh-meal-group">
+      <button class="nh-meal-header" onclick="toggleMealSection('breakfast')">
+        <span class="nh-meal-icon">🌅</span>
+        <span class="nh-meal-name">Breakfast</span>
+        <span class="nh-meal-badge" id="meal-breakfast-ct">0</span>
+        <svg class="nh-meal-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="nh-meal-body" id="meal-breakfast"></div>
+      <div class="nh-meal-add">
+        <input type="text" id="meal-breakfast-input" placeholder="Add food..." class="nh-meal-input">
+        <input type="number" id="meal-breakfast-cal" placeholder="Cal" class="nh-meal-num nh-num-cal">
+        <input type="number" id="meal-breakfast-protein" placeholder="P" class="nh-meal-num" title="Protein (g)">
+        <input type="number" id="meal-breakfast-carbs" placeholder="C" class="nh-meal-num" title="Carbs (g)">
+        <input type="number" id="meal-breakfast-fats" placeholder="F" class="nh-meal-num" title="Fats (g)">
+        <button class="nh-meal-add-btn" onclick="addMealItem('breakfast')">+</button>
       </div>
     </div>
-    <div class="meal-section">
-      <div class="meal-section-head" onclick="toggleMealSection('dinner')">
-        <span>&#x1F319; Dinner</span><span class="meal-count" id="meal-dinner-ct">0</span>
-      </div>
-      <div class="meal-section-body" id="meal-dinner"></div>
-      <div class="meal-add">
-        <input type="text" id="meal-dinner-input" placeholder="What did you eat?" class="quiz-q">
-        <input type="number" id="meal-dinner-cal" placeholder="Cal" class="meal-cal-input">
-        <input type="number" id="meal-dinner-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
-        <input type="number" id="meal-dinner-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
-        <input type="number" id="meal-dinner-fats" placeholder="F" class="meal-macro-input" title="Fats (g)">
-        <button onclick="addMealItem('dinner')">+</button>
+    <div class="nh-meal-group">
+      <button class="nh-meal-header" onclick="toggleMealSection('lunch')">
+        <span class="nh-meal-icon">☀️</span>
+        <span class="nh-meal-name">Lunch</span>
+        <span class="nh-meal-badge" id="meal-lunch-ct">0</span>
+        <svg class="nh-meal-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="nh-meal-body" id="meal-lunch"></div>
+      <div class="nh-meal-add">
+        <input type="text" id="meal-lunch-input" placeholder="Add food..." class="nh-meal-input">
+        <input type="number" id="meal-lunch-cal" placeholder="Cal" class="nh-meal-num nh-num-cal">
+        <input type="number" id="meal-lunch-protein" placeholder="P" class="nh-meal-num" title="Protein (g)">
+        <input type="number" id="meal-lunch-carbs" placeholder="C" class="nh-meal-num" title="Carbs (g)">
+        <input type="number" id="meal-lunch-fats" placeholder="F" class="nh-meal-num" title="Fats (g)">
+        <button class="nh-meal-add-btn" onclick="addMealItem('lunch')">+</button>
       </div>
     </div>
-    <div class="meal-section">
-      <div class="meal-section-head" onclick="toggleMealSection('snacks')">
-        <span>&#x1F36A; Snacks</span><span class="meal-count" id="meal-snacks-ct">0</span>
+    <div class="nh-meal-group">
+      <button class="nh-meal-header" onclick="toggleMealSection('dinner')">
+        <span class="nh-meal-icon">🌙</span>
+        <span class="nh-meal-name">Dinner</span>
+        <span class="nh-meal-badge" id="meal-dinner-ct">0</span>
+        <svg class="nh-meal-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="nh-meal-body" id="meal-dinner"></div>
+      <div class="nh-meal-add">
+        <input type="text" id="meal-dinner-input" placeholder="Add food..." class="nh-meal-input">
+        <input type="number" id="meal-dinner-cal" placeholder="Cal" class="nh-meal-num nh-num-cal">
+        <input type="number" id="meal-dinner-protein" placeholder="P" class="nh-meal-num" title="Protein (g)">
+        <input type="number" id="meal-dinner-carbs" placeholder="C" class="nh-meal-num" title="Carbs (g)">
+        <input type="number" id="meal-dinner-fats" placeholder="F" class="nh-meal-num" title="Fats (g)">
+        <button class="nh-meal-add-btn" onclick="addMealItem('dinner')">+</button>
       </div>
-      <div class="meal-section-body" id="meal-snacks"></div>
-      <div class="meal-add">
-        <input type="text" id="meal-snacks-input" placeholder="Snack item" class="quiz-q">
-        <input type="number" id="meal-snacks-cal" placeholder="Cal" class="meal-cal-input">
-        <input type="number" id="meal-snacks-protein" placeholder="P" class="meal-macro-input" title="Protein (g)">
-        <input type="number" id="meal-snacks-carbs" placeholder="C" class="meal-macro-input" title="Carbs (g)">
-        <input type="number" id="meal-snacks-fats" placeholder="F" class="meal-macro-input" title="Fats (g)">
-        <button onclick="addMealItem('snacks')">+</button>
+    </div>
+    <div class="nh-meal-group">
+      <button class="nh-meal-header" onclick="toggleMealSection('snacks')">
+        <span class="nh-meal-icon">🍪</span>
+        <span class="nh-meal-name">Snacks</span>
+        <span class="nh-meal-badge" id="meal-snacks-ct">0</span>
+        <svg class="nh-meal-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="nh-meal-body" id="meal-snacks"></div>
+      <div class="nh-meal-add">
+        <input type="text" id="meal-snacks-input" placeholder="Snack item..." class="nh-meal-input">
+        <input type="number" id="meal-snacks-cal" placeholder="Cal" class="nh-meal-num nh-num-cal">
+        <input type="number" id="meal-snacks-protein" placeholder="P" class="nh-meal-num" title="Protein (g)">
+        <input type="number" id="meal-snacks-carbs" placeholder="C" class="nh-meal-num" title="Carbs (g)">
+        <input type="number" id="meal-snacks-fats" placeholder="F" class="nh-meal-num" title="Fats (g)">
+        <button class="nh-meal-add-btn" onclick="addMealItem('snacks')">+</button>
       </div>
     </div>
   </div>
 
   <!-- Shared Meal Planning (Us mode) -->
   <div class="us-only">
-    <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Meal Planning</div></div>
-    <div class="card">
+    <div class="nh-section-label">Meal Planning</div>
+    <div class="nh-plan-card">
       <div class="d-flex gap-8 mb-10">
-        <input type="text" id="mealplan-name" placeholder="Meal name" class="quiz-q flex-2">
-        <select id="mealplan-day" class="form-input-inline">
+        <input type="text" id="mealplan-name" placeholder="Meal name" class="nh-meal-input" style="flex:2">
+        <select id="mealplan-day" class="nh-meal-input" style="flex:1;padding:10px 8px">
           <option value="mon">Mon</option><option value="tue">Tue</option><option value="wed">Wed</option>
           <option value="thu">Thu</option><option value="fri">Fri</option><option value="sat">Sat</option><option value="sun">Sun</option>
         </select>
       </div>
-      <button class="dq-submit" onclick="addMealPlan()">Add to Plan</button>
+      <button class="nh-action-btn" onclick="addMealPlan()">Add to Plan</button>
     </div>
     <div id="mealplan-list"><div class="empty">Plan meals for the week</div></div>
   </div>
 
   <!-- Shared Grocery List -->
   <div class="us-only">
-    <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Grocery List</div></div>
-    <div class="bl-form">
-      <input type="text" id="grocery-input" class="quiz-q" placeholder="Add item..." onkeydown="if(event.key==='Enter')addGroceryItem()">
-      <button onclick="addGroceryItem()">+</button>
+    <div class="nh-section-label">Grocery List</div>
+    <div class="nh-grocery-form">
+      <input type="text" id="grocery-input" class="nh-meal-input" placeholder="Add item..." onkeydown="if(event.key==='Enter')addGroceryItem()" style="flex:1">
+      <button class="nh-meal-add-btn" onclick="addGroceryItem()">+</button>
     </div>
     <div id="grocery-list"><div class="empty">Build your shared grocery list</div></div>
   </div>
 
   <!-- Recipes -->
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Saved Recipes</div></div>
-  <div class="card">
-    <input type="text" id="recipe-name" placeholder="Recipe name" class="quiz-q mb-8">
-    <textarea id="recipe-desc" placeholder="Ingredients &amp; instructions..." class="form-textarea form-textarea-min mb-8"></textarea>
-    <button class="dq-submit" onclick="saveRecipe()">Save Recipe</button>
+  <div class="nh-section-label">Saved Recipes</div>
+  <div class="nh-plan-card">
+    <input type="text" id="recipe-name" placeholder="Recipe name" class="nh-meal-input mb-8">
+    <textarea id="recipe-desc" placeholder="Ingredients &amp; instructions..." class="nh-recipe-textarea mb-8"></textarea>
+    <button class="nh-action-btn" onclick="saveRecipe()">Save Recipe</button>
   </div>
   <div id="recipe-list"><div class="empty">Save your favorite recipes</div></div>
 </div>

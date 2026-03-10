@@ -1190,29 +1190,32 @@ function renderNutritionDay() {
     if (container) {
       container.innerHTML = items.length ? items.map(i => {
         const macroStr = [i.protein ? i.protein+'p' : '', i.carbs ? i.carbs+'c' : '', i.fats ? i.fats+'f' : ''].filter(Boolean).join('/');
-        return `<div class="meal-item"><span>${esc(i.name)}</span><span style="color:var(--t3)">${i.calories ? i.calories + ' cal' : ''}${macroStr ? ' · ' + macroStr : ''}</span></div>`;
+        return `<div class="nh-food-item"><span class="nh-food-name">${esc(i.name)}</span><span class="nh-food-meta">${i.calories ? i.calories + ' cal' : ''}${macroStr ? ' · ' + macroStr : ''}</span></div>`;
       }).join('') : '';
     }
   });
   const el = id => document.getElementById(id);
   if (el('nutr-meals')) el('nutr-meals').textContent = mealCount;
   if (el('nutr-cals')) el('nutr-cals').textContent = totalCals;
-  // Macros
+  // Macros - update ring SVGs
   const calTarget = 2000;
   if (el('nutr-protein')) el('nutr-protein').textContent = totalP + 'g';
   if (el('nutr-carbs')) el('nutr-carbs').textContent = totalC + 'g';
   if (el('nutr-fats')) el('nutr-fats').textContent = totalF + 'g';
-  if (el('nutr-protein-bar')) el('nutr-protein-bar').style.width = Math.min(totalP / 150 * 100, 100) + '%';
-  if (el('nutr-carbs-bar')) el('nutr-carbs-bar').style.width = Math.min(totalC / 250 * 100, 100) + '%';
-  if (el('nutr-fats-bar')) el('nutr-fats-bar').style.width = Math.min(totalF / 65 * 100, 100) + '%';
+  // SVG ring offsets (circumference - progress)
+  const macroCirc = 113.1;
+  const calCirc = 389.6;
+  if (el('nutr-protein-ring')) el('nutr-protein-ring').style.strokeDashoffset = macroCirc - Math.min(totalP / 150, 1) * macroCirc;
+  if (el('nutr-carbs-ring')) el('nutr-carbs-ring').style.strokeDashoffset = macroCirc - Math.min(totalC / 250, 1) * macroCirc;
+  if (el('nutr-fats-ring')) el('nutr-fats-ring').style.strokeDashoffset = macroCirc - Math.min(totalF / 65, 1) * macroCirc;
+  if (el('nutr-cal-ring')) el('nutr-cal-ring').style.strokeDashoffset = calCirc - Math.min(totalCals / calTarget, 1) * calCirc;
   if (el('nutr-cal-total')) el('nutr-cal-total').textContent = totalCals;
   if (el('nutr-cal-target')) el('nutr-cal-target').textContent = calTarget;
-  if (el('nutr-cal-bar')) el('nutr-cal-bar').style.width = Math.min(totalCals / calTarget * 100, 100) + '%';
   // Water
   const waterData = meals.water || 0;
   if (el('water-count')) el('water-count').textContent = waterData;
   if (el('nutr-water')) el('nutr-water').textContent = waterData;
-  document.querySelectorAll('.hydration-glass').forEach((g, i) => {
+  document.querySelectorAll('.nh-water-drop').forEach((g, i) => {
     g.classList.toggle('filled', i < waterData);
   });
   // Score
