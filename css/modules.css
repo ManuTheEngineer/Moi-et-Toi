@@ -1490,15 +1490,12 @@
 .ob-loc-feat{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--t2);padding:8px 12px;background:var(--glass,rgba(255,255,255,.35));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:12px}
 .ob-loc-feat span{font-size:18px;flex-shrink:0}
 
-/* Settings page - collapsible sections */
-.sec-collapse{cursor:pointer;user-select:none;-webkit-user-select:none}
-.sec-collapse:active{opacity:.7}
-.sec-chevron{display:inline-block;width:18px;height:18px;margin-left:auto;transition:transform .3s ease;color:var(--t3)}
-.sec-chevron::before{content:'';display:block;width:8px;height:8px;border-right:2px solid var(--t3);border-bottom:2px solid var(--t3);transform:rotate(45deg);margin:2px auto 0}
-.sec-collapse .sec-chevron::before{transition:transform .3s ease}
-.sec-body{overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .25s ease;max-height:2000px;opacity:1}
-.sec-body.collapsed{max-height:0;opacity:0;margin-bottom:0}
-.sec-collapse.open .sec-chevron::before{transform:rotate(-135deg)}
+/* Settings page - sections always visible */
+.sec-body{overflow:visible}
+/* Profile card - grouped fields in a single card */
+.settings-profile-card{display:flex;flex-direction:column;gap:16px}
+.settings-field-group{display:flex;flex-direction:column;gap:4px}
+.settings-field-row{display:flex;gap:12px}
 .settings-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .settings-label{font-size:13px;color:var(--t2)}
 .settings-btn{padding:8px 18px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}

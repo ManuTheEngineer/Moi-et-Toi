@@ -100,7 +100,8 @@ async function init() {
         if (needsOnboarding()) {
           showFirstLocationPrompt();
         } else {
-          finishLogin();
+          // Returning user — show welcome gate with biometric
+          showWelcomeGate();
         }
       } else {
         firebase.auth().signOut();
@@ -184,7 +185,8 @@ async function doLogin() {
     if (needsOnboarding()) {
       showFirstLocationPrompt();
     } else {
-      finishLogin();
+      // First manual login — go straight in but offer biometric setup
+      offerBiometricAfterLogin();
     }
   } catch(e) {
     console.error('Login error:', e.code, e.message);
@@ -1390,6 +1392,168 @@ function showWelcomeGate() {
       }
     });
   }
+  // Update biometric button state
+  updateBiometricUI();
+}
+
+// ===== BIOMETRIC / FACE ID AUTH =====
+var _biometricAvailable = false;
+
+function isBiometricSupported() {
+  return window.PublicKeyCredential !== undefined &&
+    typeof window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function';
+}
+
+async function checkBiometricAvailable() {
+  if (!isBiometricSupported()) return false;
+  try {
+    return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+  } catch(e) { return false; }
+}
+
+function hasBiometricCredential() {
+  try { return !!localStorage.getItem('met_bio_cred_' + user); } catch(e) { return false; }
+}
+
+// Register a WebAuthn credential after first successful login
+async function registerBiometric() {
+  if (!isBiometricSupported()) return false;
+  try {
+    var userId = new Uint8Array(16);
+    crypto.getRandomValues(userId);
+    var challenge = new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+
+    var credential = await navigator.credentials.create({
+      publicKey: {
+        rp: { name: 'Moi et Toi', id: location.hostname },
+        user: {
+          id: userId,
+          name: authUser.email,
+          displayName: NAMES[user] || authUser.email
+        },
+        challenge: challenge,
+        pubKeyCredParams: [
+          { type: 'public-key', alg: -7 },
+          { type: 'public-key', alg: -257 }
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: 'platform',
+          userVerification: 'required'
+        },
+        timeout: 60000,
+        attestation: 'none'
+      }
+    });
+
+    if (credential) {
+      // Store credential ID for future verification
+      var credId = btoa(String.fromCharCode.apply(null, new Uint8Array(credential.rawId)));
+      localStorage.setItem('met_bio_cred_' + user, credId);
+      return true;
+    }
+  } catch(e) {
+    console.log('Biometric registration skipped:', e.message);
+  }
+  return false;
+}
+
+// Verify biometric on returning session
+async function verifyBiometric() {
+  var credId = localStorage.getItem('met_bio_cred_' + user);
+  if (!credId) return false;
+  try {
+    var rawId = Uint8Array.from(atob(credId), function(c) { return c.charCodeAt(0); });
+    var challenge = new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+
+    var assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge: challenge,
+        allowCredentials: [{
+          type: 'public-key',
+          id: rawId,
+          transports: ['internal']
+        }],
+        userVerification: 'required',
+        timeout: 60000
+      }
+    });
+    return !!assertion;
+  } catch(e) {
+    console.log('Biometric verification failed:', e.message);
+    return false;
+  }
+}
+
+// Called when user taps Enter on welcome gate
+async function enterApp() {
+  var enterBtn = document.getElementById('welcome-enter-btn');
+  if (enterBtn) {
+    enterBtn.textContent = 'Verifying...';
+    enterBtn.disabled = true;
+  }
+
+  var needsBioSetup = _biometricAvailable && !hasBiometricCredential();
+  var hasBio = hasBiometricCredential();
+
+  if (hasBio) {
+    // Returning user with biometric — verify
+    var verified = await verifyBiometric();
+    if (verified) {
+      finishLogin();
+      return;
+    }
+    // Verification failed or cancelled — still let them in
+    toast('Biometric cancelled — entering anyway');
+    finishLogin();
+  } else if (needsBioSetup) {
+    // First time after login — offer to register biometric
+    var registered = await registerBiometric();
+    if (registered) {
+      toast('Face ID enabled for next time!');
+    }
+    finishLogin();
+  } else {
+    // No biometric support — just enter
+    finishLogin();
+  }
+}
+
+function updateBiometricUI() {
+  var bioHint = document.getElementById('welcome-bio-hint');
+  var enterBtn = document.getElementById('welcome-enter-btn');
+  checkBiometricAvailable().then(function(available) {
+    _biometricAvailable = available;
+    if (bioHint) {
+      if (available && hasBiometricCredential()) {
+        bioHint.textContent = 'Tap to verify with Face ID';
+        bioHint.style.display = '';
+      } else if (available && !hasBiometricCredential()) {
+        bioHint.textContent = 'Set up Face ID on entry';
+        bioHint.style.display = '';
+      } else {
+        bioHint.style.display = 'none';
+      }
+    }
+    if (enterBtn) {
+      enterBtn.textContent = 'Enter';
+      enterBtn.disabled = false;
+    }
+  });
+}
+
+// After first manual login, go straight in but offer biometric registration
+async function offerBiometricAfterLogin() {
+  finishLogin();
+  // Offer biometric setup after a short delay so user sees the app first
+  var available = await checkBiometricAvailable();
+  if (available && !hasBiometricCredential()) {
+    setTimeout(async function() {
+      var registered = await registerBiometric();
+      if (registered) toast('Face ID enabled! Next time just tap Enter.');
+    }, 2000);
+  }
 }
 
 function finishLogin() {
@@ -1511,6 +1675,8 @@ function finishLogin() {
   initDarkMode();
   // Update push notification button state
   updateNotifButton();
+  // Initialize biometric settings toggle
+  initBiometricSettings();
 }
 
 function switchUser() { fbOffAll(); firebase.auth().signOut(); location.reload(); }
@@ -1636,6 +1802,34 @@ function toggleSettingsSection(header) {
   } else {
     body.classList.remove('collapsed');
     header.classList.add('open');
+  }
+}
+
+// ===== BIOMETRIC SETTINGS =====
+function initBiometricSettings() {
+  checkBiometricAvailable().then(function(available) {
+    var card = document.getElementById('biometric-settings-card');
+    var toggle = document.getElementById('set-biometric');
+    if (card && available) {
+      card.style.display = '';
+      if (toggle) toggle.checked = hasBiometricCredential();
+    }
+  });
+}
+
+async function toggleBiometricSetting(enabled) {
+  if (enabled) {
+    var registered = await registerBiometric();
+    if (registered) {
+      toast('Face ID enabled');
+    } else {
+      var toggle = document.getElementById('set-biometric');
+      if (toggle) toggle.checked = false;
+      toast('Could not enable Face ID');
+    }
+  } else {
+    try { localStorage.removeItem('met_bio_cred_' + user); } catch(e) {}
+    toast('Face ID disabled');
   }
 }
 
