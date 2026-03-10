@@ -14,6 +14,7 @@
 
 /* ===== LOGIN ===== */
 .login{position:relative;width:100%;min-height:100vh;min-height:100dvh;min-height:-webkit-fill-available;z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:var(--bg);padding:env(safe-area-inset-top,0px) 32px calc(env(safe-area-inset-bottom,0px) + 8px);box-sizing:border-box;overflow-y:auto}
+.login::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:-1;pointer-events:none}
 .login-sky-scene{position:fixed;top:0;left:0;right:0;bottom:calc(-1 * env(safe-area-inset-bottom,40px));z-index:0;pointer-events:none;overflow:hidden;
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%);
   mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%)}
