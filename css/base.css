@@ -293,10 +293,12 @@ body[data-sky-theme="mountain"] .sky-bf-wing{background:rgba(150,220,180,.7)}
 
 /* ===== PWA STANDALONE MODE FIXES ===== */
 /* Prevent iOS overscroll bounce gap in standalone PWA mode.
-   html must be full viewport height (not --real-h) so position:fixed nav reaches screen bottom. */
+   html must be full viewport height (not --real-h) so position:fixed nav reaches screen bottom.
+   DO NOT use overflow:clip on html — it clips body::before/::after backgrounds that
+   extend into the safe-area-inset-bottom region, leaving a white gap on iPhones. */
 @media (display-mode: standalone){
-  html{height:100%;overflow:clip}
-  body{height:100%;overflow:hidden;overflow-y:auto}
+  html{height:100%;overscroll-behavior:none}
+  body{height:100%;overflow:hidden;overflow-y:auto;overscroll-behavior-y:none}
 }
 
 /* Enhanced page transitions - overridden by directional transitions in nav.css */

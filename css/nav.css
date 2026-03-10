@@ -17,7 +17,7 @@
 .login-sky-scene{position:fixed;top:0;left:0;right:0;bottom:calc(-1 * env(safe-area-inset-bottom,40px));z-index:0;pointer-events:none;overflow:hidden;
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%);
   mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%)}
-.login-terrain-scene{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;overflow:visible;transform:translateY(env(safe-area-inset-bottom,34px))}
+.login-terrain-scene{position:fixed;top:0;left:0;right:0;bottom:calc(-1 * env(safe-area-inset-bottom,34px));z-index:0;pointer-events:none;overflow:visible}
 .login > *:not(.login-sky-scene):not(.login-terrain-scene){position:relative;z-index:1}
 @keyframes loginBgShift{0%{background-position:0% 0%}100%{background-position:100% 100%}}
 .login.h{display:none}
