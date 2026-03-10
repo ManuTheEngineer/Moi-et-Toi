@@ -3045,6 +3045,255 @@ body[data-time="night"] .login.onboard-active {
   animation: loginBgShift 12s ease-in-out infinite alternate !important;
 }
 
+/* ===== NIGHT/EVENING LOGIN COMPREHENSIVE STYLING ===== */
+/* Night login: deep navy sky fading to sage/mist horizon */
+body[data-time="night"] .login {
+  background: linear-gradient(180deg,
+    #0C0E1E 0%,
+    #141830 12%,
+    #1E2848 25%,
+    #2A3A5E 38%,
+    #3D5268 48%,
+    #5A7A78 58%,
+    #7A9A88 68%,
+    #9AB8A0 76%,
+    #B8D0B4 84%,
+    #D0E0C8 92%,
+    #DDE8D6 100%
+  ) !important;
+}
+body[data-time="evening"] .login {
+  background: linear-gradient(180deg,
+    #141028 0%,
+    #1E1840 12%,
+    #2A2858 25%,
+    #3A3A68 38%,
+    #4E5478 48%,
+    #687888 58%,
+    #889A94 68%,
+    #A8B8A4 76%,
+    #C4D0BC 84%,
+    #D8E2D0 92%,
+    #E2EAD8 100%
+  ) !important;
+}
+
+/* Night/evening login inputs: frosted glass with muted tones */
+body[data-time="night"] .login-input,
+body[data-time="evening"] .login-input {
+  background: rgba(120,130,150,0.42) !important;
+  backdrop-filter: blur(20px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+  color: #E8E4E0 !important;
+  border: 1px solid rgba(180,190,210,0.12) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+body[data-time="night"] .login-input:focus,
+body[data-time="evening"] .login-input:focus {
+  background: rgba(130,140,160,0.52) !important;
+  border-color: rgba(180,200,160,0.22) !important;
+  box-shadow: 0 0 0 3px rgba(140,170,120,0.15), 0 2px 12px rgba(0,0,0,0.18) !important;
+}
+body[data-time="night"] .login-input::placeholder,
+body[data-time="evening"] .login-input::placeholder {
+  color: rgba(180,190,210,0.55) !important;
+}
+
+/* Night/evening login button: sage green gradient */
+body[data-time="night"] .login-btn,
+body[data-time="evening"] .login-btn {
+  background: linear-gradient(135deg, #5A7A4A 0%, #6B8F5E 40%, #7DA068 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 20px rgba(90,122,74,0.30), 0 1px 0 rgba(255,255,255,0.08) inset !important;
+  border: 1px solid rgba(140,180,120,0.18) !important;
+}
+body[data-time="night"] .login-btn:hover,
+body[data-time="evening"] .login-btn:hover {
+  box-shadow: 0 6px 28px rgba(90,122,74,0.40), 0 1px 0 rgba(255,255,255,0.10) inset !important;
+}
+body[data-time="night"] .login-btn:active,
+body[data-time="evening"] .login-btn:active {
+  box-shadow: 0 2px 12px rgba(90,122,74,0.20) !important;
+}
+
+/* Night/evening login text: light and elegant */
+body[data-time="night"] .login h1,
+body[data-time="evening"] .login h1 {
+  color: #F0ECE6 !important;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.20) !important;
+}
+body[data-time="night"] .login .sub,
+body[data-time="evening"] .login .sub {
+  color: rgba(200,210,200,0.60) !important;
+}
+body[data-time="night"] .login .lbl,
+body[data-time="evening"] .login .lbl {
+  color: rgba(200,210,200,0.50) !important;
+}
+
+/* Night/evening login logo: subtle glow */
+body[data-time="night"] .login-logo,
+body[data-time="evening"] .login-logo {
+  background: rgba(140,170,130,0.10) !important;
+  border-color: rgba(180,200,170,0.20) !important;
+  color: rgba(200,210,195,0.70) !important;
+  box-shadow: 0 0 24px 4px rgba(140,170,130,0.08) !important;
+}
+@keyframes loginLogoPulseNight {
+  0%, 100% { box-shadow: 0 0 24px 4px rgba(140,170,130,0.08); transform: scale(1); }
+  50% { box-shadow: 0 0 36px 8px rgba(140,170,130,0.14); transform: scale(1.03); }
+}
+body[data-time="night"] .login-logo,
+body[data-time="evening"] .login-logo {
+  animation: loginLogoPulseNight 3s ease-in-out infinite !important;
+}
+
+/* Night/evening login error */
+body[data-time="night"] .login-err,
+body[data-time="evening"] .login-err {
+  color: #E8947A !important;
+}
+
+/* Night/evening welcome gate text */
+body[data-time="night"] #welcome-greeting,
+body[data-time="evening"] #welcome-greeting {
+  color: rgba(200,210,200,0.65) !important;
+}
+
+/* Night/evening sky scene: extend visibility */
+body[data-time="night"] .login-sky-scene,
+body[data-time="evening"] .login-sky-scene {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 80%) !important;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 80%) !important;
+}
+
+/* ===== BEACH + NIGHT/EVENING LOGIN ===== */
+body[data-sky-theme="beach"][data-time="night"] .login {
+  background: linear-gradient(180deg,
+    #0A1020 0%, #121830 12%, #1A2848 25%, #264060 38%,
+    #385870 48%, #508878 58%, #70A088 68%,
+    #90B89C 76%, #B0CEBC 84%, #D0E0D0 92%, #DCE8DA 100%
+  ) !important;
+}
+body[data-sky-theme="beach"][data-time="evening"] .login {
+  background: linear-gradient(180deg,
+    #121030 0%, #1A1844 12%, #283060 25%, #3A4870 38%,
+    #506878 48%, #688888 58%, #88A898 68%,
+    #A8C0AC 76%, #C4D4C4 84%, #D8E4D4 92%, #E2EADA 100%
+  ) !important;
+}
+body[data-sky-theme="beach"][data-time="night"] .login-btn,
+body[data-sky-theme="beach"][data-time="evening"] .login-btn {
+  background: linear-gradient(135deg, #3A7888 0%, #4A9098 40%, #58A8A0 100%) !important;
+  box-shadow: 0 4px 20px rgba(58,120,136,0.30), 0 1px 0 rgba(255,255,255,0.08) inset !important;
+  border: 1px solid rgba(100,180,180,0.18) !important;
+}
+
+/* ===== MOUNTAIN + NIGHT/EVENING LOGIN ===== */
+body[data-sky-theme="mountain"][data-time="night"] .login {
+  background: linear-gradient(180deg,
+    #0A0E18 0%, #101828 12%, #182440 25%, #243858 38%,
+    #385068 48%, #4E6870 58%, #688878 68%,
+    #88A890 76%, #A8C0A8 84%, #C8D8C0 92%, #D8E4D0 100%
+  ) !important;
+}
+body[data-sky-theme="mountain"][data-time="evening"] .login {
+  background: linear-gradient(180deg,
+    #101420 0%, #181E38 12%, #243050 25%, #344464 38%,
+    #486074 48%, #607C80 58%, #7E9888 68%,
+    #9CB49C 76%, #B8CCB4 84%, #D0DEC8 92%, #DCE8D4 100%
+  ) !important;
+}
+body[data-sky-theme="mountain"][data-time="night"] .login-btn,
+body[data-sky-theme="mountain"][data-time="evening"] .login-btn {
+  background: linear-gradient(135deg, #3A6A40 0%, #4A8050 40%, #5A9260 100%) !important;
+  box-shadow: 0 4px 20px rgba(58,106,64,0.30), 0 1px 0 rgba(255,255,255,0.08) inset !important;
+  border: 1px solid rgba(100,160,100,0.18) !important;
+}
+
+/* ===== DAWN/GOLDEN HOUR LOGIN ENHANCEMENTS ===== */
+/* Dawn: soft rosy horizon */
+body[data-time="dawn"] .login {
+  background: linear-gradient(180deg,
+    #2E1A32 0%, #4A2848 12%, #6A3858 22%, #8A5068 32%,
+    #B07080 42%, #C89098 52%, #D8B0B0 62%,
+    #E4C8C4 72%, #EDD8D4 82%, #F2E4E0 92%, #F5EAE6 100%
+  ) !important;
+}
+body[data-time="dawn"] .login-input {
+  background: rgba(160,120,140,0.35) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  color: #F0E8E4 !important;
+  border: 1px solid rgba(220,180,190,0.15) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10) !important;
+}
+body[data-time="dawn"] .login-input::placeholder {
+  color: rgba(220,190,200,0.50) !important;
+}
+body[data-time="dawn"] .login-btn {
+  background: linear-gradient(135deg, #B86878 0%, #C88090 40%, #D8A0A0 100%) !important;
+  box-shadow: 0 4px 20px rgba(184,104,120,0.25) !important;
+}
+body[data-time="dawn"] .login h1 { color: #F4ECE8 !important; }
+body[data-time="dawn"] .login .sub { color: rgba(240,220,220,0.55) !important; }
+body[data-time="dawn"] .login .lbl { color: rgba(240,220,220,0.45) !important; }
+body[data-time="dawn"] .login-logo {
+  background: rgba(200,140,160,0.10) !important;
+  border-color: rgba(220,160,180,0.20) !important;
+  color: rgba(240,210,220,0.65) !important;
+}
+
+/* Golden hour: warm amber glow */
+body[data-time="golden"] .login {
+  background: linear-gradient(180deg,
+    #3A2810 0%, #5A3818 12%, #7A5020 22%, #9A6830 32%,
+    #B88040 42%, #C89850 52%, #D8B470 62%,
+    #E4C890 72%, #EDD8B0 82%, #F4E4C8 92%, #F6ECD8 100%
+  ) !important;
+}
+body[data-time="golden"] .login-input {
+  background: rgba(160,130,80,0.38) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  color: #F4ECE0 !important;
+  border: 1px solid rgba(220,190,140,0.15) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10) !important;
+}
+body[data-time="golden"] .login-input::placeholder {
+  color: rgba(220,200,170,0.50) !important;
+}
+body[data-time="golden"] .login-btn {
+  background: linear-gradient(135deg, #B87A20 0%, #C89030 40%, #D8A840 100%) !important;
+  box-shadow: 0 4px 20px rgba(184,122,32,0.30) !important;
+}
+body[data-time="golden"] .login h1 { color: #FFF4E4 !important; }
+body[data-time="golden"] .login .sub { color: rgba(255,230,190,0.55) !important; }
+body[data-time="golden"] .login .lbl { color: rgba(255,230,190,0.45) !important; }
+body[data-time="golden"] .login-logo {
+  background: rgba(200,160,60,0.12) !important;
+  border-color: rgba(220,180,80,0.22) !important;
+  color: rgba(255,220,150,0.70) !important;
+}
+
+/* Morning: warm light, gentle gradient */
+body[data-time="morning"] .login {
+  background: linear-gradient(180deg,
+    #D8E0F0 0%, #E0E8F0 15%, #E8EEF0 30%,
+    #F0F0E8 50%, #F5F0E6 65%,
+    #F8F2E2 80%, #FAF4E4 100%
+  ) !important;
+}
+
+/* Afternoon: clean bright sky feel */
+body[data-time="afternoon"] .login {
+  background: linear-gradient(180deg,
+    #C8DCF0 0%, #D4E4F4 15%, #E0ECF6 30%,
+    #E8F0F6 50%, #EFF3F5 65%,
+    #F2F4F4 80%, #F5F5F2 100%
+  ) !important;
+}
+
 /* Sound preview button */
 .ob-sound-preview-btn {
   display: block;
