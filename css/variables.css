@@ -138,7 +138,7 @@ body[data-time="golden"] {
 /* Evening (6-9pm) - deep indigo, warm amber accents, winding down */
 body[data-time="evening"] {
   --bg: #2A2440; --bg2: #342E4A; --bg3: #3E3854;
-  --t1: #F0E8E0; --t2: #C0B8B0; --t3: #8A8290;
+  --t1: #F0E8E0; --t2: #C0B8B0; --t3: #9E96A8;
   --card-bg: rgba(50,44,70,.72); --input-bg: rgba(200,180,160,.08);
   --nav-bg: rgba(42,36,64,.85); --nav-shadow: 0 -1px 0 rgba(200,160,100,.08), 0 -4px 20px rgba(0,0,0,.15);
   --overlay-bg: rgba(12,8,24,.65); --sheet-bg: rgba(50,44,72,.94);
@@ -156,7 +156,7 @@ body[data-time="evening"] {
 /* Night (9pm-5am) - deep navy, starlit, calm and intimate */
 body[data-time="night"] {
   --bg: #1A1828; --bg2: #242236; --bg3: #2E2C42;
-  --t1: #E8E2DA; --t2: #A8A0B0; --t3: #706878;
+  --t1: #E8E2DA; --t2: #A8A0B0; --t3: #908898;
   --card-bg: rgba(38,36,56,.75); --input-bg: rgba(180,170,200,.08);
   --nav-bg: rgba(26,24,40,.88); --nav-shadow: 0 -1px 0 rgba(180,160,220,.06), 0 -4px 20px rgba(0,0,0,.20);
   --overlay-bg: rgba(8,6,18,.70); --sheet-bg: rgba(38,36,58,.95);
@@ -236,7 +236,7 @@ body[data-sky-theme="beach"][data-time="golden"] {
 }
 body[data-sky-theme="beach"][data-time="evening"] {
   --bg: #26203A; --bg2: #302A46; --bg3: #3A3450;
-  --t1: #F0E8E0; --t2: #C0B0A8; --t3: #8A7E88;
+  --t1: #F0E8E0; --t2: #C0B0A8; --t3: #9E929C;
   --card-bg: rgba(48,40,62,.76); --input-bg: rgba(200,170,140,.08);
   --nav-bg: rgba(38,32,58,.88); --nav-shadow: 0 -1px 0 rgba(200,160,100,.08), 0 -4px 20px rgba(0,0,0,.18);
   --overlay-bg: rgba(14,8,22,.65); --sheet-bg: rgba(48,40,64,.95);
@@ -252,7 +252,7 @@ body[data-sky-theme="beach"][data-time="evening"] {
 }
 body[data-sky-theme="beach"][data-time="night"] {
   --bg: #161824; --bg2: #201E32; --bg3: #2A2840;
-  --t1: #E8E0D8; --t2: #A898A8; --t3: #706070;
+  --t1: #E8E0D8; --t2: #A898A8; --t3: #908090;
   --card-bg: rgba(34,32,52,.78); --input-bg: rgba(180,160,190,.08);
   --nav-bg: rgba(22,24,36,.90); --nav-shadow: 0 -1px 0 rgba(160,140,200,.06), 0 -4px 20px rgba(0,0,0,.22);
   --overlay-bg: rgba(8,6,16,.72); --sheet-bg: rgba(34,32,54,.96);
@@ -332,7 +332,7 @@ body[data-sky-theme="mountain"][data-time="golden"] {
 }
 body[data-sky-theme="mountain"][data-time="evening"] {
   --bg: #202838; --bg2: #2A3244; --bg3: #343E50;
-  --t1: #E4E8F0; --t2: #B0B8C8; --t3: #788098;
+  --t1: #E4E8F0; --t2: #B0B8C8; --t3: #8E96AC;
   --card-bg: rgba(40,48,66,.76); --input-bg: rgba(160,180,200,.08);
   --nav-bg: rgba(32,40,56,.88); --nav-shadow: 0 -1px 0 rgba(140,160,200,.08), 0 -4px 20px rgba(0,0,0,.18);
   --overlay-bg: rgba(10,14,22,.66); --sheet-bg: rgba(40,48,68,.95);
@@ -349,7 +349,7 @@ body[data-sky-theme="mountain"][data-time="evening"] {
 }
 body[data-sky-theme="mountain"][data-time="night"] {
   --bg: #141C24; --bg2: #1E2630; --bg3: #28303E;
-  --t1: #E0E4E8; --t2: #98A0B0; --t3: #607078;
+  --t1: #E0E4E8; --t2: #98A0B0; --t3: #809098;
   --card-bg: rgba(30,38,50,.78); --input-bg: rgba(140,160,200,.08);
   --nav-bg: rgba(20,28,36,.90); --nav-shadow: 0 -1px 0 rgba(120,140,180,.06), 0 -4px 20px rgba(0,0,0,.22);
   --overlay-bg: rgba(6,8,16,.72); --sheet-bg: rgba(30,38,52,.96);
