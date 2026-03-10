@@ -11,12 +11,21 @@
     "lint": "eslint 'js/**/*.js'",
     "lint:fix": "eslint 'js/**/*.js' --fix",
     "format": "prettier --write 'js/**/*.js' 'css/**/*.css' '*.html'",
-    "format:check": "prettier --check 'js/**/*.js' 'css/**/*.css' '*.html'"
+    "format:check": "prettier --check 'js/**/*.js' 'css/**/*.css' '*.html'",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
-    "vite": "^6.2.0",
     "eslint": "^9.0.0",
+    "jsdom": "^28.1.0",
     "prettier": "^3.2.0",
-    "terser": "^5.30.0"
+    "terser": "^5.30.0",
+    "typescript": "^5.9.3",
+    "vite": "^6.2.0",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "firebase": "^12.10.0"
   }
 }

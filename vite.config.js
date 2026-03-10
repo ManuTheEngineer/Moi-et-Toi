@@ -17,7 +17,8 @@ function minifyLegacyScripts() {
       const jsFiles = [
         'app.js', 'nav.js', 'utils.js', 'weather.js', 'metrics.js',
         'modules-core.js', 'modules-social.js', 'modules-life.js',
-        'dashboard.js', 'modules-track.js', 'modules-data.js'
+        'dashboard.js', 'modules-track.js', 'modules-data.js',
+        'template-loader.js'
       ];
       for (const file of jsFiles) {
         const src = resolve(__dirname, 'js', file);
@@ -82,5 +83,11 @@ export default defineConfig({
     assetsInlineLimit: 0
   },
 
-  plugins: [minifyLegacyScripts()]
+  plugins: [minifyLegacyScripts()],
+
+  test: {
+    environment: 'jsdom',
+    include: ['tests/**/*.test.{js,ts}'],
+    globals: true
+  }
 });

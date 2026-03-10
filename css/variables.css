@@ -363,6 +363,67 @@ body[data-sky-theme="mountain"][data-time="night"] {
   --shadow: 0 4px 24px rgba(0,0,0,.20); --shadow-lg: 0 8px 48px rgba(0,0,0,.28);
 }
 
+/* ===== DARK MODE ===== */
+/* Applied via body[data-theme="dark"] or auto via prefers-color-scheme */
+body[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121218; --bg2: #1C1C26; --bg3: #262632;
+  --bg-nav: rgba(18,18,24,.90);
+  --t1: #E8E4E0; --t2: #A8A4B0; --t3: #6A6878;
+  --cream: #E8E4E0; --cream-d: #B0ACC0;
+  --gold: #D4A840; --gold-l: #E8C060; --amber: #B8A070; --amber-s: #9A8860;
+  --bdr: rgba(200,190,220,.08); --bdr-s: rgba(200,190,220,.04);
+  --red: #E08860; --red-s: rgba(224,136,96,.10); --red-b: rgba(224,136,96,.20);
+  --vio: #D4A858; --vio-s: rgba(212,168,88,.10); --vio-b: rgba(212,168,88,.20);
+  --tint: rgba(200,190,220,.05); --tint-s: rgba(200,190,220,.03); --tint-xs: rgba(200,190,220,.02);
+  --tint-b: rgba(200,190,220,.08); --tint-bd: rgba(200,190,220,.10);
+  --red-tag: #E08860; --red-tag-s: #C87048;
+  --vio-tag: #D4A858; --vio-tag-s: #B89040;
+  --glow-gold: rgba(212,168,64,.25); --glow-red: rgba(224,136,96,.22); --glow-vio: rgba(212,168,88,.22);
+  --grad-gold: rgba(212,168,64,.08); --grad-grey: rgba(160,150,180,.04);
+  --sec-bg: rgba(160,150,180,.08); --sec-bd: rgba(160,150,180,.12);
+  --amber-bg: rgba(212,168,64,.06); --amber-bd: rgba(212,168,64,.10);
+  --wg-gold: linear-gradient(135deg,rgba(212,168,64,.08),rgba(212,168,64,.03));
+  --wg-red: linear-gradient(135deg,rgba(224,136,96,.08),rgba(224,136,96,.03));
+  --wg-vio: linear-gradient(135deg,rgba(212,168,88,.08),rgba(212,168,88,.03));
+  --wg-dc: linear-gradient(135deg,rgba(212,168,64,.10),rgba(212,168,64,.04));
+  --wg-nxr: linear-gradient(135deg,rgba(224,136,96,.08),rgba(224,136,96,.03));
+  --wg-nxv: linear-gradient(135deg,rgba(212,168,88,.08),rgba(212,168,88,.03));
+  --ec-red: rgba(224,136,96,.12); --ec-vio: rgba(212,168,88,.12);
+  --tgr-bg: rgba(212,168,64,.06); --tgr-bd: rgba(212,168,64,.10); --tgr-c: var(--amber-s);
+  --trr-bg: rgba(224,136,96,.06); --trr-bd: rgba(224,136,96,.10);
+  --tvr-bg: rgba(212,168,88,.06); --tvr-bd: rgba(212,168,88,.08);
+  --card-bg: rgba(30,30,42,.72); --card-shadow: 0 2px 8px rgba(0,0,0,.20), 0 12px 36px rgba(0,0,0,.24);
+  --card-hover: 0 4px 16px rgba(0,0,0,.25), 0 20px 48px rgba(0,0,0,.28);
+  --input-bg: rgba(200,190,220,.08); --focus-ring: 0 0 0 3px rgba(212,168,64,.22);
+  --nav-bg: rgba(18,18,24,.88); --nav-shadow: 0 -1px 0 rgba(200,190,220,.06), 0 -4px 20px rgba(0,0,0,.22);
+  --glass: rgba(40,38,56,.55); --glass-strong: rgba(38,36,52,.82);
+  --overlay-bg: rgba(6,6,12,.70); --sheet-bg: rgba(30,30,44,.95);
+  --shadow: 0 4px 24px rgba(0,0,0,.22); --shadow-lg: 0 8px 48px rgba(0,0,0,.28);
+  --rose: #F06888; --rose-s: rgba(240,104,136,.12); --rose-glow: rgba(240,104,136,.22);
+  --teal: #28C0C0; --teal-s: rgba(40,192,192,.12); --teal-glow: rgba(40,192,192,.22);
+  --lavender: #9080C0; --lavender-s: rgba(144,128,192,.12); --lavender-glow: rgba(144,128,192,.22);
+  --emerald: #40B888; --emerald-s: rgba(64,184,136,.12); --emerald-glow: rgba(64,184,136,.22);
+}
+/* Dark mode overrides time-of-day background tones but preserves accents */
+body[data-theme="dark"][data-time="dawn"],
+body[data-theme="dark"][data-time="morning"],
+body[data-theme="dark"][data-time="afternoon"],
+body[data-theme="dark"][data-time="golden"] {
+  --bg: #121218; --bg2: #1C1C26; --bg3: #262632;
+  --card-bg: rgba(30,30,42,.72); --input-bg: rgba(200,190,220,.08);
+  --nav-bg: rgba(18,18,24,.88); --sheet-bg: rgba(30,30,44,.95);
+  --glass: rgba(40,38,56,.55); --glass-strong: rgba(38,36,52,.82);
+  --t1: #E8E4E0; --t2: #A8A4B0; --t3: #6A6878;
+  --bdr: rgba(200,190,220,.08); --bdr-s: rgba(200,190,220,.04);
+  --card-shadow: 0 2px 8px rgba(0,0,0,.20), 0 12px 36px rgba(0,0,0,.24);
+}
+/* Dark mode toggle button group */
+.dark-mode-toggle-group{display:flex;gap:2px;background:var(--input-bg);border-radius:var(--radius-sm);padding:2px}
+.dm-btn{border:none;background:none;color:var(--t3);font-family:'Outfit',sans-serif;font-size:11px;font-weight:400;
+  padding:5px 10px;border-radius:8px;cursor:pointer;transition:all .2s}
+.dm-btn.sel{background:var(--gold);color:#fff;font-weight:600}
+
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;scrollbar-width:none}
 *::-webkit-scrollbar{display:none}
 /* Global form element reset - prevents white flash on dark backgrounds */

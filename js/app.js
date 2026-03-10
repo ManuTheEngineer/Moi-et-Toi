@@ -1415,6 +1415,10 @@ function finishLogin() {
   setInterval(updateNavBadges, 60000);
   // Voice notes & in-app notifications
   if (typeof initVoiceNotes === 'function') setTimeout(initVoiceNotes, 2000);
+  // Initialize dark mode from saved preference
+  initDarkMode();
+  // Update push notification button state
+  updateNotifButton();
 }
 
 function switchUser() { fbOffAll(); firebase.auth().signOut(); location.reload(); }
@@ -1481,4 +1485,213 @@ function submitApiKey() {
   } else if (key) { toast('Invalid key format'); }
   else { closeModal(); }
 }
+
+// ===== DARK MODE (#17) =====
+function initDarkMode() {
+  var pref = localStorage.getItem('met_dark_mode') || 'auto';
+  applyDarkMode(pref);
+  // Highlight the active button
+  document.querySelectorAll('.dm-btn').forEach(function(b) {
+    b.classList.toggle('sel', b.dataset.dm === pref);
+  });
+  // Listen for system preference changes when in auto mode
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+      if ((localStorage.getItem('met_dark_mode') || 'auto') === 'auto') {
+        applyDarkMode('auto');
+      }
+    });
+  }
+}
+
+function setDarkMode(mode) {
+  localStorage.setItem('met_dark_mode', mode);
+  applyDarkMode(mode);
+  document.querySelectorAll('.dm-btn').forEach(function(b) {
+    b.classList.toggle('sel', b.dataset.dm === mode);
+  });
+  // Save preference to Firebase
+  if (db && user) {
+    db.ref('settings/darkMode/' + user).set(mode);
+  }
+}
+
+function applyDarkMode(mode) {
+  var isDark = false;
+  if (mode === 'dark') isDark = true;
+  else if (mode === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) isDark = true;
+  if (isDark) {
+    document.body.setAttribute('data-theme', 'dark');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#121218');
+  } else {
+    document.body.removeAttribute('data-theme');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#F5F0EB');
+  }
+}
+
+// ===== PUSH NOTIFICATIONS (#15) =====
+function updateNotifButton() {
+  var btn = document.getElementById('set-notif-btn');
+  var status = document.getElementById('notif-status');
+  if (!btn) return;
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+    btn.textContent = 'Not Supported';
+    btn.disabled = true;
+    return;
+  }
+  if (Notification.permission === 'granted') {
+    btn.textContent = 'Enabled';
+    btn.classList.add('btn-success');
+    if (status) { status.textContent = 'Notifications are active'; status.classList.remove('d-none'); }
+  } else if (Notification.permission === 'denied') {
+    btn.textContent = 'Blocked';
+    btn.disabled = true;
+    if (status) { status.textContent = 'Blocked by browser — enable in your browser settings'; status.classList.remove('d-none'); }
+  } else {
+    btn.textContent = 'Enable';
+  }
+}
+
+async function togglePushNotifications() {
+  if (!('Notification' in window)) { toast('Notifications not supported'); return; }
+  if (Notification.permission === 'granted') {
+    toast('Notifications already enabled');
+    return;
+  }
+  if (Notification.permission === 'denied') {
+    toast('Blocked — enable in browser settings');
+    return;
+  }
+  var permission = await Notification.requestPermission();
+  if (permission === 'granted') {
+    toast('Notifications enabled!');
+    // Save FCM token to Firebase for this user
+    savePushToken();
+  }
+  updateNotifButton();
+}
+
+async function savePushToken() {
+  if (!db || !user) return;
+  // Store a flag so we know this device has notifications enabled
+  try {
+    var reg = await navigator.serviceWorker.ready;
+    db.ref('pushTokens/' + user + '/web').set({
+      enabled: true,
+      timestamp: Date.now(),
+      userAgent: navigator.userAgent.substring(0, 100)
+    });
+  } catch (e) { console.warn('Could not save push token:', e); }
+}
+
+// Send a browser notification (called when partner does something)
+function sendPushNotification(title, body, icon) {
+  if (Notification.permission !== 'granted') return;
+  try {
+    navigator.serviceWorker.ready.then(function(reg) {
+      reg.showNotification(title, {
+        body: body,
+        icon: icon || 'icons/icon-192x192.png',
+        badge: 'icons/icon-96x96.png',
+        vibrate: [100, 50, 100],
+        tag: 'met-' + Date.now(),
+        renotify: true
+      });
+    });
+  } catch (e) {
+    // Fallback to basic notification
+    new Notification(title, { body: body, icon: icon || 'icons/icon-192x192.png' });
+  }
+}
+
+// Listen for partner actions and send notifications
+function initPartnerNotifications() {
+  if (!db || !user || Notification.permission !== 'granted') return;
+  // Letters from partner
+  db.ref('letters').orderByChild('timestamp').limitToLast(1).on('child_added', function(snap) {
+    var l = snap.val();
+    if (l && l.from === partner && Date.now() - l.timestamp < 10000) {
+      sendPushNotification('New Letter', (l.fromName || 'Your partner') + ' sent you a letter', 'icons/icon-192x192.png');
+    }
+  });
+  // Taps from partner
+  db.ref('taps').orderByChild('timestamp').limitToLast(1).on('child_added', function(snap) {
+    var t = snap.val();
+    if (t && t.from === partner && Date.now() - t.timestamp < 10000) {
+      var tapMsgs = { hug:'sent you a hug', kiss:'sent you a kiss', love:'sent you love', miss:'misses you', thinking:'is thinking of you' };
+      sendPushNotification((t.fromName || 'Your partner'), tapMsgs[t.type] || 'sent you a tap', 'icons/icon-192x192.png');
+    }
+  });
+}
+
+// ===== BACKGROUND SYNC (#16) =====
+// Queue offline data writes and sync when back online
+var _offlineQueue = [];
+try { _offlineQueue = JSON.parse(localStorage.getItem('met_offline_queue') || '[]'); } catch(e) { _offlineQueue = []; }
+
+function queueOfflineWrite(path, data) {
+  _offlineQueue.push({ path: path, data: data, timestamp: Date.now() });
+  localStorage.setItem('met_offline_queue', JSON.stringify(_offlineQueue));
+  // Try background sync if available
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    navigator.serviceWorker.ready.then(function(reg) {
+      reg.sync.register('met-offline-sync').catch(function() {});
+    });
+  }
+}
+
+function flushOfflineQueue() {
+  if (!db || !_offlineQueue.length) return;
+  var queue = _offlineQueue.slice();
+  _offlineQueue = [];
+  localStorage.removeItem('met_offline_queue');
+  var count = 0;
+  queue.forEach(function(item) {
+    db.ref(item.path).push(item.data).then(function() {
+      count++;
+      if (count === queue.length) toast('Synced ' + count + ' offline entries');
+    }).catch(function(e) {
+      // Re-queue failed items
+      _offlineQueue.push(item);
+      localStorage.setItem('met_offline_queue', JSON.stringify(_offlineQueue));
+    });
+  });
+}
+
+// Flush queue when coming back online
+window.addEventListener('online', function() {
+  setTimeout(flushOfflineQueue, 2000);
+});
+
+// Override submitMood and finishWorkout to queue when offline
+var _origSubmitMood = typeof submitMood === 'function' ? submitMood : null;
+var _origFinishWorkout = typeof finishWorkout === 'function' ? finishWorkout : null;
+
+// Patching is deferred to after all scripts load
+window.addEventListener('load', function() {
+  // Patch submitMood for offline support
+  if (typeof submitMood === 'function' && !submitMood._bgSyncPatched) {
+    var origMood = submitMood;
+    window.submitMood = async function() {
+      if (!navigator.onLine && selectedMood) {
+        var entry = {
+          mood: selectedMood, energy: selectedEnergy || 3,
+          note: (document.getElementById('mood-note') || {}).value || '',
+          user: user, userName: NAMES[user],
+          timestamp: Date.now(), date: localDate()
+        };
+        queueOfflineWrite('moods', entry);
+        toast('Saved offline — will sync when connected');
+        selectedMood = 0;
+        return;
+      }
+      return origMood.apply(this, arguments);
+    };
+    window.submitMood._bgSyncPatched = true;
+  }
+  // Initialize partner notifications after login
+  if (typeof initPartnerNotifications === 'function') {
+    setTimeout(initPartnerNotifications, 5000);
+  }
+});
 

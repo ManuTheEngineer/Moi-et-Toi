@@ -2117,3 +2117,46 @@ body[data-page="build"]{--page-accent:var(--teal)}
 
 /* ===== UTILITY: mb-20 ===== */
 .mb-20{margin-bottom:20px}
+
+/* ===== LANDSCAPE MODE SUPPORT (#18) ===== */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Two-column layout for main content */
+  .ctn{max-width:900px;margin:0 auto;padding:0 24px}
+  /* Reduce vertical spacing */
+  .sec-head{margin-top:12px;margin-bottom:6px}
+  .form-card{padding:10px 14px;margin-bottom:8px}
+  /* Side-by-side grids in landscape */
+  .dash-grid,.hub-grid{grid-template-columns:repeat(3,1fr)}
+  .mood-grid,.pill-row{display:flex;flex-wrap:wrap;gap:6px}
+  .pill-btn{padding:6px 12px;font-size:11px}
+  /* Compact nav in landscape */
+  .bnav{padding:4px 0;height:48px}
+  .bn{padding:2px 0}
+  .bn .bn-lbl{font-size:8px}
+  .shell{padding-bottom:52px}
+  /* Reduce hero section height */
+  .dash-hero{min-height:100px;padding:12px 16px}
+  .dash-hero-title{font-size:18px}
+  .dash-hero-sub{font-size:11px}
+  /* Login/onboarding adjusts */
+  .login{padding:16px 32px}
+  .login-logo{font-size:24px}
+  .login h1{font-size:20px}
+  .onboard-emoji{font-size:32px}
+  .onboard-title{font-size:18px}
+  /* Compact settings */
+  .settings-row{padding:8px 0}
+  /* Stack cards side by side */
+  .wg-card{padding:12px}
+  /* Sky scene shorter */
+  .sky-scene{-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 20%,transparent 50%);
+    mask-image:linear-gradient(to bottom,#000 0%,#000 20%,transparent 50%)}
+}
+/* Wider landscape screens */
+@media (orientation: landscape) and (min-width: 768px) {
+  .ctn{max-width:1000px;padding:0 32px}
+  .dash-grid{grid-template-columns:repeat(4,1fr)}
+  .hub-grid{grid-template-columns:repeat(3,1fr)}
+  /* Fitness workout grid */
+  .ws-ex-grid{grid-template-columns:repeat(2,1fr)}
+}

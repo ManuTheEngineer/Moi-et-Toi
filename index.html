@@ -14,9 +14,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" defer></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
 <link rel="stylesheet" href="css/variables.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/dynamic-bg.css">
@@ -3770,9 +3770,35 @@
     <div id="shared-music-feed" style="margin-top:12px"></div>
   </div>
 
+  <!-- Dark Mode -->
+  <div class="form-card">
+    <div class="settings-row mb-0">
+      <div>
+        <span class="settings-label">Dark Mode</span>
+        <div class="form-hint mt-2">Use dark backgrounds — follows your system preference by default</div>
+      </div>
+      <div class="dark-mode-toggle-group">
+        <button class="dm-btn" data-dm="auto" onclick="setDarkMode('auto')">Auto</button>
+        <button class="dm-btn" data-dm="light" onclick="setDarkMode('light')">Light</button>
+        <button class="dm-btn" data-dm="dark" onclick="setDarkMode('dark')">Dark</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Push Notifications -->
+  <div class="form-card">
+    <div class="settings-row mb-0">
+      <div>
+        <span class="settings-label">Push Notifications</span>
+        <div class="form-hint mt-2">Get notified when your partner sends letters, taps, or messages</div>
+      </div>
+      <button class="settings-btn btn-lavender" id="set-notif-btn" onclick="togglePushNotifications()">Enable</button>
+    </div>
+    <div id="notif-status" class="form-hint mt-4 d-none"></div>
+  </div>
+
   <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Account</div></div>
   <div class="form-card">
-    <!-- Theme: light mode only -->
     <div class="settings-row">
       <span class="settings-label">Switch User</span>
       <button onclick="switchUser()" class="settings-btn">Switch</button>
@@ -3902,10 +3928,26 @@
 <script src="js/dashboard.js" defer></script>
 <script src="js/modules-track.js" defer></script>
 <script src="js/modules-data.js" defer></script>
+<script src="js/template-loader.js" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function(e) { console.warn('SW registration failed:', e); });
+  navigator.serviceWorker.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'flush-offline-queue' && typeof flushOfflineQueue === 'function') {
+      flushOfflineQueue();
+    }
+  });
 }
+// Apply dark mode immediately to prevent flash
+(function() {
+  var dm = localStorage.getItem('met_dark_mode') || 'auto';
+  var isDark = dm === 'dark' || (dm === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  if (isDark) {
+    document.body.setAttribute('data-theme', 'dark');
+    var tc = document.querySelector('meta[name="theme-color"]');
+    if (tc) tc.setAttribute('content', '#121218');
+  }
+})();
 </script>
 </body>
 </html>
