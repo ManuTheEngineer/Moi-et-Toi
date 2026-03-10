@@ -456,10 +456,10 @@ function listenPhrases() {
     if (!items.length) { el.innerHTML = '<div class="empty">Teach each other your languages</div>'; return; }
     const langLabels = {ewe:'Ewe',french:'French',mina:'Mina',english:'English',slang:'Texas Slang'};
     el.innerHTML = items.map(i => {
-      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
+      const who = i.addedBy === user ? 'You' : esc(i.addedByName||'?');
       return `<div class="cx-phrase">
-      <div style="flex:1"><div class="cx-phrase-word">${i.word}</div><div class="cx-phrase-meaning">${i.meaning}</div></div>
-      <div style="text-align:right"><div class="cx-phrase-lang">${langLabels[i.lang]||i.lang}</div><div class="cx-phrase-by">${who}</div></div>
+      <div style="flex:1"><div class="cx-phrase-word">${esc(i.word)}</div><div class="cx-phrase-meaning">${esc(i.meaning)}</div></div>
+      <div style="text-align:right"><div class="cx-phrase-lang">${esc(langLabels[i.lang]||i.lang)}</div><div class="cx-phrase-by">${who}</div></div>
     </div>`;
     }).join('');
   });
@@ -494,11 +494,11 @@ function listenTraditions() {
     const originLabels = {togo:'From Togo',texas:'From Texas',ours:'Our Tradition'};
     el.innerHTML = items.map(i => {
       const ts = timeAgo(new Date(i.timestamp));
-      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
+      const who = i.addedBy === user ? 'You' : esc(i.addedByName||'?');
       return `<div class="cx-trad-card">
-        <div class="cx-trad-origin ${i.origin}">${originLabels[i.origin]||i.origin}</div>
-        <div class="cx-trad-title">${i.emoji} ${i.title}</div>
-        ${i.description ? `<div class="cx-trad-desc">${i.description.replace(/</g,'&lt;')}</div>` : ''}
+        <div class="cx-trad-origin ${i.origin}">${esc(originLabels[i.origin]||i.origin)}</div>
+        <div class="cx-trad-title">${esc(i.emoji||'')} ${esc(i.title)}</div>
+        ${i.description ? `<div class="cx-trad-desc">${esc(i.description)}</div>` : ''}
         <div class="cx-trad-meta">${who} · ${ts}</div>
       </div>`;
     }).join('');
@@ -533,11 +533,11 @@ function listenRecipes() {
     if (!items.length) { el.innerHTML = '<div class="empty">Share recipes from your cultures</div>'; return; }
     const originLabels = {togo:'Togolese',texas:'Texan',fusion:'Fusion'};
     el.innerHTML = items.map(i => {
-      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
+      const who = i.addedBy === user ? 'You' : esc(i.addedByName||'?');
       return `<div class="cx-recipe-card">
-        <div class="cx-trad-origin ${i.origin==='togo'?'togo':i.origin==='texas'?'texas':'ours'}">${originLabels[i.origin]||i.origin}</div>
-        <div class="cx-trad-title">${i.emoji} ${i.name}</div>
-        ${i.recipe ? `<div class="cx-trad-desc">${i.recipe.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>` : ''}
+        <div class="cx-trad-origin ${i.origin==='togo'?'togo':i.origin==='texas'?'texas':'ours'}">${esc(originLabels[i.origin]||i.origin)}</div>
+        <div class="cx-trad-title">${esc(i.emoji||'')} ${esc(i.name)}</div>
+        ${i.recipe ? `<div class="cx-trad-desc">${esc(i.recipe).replace(/\n/g,'<br>')}</div>` : ''}
         <div class="cx-trad-meta">${who}</div>
       </div>`;
     }).join('');
@@ -773,10 +773,10 @@ function listenValues() {
     if (!items.length) { el.innerHTML = '<div class="empty">What do you both stand for?</div>'; return; }
     const icons = ['◆','✦','♡','⬡','◇','✧','●','○'];
     el.innerHTML = items.map((i,idx) => {
-      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
+      const who = i.addedBy === user ? 'You' : esc(i.addedByName||'?');
       return `<div class="fdn-value-card">
       <div class="fdn-value-icon">${icons[idx%icons.length]}</div>
-      <div class="fdn-value-text">${i.title}</div>
+      <div class="fdn-value-text">${esc(i.title)}</div>
       <div class="fdn-value-by">${who}</div>
     </div>`;
     }).join('');
@@ -810,7 +810,7 @@ function listenAgreements() {
     }
     el.innerHTML = items.map(function(item) {
       var d = item.data;
-      var byName = d.addedBy === user ? 'You' : (d.addedByName || '');
+      var byName = d.addedBy === user ? 'You' : esc(d.addedByName || '');
       var source = d.source === 'personal' ? ' <span class="agree-item-by">' + byName + '\'s commitment</span>' : '';
       return '<div class="agree-item">' +
         '<div class="agree-item-check">✓</div>' +
@@ -1180,8 +1180,8 @@ function listenIntentions() {
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Set spiritual intentions together</div>'; return; }
     el.innerHTML = items.map(i => {
-      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
-      return `<div class="sp-intent-card"><div class="sp-intent-text">${i.text}</div><div class="sp-intent-by">${who}</div><button class="item-delete" onclick="event.stopPropagation();deleteIntention('${i._key}')">×</button></div>`;
+      const who = i.addedBy === user ? 'You' : esc(i.addedByName||'?');
+      return `<div class="sp-intent-card"><div class="sp-intent-text">${esc(i.text)}</div><div class="sp-intent-by">${who}</div><button class="item-delete" onclick="event.stopPropagation();deleteIntention('${i._key}')">×</button></div>`;
     }).join('');
   });
 }
@@ -1418,8 +1418,8 @@ function listenMeals() {
     if (!el) return;
     if (!items.length) { el.innerHTML = '<div class="empty">Plan your meals together</div>'; return; }
     el.innerHTML = items.map(i => {
-      const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
-      return `<div class="hl-meal-card"><div class="hl-meal-day">${i.day==='anytime'?'':i.day}</div><div class="hl-meal-name">${i.name}</div><div class="hl-meal-by">${who}</div><button class="item-delete" onclick="event.stopPropagation();deleteMeal('${i._key}')">×</button></div>`;
+      const who = i.addedBy === user ? 'You' : esc(i.addedByName||'?');
+      return `<div class="hl-meal-card"><div class="hl-meal-day">${i.day==='anytime'?'':esc(i.day)}</div><div class="hl-meal-name">${esc(i.name)}</div><div class="hl-meal-by">${who}</div><button class="item-delete" onclick="event.stopPropagation();deleteMeal('${i._key}')">×</button></div>`;
     }).join('');
   });
 }

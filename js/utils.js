@@ -1259,4 +1259,29 @@ document.addEventListener('DOMContentLoaded', function() {
   }, 5 * 60 * 1000);
 });
 
+// ===== PAGE VISIBILITY — THROTTLE ANIMATIONS =====
+(function() {
+  // Pause CSS animations & JS timers when the tab is hidden to save battery/CPU
+  document.addEventListener('visibilitychange', function() {
+    var hidden = document.hidden;
+    // Pause/resume all CSS animations globally
+    document.body.style.animationPlayState = hidden ? 'paused' : 'running';
+    document.documentElement.style.setProperty('--anim-state', hidden ? 'paused' : 'running');
+    // Toggle a class so individual CSS rules can opt in
+    document.body.classList.toggle('tab-hidden', hidden);
+    // Pause living sky creatures & scene updates
+    if (hidden) {
+      if (typeof SKY !== 'undefined') {
+        clearInterval(SKY.creatureTimer);
+        clearInterval(SKY.sceneTimer);
+      }
+    } else {
+      // Restart when tab regains focus
+      if (typeof initSkyScene === 'function' && typeof livingSkyEnabled !== 'undefined' && livingSkyEnabled) {
+        initSkyScene();
+      }
+    }
+  });
+})();
+
 // ===== INDIVIDUAL SPACE PRIVACY =====

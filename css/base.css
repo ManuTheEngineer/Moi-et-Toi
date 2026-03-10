@@ -2,6 +2,8 @@ html{overscroll-behavior:none}
 body{margin:0;padding:0}
 /* Reduce motion for better mobile perf */
 @media (prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+/* Pause all animations when tab is hidden to save CPU/battery */
+body.tab-hidden *{animation-play-state:paused!important;transition-duration:0s!important}
 /* Touch delay fix for mobile */
 *{-webkit-tap-highlight-color:transparent}
 button,a,[onclick],[role="button"]{touch-action:manipulation}

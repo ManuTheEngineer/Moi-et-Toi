@@ -2169,7 +2169,7 @@ function loadVoiceNoteFeed() {
       var timeAgo = _timeAgo(n.timestamp);
       return '<div class="vn-feed-item">' +
         '<button class="vn-feed-play" onclick="playVoiceNoteFeed(\'' + n._key + '\')">&#9654;</button>' +
-        '<div class="vn-feed-info"><div class="vn-feed-from">from ' + (n.fromName || n.from) + '</div>' +
+        '<div class="vn-feed-info"><div class="vn-feed-from">from ' + esc(n.fromName || n.from || '') + '</div>' +
         '<div class="vn-feed-meta">' + (n.duration || 0) + 's · ' + timeAgo + '</div></div>' +
         '<div class="vn-feed-replays">' + replaysLeft + '</div></div>';
     }).join('');

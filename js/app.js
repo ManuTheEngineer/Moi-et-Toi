@@ -7,6 +7,9 @@ try { FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_fb_config')); } cat
 
 // API key loaded from Firebase - set once, works for both
 let CLAUDE_API_KEY = "";
+// Proxy URL for Claude API — set this to your deployed proxy (e.g. Cloudflare Worker)
+// When set, API calls go through the proxy and the key stays server-side.
+let AI_PROXY_URL = localStorage.getItem('met_ai_proxy') || "";
 
 // Profile names & nicknames - loaded from Firebase
 let NAMES = { her: "", him: "" };
@@ -16,17 +19,20 @@ let NICKNAMES = { herCallsHim: "", himCallsHer: "" };
 
 let db, user, partner, authUser, selectedMood = 0, logExercises = [], logType = '', chatHistory = [];
 
-// Map email to profile role
-const EMAIL_MAP = {
-  'abokemmanuel1@gmail.com': 'him',
-  'takelley11@gmail.com': 'her'
-};
+// Map email to profile role — loaded from Firebase at init
+let EMAIL_MAP = {};
 
 // ===== INIT =====
 async function init() {
   firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.database();
-  
+
+  // Load email-to-role mapping from Firebase (keeps emails out of source code)
+  try {
+    const snap = await db.ref('config/emailMap').once('value');
+    EMAIL_MAP = snap.val() || {};
+  } catch(e) { console.warn('Could not load email map:', e); }
+
   // Check if already signed in
   firebase.auth().onAuthStateChanged(async (fbUser) => {
     if (fbUser) {
@@ -112,10 +118,10 @@ async function loadProfiles() {
     db.ref('profiles').on('value', snap => {
       const data = snap.val();
       // Reset to empty so onboarding triggers if profiles were wiped
-      NAMES.her = (data && data.her) || '';
-      NAMES.him = (data && data.him) || '';
-      NICKNAMES.herCallsHim = (data && data.herCallsHim) || '';
-      NICKNAMES.himCallsHer = (data && data.himCallsHer) || '';
+      NAMES.her = esc((data && data.her) || '');
+      NAMES.him = esc((data && data.him) || '');
+      NICKNAMES.herCallsHim = esc((data && data.herCallsHim) || '');
+      NICKNAMES.himCallsHer = esc((data && data.himCallsHer) || '');
       if (data && data.apiKey) CLAUDE_API_KEY = data.apiKey;
       // Use the nickname the current user gave their partner as the display name
       if (user) {

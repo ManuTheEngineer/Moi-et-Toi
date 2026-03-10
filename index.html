@@ -11,10 +11,12 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 <title>Manu & Taylor</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" defer></script>
 <link rel="stylesheet" href="css/variables.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/dynamic-bg.css">
@@ -3886,17 +3888,17 @@
 </div>
 
 <!-- ===== JAVASCRIPT ===== -->
-<script src="js/app.js"></script>
-<script src="js/nav.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/weather.js"></script>
-<script src="js/metrics.js"></script>
-<script src="js/modules-core.js"></script>
-<script src="js/modules-social.js"></script>
-<script src="js/modules-life.js"></script>
-<script src="js/dashboard.js"></script>
-<script src="js/modules-track.js"></script>
-<script src="js/modules-data.js"></script>
+<script src="js/app.js" defer></script>
+<script src="js/nav.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/weather.js" defer></script>
+<script src="js/metrics.js" defer></script>
+<script src="js/modules-core.js" defer></script>
+<script src="js/modules-social.js" defer></script>
+<script src="js/modules-life.js" defer></script>
+<script src="js/dashboard.js" defer></script>
+<script src="js/modules-track.js" defer></script>
+<script src="js/modules-data.js" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function(e) { console.warn('SW registration failed:', e); });

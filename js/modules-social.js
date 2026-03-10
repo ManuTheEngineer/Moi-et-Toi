@@ -95,7 +95,7 @@ function listenQuiz() {
     const qs = [];
     snap.forEach(c => qs.push(c.val()));
     if (!qs.length) { el.innerHTML = '<div class="empty">Add questions about yourself for your partner to answer.</div>'; return; }
-    el.innerHTML = qs.map(q => `<div class="quiz-item"><div class="quiz-item-q">${q.question}</div><div class="quiz-item-a correct">Answer: ${q.answer}</div></div>`).join('');
+    el.innerHTML = qs.map(q => `<div class="quiz-item"><div class="quiz-item-q">${esc(q.question)}</div><div class="quiz-item-a correct">Answer: ${esc(q.answer)}</div></div>`).join('');
   });
   // Partner's questions
   db.ref('games/knowme/' + partner).on('value', snap => {
@@ -106,8 +106,8 @@ function listenQuiz() {
     if (!qs.length) { el.innerHTML = '<div class="empty">Waiting for your partner to write some questions</div>'; return; }
     el.innerHTML = qs.map(q => {
       return `<div class="quiz-item">
-        <div class="quiz-item-q">${q.question}</div>
-        <input class="quiz-q" placeholder="Your guess..." onkeydown="if(event.key==='Enter')checkQuizAnswer(this,'${q.answer.replace(/'/g,"\\'")}')">
+        <div class="quiz-item-q">${esc(q.question)}</div>
+        <input class="quiz-q" placeholder="Your guess..." data-answer="${esc(q.answer)}" onkeydown="if(event.key==='Enter')checkQuizAnswer(this,this.dataset.answer)">
       </div>`;
     }).join('');
   });
@@ -185,7 +185,7 @@ function renderBucketList(items) {
     <span class="bl-emoji">${i.emoji}</span>
     <div class="bl-info">
       <div class="bl-title">${i.title.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-      <div class="bl-meta">${i.addedBy === user ? 'You' : (i.addedByName || '?')} · ${i.category}</div>
+      <div class="bl-meta">${i.addedBy === user ? 'You' : esc(i.addedByName || '?')} · ${esc(i.category)}</div>
     </div>
     <button class="item-delete" onclick="event.stopPropagation();deleteBucketItem('${i._key}')">×</button>
   </div>`).join('');
@@ -647,7 +647,7 @@ function renderDreams(items) {
   }
   el.innerHTML = filtered.map(i => {
     const ts = timeAgo(new Date(i.timestamp));
-    const who = i.addedBy === user ? 'You' : (i.addedByName||'?');
+    const who = i.addedBy === user ? 'You' : esc(i.addedByName||'?');
     const catColor = DR_CAT_COLORS[i.category] || 'var(--gold)';
     const catIcon = DR_CAT_ICONS[i.category] || '';
     const prioLabel = DR_PRIORITY_LABELS[i.priority] || '';

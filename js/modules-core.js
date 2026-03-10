@@ -652,9 +652,15 @@ async function sendAI() {
       tools: AI_TOOLS
     };
 
-    let response = await fetch('https://api.anthropic.com/v1/messages', {
+    function aiFetchHeaders() {
+      if (AI_PROXY_URL) return { 'Content-Type': 'application/json' };
+      return { 'Content-Type': 'application/json', 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' };
+    }
+    const aiEndpoint = AI_PROXY_URL || 'https://api.anthropic.com/v1/messages';
+
+    let response = await fetch(aiEndpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      headers: aiFetchHeaders(),
       body: JSON.stringify(requestBody)
     });
     let data = await response.json();
@@ -687,9 +693,9 @@ async function sendAI() {
       chatHistory.push({ role: 'user', content: toolResults });
 
       // Continue conversation with tool results
-      response = await fetch('https://api.anthropic.com/v1/messages', {
+      response = await fetch(aiEndpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        headers: aiFetchHeaders(),
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1024,
@@ -751,7 +757,7 @@ function addEx() {
   const r = document.getElementById('ex-r').value.trim();
   if (!n) return;
   logExercises.push({ name: n, sets: s, reps: r });
-  document.getElementById('ex-list').innerHTML += `<div class="lei"><span>${n}</span><span>${s ? s + 's ' : ''}${r ? r + 'r' : ''}</span></div>`;
+  document.getElementById('ex-list').innerHTML += `<div class="lei"><span>${esc(n)}</span><span>${s ? esc(s) + 's ' : ''}${r ? esc(r) + 'r' : ''}</span></div>`;
   document.getElementById('ex-n').value = '';
   document.getElementById('ex-s').value = '';
   document.getElementById('ex-r').value = '';
@@ -998,7 +1004,7 @@ function renderLetterFeed(letters) {
     const isMe = l.from === user;
     return `<div class="letter-card ${isMe ? 'from-me' : 'from-them'}">
       <div class="letter-header">
-        <span class="letter-from">${isMe ? 'You' : l.fromName}${!isMe && !l.read ? '<span class="letter-unread"></span>' : ''}</span>
+        <span class="letter-from">${isMe ? 'You' : esc(l.fromName || '')}${!isMe && !l.read ? '<span class="letter-unread"></span>' : ''}</span>
         <span class="letter-time">${ts}</span>
       </div>
       <div class="letter-body">${formatLetterText(l.message)}</div>
@@ -1215,10 +1221,10 @@ function renderDailyAnswers(data) {
 
   let html = '';
   if (myAnswer) {
-    html += `<div class="dq-answer mine"><div class="dq-answer-name">You</div>${myAnswer.answer}</div>`;
+    html += `<div class="dq-answer mine"><div class="dq-answer-name">You</div>${esc(myAnswer.answer)}</div>`;
   }
   if (theirAnswer) {
-    html += `<div class="dq-answer theirs"><div class="dq-answer-name">${NAMES[partner]}</div>${theirAnswer.answer}</div>`;
+    html += `<div class="dq-answer theirs"><div class="dq-answer-name">${NAMES[partner]}</div>${esc(theirAnswer.answer)}</div>`;
   } else if (myAnswer) {
     html += '<div class="dq-waiting">' + NAMES[partner] + ' hasn\'t answered yet</div>';
   }
