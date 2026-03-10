@@ -98,7 +98,7 @@ async function init() {
           setLivingSky(livingSkyEnabled);
         });
         if (needsOnboarding()) {
-          startOnboarding();
+          showFirstLocationPrompt();
         } else {
           finishLogin();
         }
@@ -182,7 +182,7 @@ async function doLogin() {
       setLivingSky(livingSkyEnabled);
     });
     if (needsOnboarding()) {
-      startOnboarding();
+      showFirstLocationPrompt();
     } else {
       finishLogin();
     }
@@ -296,6 +296,52 @@ function changePartnerPhoto() {
 
 function needsOnboarding() {
   return !NAMES[user] || NAMES[user] === 'Her' || NAMES[user] === 'Him';
+}
+
+// ===== FIRST-TIME LOCATION PROMPT =====
+// Shown before onboarding as the very first screen after first login
+function showFirstLocationPrompt() {
+  hideEl('login-form');
+  hideEl('welcome-gate');
+  var logo = document.getElementById('login-logo');
+  var heading = document.getElementById('login-heading');
+  var sub = document.getElementById('login-sub');
+  if (logo) logo.style.display = 'none';
+  if (heading) heading.style.display = 'none';
+  if (sub) sub.style.display = 'none';
+  showEl('first-location-prompt');
+}
+
+function handleFirstLocationAllow() {
+  toast('Requesting location...');
+  if (typeof requestLocationPermission === 'function') {
+    requestLocationPermission().then(function(granted) {
+      if (granted) {
+        toast('Location enabled!');
+        // Fetch weather in background - don't block onboarding
+        if (typeof fetchWeather === 'function') {
+          fetchWeather().then(function() {
+            if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
+            if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
+          });
+        }
+      }
+      hideEl('first-location-prompt');
+      startOnboarding();
+    });
+  } else {
+    hideEl('first-location-prompt');
+    startOnboarding();
+  }
+}
+
+function handleFirstLocationSkip() {
+  // Mark as prompted so the delayed prompt in initWeatherSystem doesn't fire again
+  if (db && user) {
+    db.ref('settings/weather/' + user + '/prompted').set(true);
+  }
+  hideEl('first-location-prompt');
+  startOnboarding();
 }
 
 // ===== ONBOARDING FLOW =====

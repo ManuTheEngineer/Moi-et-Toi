@@ -2562,8 +2562,9 @@ function initWeatherSystem() {
       if (WEATHER.audioEnabled) {
         updateAmbientAudio();
       }
-      if (!data.prompted) {
-        // First time - prompt after delay
+      // Location prompt is now shown before onboarding for first-time users.
+      // For returning users who haven't been prompted, show it after a delay.
+      if (!data.prompted && typeof needsOnboarding === 'function' && !needsOnboarding()) {
         setTimeout(function() {
           if (livingSkyEnabled) showLocationPrompt();
         }, 4000);

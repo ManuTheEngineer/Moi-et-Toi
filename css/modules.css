@@ -1484,6 +1484,12 @@
 .grow-text{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:20px}
 .grow-reflection-q{font-size:14px;color:var(--gold);font-style:italic;margin-bottom:10px}
 .grow-action-box{font-size:14px;color:var(--cream);background:var(--tint);padding:14px 16px;border-radius:16px;border-left:3px solid var(--gold);margin-bottom:20px;line-height:1.6}
+/* First-time location prompt */
+.ob-loc-icon{font-size:56px;margin-bottom:16px}
+.ob-loc-features{display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;margin-top:20px;text-align:left}
+.ob-loc-feat{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--t2);padding:8px 12px;background:var(--glass,rgba(255,255,255,.35));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:12px}
+.ob-loc-feat span{font-size:18px;flex-shrink:0}
+
 /* Settings page - collapsible sections */
 .sec-collapse{cursor:pointer;user-select:none;-webkit-user-select:none}
 .sec-collapse:active{opacity:.7}
