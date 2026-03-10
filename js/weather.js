@@ -2422,8 +2422,7 @@ function sendMoodToPartner(moodKey) {
     ts: Date.now()
   });
   if (typeof sendInAppNotif === 'function') {
-    var senderName = typeof NAMES !== 'undefined' ? NAMES[user] : user;
-    sendInAppNotif('mood', senderName + ' set the mood to ' + mood.label, mood.icon);
+    sendInAppNotif('mood', 'Set the mood to ' + mood.label, mood.icon);
   }
   toast('Sent ' + mood.label + ' mood to partner');
 }

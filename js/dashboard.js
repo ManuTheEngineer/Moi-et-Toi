@@ -1477,19 +1477,20 @@ function scheduleDailyReminder() {
 
 function sendNotification(pendingTasks) {
   if (Notification.permission !== 'granted') return;
-  // Warm, friendly messages that feel personal
-  const msgs = {
+  var partnerRole = (typeof user !== 'undefined' && user === 'her') ? 'him' : 'her';
+  var nickname = (typeof NAMES !== 'undefined' && NAMES[partnerRole]) || 'Love';
+  var msgs = {
     1: {
       'mood check-in': 'Take a moment to check in with yourself today',
       'daily question': 'A new question is waiting for you and your partner',
     },
     multi: 'Your mood check-in and daily question are waiting for you'
   };
-  const body = pendingTasks.length === 1
+  var body = pendingTasks.length === 1
     ? (msgs[1][pendingTasks[0]] || 'You have something waiting for you')
     : msgs.multi;
   try {
-    new Notification('Moi & Toi', {
+    new Notification(nickname, {
       body: body,
       icon: 'icons/icon-192x192.png',
       badge: 'icons/icon-96x96.png',
@@ -1811,7 +1812,7 @@ function shareSongWithPartner(platform) {
   });
 
   if (typeof sendInAppNotif === 'function') {
-    sendInAppNotif('music', senderName + ' shared a song with you ' + icon, icon);
+    sendInAppNotif('music', 'Shared a song with you ' + icon, icon);
   }
   toast('Song sent to partner!');
 }
@@ -2138,7 +2139,7 @@ function sendVoiceNote() {
     };
     db.ref('voiceNotes').push(noteData).then(function() {
       // Send notification to partner
-      sendInAppNotif('voiceNote', NAMES[user] + ' sent you a voice note', '🎙');
+      sendInAppNotif('voiceNote', 'Sent you a voice note', '🎙');
       toast('Voice note sent');
       discardVoiceNote();
       loadVoiceNoteFeed();
@@ -2349,7 +2350,7 @@ function showNotifToast(fromName, message, icon, targetPage) {
   var msgEl = document.getElementById('notif-toast-msg');
   if (!el) return;
   if (iconEl) iconEl.textContent = icon || '💬';
-  if (fromEl) fromEl.textContent = 'from ' + fromName;
+  if (fromEl) fromEl.textContent = fromName;
   if (msgEl) msgEl.textContent = message;
   // Make tappable - navigate to the relevant page
   el.onclick = null;
@@ -2382,8 +2383,8 @@ function patchSendTapNotif() {
     var origSendTap = sendTap;
     window.sendTap = async function(e, type, emoji) {
       await origSendTap(e, type, emoji);
-      var TAP_MSGS = { hug:'sent you a hug', kiss:'blew you a kiss', love:'sent you love', miss:'misses you', thinking:'is thinking of you' };
-      sendInAppNotif('tap', (NAMES[user] || user) + ' ' + (TAP_MSGS[type] || 'sent a tap'), emoji || '💕');
+      var TAP_MSGS = { hug:'Sent you a hug', kiss:'Blew you a kiss', love:'Sent you love', miss:'Misses you', thinking:'Is thinking of you' };
+      sendInAppNotif('tap', TAP_MSGS[type] || 'Sent a tap', emoji || '💕');
     };
     window.sendTap._patched = true;
   }

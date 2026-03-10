@@ -927,7 +927,7 @@ async function sendLetter() {
       message: text, timestamp: Date.now(), read: false
     };
     await db.ref('letters').push(entry);
-    if (typeof sendInAppNotif === 'function') sendInAppNotif('letter', NAMES[user] + ' sent you a letter', '💌');
+    if (typeof sendInAppNotif === 'function') sendInAppNotif('letter', 'Sent you a letter', '💌');
     toast('Delivered');
   }
   input.value = '';

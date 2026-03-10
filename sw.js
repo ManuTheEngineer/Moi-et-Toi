@@ -55,12 +55,12 @@ self.addEventListener('fetch', e => {
 
 // ===== PUSH NOTIFICATIONS (#15) =====
 self.addEventListener('push', e => {
-  let data = { title: 'Moi et Toi', body: 'You have a new notification' };
+  let data = { title: '', body: 'You have a new notification' };
   if (e.data) {
     try { data = e.data.json(); } catch (_) { data.body = e.data.text(); }
   }
   e.waitUntil(
-    self.registration.showNotification(data.title || 'Moi et Toi', {
+    self.registration.showNotification(data.title || data.fromName || 'Love', {
       body: data.body || '',
       icon: data.icon || './icons/icon-192x192.png',
       badge: './icons/icon-96x96.png',
