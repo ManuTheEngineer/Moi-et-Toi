@@ -2054,15 +2054,8 @@ function showLocationPrompt() {
 
   content.innerHTML =
     '<div class="loc-prompt">' +
-      '<div class="loc-prompt-icon">🌍</div>' +
       '<h2 class="loc-prompt-title">Living Weather</h2>' +
-      '<p class="loc-prompt-desc">Allow location access to bring your real weather to life - rain, snow, sunshine, wind and more, right in your background.</p>' +
-      '<div class="loc-prompt-features">' +
-        '<div class="loc-feat"><span>🌧</span> Real weather effects</div>' +
-        '<div class="loc-feat"><span>🌅</span> Actual sunrise & sunset</div>' +
-        '<div class="loc-feat"><span>🌡</span> Temperature colors</div>' +
-        '<div class="loc-feat"><span>🔊</span> Nature sounds</div>' +
-      '</div>' +
+      '<p class="loc-prompt-desc">Real weather, sunrise, and sounds — right in your background.</p>' +
       '<button class="dq-submit w-full mt-12" onclick="handleLocationAllow()">Allow Location</button>' +
       '<div class="loc-prompt-skip" onclick="handleLocationDeny()">Not now</div>' +
     '</div>';

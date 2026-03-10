@@ -285,8 +285,7 @@ body[data-sky-theme="mountain"] #page-header {
 }
 
 /* ===== ENVIRONMENT ONBOARDING ===== */
-body[data-sky-theme="beach"] .ob-progress-fill { background: #4EA5D2 !important; }
-body[data-sky-theme="mountain"] .ob-progress-fill { background: #4A7C39 !important; }
+/* ob-progress-fill removed — progress bar no longer used */
 body[data-sky-theme="beach"] .ob-next-btn { background: linear-gradient(135deg, #4EA5D2, #5BC0BE) !important; }
 body[data-sky-theme="mountain"] .ob-next-btn { background: linear-gradient(135deg, #4A7C39, #6B8F5E) !important; }
 
@@ -1480,8 +1479,7 @@ body[data-sky-theme="mountain"][data-time="night"] .particle { --particle-color:
   padding: 20px 16px;
 }
 .loc-prompt-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
+  display: none;
 }
 .loc-prompt-title {
   font-family: 'Cormorant Garamond', serif;
@@ -1497,26 +1495,7 @@ body[data-sky-theme="mountain"][data-time="night"] .particle { --particle-color:
   margin: 0 0 16px;
   font-family: Outfit, sans-serif;
 }
-.loc-prompt-features {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-.loc-feat {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--text-secondary, #6B5D4F);
-  font-family: Outfit, sans-serif;
-  padding: 6px 8px;
-  background: var(--bg2, #FAF5F0);
-  border-radius: var(--radius-sm, 8px);
-}
-.loc-feat span {
-  font-size: 16px;
-}
+/* loc-prompt-features grid removed — simplified location prompt */
 .loc-prompt-skip {
   font-size: 13px;
   color: var(--text-tertiary, #8C7B6B);

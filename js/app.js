@@ -598,13 +598,13 @@ function renderOnboardStep() {
     // Step 0: Welcome
     if (onboardStep === 0) {
       title.textContent = 'Moi & Toi';
-      sub.innerHTML = "A private world for you two.";
+      sub.innerHTML = "Your private world.";
       btn.textContent = "Begin";
     }
     // Step 1: Name
     else if (onboardStep === 1) {
       title.textContent = "Your name";
-      sub.textContent = "How your partner sees you.";
+      sub.textContent = "As they'll see it.";
       nameIn.style.display = ''; nameIn.value = onboardData.name;
       setTimeout(function(){ nameIn.focus(); }, 500);
       btn.textContent = 'Next';
@@ -620,7 +620,7 @@ function renderOnboardStep() {
     }
     // Step 3: Birthday
     else if (onboardStep === 3) {
-      title.textContent = 'Your birthday';
+      title.textContent = 'Birthday';
       sub.textContent = "So " + pNick + " never forgets.";
       birthdayIn.style.display = '';
       if (onboardData.birthday) birthdayIn.value = onboardData.birthday;
@@ -628,8 +628,8 @@ function renderOnboardStep() {
     }
     // Step 4: Photo
     else if (onboardStep === 4) {
-      title.textContent = 'A photo of ' + pNick;
-      sub.textContent = "This lives on " + partnerPossessive + " profile.";
+      title.textContent = pNick;
+      sub.textContent = "Add a photo for " + partnerPossessive + " profile.";
       photoWrap.style.display = '';
       skip.style.display = '';
       if (onboardData.photo) {
@@ -640,8 +640,8 @@ function renderOnboardStep() {
     }
     // Step 5: Anniversary
     else if (onboardStep === 5) {
-      title.textContent = 'Your anniversary';
-      sub.textContent = "When did it all begin?";
+      title.textContent = 'Anniversary';
+      sub.textContent = "When it began.";
       annivIn.style.display = '';
       skip.style.display = '';
       btn.textContent = 'Next';
@@ -649,7 +649,7 @@ function renderOnboardStep() {
     // Step 6: Mood & mental baseline
     else if (onboardStep === 6) {
       title.textContent = 'Right now';
-      sub.textContent = "Your starting point.";
+      sub.textContent = "A baseline.";
       moodBL.style.display = '';
       obRenderPills('ob-mood-pills', ['Low', 'Okay', 'Good', 'Great', 'Amazing'], 'mood');
       obRenderPills('ob-energy-pills', ['Drained', 'Tired', 'Normal', 'Energized', 'On Fire'], 'energy');
@@ -658,8 +658,8 @@ function renderOnboardStep() {
     }
     // Step 7: Fitness baseline
     else if (onboardStep === 7) {
-      title.textContent = 'Your body';
-      sub.textContent = "Optional. Skip if you'd like.";
+      title.textContent = 'Body';
+      sub.textContent = "Optional.";
       fitBL.style.display = '';
       skip.style.display = '';
       if (onboardData.heightFt) document.getElementById('ob-fit-height-ft').value = onboardData.heightFt;
@@ -672,7 +672,7 @@ function renderOnboardStep() {
     // Step 8: Relationship baseline
     else if (onboardStep === 8) {
       title.textContent = 'You two';
-      sub.textContent = "Be honest. This helps us grow with you.";
+      sub.textContent = "Be honest.";
       relBL.style.display = '';
       obRenderPills('ob-comm-pills', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], 'commRating');
       obRenderPills('ob-quality-pills', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], 'qualityRating');
@@ -681,8 +681,8 @@ function renderOnboardStep() {
     }
     // Step 9: Relationship agreement
     else if (onboardStep === 9) {
-      title.textContent = 'Your promises';
-      sub.innerHTML = "What you both commit to.";
+      title.textContent = 'Promises';
+      sub.innerHTML = "What you commit to.";
       agreeCard.style.display = '';
       obRenderAgreementList('ob-agree-mine', 'agreementsMine');
       obRenderAgreementList('ob-agree-together', 'agreementsTogether');
@@ -692,7 +692,7 @@ function renderOnboardStep() {
     // Step 10: Daily morning message
     else if (onboardStep === 10) {
       title.textContent = 'Good morning';
-      sub.innerHTML = esc(pNick) + " wakes up to a love note from you, every day.";
+      sub.innerHTML = "A daily note for " + esc(pNick) + ".";
       morningCard.style.display = '';
       document.getElementById('ob-morning-toggle').checked = onboardData.morningMsgEnabled;
       var customTA = document.getElementById('ob-morning-custom');
@@ -713,7 +713,7 @@ function renderOnboardStep() {
     // Step 11: Living Sky — actual background is the demo
     else if (onboardStep === 11) {
       title.textContent = 'Living Sky';
-      sub.innerHTML = "This sky follows the real sun. Toggle and see.";
+      sub.innerHTML = "Follows the real sun.";
       skyCard.style.display = '';
       document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
       obToggleLiveSky(onboardData.livingSky);
@@ -722,7 +722,7 @@ function renderOnboardStep() {
     // Step 12: Sky environment + nature sounds
     else if (onboardStep === 12) {
       title.textContent = 'Your world';
-      sub.innerHTML = "Tap — watch it change.";
+      sub.innerHTML = "Tap to explore.";
       skyThemeCard.style.display = '';
       var defaultTheme = isHer ? 'beach' : 'mountain';
       if (!onboardData.skyTheme || onboardData.skyTheme === 'mixed') onboardData.skyTheme = defaultTheme;
@@ -736,7 +736,7 @@ function renderOnboardStep() {
     // Step 13: All set
     else if (onboardStep === 13) {
       title.textContent = "You're in";
-      sub.innerHTML = "Quick tour of your space?";
+      sub.innerHTML = "Quick tour?";
       btn.textContent = 'Show me';
     }
     // Step 14: Finish
@@ -1166,21 +1166,21 @@ const TOUR_STEPS = [
   {
     target: '.dash-greeting-row',
     title: 'Home',
-    text: 'Your daily pulse. Updates with the time of day.',
+    text: 'Your daily pulse.',
     position: 'bottom',
     page: 'dash'
   },
   {
     target: '.hero-card-us',
     title: 'Your Pulse',
-    text: 'Days together, streaks, how you\'re both feeling.',
+    text: 'Days, streaks, feelings.',
     position: 'bottom',
     page: 'dash'
   },
   {
     target: '#dash-daily-q, .dash-card',
-    title: 'Daily Question',
-    text: 'A new one every day. Answer together.',
+    title: 'Daily Q',
+    text: 'A new one every day.',
     position: 'top',
     page: 'dash',
     fallbackText: true
@@ -1188,14 +1188,14 @@ const TOUR_STEPS = [
   {
     target: '.view-toggle',
     title: 'Us & Me',
-    text: '"Us" is your relationship. "Me" is your personal space.',
+    text: 'Toggle between yours and ours.',
     position: 'bottom',
     page: 'dash'
   },
   {
     target: '[data-p="together"]',
     title: 'Together',
-    text: 'Letters, dates, games, check-ins. All synced.',
+    text: 'Letters, dates, games.',
     position: 'top',
     page: 'dash',
     navigate: 'together'
@@ -1203,7 +1203,7 @@ const TOUR_STEPS = [
   {
     target: '[data-p="wellness"]',
     title: 'Wellness',
-    text: 'Mood, fitness, sleep, gratitude. Side by side.',
+    text: 'Mood, fitness, sleep.',
     position: 'top',
     page: 'together',
     navigate: 'wellness'
@@ -1211,7 +1211,7 @@ const TOUR_STEPS = [
   {
     target: '[data-p="plan"]',
     title: 'Plan',
-    text: 'Calendar, bucket list, finances, dream home.',
+    text: 'Calendar, bucket list, finances.',
     position: 'top',
     page: 'wellness',
     navigate: 'plan'
@@ -1219,7 +1219,7 @@ const TOUR_STEPS = [
   {
     target: '[data-p="more"]',
     title: 'More',
-    text: 'AI, photos, music, sounds, settings.',
+    text: 'AI, photos, sounds, settings.',
     position: 'top',
     page: 'plan',
     navigate: 'more'
@@ -1245,22 +1245,23 @@ function showTourStep() {
   var tooltip = document.getElementById('tour-tooltip');
   var spotlight = document.getElementById('tour-spotlight');
 
-  // Fade out current tooltip before transitioning
+  // Fade out tooltip smoothly
   if (tooltip) {
     tooltip.classList.remove('tour-tooltip-in');
     tooltip.classList.add('tour-tooltip-out');
   }
-  if (spotlight) spotlight.classList.add('tour-spot-moving');
 
-  var delay = 80;
+  var needsNav = false;
+  var delay = 100;
 
   // Navigate if needed
   if (step.navigate) {
     go(step.navigate);
-    delay = 450;
+    needsNav = true;
+    delay = 500;
   } else if (step.page) {
     go(step.page);
-    delay = 200;
+    delay = 250;
   }
 
   setTimeout(function() { positionTourStep(step); }, delay);
@@ -1284,35 +1285,39 @@ function positionTourStep(step) {
   // Set content
   titleEl.textContent = step.title;
   textEl.textContent = step.text;
-  countEl.textContent = (tourStep + 1) + ' of ' + TOUR_STEPS.length;
+  countEl.textContent = (tourStep + 1) + '/' + TOUR_STEPS.length;
 
   tooltip.classList.remove('tour-tooltip-out');
 
   if (target) {
-    // Scroll into view first, then position
-    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Ensure element is visible — force it into view without jarring scroll
+    target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Wait for scroll to settle, then position everything
     setTimeout(function() {
       var rect = target.getBoundingClientRect();
-      var pad = 10;
+      var pad = 12;
+
+      // Position spotlight smoothly (CSS transition handles animation)
       spotlight.style.display = '';
-      spotlight.classList.remove('tour-spot-moving');
+      spotlight.style.opacity = '1';
       spotlight.style.top = (rect.top - pad) + 'px';
       spotlight.style.left = (rect.left - pad) + 'px';
       spotlight.style.width = (rect.width + pad * 2) + 'px';
       spotlight.style.height = (rect.height + pad * 2) + 'px';
-      spotlight.style.borderRadius = getComputedStyle(target).borderRadius || '12px';
+      spotlight.style.borderRadius = getComputedStyle(target).borderRadius || '14px';
 
-      positionTooltip(tooltip, rect, step.position);
-
-      // Animate tooltip in
-      tooltip.classList.remove('tour-tooltip-in');
-      void tooltip.offsetWidth;
-      tooltip.classList.add('tour-tooltip-in');
-      _tourTransitioning = false;
-    }, 300);
+      // Position tooltip after spotlight arrives
+      setTimeout(function() {
+        positionTooltip(tooltip, rect, step.position);
+        tooltip.classList.remove('tour-tooltip-in');
+        void tooltip.offsetWidth;
+        tooltip.classList.add('tour-tooltip-in');
+        _tourTransitioning = false;
+      }, 200);
+    }, 350);
   } else {
     spotlight.style.display = 'none';
-    spotlight.classList.remove('tour-spot-moving');
     tooltip.style.top = '50%';
     tooltip.style.left = '50%';
     tooltip.style.right = 'auto';
@@ -1353,14 +1358,16 @@ function tourNext() {
 
 function endTour() {
   _tourTransitioning = false;
-  var overlay = document.getElementById('tour-overlay');
-  if (overlay) {
-    overlay.style.transition = 'opacity .4s ease';
-    overlay.classList.remove('on');
-  }
-  document.body.classList.remove('touring');
-  go('dash');
-  toast('Welcome home.');
+  var tooltip = document.getElementById('tour-tooltip');
+  var spotlight = document.getElementById('tour-spotlight');
+  if (tooltip) { tooltip.classList.remove('tour-tooltip-in'); tooltip.classList.add('tour-tooltip-out'); }
+  if (spotlight) spotlight.style.opacity = '0';
+  setTimeout(function() {
+    var overlay = document.getElementById('tour-overlay');
+    if (overlay) overlay.classList.remove('on');
+    document.body.classList.remove('touring');
+    go('dash');
+  }, 350);
 }
 
 function showWelcomeGate() {
