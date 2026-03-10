@@ -1687,15 +1687,24 @@ function logout() { fbOffAll(); firebase.auth().signOut(); location.reload(); }
 async function clearAllData() {
   if (!db) { toast('Not connected'); return; }
   try {
-    // Preserve only the API key
-    const snap = await db.ref('profiles/apiKey').once('value');
-    const apiKey = snap.val();
+    // Preserve API key and email map before wiping
+    const apiSnap = await db.ref('profiles/apiKey').once('value');
+    const apiKey = apiSnap.val();
+    const emailSnap = await db.ref('config/emailMap').once('value');
+    const emailMap = emailSnap.val();
     // Wipe everything
     await db.ref('/').remove();
-    // Restore only API key
+    // Restore API key and email map so login still works
     if (apiKey) await db.ref('profiles/apiKey').set(apiKey);
-    // Clear local caches
-    ['met_last_reminder', 'met_recent_pages'].forEach(k => localStorage.removeItem(k));
+    if (emailMap) await db.ref('config/emailMap').set(emailMap);
+    // Clear offline queue in memory so it doesn't re-write wiped data
+    _offlineQueue = [];
+    // Clear all app localStorage (preserve Firebase config)
+    const fbConfig = localStorage.getItem('met_fb_config');
+    const aiProxy = localStorage.getItem('met_ai_proxy');
+    Object.keys(localStorage).filter(k => k.startsWith('met_')).forEach(k => localStorage.removeItem(k));
+    if (fbConfig) localStorage.setItem('met_fb_config', fbConfig);
+    if (aiProxy) localStorage.setItem('met_ai_proxy', aiProxy);
     toast('All data cleared - onboarding will restart');
     setTimeout(() => location.reload(), 1000);
   } catch (e) {
