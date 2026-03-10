@@ -112,7 +112,13 @@ async function init() {
   });
 }
 
-// Load email-to-role mapping from Firebase, with localStorage fallback
+// Load email-to-role mapping from Firebase, with localStorage fallback.
+// Seeds the default map into Firebase if the node doesn't exist yet.
+const DEFAULT_EMAIL_MAP = {
+  'abokemmanuel1@gmail.com': 'him',
+  'takelley11@gmail.com': 'her'
+};
+
 async function loadEmailMap() {
   try {
     const snap = await db.ref('config/emailMap').once('value');
@@ -128,8 +134,19 @@ async function loadEmailMap() {
   // Fall back to localStorage cache
   try {
     const cached = JSON.parse(localStorage.getItem('met_email_map'));
-    if (cached && Object.keys(cached).length > 0) EMAIL_MAP = cached;
+    if (cached && Object.keys(cached).length > 0) {
+      EMAIL_MAP = cached;
+      return;
+    }
   } catch(e) {}
+  // If still empty, seed default map into Firebase and use it
+  if (Object.keys(EMAIL_MAP).length === 0) {
+    EMAIL_MAP = DEFAULT_EMAIL_MAP;
+    try { localStorage.setItem('met_email_map', JSON.stringify(EMAIL_MAP)); } catch(e) {}
+    try { await db.ref('config/emailMap').set(DEFAULT_EMAIL_MAP); } catch(e) {
+      console.warn('Could not seed email map to Firebase:', e);
+    }
+  }
 }
 
 async function doLogin() {
