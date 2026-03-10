@@ -218,7 +218,7 @@ body.touring .bn{pointer-events:none}
 @keyframes iconPop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1.05)}}
 
 /* Sliding indicator dot under active tab */
-.bnav-indicator{position:absolute;height:3px;bottom:0;border-radius:3px 3px 0 0;background:var(--gold);transition:left .35s cubic-bezier(.4,0,.15,1),width .35s cubic-bezier(.4,0,.15,1);z-index:0;pointer-events:none;bottom:env(safe-area-inset-bottom,8px)}
+.bnav-indicator{position:absolute;height:3px;border-radius:3px 3px 0 0;background:var(--gold);transition:left .35s cubic-bezier(.4,0,.15,1),width .35s cubic-bezier(.4,0,.15,1);z-index:0;pointer-events:none;bottom:env(safe-area-inset-bottom,8px)}
 
 /* Notification badges on nav tabs */
 .bn-badge{position:absolute;top:2px;right:6px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--rose);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0);transition:all .35s cubic-bezier(.175,.885,.32,1.275);line-height:1;z-index:2}

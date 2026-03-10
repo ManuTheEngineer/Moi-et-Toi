@@ -2,7 +2,7 @@
 (function(){
   var fullH = 0;
   function fillScreen(){
-    var h = Math.max(window.screen.height, window.innerHeight, document.documentElement.clientHeight);
+    var h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     document.documentElement.style.setProperty('--real-h', h + 'px');
     if (h > fullH) fullH = h; // Track max height (before keyboard)
   }
