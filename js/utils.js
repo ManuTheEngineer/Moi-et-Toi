@@ -298,12 +298,16 @@ function setLivingSky(on) {
     }
     if (typeof renderTerrain === 'function') renderTerrain();
     spawnOrbs();
+    // Resume aurora background animation
+    document.body.classList.remove('sky-off');
   } else {
     // Clear sky scene
     if (container) container.innerHTML = '';
     clearInterval(SKY.creatureTimer);
     clearInterval(SKY.sceneTimer);
     SKY.sceneTimer = null;
+    // Pause aurora background animation
+    document.body.classList.add('sky-off');
     // Hide terrain
     var terrain = document.getElementById('terrain-scene');
     if (terrain) { terrain.innerHTML = ''; terrain.style.opacity = '0'; }
