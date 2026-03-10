@@ -21,20 +21,41 @@
   // Track visual viewport for keyboard-aware layouts
   if (window.visualViewport) {
     var vv = window.visualViewport;
+    var kbTimer = null;
+    var wasKeyboardOpen = false;
     function onVVResize() {
       var h = vv.height;
       document.documentElement.style.setProperty('--vv-h', h + 'px');
-      // Detect keyboard open: viewport shrinks significantly
+      // Detect keyboard open: viewport shrinks significantly.
+      // Debounce the class toggle to prevent rapid add/remove flicker
+      // which causes layout thrashing (padding, nav transform, etc.)
       var keyboardOpen = fullH > 0 && (fullH - h) > 100;
-      document.body.classList.toggle('keyboard-open', keyboardOpen);
+      if (keyboardOpen !== wasKeyboardOpen) {
+        clearTimeout(kbTimer);
+        kbTimer = setTimeout(function() {
+          wasKeyboardOpen = keyboardOpen;
+          document.body.classList.toggle('keyboard-open', keyboardOpen);
+        }, keyboardOpen ? 50 : 200); // open fast, close slow to avoid bounce
+      }
     }
     vv.addEventListener('resize', onVVResize);
     onVVResize();
   }
 
-  // Dismiss keyboard on scroll - only on main page, not in modals or forms
+  // Dismiss keyboard on scroll - only on main page, not in modals or forms.
+  // Guard against focus-blur loop: ignore scroll events that happen right
+  // after an input receives focus (the browser scrolls to keep it visible,
+  // which was triggering blur → keyboard close → scroll → reopen loop).
   var scrollTick = false;
+  var lastFocusTime = 0;
+  document.addEventListener('focusin', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      lastFocusTime = Date.now();
+    }
+  }, true);
   window.addEventListener('scroll', function() {
+    // Skip if an input was just focused (browser auto-scrolls to show it)
+    if (Date.now() - lastFocusTime < 800) return;
     if (!scrollTick) {
       scrollTick = true;
       requestAnimationFrame(function() {
