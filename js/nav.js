@@ -68,7 +68,11 @@ function updateNavIndicator() {
   indicator.style.left = (btnRect.left - navRect.left) + 'px';
   indicator.style.width = btnRect.width + 'px';
 }
-window.addEventListener('resize', updateNavIndicator);
+var _navResizeTimer;
+window.addEventListener('resize', function() {
+  if (_navResizeTimer) return;
+  _navResizeTimer = requestAnimationFrame(function() { updateNavIndicator(); _navResizeTimer = 0; });
+});
 
 // ===== PAGE HEADER =====
 function updatePageHeader(p) {

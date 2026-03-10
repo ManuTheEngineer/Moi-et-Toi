@@ -2387,7 +2387,7 @@ function initVoiceNotes() {
   listenNotifications();
   patchSendTapNotif();
   // Refresh avatar play button periodically
-  setInterval(checkPartnerVoiceNote, 60000);
+  setInterval(function() { if (!document.hidden) checkPartnerVoiceNote(); }, 60000);
   // Load feed if on connect page
   loadVoiceNoteFeed();
 }

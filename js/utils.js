@@ -7,7 +7,11 @@
     if (h > fullH) fullH = h; // Track max height (before keyboard)
   }
   fillScreen();
-  window.addEventListener('resize', fillScreen);
+  var _resizeTimer;
+  window.addEventListener('resize', function() {
+    if (_resizeTimer) return;
+    _resizeTimer = requestAnimationFrame(function() { fillScreen(); _resizeTimer = 0; });
+  });
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) fillScreen(); });
 
   // Track visual viewport for keyboard-aware layouts
@@ -274,9 +278,9 @@ function initSkyScene() {
   if (!livingSkyEnabled) return;
   renderLivingSky(container);
   startCreatureLoop(container);
-  // Update sky every 2 minutes — sun position changes slowly
+  // Update sky every 2 minutes — sun position changes slowly (skip when tab hidden)
   SKY.sceneTimer = setInterval(function() {
-    if (!livingSkyEnabled) return;
+    if (!livingSkyEnabled || document.hidden) return;
     renderLivingSky(container);
   }, 120000);
 }
@@ -602,7 +606,7 @@ function startCreatureLoop(container) {
   clearInterval(SKY.creatureTimer);
   spawnCreatures(container);
   SKY.creatureTimer = setInterval(function() {
-    if (!livingSkyEnabled) return;
+    if (!livingSkyEnabled || document.hidden) return;
     spawnCreatures(container);
   }, 15000);
 }

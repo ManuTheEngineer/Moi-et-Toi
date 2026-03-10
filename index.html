@@ -3641,19 +3641,17 @@
 <div class="pg" id="pg-settings">
 <div class="ctn">
 
+  <!-- Profile & Relationship - always visible (most used) -->
   <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Profile</div></div>
   <div class="form-card">
     <label class="form-label">Your Name</label>
     <input type="text" id="set-name" placeholder="Your name" class="form-input">
   </div>
-
   <div class="form-card">
     <label class="form-label">Your Birthday</label>
     <input type="date" id="set-birthday" class="form-input">
     <div class="form-hint">We'll remind your partner and celebrate you</div>
   </div>
-
-  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Relationship</div></div>
   <div class="form-card">
     <label class="form-label">Nickname for Partner</label>
     <input type="text" id="set-nickname" placeholder="What you call them..." class="form-input">
@@ -3664,177 +3662,171 @@
     <input type="date" id="set-anniversary" class="form-input">
     <div class="form-hint">This sets your "Days Together" count on the dashboard</div>
   </div>
-
   <div class="form-card">
     <label class="form-label">Partner's Name</label>
     <input type="text" id="set-partner-name" placeholder="Partner's name" class="form-input" disabled>
     <div class="form-hint">Only your partner can change their name</div>
   </div>
-
   <button onclick="saveSettings()" class="dq-submit w-full mt-8 mb-20">Save Changes</button>
 
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">Visuals</div></div>
-  <div class="form-card">
-    <div class="settings-row mb-0">
-      <div>
-        <span class="settings-label">Living Sky</span>
-        <div class="form-hint mt-2">Sun tracks across the sky, moon and stars at night, birds and creatures</div>
-      </div>
-      <label class="toggle-switch">
-        <input type="checkbox" id="set-living-sky" checked onchange="toggleLivingSkySetting(this.checked)">
-        <span class="toggle-slider"></span>
-      </label>
-    </div>
-  </div>
-
-  <!-- Sky Theme -->
-  <div class="form-card">
-    <span class="settings-label">Sky Environment</span>
-    <div class="form-hint mt-2">Choose your living sky theme: beach, mountain, or a blend of both</div>
-    <div class="sky-theme-grid mt-8" id="set-sky-theme">
-      <button class="sky-theme-btn" data-theme="beach" onclick="setSkyTheme('beach')">
-        <span class="sky-theme-icon">🏖</span><span class="sky-theme-name">Beach</span>
-        <span class="sky-theme-desc">Seagulls, ocean waves, palm trees</span>
-      </button>
-      <button class="sky-theme-btn" data-theme="mountain" onclick="setSkyTheme('mountain')">
-        <span class="sky-theme-icon">🏔</span><span class="sky-theme-name">Mountain</span>
-        <span class="sky-theme-desc">Eagles, pines, creek, campfire glow</span>
-      </button>
-      <button class="sky-theme-btn" data-theme="mixed" onclick="setSkyTheme('mixed')">
-        <span class="sky-theme-icon">🌅</span><span class="sky-theme-name">Both</span>
-        <span class="sky-theme-desc">A blend of beach and mountain</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Living Weather -->
-  <div class="form-card">
-    <div class="settings-row">
-      <div>
-        <span class="settings-label">Living Weather</span>
-        <div class="form-hint mt-2">Real weather from your location: rain, snow, sun, wind and more</div>
-      </div>
-      <button class="settings-btn btn-lavender" id="set-location-btn" onclick="handleLocationSettingsBtn()">Enable</button>
-    </div>
-    <div id="weather-info-display" class="weather-info-bar d-none"></div>
-  </div>
-
-  <!-- Ambient Audio -->
-  <div class="form-card">
-    <div class="settings-row mb-0">
-      <div>
-        <span class="settings-label">Nature Sounds</span>
-        <div class="form-hint mt-2">Ambient audio: wind, rain, birdsong, waves and creatures</div>
-      </div>
-      <label class="toggle-switch">
-        <input type="checkbox" id="set-ambient-audio" onchange="toggleAmbientAudio(this.checked)">
-        <span class="toggle-slider"></span>
-      </label>
-    </div>
-  </div>
-
-  <!-- Mood Sounds in Settings -->
-  <div class="form-card">
-    <span class="settings-label">Mood Sounds</span>
-    <div class="form-hint mt-2">Ambient sounds for date nights, events, and relaxation</div>
-    <div class="mood-sounds-grid mt-8" id="settings-mood-sounds">
-      <button class="mood-sound-btn" data-mood="romantic" onclick="toggleMoodSound('romantic')"><span class="msb-icon">🕯</span><span class="msb-label">Romantic</span></button>
-      <button class="mood-sound-btn" data-mood="dreamy" onclick="toggleMoodSound('dreamy')"><span class="msb-icon">💫</span><span class="msb-label">Dreamy</span></button>
-      <button class="mood-sound-btn" data-mood="cozy" onclick="toggleMoodSound('cozy')"><span class="msb-icon">☕</span><span class="msb-label">Cozy</span></button>
-      <button class="mood-sound-btn" data-mood="soulful" onclick="toggleMoodSound('soulful')"><span class="msb-icon">🎷</span><span class="msb-label">Soulful</span></button>
-      <button class="mood-sound-btn" data-mood="serene" onclick="toggleMoodSound('serene')"><span class="msb-icon">🪷</span><span class="msb-label">Serene</span></button>
-      <button class="mood-sound-btn" data-mood="relaxing" onclick="toggleMoodSound('relaxing')"><span class="msb-icon">🧘</span><span class="msb-label">Relaxing</span></button>
-      <button class="mood-sound-btn" data-mood="rainyNight" onclick="toggleMoodSound('rainyNight')"><span class="msb-icon">🌃</span><span class="msb-label">Rainy Night</span></button>
-      <button class="mood-sound-btn" data-mood="campfire" onclick="toggleMoodSound('campfire')"><span class="msb-icon">🔥</span><span class="msb-label">Campfire</span></button>
-      <button class="mood-sound-btn" data-mood="tropical" onclick="toggleMoodSound('tropical')"><span class="msb-icon">🌴</span><span class="msb-label">Tropical</span></button>
-      <button class="mood-sound-btn" data-mood="lively" onclick="toggleMoodSound('lively')"><span class="msb-icon">🎉</span><span class="msb-label">Lively</span></button>
-    </div>
-    <button class="mood-stop-btn d-none" id="mood-stop-all" onclick="stopMoodSound()">Stop All Sounds</button>
-  </div>
-
-  <!-- Music Connect -->
-  <div class="form-card">
-    <span class="settings-label">Connect Music</span>
-    <div class="form-hint mt-2">Link your music for date nights and events</div>
-    <div class="music-connect-row mt-8">
-      <button class="music-connect-btn spotify" onclick="connectSpotify()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-        Spotify
-      </button>
-      <button class="music-connect-btn youtube" onclick="connectYouTubeMusic()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        YouTube Music
-      </button>
-    </div>
-    <div class="form-hint mt-4">Share playlists and songs with your partner</div>
-    <div id="shared-music-feed" style="margin-top:12px"></div>
-  </div>
-
-  <!-- Dark Mode -->
-  <div class="form-card">
-    <div class="settings-row mb-0">
-      <div>
-        <span class="settings-label">Dark Mode</span>
-        <div class="form-hint mt-2">Use dark backgrounds — follows your system preference by default</div>
-      </div>
-      <div class="dark-mode-toggle-group">
-        <button class="dm-btn" data-dm="auto" onclick="setDarkMode('auto')">Auto</button>
-        <button class="dm-btn" data-dm="light" onclick="setDarkMode('light')">Light</button>
-        <button class="dm-btn" data-dm="dark" onclick="setDarkMode('dark')">Dark</button>
+  <!-- Appearance - collapsible -->
+  <div class="sec-head sec-collapse" onclick="toggleSettingsSection(this)"><div class="sec-dot sd-teal"></div><div class="sec-title">Appearance</div><span class="sec-chevron"></span></div>
+  <div class="sec-body collapsed">
+    <div class="form-card">
+      <div class="settings-row mb-0">
+        <div>
+          <span class="settings-label">Dark Mode</span>
+          <div class="form-hint mt-2">Follows system preference by default</div>
+        </div>
+        <div class="dark-mode-toggle-group">
+          <button class="dm-btn" data-dm="auto" onclick="setDarkMode('auto')">Auto</button>
+          <button class="dm-btn" data-dm="light" onclick="setDarkMode('light')">Light</button>
+          <button class="dm-btn" data-dm="dark" onclick="setDarkMode('dark')">Dark</button>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- Push Notifications -->
-  <div class="form-card">
-    <div class="settings-row mb-0">
-      <div>
-        <span class="settings-label">Push Notifications</span>
-        <div class="form-hint mt-2">Get notified when your partner sends letters, taps, or messages</div>
+    <div class="form-card">
+      <div class="settings-row mb-0">
+        <div>
+          <span class="settings-label">Living Sky</span>
+          <div class="form-hint mt-2">Animated sky, sun, moon, stars, birds and creatures</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="set-living-sky" checked onchange="toggleLivingSkySetting(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
       </div>
-      <button class="settings-btn btn-lavender" id="set-notif-btn" onclick="togglePushNotifications()">Enable</button>
     </div>
-    <div id="notif-status" class="form-hint mt-4 d-none"></div>
+    <div class="form-card">
+      <span class="settings-label">Sky Environment</span>
+      <div class="sky-theme-grid mt-8" id="set-sky-theme">
+        <button class="sky-theme-btn" data-theme="beach" onclick="setSkyTheme('beach')">
+          <span class="sky-theme-icon">🏖</span><span class="sky-theme-name">Beach</span>
+          <span class="sky-theme-desc">Seagulls, ocean waves, palm trees</span>
+        </button>
+        <button class="sky-theme-btn" data-theme="mountain" onclick="setSkyTheme('mountain')">
+          <span class="sky-theme-icon">🏔</span><span class="sky-theme-name">Mountain</span>
+          <span class="sky-theme-desc">Eagles, pines, creek, campfire glow</span>
+        </button>
+        <button class="sky-theme-btn" data-theme="mixed" onclick="setSkyTheme('mixed')">
+          <span class="sky-theme-icon">🌅</span><span class="sky-theme-name">Both</span>
+          <span class="sky-theme-desc">A blend of beach and mountain</span>
+        </button>
+      </div>
+    </div>
+    <div class="form-card">
+      <div class="settings-row">
+        <div>
+          <span class="settings-label">Living Weather</span>
+          <div class="form-hint mt-2">Real weather from your location</div>
+        </div>
+        <button class="settings-btn btn-lavender" id="set-location-btn" onclick="handleLocationSettingsBtn()">Enable</button>
+      </div>
+      <div id="weather-info-display" class="weather-info-bar d-none"></div>
+    </div>
   </div>
 
-  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Account</div></div>
-  <div class="form-card">
-    <div class="settings-row">
-      <span class="settings-label">Switch User</span>
-      <button onclick="switchUser()" class="settings-btn">Switch</button>
+  <!-- Sounds & Music - collapsible -->
+  <div class="sec-head sec-collapse" onclick="toggleSettingsSection(this)"><div class="sec-dot sd-lavender"></div><div class="sec-title">Sounds & Music</div><span class="sec-chevron"></span></div>
+  <div class="sec-body collapsed">
+    <div class="form-card">
+      <div class="settings-row mb-0">
+        <div>
+          <span class="settings-label">Nature Sounds</span>
+          <div class="form-hint mt-2">Wind, rain, birdsong, waves and creatures</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="set-ambient-audio" onchange="toggleAmbientAudio(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
     </div>
-    <div class="settings-row mb-0">
-      <span class="settings-label">Log Out</span>
-      <button onclick="logout()" class="settings-btn settings-btn-danger">Log Out</button>
+    <div class="form-card">
+      <span class="settings-label">Mood Sounds</span>
+      <div class="form-hint mt-2">Ambient sounds for date nights, events, and relaxation</div>
+      <div class="mood-sounds-grid mt-8" id="settings-mood-sounds">
+        <button class="mood-sound-btn" data-mood="romantic" onclick="toggleMoodSound('romantic')"><span class="msb-icon">🕯</span><span class="msb-label">Romantic</span></button>
+        <button class="mood-sound-btn" data-mood="dreamy" onclick="toggleMoodSound('dreamy')"><span class="msb-icon">💫</span><span class="msb-label">Dreamy</span></button>
+        <button class="mood-sound-btn" data-mood="cozy" onclick="toggleMoodSound('cozy')"><span class="msb-icon">☕</span><span class="msb-label">Cozy</span></button>
+        <button class="mood-sound-btn" data-mood="soulful" onclick="toggleMoodSound('soulful')"><span class="msb-icon">🎷</span><span class="msb-label">Soulful</span></button>
+        <button class="mood-sound-btn" data-mood="serene" onclick="toggleMoodSound('serene')"><span class="msb-icon">🪷</span><span class="msb-label">Serene</span></button>
+        <button class="mood-sound-btn" data-mood="relaxing" onclick="toggleMoodSound('relaxing')"><span class="msb-icon">🧘</span><span class="msb-label">Relaxing</span></button>
+        <button class="mood-sound-btn" data-mood="rainyNight" onclick="toggleMoodSound('rainyNight')"><span class="msb-icon">🌃</span><span class="msb-label">Rainy Night</span></button>
+        <button class="mood-sound-btn" data-mood="campfire" onclick="toggleMoodSound('campfire')"><span class="msb-icon">🔥</span><span class="msb-label">Campfire</span></button>
+        <button class="mood-sound-btn" data-mood="tropical" onclick="toggleMoodSound('tropical')"><span class="msb-icon">🌴</span><span class="msb-label">Tropical</span></button>
+        <button class="mood-sound-btn" data-mood="lively" onclick="toggleMoodSound('lively')"><span class="msb-icon">🎉</span><span class="msb-label">Lively</span></button>
+      </div>
+      <button class="mood-stop-btn d-none" id="mood-stop-all" onclick="stopMoodSound()">Stop All Sounds</button>
+    </div>
+    <div class="form-card">
+      <span class="settings-label">Connect Music</span>
+      <div class="form-hint mt-2">Link your music for date nights and events</div>
+      <div class="music-connect-row mt-8">
+        <button class="music-connect-btn spotify" onclick="connectSpotify()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          Spotify
+        </button>
+        <button class="music-connect-btn youtube" onclick="connectYouTubeMusic()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          YouTube Music
+        </button>
+      </div>
+      <div class="form-hint mt-4">Share playlists and songs with your partner</div>
+      <div id="shared-music-feed" style="margin-top:12px"></div>
     </div>
   </div>
 
-  <div class="sec-head"><div class="sec-dot sd-lavender"></div><div class="sec-title">Data</div></div>
-  <div class="form-card">
-    <div class="settings-row">
-      <span class="settings-label">AI API Key</span>
-      <button onclick="updateApiKey()" class="settings-btn btn-lavender">Update</button>
+  <!-- Notifications - collapsible -->
+  <div class="sec-head sec-collapse" onclick="toggleSettingsSection(this)"><div class="sec-dot sd-rose"></div><div class="sec-title">Notifications</div><span class="sec-chevron"></span></div>
+  <div class="sec-body collapsed">
+    <div class="form-card">
+      <div class="settings-row mb-0">
+        <div>
+          <span class="settings-label">Push Notifications</span>
+          <div class="form-hint mt-2">Get notified when your partner sends letters, taps, or messages</div>
+        </div>
+        <button class="settings-btn btn-lavender" id="set-notif-btn" onclick="togglePushNotifications()">Enable</button>
+      </div>
+      <div id="notif-status" class="form-hint mt-4 d-none"></div>
     </div>
-    <div class="form-hint">Set the Claude API key for AI features</div>
-  </div>
-  <div class="form-card">
-    <div class="settings-row">
-      <span class="settings-label">Export All Data</span>
-      <button onclick="exportAllData()" class="settings-btn btn-lavender">Export</button>
-    </div>
-    <div class="form-hint">Download all your shared data as a JSON file for backup</div>
-  </div>
-
-  <div class="sec-head"><div class="sec-dot sd-red"></div><div class="sec-title">Danger Zone</div></div>
-  <div class="form-card">
-    <div class="settings-row mb-0">
-      <span class="settings-label">Clear All Data</span>
-      <button onclick="if(confirm('This will erase everything and restart onboarding. Are you sure?'))clearAllData()" class="settings-btn settings-btn-danger">Reset</button>
-    </div>
-    <div class="form-hint">Wipes all data and restarts the onboarding process</div>
   </div>
 
-  <div class="sec-head"><div class="sec-dot sd-teal"></div><div class="sec-title">About</div></div>
+  <!-- Account & Data - collapsible -->
+  <div class="sec-head sec-collapse" onclick="toggleSettingsSection(this)"><div class="sec-dot sd-amber"></div><div class="sec-title">Account & Data</div><span class="sec-chevron"></span></div>
+  <div class="sec-body collapsed">
+    <div class="form-card">
+      <div class="settings-row">
+        <span class="settings-label">Switch User</span>
+        <button onclick="switchUser()" class="settings-btn">Switch</button>
+      </div>
+      <div class="settings-row mb-0">
+        <span class="settings-label">Log Out</span>
+        <button onclick="logout()" class="settings-btn settings-btn-danger">Log Out</button>
+      </div>
+    </div>
+    <div class="form-card">
+      <div class="settings-row">
+        <span class="settings-label">AI API Key</span>
+        <button onclick="updateApiKey()" class="settings-btn btn-lavender">Update</button>
+      </div>
+      <div class="form-hint">Set the Claude API key for AI features</div>
+    </div>
+    <div class="form-card">
+      <div class="settings-row">
+        <span class="settings-label">Export All Data</span>
+        <button onclick="exportAllData()" class="settings-btn btn-lavender">Export</button>
+      </div>
+      <div class="form-hint">Download all your shared data as a JSON file for backup</div>
+    </div>
+    <div class="form-card">
+      <div class="settings-row mb-0">
+        <span class="settings-label">Clear All Data</span>
+        <button onclick="if(confirm('This will erase everything and restart onboarding. Are you sure?'))clearAllData()" class="settings-btn settings-btn-danger">Reset</button>
+      </div>
+      <div class="form-hint">Wipes all data and restarts the onboarding process</div>
+    </div>
+  </div>
+
   <div class="settings-about">
     <div class="t-lg fw-700 c-cream ls-1">Moi et Toi</div>
     <div class="t-sm c-t3 mt-4">A shared space for the two of you</div>

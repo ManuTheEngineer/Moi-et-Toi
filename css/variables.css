@@ -418,6 +418,16 @@ body[data-theme="dark"][data-time="golden"] {
   --bdr: rgba(200,190,220,.08); --bdr-s: rgba(200,190,220,.04);
   --card-shadow: 0 2px 8px rgba(0,0,0,.20), 0 12px 36px rgba(0,0,0,.24);
 }
+/* Dark mode aurora - boost radial gradient opacity for dark base */
+body[data-theme="dark"]::before {
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196,120,74,0.14) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(28,43,74,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(176,138,80,0.10) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(212,98,122,0.06) 0%, transparent 70%),
+    var(--bg) !important;
+}
+body[data-theme="dark"]::after { opacity: 0.04; }
 /* Dark mode toggle button group */
 .dark-mode-toggle-group{display:flex;gap:2px;background:var(--input-bg);border-radius:var(--radius-sm);padding:2px}
 .dm-btn{border:none;background:none;color:var(--t3);font-family:'Outfit',sans-serif;font-size:11px;font-weight:400;

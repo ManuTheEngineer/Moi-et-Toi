@@ -1457,8 +1457,8 @@ function finishLogin() {
   setTimeout(updateNavIndicator, 100);
   // Hub & module statuses
   setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); checkAchievements(); updateNavBadges(); initHubPages(); }, 1500);
-  // Refresh badges periodically
-  setInterval(updateNavBadges, 60000);
+  // Refresh badges periodically (skip when tab is hidden)
+  setInterval(function() { if (!document.hidden) updateNavBadges(); }, 60000);
   // Voice notes & in-app notifications
   if (typeof initVoiceNotes === 'function') setTimeout(initVoiceNotes, 2000);
   // Initialize dark mode from saved preference
@@ -1566,12 +1566,30 @@ function applyDarkMode(mode) {
   var isDark = false;
   if (mode === 'dark') isDark = true;
   else if (mode === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) isDark = true;
+  var meta = document.querySelector('meta[name="theme-color"]');
   if (isDark) {
     document.body.setAttribute('data-theme', 'dark');
-    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#121218');
+    if (meta) meta.setAttribute('content', '#121218');
   } else {
     document.body.removeAttribute('data-theme');
-    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#F5F0EB');
+    if (meta) meta.setAttribute('content', '#F5F0EB');
+  }
+  // Re-render sky and orbs to pick up new --bg variable
+  if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+  if (typeof spawnOrbs === 'function') spawnOrbs();
+}
+
+// ===== SETTINGS COLLAPSIBLE SECTIONS =====
+function toggleSettingsSection(header) {
+  var body = header.nextElementSibling;
+  if (!body || !body.classList.contains('sec-body')) return;
+  var isOpen = !body.classList.contains('collapsed');
+  if (isOpen) {
+    body.classList.add('collapsed');
+    header.classList.remove('open');
+  } else {
+    body.classList.remove('collapsed');
+    header.classList.add('open');
   }
 }
 

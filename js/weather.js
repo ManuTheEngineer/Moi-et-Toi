@@ -1985,6 +1985,7 @@ function spawnSceneCreatures(container) {
   if (!WEATHER._creatureInterval) {
     WEATHER._creatureInterval = setInterval(function() {
       if (!container.parentNode) { clearInterval(WEATHER._creatureInterval); WEATHER._creatureInterval = null; return; }
+      if (document.hidden) return;
       if (container.querySelectorAll('.scene-creature').length >= MAX_SCENE_CREATURES) return;
       var t = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
       var c = scene.creatures[t] || scene.creatures.morning;
@@ -2451,8 +2452,8 @@ function syncSkyState() {
     if (typeof spawnOrbs === 'function') spawnOrbs();
   }
 }
-// Sync every 60 seconds
-setInterval(syncSkyState, 60000);
+// Sync every 60 seconds (skip when tab hidden)
+setInterval(function() { if (!document.hidden) syncSkyState(); }, 60000);
 
 // Periodic audio retry - if enabled but no sounds playing, try again
 // Does NOT create AudioContext — only works with an existing one
@@ -2573,6 +2574,7 @@ function initWeatherSystem() {
   // Refresh weather every 15 minutes
   if (!WEATHER.refreshTimer) {
     WEATHER.refreshTimer = setInterval(function() {
+      if (document.hidden) return;
       if (WEATHER.locationGranted) {
         fetchWeather().then(function() {
           var container = document.getElementById('sky-scene');
