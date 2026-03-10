@@ -162,6 +162,7 @@ async function doLogin() {
   
   try {
     const result = await firebase.auth().signInWithEmailAndPassword(email, pass);
+    showError(''); // Clear any previous error message on successful login
     authUser = result.user;
     // Reload email map now that we're authenticated (rules may require auth)
     if (Object.keys(EMAIL_MAP).length === 0) {

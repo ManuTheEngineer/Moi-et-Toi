@@ -957,7 +957,11 @@ function renderMountainTerrain(container) {
   var rockPositions = [
     { left: 15, bottom: 24, w: 8, h: 5 },
     { left: 55, bottom: 22, w: 10, h: 6 },
-    { left: 82, bottom: 20, w: 7, h: 4 }
+    { left: 82, bottom: 20, w: 7, h: 4 },
+    { left: 8, bottom: 18, w: 6, h: 4 },
+    { left: 42, bottom: 26, w: 9, h: 5 },
+    { left: 68, bottom: 16, w: 8, h: 5 },
+    { left: 92, bottom: 14, w: 7, h: 4 }
   ];
   for (var r = 0; r < rockPositions.length; r++) {
     var rp = rockPositions[r];
@@ -965,6 +969,53 @@ function renderMountainTerrain(container) {
     rock.className = 'terrain-rock';
     rock.style.cssText = 'left:' + rp.left + '%;bottom:' + rp.bottom + '%;width:' + rp.w + 'px;height:' + rp.h + 'px';
     container.appendChild(rock);
+  }
+
+  // Winding mountain river through the valley
+  var river = document.createElement('div');
+  river.className = 'terrain-mtn-river';
+  container.appendChild(river);
+
+  // Deer silhouettes grazing near the foothills
+  var deerPositions = [
+    { left: 20, bottom: 12, size: 10, flip: false },
+    { left: 24, bottom: 11, size: 8, flip: true },
+    { left: 75, bottom: 10, size: 9, flip: false }
+  ];
+  for (var d = 0; d < deerPositions.length; d++) {
+    var dp = deerPositions[d];
+    var deer = document.createElement('div');
+    deer.className = 'terrain-deer';
+    deer.style.cssText = 'left:' + dp.left + '%;bottom:' + dp.bottom + '%;--deer-size:' + dp.size + 'px' +
+      (dp.flip ? ';transform:scaleX(-1)' : '');
+    container.appendChild(deer);
+  }
+
+  // Wooden bridge over the river
+  var bridge = document.createElement('div');
+  bridge.className = 'terrain-bridge';
+  container.appendChild(bridge);
+
+  // Low fog patches in the valley
+  var fogPositions = [
+    { left: 5, bottom: 8, w: 80, h: 10, delay: 0 },
+    { left: 15, bottom: 5, w: 60, h: 8, delay: 5 }
+  ];
+  for (var fg = 0; fg < fogPositions.length; fg++) {
+    var fp = fogPositions[fg];
+    var fog = document.createElement('div');
+    fog.className = 'terrain-valley-fog';
+    fog.style.cssText = 'left:' + fp.left + '%;bottom:' + fp.bottom + '%;width:' + fp.w + 'px;height:' + fp.h + 'px;animation-delay:' + fp.delay + 's';
+    container.appendChild(fog);
+  }
+
+  // Small wildflowers at the base
+  var mtnFlowerPositions = [10, 30, 42, 58, 72, 85];
+  for (var mf = 0; mf < mtnFlowerPositions.length; mf++) {
+    var mFlower = document.createElement('div');
+    mFlower.className = 'terrain-mtn-flower';
+    mFlower.style.cssText = 'left:' + mtnFlowerPositions[mf] + '%;animation-delay:' + (mf * 0.8) + 's';
+    container.appendChild(mFlower);
   }
 }
 
@@ -1077,7 +1128,10 @@ function renderBeachTerrain(container) {
     { left: 42, bottom: 3 },
     { left: 60, bottom: 5 },
     { left: 75, bottom: 3.5 },
-    { left: 35, bottom: 6 }
+    { left: 35, bottom: 6 },
+    { left: 50, bottom: 3 },
+    { left: 15, bottom: 5 },
+    { left: 68, bottom: 4 }
   ];
   for (var sh = 0; sh < shellPositions.length; sh++) {
     var sp = shellPositions[sh];
@@ -1085,6 +1139,65 @@ function renderBeachTerrain(container) {
     shell.className = 'terrain-seashell';
     shell.style.cssText = 'left:' + sp.left + '%;bottom:' + sp.bottom + '%;transform:rotate(' + (Math.random() * 360) + 'deg)';
     container.appendChild(shell);
+  }
+
+  // Beach umbrella
+  var umbrella = document.createElement('div');
+  umbrella.className = 'terrain-umbrella';
+  container.appendChild(umbrella);
+
+  // Starfish on the shore
+  var starfishPositions = [
+    { left: 30, bottom: 3.5 },
+    { left: 55, bottom: 4.5 },
+    { left: 78, bottom: 3 }
+  ];
+  for (var sf = 0; sf < starfishPositions.length; sf++) {
+    var sfp = starfishPositions[sf];
+    var starfish = document.createElement('div');
+    starfish.className = 'terrain-starfish';
+    starfish.style.cssText = 'left:' + sfp.left + '%;bottom:' + sfp.bottom + '%;transform:rotate(' + (Math.random() * 360) + 'deg)';
+    container.appendChild(starfish);
+  }
+
+  // Tide pool reflections
+  var tidePools = [
+    { left: 20, bottom: 2.5, w: 18, h: 8 },
+    { left: 65, bottom: 2, w: 14, h: 6 }
+  ];
+  for (var tp = 0; tp < tidePools.length; tp++) {
+    var tpp = tidePools[tp];
+    var pool = document.createElement('div');
+    pool.className = 'terrain-tidepool';
+    pool.style.cssText = 'left:' + tpp.left + '%;bottom:' + tpp.bottom + '%;width:' + tpp.w + 'px;height:' + tpp.h + 'px';
+    container.appendChild(pool);
+  }
+
+  // Driftwood on the shore
+  var driftPositions = [
+    { left: 38, bottom: 5.5, w: 20, rot: -8 },
+    { left: 72, bottom: 4, w: 16, rot: 12 }
+  ];
+  for (var dw = 0; dw < driftPositions.length; dw++) {
+    var dwp = driftPositions[dw];
+    var drift = document.createElement('div');
+    drift.className = 'terrain-driftwood';
+    drift.style.cssText = 'left:' + dwp.left + '%;bottom:' + dwp.bottom + '%;width:' + dwp.w + 'px;transform:rotate(' + dwp.rot + 'deg)';
+    container.appendChild(drift);
+  }
+
+  // Distant cargo ship on horizon
+  var cargo = document.createElement('div');
+  cargo.className = 'terrain-cargo-ship';
+  container.appendChild(cargo);
+
+  // Wave splash effects at shoreline
+  var splashPositions = [12, 28, 48, 65, 82];
+  for (var ws = 0; ws < splashPositions.length; ws++) {
+    var splash = document.createElement('div');
+    splash.className = 'terrain-wave-splash';
+    splash.style.cssText = 'left:' + splashPositions[ws] + '%;animation-delay:' + (ws * 1.2) + 's';
+    container.appendChild(splash);
   }
 }
 
@@ -1269,6 +1382,82 @@ function renderMeadowTerrain(container) {
       'px;animation-delay:' + (d * 2) + 's';
     container.appendChild(dapple);
   }
+
+  // Rabbits near the fence
+  var rabbitPositions = [
+    { left: 12, bottom: 7, size: 6, flip: false },
+    { left: 28, bottom: 6, size: 5, flip: true }
+  ];
+  for (var rb = 0; rb < rabbitPositions.length; rb++) {
+    var rbp = rabbitPositions[rb];
+    var rabbit = document.createElement('div');
+    rabbit.className = 'terrain-rabbit';
+    rabbit.style.cssText = 'left:' + rbp.left + '%;bottom:' + rbp.bottom + '%;--rabbit-size:' + rbp.size + 'px' +
+      (rbp.flip ? ';transform:scaleX(-1)' : '');
+    container.appendChild(rabbit);
+  }
+
+  // Hay bales scattered in the meadow
+  var balePositions = [
+    { left: 58, bottom: 9 },
+    { left: 70, bottom: 7 },
+    { left: 65, bottom: 10 }
+  ];
+  for (var hb = 0; hb < balePositions.length; hb++) {
+    var hbp = balePositions[hb];
+    var bale = document.createElement('div');
+    bale.className = 'terrain-hay-bale';
+    bale.style.cssText = 'left:' + hbp.left + '%;bottom:' + hbp.bottom + '%';
+    container.appendChild(bale);
+  }
+
+  // Small pond with lily pads
+  var pond = document.createElement('div');
+  pond.className = 'terrain-pond';
+  container.appendChild(pond);
+
+  // Pond shimmer
+  var pondShimmer = document.createElement('div');
+  pondShimmer.className = 'terrain-pond-shimmer';
+  container.appendChild(pondShimmer);
+
+  // Dandelion seeds floating in the breeze
+  var dandyPositions = [
+    { left: 18, bottom: 20, delay: 0 },
+    { left: 35, bottom: 26, delay: 2 },
+    { left: 52, bottom: 22, delay: 4 },
+    { left: 70, bottom: 28, delay: 6 },
+    { left: 85, bottom: 24, delay: 8 },
+    { left: 42, bottom: 30, delay: 3 },
+    { left: 28, bottom: 18, delay: 7 }
+  ];
+  for (var dd = 0; dd < dandyPositions.length; dd++) {
+    var ddp = dandyPositions[dd];
+    var dandy = document.createElement('div');
+    dandy.className = 'terrain-dandelion-seed';
+    dandy.style.cssText = 'left:' + ddp.left + '%;bottom:' + ddp.bottom + '%;animation-delay:' + ddp.delay + 's';
+    container.appendChild(dandy);
+  }
+
+  // Wildflower bushes - larger flower clusters
+  var bushPositions = [
+    { left: 15, bottom: 5, color: 'rgba(220,180,255,0.4)' },
+    { left: 42, bottom: 4, color: 'rgba(255,200,160,0.4)' },
+    { left: 75, bottom: 6, color: 'rgba(255,180,200,0.4)' },
+    { left: 88, bottom: 4.5, color: 'rgba(200,220,255,0.35)' }
+  ];
+  for (var wb = 0; wb < bushPositions.length; wb++) {
+    var wbp = bushPositions[wb];
+    var bush = document.createElement('div');
+    bush.className = 'terrain-flower-bush';
+    bush.style.cssText = 'left:' + wbp.left + '%;bottom:' + wbp.bottom + '%;--bush-color:' + wbp.color;
+    container.appendChild(bush);
+  }
+
+  // Small wooden birdhouse on a tree
+  var birdhouse = document.createElement('div');
+  birdhouse.className = 'terrain-birdhouse';
+  container.appendChild(birdhouse);
 }
 
 // ===== SKY THEME (beach / mountain / mixed) =====
