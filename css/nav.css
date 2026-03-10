@@ -13,7 +13,8 @@
 .explore-dir-item .edi-label{font-size:9px;font-weight:500;color:var(--cream);letter-spacing:.3px}
 
 /* ===== LOGIN ===== */
-.login{position:relative;width:100%;min-height:100vh;min-height:-webkit-fill-available;min-height:100dvh;z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:var(--bg);padding:env(safe-area-inset-top,0px) 32px calc(env(safe-area-inset-bottom,0px) + 8px);box-sizing:border-box;overflow-y:auto}
+.login{position:relative;width:100%;min-height:100vh;min-height:-webkit-fill-available;min-height:100dvh;z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:var(--bg);padding:env(safe-area-inset-top,0px) 32px calc(env(safe-area-inset-bottom,0px) + 8px);box-sizing:border-box;overflow:visible}
+@media (display-mode:standalone){.login{min-height:calc(100vh + env(safe-area-inset-bottom,50px));min-height:calc(100dvh + env(safe-area-inset-bottom,50px))}}
 .login::before{content:'';position:fixed;top:0;left:0;right:0;bottom:calc(-1 * env(safe-area-inset-bottom,50px));background:var(--bg);z-index:-1;pointer-events:none}
 .login-sky-scene{position:fixed;top:0;left:0;right:0;bottom:calc(-1 * env(safe-area-inset-bottom,50px));z-index:0;pointer-events:none;overflow:hidden;
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%);
@@ -52,7 +53,7 @@
 
 /* ===== ONBOARDING ===== */
 /* Onboarding mode: top-align content and allow scrolling */
-.login.onboard-active{align-items:center;justify-content:flex-start;padding-top:max(env(safe-area-inset-top,20px),40px);padding-bottom:80px;scroll-behavior:smooth}
+.login.onboard-active{align-items:center;justify-content:flex-start;padding-top:max(env(safe-area-inset-top,20px),40px);padding-bottom:80px;scroll-behavior:smooth;overflow-y:auto}
 .login.onboard-active>.login-inner{margin:auto 0}
 .onboard-wrap{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px;margin:auto}
 .onboard-progress{width:100%;max-width:220px;height:4px;background:var(--tint,rgba(26,26,46,.08));border-radius:4px;margin-bottom:32px;overflow:hidden}
