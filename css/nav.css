@@ -97,39 +97,6 @@
 .pg.on{display:block}
 
 
-/* ===== SETTINGS TABS & FORM ===== */
-.set-tabs{display:flex;gap:0;background:var(--card-bg);border-radius:14px;padding:4px;margin-bottom:20px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)}
-.set-tab{flex:1;padding:10px 8px;border:none;background:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--t3);cursor:pointer;transition:all .3s}
-.set-tab.active{background:var(--gold);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-.set-panel{display:none}
-.set-panel.active{display:block}
-.set-card{padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:12px}
-.set-lbl{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
-.set-input{display:block;width:100%;padding:12px 14px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;box-sizing:border-box;outline:none;transition:box-shadow .2s}
-.set-input:focus{box-shadow:var(--focus-ring)}
-.set-input:disabled{opacity:.5;cursor:not-allowed}
-.set-hint{font-size:11px;color:var(--t3);margin-top:6px;line-height:1.4}
-.set-row{display:flex;align-items:center;justify-content:space-between}
-.set-row-label{font-size:13px;color:var(--t2)}
-.set-row-btn{padding:8px 18px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}
-.set-row-btn:active{transform:scale(.95)}
-.set-row-btn-danger{background:rgba(220,80,80,0.12);color:#dc5050}
-
-/* ===== ENVIRONMENT GRID ===== */
-.env-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.env-card{position:relative;border-radius:18px;padding:18px 14px;cursor:pointer;transition:all .3s;border:2px solid transparent;overflow:hidden;min-height:90px;display:flex;flex-direction:column;justify-content:flex-end}
-.env-card.active{border-color:var(--gold);box-shadow:0 0 20px var(--glow-gold)}
-.env-card:active{transform:scale(.96)}
-.env-card .env-name{font-size:13px;font-weight:600;color:#fff;position:relative;z-index:1}
-.env-card .env-desc{font-size:10px;color:rgba(255,255,255,.65);margin-top:2px;position:relative;z-index:1}
-.env-card .env-creatures{position:absolute;top:10px;right:12px;font-size:16px;opacity:.7;z-index:1}
-.env-card::before{content:'';position:absolute;inset:0;z-index:0;border-radius:16px}
-.env-card[data-env="starry"]::before{background:linear-gradient(135deg,#0C1220,#1C2B4A,#2A3D60)}
-.env-card[data-env="forest"]::before{background:linear-gradient(135deg,#0A1F12,#1A3D28,#2D6B45)}
-.env-card[data-env="ocean"]::before{background:linear-gradient(135deg,#081828,#0E2E4A,#1A4D6E)}
-.env-card[data-env="blossom"]::before{background:linear-gradient(135deg,#2A1525,#4A2040,#6E3860)}
-.env-card[data-env="savanna"]::before{background:linear-gradient(135deg,#2A1A08,#4A3018,#6E4828)}
-
 /* ===== MOBILE RESPONSIVE ===== */
 
 /* Phones (up to 430px — iPhone 16 Pro is 393pt, Pro Max is 430pt) */

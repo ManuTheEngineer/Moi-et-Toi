@@ -2463,78 +2463,42 @@
 <div class="pg" id="pg-settings">
 <div class="ctn">
 
-  <!-- Settings Tabs -->
-  <div class="set-tabs">
-    <button class="set-tab active" onclick="switchSettingsTab('profile')">Profile</button>
-    <button class="set-tab" onclick="switchSettingsTab('look')">Look</button>
-    <button class="set-tab" onclick="switchSettingsTab('account')">Account</button>
+  <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Profile</div></div>
+  <div style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:12px">
+    <label style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Your Name</label>
+    <input type="text" id="set-name" placeholder="Your name" style="width:100%;padding:12px 14px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;box-sizing:border-box">
   </div>
 
-  <!-- PROFILE TAB -->
-  <div class="set-panel active" id="set-panel-profile">
-    <div class="set-card">
-      <label class="set-lbl">Your Name</label>
-      <input type="text" id="set-name" class="set-input" placeholder="Your name">
-    </div>
-
-    <div class="set-card">
-      <label class="set-lbl">Your Birthday</label>
-      <input type="date" id="set-birthday" class="set-input">
-      <div class="set-hint">We'll remind your partner and celebrate you</div>
-    </div>
-
-    <div class="set-card">
-      <label class="set-lbl">Nickname for Partner</label>
-      <input type="text" id="set-nickname" class="set-input" placeholder="Pet name, nickname, or real name">
-      <div class="set-hint">What you lovingly call them</div>
-    </div>
-
-    <div class="set-card">
-      <label class="set-lbl">Together Since</label>
-      <input type="date" id="set-anniversary" class="set-input">
-      <div class="set-hint">Sets your "Days Together" count on the dashboard</div>
-    </div>
-
-    <div class="set-card">
-      <label class="set-lbl">Partner's Name</label>
-      <input type="text" id="set-partner-name" class="set-input" placeholder="Partner's name" disabled>
-      <div class="set-hint">Set by your partner</div>
-    </div>
-
-    <button onclick="saveSettings()" class="dq-submit" style="width:100%;margin-top:12px;margin-bottom:20px">Save Changes</button>
+  <div class="sec-head"><div class="sec-dot sd-rose"></div><div class="sec-title">Relationship</div></div>
+  <div style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:12px">
+    <label style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Together Since</label>
+    <input type="date" id="set-anniversary" style="width:100%;padding:12px 14px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;box-sizing:border-box">
+    <div style="font-size:11px;color:var(--t3);margin-top:6px">This sets your "Days Together" count on the dashboard</div>
   </div>
 
-  <!-- LOOK TAB -->
-  <div class="set-panel" id="set-panel-look">
-    <div class="sec-head"><div class="sec-dot sd-gold"></div><div class="sec-title">Environment</div></div>
-    <div class="set-hint" style="margin-bottom:14px">Choose a scene — it changes the entire feel of the app</div>
-    <div class="env-grid" id="env-grid"></div>
-
-    <div class="sec-head" style="margin-top:24px"><div class="sec-dot sd-rose"></div><div class="sec-title">Theme</div></div>
-    <div class="set-card">
-      <div class="set-row">
-        <span class="set-row-label">Appearance</span>
-        <button onclick="toggleTheme()" class="set-row-btn" id="set-theme-btn">Auto</button>
-      </div>
-    </div>
+  <div style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:12px">
+    <label style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px">Partner's Name</label>
+    <input type="text" id="set-partner-name" placeholder="Partner's name" style="width:100%;padding:12px 14px;border-radius:12px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:14px;box-sizing:border-box" disabled>
+    <div style="font-size:11px;color:var(--t3);margin-top:6px">Only your partner can change their name</div>
   </div>
 
-  <!-- ACCOUNT TAB -->
-  <div class="set-panel" id="set-panel-account">
-    <div class="set-card">
-      <div class="set-row">
-        <span class="set-row-label">Switch User</span>
-        <button onclick="switchUser()" class="set-row-btn">Switch</button>
-      </div>
+  <button onclick="saveSettings()" class="dq-submit" style="width:100%;margin-top:8px;margin-bottom:20px">Save Changes</button>
+
+  <div class="sec-head"><div class="sec-dot sd-amber"></div><div class="sec-title">Account</div></div>
+  <div style="padding:14px 16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s);margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <span style="font-size:13px;color:var(--t2)">Theme</span>
+      <button onclick="toggleTheme()" style="padding:8px 16px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-size:12px;cursor:pointer" id="set-theme-btn">Toggle</button>
     </div>
-    <div class="set-card">
-      <div class="set-row">
-        <span class="set-row-label">Log Out</span>
-        <button onclick="logout()" class="set-row-btn set-row-btn-danger">Log Out</button>
-      </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <span style="font-size:13px;color:var(--t2)">Switch User</span>
+      <button onclick="switchUser()" style="padding:8px 16px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-size:12px;cursor:pointer">Switch</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:13px;color:var(--t2)">Log Out</span>
+      <button onclick="logout()" style="padding:8px 16px;border-radius:20px;border:none;background:rgba(220,80,80,0.15);color:#dc5050;font-size:12px;cursor:pointer">Log Out</button>
     </div>
   </div>
-
 </div>
 </div>
 

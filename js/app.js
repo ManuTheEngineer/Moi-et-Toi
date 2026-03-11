@@ -365,8 +365,7 @@ function finishLogin() {
   listenMemories();
   listenAchievements();
   listenGrowData();
-  // Environment, particles, global mode, presence
-  applyEnvironment(getEnvironment());
+  // Particles, global mode, presence
   initParticles();
   setGlobalMode(localStorage.getItem('met_global_mode') || 'us');
   initPresence();
