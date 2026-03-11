@@ -83,6 +83,7 @@ async function init() {
         WEATHER.lat = pos.coords.latitude;
         WEATHER.lon = pos.coords.longitude;
         WEATHER.locationGranted = true;
+        try { localStorage.setItem('met_weather_location', JSON.stringify({ lat: WEATHER.lat, lon: WEATHER.lon })); } catch(e) {}
       }
       fetchWeather().then(function() {
         var loginSky = document.getElementById('login-sky-scene');

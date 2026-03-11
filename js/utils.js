@@ -115,6 +115,29 @@ function renderLoginSky() {
   var skyC = document.getElementById('login-sky-scene');
   var terrC = document.getElementById('login-terrain-scene');
   if (!skyC || !terrC) return;
+
+  // Restore cached weather data for instant weather effects on login page
+  if (typeof WEATHER !== 'undefined' && !WEATHER.data) {
+    try {
+      var cached = localStorage.getItem('met_weather_cache');
+      if (cached) {
+        WEATHER.data = JSON.parse(cached);
+      }
+    } catch(e) {}
+  }
+  // Restore cached location for weather-aware login rendering
+  if (typeof WEATHER !== 'undefined' && !WEATHER.lat) {
+    try {
+      var cachedLoc = localStorage.getItem('met_weather_location');
+      if (cachedLoc) {
+        var loc = JSON.parse(cachedLoc);
+        WEATHER.lat = loc.lat;
+        WEATHER.lon = loc.lon;
+        WEATHER.locationGranted = true;
+      }
+    } catch(e) {}
+  }
+
   if (typeof renderLivingSky === 'function') renderLivingSky(skyC);
   terrC.innerHTML = '';
   var theme = window._cachedSkyTheme || 'mixed';

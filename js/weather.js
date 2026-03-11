@@ -124,7 +124,8 @@ var WEATHER_EFFECTS = {
   sand: { particles: 35, overlay: 'dust', sound: 'wind' },
   smoke: { particles: 0, overlay: 'haze' },
   tornado: { particles: 60, overlay: 'storm', sound: 'wind' },
-  squall: { particles: 50, overlay: 'storm', sound: 'wind' }
+  squall: { particles: 50, overlay: 'storm', sound: 'wind' },
+  hail: { particles: 45, overlay: 'storm', sound: 'wind' }
 };
 
 // ===== GEOLOCATION =====
@@ -140,6 +141,8 @@ function requestLocationPermission() {
         WEATHER.lat = pos.coords.latitude;
         WEATHER.lon = pos.coords.longitude;
         WEATHER.locationGranted = true;
+        // Cache location for instant login page rendering
+        try { localStorage.setItem('met_weather_location', JSON.stringify({ lat: WEATHER.lat, lon: WEATHER.lon })); } catch(e) {}
         if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
           db.ref('settings/weather/' + user + '/location').set({
             lat: WEATHER.lat,
@@ -256,6 +259,8 @@ function fetchWeather() {
           sunset: data.daily && data.daily.sunset ? new Date(data.daily.sunset[0]).getTime() / 1000 : null
         }
       };
+      // Cache weather data in localStorage for instant login page rendering
+      try { localStorage.setItem('met_weather_cache', JSON.stringify(WEATHER.data)); } catch(e) {}
       // Update location button
       var btn = document.getElementById('set-location-btn');
       if (btn) btn.textContent = 'Refresh';
@@ -275,9 +280,11 @@ function mapWMOCode(code) {
   if (code >= 45 && code <= 48) return 'fog';
   if (code >= 51 && code <= 57) return 'drizzle';
   if (code >= 61 && code <= 67) return 'rain';
-  if (code >= 71 && code <= 77) return 'snow';
+  if (code >= 71 && code <= 75) return 'snow';
+  if (code === 77) return 'hail'; // ice pellets
   if (code >= 80 && code <= 82) return 'rain';
   if (code >= 85 && code <= 86) return 'snow';
+  if (code === 96 || code === 99) return 'hail'; // hail with thunderstorm
   if (code >= 95 && code <= 99) return 'thunderstorm';
   return 'clear';
 }
@@ -323,9 +330,11 @@ function renderWeatherEffects(container) {
       var x = Math.random() * 120 - 10;
       var delay = Math.random() * 3;
       var dur = condition === 'snow' ? (3 + Math.random() * 4) :
+                condition === 'hail' ? (0.6 + Math.random() * 0.8) :
                 condition === 'dust' || condition === 'sand' ? (2 + Math.random() * 3) :
                 (0.4 + Math.random() * 0.6);
       var size = condition === 'snow' ? (3 + Math.random() * 5) :
+                 condition === 'hail' ? (4 + Math.random() * 6) :
                  condition === 'dust' || condition === 'sand' ? (2 + Math.random() * 3) :
                  (1 + Math.random() * 1.5);
 
@@ -361,6 +370,33 @@ function renderWeatherEffects(container) {
       streak.className = 'weather-wind-streak';
       streak.style.cssText = 'top:' + (Math.random() * 80) + '%;animation-delay:' + (Math.random() * 4) + 's;animation-duration:' + (1 + Math.random() * 2) + 's';
       layer.appendChild(streak);
+    }
+  }
+
+  // Dynamic cloud cover based on actual cloud percentage
+  if (WEATHER.data.clouds !== undefined && WEATHER.data.clouds > 10) {
+    var cloudCount = Math.floor(WEATHER.data.clouds / 15); // 1-7 clouds
+    cloudCount = Math.min(cloudCount, 7);
+    for (var c = 0; c < cloudCount; c++) {
+      var cloud = document.createElement('div');
+      cloud.className = 'weather-cloud';
+      var cSize = 80 + Math.random() * 120;
+      var cTop = 2 + Math.random() * 25;
+      var cLeft = -10 + (c / cloudCount) * 110;
+      var cDur = 40 + Math.random() * 60;
+      var cOpacity = Math.min(0.15 + (WEATHER.data.clouds / 100) * 0.35, 0.5);
+      cloud.style.cssText = 'width:' + cSize + 'px;height:' + (cSize * 0.4) + 'px;top:' + cTop + '%;left:' + cLeft + '%;opacity:' + cOpacity + ';animation-duration:' + cDur + 's;animation-delay:' + (c * -8) + 's';
+      layer.appendChild(cloud);
+    }
+  }
+
+  // Clear sky sun rays
+  if (condition === 'clear' && WEATHER.data.clouds < 15) {
+    var time = typeof getTimeOfDay === 'function' ? getTimeOfDay() : 'afternoon';
+    if (time !== 'night' && time !== 'evening') {
+      var rays = document.createElement('div');
+      rays.className = 'weather-sun-rays';
+      layer.appendChild(rays);
     }
   }
 
