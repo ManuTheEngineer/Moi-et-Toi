@@ -75,6 +75,23 @@ async function init() {
   // Start connection state monitoring
   initConnectionMonitor();
 
+  // Early weather fetch — update login sky background immediately using
+  // previously granted location. Runs in parallel with auth, no user needed.
+  if (navigator.geolocation && typeof fetchWeather === 'function') {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      if (typeof WEATHER !== 'undefined') {
+        WEATHER.lat = pos.coords.latitude;
+        WEATHER.lon = pos.coords.longitude;
+        WEATHER.locationGranted = true;
+      }
+      fetchWeather().then(function() {
+        var loginSky = document.getElementById('login-sky-scene');
+        if (loginSky && typeof renderLivingSky === 'function') renderLivingSky(loginSky);
+      });
+    }, function() { /* location denied or unavailable — login sky stays time-based */ },
+    { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 });
+  }
+
   // Load email-to-role mapping from Firebase (keeps emails out of source code)
   await loadEmailMap();
 
@@ -325,9 +342,12 @@ function handleFirstLocationAllow() {
     requestLocationPermission().then(function(granted) {
       if (granted) {
         toast('Location enabled!');
-        // Fetch weather in background - don't block onboarding
+        // Fetch weather and immediately update the login sky background
         if (typeof fetchWeather === 'function') {
           fetchWeather().then(function() {
+            // Update the login screen sky with real weather data
+            var loginSky = document.getElementById('login-sky-scene');
+            if (loginSky && typeof renderLivingSky === 'function') renderLivingSky(loginSky);
             if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
             if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
           });

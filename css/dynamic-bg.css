@@ -3969,6 +3969,127 @@ body[data-time="golden"] .onboard-sub strong {
   color: #FFF4E4 !important;
 }
 
+/* Morning/afternoon onboarding text legibility - bright sky needs strong contrast */
+body[data-time="morning"] .onboard-title,
+body[data-time="afternoon"] .onboard-title {
+  color: #2A1A0A !important;
+  text-shadow: 0 1px 6px rgba(255,255,255,0.60), 0 0 20px rgba(255,255,255,0.35) !important;
+}
+body[data-time="morning"] .onboard-sub,
+body[data-time="afternoon"] .onboard-sub {
+  color: #3A2A1A !important;
+  text-shadow: 0 1px 4px rgba(255,255,255,0.55), 0 0 14px rgba(255,255,255,0.25) !important;
+}
+body[data-time="morning"] .onboard-sub strong,
+body[data-time="afternoon"] .onboard-sub strong {
+  color: #1A1A0A !important;
+}
+body[data-time="morning"] .onboard-skip,
+body[data-time="afternoon"] .onboard-skip {
+  color: #4A3A2A !important;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.45) !important;
+}
+body[data-time="morning"] .ob-bl-label,
+body[data-time="afternoon"] .ob-bl-label {
+  color: #3A2A1A !important;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.45) !important;
+}
+body[data-time="morning"] .ob-agree-heading,
+body[data-time="afternoon"] .ob-agree-heading {
+  color: #2A1A0A !important;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.45) !important;
+}
+body[data-time="morning"] .ob-agree-hint,
+body[data-time="afternoon"] .ob-agree-hint {
+  color: #4A3A2A !important;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.35) !important;
+}
+body[data-time="morning"] .ob-agree-item,
+body[data-time="afternoon"] .ob-agree-item {
+  color: #2A1A0A !important;
+  background: rgba(255,255,255,0.35) !important;
+}
+body[data-time="morning"] .ob-pill,
+body[data-time="afternoon"] .ob-pill {
+  color: #3A2A1A !important;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.3) !important;
+}
+body[data-time="morning"] .ob-photo-hint,
+body[data-time="afternoon"] .ob-photo-hint {
+  color: #4A3A2A !important;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.35) !important;
+}
+body[data-time="morning"] .ob-morning-preview,
+body[data-time="afternoon"] .ob-morning-preview {
+  color: #2A1A0A !important;
+}
+body[data-time="morning"] .ob-tour-row div,
+body[data-time="afternoon"] .ob-tour-row div {
+  color: #3A2A1A !important;
+}
+body[data-time="morning"] .ob-tour-row strong,
+body[data-time="afternoon"] .ob-tour-row strong {
+  color: #1A1A0A !important;
+}
+body[data-time="morning"] .ob-partner-status,
+body[data-time="afternoon"] .ob-partner-status {
+  color: #3A2A1A !important;
+  background: rgba(255,255,255,0.25) !important;
+}
+body[data-time="morning"] .sky-theme-name,
+body[data-time="afternoon"] .sky-theme-name {
+  color: #2A1A0A !important;
+}
+body[data-time="morning"] .sky-theme-desc,
+body[data-time="afternoon"] .sky-theme-desc {
+  color: #4A3A2A !important;
+}
+/* Dawn/golden onboarding sub-elements also need legibility */
+body[data-time="dawn"] .ob-bl-label,
+body[data-time="golden"] .ob-bl-label {
+  color: rgba(240,220,210,0.70) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
+}
+body[data-time="dawn"] .ob-agree-heading,
+body[data-time="golden"] .ob-agree-heading {
+  color: #F4ECE8 !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
+}
+body[data-time="dawn"] .ob-agree-hint,
+body[data-time="golden"] .ob-agree-hint {
+  color: rgba(240,220,210,0.65) !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.20) !important;
+}
+body[data-time="dawn"] .ob-agree-item,
+body[data-time="golden"] .ob-agree-item {
+  color: rgba(240,230,220,0.80) !important;
+  background: rgba(0,0,0,0.12) !important;
+}
+body[data-time="dawn"] .ob-pill,
+body[data-time="golden"] .ob-pill {
+  color: rgba(240,220,210,0.70) !important;
+}
+body[data-time="dawn"] .ob-photo-hint,
+body[data-time="golden"] .ob-photo-hint {
+  color: rgba(240,220,210,0.65) !important;
+}
+body[data-time="dawn"] .ob-tour-row div,
+body[data-time="golden"] .ob-tour-row div {
+  color: rgba(240,220,210,0.65) !important;
+}
+body[data-time="dawn"] .ob-tour-row strong,
+body[data-time="golden"] .ob-tour-row strong {
+  color: #F4ECE8 !important;
+}
+body[data-time="dawn"] .sky-theme-name,
+body[data-time="golden"] .sky-theme-name {
+  color: #F4ECE8 !important;
+}
+body[data-time="dawn"] .sky-theme-desc,
+body[data-time="golden"] .sky-theme-desc {
+  color: rgba(240,220,210,0.60) !important;
+}
+
 /* Night/evening login logo: subtle glow */
 body[data-time="night"] .login-logo,
 body[data-time="evening"] .login-logo {
