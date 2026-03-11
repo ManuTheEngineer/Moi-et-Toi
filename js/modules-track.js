@@ -2088,8 +2088,7 @@ async function saveGrowReflection() {
 // ===== NUTRITION MODULE =====
 // ========================================
 let nutritionData = {},
-  recipeData = {},
-  mealPlanData = {};
+  recipeData = {};
 
 function listenNutritionData() {
   if (!db) return;
@@ -2102,10 +2101,7 @@ function listenNutritionData() {
     recipeData = snap.val() || {};
     renderRecipeList();
   });
-  db.ref('nutrition/mealPlans').on('value', snap => {
-    mealPlanData = snap.val() || {};
-    renderMealPlan();
-  });
+  // Meal planning consolidated into pg-homelife
 }
 
 function renderNutritionDay() {
@@ -2235,51 +2231,7 @@ async function logWater(count) {
   await db.ref('nutrition/' + user + '/meals/' + today + '/water').set(count);
 }
 
-async function addMealPlan() {
-  const name = document.getElementById('mealplan-name').value.trim();
-  const day = document.getElementById('mealplan-day').value;
-  if (!name) {
-    toast('Enter meal name');
-    return;
-  }
-  const weekKey = getWeekKey();
-  await db.ref('nutrition/mealPlans/' + weekKey).push({ name, day, user, timestamp: Date.now() });
-  document.getElementById('mealplan-name').value = '';
-  toast('Added to meal plan');
-}
-
-function getWeekKey() {
-  const now = new Date();
-  const start = new Date(now);
-  start.setDate(start.getDate() - start.getDay());
-  return localDate(start);
-}
-
-function renderMealPlan() {
-  const container = document.getElementById('mealplan-list');
-  if (!container) return;
-  const plans = Object.entries(mealPlanData);
-  if (!plans.length) {
-    container.innerHTML = '<div class="empty">Plan meals for the week</div>';
-    return;
-  }
-  const dayOrder = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6, sun: 7 };
-  const items = [];
-  plans.forEach(([wk, meals]) => {
-    Object.entries(meals).forEach(([k, m]) => items.push({ ...m, key: wk + '/' + k }));
-  });
-  items.sort((a, b) => (dayOrder[a.day] || 0) - (dayOrder[b.day] || 0));
-  container.innerHTML = items
-    .map(
-      m => `
-    <div class="card-data" style="margin-bottom:6px">
-      <div class="cd-accent" style="background:var(--rose)"></div>
-      <div class="cd-number" style="font-size:10px;text-transform:uppercase;color:var(--t3);min-width:30px">${m.day}</div>
-      <div class="cd-info"><div class="cd-label">${esc(m.name)}</div></div>
-    </div>`
-    )
-    .join('');
-}
+// Meal planning functions consolidated into pg-homelife (modules-life.js)
 
 async function saveRecipe() {
   const name = document.getElementById('recipe-name').value.trim();

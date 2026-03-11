@@ -2112,38 +2112,8 @@
             <div class="sec-title">Send a Vibe</div>
           </div>
           <div class="form-hint" style="margin: -6px 0 6px">Set the mood on your partner's screen</div>
-          <div class="mood-sounds-grid" id="send-vibe-moods">
-            <button class="mood-sound-btn" data-mood="romantic" onclick="sendMoodToPartner('romantic')">
-              <span class="msb-icon">🕯</span><span class="msb-label">Romantic</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="dreamy" onclick="sendMoodToPartner('dreamy')">
-              <span class="msb-icon">💫</span><span class="msb-label">Dreamy</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="cozy" onclick="sendMoodToPartner('cozy')">
-              <span class="msb-icon">☕</span><span class="msb-label">Cozy</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="soulful" onclick="sendMoodToPartner('soulful')">
-              <span class="msb-icon">🎷</span><span class="msb-label">Soulful</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="serene" onclick="sendMoodToPartner('serene')">
-              <span class="msb-icon">🪷</span><span class="msb-label">Serene</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="relaxing" onclick="sendMoodToPartner('relaxing')">
-              <span class="msb-icon">🧘</span><span class="msb-label">Relaxing</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="rainyNight" onclick="sendMoodToPartner('rainyNight')">
-              <span class="msb-icon">🌃</span><span class="msb-label">Rainy Night</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="campfire" onclick="sendMoodToPartner('campfire')">
-              <span class="msb-icon">🔥</span><span class="msb-label">Campfire</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="tropical" onclick="sendMoodToPartner('tropical')">
-              <span class="msb-icon">🌴</span><span class="msb-label">Tropical</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="lively" onclick="sendMoodToPartner('lively')">
-              <span class="msb-icon">🎉</span><span class="msb-label">Lively</span>
-            </button>
-          </div>
+          <!-- Populated by renderMoodSoundsGrid() -->
+          <div class="mood-sounds-grid" id="send-vibe-moods"></div>
 
           <!-- Listen Together -->
           <div class="sec-head">
@@ -2255,7 +2225,7 @@
             <button class="ms-save" onclick="saveMilestone()">Save Milestone</button>
             <div class="ms-cancel" onclick="toggleMsForm()">Cancel</div>
           </div>
-          <div class="timeline" id="timeline"><div class="empty">Add your first milestone together</div></div>
+          <div class="timeline" id="timeline"><div class="empty" onclick="toggleMsForm()" style="cursor:pointer">Add your first milestone together <span style="opacity:.5">— tap here</span></div></div>
         </div>
       </div>
 
@@ -2491,7 +2461,7 @@
             <div class="sec-title">Today</div>
           </div>
           <div class="grat-compose">
-            <textarea class="grat-textarea" id="grat-input" placeholder="Today I'm grateful for..."></textarea>
+            <textarea class="grat-textarea" id="grat-input" placeholder="What are you grateful for today?"></textarea>
             <button class="dq-submit mt-8" id="grat-submit-btn" onclick="submitGratitude()">Share</button>
           </div>
 
@@ -2804,7 +2774,7 @@
           </div>
         </div>
       </div>
-      <!-- ===== FOUNDATION WORKOUT ===== -->
+      <!-- ===== WORKOUT PROGRAMS (content injected by JS — see modules-track.js) ===== -->
       <div class="pg" id="pg-w1"><div class="ctn" id="w1-content"></div></div>
       <div class="pg" id="pg-w2"><div class="ctn" id="w2-content"></div></div>
       <div class="pg" id="pg-w3"><div class="ctn" id="w3-content"></div></div>
@@ -2835,62 +2805,8 @@
             <div class="sec-dot sd-amber"></div>
             <div class="sec-title">Set the Mood</div>
           </div>
-          <div class="mood-sounds-grid" id="mood-sounds-grid">
-            <button class="mood-sound-btn" data-mood="romantic" onclick="toggleMoodSound('romantic')">
-              <span class="msb-icon">🕯</span><span class="msb-label">Romantic</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="relaxing" onclick="toggleMoodSound('relaxing')">
-              <span class="msb-icon">🧘</span><span class="msb-label">Relaxing</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="dreamy" onclick="toggleMoodSound('dreamy')">
-              <span class="msb-icon">💫</span><span class="msb-label">Dreamy</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="serene" onclick="toggleMoodSound('serene')">
-              <span class="msb-icon">🪷</span><span class="msb-label">Serene</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="cozy" onclick="toggleMoodSound('cozy')">
-              <span class="msb-icon">☕</span><span class="msb-label">Cozy</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="soulful" onclick="toggleMoodSound('soulful')">
-              <span class="msb-icon">🎷</span><span class="msb-label">Soulful</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="focused" onclick="toggleMoodSound('focused')">
-              <span class="msb-icon">🎯</span><span class="msb-label">Focused</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="lively" onclick="toggleMoodSound('lively')">
-              <span class="msb-icon">🎉</span><span class="msb-label">Lively</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="playful" onclick="toggleMoodSound('playful')">
-              <span class="msb-icon">🎵</span><span class="msb-label">Playful</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="tropical" onclick="toggleMoodSound('tropical')">
-              <span class="msb-icon">🌴</span><span class="msb-label">Tropical</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="campfire" onclick="toggleMoodSound('campfire')">
-              <span class="msb-icon">🔥</span><span class="msb-label">Campfire</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="rainyNight" onclick="toggleMoodSound('rainyNight')">
-              <span class="msb-icon">🌃</span><span class="msb-label">Rainy Night</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="rain" onclick="toggleMoodSound('rain')">
-              <span class="msb-icon">🌧</span><span class="msb-label">Rain</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="ocean" onclick="toggleMoodSound('ocean')">
-              <span class="msb-icon">🌊</span><span class="msb-label">Ocean</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="night" onclick="toggleMoodSound('night')">
-              <span class="msb-icon">🌙</span><span class="msb-label">Night</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="forest" onclick="toggleMoodSound('forest')">
-              <span class="msb-icon">🌲</span><span class="msb-label">Forest</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="birds" onclick="toggleMoodSound('birds')">
-              <span class="msb-icon">🐦</span><span class="msb-label">Birds</span>
-            </button>
-            <button class="mood-sound-btn" data-mood="thunder" onclick="toggleMoodSound('thunder')">
-              <span class="msb-icon">⛈</span><span class="msb-label">Storm</span>
-            </button>
-          </div>
+          <!-- Populated by renderMoodSoundsGrid() -->
+          <div class="mood-sounds-grid" id="mood-sounds-grid"></div>
           <div style="display: flex; gap: 8px; margin-top: 6px">
             <button class="mood-stop-btn d-none" id="mood-stop-main" onclick="stopMoodSound()" style="flex: 1">
               Stop Sound
@@ -2971,7 +2887,7 @@
             <div class="sec-dot sd-amber"></div>
             <div class="sec-title">Past Check-ins</div>
           </div>
-          <div id="ci-feed"><div class="empty">Check in on how you're doing as a team</div></div>
+          <div id="ci-feed"><div class="empty" onclick="document.getElementById('ci-well').focus()" style="cursor:pointer">Check in on how you're doing as a team <span style="opacity:.5">— tap here</span></div></div>
         </div>
       </div>
 
@@ -3035,6 +2951,7 @@
                 <option value="family">👨‍👩‍👧 Family</option>
                 <option value="experience">🎯 Experiences</option>
                 <option value="financial">💰 Financial</option>
+                <option value="shared">🤝 Shared Goal</option>
               </select>
             </div>
             <div class="dr-form-row">
@@ -3065,6 +2982,7 @@
             <span class="bl-cat" onclick="filterDreams('family', this)">👨‍👩‍👧 Family</span>
             <span class="bl-cat" onclick="filterDreams('experience', this)">🎯 Experiences</span>
             <span class="bl-cat" onclick="filterDreams('financial', this)">💰 Financial</span>
+            <span class="bl-cat" onclick="filterDreams('shared', this)">🤝 Goals</span>
             <span class="bl-cat" onclick="filterDreams('achieved', this)">✓ Achieved</span>
           </div>
 
@@ -4866,25 +4784,10 @@
             </div>
           </div>
 
-          <!-- Shared Meal Planning (Us mode) -->
+          <!-- Meal Planning lives in Home Life -->
           <div class="us-only">
             <div class="nh-section-label">Meal Planning</div>
-            <div class="nh-plan-card">
-              <div class="d-flex gap-8 mb-10">
-                <input type="text" id="mealplan-name" placeholder="Meal name" class="nh-meal-input" style="flex: 2" />
-                <select id="mealplan-day" class="nh-meal-input" style="flex: 1; padding: 10px 8px">
-                  <option value="mon">Mon</option>
-                  <option value="tue">Tue</option>
-                  <option value="wed">Wed</option>
-                  <option value="thu">Thu</option>
-                  <option value="fri">Fri</option>
-                  <option value="sat">Sat</option>
-                  <option value="sun">Sun</option>
-                </select>
-              </div>
-              <button class="nh-action-btn" onclick="addMealPlan()">Add to Plan</button>
-            </div>
-            <div id="mealplan-list"><div class="empty">Plan meals for the week</div></div>
+            <button class="nh-action-btn" onclick="go('homelife')" style="width:100%">Open Meal Ideas →</button>
           </div>
 
           <!-- Shared Grocery List -->
@@ -5345,7 +5248,7 @@
             <div class="sec-dot sd-gold"></div>
             <div class="sec-title" id="mem-section-title">All Memories</div>
           </div>
-          <div class="mem-grid" id="mem-grid"><div class="empty">Upload your first photo together</div></div>
+          <div class="mem-grid" id="mem-grid"><div class="empty" onclick="document.getElementById('mem-file').click()" style="cursor:pointer">Upload your first photo together <span style="opacity:.5">— tap here</span></div></div>
 
           <!-- Memory Timeline (hidden by default) -->
           <div class="mem-timeline" id="mem-timeline" class="d-none"></div>
@@ -5556,23 +5459,12 @@
             </div>
             <div id="fdn-value-list" class="stagger-in"><div class="empty">What do you both stand for?</div></div>
 
+            <!-- Shared Goals consolidated into Dreams page -->
             <div class="sec-head">
               <div class="sec-dot sd-teal"></div>
               <div class="sec-title">Shared Goals</div>
             </div>
-            <div class="bl-form">
-              <input type="text" id="shared-goal-input" placeholder="A goal for both of us..." class="quiz-q" />
-              <select id="shared-goal-cat" class="select-field">
-                <option value="relationship">Relationship</option>
-                <option value="health">Health</option>
-                <option value="finance">Finance</option>
-                <option value="home">Home</option>
-                <option value="career">Career</option>
-                <option value="personal">Growth</option>
-              </select>
-              <button onclick="addSharedGoal()">+</button>
-            </div>
-            <div id="shared-goals-list" class="stagger-in"><div class="empty">Build your future together</div></div>
+            <button class="nh-action-btn" onclick="go('dreams')" style="width:100%">Open Dream Board →</button>
 
             <div class="sec-head">
               <div class="sec-dot sd-lavender"></div>
@@ -5773,7 +5665,7 @@
               ></textarea>
               <button class="dq-submit" onclick="addBlessing()">Give Thanks</button>
             </div>
-            <div id="sp-blessings" class="stagger-in"><div class="empty">Count your blessings together</div></div>
+            <div id="sp-blessings" class="stagger-in"><div class="empty">Count a blessing you've received</div></div>
 
             <div class="sec-head">
               <div class="sec-dot sd-rose"></div>
@@ -5813,7 +5705,7 @@
               <span class="bl-cat" onclick="filterBucket('home', this)">Home</span>
             </div>
             <div id="bl-list" class="stagger-in">
-              <div class="empty">What do you two want to do before you're old and gray?</div>
+              <div class="empty" onclick="document.getElementById('bl-input').focus()" style="cursor:pointer">What do you two want to do before you're old and gray? <span style="opacity:.5">— tap here</span></div>
             </div>
           </div>
 
@@ -6177,38 +6069,8 @@
             <div class="form-card">
               <span class="settings-label">Mood Sounds</span>
               <div class="form-hint mt-2">Ambient sounds for date nights, events, and relaxation</div>
-              <div class="mood-sounds-grid mt-8" id="settings-mood-sounds">
-                <button class="mood-sound-btn" data-mood="romantic" onclick="toggleMoodSound('romantic')">
-                  <span class="msb-icon">🕯</span><span class="msb-label">Romantic</span>
-                </button>
-                <button class="mood-sound-btn" data-mood="dreamy" onclick="toggleMoodSound('dreamy')">
-                  <span class="msb-icon">💫</span><span class="msb-label">Dreamy</span>
-                </button>
-                <button class="mood-sound-btn" data-mood="cozy" onclick="toggleMoodSound('cozy')">
-                  <span class="msb-icon">☕</span><span class="msb-label">Cozy</span>
-                </button>
-                <button class="mood-sound-btn" data-mood="soulful" onclick="toggleMoodSound('soulful')">
-                  <span class="msb-icon">🎷</span><span class="msb-label">Soulful</span>
-                </button>
-                <button class="mood-sound-btn" data-mood="serene" onclick="toggleMoodSound('serene')">
-                  <span class="msb-icon">🪷</span><span class="msb-label">Serene</span>
-                </button>
-                <button class="mood-sound-btn" data-mood="relaxing" onclick="toggleMoodSound('relaxing')">
-                  <span class="msb-icon">🧘</span><span class="msb-label">Relaxing</span>
-                </button>
-                <button class="mood-sound-btn" data-mood="rainyNight" onclick="toggleMoodSound('rainyNight')">
-                  <span class="msb-icon">🌃</span><span class="msb-label">Rainy Night</span>
-                </button>
-                <button class="mood-sound-btn" data-mood="campfire" onclick="toggleMoodSound('campfire')">
-                  <span class="msb-icon">🔥</span><span class="msb-label">Campfire</span>
-                </button>
-                <button class="mood-sound-btn" data-mood="tropical" onclick="toggleMoodSound('tropical')">
-                  <span class="msb-icon">🌴</span><span class="msb-label">Tropical</span>
-                </button>
-                <button class="mood-sound-btn" data-mood="lively" onclick="toggleMoodSound('lively')">
-                  <span class="msb-icon">🎉</span><span class="msb-label">Lively</span>
-                </button>
-              </div>
+              <!-- Populated by renderMoodSoundsGrid() -->
+              <div class="mood-sounds-grid mt-8" id="settings-mood-sounds"></div>
               <button class="mood-stop-btn d-none" id="mood-stop-all" onclick="stopMoodSound()">Stop All Sounds</button>
             </div>
             <div class="form-card">

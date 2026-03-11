@@ -1913,7 +1913,7 @@ function finishLogin() {
   listenMeals();
   listenChores();
   listenExpenses();
-  listenSharedGoals();
+  // listenSharedGoals(); — consolidated into Dreams page
   listenHabits();
   listenGrocery();
   listenSharedTodos();
