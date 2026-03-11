@@ -1781,8 +1781,8 @@ function scheduleDailyReminder() {
 
 function sendNotification(pendingTasks) {
   if (Notification.permission !== 'granted') return;
-  var partnerRole = typeof user !== 'undefined' && user === 'her' ? 'him' : 'her';
-  var nickname = (typeof NAMES !== 'undefined' && NAMES[partnerRole]) || 'Love';
+  // Address the user by their own name (not partner's nickname)
+  var myName = (typeof NAMES !== 'undefined' && NAMES[user]) || 'Love';
   var msgs = {
     1: {
       'mood check-in': 'Take a moment to check in with yourself today',
@@ -1792,7 +1792,7 @@ function sendNotification(pendingTasks) {
   };
   var body = pendingTasks.length === 1 ? msgs[1][pendingTasks[0]] || 'You have something waiting for you' : msgs.multi;
   try {
-    new Notification(nickname, {
+    new Notification(myName, {
       body: body,
       icon: 'icons/icon-192x192.png',
       badge: 'icons/icon-96x96.png',
@@ -1870,7 +1870,12 @@ function loadSettings() {
   const bdayEl = document.getElementById('set-birthday');
   const nickEl = document.getElementById('set-nickname');
   if (nameEl) nameEl.value = NAMES[user] || '';
-  if (partnerEl) partnerEl.value = NAMES[partner] || '';
+  // Show partner's real name (not the nickname we gave them)
+  if (partnerEl && db) {
+    db.ref('profiles/' + partner).once('value', snap => {
+      partnerEl.value = snap.val() || '';
+    });
+  }
   // Nickname
   if (nickEl) {
     var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';

@@ -8128,11 +8128,17 @@
 .settings-field-row {
   display: flex;
   gap: 12px;
-  flex-wrap: wrap;
 }
 .settings-field-row > .settings-field-group {
-  flex: 1 1 140px;
+  flex: 1 1 0;
   min-width: 0;
+  overflow: hidden;
+}
+.settings-field-row .form-input {
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .settings-row {
   display: flex;
@@ -8148,13 +8154,21 @@
 /* Ensure all settings inputs stay within bounds */
 #pg-settings .form-card {
   overflow: hidden;
+  box-sizing: border-box;
 }
 #pg-settings .form-input {
   max-width: 100%;
   min-width: 0;
+  box-sizing: border-box;
 }
 #pg-settings .ctn {
   overflow-x: hidden;
+}
+/* Date inputs on iOS need explicit width constraint */
+#pg-settings input[type="date"] {
+  -webkit-appearance: none;
+  min-width: 0;
+  max-width: 100%;
 }
 .settings-btn {
   padding: 8px 18px;
