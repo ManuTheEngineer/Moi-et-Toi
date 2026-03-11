@@ -74,6 +74,27 @@
       });
     }
   }, { passive: true });
+
+  // Reset iOS zoom after input blur - iOS sometimes stays zoomed in after
+  // the keyboard dismisses, especially on inputs that had small font-sizes.
+  document.addEventListener('focusout', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+      // Small delay to let keyboard animation finish, then reset viewport scale
+      setTimeout(function() {
+        if (document.activeElement === document.body || !document.activeElement ||
+            (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'SELECT')) {
+          // Reset any residual zoom by toggling the viewport meta
+          var vp = document.querySelector('meta[name="viewport"]');
+          if (vp) {
+            var original = vp.content;
+            vp.content = original + ', maximum-scale=1';
+            setTimeout(function() { vp.content = original; }, 50);
+          }
+          window.scrollTo({ top: window.scrollY, behavior: 'instant' });
+        }
+      }, 300);
+    }
+  }, true);
 })();
 
 // ===== EARLY THEME APPLICATION =====
