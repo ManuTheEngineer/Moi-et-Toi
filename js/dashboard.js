@@ -3069,9 +3069,9 @@ function checkMorningMessage() {
   var KEY = 'met_morning_msg_' + user;
   if (localStorage.getItem(KEY) === today) return;
 
-  // Check if partner has enabled morning messages for us
+  // Read your own morning message settings (each person sees their own config)
   var partnerRole = user === 'her' ? 'him' : 'her';
-  db.ref('settings/morningMsg/' + partnerRole).once('value', function (snap) {
+  db.ref('settings/morningMsg/' + user).once('value', function (snap) {
     var settings = snap.val();
     if (!settings || !settings.enabled) return;
 
@@ -3080,7 +3080,7 @@ function checkMorningMessage() {
     // Only show between 5am and 11am
     if (hour < 5 || hour > 11) return;
 
-    var nickname = settings.nickname || NAMES[partnerRole] || 'your love';
+    var nickname = NAMES[partnerRole] || settings.nickname || 'your love';
     var msg;
     if (settings.customMsg) {
       // Use custom messages (can be multiple separated by |)
