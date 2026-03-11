@@ -4049,7 +4049,7 @@
 <script src="js/template-loader.js" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js?v=165').then(function(reg) {
+  navigator.serviceWorker.register('sw.js?v=167').then(function(reg) {
     // Force waiting SW to activate immediately
     if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     reg.addEventListener('updatefound', function() {

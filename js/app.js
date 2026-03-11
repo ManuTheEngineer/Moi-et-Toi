@@ -99,8 +99,8 @@ async function init() {
 
   // Check if already signed in
   firebase.auth().onAuthStateChanged(async (fbUser) => {
-    _authResolved = true;
     if (fbUser) {
+      _authResolved = true;
       authUser = fbUser;
       // Retry loading email map if it's empty — Firebase rules may require auth
       if (Object.keys(EMAIL_MAP).length === 0) {
@@ -130,9 +130,16 @@ async function init() {
           : 'Account not authorized.');
       }
     } else {
-      // Not authenticated — ensure login form is visible (undo early biometric gate)
-      showEl('login-form');
-      hideEl('welcome-gate');
+      // Firebase may fire null initially while restoring a persisted session.
+      // Delay _authResolved so _waitForAuth keeps polling for the real callback.
+      setTimeout(function() {
+        if (!user && !authUser) {
+          _authResolved = true;
+          // Only show login form if still no user after delay
+          showEl('login-form');
+          hideEl('welcome-gate');
+        }
+      }, 2000);
     }
   });
 }
