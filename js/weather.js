@@ -2066,11 +2066,11 @@ function spawnSceneCreatures(container) {
   var time = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
   var creatures = scene.creatures[time] || scene.creatures.morning;
 
-  // Spawn 1-2 creatures with staggered timing
-  var count = 1 + Math.floor(Math.random() * 2);
+  // Spawn 2-3 creatures with staggered timing
+  var count = 2 + Math.floor(Math.random() * 2);
   for (var i = 0; i < count; i++) {
     (function(idx) {
-      var delay = idx * (2000 + Math.random() * 2000);
+      var delay = idx * (1500 + Math.random() * 1500);
       setTimeout(function() {
         if (container.querySelectorAll('.scene-creature').length >= MAX_SCENE_CREATURES) return;
         var type = creatures[Math.floor(Math.random() * creatures.length)];
@@ -2089,7 +2089,7 @@ function spawnSceneCreatures(container) {
       var c = scene.creatures[t] || scene.creatures.morning;
       var type = c[Math.floor(Math.random() * c.length)];
       renderSceneCreature(container, type);
-    }, 18000 + Math.random() * 10000);
+    }, 10000 + Math.random() * 8000);
   }
 }
 

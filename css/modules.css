@@ -1550,10 +1550,15 @@
 .sec-body{overflow:visible}
 /* Profile card - grouped fields in a single card */
 .settings-profile-card{display:flex;flex-direction:column;gap:16px}
-.settings-field-group{display:flex;flex-direction:column;gap:4px}
-.settings-field-row{display:flex;gap:12px}
-.settings-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.settings-field-group{display:flex;flex-direction:column;gap:4px;min-width:0}
+.settings-field-row{display:flex;gap:12px;flex-wrap:wrap}
+.settings-field-row>.settings-field-group{flex:1 1 140px;min-width:0}
+.settings-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px}
 .settings-label{font-size:13px;color:var(--t2)}
+/* Ensure all settings inputs stay within bounds */
+#pg-settings .form-card{overflow:hidden}
+#pg-settings .form-input{max-width:100%;min-width:0}
+#pg-settings .ctn{overflow-x:hidden}
 .settings-btn{padding:8px 18px;border-radius:20px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}
 .settings-btn:hover{background:var(--tint-b)}
 .settings-btn:active{transform:scale(.96)}

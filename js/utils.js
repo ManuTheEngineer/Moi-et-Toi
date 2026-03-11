@@ -751,10 +751,12 @@ function scheduleShootingStar(container) {
 function startCreatureLoop(container) {
   clearInterval(SKY.creatureTimer);
   spawnCreatures(container);
+  // Spawn a second batch after a short delay for immediate liveliness
+  setTimeout(function() { if (livingSkyEnabled) spawnCreatures(container); }, 3000);
   SKY.creatureTimer = setInterval(function() {
     if (!livingSkyEnabled || document.hidden) return;
     spawnCreatures(container);
-  }, 15000);
+  }, 10000);
 }
 
 var _prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
