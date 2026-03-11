@@ -3,16 +3,16 @@
   color-scheme: light;
   --bg: #F5F0EB; --bg2: #EDE7E0; --bg3: #E2DCD5;
   --bg-nav: rgba(245,240,235,.82);
-  --gold: #B8860B; --gold-l: #D4A017; --amber: #8B7355; --amber-s: #6B5B47;
+  --gold: #96700A; --gold-l: #8B6508; --amber: #7A6448; --amber-s: #5A4A38;
   --cream: #1A1A2E; --cream-d: #38384C;
-  --t1: #1A1A2E; --t2: #555566; --t3: #8E8A85;
+  --t1: #1A1A2E; --t2: #48485A; --t3: #6E6A65;
   --bdr: rgba(26,26,46,0.08); --bdr-s: rgba(26,26,46,0.04);
-  --red: #D4784A; --red-s: rgba(212,120,74,0.10); --red-b: rgba(212,120,74,0.20);
-  --vio: #C4964A; --vio-s: rgba(196,150,74,0.10); --vio-b: rgba(196,150,74,0.20);
-  --tint: rgba(26,26,46,0.05); --tint-s: rgba(26,26,46,0.03); --tint-xs: rgba(26,26,46,0.02);
-  --tint-b: rgba(26,26,46,0.10); --tint-bd: rgba(26,26,46,0.12);
-  --red-tag: #D4784A; --red-tag-s: #B86438;
-  --vio-tag: #C4964A; --vio-tag-s: #A87E3C;
+  --red: #B0603A; --red-s: rgba(176,96,58,0.12); --red-b: rgba(176,96,58,0.22);
+  --vio: #A07A3A; --vio-s: rgba(160,122,58,0.12); --vio-b: rgba(160,122,58,0.22);
+  --tint: rgba(26,26,46,0.09); --tint-s: rgba(26,26,46,0.06); --tint-xs: rgba(26,26,46,0.04);
+  --tint-b: rgba(26,26,46,0.14); --tint-bd: rgba(26,26,46,0.16);
+  --red-tag: #9A5030; --red-tag-s: #884428;
+  --vio-tag: #8A6A32; --vio-tag-s: #78582A;
   --glow-gold: rgba(184,134,11,.20); --glow-red: rgba(212,120,74,.18); --glow-vio: rgba(196,150,74,.18);
   --grad-gold: rgba(184,134,11,.05); --grad-grey: rgba(139,115,85,.03);
   --sec-bg: rgba(139,115,85,.08); --sec-bd: rgba(139,115,85,.14);
@@ -97,7 +97,7 @@ body[data-time="dawn"] {
   --nav-bg: rgba(240,230,232,.80); --nav-shadow: 0 -1px 0 rgba(140,80,100,.06), 0 -4px 20px rgba(140,80,100,.06);
   --overlay-bg: rgba(40,20,30,.50); --sheet-bg: rgba(255,242,245,.94);
   --glass: rgba(255,235,240,.55); --glass-strong: rgba(255,240,245,.82);
-  --gold: #C4784A; --gold-l: #D4906A;
+  --gold: #A0603A; --gold-l: #8E5230;
   --bdr: rgba(140,80,100,.08); --bdr-s: rgba(140,80,100,.04);
   --tint: rgba(140,80,100,.05); --tint-s: rgba(140,80,100,.03);
   --card-shadow: 0 2px 8px rgba(140,80,100,.05), 0 12px 36px rgba(140,80,100,.07);
@@ -110,7 +110,7 @@ body[data-time="morning"] {
   --nav-bg: rgba(245,240,230,.82); --nav-shadow: 0 -1px 0 rgba(184,134,11,.06), 0 -4px 20px rgba(184,134,11,.06);
   --sheet-bg: rgba(255,252,240,.94);
   --glass: rgba(255,250,235,.55); --glass-strong: rgba(255,250,240,.82);
-  --gold: #B8860B; --gold-l: #D4A017;
+  --gold: #8A6E08; --gold-l: #7A6008;
 }
 
 /* Afternoon (11am-4pm) - clean bright, slight cool tones */
@@ -120,7 +120,7 @@ body[data-time="afternoon"] {
   --nav-bg: rgba(240,245,248,.80); --nav-shadow: 0 -1px 0 rgba(40,80,120,.05), 0 -4px 20px rgba(40,80,120,.05);
   --sheet-bg: rgba(248,252,255,.94);
   --glass: rgba(240,248,255,.55); --glass-strong: rgba(245,250,255,.82);
-  --gold: #A08030; --gold-l: #C0A050;
+  --gold: #7A6218; --gold-l: #6A5510;
 }
 
 /* Golden hour (4-6pm) - rich amber, deep warm glow */
@@ -130,7 +130,7 @@ body[data-time="golden"] {
   --nav-bg: rgba(242,232,216,.82); --nav-shadow: 0 -1px 0 rgba(180,100,30,.08), 0 -4px 20px rgba(180,100,30,.06);
   --overlay-bg: rgba(40,20,10,.50); --sheet-bg: rgba(255,248,232,.94);
   --glass: rgba(255,242,220,.58); --glass-strong: rgba(255,245,228,.85);
-  --gold: #C87A10; --gold-l: #E09830;
+  --gold: #9A6010; --gold-l: #885210;
   --t2: #5A4A38; --t3: #8A7660;
   --card-shadow: 0 2px 8px rgba(140,80,20,.06), 0 12px 36px rgba(140,80,20,.08);
 }
@@ -181,7 +181,7 @@ body[data-sky-theme="beach"][data-time="dawn"] {
   --nav-bg: rgba(244,224,216,.84); --nav-shadow: 0 -1px 0 rgba(210,140,100,.08), 0 -4px 20px rgba(210,140,100,.06);
   --overlay-bg: rgba(50,25,15,.50); --sheet-bg: rgba(255,240,232,.94);
   --glass: rgba(255,230,218,.58); --glass-strong: rgba(255,235,225,.84);
-  --gold: #D07040; --gold-l: #E08858;
+  --gold: #B05830; --gold-l: #9A4C28;
   --rose: #E06858; --teal: #38B8B8; --emerald: #48A888; --lavender: #A088B8;
   --bdr: rgba(210,140,100,.10); --bdr-s: rgba(210,140,100,.05);
   --tint: rgba(210,140,100,.06); --tint-s: rgba(210,140,100,.03);
@@ -199,7 +199,7 @@ body[data-sky-theme="beach"][data-time="morning"] {
   --nav-bg: rgba(248,238,224,.84); --nav-shadow: 0 -1px 0 rgba(200,160,60,.06), 0 -4px 20px rgba(200,160,60,.06);
   --sheet-bg: rgba(255,250,236,.94);
   --glass: rgba(255,248,230,.58); --glass-strong: rgba(255,246,235,.84);
-  --gold: #C88818; --gold-l: #E0A030;
+  --gold: #9A6A10; --gold-l: #885C08;
   --rose: #E86068; --teal: #18A8B8; --emerald: #38A880; --lavender: #9878B0;
   --card-shadow: 0 2px 8px rgba(200,160,60,.05), 0 12px 36px rgba(200,160,60,.07);
   --grad-love: linear-gradient(135deg,#B83050 0%,#D85870 100%);
@@ -212,7 +212,7 @@ body[data-sky-theme="beach"][data-time="afternoon"] {
   --nav-bg: rgba(228,242,244,.84); --nav-shadow: 0 -1px 0 rgba(20,140,160,.06), 0 -4px 20px rgba(20,140,160,.06);
   --sheet-bg: rgba(235,248,250,.94);
   --glass: rgba(225,245,248,.58); --glass-strong: rgba(230,246,248,.84);
-  --gold: #18A0B0; --gold-l: #28B8C0;
+  --gold: #148890; --gold-l: #107078;
   --t1: #1A2E30; --t2: #2A4E58; --t3: #4A7080;
   --rose: #E06070; --teal: #10A8B8; --emerald: #28A890; --lavender: #8870B0;
   --card-shadow: 0 2px 8px rgba(20,140,160,.05), 0 12px 36px rgba(20,140,160,.07);
@@ -228,7 +228,7 @@ body[data-sky-theme="beach"][data-time="golden"] {
   --nav-bg: rgba(246,226,200,.84); --nav-shadow: 0 -1px 0 rgba(200,110,30,.08), 0 -4px 20px rgba(200,110,30,.06);
   --overlay-bg: rgba(50,20,5,.55); --sheet-bg: rgba(255,244,220,.95);
   --glass: rgba(255,236,210,.60); --glass-strong: rgba(255,240,218,.86);
-  --gold: #D47010; --gold-l: #E88828;
+  --gold: #A85A0C; --gold-l: #904C08;
   --t2: #5A3E28; --t3: #7A6040;
   --card-shadow: 0 2px 8px rgba(200,110,30,.07), 0 12px 36px rgba(200,110,30,.10);
   --grad-love: linear-gradient(135deg,#C03838 0%,#E06048 100%);
@@ -273,7 +273,7 @@ body[data-sky-theme="mountain"][data-time="dawn"] {
   --nav-bg: rgba(230,232,228,.84); --nav-shadow: 0 -1px 0 rgba(80,120,70,.08), 0 -4px 20px rgba(80,120,70,.06);
   --overlay-bg: rgba(20,30,18,.50); --sheet-bg: rgba(242,245,238,.94);
   --glass: rgba(235,240,228,.58); --glass-strong: rgba(238,242,232,.84);
-  --gold: #6A8A48; --gold-l: #80A460;
+  --gold: #587838; --gold-l: #4A6830;
   --rose: #C86878; --teal: #38A0A0; --emerald: #2D8B5E; --lavender: #8070A8;
   --bdr: rgba(80,120,70,.10); --bdr-s: rgba(80,120,70,.05);
   --tint: rgba(80,120,70,.06); --tint-s: rgba(80,120,70,.03);
@@ -291,7 +291,7 @@ body[data-sky-theme="mountain"][data-time="morning"] {
   --nav-bg: rgba(232,238,226,.84); --nav-shadow: 0 -1px 0 rgba(70,120,50,.06), 0 -4px 20px rgba(70,120,50,.06);
   --sheet-bg: rgba(244,250,238,.94);
   --glass: rgba(238,248,230,.58); --glass-strong: rgba(240,248,234,.84);
-  --gold: #4A8A38; --gold-l: #60A450;
+  --gold: #3C7228; --gold-l: #326020;
   --t2: #2E4828; --t3: #4E6E42;
   --rose: #D06870; --teal: #28A098; --emerald: #288A50; --lavender: #7868A0;
   --card-shadow: 0 2px 8px rgba(70,120,50,.05), 0 12px 36px rgba(70,120,50,.07);
@@ -306,7 +306,7 @@ body[data-sky-theme="mountain"][data-time="afternoon"] {
   --nav-bg: rgba(226,236,240,.84); --nav-shadow: 0 -1px 0 rgba(40,80,110,.06), 0 -4px 20px rgba(40,80,110,.06);
   --sheet-bg: rgba(238,248,252,.94);
   --glass: rgba(228,242,248,.58); --glass-strong: rgba(232,244,250,.84);
-  --gold: #3A78A0; --gold-l: #5090B8;
+  --gold: #306888; --gold-l: #285878;
   --t2: #284860; --t3: #446A82;
   --rose: #D06878; --teal: #20A0A8; --emerald: #288A58; --lavender: #7068A8;
   --card-shadow: 0 2px 8px rgba(40,80,110,.05), 0 12px 36px rgba(40,80,110,.07);
@@ -323,7 +323,7 @@ body[data-sky-theme="mountain"][data-time="golden"] {
   --nav-bg: rgba(236,226,212,.84); --nav-shadow: 0 -1px 0 rgba(160,90,30,.08), 0 -4px 20px rgba(160,90,30,.06);
   --overlay-bg: rgba(30,20,10,.52); --sheet-bg: rgba(250,244,228,.95);
   --glass: rgba(244,238,220,.60); --glass-strong: rgba(246,240,226,.86);
-  --gold: #B07020; --gold-l: #C88838;
+  --gold: #8A5818; --gold-l: #784A10;
   --t2: #4A3C28; --t3: #6A5C40;
   --card-shadow: 0 2px 8px rgba(160,90,30,.07), 0 12px 36px rgba(160,90,30,.10);
   --grad-love: linear-gradient(135deg,#8B2040 0%,#B84060 100%);
