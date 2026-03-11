@@ -64,6 +64,10 @@ function isOnline() { return _isOnline; }
 // ===== INIT =====
 async function init() {
   firebase.initializeApp(FIREBASE_CONFIG);
+
+  // Explicitly set LOCAL persistence so sessions survive tab/browser close on iOS Safari
+  try { await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch(e) {}
+
   db = firebase.database();
 
   // Enable offline persistence — caches data locally so app works offline
@@ -139,7 +143,7 @@ async function init() {
           showEl('login-form');
           hideEl('welcome-gate');
         }
-      }, 2000);
+      }, 4000);
     }
   });
 }
