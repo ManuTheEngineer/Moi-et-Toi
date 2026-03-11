@@ -518,3 +518,8 @@ function replaceEmojisWithIcons() {
 }
 
 document.addEventListener('DOMContentLoaded', replaceEmojisWithIcons);
+
+// Prevent pinch-to-zoom on iOS Safari (ignores viewport meta in some versions)
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
+document.addEventListener('gestureend', function (e) { e.preventDefault(); });

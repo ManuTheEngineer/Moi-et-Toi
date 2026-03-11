@@ -1,6 +1,8 @@
 html {
   overscroll-behavior: none;
   background: var(--bg);
+  touch-action: pan-x pan-y;
+  -ms-touch-action: pan-x pan-y;
 }
 body {
   margin: 0;
