@@ -2450,6 +2450,7 @@ async function addCalEvent() {
 
 async function deleteCalEvent(key) {
   await db.ref('calendar/' + key).remove();
+  toast('Event removed');
 }
 
 // ========================================
@@ -2742,6 +2743,7 @@ async function dhDelNote(key) {
   if (!db) return;
   await db.ref('dreamHome/notes/' + key).remove();
   dhRenderNotes();
+  toast('Note removed');
 }
 
 // Budget breakdown save
@@ -2967,6 +2969,7 @@ async function addHomeWish() {
 
 async function deleteHomeWish(key) {
   await db.ref('dreamHome/wishlist/' + key).remove();
+  toast('Removed from wishlist');
 }
 
 // Summary card renderer
@@ -3121,7 +3124,7 @@ function listenGrocery() {
             return `<div class="grocery-item ${i.checked ? 'done' : ''}">
           <div class="grocery-check" onclick="toggleGrocery('${i._key}',${!i.checked})">${i.checked ? '✓' : ''}</div>
           <span class="grocery-name">${esc(i.name)}</span>
-          <button class="item-delete" onclick="db.ref('grocery/${i._key}').remove()">×</button>
+          <button class="item-delete" onclick="db.ref('grocery/${i._key}').remove();toast('Removed')">×</button>
         </div>`;
           })
           .join('');
@@ -3188,7 +3191,7 @@ function listenSharedTodos() {
           <span class="todo-title">${esc(i.title)}</span>
           <span class="todo-by">${who}</span>
         </div>
-        <button class="item-delete" onclick="db.ref('sharedTodos/${i._key}').remove()">×</button>
+        <button class="item-delete" onclick="db.ref('sharedTodos/${i._key}').remove();toast('Removed')">×</button>
       </div>`;
         })
         .join('');

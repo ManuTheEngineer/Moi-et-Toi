@@ -4094,7 +4094,7 @@
               <button class="dq-submit" onclick="addExpense()">Add</button>
             </div>
             <div class="receipt-preview d-none" id="fin-receipt-preview">
-              <img id="fin-receipt-img" class="receipt-preview img" />
+              <img id="fin-receipt-img" class="receipt-preview img" alt="Receipt preview" />
               <button class="receipt-remove" onclick="clearReceipt()">&times;</button>
             </div>
           </div>
@@ -4319,7 +4319,7 @@
           <div class="fit-builder" id="fit-builder">
             <div class="fit-builder-header">
               <div class="t-body fw-600 c-cream">Workout Builder</div>
-              <button class="modal-close" onclick="closeWorkoutBuilder()">&times;</button>
+              <button class="modal-close" onclick="closeWorkoutBuilder()" aria-label="Close">&times;</button>
             </div>
             <input
               type="text"
@@ -5228,6 +5228,7 @@
             <div id="mem-preview" class="d-none" style="margin: 10px 0">
               <img
                 id="mem-preview-img"
+                alt="Memory preview"
                 style="width: 100%; border-radius: 14px; max-height: 200px; object-fit: cover"
               />
             </div>
@@ -5257,8 +5258,8 @@
 
       <!-- Memory Detail Modal -->
       <div class="mem-detail-modal" id="mem-detail-modal">
-        <button class="mem-detail-close" onclick="closeMemoryDetail()">&times;</button>
-        <img id="mem-detail-img" src="" alt="" />
+        <button class="mem-detail-close" onclick="closeMemoryDetail()" aria-label="Close">&times;</button>
+        <img id="mem-detail-img" src="" alt="Memory photo" />
         <div class="text-center" style="max-width: 90%">
           <div class="mem-detail-caption" id="mem-detail-caption"></div>
           <div class="mem-detail-meta" id="mem-detail-meta"></div>
@@ -6257,7 +6258,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('sw.js?v=167')
+          .register('sw.js?v=171')
           .then(function (reg) {
             // Force waiting SW to activate immediately
             if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });

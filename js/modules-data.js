@@ -161,7 +161,7 @@ function renderKYPNotes() {
     <div class="kyp-note" style="padding:10px 0;border-bottom:1px solid var(--tint);display:flex;align-items:center;gap:10px">
       <span style="flex:1;font-size:13px;color:var(--cream)">${esc(n.text)}</span>
       <span style="font-size:10px;color:var(--t3)">${timeAgo(n.timestamp)}</span>
-      <button onclick="db.ref('knowYou/${user}/notes/${k}').remove()" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
+      <button onclick="db.ref('knowYou/${user}/notes/${k}').remove();toast('Removed')" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
     </div>`
     )
     .join('');
@@ -334,7 +334,7 @@ function renderKYPCategories() {
       <div style="padding:8px 0;border-bottom:1px solid var(--tint);display:flex;align-items:center;gap:8px">
         <span style="flex:1;font-size:13px;color:var(--cream)">${esc(n.text)}</span>
         <span style="font-size:10px;color:var(--t3)">${timeAgo(n.timestamp)}</span>
-        <button onclick="db.ref('knowYou/${user}/categories/${cat}/${k}').remove()" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
+        <button onclick="db.ref('knowYou/${user}/categories/${cat}/${k}').remove();toast('Removed')" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
       </div>`
       )
       .join('');
@@ -667,6 +667,7 @@ function toggleMemFavorite(key) {
   if (!db || !key) return;
   const current = memoriesData[key] && memoriesData[key].favorite;
   db.ref('memories/' + key + '/favorite').set(!current);
+  toast(current ? 'Unfavorited' : 'Favorited');
 }
 
 // ===== MEMORY PROMPTS =====
