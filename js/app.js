@@ -1575,9 +1575,9 @@ async function registerBiometric() {
   return false;
 }
 
-// Verify biometric on returning session
-async function verifyBiometric() {
-  var credId = localStorage.getItem('met_bio_cred_' + user);
+// Verify biometric on returning session — accepts optional credId to avoid needing `user`
+async function verifyBiometric(credIdOverride) {
+  var credId = credIdOverride || localStorage.getItem('met_bio_cred_' + user);
   if (!credId) return false;
   try {
     var rawId = Uint8Array.from(atob(credId), function(c) { return c.charCodeAt(0); });
@@ -1602,7 +1602,8 @@ async function verifyBiometric() {
     // If credential is permanently invalid, clear it so user can re-register
     if (e.name === 'InvalidStateError' || e.name === 'SecurityError') {
       console.log('Clearing invalid biometric credential:', e.name);
-      try { localStorage.removeItem('met_bio_cred_' + user); } catch(ex) {}
+      try { localStorage.removeItem('met_bio_cred_her'); } catch(ex) {}
+      try { localStorage.removeItem('met_bio_cred_him'); } catch(ex) {}
     }
     // NotAllowedError with no user cancellation can indicate a missing credential
     // (e.g. device was wiped, Face ID re-enrolled) — log for diagnostics
@@ -1613,42 +1614,48 @@ async function verifyBiometric() {
   }
 }
 
+// Find stored biometric credential ID without needing the `user` variable
+function _findStoredCredId() {
+  try {
+    return localStorage.getItem('met_bio_cred_her') || localStorage.getItem('met_bio_cred_him') || null;
+  } catch(e) { return null; }
+}
+
 // Called when user taps Enter on welcome gate
 var _bioFailCount = 0;
 async function enterApp() {
   var enterBtn = document.getElementById('welcome-enter-btn');
+  if (enterBtn) { enterBtn.textContent = 'Verifying...'; enterBtn.disabled = true; }
 
-  // Guard: wait for Firebase auth to complete (up to 5s) instead of bailing
-  if (!user || !authUser) {
-    if (enterBtn) { enterBtn.textContent = 'Loading...'; enterBtn.disabled = true; }
-    var waited = await _waitForAuth(5000);
-    if (!waited || !user || !authUser) {
-      toast('Could not connect — try again');
-      if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
-      return;
-    }
-  }
+  // Check for stored credential SYNCHRONOUSLY (no awaits that kill the gesture)
+  var storedCredId = _findStoredCredId();
 
-  if (enterBtn) {
-    enterBtn.textContent = 'Verifying...';
-    enterBtn.disabled = true;
-  }
+  if (storedCredId) {
+    // CRITICAL: call Face ID IMMEDIATELY — no awaits before this point
+    // Any async gap would consume the iOS user-gesture activation
+    var verified = await verifyBiometric(storedCredId);
 
-  var hasBio = hasBiometricCredential();
-
-  if (hasBio) {
-    // Returning user with biometric — prompt Face ID immediately
-    // (skip checkBiometricAvailable() to preserve user-gesture context on iOS)
-    var verified = await verifyBiometric();
     if (verified) {
       _bioFailCount = 0;
+      // Now wait for Firebase auth if needed (gesture no longer matters)
+      if (!user || !authUser) {
+        if (enterBtn) enterBtn.textContent = 'Loading...';
+        var waited = await _waitForAuth(8000);
+        if (!waited || !user || !authUser) {
+          toast('Could not connect — try again');
+          if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
+          return;
+        }
+      }
       finishLogin();
       return;
     }
+
     // Verification failed or cancelled
     _bioFailCount++;
     if (_bioFailCount >= 2) {
-      // After 2 failures, offer a bypass so user isn't locked out
+      // Wait for auth before showing bypass modal (it needs user context)
+      if (!user || !authUser) await _waitForAuth(5000);
       showBiometricBypassModal();
     } else {
       if (enterBtn) { enterBtn.textContent = 'Try again'; enterBtn.disabled = false; }
@@ -1657,7 +1664,17 @@ async function enterApp() {
     return;
   }
 
-  // No stored credential — check if biometric is available for setup
+  // No stored credential — wait for auth, then check if biometric setup is available
+  if (!user || !authUser) {
+    if (enterBtn) enterBtn.textContent = 'Loading...';
+    var waited = await _waitForAuth(8000);
+    if (!waited || !user || !authUser) {
+      toast('Could not connect — try again');
+      if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
+      return;
+    }
+  }
+
   var bioAvailable = await checkBiometricAvailable();
   _biometricAvailable = bioAvailable;
 
@@ -1705,9 +1722,12 @@ async function retryBiometricFromModal() {
   var modal = document.getElementById('generic-modal');
   if (modal) modal.classList.remove('on');
   document.body.classList.remove('modal-open');
-  var verified = await verifyBiometric();
+  // Use stored cred ID so it works even if `user` isn't set yet
+  var credId = _findStoredCredId();
+  var verified = await verifyBiometric(credId);
   if (verified) {
     _bioFailCount = 0;
+    if (!user || !authUser) await _waitForAuth(5000);
     finishLogin();
   } else {
     toast('Verification failed');
@@ -1720,18 +1740,27 @@ function bypassBiometric() {
   if (modal) modal.classList.remove('on');
   document.body.classList.remove('modal-open');
   _bioFailCount = 0;
-  finishLogin();
+  if (!user || !authUser) {
+    _waitForAuth(5000).then(function() { finishLogin(); });
+  } else {
+    finishLogin();
+  }
 }
 
 function resetBiometricAndEnter() {
-  // Clear the stored credential so user can re-register next time
-  try { localStorage.removeItem('met_bio_cred_' + user); } catch(e) {}
+  // Clear both credentials so user can re-register next time
+  try { localStorage.removeItem('met_bio_cred_her'); } catch(e) {}
+  try { localStorage.removeItem('met_bio_cred_him'); } catch(e) {}
   var modal = document.getElementById('generic-modal');
   if (modal) modal.classList.remove('on');
   document.body.classList.remove('modal-open');
   _bioFailCount = 0;
   toast('Face ID reset — you can set it up again in Settings');
-  finishLogin();
+  if (!user || !authUser) {
+    _waitForAuth(5000).then(function() { finishLogin(); });
+  } else {
+    finishLogin();
+  }
 }
 
 function updateBiometricUI() {
