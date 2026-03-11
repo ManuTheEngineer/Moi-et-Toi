@@ -18,6 +18,7 @@ let NICKNAMES = { herCallsHim: "", himCallsHer: "" };
 // ==========================================
 
 let db, user, partner, authUser, selectedMood = 0, logExercises = [], logType = '', chatHistory = [];
+var _authResolved = false; // set true once onAuthStateChanged fires at least once
 
 // Map email to profile role — loaded from Firebase at init
 let EMAIL_MAP = {};
@@ -98,6 +99,7 @@ async function init() {
 
   // Check if already signed in
   firebase.auth().onAuthStateChanged(async (fbUser) => {
+    _authResolved = true;
     if (fbUser) {
       authUser = fbUser;
       // Retry loading email map if it's empty — Firebase rules may require auth
@@ -1642,7 +1644,8 @@ async function enterApp() {
         if (enterBtn) enterBtn.textContent = 'Loading...';
         var waited = await _waitForAuth(8000);
         if (!waited || !user || !authUser) {
-          toast('Could not connect — try again');
+          // Auth failed — user session expired, fall back to login form
+          toast('Session expired — please sign in');
           if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
           return;
         }
@@ -1654,9 +1657,15 @@ async function enterApp() {
     // Verification failed or cancelled
     _bioFailCount++;
     if (_bioFailCount >= 2) {
-      // Wait for auth before showing bypass modal (it needs user context)
+      // Wait for auth before showing bypass modal
       if (!user || !authUser) await _waitForAuth(5000);
-      showBiometricBypassModal();
+      if (user && authUser) {
+        showBiometricBypassModal();
+      } else {
+        // Auth expired — just show login form
+        toast('Session expired — please sign in');
+        if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
+      }
     } else {
       if (enterBtn) { enterBtn.textContent = 'Try again'; enterBtn.disabled = false; }
       toast('Face ID required — tap to retry');
@@ -1669,7 +1678,12 @@ async function enterApp() {
     if (enterBtn) enterBtn.textContent = 'Loading...';
     var waited = await _waitForAuth(8000);
     if (!waited || !user || !authUser) {
-      toast('Could not connect — try again');
+      // Auth resolved but no user — session expired
+      if (_authResolved) {
+        toast('Session expired — please sign in');
+      } else {
+        toast('Could not connect — try again');
+      }
       if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
       return;
     }
@@ -1679,10 +1693,8 @@ async function enterApp() {
   _biometricAvailable = bioAvailable;
 
   if (bioAvailable) {
-    // Biometric available but not registered — prompt setup
     showBiometricSetupModal();
   } else {
-    // No biometric support — just enter
     finishLogin();
   }
 }
@@ -1691,11 +1703,13 @@ async function enterApp() {
 function _waitForAuth(timeout) {
   return new Promise(function(resolve) {
     if (user && authUser) { resolve(true); return; }
+    // If auth already resolved with null user, don't wait
+    if (_authResolved) { resolve(false); return; }
     var elapsed = 0;
     var interval = setInterval(function() {
       elapsed += 100;
       if (user && authUser) { clearInterval(interval); resolve(true); }
-      else if (elapsed >= timeout) { clearInterval(interval); resolve(false); }
+      else if (_authResolved || elapsed >= timeout) { clearInterval(interval); resolve(false); }
     }, 100);
   });
 }
