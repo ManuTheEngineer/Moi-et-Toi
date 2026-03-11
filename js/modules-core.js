@@ -135,9 +135,9 @@ function renderDashMoods(moods) {
   const pEl = document.getElementById('partner-mood');
   if (pEl) {
     if (partnerToday) {
-      pEl.innerHTML = `<span style="font-size:20px">${emojis[partnerToday.mood]}</span><span style="font-size:11px;color:var(--cream)">${NAMES[partner]}: ${labels[partnerToday.mood]}</span>`;
+      pEl.innerHTML = `<span style="font-size:20px">${emojis[partnerToday.mood]}</span><span style="font-size:11px;color:var(--cream)">${esc(NAMES[partner])}: ${labels[partnerToday.mood]}</span>`;
     } else {
-      pEl.innerHTML = `<span style="font-size:11px;color:var(--t3)">${NAMES[partner]}: Waiting...</span>`;
+      pEl.innerHTML = `<span style="font-size:11px;color:var(--t3)">${esc(NAMES[partner])}: Waiting...</span>`;
     }
   }
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'moiettoi-v162';
+const CACHE_NAME = 'moiettoi-v163';
 
 const ASSETS = [
   './',
@@ -21,7 +21,10 @@ const ASSETS = [
   './js/modules-data.js',
   './js/template-loader.js',
   './js/weather.js',
-  './manifest.json'
+  './js/firebase-init.mjs',
+  './manifest.json',
+  './icons/icon-192x192.png',
+  './icons/icon-96x96.png'
 ];
 
 self.addEventListener('install', e => {

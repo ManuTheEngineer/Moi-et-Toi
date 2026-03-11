@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync } from 'fs';
 import { minify } from 'terser';
-import { globSync } from 'fs';
 
 // Custom plugin to minify non-module <script> tags and copy extra assets
 function minifyLegacyScripts() {
@@ -18,7 +17,7 @@ function minifyLegacyScripts() {
         'app.js', 'nav.js', 'utils.js', 'weather.js', 'metrics.js',
         'modules-core.js', 'modules-social.js', 'modules-life.js',
         'dashboard.js', 'modules-track.js', 'modules-data.js',
-        'template-loader.js'
+        'template-loader.js', 'firebase-init.mjs'
       ];
       for (const file of jsFiles) {
         const src = resolve(__dirname, 'js', file);

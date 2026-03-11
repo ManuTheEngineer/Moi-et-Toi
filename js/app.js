@@ -1570,7 +1570,7 @@ async function registerBiometric() {
       return true;
     }
   } catch(e) {
-    console.log('Biometric registration skipped:', e.message);
+    // Biometric registration skipped (user cancelled or unsupported)
   }
   return false;
 }
@@ -1599,10 +1599,8 @@ async function verifyBiometric() {
     });
     return !!assertion;
   } catch(e) {
-    console.log('Biometric verification failed:', e.name, e.message);
     // If credential is permanently invalid, clear it so user can re-register
     if (e.name === 'InvalidStateError' || e.name === 'SecurityError') {
-      console.log('Clearing invalid biometric credential');
       try { localStorage.removeItem('met_bio_cred_' + user); } catch(ex) {}
     }
     return false;
@@ -1888,10 +1886,8 @@ function finishLogin() {
   // Safety net: verify sky rendered, force if empty
   setTimeout(function() {
     var sc = document.getElementById('sky-scene');
-    if (!sc) { console.error('[Sky] sky-scene element not found!'); return; }
-    console.log('[Sky] sky-scene children:', sc.children.length, 'livingSkyEnabled:', livingSkyEnabled);
+    if (!sc) return;
     if (sc.children.length === 0) {
-      console.warn('[Sky] Forced re-render — sky-scene was empty');
       livingSkyEnabled = true;
       if (typeof renderLivingSky === 'function') renderLivingSky(sc);
       if (typeof renderTerrain === 'function') renderTerrain();
