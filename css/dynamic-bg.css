@@ -1,0 +1,4983 @@
+/* ===== DYNAMIC TIME-OF-DAY BACKGROUNDS ===== */
+
+/* Time periods set via JS: data-time="dawn|morning|afternoon|golden|evening|night" */
+
+/* Dawn (5-7am) - soft pinks and purples */
+body[data-time="dawn"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 80%, rgba(255,120,150,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 30%, rgba(180,140,255,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,180,120,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 40% at 20% 10%, rgba(100,80,200,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+
+/* Morning (7-11am) - warm gold and peach */
+body[data-time="morning"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(255,200,100,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 70%, rgba(255,160,80,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 60% 50%, rgba(255,220,180,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 20% 30%, rgba(255,180,140,0.05) 0%, transparent 60%),
+    var(--bg) !important;
+}
+
+/* Afternoon (11am-4pm) - bright sky blue and warm */
+body[data-time="afternoon"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(100,180,255,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 60%, rgba(255,200,130,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 80%, rgba(80,200,200,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 40% 40%, rgba(160,220,255,0.05) 0%, transparent 60%),
+    var(--bg) !important;
+}
+
+/* Golden hour (4-6pm) - rich amber and deep orange */
+body[data-time="golden"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 70%, rgba(255,140,50,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 30%, rgba(255,100,80,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 60% 20%, rgba(255,180,60,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 50%, rgba(200,60,120,0.05) 0%, transparent 60%),
+    var(--bg) !important;
+}
+
+/* Evening (6-9pm) - deep indigo and warm amber */
+body[data-time="evening"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(80,60,160,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 70%, rgba(212,149,106,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 50%, rgba(140,80,200,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 30%, rgba(255,100,120,0.05) 0%, transparent 60%),
+    var(--bg) !important;
+}
+
+/* Night (9pm-5am) - deep dark sky with subtle aurora */
+body[data-time="night"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(15,25,60,0.30) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(40,25,80,0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 90%, rgba(0,80,80,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(8,12,30,0.25) 0%, transparent 80%),
+    var(--bg) !important;
+}
+
+/* ===== BEACH ENVIRONMENT - sandy, turquoise, coral warmth ===== */
+body[data-sky-theme="beach"][data-time="dawn"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 80%, rgba(255,160,120,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 30%, rgba(255,200,140,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 50% 50%, rgba(210,140,100,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 40% at 20% 10%, rgba(255,180,160,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="morning"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(255,220,140,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 70%, rgba(100,210,230,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 60% 50%, rgba(255,240,200,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 20% 30%, rgba(200,160,80,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="afternoon"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(40,200,220,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 60%, rgba(60,220,240,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 80%, rgba(255,220,180,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 40% 40%, rgba(120,230,240,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="golden"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 70%, rgba(255,140,40,0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 30%, rgba(255,100,50,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 60% 20%, rgba(255,180,80,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 50%, rgba(255,120,60,0.08) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="evening"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(60,40,120,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 70%, rgba(200,130,90,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 50%, rgba(100,60,140,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 30%, rgba(60,80,140,0.05) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="night"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(10,20,50,0.30) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(20,30,70,0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 90%, rgba(10,60,80,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(6,10,26,0.25) 0%, transparent 80%),
+    var(--bg) !important;
+}
+
+/* ===== MOUNTAIN ENVIRONMENT - forest greens, alpine blues, earthy ===== */
+body[data-sky-theme="mountain"][data-time="dawn"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 80%, rgba(120,160,100,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 30%, rgba(160,180,140,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 50% 50%, rgba(180,200,160,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 40% at 20% 10%, rgba(100,140,80,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="morning"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(140,200,100,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 70%, rgba(100,180,80,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 60% 50%, rgba(180,220,140,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 20% 30%, rgba(80,160,60,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="afternoon"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(80,140,200,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 60%, rgba(100,180,140,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 80%, rgba(60,160,120,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 40% 40%, rgba(120,180,220,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="golden"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 70%, rgba(200,140,60,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 30%, rgba(180,120,40,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 60% 20%, rgba(160,180,80,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 50%, rgba(140,100,40,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="evening"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(40,60,100,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 70%, rgba(60,100,80,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 50%, rgba(30,50,80,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 30%, rgba(80,100,140,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="night"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(10,18,30,0.32) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(20,30,50,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 90%, rgba(10,40,30,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(6,10,20,0.28) 0%, transparent 80%),
+    var(--bg) !important;
+}
+
+/* ===== ANIMATED FLOATING ORBS ===== */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(30px);
+  opacity: 0;
+  z-index: -2;
+  animation: orbFloat linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes orbFloat {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  10% { opacity: var(--orb-opacity, 0.15); }
+  50% { transform: translate(var(--orb-dx, 50px), var(--orb-dy, -30px)) scale(1.2); }
+  90% { opacity: var(--orb-opacity, 0.15); }
+  100% { transform: translate(calc(var(--orb-dx, 50px) * 2), calc(var(--orb-dy, -30px) * 2)) scale(1); opacity: 0; }
+}
+
+/* ===== ENHANCED PARTICLE STYLES ===== */
+.particle {
+  background: var(--particle-color, rgba(212,149,106,0.3));
+  box-shadow: 0 0 6px var(--particle-color, rgba(212,149,106,0.15));
+}
+
+/* Particle color variations by time */
+body[data-time="dawn"] .particle { --particle-color: rgba(255,140,180,0.35); }
+body[data-time="morning"] .particle { --particle-color: rgba(255,200,100,0.3); }
+body[data-time="afternoon"] .particle { --particle-color: rgba(100,180,255,0.25); }
+body[data-time="golden"] .particle { --particle-color: rgba(255,160,60,0.35); }
+body[data-time="evening"] .particle { --particle-color: rgba(160,120,255,0.3); }
+body[data-time="night"] .particle { --particle-color: rgba(100,140,255,0.25); }
+
+/* ===== ENVIRONMENT-AWARE PARTICLES ===== */
+body[data-sky-theme="beach"] .particle { --particle-color: rgba(78,195,230,0.3) !important; }
+body[data-sky-theme="mountain"] .particle { --particle-color: rgba(80,160,80,0.3) !important; }
+body[data-sky-theme="beach"][data-time="evening"] .particle { --particle-color: rgba(120,160,220,0.3) !important; }
+body[data-sky-theme="beach"][data-time="night"] .particle { --particle-color: rgba(60,120,180,0.25) !important; }
+body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-color: rgba(60,100,80,0.3) !important; }
+body[data-sky-theme="mountain"][data-time="night"] .particle { --particle-color: rgba(40,80,60,0.25) !important; }
+
+/* ===== ENVIRONMENT CSS VARIABLE OVERRIDES ===== */
+/* Beach: turquoise tints, sandy warmth, coral accents */
+body[data-sky-theme="beach"] {
+  --env-accent: rgba(78,165,210,0.12);
+  --env-accent-s: rgba(78,165,210,0.06);
+  --env-glow: rgba(78,195,230,0.18);
+  --env-border: rgba(78,165,210,0.10);
+}
+body[data-sky-theme="beach"] .bnav {
+  border-top-color: rgba(78,165,210,0.10);
+}
+body[data-sky-theme="beach"] .bnav-indicator {
+  background: linear-gradient(90deg, #4EA5D2, #5BC0BE);
+}
+body[data-sky-theme="beach"] .bn.on { color: #4EA5D2; }
+body[data-sky-theme="beach"] .login-btn {
+  background: linear-gradient(135deg, #4EA5D2, #5BC0BE) !important;
+  box-shadow: 0 4px 24px rgba(78,165,210,0.25) !important;
+}
+body[data-sky-theme="beach"] .login-logo {
+  border-color: rgba(78,165,210,0.25);
+  background: rgba(78,165,210,0.08);
+}
+body[data-sky-theme="beach"] .sec-dot { background: #4EA5D2 !important; }
+body[data-sky-theme="beach"] .hub-pulse-num.c-teal { color: #3B8EAF !important; }
+
+/* Mountain: forest greens, earthy browns, alpine blues */
+body[data-sky-theme="mountain"] {
+  --env-accent: rgba(74,124,57,0.12);
+  --env-accent-s: rgba(74,124,57,0.06);
+  --env-glow: rgba(80,160,80,0.18);
+  --env-border: rgba(74,124,57,0.10);
+}
+body[data-sky-theme="mountain"] .bnav {
+  border-top-color: rgba(74,124,57,0.10);
+}
+body[data-sky-theme="mountain"] .bnav-indicator {
+  background: linear-gradient(90deg, #4A7C39, #6B8F5E);
+}
+body[data-sky-theme="mountain"] .bn.on { color: #4A7C39; }
+body[data-sky-theme="mountain"] .login-btn {
+  background: linear-gradient(135deg, #4A7C39, #6B8F5E) !important;
+  box-shadow: 0 4px 24px rgba(74,124,57,0.25) !important;
+}
+body[data-sky-theme="mountain"] .login-logo {
+  border-color: rgba(74,124,57,0.25);
+  background: rgba(74,124,57,0.08);
+}
+body[data-sky-theme="mountain"] .sec-dot { background: #4A7C39 !important; }
+
+/* ===== ENVIRONMENT-THEMED CARDS & UI ELEMENTS ===== */
+/* Card accent border for beach */
+body[data-sky-theme="beach"] .dq-card,
+body[data-sky-theme="beach"] .dt-current,
+body[data-sky-theme="beach"] .form-card,
+body[data-sky-theme="beach"] .agree-daily-card {
+  border-left: 3px solid rgba(78,165,210,0.25);
+}
+body[data-sky-theme="beach"] .hub-today-card {
+  border-top: 2px solid rgba(78,165,210,0.12);
+}
+/* Card accent border for mountain */
+body[data-sky-theme="mountain"] .dq-card,
+body[data-sky-theme="mountain"] .dt-current,
+body[data-sky-theme="mountain"] .form-card,
+body[data-sky-theme="mountain"] .agree-daily-card {
+  border-left: 3px solid rgba(74,124,57,0.25);
+}
+body[data-sky-theme="mountain"] .hub-today-card {
+  border-top: 2px solid rgba(74,124,57,0.12);
+}
+
+/* ===== ENVIRONMENT HEADER ACCENTS ===== */
+body[data-sky-theme="beach"] #page-header {
+  border-bottom-color: rgba(78,165,210,0.08);
+}
+body[data-sky-theme="mountain"] #page-header {
+  border-bottom-color: rgba(74,124,57,0.08);
+}
+
+/* ===== ENVIRONMENT ONBOARDING ===== */
+/* ob-progress-fill removed — progress bar no longer used */
+body[data-sky-theme="beach"] .ob-next-btn { background: linear-gradient(135deg, #4EA5D2, #5BC0BE) !important; }
+body[data-sky-theme="mountain"] .ob-next-btn { background: linear-gradient(135deg, #4A7C39, #6B8F5E) !important; }
+
+/* ===== ENVIRONMENT BUTTON/INTERACTIVE ACCENTS ===== */
+body[data-sky-theme="beach"] .streak-fire-icon svg { stroke: #4EA5D2 !important; }
+body[data-sky-theme="mountain"] .streak-fire-icon svg { stroke: #4A7C39 !important; }
+body[data-sky-theme="beach"] .agree-pending-dot { background: #4EA5D2 !important; }
+body[data-sky-theme="mountain"] .agree-pending-dot { background: #4A7C39 !important; }
+body[data-sky-theme="beach"] .agree-item-check { background: #4EA5D2 !important; }
+body[data-sky-theme="mountain"] .agree-item-check { background: #4A7C39 !important; }
+
+/* ===== DRAMATIC ENVIRONMENT ACCENT SYSTEM ===== */
+/* Beach: turquoise/coral accent - override gold accent everywhere */
+body[data-sky-theme="beach"] {
+  --gold: #2A9D8F; --gold-l: #238B7E;
+  --glow-gold: rgba(42,157,143,.25);
+  --focus-ring: 0 0 0 3px rgba(42,157,143,.20);
+}
+body[data-sky-theme="beach"] .bnav-indicator { background: #2A9D8F !important; }
+body[data-sky-theme="beach"] .bnav { border-top-color: rgba(42,157,143,.15); }
+body[data-sky-theme="beach"] .bn.active .ni,
+body[data-sky-theme="beach"] .bn.active .nl { color: #2A9D8F !important; }
+body[data-sky-theme="beach"] .toggle-switch input:checked+.toggle-slider { background: #2A9D8F; }
+body[data-sky-theme="beach"] .dq-submit { background: linear-gradient(135deg,#2A9D8F,#4EA5D2) !important; }
+body[data-sky-theme="beach"] .sky-theme-btn.active { border-color: #2A9D8F; background: rgba(42,157,143,.12); }
+body[data-sky-theme="beach"] .stab.active { box-shadow: 0 2px 8px rgba(42,157,143,.15); }
+body[data-sky-theme="beach"] .dash-title,
+body[data-sky-theme="beach"] .pg-title { color: #2A9D8F; }
+
+/* Mountain: forest green accent - override gold accent everywhere */
+body[data-sky-theme="mountain"] {
+  --gold: #4A7C39; --gold-l: #3D6830;
+  --glow-gold: rgba(74,124,57,.25);
+  --focus-ring: 0 0 0 3px rgba(74,124,57,.20);
+}
+body[data-sky-theme="mountain"] .bnav-indicator { background: #4A7C39 !important; }
+body[data-sky-theme="mountain"] .bnav { border-top-color: rgba(74,124,57,.15); }
+body[data-sky-theme="mountain"] .bn.active .ni,
+body[data-sky-theme="mountain"] .bn.active .nl { color: #4A7C39 !important; }
+body[data-sky-theme="mountain"] .toggle-switch input:checked+.toggle-slider { background: #4A7C39; }
+body[data-sky-theme="mountain"] .dq-submit { background: linear-gradient(135deg,#4A7C39,#6B8F5E) !important; }
+body[data-sky-theme="mountain"] .sky-theme-btn.active { border-color: #4A7C39; background: rgba(74,124,57,.12); }
+body[data-sky-theme="mountain"] .stab.active { box-shadow: 0 2px 8px rgba(74,124,57,.15); }
+body[data-sky-theme="mountain"] .dash-title,
+body[data-sky-theme="mountain"] .pg-title { color: #4A7C39; }
+
+/* Evening/Night overrides for beach accent */
+body[data-sky-theme="beach"][data-time="evening"],
+body[data-sky-theme="beach"][data-time="night"] {
+  --gold: #5BC8BA; --gold-l: #4EB8AA;
+  --glow-gold: rgba(91,200,186,.30);
+}
+body[data-sky-theme="beach"][data-time="evening"] .bnav-indicator,
+body[data-sky-theme="beach"][data-time="night"] .bnav-indicator { background: #5BC8BA !important; }
+body[data-sky-theme="beach"][data-time="evening"] .bn.active .ni,
+body[data-sky-theme="beach"][data-time="evening"] .bn.active .nl,
+body[data-sky-theme="beach"][data-time="night"] .bn.active .ni,
+body[data-sky-theme="beach"][data-time="night"] .bn.active .nl { color: #5BC8BA !important; }
+
+/* Evening/Night overrides for mountain accent */
+body[data-sky-theme="mountain"][data-time="evening"],
+body[data-sky-theme="mountain"][data-time="night"] {
+  --gold: #7CB568; --gold-l: #6AA558;
+  --glow-gold: rgba(124,181,104,.30);
+}
+body[data-sky-theme="mountain"][data-time="evening"] .bnav-indicator,
+body[data-sky-theme="mountain"][data-time="night"] .bnav-indicator { background: #7CB568 !important; }
+body[data-sky-theme="mountain"][data-time="evening"] .bn.active .ni,
+body[data-sky-theme="mountain"][data-time="evening"] .bn.active .nl,
+body[data-sky-theme="mountain"][data-time="night"] .bn.active .ni,
+body[data-sky-theme="mountain"][data-time="night"] .bn.active .nl { color: #7CB568 !important; }
+
+/* ===== ENVIRONMENT EXPLORE PAGE ===== */
+body[data-sky-theme="beach"] .explore-feat:first-child { background: linear-gradient(135deg, #4EA5D2, #3B8EAF) !important; }
+body[data-sky-theme="beach"] .explore-feat:nth-child(2) { background: linear-gradient(135deg, #5BC0BE, #4EA5D2) !important; }
+body[data-sky-theme="mountain"] .explore-feat:first-child { background: linear-gradient(135deg, #4A7C39, #3A6530) !important; }
+body[data-sky-theme="mountain"] .explore-feat:nth-child(2) { background: linear-gradient(135deg, #6B8F5E, #4A7C39) !important; }
+
+/* ===== MOVING GRADIENT MESH (secondary layer) ===== */
+.bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  background-size: 200% 200%;
+  animation: meshMove 60s ease-in-out infinite;
+  opacity: 0.4;
+}
+
+@keyframes meshMove {
+  0%, 100% { background-position: 0% 50%; }
+  25% { background-position: 100% 0%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
+}
+
+body[data-time="dawn"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(255,120,150,0.06), rgba(180,140,255,0.04), rgba(255,180,120,0.05), rgba(100,80,200,0.03));
+}
+body[data-time="morning"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(255,200,100,0.06), rgba(255,160,80,0.04), rgba(255,220,180,0.05), rgba(255,180,140,0.03));
+}
+body[data-time="afternoon"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(100,180,255,0.05), rgba(255,200,130,0.04), rgba(80,200,200,0.04), rgba(160,220,255,0.03));
+}
+body[data-time="golden"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(255,140,50,0.07), rgba(255,100,80,0.05), rgba(255,180,60,0.04), rgba(200,60,120,0.03));
+}
+body[data-time="evening"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(80,60,160,0.06), rgba(212,149,106,0.05), rgba(140,80,200,0.04), rgba(255,100,120,0.03));
+}
+body[data-time="night"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(20,30,80,0.08), rgba(60,40,120,0.05), rgba(0,100,120,0.03), rgba(40,60,140,0.04));
+}
+
+/* Beach environment mesh - sandy, turquoise, coral */
+body[data-sky-theme="beach"][data-time="dawn"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(255,160,120,0.08), rgba(255,200,140,0.05), rgba(210,140,100,0.06), rgba(255,180,160,0.04));
+}
+body[data-sky-theme="beach"][data-time="morning"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(255,220,140,0.07), rgba(100,210,230,0.05), rgba(255,240,200,0.05), rgba(200,160,80,0.03));
+}
+body[data-sky-theme="beach"][data-time="afternoon"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(40,200,220,0.07), rgba(60,220,240,0.05), rgba(255,220,180,0.04), rgba(120,230,240,0.03));
+}
+body[data-sky-theme="beach"][data-time="golden"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(255,140,40,0.09), rgba(255,100,50,0.06), rgba(255,180,80,0.05), rgba(255,120,60,0.04));
+}
+body[data-sky-theme="beach"][data-time="evening"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(60,40,120,0.06), rgba(200,130,90,0.05), rgba(100,60,140,0.04), rgba(60,80,140,0.03));
+}
+body[data-sky-theme="beach"][data-time="night"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(10,20,50,0.09), rgba(20,30,70,0.06), rgba(10,60,80,0.04), rgba(15,30,60,0.05));
+}
+
+/* Mountain environment mesh - forest greens, alpine blues, earthy */
+body[data-sky-theme="mountain"][data-time="dawn"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(120,160,100,0.07), rgba(160,180,140,0.05), rgba(180,200,160,0.05), rgba(100,140,80,0.03));
+}
+body[data-sky-theme="mountain"][data-time="morning"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(100,180,80,0.07), rgba(80,160,60,0.05), rgba(140,200,100,0.05), rgba(120,180,80,0.03));
+}
+body[data-sky-theme="mountain"][data-time="afternoon"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(80,140,200,0.06), rgba(60,160,120,0.04), rgba(100,180,140,0.04), rgba(80,140,180,0.03));
+}
+body[data-sky-theme="mountain"][data-time="golden"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(200,140,60,0.08), rgba(160,180,80,0.05), rgba(180,120,40,0.05), rgba(140,160,60,0.04));
+}
+body[data-sky-theme="mountain"][data-time="evening"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(40,60,100,0.07), rgba(60,100,80,0.05), rgba(30,50,80,0.04), rgba(50,80,60,0.03));
+}
+body[data-sky-theme="mountain"][data-time="night"] .bg-mesh {
+  background: linear-gradient(-45deg, rgba(10,18,30,0.09), rgba(15,30,20,0.06), rgba(10,20,40,0.04), rgba(20,35,25,0.05));
+}
+
+/* Beach environment particles */
+body[data-sky-theme="beach"][data-time="dawn"] .particle { --particle-color: rgba(255,180,140,0.35); }
+body[data-sky-theme="beach"][data-time="morning"] .particle { --particle-color: rgba(255,220,140,0.30); }
+body[data-sky-theme="beach"][data-time="afternoon"] .particle { --particle-color: rgba(60,210,230,0.28); }
+body[data-sky-theme="beach"][data-time="golden"] .particle { --particle-color: rgba(255,150,50,0.38); }
+body[data-sky-theme="beach"][data-time="evening"] .particle { --particle-color: rgba(180,120,200,0.28); }
+body[data-sky-theme="beach"][data-time="night"] .particle { --particle-color: rgba(80,120,200,0.22); }
+
+/* Mountain environment particles */
+body[data-sky-theme="mountain"][data-time="dawn"] .particle { --particle-color: rgba(140,180,120,0.30); }
+body[data-sky-theme="mountain"][data-time="morning"] .particle { --particle-color: rgba(120,200,100,0.28); }
+body[data-sky-theme="mountain"][data-time="afternoon"] .particle { --particle-color: rgba(80,160,200,0.25); }
+body[data-sky-theme="mountain"][data-time="golden"] .particle { --particle-color: rgba(200,160,60,0.35); }
+body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-color: rgba(80,120,160,0.28); }
+body[data-sky-theme="mountain"][data-time="night"] .particle { --particle-color: rgba(60,100,140,0.22); }
+
+/* ===== WEATHER EFFECTS LAYER ===== */
+.weather-fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+/* --- Weather Overlays --- */
+.weather-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 2s ease;
+}
+.weather-overlay-overcast {
+  background: linear-gradient(180deg, rgba(140,150,160,0.12) 0%, rgba(160,170,180,0.06) 50%, transparent 100%);
+}
+.weather-overlay-rain {
+  background: linear-gradient(180deg, rgba(80,90,110,0.15) 0%, rgba(100,110,130,0.08) 40%, transparent 100%);
+}
+.weather-overlay-storm {
+  background: linear-gradient(180deg, rgba(40,45,60,0.22) 0%, rgba(60,65,80,0.12) 40%, rgba(80,85,100,0.06) 100%);
+}
+.weather-overlay-snow {
+  background: linear-gradient(180deg, rgba(200,210,220,0.10) 0%, rgba(220,225,235,0.06) 50%, transparent 100%);
+}
+.weather-overlay-fog {
+  background: linear-gradient(180deg, rgba(200,200,210,0.18) 0%, rgba(210,210,220,0.14) 40%, rgba(220,220,230,0.08) 80%, transparent 100%);
+  animation: fogDrift 20s ease-in-out infinite alternate;
+}
+.weather-overlay-haze {
+  background: rgba(200,190,170,0.10);
+}
+.weather-overlay-dust {
+  background: linear-gradient(135deg, rgba(180,160,120,0.12), rgba(200,180,140,0.08), transparent);
+  animation: dustDrift 15s ease-in-out infinite alternate;
+}
+
+@keyframes fogDrift {
+  0% { opacity: 0.8; transform: translateX(-3%); }
+  100% { opacity: 1; transform: translateX(3%); }
+}
+@keyframes dustDrift {
+  0% { transform: translateX(-5%) skewX(-2deg); }
+  100% { transform: translateX(5%) skewX(2deg); }
+}
+
+/* --- Weather Particles --- */
+.weather-particle {
+  position: absolute;
+  top: -10px;
+  pointer-events: none;
+}
+
+/* Rain */
+.weather-rain, .weather-drizzle {
+  background: linear-gradient(180deg, rgba(150,170,200,0.6), rgba(150,170,200,0.1));
+  border-radius: 0 0 2px 2px;
+  animation: rainFall linear infinite;
+}
+.weather-drizzle {
+  background: linear-gradient(180deg, rgba(150,170,200,0.4), rgba(150,170,200,0.05));
+}
+@keyframes rainFall {
+  0% { transform: translateY(-10px) translateX(0); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(100vh) translateX(var(--wind-offset, 15px)); opacity: 0; }
+}
+
+/* Snow */
+.weather-snow {
+  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 60%, transparent 100%);
+  border-radius: 50%;
+  animation: snowFall linear infinite;
+}
+@keyframes snowFall {
+  0% { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  50% { transform: translateY(50vh) translateX(calc(var(--wind-offset, 20px) + 30px * sin(var(--snow-phase, 0)))) rotate(180deg); }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(100vh) translateX(var(--wind-offset, 40px)) rotate(360deg); opacity: 0; }
+}
+
+/* Dust/Sand */
+.weather-dust, .weather-sand {
+  background: radial-gradient(circle, rgba(180,160,120,0.6) 0%, rgba(180,160,120,0.1) 100%);
+  border-radius: 50%;
+  animation: dustBlow linear infinite;
+}
+@keyframes dustBlow {
+  0% { transform: translate(-20px, 0) scale(1); opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.3; }
+  100% { transform: translate(calc(100vw + var(--wind-offset, 50px)), 30px) scale(0.5); opacity: 0; }
+}
+
+/* Thunderstorm rain (heavier) */
+.weather-thunderstorm {
+  background: linear-gradient(180deg, rgba(120,140,170,0.7), rgba(120,140,170,0.1));
+  border-radius: 0 0 2px 2px;
+  animation: rainFall linear infinite;
+}
+
+/* Lightning Flash */
+.weather-lightning {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.25);
+  animation: lightningFlash 0.3s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes lightningFlash {
+  0% { opacity: 1; }
+  20% { opacity: 0.6; }
+  40% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* Temperature Tint */
+.weather-temp-tint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: background 3s ease;
+}
+
+/* Wind Streaks */
+.weather-wind-streak {
+  position: absolute;
+  left: -20%;
+  width: 40%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), rgba(255,255,255,0.04), transparent);
+  animation: windStreak linear infinite;
+}
+@keyframes windStreak {
+  0% { transform: translateX(-100%); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 0.6; }
+  100% { transform: translateX(350%); opacity: 0; }
+}
+
+/* Hail */
+.weather-hail {
+  background: radial-gradient(circle, rgba(220,230,240,0.9) 0%, rgba(180,200,220,0.6) 40%, rgba(160,180,200,0.2) 100%);
+  border-radius: 50%;
+  animation: hailFall linear infinite;
+  box-shadow: inset -1px -1px 2px rgba(255,255,255,0.5), 0 0 3px rgba(180,200,220,0.3);
+}
+@keyframes hailFall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 0; }
+  8% { opacity: 0.9; }
+  85% { opacity: 0.7; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* Dynamic Clouds */
+.weather-cloud {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.5) 0%, rgba(240,245,250,0.3) 40%, transparent 70%);
+  filter: blur(12px);
+  animation: cloudDrift linear infinite;
+}
+.weather-cloud::before {
+  content: '';
+  position: absolute;
+  width: 70%;
+  height: 80%;
+  top: -20%;
+  left: 15%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.4) 0%, transparent 70%);
+  filter: blur(8px);
+}
+.weather-cloud::after {
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 60%;
+  top: -10%;
+  right: 10%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.3) 0%, transparent 70%);
+  filter: blur(6px);
+}
+@keyframes cloudDrift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(25vw); }
+}
+
+/* Night/Evening clouds are darker */
+body[data-time="night"] .weather-cloud,
+body[data-time="evening"] .weather-cloud {
+  background: radial-gradient(ellipse at 30% 50%, rgba(60,65,80,0.4) 0%, rgba(40,45,60,0.25) 40%, transparent 70%);
+}
+body[data-time="night"] .weather-cloud::before,
+body[data-time="evening"] .weather-cloud::before {
+  background: radial-gradient(ellipse, rgba(50,55,70,0.3) 0%, transparent 70%);
+}
+
+/* Clear Sky Sun Rays */
+.weather-sun-rays {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 10%, rgba(255,220,140,0.12) 0%, rgba(255,200,100,0.06) 30%, transparent 60%);
+  animation: sunRaysPulse 8s ease-in-out infinite alternate;
+}
+@keyframes sunRaysPulse {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+body[data-time="dawn"] .weather-sun-rays {
+  background: radial-gradient(ellipse at 20% 30%, rgba(255,200,130,0.15) 0%, rgba(255,170,100,0.08) 30%, transparent 55%);
+}
+body[data-time="golden"] .weather-sun-rays {
+  background: radial-gradient(ellipse at 75% 25%, rgba(255,180,80,0.18) 0%, rgba(255,150,50,0.10) 35%, transparent 60%);
+}
+
+/* ===== SCENE GROUND LAYERS ===== */
+.scene-ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 1;
+}
+.scene-ground-meadow {
+  background: linear-gradient(to top,
+    var(--scene-ground, rgba(120,180,80,0.08)) 0%,
+    var(--scene-accent, rgba(180,220,120,0.04)) 40%,
+    transparent 100%);
+}
+.scene-ground-meadow::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 6px,
+    rgba(80,140,40,0.06) 6px, rgba(80,140,40,0.06) 7px);
+}
+.scene-ground-coastal {
+  background: linear-gradient(to top,
+    var(--scene-ground, rgba(180,200,220,0.08)) 0%,
+    var(--scene-accent, rgba(140,200,240,0.04)) 40%,
+    transparent 100%);
+}
+.scene-ground-coastal::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(180deg, rgba(100,180,220,0.06), rgba(180,200,220,0.03));
+  animation: waveSurge 4s ease-in-out infinite alternate;
+}
+@keyframes waveSurge {
+  0% { transform: translateY(0) scaleY(1); }
+  100% { transform: translateY(-5px) scaleY(1.2); }
+}
+.scene-ground-forest {
+  background: linear-gradient(to top,
+    var(--scene-ground, rgba(30,80,40,0.08)) 0%,
+    var(--scene-accent, rgba(60,100,50,0.04)) 40%,
+    transparent 100%);
+}
+.scene-ground-forest::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 15px,
+    rgba(30,60,20,0.05) 15px, rgba(30,60,20,0.05) 18px);
+}
+
+/* ===== SCENE CREATURES ===== */
+.scene-creature {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Rabbit */
+.creature-rabbit {
+  animation: rabbitHop ease-in-out forwards;
+}
+.rabbit-body {
+  width: 12px;
+  height: 8px;
+  background: rgba(180,160,140,0.5);
+  border-radius: 50%;
+  position: relative;
+}
+.rabbit-ear {
+  position: absolute;
+  width: 3px;
+  height: 8px;
+  background: rgba(180,160,140,0.5);
+  border-radius: 50% 50% 0 0;
+  top: -7px;
+}
+.rabbit-ear-l { left: 2px; transform: rotate(-10deg); }
+.rabbit-ear-r { left: 6px; transform: rotate(10deg); }
+.rabbit-tail {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(220,210,200,0.5);
+  border-radius: 50%;
+  right: -2px;
+  top: 2px;
+}
+@keyframes rabbitHop {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.7; }
+  20% { transform: translate(20px, -15px); }
+  30% { transform: translate(40px, 0); }
+  40% { transform: translate(60px, -12px); }
+  50% { transform: translate(80px, 0); }
+  60% { transform: translate(100px, -15px); }
+  70% { transform: translate(120px, 0); }
+  80% { transform: translate(130px, 0); opacity: 0.7; }
+  100% { transform: translate(160px, 0); opacity: 0; }
+}
+
+/* Bee */
+.creature-bee {
+  animation: beeFloat ease-in-out forwards;
+}
+.bee-body {
+  width: 8px;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, rgba(255,200,0,0.7) 0px, rgba(255,200,0,0.7) 2px, rgba(40,30,0,0.5) 2px, rgba(40,30,0,0.5) 4px);
+  border-radius: 50%;
+  position: relative;
+}
+.bee-wing {
+  position: absolute;
+  width: 6px;
+  height: 4px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 50%;
+  top: -3px;
+  animation: beeWing 0.1s ease-in-out infinite alternate;
+}
+.bee-wing-l { left: 0; transform-origin: bottom right; }
+.bee-wing-r { right: 0; transform-origin: bottom left; }
+@keyframes beeFloat {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.8; }
+  25% { transform: translate(calc(var(--bee-dx, 100px) * 0.3), calc(var(--bee-dy, -20px) * 0.5 - 10px)); }
+  50% { transform: translate(calc(var(--bee-dx, 100px) * 0.6), calc(var(--bee-dy, -20px) * 0.3 + 5px)); }
+  75% { transform: translate(calc(var(--bee-dx, 100px) * 0.8), calc(var(--bee-dy, -20px) * 0.7 - 8px)); }
+  90% { opacity: 0.6; }
+  100% { transform: translate(var(--bee-dx, 100px), var(--bee-dy, -20px)); opacity: 0; }
+}
+@keyframes beeWing {
+  0% { transform: scaleY(1) rotate(-20deg); }
+  100% { transform: scaleY(0.3) rotate(20deg); }
+}
+
+/* Dragonfly */
+.creature-dragonfly {
+  animation: dfFloat ease-in-out forwards;
+}
+.df-body {
+  width: 16px;
+  height: 3px;
+  background: rgba(80,160,200,0.5);
+  border-radius: 2px;
+  position: relative;
+}
+.df-wing {
+  position: absolute;
+  width: 10px;
+  height: 3px;
+  background: rgba(200,220,255,0.3);
+  border-radius: 50%;
+  top: -2px;
+  animation: dfWingBeat 0.08s ease-in-out infinite alternate;
+}
+.df-wing-l { left: 2px; transform-origin: bottom right; }
+.df-wing-r { left: 6px; transform-origin: bottom left; }
+@keyframes dfFloat {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.7; }
+  30% { transform: translate(calc(var(--df-dx, 150px) * 0.3), -20px); }
+  50% { transform: translate(calc(var(--df-dx, 150px) * 0.5), 10px); }
+  70% { transform: translate(calc(var(--df-dx, 150px) * 0.7), -15px); }
+  90% { opacity: 0.5; }
+  100% { transform: translate(var(--df-dx, 150px), 0); opacity: 0; }
+}
+@keyframes dfWingBeat {
+  0% { transform: scaleY(1); }
+  100% { transform: scaleY(0.2); }
+}
+
+/* Deer */
+.creature-deer {
+  animation: deerWalk linear forwards;
+}
+.deer-body {
+  width: 24px;
+  height: 14px;
+  background: rgba(160,120,80,0.45);
+  border-radius: 8px 12px 4px 4px;
+  position: relative;
+}
+.deer-head {
+  position: absolute;
+  width: 10px;
+  height: 8px;
+  background: rgba(160,120,80,0.45);
+  border-radius: 50%;
+  top: -4px;
+  right: -6px;
+}
+.deer-antler {
+  position: absolute;
+  width: 2px;
+  height: 8px;
+  background: rgba(120,90,60,0.4);
+  top: -11px;
+  border-radius: 1px;
+}
+.deer-antler-l { right: -2px; transform: rotate(-15deg); }
+.deer-antler-r { right: -6px; transform: rotate(15deg); }
+.deer-leg {
+  position: absolute;
+  width: 2px;
+  height: 10px;
+  background: rgba(140,100,70,0.4);
+  bottom: -9px;
+  border-radius: 0 0 1px 1px;
+}
+.deer-leg-fl { left: 4px; animation: deerStep 0.8s ease-in-out infinite; }
+.deer-leg-fr { left: 8px; animation: deerStep 0.8s ease-in-out infinite 0.4s; }
+.deer-leg-bl { right: 4px; animation: deerStep 0.8s ease-in-out infinite 0.2s; }
+.deer-leg-br { right: 8px; animation: deerStep 0.8s ease-in-out infinite 0.6s; }
+@keyframes deerWalk {
+  0% { transform: translateX(0); opacity: 0; }
+  5% { opacity: 0.6; }
+  90% { opacity: 0.5; }
+  100% { transform: translateX(var(--deer-dir, 300px)); opacity: 0; }
+}
+@keyframes deerStep {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+}
+
+/* Owl */
+.creature-owl {
+  animation: owlBob 3s ease-in-out infinite;
+}
+.owl-body {
+  width: 14px;
+  height: 16px;
+  background: rgba(120,100,80,0.5);
+  border-radius: 50% 50% 40% 40%;
+  position: relative;
+}
+.owl-eye {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: rgba(255,220,100,0.7);
+  border-radius: 50%;
+  top: 3px;
+  animation: owlBlink 4s ease-in-out infinite;
+}
+.owl-eye-l { left: 2px; }
+.owl-eye-r { right: 2px; }
+.owl-wing {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  background: rgba(100,80,60,0.4);
+  border-radius: 50%;
+  top: 4px;
+}
+.owl-wing-l { left: -4px; }
+.owl-wing-r { right: -4px; }
+@keyframes owlBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes owlBlink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+/* Bat */
+.creature-bat {
+  animation: batFly ease-in-out forwards;
+}
+.bat-body {
+  width: 6px;
+  height: 4px;
+  background: rgba(40,30,30,0.6);
+  border-radius: 50%;
+  position: relative;
+}
+.bat-wing {
+  position: absolute;
+  width: 12px;
+  height: 6px;
+  background: rgba(40,30,30,0.4);
+  top: -2px;
+  border-radius: 50% 50% 0 0;
+  animation: batFlap 0.15s ease-in-out infinite alternate;
+}
+.bat-wing-l { left: -10px; transform-origin: right center; }
+.bat-wing-r { right: -10px; transform-origin: left center; }
+@keyframes batFly {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.7; }
+  30% { transform: translate(calc(var(--bat-dx, 200px) * 0.3), calc(var(--bat-dy, -30px) * 0.4 - 20px)); }
+  60% { transform: translate(calc(var(--bat-dx, 200px) * 0.6), calc(var(--bat-dy, -30px) * 0.7 + 10px)); }
+  90% { opacity: 0.5; }
+  100% { transform: translate(var(--bat-dx, 200px), var(--bat-dy, -30px)); opacity: 0; }
+}
+@keyframes batFlap {
+  0% { transform: scaleY(1) rotate(-30deg); }
+  100% { transform: scaleY(0.3) rotate(30deg); }
+}
+
+/* Fox */
+.creature-fox {
+  animation: foxTrot linear forwards;
+}
+.fox-body {
+  width: 20px;
+  height: 10px;
+  background: rgba(200,100,40,0.5);
+  border-radius: 6px 10px 4px 4px;
+  position: relative;
+}
+.fox-tail {
+  position: absolute;
+  width: 14px;
+  height: 6px;
+  background: rgba(200,100,40,0.4);
+  border-radius: 50%;
+  left: -10px;
+  top: 0;
+  transform: rotate(-20deg);
+  animation: foxTailWag 1s ease-in-out infinite alternate;
+}
+.fox-ear {
+  position: absolute;
+  width: 4px;
+  height: 6px;
+  background: rgba(200,100,40,0.5);
+  border-radius: 50% 50% 0 0;
+  top: -5px;
+}
+.fox-ear-l { right: 4px; }
+.fox-ear-r { right: 0px; }
+@keyframes foxTrot {
+  0% { transform: translateX(0); opacity: 0; }
+  5% { opacity: 0.6; }
+  90% { opacity: 0.5; }
+  100% { transform: translateX(var(--fox-dir, 250px)); opacity: 0; }
+}
+@keyframes foxTailWag {
+  0% { transform: rotate(-20deg); }
+  100% { transform: rotate(-35deg); }
+}
+
+/* Squirrel */
+.creature-squirrel {
+  animation: squirrelScurry ease-in-out forwards;
+}
+.squirrel-body {
+  width: 10px;
+  height: 7px;
+  background: rgba(140,100,60,0.5);
+  border-radius: 50%;
+  position: relative;
+}
+.squirrel-tail {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  background: rgba(140,100,60,0.4);
+  border-radius: 50%;
+  left: -4px;
+  top: -6px;
+  transform: rotate(30deg);
+}
+@keyframes squirrelScurry {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.7; transform: translate(10px, -5px); }
+  25% { transform: translate(30px, 0); }
+  35% { transform: translate(35px, 0); }  /* pause */
+  50% { transform: translate(60px, -8px); }
+  60% { transform: translate(80px, 0); }
+  70% { transform: translate(85px, 0); } /* pause */
+  90% { opacity: 0.5; }
+  100% { transform: translate(120px, -20px); opacity: 0; }
+}
+
+/* Woodpecker */
+.creature-woodpecker {
+  animation: woodpeck 0.4s ease-in-out infinite;
+}
+.wp-body {
+  width: 8px;
+  height: 10px;
+  background: rgba(180,40,40,0.5);
+  border-radius: 50% 50% 30% 30%;
+  position: relative;
+}
+.wp-beak {
+  position: absolute;
+  width: 6px;
+  height: 2px;
+  background: rgba(60,50,40,0.6);
+  right: -5px;
+  top: 2px;
+  border-radius: 0 2px 2px 0;
+}
+@keyframes woodpeck {
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(8deg) translateX(2px); }
+}
+
+/* Seagull */
+.creature-seagull {
+  animation: seagullFly ease-in-out forwards;
+}
+.sg-body {
+  width: 10px;
+  height: 5px;
+  background: rgba(240,240,240,0.6);
+  border-radius: 50%;
+  position: relative;
+}
+.sg-wing {
+  position: absolute;
+  width: 14px;
+  height: 3px;
+  background: rgba(240,240,240,0.5);
+  top: -2px;
+  border-radius: 50%;
+  animation: sgFlap 0.4s ease-in-out infinite alternate;
+}
+.sg-wing-l { left: -12px; transform-origin: right center; }
+.sg-wing-r { right: -12px; transform-origin: left center; }
+@keyframes seagullFly {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.7; }
+  50% { transform: translate(calc(var(--sg-dx, 300px) * 0.5), calc(var(--sg-dy, -20px) * 0.5)); }
+  90% { opacity: 0.5; }
+  100% { transform: translate(var(--sg-dx, 300px), var(--sg-dy, -20px)); opacity: 0; }
+}
+@keyframes sgFlap {
+  0% { transform: rotate(-25deg); }
+  100% { transform: rotate(15deg); }
+}
+
+/* Crab */
+.creature-crab {
+  animation: crabWalk ease-in-out forwards;
+}
+.crab-body {
+  width: 10px;
+  height: 6px;
+  background: rgba(220,80,60,0.5);
+  border-radius: 50% 50% 30% 30%;
+  position: relative;
+}
+.crab-claw {
+  position: absolute;
+  width: 5px;
+  height: 4px;
+  background: rgba(220,80,60,0.4);
+  border-radius: 50%;
+  top: -1px;
+}
+.crab-claw-l { left: -4px; animation: clawSnap 2s ease-in-out infinite; }
+.crab-claw-r { right: -4px; animation: clawSnap 2s ease-in-out infinite 1s; }
+.crab-leg {
+  position: absolute;
+  width: 6px;
+  height: 1px;
+  background: rgba(200,70,50,0.4);
+  bottom: -1px;
+}
+.crab-leg-l { left: -3px; transform: rotate(30deg); }
+.crab-leg-r { right: -3px; transform: rotate(-30deg); }
+@keyframes crabWalk {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.5; }
+  100% { transform: translateX(var(--crab-dir, 120px)); opacity: 0; }
+}
+@keyframes clawSnap {
+  0%, 80%, 100% { transform: rotate(0); }
+  90% { transform: rotate(-20deg); }
+}
+
+/* Dolphin */
+.creature-dolphin {
+  animation: dolphinLeap ease-in-out forwards;
+}
+.dolphin-body {
+  width: 20px;
+  height: 8px;
+  background: rgba(100,140,180,0.5);
+  border-radius: 50% 60% 40% 50%;
+  position: relative;
+}
+.dolphin-fin {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(100,140,180,0.4);
+  border-radius: 0 50% 0 50%;
+  top: -5px;
+  left: 8px;
+  transform: rotate(45deg);
+}
+.dolphin-tail {
+  position: absolute;
+  width: 8px;
+  height: 4px;
+  background: rgba(100,140,180,0.4);
+  border-radius: 50%;
+  left: -5px;
+  top: 2px;
+}
+@keyframes dolphinLeap {
+  0% { transform: translate(0, 0) rotate(0); opacity: 0; }
+  10% { opacity: 0.7; }
+  30% { transform: translate(80px, -40px) rotate(-20deg); }
+  50% { transform: translate(160px, -60px) rotate(-10deg); }
+  70% { transform: translate(240px, -30px) rotate(10deg); }
+  85% { transform: translate(300px, 0) rotate(20deg); opacity: 0.5; }
+  100% { transform: translate(350px, 20px) rotate(25deg); opacity: 0; }
+}
+
+/* Fish */
+.creature-fish {
+  animation: fishSwim linear forwards;
+}
+.fish-body {
+  width: 10px;
+  height: 5px;
+  background: rgba(200,180,100,0.4);
+  border-radius: 50%;
+  position: relative;
+}
+.fish-tail {
+  position: absolute;
+  width: 5px;
+  height: 6px;
+  background: rgba(200,180,100,0.3);
+  border-radius: 0;
+  left: -3px;
+  top: -1px;
+  clip-path: polygon(100% 50%, 0 0, 0 100%);
+  animation: fishTail 0.3s ease-in-out infinite alternate;
+}
+@keyframes fishSwim {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.4; }
+  100% { transform: translateX(120vw); opacity: 0; }
+}
+@keyframes fishTail {
+  0% { transform: rotate(-15deg); }
+  100% { transform: rotate(15deg); }
+}
+
+/* Jellyfish */
+.creature-jellyfish {
+  animation: jellyfishFloat ease-in-out forwards;
+}
+.jf-body {
+  width: 14px;
+  height: 10px;
+  background: rgba(200,160,255,0.3);
+  border-radius: 50% 50% 20% 20%;
+  position: relative;
+}
+.jf-tentacle {
+  position: absolute;
+  width: 1px;
+  height: 12px;
+  background: rgba(200,160,255,0.2);
+  bottom: -11px;
+  animation: jfWiggle 2s ease-in-out infinite alternate;
+}
+.jf-t1 { left: 3px; animation-delay: 0s; }
+.jf-t2 { left: 7px; animation-delay: 0.3s; }
+.jf-t3 { left: 11px; animation-delay: 0.6s; }
+@keyframes jellyfishFloat {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.5; }
+  50% { transform: translateY(-60px); }
+  90% { opacity: 0.3; }
+  100% { transform: translateY(-100px); opacity: 0; }
+}
+@keyframes jfWiggle {
+  0% { transform: rotate(-10deg); }
+  100% { transform: rotate(10deg); }
+}
+
+/* Turtle */
+.creature-turtle {
+  animation: turtleCrawl linear forwards;
+}
+.turtle-shell {
+  width: 14px;
+  height: 10px;
+  background: rgba(80,120,60,0.5);
+  border-radius: 50% 50% 30% 30%;
+  position: relative;
+}
+.turtle-head {
+  position: absolute;
+  width: 5px;
+  height: 4px;
+  background: rgba(100,140,80,0.4);
+  border-radius: 50%;
+  right: -3px;
+  top: 3px;
+}
+.turtle-leg {
+  position: absolute;
+  width: 4px;
+  height: 3px;
+  background: rgba(100,140,80,0.3);
+  border-radius: 50%;
+  bottom: -2px;
+}
+.turtle-leg-fl { right: 0; animation: turtleStep 1.2s ease-in-out infinite; }
+.turtle-leg-fr { right: 4px; animation: turtleStep 1.2s ease-in-out infinite 0.6s; }
+@keyframes turtleCrawl {
+  0% { transform: translateX(0); opacity: 0; }
+  5% { opacity: 0.5; }
+  90% { opacity: 0.4; }
+  100% { transform: translateX(110vw); opacity: 0; }
+}
+@keyframes turtleStep {
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(20deg) translateX(2px); }
+}
+
+/* Whale */
+.creature-whale {
+  animation: whaleGlide linear forwards;
+}
+.whale-body {
+  width: 40px;
+  height: 16px;
+  background: rgba(60,80,120,0.3);
+  border-radius: 50% 60% 40% 50%;
+  position: relative;
+}
+.whale-tail {
+  position: absolute;
+  width: 14px;
+  height: 10px;
+  background: rgba(60,80,120,0.25);
+  border-radius: 50%;
+  left: -8px;
+  top: 3px;
+  animation: whaleTail 3s ease-in-out infinite alternate;
+}
+.whale-spout {
+  position: absolute;
+  width: 4px;
+  height: 0;
+  background: rgba(200,220,255,0.3);
+  top: -2px;
+  right: 10px;
+  border-radius: 2px;
+  animation: whaleSpout 8s ease-in-out infinite;
+}
+@keyframes whaleGlide {
+  0% { transform: translate(0, 0); opacity: 0; }
+  5% { opacity: 0.4; }
+  50% { transform: translate(55vw, -10px); }
+  90% { opacity: 0.3; }
+  100% { transform: translate(120vw, 0); opacity: 0; }
+}
+@keyframes whaleTail {
+  0% { transform: rotate(-5deg); }
+  100% { transform: rotate(5deg); }
+}
+@keyframes whaleSpout {
+  0%, 80%, 100% { height: 0; opacity: 0; }
+  85% { height: 15px; opacity: 0.5; }
+  90% { height: 20px; opacity: 0.3; }
+  95% { height: 10px; opacity: 0; }
+}
+
+/* ===== HAWK ===== */
+.creature-hawk {
+  position: absolute;
+  animation: hawkSoar var(--hawk-dur, 12s) linear forwards;
+}
+.hawk-body {
+  width: 10px;
+  height: 5px;
+  background: rgba(90,60,30,0.6);
+  border-radius: 60% 40% 40% 60%;
+  position: relative;
+}
+.hawk-wing {
+  position: absolute;
+  width: 18px;
+  height: 3px;
+  background: rgba(90,60,30,0.5);
+  top: 0;
+  border-radius: 50%;
+}
+.hawk-wing-l {
+  left: -16px;
+  transform-origin: right center;
+  animation: hawkFlap 1.8s ease-in-out infinite;
+}
+.hawk-wing-r {
+  right: -16px;
+  transform-origin: left center;
+  animation: hawkFlap 1.8s ease-in-out infinite reverse;
+}
+@keyframes hawkSoar {
+  0% { transform: translate(0, 0); opacity: 0; }
+  5% { opacity: 0.7; }
+  50% { transform: translate(calc(var(--hawk-dx) * 0.5), calc(var(--hawk-dy) * 0.5)); }
+  90% { opacity: 0.5; }
+  100% { transform: translate(var(--hawk-dx), var(--hawk-dy)); opacity: 0; }
+}
+@keyframes hawkFlap {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(8deg); }
+}
+
+/* ===== SWALLOW ===== */
+.creature-swallow {
+  position: absolute;
+  animation: swallowDart var(--sw-dur, 5s) cubic-bezier(0.2,0.8,0.3,1) forwards;
+}
+.sw-body {
+  width: 6px;
+  height: 3px;
+  background: rgba(20,30,60,0.6);
+  border-radius: 60% 40% 40% 60%;
+  position: relative;
+}
+.sw-wing {
+  position: absolute;
+  width: 10px;
+  height: 2px;
+  background: rgba(20,30,60,0.5);
+  top: -1px;
+  border-radius: 50%;
+}
+.sw-wing-l {
+  left: -9px;
+  transform-origin: right center;
+  animation: swallowFlap 0.3s ease-in-out infinite;
+}
+.sw-wing-r {
+  right: -9px;
+  transform-origin: left center;
+  animation: swallowFlap 0.3s ease-in-out infinite reverse;
+}
+.sw-tail {
+  position: absolute;
+  width: 5px;
+  height: 1px;
+  background: rgba(20,30,60,0.4);
+  left: -4px;
+  top: 1px;
+  border-radius: 0 50% 50% 0;
+}
+@keyframes swallowDart {
+  0% { transform: translate(0, 0); opacity: 0; }
+  8% { opacity: 0.8; }
+  30% { transform: translate(calc(var(--sw-dx) * 0.3), calc(var(--sw-dy) * 0.5)); }
+  60% { transform: translate(calc(var(--sw-dx) * 0.6), calc(var(--sw-dy) * 0.2)); }
+  90% { opacity: 0.6; }
+  100% { transform: translate(var(--sw-dx), var(--sw-dy)); opacity: 0; }
+}
+@keyframes swallowFlap {
+  0%, 100% { transform: rotate(-20deg); }
+  50% { transform: rotate(20deg); }
+}
+
+/* ===== SPARROW ===== */
+.creature-sparrow {
+  position: absolute;
+  animation: sparrowFly var(--sp-dur, 7s) ease-in-out forwards;
+}
+.sp-body {
+  width: 6px;
+  height: 4px;
+  background: rgba(140,110,70,0.6);
+  border-radius: 50%;
+  position: relative;
+}
+.sp-wing {
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  background: rgba(120,90,50,0.5);
+  top: 0;
+  border-radius: 50%;
+}
+.sp-wing-l {
+  left: -7px;
+  transform-origin: right center;
+  animation: sparrowFlap 0.4s ease-in-out infinite;
+}
+.sp-wing-r {
+  right: -7px;
+  transform-origin: left center;
+  animation: sparrowFlap 0.4s ease-in-out infinite reverse;
+}
+@keyframes sparrowFly {
+  0% { transform: translate(0, 0); opacity: 0; }
+  8% { opacity: 0.7; }
+  25% { transform: translate(calc(var(--sp-dx) * 0.25), calc(var(--sp-dy) * 0.4)); }
+  50% { transform: translate(calc(var(--sp-dx) * 0.5), calc(var(--sp-dy) * 0.3)); }
+  75% { transform: translate(calc(var(--sp-dx) * 0.75), calc(var(--sp-dy) * 0.8)); }
+  90% { opacity: 0.5; }
+  100% { transform: translate(var(--sp-dx), var(--sp-dy)); opacity: 0; }
+}
+@keyframes sparrowFlap {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(15deg); }
+}
+
+/* ===== HERON ===== */
+.creature-heron {
+  position: absolute;
+  animation: heronGlide var(--hr-dur, 15s) linear forwards;
+}
+.hr-body {
+  width: 12px;
+  height: 5px;
+  background: rgba(180,180,190,0.5);
+  border-radius: 50% 50% 40% 40%;
+  position: relative;
+}
+.hr-wing {
+  position: absolute;
+  width: 22px;
+  height: 3px;
+  background: rgba(160,160,180,0.4);
+  top: -1px;
+  border-radius: 50%;
+}
+.hr-wing-l {
+  left: -20px;
+  transform-origin: right center;
+  animation: heronFlap 2.5s ease-in-out infinite;
+}
+.hr-wing-r {
+  right: -20px;
+  transform-origin: left center;
+  animation: heronFlap 2.5s ease-in-out infinite reverse;
+}
+.hr-neck {
+  position: absolute;
+  width: 3px;
+  height: 6px;
+  background: rgba(180,180,190,0.4);
+  right: -2px;
+  top: -3px;
+  border-radius: 2px;
+  transform: rotate(-20deg);
+}
+@keyframes heronGlide {
+  0% { transform: translate(0, 0); opacity: 0; }
+  5% { opacity: 0.6; }
+  50% { transform: translate(calc(var(--hr-dx) * 0.5), calc(var(--hr-dy) * 0.5)); }
+  90% { opacity: 0.4; }
+  100% { transform: translate(var(--hr-dx), var(--hr-dy)); opacity: 0; }
+}
+@keyframes heronFlap {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+/* ===== PELICAN ===== */
+.creature-pelican {
+  position: absolute;
+  animation: pelicanFly var(--pl-dur, 12s) linear forwards;
+}
+.pl-body {
+  width: 12px;
+  height: 6px;
+  background: rgba(240,230,210,0.5);
+  border-radius: 50% 60% 40% 50%;
+  position: relative;
+}
+.pl-wing {
+  position: absolute;
+  width: 20px;
+  height: 3px;
+  background: rgba(220,210,190,0.4);
+  top: 0;
+  border-radius: 50%;
+}
+.pl-wing-l {
+  left: -18px;
+  transform-origin: right center;
+  animation: pelicanFlap 2s ease-in-out infinite;
+}
+.pl-wing-r {
+  right: -18px;
+  transform-origin: left center;
+  animation: pelicanFlap 2s ease-in-out infinite reverse;
+}
+.pl-beak {
+  position: absolute;
+  width: 6px;
+  height: 3px;
+  background: rgba(200,160,80,0.5);
+  right: -5px;
+  top: 2px;
+  border-radius: 0 60% 60% 40%;
+}
+@keyframes pelicanFly {
+  0% { transform: translate(0, 0); opacity: 0; }
+  5% { opacity: 0.6; }
+  50% { transform: translate(calc(var(--pl-dx) * 0.5), calc(var(--pl-dy) * 0.5)); }
+  90% { opacity: 0.4; }
+  100% { transform: translate(var(--pl-dx), var(--pl-dy)); opacity: 0; }
+}
+@keyframes pelicanFlap {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+
+/* ===== SETTINGS - SCENE PICKER ===== */
+/* ===== LOCATION PROMPT ===== */
+.loc-prompt {
+  text-align: center;
+  padding: 20px 16px;
+}
+.loc-prompt-icon {
+  display: none;
+}
+.loc-prompt-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary, #3D2E22);
+  margin: 0 0 8px;
+}
+.loc-prompt-desc {
+  font-size: 13px;
+  color: var(--text-secondary, #6B5D4F);
+  line-height: 1.5;
+  margin: 0 0 16px;
+  font-family: Outfit, sans-serif;
+}
+/* loc-prompt-features grid removed — simplified location prompt */
+.loc-prompt-skip {
+  font-size: 13px;
+  color: var(--text-tertiary, #8C7B6B);
+  cursor: pointer;
+  margin-top: 12px;
+  font-family: Outfit, sans-serif;
+}
+.loc-prompt-skip:hover {
+  color: var(--text-primary, #3D2E22);
+}
+
+/* ===== WEATHER INFO DISPLAY ===== */
+.weather-info-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: var(--bg2, #FAF5F0);
+  border-radius: var(--radius-md, 12px);
+  font-size: 12px;
+  font-family: Outfit, sans-serif;
+  color: var(--text-secondary, #6B5D4F);
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+.weather-icon { font-size: 18px; }
+.weather-temp { font-weight: 600; color: var(--text-primary, #3D2E22); }
+.weather-cond { text-transform: capitalize; }
+.weather-wind { opacity: 0.7; }
+
+/* ===== MOOD SOUNDS GRID ===== */
+.mood-sounds-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 8px 0;
+}
+@media (max-width: 374px) {
+  .mood-sounds-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+}
+.mood-sound-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  background: var(--bg2, #FAF5F0);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md, 12px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: Outfit, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+.mood-sound-btn.active {
+  border-color: var(--gold, #C9A96E);
+  background: rgba(201,169,110,0.12);
+  box-shadow: 0 2px 12px rgba(201,169,110,0.2);
+  animation: msbPulse 2s ease-in-out infinite;
+}
+/* Environment-aware highlighting for matching mood sounds */
+[data-sky-theme="beach"] .mood-sound-btn[data-mood="ocean"],
+[data-sky-theme="beach"] .mood-sound-btn[data-mood="beachBreeze"],
+[data-sky-theme="beach"] .mood-sound-btn[data-mood="seagulls"],
+[data-sky-theme="beach"] .mood-sound-btn[data-mood="tropical"] {
+  border-color: rgba(78,165,210,0.25);
+  background: rgba(78,165,210,0.06);
+}
+[data-sky-theme="mountain"] .mood-sound-btn[data-mood="forest"],
+[data-sky-theme="mountain"] .mood-sound-btn[data-mood="mountainCreek"],
+[data-sky-theme="mountain"] .mood-sound-btn[data-mood="mountainWind"],
+[data-sky-theme="mountain"] .mood-sound-btn[data-mood="campfire"] {
+  border-color: rgba(74,124,57,0.25);
+  background: rgba(74,124,57,0.06);
+}
+/* Active overrides the environment hint */
+.mood-sound-btn.active {
+  border-color: var(--gold, #C9A96E) !important;
+  background: rgba(201,169,110,0.12) !important;
+}
+@keyframes msbPulse {
+  0%,100% { box-shadow: 0 2px 12px rgba(201,169,110,0.2); }
+  50% { box-shadow: 0 2px 18px rgba(201,169,110,0.35); }
+}
+.mood-sound-btn:active { transform: scale(0.95); }
+.msb-icon { font-size: 20px; }
+.msb-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-secondary, #6B5D4F);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.mood-sound-btn.active .msb-label {
+  color: var(--gold, #C9A96E);
+}
+.mood-send-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--rose, #C97B7B);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md, 12px);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: Outfit, sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.2s;
+}
+.mood-send-btn:active { opacity: 0.8; }
+.mood-stop-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--bg3, #E8DDD0);
+  color: var(--text-secondary, #6B5D4F);
+  border: none;
+  border-radius: var(--radius-md, 12px);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: Outfit, sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* ===== MUSIC CONNECT ===== */
+.music-connect-row {
+  display: flex;
+  gap: 10px;
+}
+.music-connect-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius-md, 12px);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: Outfit, sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.music-connect-btn:active { opacity: 0.8; }
+.music-connect-btn.spotify {
+  background: #1DB954;
+  color: #fff;
+}
+.music-connect-btn.youtube {
+  background: #FF0000;
+  color: #fff;
+}
+
+/* ===== VOICE NOTE UI ===== */
+
+/* Record button on Connect page */
+.vn-record-section {
+  margin-top: 8px;
+}
+.vn-record-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 50px;
+  border: 2px solid var(--rose);
+  background: rgba(193,121,121,0.08);
+  color: var(--cream);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .3s;
+}
+.vn-record-btn:active { transform: scale(.97); }
+.vn-record-btn.recording {
+  border-color: #e74c3c;
+  background: rgba(231,76,60,0.15);
+  animation: vn-pulse 1s infinite;
+}
+@keyframes vn-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.3); }
+  50% { box-shadow: 0 0 0 12px rgba(231,76,60,0); }
+}
+.vn-record-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--rose);
+  transition: all .3s;
+}
+.vn-record-btn.recording .vn-record-dot {
+  background: #e74c3c;
+  animation: vn-dot-pulse 0.8s infinite;
+}
+@keyframes vn-dot-pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.vn-timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--t2);
+  margin-top: 6px;
+  text-align: center;
+}
+.vn-controls {
+  display: none;
+  margin-top: 10px;
+}
+.vn-controls.show { display: block; }
+.vn-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--input-bg);
+  border-radius: 14px;
+  margin-bottom: 10px;
+}
+.vn-play-preview {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gold);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.vn-waveform {
+  flex: 1;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.vn-wave-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+.vn-duration-label {
+  font-size: 11px;
+  color: var(--t3);
+  flex-shrink: 0;
+}
+.vn-send-options {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.vn-option-group {
+  flex: 1;
+}
+.vn-option-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--t3);
+  margin-bottom: 4px;
+}
+.vn-option-select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--bdr-s);
+  background: var(--input-bg);
+  color: var(--cream);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  -webkit-appearance: none;
+}
+.vn-send-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.vn-discard-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 50px;
+  border: 1px solid var(--bdr-s);
+  background: transparent;
+  color: var(--t2);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.vn-send-btn {
+  flex: 2;
+  padding: 12px;
+  border-radius: 50px;
+  border: none;
+  background: var(--gold);
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.vn-send-btn:active { transform: scale(.97); }
+
+/* Voice note play button on partner avatar */
+.dash-partner-avatar .vn-avatar-play {
+  position: absolute;
+  bottom: -4px;
+  left: -4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+  animation: vn-avatar-glow 2s infinite;
+  transition: all .2s;
+}
+.dash-partner-avatar .vn-avatar-play:active { transform: scale(.85); }
+.dash-partner-avatar .vn-avatar-play svg {
+  width: 10px;
+  height: 10px;
+  fill: #fff;
+}
+@keyframes vn-avatar-glow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,169,110,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(201,169,110,0); }
+}
+.vn-avatar-playing {
+  background: var(--rose) !important;
+  animation: none !important;
+}
+
+/* Voice note feed items */
+.vn-feed-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--input-bg);
+  border-radius: 14px;
+  margin-bottom: 6px;
+}
+.vn-feed-play {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gold);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.vn-feed-info {
+  flex: 1;
+  min-width: 0;
+}
+.vn-feed-from {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cream);
+}
+.vn-feed-meta {
+  font-size: 10px;
+  color: var(--t3);
+  margin-top: 2px;
+}
+.vn-feed-replays {
+  font-size: 10px;
+  color: var(--t3);
+  flex-shrink: 0;
+}
+
+/* Notification toast enhanced */
+.notif-toast {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3000;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(30,28,26,0.95), rgba(40,36,32,0.95));
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--bdr-s);
+  transform: translateY(-100%);
+  transition: transform .35s cubic-bezier(.2,.8,.3,1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.notif-toast.show { transform: translateY(0); }
+.notif-toast-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(201,169,110,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.notif-toast-body { flex: 1; min-width: 0; }
+.notif-toast-from {
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.notif-toast-msg {
+  font-size: 13px;
+  color: var(--cream);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== ENHANCED NIGHT SKY ===== */
+
+/* Milky way - diagonal band of faint light */
+.sky-milky-way {
+  position: absolute;
+  width: 200%;
+  height: 40px;
+  top: 15%;
+  left: -30%;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(200,200,240,0.015) 20%,
+    rgba(220,210,240,0.04) 40%,
+    rgba(200,200,240,0.05) 50%,
+    rgba(220,210,240,0.04) 60%,
+    rgba(200,200,240,0.015) 80%,
+    transparent 100%
+  );
+  transform: rotate(-25deg);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+/* ===== SKY THEME VARIANTS ===== */
+
+/* Beach theme - warmer, tropical sky tints for every time of day */
+body[data-sky-theme="beach"][data-time="dawn"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 80%, rgba(255,140,120,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 30%, rgba(255,180,100,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,200,140,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 40% at 20% 10%, rgba(200,120,80,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="morning"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(255,210,120,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 70%, rgba(100,200,230,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 60% 50%, rgba(255,230,190,0.08) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="afternoon"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(60,180,240,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 60%, rgba(255,220,150,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 80%, rgba(40,200,220,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 90%, rgba(200,230,240,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="golden"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 70%, rgba(255,120,40,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 30%, rgba(255,80,60,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 40% at 50% 90%, rgba(255,160,80,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255,100,50,0.08) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="evening"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(60,50,140,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 70%, rgba(200,120,80,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 90%, rgba(100,60,120,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 30% at 50% 100%, rgba(40,80,120,0.08) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="beach"][data-time="night"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(30,50,120,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(60,40,140,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 90%, rgba(20,60,80,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 30% at 50% 100%, rgba(20,50,80,0.10) 0%, transparent 60%),
+    var(--bg) !important;
+}
+
+/* Beach particle tints */
+body[data-sky-theme="beach"][data-time="morning"] .particle { --particle-color: rgba(255,210,120,0.3); }
+body[data-sky-theme="beach"][data-time="afternoon"] .particle { --particle-color: rgba(60,200,230,0.25); }
+body[data-sky-theme="beach"][data-time="golden"] .particle { --particle-color: rgba(255,140,50,0.4); }
+
+/* Mountain theme - cooler, alpine sky tints for every time of day */
+body[data-sky-theme="mountain"][data-time="dawn"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 80%, rgba(180,160,220,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 30%, rgba(160,180,220,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 50% 50%, rgba(200,180,240,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 40% at 20% 10%, rgba(100,120,180,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="morning"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(200,220,255,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 70%, rgba(180,200,140,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 60% 50%, rgba(220,235,250,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 40% 80%, rgba(140,180,120,0.05) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="afternoon"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(80,140,220,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 60%, rgba(160,200,180,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 80%, rgba(100,160,120,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 60% 90%, rgba(120,160,100,0.04) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="golden"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 70%, rgba(220,140,60,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 30% 30%, rgba(200,100,80,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 60% 20%, rgba(220,160,80,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 50%, rgba(160,80,100,0.05) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="evening"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(60,40,140,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 70% 70%, rgba(140,80,160,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 50%, rgba(80,60,120,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 40% 90%, rgba(40,60,100,0.06) 0%, transparent 60%),
+    var(--bg) !important;
+}
+body[data-sky-theme="mountain"][data-time="night"]::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(30,40,120,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(80,50,160,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 90%, rgba(0,120,100,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 60% 20%, rgba(40,30,100,0.08) 0%, transparent 60%),
+    var(--bg) !important;
+}
+
+/* Mountain particle tints */
+body[data-sky-theme="mountain"][data-time="morning"] .particle { --particle-color: rgba(140,180,120,0.25); }
+body[data-sky-theme="mountain"][data-time="afternoon"] .particle { --particle-color: rgba(80,140,200,0.25); }
+body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-color: rgba(140,100,200,0.3); }
+
+/* ===== THEMED CREATURES ===== */
+
+/* Seagull - white wings */
+.sky-seagull .sky-bird-wing {
+  border-top-color: rgba(255,255,255,.6);
+}
+
+/* Eagle - larger wingspan, darker color */
+.sky-eagle-wing {
+  width: 12px !important;
+  height: 4px !important;
+  border-top-color: rgba(80,60,40,.5) !important;
+  border-top-width: 3px !important;
+}
+.sky-eagle .sky-bird-wing-l { left: -13px !important; }
+.sky-eagle .sky-bird-wing-r { right: -13px !important; }
+
+/* Crab */
+.sky-crab {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+  animation: crabWalk linear forwards;
+  opacity: 0;
+}
+.crab-body {
+  width: 8px;
+  height: 5px;
+  background: rgba(200,120,80,.5);
+  border-radius: 50% 50% 30% 30%;
+}
+@keyframes crabWalk {
+  0% { transform: translateX(0); opacity: 0; }
+  10% { opacity: .5; }
+  50% { opacity: .4; transform: translateX(calc(var(--crab-dir, 60px) * 0.5)); }
+  90% { opacity: .3; }
+  100% { transform: translateX(var(--crab-dir, 60px)); opacity: 0; }
+}
+
+/* Owl eyes - glowing in the dark */
+.sky-owl-eyes {
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.owl-eye {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255,200,50,.7);
+  box-shadow: 0 0 6px rgba(255,200,50,.4);
+  animation: owlBlink 3s ease-in-out infinite;
+}
+@keyframes owlBlink {
+  0%,45%,55%,100% { opacity: 1; transform: scaleY(1); }
+  50% { opacity: .3; transform: scaleY(.1); }
+}
+
+/* ===== IMMERSIVE TERRAIN SYSTEM ===== */
+/* Terrain lives outside sky-scene mask so silhouettes are fully visible */
+
+.terrain-scene {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 2s ease;
+}
+
+/* --- MOUNTAIN TERRAIN --- */
+
+/* Far mountain range - distant peaks */
+.terrain-mountain-far {
+  position: absolute;
+  bottom: 0;
+  left: -5%;
+  right: -5%;
+  height: 45%;
+  opacity: 0.7;
+  transition: opacity 2s ease;
+  clip-path: polygon(
+    0% 100%, 0% 65%, 3% 58%, 6% 50%, 9% 42%, 11% 38%,
+    14% 28%, 16% 22%, 18% 18%, 20% 15%, 22% 12%,
+    24% 18%, 26% 22%, 28% 30%, 30% 35%,
+    32% 30%, 34% 25%, 36% 20%, 38% 15%, 40% 10%,
+    42% 8%, 44% 12%, 46% 18%, 48% 25%,
+    50% 28%, 52% 22%, 54% 16%, 56% 12%,
+    58% 18%, 60% 25%, 62% 32%,
+    64% 28%, 66% 22%, 68% 16%, 70% 12%,
+    72% 8%, 74% 5%, 76% 10%, 78% 16%,
+    80% 22%, 82% 30%, 84% 35%,
+    86% 30%, 88% 22%, 90% 18%, 92% 22%,
+    94% 28%, 96% 35%, 98% 45%, 100% 55%, 100% 100%
+  );
+}
+
+/* Mid mountain range - closer, greener */
+.terrain-mountain-mid {
+  position: absolute;
+  bottom: 0;
+  left: -3%;
+  right: -3%;
+  height: 38%;
+  opacity: 0.75;
+  transition: opacity 2s ease;
+  clip-path: polygon(
+    0% 100%, 0% 70%, 4% 62%, 7% 55%, 10% 48%,
+    13% 42%, 15% 38%, 18% 32%, 20% 28%,
+    22% 24%, 24% 20%, 26% 25%, 28% 32%,
+    30% 38%, 33% 42%, 35% 45%,
+    37% 40%, 39% 35%, 41% 30%, 43% 25%,
+    45% 22%, 47% 28%, 49% 35%,
+    51% 38%, 53% 34%, 55% 28%, 57% 24%,
+    59% 20%, 61% 24%, 63% 30%,
+    65% 36%, 67% 40%, 69% 38%,
+    71% 32%, 73% 26%, 75% 22%, 77% 18%,
+    79% 22%, 81% 28%, 83% 34%,
+    85% 40%, 87% 44%, 89% 42%,
+    91% 38%, 93% 34%, 95% 40%,
+    97% 48%, 99% 56%, 100% 62%, 100% 100%
+  );
+}
+
+/* Near foothills - forest treeline */
+.terrain-mountain-near {
+  position: absolute;
+  bottom: 0;
+  left: -2%;
+  right: -2%;
+  height: 28%;
+  opacity: 0.8;
+  transition: opacity 2s ease;
+  clip-path: polygon(
+    0% 100%, 0% 50%,
+    2% 46%, 3% 42%, 4% 38%, 4.5% 34%, 5% 38%, 5.5% 42%,
+    6% 46%, 7% 48%, 8% 44%, 8.5% 40%, 9% 36%, 9.5% 32%,
+    10% 36%, 10.5% 40%, 11% 44%, 12% 48%,
+    14% 50%, 15% 46%, 16% 42%, 16.5% 38%, 17% 34%,
+    17.5% 38%, 18% 42%, 19% 46%, 20% 48%,
+    22% 52%, 23% 48%, 24% 44%, 24.5% 40%, 25% 36%,
+    25.5% 40%, 26% 44%, 27% 48%, 28% 52%,
+    30% 54%, 32% 50%, 33% 46%, 33.5% 42%, 34% 38%,
+    34.5% 42%, 35% 46%, 36% 50%, 38% 54%,
+    40% 52%, 41% 48%, 42% 44%, 42.5% 40%, 43% 36%,
+    43.5% 40%, 44% 44%, 45% 48%, 46% 52%,
+    48% 56%, 50% 54%, 51% 50%, 52% 46%, 52.5% 42%,
+    53% 38%, 53.5% 42%, 54% 46%, 55% 50%, 56% 54%,
+    58% 56%, 59% 52%, 60% 48%, 60.5% 44%, 61% 40%,
+    61.5% 44%, 62% 48%, 63% 52%, 64% 56%,
+    66% 54%, 67% 50%, 68% 46%, 68.5% 42%, 69% 38%,
+    69.5% 34%, 70% 38%, 70.5% 42%, 71% 46%, 72% 50%,
+    74% 54%, 75% 50%, 76% 46%, 76.5% 42%, 77% 38%,
+    77.5% 42%, 78% 46%, 79% 50%, 80% 54%,
+    82% 52%, 83% 48%, 84% 44%, 84.5% 40%, 85% 36%,
+    85.5% 40%, 86% 44%, 87% 48%, 88% 52%,
+    90% 56%, 91% 52%, 92% 48%, 92.5% 44%,
+    93% 48%, 94% 52%, 95% 56%, 96% 52%,
+    97% 48%, 98% 52%, 99% 56%, 100% 58%, 100% 100%
+  );
+}
+
+/* Mountain mist layers between ranges */
+.terrain-mountain-mist {
+  position: absolute;
+  bottom: 20%;
+  left: 0;
+  right: 0;
+  height: 18%;
+  opacity: 0.5;
+  background: linear-gradient(180deg, transparent 0%, rgba(200,210,220,0.7) 40%, rgba(220,230,240,0.5) 70%, transparent 100%);
+  animation: mistDrift 25s ease-in-out infinite alternate;
+}
+@keyframes mistDrift {
+  0% { transform: translateX(-3%) scaleY(0.9); opacity: 0.2; }
+  100% { transform: translateX(3%) scaleY(1.1); opacity: 0.35; }
+}
+
+/* Waterfall - thin animated streak on a mountain face */
+.terrain-waterfall {
+  position: absolute;
+  width: 3px;
+  height: 12%;
+  opacity: 0.7;
+  overflow: hidden;
+}
+.terrain-waterfall::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(200,230,255,0.8) 10%,
+    rgba(180,220,250,0.6) 50%,
+    rgba(200,230,255,0.3) 90%,
+    transparent 100%);
+  animation: waterfallFlow 1.5s linear infinite;
+}
+.terrain-waterfall::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: -4px;
+  width: 10px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(200,230,255,0.3) 0%, transparent 70%);
+  animation: waterfallSplash 2s ease-in-out infinite;
+}
+@keyframes waterfallFlow {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+@keyframes waterfallSplash {
+  0%, 100% { transform: scale(0.8); opacity: 0.2; }
+  50% { transform: scale(1.3); opacity: 0.4; }
+}
+
+/* Pine tree silhouettes */
+.terrain-pine {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  opacity: 0.75;
+}
+.terrain-pine::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: var(--pine-w, 8px) solid transparent;
+  border-right: var(--pine-w, 8px) solid transparent;
+  border-bottom: var(--pine-h, 24px) solid var(--pine-color, rgba(20,50,30,0.8));
+}
+.terrain-pine::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: calc(var(--pine-h, 24px) * 0.3);
+  background: var(--pine-trunk, rgba(60,40,20,0.6));
+}
+
+/* --- BEACH TERRAIN --- */
+
+/* Ocean water layer */
+.terrain-ocean {
+  position: absolute;
+  bottom: 0;
+  left: -5%;
+  right: -5%;
+  height: 30%;
+  opacity: 0.8;
+  transition: opacity 2s ease;
+}
+.terrain-ocean-body {
+  position: absolute;
+  inset: 0;
+  top: 30%;
+  background: linear-gradient(180deg,
+    rgba(30,120,180,0.3) 0%,
+    rgba(20,100,160,0.4) 30%,
+    rgba(15,80,140,0.5) 60%,
+    rgba(10,60,120,0.6) 100%);
+}
+
+/* Animated wave crests */
+.terrain-wave {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 8px;
+  opacity: 0.75;
+  border-radius: 50%;
+}
+.terrain-wave-1 {
+  top: 28%;
+  background: rgba(200,230,250,0.5);
+  animation: waveRoll1 6s ease-in-out infinite;
+}
+.terrain-wave-2 {
+  top: 32%;
+  background: rgba(180,220,245,0.4);
+  animation: waveRoll2 8s ease-in-out infinite;
+}
+.terrain-wave-3 {
+  top: 38%;
+  background: rgba(160,210,240,0.3);
+  animation: waveRoll3 7s ease-in-out infinite;
+}
+@keyframes waveRoll1 {
+  0%, 100% { transform: translateX(-2%) scaleY(1); }
+  50% { transform: translateX(2%) scaleY(1.5); }
+}
+@keyframes waveRoll2 {
+  0%, 100% { transform: translateX(3%) scaleY(0.8); }
+  50% { transform: translateX(-3%) scaleY(1.3); }
+}
+@keyframes waveRoll3 {
+  0%, 100% { transform: translateX(-1%) scaleY(1.2); }
+  50% { transform: translateX(1%) scaleY(0.7); }
+}
+
+/* Wave foam */
+.terrain-foam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 8px,
+    rgba(255,255,255,0.3) 8px, rgba(255,255,255,0.3) 12px,
+    transparent 12px, transparent 20px);
+  animation: foamShimmer 3s ease-in-out infinite alternate;
+}
+@keyframes foamShimmer {
+  0% { opacity: 0.3; transform: translateX(-5px); }
+  100% { opacity: 0.5; transform: translateX(5px); }
+}
+
+/* Sandy shore gradient */
+.terrain-shore {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 12%;
+  background: linear-gradient(180deg,
+    rgba(220,195,150,0.5) 0%,
+    rgba(230,205,165,0.65) 40%,
+    rgba(240,215,175,0.75) 100%);
+}
+
+/* Palm tree silhouette */
+.terrain-palm {
+  position: absolute;
+  bottom: 0;
+  opacity: 0.75;
+}
+.terrain-palm-trunk {
+  position: absolute;
+  bottom: 0;
+  width: 3px;
+  border-radius: 2px;
+  transform-origin: bottom center;
+}
+.terrain-palm-frond {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0.9;
+}
+
+/* Individual palm frond shapes */
+.terrain-palm-frond-1 {
+  border-bottom: var(--frond-h, 18px) solid var(--palm-color, rgba(20,60,20,0.7));
+  border-left: var(--frond-w, 22px) solid transparent;
+  border-right: 2px solid transparent;
+  transform: rotate(-25deg);
+}
+.terrain-palm-frond-2 {
+  border-bottom: var(--frond-h, 16px) solid var(--palm-color, rgba(20,60,20,0.7));
+  border-left: 2px solid transparent;
+  border-right: var(--frond-w, 20px) solid transparent;
+  transform: rotate(20deg);
+}
+.terrain-palm-frond-3 {
+  border-bottom: var(--frond-h, 14px) solid var(--palm-color, rgba(20,60,20,0.65));
+  border-left: var(--frond-w, 18px) solid transparent;
+  border-right: 2px solid transparent;
+  transform: rotate(-45deg);
+}
+.terrain-palm-frond-4 {
+  border-bottom: var(--frond-h, 14px) solid var(--palm-color, rgba(20,60,20,0.65));
+  border-left: 2px solid transparent;
+  border-right: var(--frond-w, 18px) solid transparent;
+  transform: rotate(40deg);
+}
+.terrain-palm-frond-5 {
+  border-bottom: var(--frond-h, 12px) solid var(--palm-color, rgba(20,60,20,0.55));
+  border-left: var(--frond-w, 16px) solid transparent;
+  border-right: 2px solid transparent;
+  transform: rotate(-60deg);
+}
+.terrain-palm-frond-6 {
+  border-bottom: var(--frond-h, 12px) solid var(--palm-color, rgba(20,60,20,0.55));
+  border-left: 2px solid transparent;
+  border-right: var(--frond-w, 16px) solid transparent;
+  transform: rotate(55deg);
+}
+
+/* Gentle frond sway */
+.terrain-palm-canopy {
+  position: absolute;
+  animation: palmSway 8s ease-in-out infinite alternate;
+}
+@keyframes palmSway {
+  0% { transform: rotate(-3deg); }
+  100% { transform: rotate(3deg); }
+}
+
+/* Distant island silhouette */
+.terrain-island {
+  position: absolute;
+  border-radius: 50% 50% 0 0;
+  opacity: 0.30;
+}
+
+/* --- MEADOW TERRAIN --- */
+
+/* Rolling hills */
+.terrain-hill-far {
+  position: absolute;
+  bottom: 0;
+  left: -5%;
+  right: -5%;
+  height: 22%;
+  opacity: 0.65;
+  border-radius: 60% 50% 0 0;
+  transition: opacity 2s ease;
+}
+.terrain-hill-mid {
+  position: absolute;
+  bottom: 0;
+  left: -3%;
+  right: -3%;
+  height: 18%;
+  opacity: 0.7;
+  border-radius: 45% 55% 0 0;
+  transition: opacity 2s ease;
+}
+.terrain-hill-near {
+  position: absolute;
+  bottom: 0;
+  left: -2%;
+  right: -2%;
+  height: 14%;
+  opacity: 0.75;
+  border-radius: 50% 50% 0 0;
+  transition: opacity 2s ease;
+}
+
+/* Meadow scattered trees */
+.terrain-tree {
+  position: absolute;
+  bottom: 0;
+  opacity: 0.7;
+}
+.terrain-tree-trunk {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  border-radius: 1px;
+}
+.terrain-tree-canopy {
+  position: absolute;
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Wildflower dots */
+.terrain-flowers {
+  position: absolute;
+  bottom: 2%;
+  left: 0;
+  right: 0;
+  height: 8%;
+  pointer-events: none;
+}
+.terrain-flower-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  animation: flowerSway 4s ease-in-out infinite alternate;
+}
+@keyframes flowerSway {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-2px) rotate(5deg); }
+}
+
+/* Meadow grass blades */
+.terrain-grass-layer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 5%;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 3px,
+    rgba(80,140,40,0.35) 3px, rgba(80,140,40,0.35) 4px);
+  animation: grassWave 5s ease-in-out infinite alternate;
+}
+@keyframes grassWave {
+  0% { transform: skewX(-1deg); }
+  100% { transform: skewX(1deg); }
+}
+
+/* ===== TERRAIN TIME-OF-DAY COLORS ===== */
+
+/* Mountain colors by time */
+body[data-time="dawn"] .terrain-mountain-far { background: rgba(80,60,100,0.95); }
+body[data-time="dawn"] .terrain-mountain-mid { background: rgba(60,80,70,0.9); }
+body[data-time="dawn"] .terrain-mountain-near { background: rgba(30,60,35,0.9); }
+body[data-time="dawn"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(255,180,160,0.45), transparent); }
+body[data-time="dawn"] .terrain-waterfall::before { background: linear-gradient(180deg, transparent, rgba(255,200,220,0.7), transparent); }
+
+body[data-time="morning"] .terrain-mountain-far { background: rgba(100,120,140,0.9); }
+body[data-time="morning"] .terrain-mountain-mid { background: rgba(60,100,60,0.9); }
+body[data-time="morning"] .terrain-mountain-near { background: rgba(30,70,30,0.9); }
+body[data-time="morning"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(220,230,240,0.5), transparent); }
+
+body[data-time="afternoon"] .terrain-mountain-far { background: rgba(90,110,140,0.85); }
+body[data-time="afternoon"] .terrain-mountain-mid { background: rgba(50,90,60,0.85); }
+body[data-time="afternoon"] .terrain-mountain-near { background: rgba(30,65,30,0.85); }
+body[data-time="afternoon"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(200,220,240,0.4), transparent); }
+
+body[data-time="golden"] .terrain-mountain-far { background: rgba(140,80,40,0.9); }
+body[data-time="golden"] .terrain-mountain-mid { background: rgba(100,80,30,0.9); }
+body[data-time="golden"] .terrain-mountain-near { background: rgba(50,60,20,0.9); }
+body[data-time="golden"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(255,180,80,0.4), transparent); }
+body[data-time="golden"] .terrain-waterfall::before { background: linear-gradient(180deg, transparent, rgba(255,220,150,0.7), transparent); }
+
+body[data-time="evening"] .terrain-mountain-far { background: rgba(40,30,60,0.95); }
+body[data-time="evening"] .terrain-mountain-mid { background: rgba(30,40,50,0.9); }
+body[data-time="evening"] .terrain-mountain-near { background: rgba(20,35,25,0.9); }
+body[data-time="evening"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(80,60,120,0.3), transparent); }
+
+body[data-time="night"] .terrain-mountain-far { background: rgba(10,10,20,0.95); }
+body[data-time="night"] .terrain-mountain-mid { background: rgba(8,12,15,0.9); }
+body[data-time="night"] .terrain-mountain-near { background: rgba(5,10,8,0.9); }
+body[data-time="night"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(15,20,35,0.2), transparent); opacity: 0.12; }
+body[data-time="night"] .terrain-waterfall::before { background: linear-gradient(180deg, transparent, rgba(100,140,200,0.4), transparent); }
+
+/* Beach ocean colors by time */
+body[data-time="dawn"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(180,120,140,0.5), rgba(150,100,120,0.6), rgba(120,80,100,0.7)); }
+body[data-time="dawn"] .terrain-wave { background: rgba(255,200,180,0.5); }
+body[data-time="dawn"] .terrain-shore { background: linear-gradient(180deg, rgba(230,200,170,0.2), rgba(240,210,180,0.35)); }
+
+body[data-time="morning"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(60,160,200,0.5), rgba(40,140,180,0.6), rgba(20,120,160,0.7)); }
+body[data-time="morning"] .terrain-wave { background: rgba(200,235,250,0.6); }
+
+body[data-time="afternoon"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(30,150,200,0.55), rgba(20,130,180,0.65), rgba(10,100,160,0.75)); }
+body[data-time="afternoon"] .terrain-wave { background: rgba(180,225,250,0.6); }
+
+body[data-time="golden"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(200,120,60,0.5), rgba(180,100,40,0.6), rgba(150,80,30,0.7)); }
+body[data-time="golden"] .terrain-wave { background: rgba(255,200,120,0.6); }
+body[data-time="golden"] .terrain-shore { background: linear-gradient(180deg, rgba(240,200,140,0.3), rgba(250,210,150,0.45)); }
+
+body[data-time="evening"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(40,30,80,0.55), rgba(30,25,70,0.65), rgba(20,15,50,0.75)); }
+body[data-time="evening"] .terrain-wave { background: rgba(100,80,160,0.45); }
+body[data-time="evening"] .terrain-shore { background: linear-gradient(180deg, rgba(180,160,140,0.2), rgba(190,170,150,0.3)); }
+
+body[data-time="night"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(8,15,35,0.6), rgba(5,10,25,0.7), rgba(3,5,15,0.8)); }
+body[data-time="night"] .terrain-wave { background: rgba(40,60,100,0.35); }
+body[data-time="night"] .terrain-shore { background: linear-gradient(180deg, rgba(40,35,30,0.15), rgba(50,45,40,0.25)); }
+
+/* Beach ocean shimmer - moonlight / sunlight reflections */
+.terrain-ocean-shimmer {
+  position: absolute;
+  top: 35%;
+  left: 10%;
+  right: 10%;
+  height: 20%;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 15px,
+    rgba(255,255,255,0.06) 15px, rgba(255,255,255,0.06) 17px);
+  animation: oceanShimmer 4s ease-in-out infinite alternate;
+  opacity: 0.5;
+}
+@keyframes oceanShimmer {
+  0% { transform: scaleX(0.95) translateX(-10px); opacity: 0.3; }
+  100% { transform: scaleX(1.05) translateX(10px); opacity: 0.6; }
+}
+body[data-time="golden"] .terrain-ocean-shimmer {
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 12px,
+    rgba(255,200,80,0.08) 12px, rgba(255,200,80,0.08) 14px);
+}
+body[data-time="night"] .terrain-ocean-shimmer {
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 20px,
+    rgba(180,200,255,0.04) 20px, rgba(180,200,255,0.04) 22px);
+}
+
+/* Meadow hill colors by time */
+body[data-time="dawn"] .terrain-hill-far { background: rgba(100,80,60,0.8); }
+body[data-time="dawn"] .terrain-hill-mid { background: rgba(80,100,60,0.75); }
+body[data-time="dawn"] .terrain-hill-near { background: rgba(90,120,60,0.7); }
+
+body[data-time="morning"] .terrain-hill-far { background: rgba(80,130,60,0.75); }
+body[data-time="morning"] .terrain-hill-mid { background: rgba(90,150,70,0.7); }
+body[data-time="morning"] .terrain-hill-near { background: rgba(100,160,70,0.65); }
+
+body[data-time="afternoon"] .terrain-hill-far { background: rgba(70,120,60,0.7); }
+body[data-time="afternoon"] .terrain-hill-mid { background: rgba(80,140,60,0.65); }
+body[data-time="afternoon"] .terrain-hill-near { background: rgba(90,150,60,0.6); }
+
+body[data-time="golden"] .terrain-hill-far { background: rgba(160,120,50,0.75); }
+body[data-time="golden"] .terrain-hill-mid { background: rgba(140,130,40,0.7); }
+body[data-time="golden"] .terrain-hill-near { background: rgba(120,140,40,0.65); }
+
+body[data-time="evening"] .terrain-hill-far { background: rgba(50,40,60,0.8); }
+body[data-time="evening"] .terrain-hill-mid { background: rgba(40,50,40,0.75); }
+body[data-time="evening"] .terrain-hill-near { background: rgba(35,45,35,0.7); }
+
+body[data-time="night"] .terrain-hill-far { background: rgba(10,12,15,0.85); }
+body[data-time="night"] .terrain-hill-mid { background: rgba(8,10,12,0.8); }
+body[data-time="night"] .terrain-hill-near { background: rgba(6,8,10,0.75); }
+
+/* Meadow flower colors by time */
+body[data-time="dawn"] .terrain-flower-dot { box-shadow: 0 0 3px currentColor; }
+body[data-time="golden"] .terrain-flower-dot { box-shadow: 0 0 4px rgba(255,180,60,0.3); }
+body[data-time="night"] .terrain-flower-dot { opacity: 0.05; }
+
+/* Mountain pine tree colors by time */
+body[data-time="dawn"] .terrain-pine::before { border-bottom-color: rgba(30,50,30,0.85); }
+body[data-time="morning"] .terrain-pine::before { border-bottom-color: rgba(20,60,25,0.85); }
+body[data-time="afternoon"] .terrain-pine::before { border-bottom-color: rgba(25,55,25,0.8); }
+body[data-time="golden"] .terrain-pine::before { border-bottom-color: rgba(50,50,15,0.85); }
+body[data-time="evening"] .terrain-pine::before { border-bottom-color: rgba(15,25,15,0.9); }
+body[data-time="night"] .terrain-pine::before { border-bottom-color: rgba(5,10,5,0.9); }
+
+/* Palm tree colors by time */
+body[data-time="dawn"] .terrain-palm-trunk { background: rgba(80,50,30,0.5); }
+body[data-time="dawn"] .terrain-palm-frond-1,
+body[data-time="dawn"] .terrain-palm-frond-2,
+body[data-time="dawn"] .terrain-palm-frond-3,
+body[data-time="dawn"] .terrain-palm-frond-4,
+body[data-time="dawn"] .terrain-palm-frond-5,
+body[data-time="dawn"] .terrain-palm-frond-6 { --palm-color: rgba(30,50,20,0.6); }
+
+body[data-time="golden"] .terrain-palm-trunk { background: rgba(100,60,20,0.6); }
+body[data-time="golden"] .terrain-palm-frond-1,
+body[data-time="golden"] .terrain-palm-frond-2,
+body[data-time="golden"] .terrain-palm-frond-3,
+body[data-time="golden"] .terrain-palm-frond-4,
+body[data-time="golden"] .terrain-palm-frond-5,
+body[data-time="golden"] .terrain-palm-frond-6 { --palm-color: rgba(40,50,10,0.65); }
+
+body[data-time="night"] .terrain-palm-trunk { background: rgba(15,10,5,0.7); }
+body[data-time="night"] .terrain-palm-frond-1,
+body[data-time="night"] .terrain-palm-frond-2,
+body[data-time="night"] .terrain-palm-frond-3,
+body[data-time="night"] .terrain-palm-frond-4,
+body[data-time="night"] .terrain-palm-frond-5,
+body[data-time="night"] .terrain-palm-frond-6 { --palm-color: rgba(5,10,5,0.75); }
+
+/* Meadow tree canopy/trunk colors by time */
+body[data-time="dawn"] .terrain-tree-canopy { background: rgba(60,80,40,0.8); }
+body[data-time="dawn"] .terrain-tree-trunk { background: rgba(70,45,25,0.7); }
+body[data-time="morning"] .terrain-tree-canopy { background: rgba(50,100,40,0.75); }
+body[data-time="morning"] .terrain-tree-trunk { background: rgba(80,55,30,0.7); }
+body[data-time="afternoon"] .terrain-tree-canopy { background: rgba(55,95,40,0.7); }
+body[data-time="afternoon"] .terrain-tree-trunk { background: rgba(75,50,28,0.65); }
+body[data-time="golden"] .terrain-tree-canopy { background: rgba(100,90,30,0.75); }
+body[data-time="golden"] .terrain-tree-trunk { background: rgba(90,60,20,0.7); }
+body[data-time="evening"] .terrain-tree-canopy { background: rgba(25,35,20,0.8); }
+body[data-time="evening"] .terrain-tree-trunk { background: rgba(35,25,15,0.75); }
+body[data-time="night"] .terrain-tree-canopy { background: rgba(8,12,6,0.85); }
+body[data-time="night"] .terrain-tree-trunk { background: rgba(10,8,5,0.8); }
+
+/* ===== ENHANCED TERRAIN REALISM ===== */
+
+/* Depth-of-field blur on distant terrain layers */
+.terrain-mountain-far { filter: blur(1.5px); }
+.terrain-mountain-mid { filter: blur(0.5px); }
+.terrain-hill-far { filter: blur(1px); }
+
+/* Atmospheric perspective - distant elements are hazier/lighter */
+.terrain-mountain-far::after,
+.terrain-hill-far::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(180,200,230,0.15) 0%, rgba(180,200,230,0.08) 50%, transparent 100%);
+  pointer-events: none;
+}
+body[data-time="golden"] .terrain-mountain-far::after,
+body[data-time="golden"] .terrain-hill-far::after {
+  background: linear-gradient(180deg, rgba(255,180,100,0.12) 0%, rgba(255,180,100,0.06) 50%, transparent 100%);
+}
+body[data-time="night"] .terrain-mountain-far::after,
+body[data-time="night"] .terrain-hill-far::after {
+  background: linear-gradient(180deg, rgba(20,25,50,0.10) 0%, transparent 50%);
+}
+
+/* Subtle parallax movement on terrain layers */
+@keyframes terrainParallaxFar {
+  0% { transform: translateX(-0.5%); }
+  100% { transform: translateX(0.5%); }
+}
+@keyframes terrainParallaxMid {
+  0% { transform: translateX(-0.3%); }
+  100% { transform: translateX(0.3%); }
+}
+.terrain-mountain-far,
+.terrain-hill-far { animation: terrainParallaxFar 30s ease-in-out infinite alternate; }
+.terrain-mountain-mid,
+.terrain-hill-mid { animation: terrainParallaxMid 25s ease-in-out infinite alternate; }
+
+/* Improved wave realism - foam detail and depth */
+.terrain-wave { border-radius: 45% 55% 45% 55%; }
+.terrain-wave-1::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 5%;
+  right: 5%;
+  height: 4px;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 6px,
+    rgba(255,255,255,0.25) 6px, rgba(255,255,255,0.25) 8px);
+  border-radius: 50%;
+  animation: foamBubble 2s ease-in-out infinite alternate;
+}
+@keyframes foamBubble {
+  0% { opacity: 0.4; transform: scaleX(0.98); }
+  100% { opacity: 0.7; transform: scaleX(1.02); }
+}
+
+/* Beach: wet sand reflection zone */
+.terrain-shore::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(180deg, rgba(180,200,220,0.12) 0%, transparent 100%);
+  animation: wetSand 6s ease-in-out infinite alternate;
+}
+@keyframes wetSand {
+  0% { opacity: 0.6; }
+  100% { opacity: 0.9; }
+}
+
+/* Mountain: snow caps on highest peaks */
+.terrain-snow-cap {
+  position: absolute;
+  opacity: 0.75;
+  background: rgba(255,255,255,0.85);
+  clip-path: polygon(20% 100%, 50% 0%, 80% 100%);
+}
+
+/* Mountain: rock texture on near terrain */
+.terrain-mountain-near::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: repeating-linear-gradient(175deg,
+    transparent 0px, transparent 20px,
+    rgba(0,0,0,0.02) 20px, rgba(0,0,0,0.02) 21px);
+  pointer-events: none;
+}
+
+/* Meadow: sunlight dapple effect */
+.terrain-dapple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255,255,200,0.18) 0%, transparent 70%);
+  animation: dappleShift 8s ease-in-out infinite alternate;
+}
+@keyframes dappleShift {
+  0% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+  100% { transform: translate(5px, -3px) scale(1.1); opacity: 0.9; }
+}
+
+/* Beach: seabird footprints in sand */
+.terrain-footprints {
+  position: absolute;
+  bottom: 1%;
+  left: 0;
+  right: 0;
+  height: 3%;
+  pointer-events: none;
+}
+.terrain-footprint {
+  position: absolute;
+  width: 3px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(160,140,110,0.15);
+}
+
+/* Enhanced palm frond sway - more natural */
+@keyframes palmSwayNatural {
+  0% { transform: rotate(-2deg) skewX(-1deg); }
+  25% { transform: rotate(-4deg) skewX(0deg); }
+  50% { transform: rotate(-1deg) skewX(1deg); }
+  75% { transform: rotate(2deg) skewX(0deg); }
+  100% { transform: rotate(-2deg) skewX(-1deg); }
+}
+.terrain-palm-canopy { animation: palmSwayNatural 10s ease-in-out infinite; }
+
+/* Meadow: subtle heat shimmer effect in afternoon */
+body[data-time="afternoon"] .terrain-hill-near::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 15px;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 4px,
+    rgba(255,255,255,0.03) 4px, rgba(255,255,255,0.03) 6px);
+  animation: heatShimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes heatShimmer {
+  0%, 100% { transform: scaleY(1) translateY(0); opacity: 0.4; }
+  50% { transform: scaleY(1.5) translateY(-2px); opacity: 0.7; }
+}
+
+/* ===== MOUNTAIN: Alpine lake ===== */
+.terrain-lake {
+  position: absolute;
+  bottom: 6%;
+  left: 35%;
+  width: 30%;
+  height: 5%;
+  border-radius: 50%;
+  opacity: 0.7;
+  background: linear-gradient(180deg, rgba(80,140,200,0.6) 0%, rgba(60,120,180,0.8) 50%, rgba(40,100,160,0.6) 100%);
+  filter: blur(0.5px);
+}
+.terrain-lake-shimmer {
+  position: absolute;
+  bottom: 7.5%;
+  left: 38%;
+  width: 24%;
+  height: 2%;
+  opacity: 0.35;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 8px,
+    rgba(255,255,255,0.4) 8px, rgba(255,255,255,0.4) 10px);
+  animation: lakeShimmer 5s ease-in-out infinite alternate;
+  border-radius: 50%;
+}
+@keyframes lakeShimmer {
+  0% { opacity: 0.10; transform: scaleX(0.95); }
+  100% { opacity: 0.20; transform: scaleX(1.05); }
+}
+body[data-time="golden"] .terrain-lake { background: linear-gradient(180deg, rgba(200,140,60,0.5), rgba(180,120,40,0.7), rgba(160,100,30,0.5)); }
+body[data-time="night"] .terrain-lake { background: linear-gradient(180deg, rgba(10,15,30,0.7), rgba(15,20,40,0.8), rgba(10,15,30,0.7)); }
+body[data-time="night"] .terrain-lake-shimmer { background: repeating-linear-gradient(90deg, transparent 0px, transparent 12px, rgba(180,200,255,0.15) 12px, rgba(180,200,255,0.15) 14px); }
+body[data-time="evening"] .terrain-lake { background: linear-gradient(180deg, rgba(40,30,70,0.5), rgba(30,25,60,0.7), rgba(40,30,70,0.5)); }
+
+/* ===== MOUNTAIN: Eagles soaring ===== */
+.terrain-eagle {
+  position: absolute;
+  width: var(--eagle-size, 10px);
+  height: calc(var(--eagle-size, 10px) * 0.35);
+  opacity: 0.65;
+  animation: eagleSoar 18s ease-in-out infinite;
+}
+.terrain-eagle::before,
+.terrain-eagle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 50%;
+  height: 2px;
+  background: rgba(30,20,10,0.8);
+  transform-origin: center;
+  animation: eagleWingFlap 3s ease-in-out infinite;
+}
+.terrain-eagle::before {
+  left: 0;
+  border-radius: 2px 0 0 0;
+  transform: rotate(-8deg);
+}
+.terrain-eagle::after {
+  right: 0;
+  border-radius: 0 2px 0 0;
+  transform: rotate(8deg);
+}
+@keyframes eagleSoar {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(15px, -8px); }
+  50% { transform: translate(30px, -3px); }
+  75% { transform: translate(15px, 5px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes eagleWingFlap {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(-20deg); }
+}
+body[data-time="night"] .terrain-eagle { opacity: 0; }
+
+/* ===== MOUNTAIN: Cabin silhouette ===== */
+.terrain-cabin {
+  position: absolute;
+  bottom: 12%;
+  left: 60%;
+  width: 14px;
+  height: 10px;
+  opacity: 0.45;
+}
+.terrain-cabin::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1px;
+  width: 12px;
+  height: 7px;
+  background: rgba(50,35,20,0.8);
+  border-radius: 1px;
+}
+.terrain-cabin::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: -1px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 6px solid rgba(60,30,15,0.8);
+}
+body[data-time="night"] .terrain-cabin::before { background: rgba(10,8,5,0.8); }
+body[data-time="night"] .terrain-cabin::after { border-bottom-color: rgba(12,10,6,0.8); }
+
+/* Cabin window glow at night/evening */
+body[data-time="night"] .terrain-cabin::before,
+body[data-time="evening"] .terrain-cabin::before {
+  box-shadow: 3px 2px 0 1px rgba(255,200,80,0.25), 7px 2px 0 1px rgba(255,200,80,0.20);
+}
+
+/* ===== MOUNTAIN: Rocky outcrops ===== */
+.terrain-rock {
+  position: absolute;
+  opacity: 0.6;
+  background: rgba(80,70,60,0.85);
+  border-radius: 40% 50% 45% 55%;
+  clip-path: polygon(10% 100%, 0% 50%, 15% 20%, 35% 0%, 65% 5%, 85% 15%, 100% 45%, 90% 100%);
+}
+body[data-time="night"] .terrain-rock { background: rgba(12,10,8,0.8); }
+body[data-time="golden"] .terrain-rock { background: rgba(120,80,40,0.6); }
+
+/* ===== BEACH: Seagulls ===== */
+.terrain-seagull {
+  position: absolute;
+  width: var(--gull-size, 10px);
+  height: calc(var(--gull-size, 10px) * 0.3);
+  opacity: 0.7;
+  animation: gullGlide 14s ease-in-out infinite;
+}
+.terrain-seagull::before,
+.terrain-seagull::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 48%;
+  height: 1.5px;
+  background: rgba(240,240,240,0.9);
+  animation: gullWing 2s ease-in-out infinite;
+}
+.terrain-seagull::before {
+  left: 0;
+  transform: rotate(-15deg);
+  transform-origin: right center;
+  border-radius: 2px 0 0 0;
+}
+.terrain-seagull::after {
+  right: 0;
+  transform: rotate(15deg);
+  transform-origin: left center;
+  border-radius: 0 2px 0 0;
+}
+@keyframes gullGlide {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(20px, -5px); }
+  50% { transform: translate(40px, 2px); }
+  75% { transform: translate(20px, -3px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes gullWing {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(-30deg); }
+}
+body[data-time="night"] .terrain-seagull { opacity: 0; }
+body[data-time="evening"] .terrain-seagull { opacity: 0.10; }
+
+/* ===== BEACH: Sailboat ===== */
+.terrain-sailboat {
+  position: absolute;
+  bottom: 22%;
+  left: 70%;
+  width: 16px;
+  height: 20px;
+  opacity: 0.45;
+  animation: sailboatDrift 20s ease-in-out infinite alternate;
+}
+.terrain-sailboat::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 2px;
+  width: 12px;
+  height: 4px;
+  background: rgba(60,40,20,0.6);
+  border-radius: 0 0 40% 40%;
+}
+.terrain-sailboat::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 6px;
+  width: 0;
+  height: 0;
+  border-left: 1px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 16px solid rgba(255,255,255,0.6);
+}
+@keyframes sailboatDrift {
+  0% { transform: translate(0, 0) rotate(-1deg); }
+  50% { transform: translate(-15px, 2px) rotate(1deg); }
+  100% { transform: translate(10px, -1px) rotate(-1deg); }
+}
+body[data-time="night"] .terrain-sailboat { opacity: 0.08; }
+body[data-time="night"] .terrain-sailboat::after { border-bottom-color: rgba(180,190,210,0.3); }
+body[data-time="golden"] .terrain-sailboat::after { border-bottom-color: rgba(255,220,150,0.6); }
+
+/* ===== BEACH: Lighthouse ===== */
+.terrain-lighthouse {
+  position: absolute;
+  bottom: 14%;
+  left: 92%;
+  width: 5px;
+  height: 18px;
+  opacity: 0.45;
+}
+.terrain-lighthouse::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 5px;
+  height: 14px;
+  background: linear-gradient(180deg, rgba(220,200,180,0.8) 0%, rgba(180,160,140,0.7) 100%);
+  border-radius: 1px 1px 0 0;
+  clip-path: polygon(15% 100%, 0% 0%, 100% 0%, 85% 100%);
+}
+.terrain-lighthouse::after {
+  content: '';
+  position: absolute;
+  bottom: 13px;
+  left: -1px;
+  width: 7px;
+  height: 5px;
+  background: rgba(200,180,160,0.7);
+  border-radius: 2px 2px 0 0;
+}
+/* Lighthouse beacon glow */
+body[data-time="night"] .terrain-lighthouse::after,
+body[data-time="evening"] .terrain-lighthouse::after {
+  box-shadow: 0 0 8px 3px rgba(255,220,100,0.3);
+  background: rgba(255,220,100,0.6);
+  animation: lighthouseBeacon 4s ease-in-out infinite;
+}
+@keyframes lighthouseBeacon {
+  0%, 100% { opacity: 0.3; box-shadow: 0 0 6px 2px rgba(255,220,100,0.2); }
+  50% { opacity: 1; box-shadow: 0 0 12px 5px rgba(255,220,100,0.4); }
+}
+
+/* ===== BEACH: Seashells ===== */
+.terrain-seashell {
+  position: absolute;
+  width: 5px;
+  height: 4px;
+  opacity: 0.55;
+  background: rgba(240,220,190,0.6);
+  border-radius: 50% 50% 50% 0;
+}
+body[data-time="golden"] .terrain-seashell { background: rgba(255,230,180,0.5); }
+body[data-time="night"] .terrain-seashell { opacity: 0.05; }
+
+/* ===== MEADOW: Winding stream ===== */
+.terrain-stream {
+  position: absolute;
+  bottom: 3%;
+  left: 30%;
+  width: 40%;
+  height: 8%;
+  opacity: 0.6;
+  overflow: hidden;
+}
+.terrain-stream::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(80,150,200,0.4) 15%,
+    rgba(60,130,190,0.6) 30%,
+    rgba(80,150,200,0.5) 50%,
+    rgba(60,130,190,0.6) 70%,
+    rgba(80,150,200,0.4) 85%,
+    transparent 100%);
+  border-radius: 40%;
+  clip-path: path('M0,20 C30,5 60,35 100,15 C140,0 170,30 200,12 C230,0 260,25 300,18');
+  animation: streamFlow 8s linear infinite;
+}
+@keyframes streamFlow {
+  0% { transform: translateX(-5px); }
+  100% { transform: translateX(5px); }
+}
+.terrain-stream-sparkle {
+  position: absolute;
+  bottom: 5%;
+  left: 35%;
+  width: 30%;
+  height: 4%;
+  opacity: 0.30;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 10px,
+    rgba(255,255,255,0.3) 10px, rgba(255,255,255,0.3) 12px);
+  animation: streamSparkle 3s ease-in-out infinite alternate;
+  border-radius: 50%;
+}
+@keyframes streamSparkle {
+  0% { opacity: 0.08; transform: scaleX(0.95); }
+  100% { opacity: 0.15; transform: scaleX(1.05); }
+}
+body[data-time="golden"] .terrain-stream::before { background: linear-gradient(90deg, transparent, rgba(200,150,60,0.4), rgba(180,130,40,0.6), rgba(200,150,60,0.4), transparent); }
+body[data-time="night"] .terrain-stream::before { background: linear-gradient(90deg, transparent, rgba(15,20,40,0.5), rgba(20,25,50,0.7), rgba(15,20,40,0.5), transparent); }
+body[data-time="night"] .terrain-stream-sparkle { background: repeating-linear-gradient(90deg, transparent 0px, transparent 14px, rgba(180,200,255,0.1) 14px, rgba(180,200,255,0.1) 16px); }
+
+/* ===== MEADOW: Butterflies ===== */
+.terrain-butterfly {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  opacity: 0.7;
+  border-radius: 50% 0 50% 50%;
+  animation: butterflyFloat 12s ease-in-out infinite;
+}
+.terrain-butterfly::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -3px;
+  width: 5px;
+  height: 4px;
+  background: inherit;
+  border-radius: 50% 50% 0 50%;
+  animation: butterflyWing 0.4s ease-in-out infinite alternate;
+}
+.terrain-butterfly::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -3px;
+  width: 5px;
+  height: 4px;
+  background: inherit;
+  border-radius: 50% 50% 50% 0;
+  animation: butterflyWing 0.4s ease-in-out infinite alternate-reverse;
+}
+@keyframes butterflyFloat {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(12px, -8px); }
+  40% { transform: translate(5px, -15px); }
+  60% { transform: translate(-8px, -10px); }
+  80% { transform: translate(-5px, -3px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes butterflyWing {
+  0% { transform: scaleY(1) rotate(0deg); }
+  100% { transform: scaleY(0.3) rotate(10deg); }
+}
+body[data-time="night"] .terrain-butterfly { opacity: 0; }
+body[data-time="evening"] .terrain-butterfly { opacity: 0.12; }
+
+/* ===== MEADOW: Stone path ===== */
+.terrain-path-stone {
+  position: absolute;
+  width: 7px;
+  height: 5px;
+  opacity: 0.55;
+  background: rgba(160,150,130,0.6);
+  border-radius: 50%;
+}
+body[data-time="night"] .terrain-path-stone { background: rgba(30,28,25,0.5); }
+body[data-time="golden"] .terrain-path-stone { background: rgba(200,170,120,0.5); }
+
+/* ===== MEADOW: Rustic fence ===== */
+.terrain-fence {
+  position: absolute;
+  bottom: 8%;
+  left: 5%;
+  width: 25%;
+  height: 8px;
+  opacity: 0.35;
+}
+.terrain-fence::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: rgba(90,60,30,0.7);
+}
+.terrain-fence::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: repeating-linear-gradient(90deg,
+    rgba(80,55,25,0.7) 0px, rgba(80,55,25,0.7) 2px,
+    transparent 2px, transparent 12px);
+}
+body[data-time="night"] .terrain-fence::before { background: rgba(15,12,8,0.7); }
+body[data-time="night"] .terrain-fence::after { background: repeating-linear-gradient(90deg, rgba(15,12,8,0.7) 0px, rgba(15,12,8,0.7) 2px, transparent 2px, transparent 12px); }
+
+/* ===== MOUNTAIN: Valley river ===== */
+.terrain-mtn-river {
+  position: absolute;
+  bottom: 2%;
+  left: 15%;
+  width: 70%;
+  height: 6%;
+  opacity: 0.55;
+  overflow: hidden;
+}
+.terrain-mtn-river::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(60,120,180,0.4) 10%,
+    rgba(50,110,170,0.6) 30%,
+    rgba(60,120,180,0.5) 50%,
+    rgba(50,110,170,0.6) 70%,
+    rgba(60,120,180,0.4) 90%,
+    transparent 100%);
+  clip-path: path('M0,15 C20,8 40,22 80,12 C120,2 160,20 200,10 C240,0 280,18 320,12');
+  animation: riverFlow 10s linear infinite;
+}
+@keyframes riverFlow {
+  0% { transform: translateX(-8px); }
+  100% { transform: translateX(8px); }
+}
+body[data-time="golden"] .terrain-mtn-river::before { background: linear-gradient(90deg, transparent, rgba(180,130,60,0.4), rgba(200,150,80,0.6), rgba(180,130,60,0.4), transparent); }
+body[data-time="night"] .terrain-mtn-river::before { background: linear-gradient(90deg, transparent, rgba(10,15,30,0.5), rgba(15,20,40,0.7), rgba(10,15,30,0.5), transparent); }
+
+/* ===== MOUNTAIN: Deer silhouettes ===== */
+.terrain-deer {
+  position: absolute;
+  width: var(--deer-size, 10px);
+  height: calc(var(--deer-size, 10px) * 1.2);
+  opacity: 0.55;
+}
+.terrain-deer::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: 60%;
+  height: 65%;
+  background: var(--terrain-silhouette, rgba(30,50,30,0.8));
+  border-radius: 40% 60% 30% 20%;
+}
+.terrain-deer::after {
+  content: '';
+  position: absolute;
+  bottom: 55%;
+  left: 55%;
+  width: 25%;
+  height: 35%;
+  background: var(--terrain-silhouette, rgba(30,50,30,0.8));
+  border-radius: 50% 60% 40% 30%;
+}
+body[data-time="night"] .terrain-deer { opacity: 0; }
+body[data-time="evening"] .terrain-deer { opacity: 0.18; }
+
+/* ===== MOUNTAIN: Wooden bridge ===== */
+.terrain-bridge {
+  position: absolute;
+  bottom: 4%;
+  left: 42%;
+  width: 16%;
+  height: 3px;
+  opacity: 0.55;
+  background: rgba(90,60,30,0.6);
+  border-radius: 2px;
+}
+.terrain-bridge::before,
+.terrain-bridge::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  height: 8px;
+  background: rgba(90,60,30,0.5);
+}
+.terrain-bridge::before { left: 10%; }
+.terrain-bridge::after { right: 10%; }
+body[data-time="night"] .terrain-bridge { background: rgba(12,10,6,0.7); }
+body[data-time="night"] .terrain-bridge::before,
+body[data-time="night"] .terrain-bridge::after { background: rgba(12,10,6,0.6); }
+
+/* ===== MOUNTAIN: Valley fog ===== */
+.terrain-valley-fog {
+  position: absolute;
+  opacity: 0.3;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(200,210,230,0.5) 0%, transparent 70%);
+  animation: valleyFogDrift 20s ease-in-out infinite alternate;
+}
+@keyframes valleyFogDrift {
+  0% { transform: translateX(-10px) scaleX(1); opacity: 0.10; }
+  100% { transform: translateX(10px) scaleX(1.2); opacity: 0.20; }
+}
+body[data-time="night"] .terrain-valley-fog { background: radial-gradient(ellipse, rgba(20,25,40,0.4) 0%, transparent 70%); }
+body[data-time="golden"] .terrain-valley-fog { background: radial-gradient(ellipse, rgba(255,200,120,0.3) 0%, transparent 70%); }
+
+/* ===== MOUNTAIN: Small wildflowers ===== */
+.terrain-mtn-flower {
+  position: absolute;
+  bottom: 2%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  opacity: 0.55;
+  background: rgba(200,160,255,0.6);
+  animation: mtnFlowerSway 3s ease-in-out infinite alternate;
+}
+.terrain-mtn-flower::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 1px;
+  height: 6px;
+  background: rgba(60,100,40,0.4);
+}
+@keyframes mtnFlowerSway {
+  0% { transform: translateY(0) rotate(-3deg); }
+  100% { transform: translateY(-1px) rotate(3deg); }
+}
+body[data-time="night"] .terrain-mtn-flower { opacity: 0.08; }
+
+/* ===== BEACH: Umbrella ===== */
+.terrain-umbrella {
+  position: absolute;
+  bottom: 5%;
+  left: 48%;
+  opacity: 0.55;
+}
+.terrain-umbrella::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  height: 14px;
+  background: rgba(120,90,50,0.6);
+  transform: translateX(-50%);
+}
+.terrain-umbrella::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  width: 18px;
+  height: 10px;
+  transform: translateX(-50%);
+  background: rgba(180,60,60,0.4);
+  border-radius: 50% 50% 0 0;
+}
+body[data-time="night"] .terrain-umbrella { opacity: 0.12; }
+
+/* ===== BEACH: Starfish ===== */
+.terrain-starfish {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  opacity: 0.5;
+}
+.terrain-starfish::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(200,120,80,0.6);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+body[data-time="night"] .terrain-starfish { opacity: 0.08; }
+body[data-time="golden"] .terrain-starfish::before { background: rgba(255,180,100,0.6); }
+
+/* ===== BEACH: Tide pools ===== */
+.terrain-tidepool {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.45;
+  background: radial-gradient(ellipse, rgba(60,140,200,0.5) 0%, rgba(80,160,220,0.3) 60%, transparent 100%);
+  animation: tidepoolShimmer 5s ease-in-out infinite alternate;
+}
+@keyframes tidepoolShimmer {
+  0% { opacity: 0.20; }
+  100% { opacity: 0.30; }
+}
+body[data-time="night"] .terrain-tidepool { background: radial-gradient(ellipse, rgba(10,20,40,0.5) 0%, rgba(15,25,50,0.3) 60%, transparent 100%); }
+
+/* ===== BEACH: Driftwood ===== */
+.terrain-driftwood {
+  position: absolute;
+  height: 3px;
+  opacity: 0.5;
+  background: rgba(140,110,70,0.5);
+  border-radius: 2px;
+}
+.terrain-driftwood::before {
+  content: '';
+  position: absolute;
+  left: 20%;
+  top: -2px;
+  width: 30%;
+  height: 2px;
+  background: rgba(140,110,70,0.4);
+  border-radius: 2px;
+  transform: rotate(-20deg);
+}
+body[data-time="night"] .terrain-driftwood { background: rgba(20,16,10,0.5); }
+
+/* ===== BEACH: Distant cargo ship ===== */
+.terrain-cargo-ship {
+  position: absolute;
+  bottom: 25%;
+  left: 30%;
+  width: 20px;
+  height: 6px;
+  opacity: 0.35;
+  animation: cargoShipDrift 60s linear infinite;
+}
+.terrain-cargo-ship::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(60,60,70,0.6);
+  border-radius: 2px 2px 0 0;
+}
+.terrain-cargo-ship::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 30%;
+  width: 20%;
+  height: 5px;
+  background: rgba(60,60,70,0.5);
+  border-radius: 1px;
+}
+@keyframes cargoShipDrift {
+  0% { transform: translateX(-20px); }
+  100% { transform: translateX(40px); }
+}
+body[data-time="night"] .terrain-cargo-ship { opacity: 0.08; }
+
+/* ===== BEACH: Wave splashes ===== */
+.terrain-wave-splash {
+  position: absolute;
+  bottom: 8%;
+  width: 8px;
+  height: 4px;
+  opacity: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  animation: waveSplash 4s ease-out infinite;
+}
+@keyframes waveSplash {
+  0% { opacity: 0; transform: scale(0.5) translateY(0); }
+  20% { opacity: 0.35; transform: scale(1) translateY(-3px); }
+  100% { opacity: 0; transform: scale(1.5) translateY(-8px); }
+}
+
+/* ===== MEADOW: Rabbits ===== */
+.terrain-rabbit {
+  position: absolute;
+  width: var(--rabbit-size, 6px);
+  height: calc(var(--rabbit-size, 6px) * 0.8);
+  opacity: 0.55;
+}
+.terrain-rabbit::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 70%;
+  height: 70%;
+  background: var(--terrain-silhouette, rgba(100,80,60,0.7));
+  border-radius: 50% 50% 40% 40%;
+}
+.terrain-rabbit::after {
+  content: '';
+  position: absolute;
+  bottom: 55%;
+  left: 50%;
+  width: 20%;
+  height: 50%;
+  background: var(--terrain-silhouette, rgba(100,80,60,0.7));
+  border-radius: 40% 40% 20% 20%;
+}
+body[data-time="night"] .terrain-rabbit { opacity: 0; }
+body[data-time="evening"] .terrain-rabbit { opacity: 0.15; }
+
+/* ===== MEADOW: Hay bales ===== */
+.terrain-hay-bale {
+  position: absolute;
+  width: 12px;
+  height: 9px;
+  opacity: 0.55;
+  border-radius: 50%;
+  background: rgba(180,150,80,0.5);
+  border: 1px solid rgba(160,130,60,0.3);
+}
+body[data-time="night"] .terrain-hay-bale { background: rgba(20,18,12,0.5); border-color: rgba(15,12,8,0.3); }
+body[data-time="golden"] .terrain-hay-bale { background: rgba(220,180,80,0.5); }
+
+/* ===== MEADOW: Pond ===== */
+.terrain-pond {
+  position: absolute;
+  bottom: 3%;
+  left: 78%;
+  width: 18%;
+  height: 4%;
+  border-radius: 50%;
+  opacity: 0.55;
+  background: linear-gradient(180deg, rgba(80,140,200,0.5) 0%, rgba(60,120,180,0.7) 50%, rgba(40,100,160,0.5) 100%);
+}
+.terrain-pond-shimmer {
+  position: absolute;
+  bottom: 4%;
+  left: 80%;
+  width: 14%;
+  height: 2%;
+  opacity: 0.25;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 6px,
+    rgba(255,255,255,0.3) 6px, rgba(255,255,255,0.3) 8px);
+  animation: pondShimmer 4s ease-in-out infinite alternate;
+  border-radius: 50%;
+}
+@keyframes pondShimmer {
+  0% { opacity: 0.15; transform: scaleX(0.95); }
+  100% { opacity: 0.30; transform: scaleX(1.05); }
+}
+body[data-time="night"] .terrain-pond { background: linear-gradient(180deg, rgba(10,15,25,0.6), rgba(15,20,35,0.8), rgba(10,15,25,0.6)); }
+body[data-time="golden"] .terrain-pond { background: linear-gradient(180deg, rgba(200,150,60,0.4), rgba(180,130,50,0.6), rgba(160,110,40,0.4)); }
+
+/* ===== MEADOW: Dandelion seeds ===== */
+.terrain-dandelion-seed {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  opacity: 0.5;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+  animation: dandelionFloat 12s ease-in-out infinite;
+}
+.terrain-dandelion-seed::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 1px;
+  height: 3px;
+  background: rgba(255,255,255,0.3);
+  transform: translateX(-50%);
+}
+@keyframes dandelionFloat {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.25; }
+  25% { transform: translate(8px, -6px) rotate(90deg); opacity: 0.35; }
+  50% { transform: translate(15px, -2px) rotate(180deg); opacity: 0.20; }
+  75% { transform: translate(5px, -10px) rotate(270deg); opacity: 0.30; }
+  100% { transform: translate(0, 0) rotate(360deg); opacity: 0.25; }
+}
+body[data-time="night"] .terrain-dandelion-seed { opacity: 0; }
+
+/* ===== MEADOW: Flower bushes ===== */
+.terrain-flower-bush {
+  position: absolute;
+  width: 16px;
+  height: 12px;
+  opacity: 0.6;
+}
+.terrain-flower-bush::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: rgba(40,80,30,0.5);
+  border-radius: 50% 50% 30% 30%;
+}
+.terrain-flower-bush::after {
+  content: '';
+  position: absolute;
+  bottom: 40%;
+  left: 10%;
+  width: 80%;
+  height: 60%;
+  background: var(--bush-color, rgba(220,180,255,0.4));
+  border-radius: 50%;
+}
+body[data-time="night"] .terrain-flower-bush { opacity: 0.10; }
+
+/* ===== MEADOW: Birdhouse ===== */
+.terrain-birdhouse {
+  position: absolute;
+  bottom: 24%;
+  left: 35%;
+  opacity: 0.5;
+}
+.terrain-birdhouse::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  height: 10px;
+  background: rgba(90,60,30,0.5);
+  transform: translateX(-50%);
+}
+.terrain-birdhouse::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 8px;
+  height: 6px;
+  background: rgba(140,90,40,0.5);
+  border-radius: 1px;
+  transform: translateX(-50%);
+}
+body[data-time="night"] .terrain-birdhouse { opacity: 0.12; }
+
+/* ===== ONBOARDING ENVIRONMENT PREVIEW (Live Sky + Terrain) ===== */
+.ob-env-preview {
+  width: 100%;
+  height: 200px;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.8s ease;
+  box-shadow: inset 0 -20px 40px rgba(0,0,0,0.08), 0 4px 20px rgba(0,0,0,0.15);
+}
+
+/* Time-of-day aware preview backgrounds */
+body[data-time="dawn"] .ob-env-preview { background: linear-gradient(180deg, #2D1B4E 0%, #8B4570 25%, #E87D5E 50%, #FFB57A 75%, #FFE4B5 100%); }
+body[data-time="morning"] .ob-env-preview { background: linear-gradient(180deg, #5B9BD5 0%, #87CEEB 30%, #FFFACD 70%, #FFF8E0 100%); }
+body[data-time="afternoon"] .ob-env-preview { background: linear-gradient(180deg, #4A90D9 0%, #87CEEB 40%, #B0D4F1 70%, #E8F4FD 100%); }
+body[data-time="golden"] .ob-env-preview { background: linear-gradient(180deg, #C0392B 0%, #E67E22 25%, #F39C12 50%, #FFD700 75%, #FFEAA7 100%); }
+body[data-time="evening"] .ob-env-preview { background: linear-gradient(180deg, #1A1A3E 0%, #2C1654 25%, #6B3FA0 45%, #D4784A 70%, #FFB347 100%); }
+body[data-time="night"] .ob-env-preview { background: linear-gradient(180deg, #0A0A1A 0%, #0F1530 30%, #1A1F3A 60%, #1E2548 100%); }
+
+/* Live sky container inside preview - re-contextualize fixed-position sky elements */
+.ob-live-sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+/* Override sky element styles to work inside the preview container */
+.ob-live-sky .sky-atmo-day,
+.ob-live-sky .sky-horizon,
+.ob-live-sky .sky-sun,
+.ob-live-sky .sky-sun-flare,
+.ob-live-sky .sky-light-shaft,
+.ob-live-sky .sky-cloud,
+.ob-live-sky .sky-moon,
+.ob-live-sky .sky-star {
+  position: absolute;
+}
+
+/* Live terrain container inside preview */
+.ob-live-terrain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 2;
+}
+/* Override terrain elements from fixed to absolute inside preview */
+.ob-live-terrain .terrain-mountain-far,
+.ob-live-terrain .terrain-mountain-mid,
+.ob-live-terrain .terrain-mountain-near,
+.ob-live-terrain .terrain-mountain-mist,
+.ob-live-terrain .terrain-pine,
+.ob-live-terrain .terrain-snow-cap,
+.ob-live-terrain .terrain-waterfall,
+.ob-live-terrain .terrain-ocean,
+.ob-live-terrain .terrain-ocean-body,
+.ob-live-terrain .terrain-wave,
+.ob-live-terrain .terrain-foam,
+.ob-live-terrain .terrain-ocean-shimmer,
+.ob-live-terrain .terrain-shore,
+.ob-live-terrain .terrain-palm,
+.ob-live-terrain .terrain-palm-trunk,
+.ob-live-terrain .terrain-palm-canopy,
+.ob-live-terrain .terrain-island,
+.ob-live-terrain .terrain-footprints,
+.ob-live-terrain .terrain-footprint,
+.ob-live-terrain .terrain-meadow-ground,
+.ob-live-terrain .terrain-meadow-hill-far,
+.ob-live-terrain .terrain-meadow-hill-near,
+.ob-live-terrain .terrain-meadow-flowers,
+.ob-live-terrain .terrain-meadow-grass,
+.ob-live-terrain .terrain-lake,
+.ob-live-terrain .terrain-lake-shimmer,
+.ob-live-terrain .terrain-eagle,
+.ob-live-terrain .terrain-cabin,
+.ob-live-terrain .terrain-rock,
+.ob-live-terrain .terrain-seagull,
+.ob-live-terrain .terrain-sailboat,
+.ob-live-terrain .terrain-lighthouse,
+.ob-live-terrain .terrain-seashell,
+.ob-live-terrain .terrain-stream,
+.ob-live-terrain .terrain-stream-sparkle,
+.ob-live-terrain .terrain-butterfly,
+.ob-live-terrain .terrain-path-stone,
+.ob-live-terrain .terrain-fence,
+.ob-live-terrain .terrain-mtn-river,
+.ob-live-terrain .terrain-deer,
+.ob-live-terrain .terrain-bridge,
+.ob-live-terrain .terrain-valley-fog,
+.ob-live-terrain .terrain-mtn-flower,
+.ob-live-terrain .terrain-umbrella,
+.ob-live-terrain .terrain-starfish,
+.ob-live-terrain .terrain-tidepool,
+.ob-live-terrain .terrain-driftwood,
+.ob-live-terrain .terrain-cargo-ship,
+.ob-live-terrain .terrain-wave-splash,
+.ob-live-terrain .terrain-rabbit,
+.ob-live-terrain .terrain-hay-bale,
+.ob-live-terrain .terrain-pond,
+.ob-live-terrain .terrain-pond-shimmer,
+.ob-live-terrain .terrain-dandelion-seed,
+.ob-live-terrain .terrain-flower-bush,
+.ob-live-terrain .terrain-birdhouse {
+  position: absolute;
+}
+
+.ob-prev-label {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+  letter-spacing: 0.8px;
+  z-index: 10;
+}
+
+/* ===== ONBOARDING TIME-OF-DAY BACKGROUND ===== */
+/* Login + onboarding: transparent background to show live aurora from body::before */
+
+/* ===== NIGHT/EVENING LOGIN COMPREHENSIVE STYLING ===== */
+/* Login background: transparent - inherits live aurora from body::before */
+
+/* Night/evening login inputs: frosted glass with muted tones */
+body[data-time="night"] .login-input,
+body[data-time="evening"] .login-input {
+  background: rgba(120,130,150,0.42) !important;
+  backdrop-filter: blur(20px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+  color: #E8E4E0 !important;
+  border: 1px solid rgba(180,190,210,0.12) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+body[data-time="night"] .login-input:focus,
+body[data-time="evening"] .login-input:focus {
+  background: rgba(130,140,160,0.52) !important;
+  border-color: rgba(180,200,160,0.22) !important;
+  box-shadow: 0 0 0 3px rgba(140,170,120,0.15), 0 2px 12px rgba(0,0,0,0.18) !important;
+}
+body[data-time="night"] .login-input::placeholder,
+body[data-time="evening"] .login-input::placeholder {
+  color: rgba(180,190,210,0.55) !important;
+}
+
+/* Night/evening login button: sage green gradient */
+body[data-time="night"] .login-btn,
+body[data-time="evening"] .login-btn {
+  background: linear-gradient(135deg, #5A7A4A 0%, #6B8F5E 40%, #7DA068 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 20px rgba(90,122,74,0.30), 0 1px 0 rgba(255,255,255,0.08) inset !important;
+  border: 1px solid rgba(140,180,120,0.18) !important;
+}
+body[data-time="night"] .login-btn:hover,
+body[data-time="evening"] .login-btn:hover {
+  box-shadow: 0 6px 28px rgba(90,122,74,0.40), 0 1px 0 rgba(255,255,255,0.10) inset !important;
+}
+body[data-time="night"] .login-btn:active,
+body[data-time="evening"] .login-btn:active {
+  box-shadow: 0 2px 12px rgba(90,122,74,0.20) !important;
+}
+
+/* Night/evening login text: light and elegant */
+body[data-time="night"] .login h1,
+body[data-time="evening"] .login h1 {
+  color: #F0ECE6 !important;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.20) !important;
+}
+body[data-time="night"] .login .sub,
+body[data-time="evening"] .login .sub {
+  color: rgba(220,225,220,0.78) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
+}
+body[data-time="night"] .login .lbl,
+body[data-time="evening"] .login .lbl {
+  color: rgba(220,225,220,0.82) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
+}
+/* Night/evening/dawn/golden onboarding text legibility */
+body[data-time="night"] .onboard-title,
+body[data-time="evening"] .onboard-title {
+  color: #F0ECE6 !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.35) !important;
+}
+body[data-time="night"] .onboard-sub,
+body[data-time="evening"] .onboard-sub {
+  color: rgba(220,225,220,0.75) !important;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.30) !important;
+}
+body[data-time="night"] .onboard-sub strong,
+body[data-time="evening"] .onboard-sub strong {
+  color: #F0ECE6 !important;
+}
+body[data-time="night"] .onboard-skip,
+body[data-time="evening"] .onboard-skip {
+  color: rgba(200,210,200,0.55) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
+}
+body[data-time="night"] .ob-sky-label,
+body[data-time="evening"] .ob-sky-label {
+  color: rgba(220,225,220,0.80) !important;
+}
+body[data-time="night"] .ob-sky-hint,
+body[data-time="evening"] .ob-sky-hint {
+  color: rgba(200,210,200,0.55) !important;
+}
+body[data-time="night"] .ob-bl-label,
+body[data-time="evening"] .ob-bl-label {
+  color: rgba(200,210,200,0.60) !important;
+}
+body[data-time="night"] .sky-theme-name,
+body[data-time="evening"] .sky-theme-name {
+  color: #F0ECE6 !important;
+}
+body[data-time="dawn"] .onboard-title {
+  color: #F4ECE8 !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+}
+body[data-time="dawn"] .onboard-sub {
+  color: rgba(240,220,220,0.70) !important;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.20) !important;
+}
+body[data-time="dawn"] .onboard-sub strong {
+  color: #F4ECE8 !important;
+}
+body[data-time="golden"] .onboard-title {
+  color: #FFF4E4 !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+}
+body[data-time="golden"] .onboard-sub {
+  color: rgba(255,240,210,0.70) !important;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.20) !important;
+}
+body[data-time="golden"] .onboard-sub strong {
+  color: #FFF4E4 !important;
+}
+
+/* Morning/afternoon onboarding text legibility - bright sky needs strong contrast */
+body[data-time="morning"] .onboard-title,
+body[data-time="afternoon"] .onboard-title {
+  color: #2A1A0A !important;
+  text-shadow: 0 1px 6px rgba(255,255,255,0.60), 0 0 20px rgba(255,255,255,0.35) !important;
+}
+body[data-time="morning"] .onboard-sub,
+body[data-time="afternoon"] .onboard-sub {
+  color: #3A2A1A !important;
+  text-shadow: 0 1px 4px rgba(255,255,255,0.55), 0 0 14px rgba(255,255,255,0.25) !important;
+}
+body[data-time="morning"] .onboard-sub strong,
+body[data-time="afternoon"] .onboard-sub strong {
+  color: #1A1A0A !important;
+}
+body[data-time="morning"] .onboard-skip,
+body[data-time="afternoon"] .onboard-skip {
+  color: #4A3A2A !important;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.45) !important;
+}
+body[data-time="morning"] .ob-bl-label,
+body[data-time="afternoon"] .ob-bl-label {
+  color: #3A2A1A !important;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.45) !important;
+}
+body[data-time="morning"] .ob-agree-heading,
+body[data-time="afternoon"] .ob-agree-heading {
+  color: #2A1A0A !important;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.45) !important;
+}
+body[data-time="morning"] .ob-agree-hint,
+body[data-time="afternoon"] .ob-agree-hint {
+  color: #4A3A2A !important;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.35) !important;
+}
+body[data-time="morning"] .ob-agree-item,
+body[data-time="afternoon"] .ob-agree-item {
+  color: #2A1A0A !important;
+  background: rgba(255,255,255,0.35) !important;
+}
+body[data-time="morning"] .ob-pill,
+body[data-time="afternoon"] .ob-pill {
+  color: #3A2A1A !important;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.3) !important;
+}
+body[data-time="morning"] .ob-photo-hint,
+body[data-time="afternoon"] .ob-photo-hint {
+  color: #4A3A2A !important;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.35) !important;
+}
+body[data-time="morning"] .ob-morning-preview,
+body[data-time="afternoon"] .ob-morning-preview {
+  color: #2A1A0A !important;
+}
+body[data-time="morning"] .ob-tour-row div,
+body[data-time="afternoon"] .ob-tour-row div {
+  color: #3A2A1A !important;
+}
+body[data-time="morning"] .ob-tour-row strong,
+body[data-time="afternoon"] .ob-tour-row strong {
+  color: #1A1A0A !important;
+}
+body[data-time="morning"] .ob-partner-status,
+body[data-time="afternoon"] .ob-partner-status {
+  color: #3A2A1A !important;
+  background: rgba(255,255,255,0.25) !important;
+}
+body[data-time="morning"] .sky-theme-name,
+body[data-time="afternoon"] .sky-theme-name {
+  color: #2A1A0A !important;
+}
+body[data-time="morning"] .sky-theme-desc,
+body[data-time="afternoon"] .sky-theme-desc {
+  color: #4A3A2A !important;
+}
+/* Dawn/golden onboarding sub-elements also need legibility */
+body[data-time="dawn"] .ob-bl-label,
+body[data-time="golden"] .ob-bl-label {
+  color: rgba(240,220,210,0.70) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
+}
+body[data-time="dawn"] .ob-agree-heading,
+body[data-time="golden"] .ob-agree-heading {
+  color: #F4ECE8 !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
+}
+body[data-time="dawn"] .ob-agree-hint,
+body[data-time="golden"] .ob-agree-hint {
+  color: rgba(240,220,210,0.65) !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.20) !important;
+}
+body[data-time="dawn"] .ob-agree-item,
+body[data-time="golden"] .ob-agree-item {
+  color: rgba(240,230,220,0.80) !important;
+  background: rgba(0,0,0,0.12) !important;
+}
+body[data-time="dawn"] .ob-pill,
+body[data-time="golden"] .ob-pill {
+  color: rgba(240,220,210,0.70) !important;
+}
+body[data-time="dawn"] .ob-photo-hint,
+body[data-time="golden"] .ob-photo-hint {
+  color: rgba(240,220,210,0.65) !important;
+}
+body[data-time="dawn"] .ob-tour-row div,
+body[data-time="golden"] .ob-tour-row div {
+  color: rgba(240,220,210,0.65) !important;
+}
+body[data-time="dawn"] .ob-tour-row strong,
+body[data-time="golden"] .ob-tour-row strong {
+  color: #F4ECE8 !important;
+}
+body[data-time="dawn"] .sky-theme-name,
+body[data-time="golden"] .sky-theme-name {
+  color: #F4ECE8 !important;
+}
+body[data-time="dawn"] .sky-theme-desc,
+body[data-time="golden"] .sky-theme-desc {
+  color: rgba(240,220,210,0.60) !important;
+}
+
+/* Night/evening login logo: subtle glow */
+body[data-time="night"] .login-logo,
+body[data-time="evening"] .login-logo {
+  background: rgba(140,170,130,0.10) !important;
+  border-color: rgba(180,200,170,0.20) !important;
+  color: rgba(200,210,195,0.70) !important;
+  box-shadow: 0 0 24px 4px rgba(140,170,130,0.08) !important;
+}
+@keyframes loginLogoPulseNight {
+  0%, 100% { box-shadow: 0 0 24px 4px rgba(140,170,130,0.08); transform: scale(1); }
+  50% { box-shadow: 0 0 36px 8px rgba(140,170,130,0.14); transform: scale(1.03); }
+}
+body[data-time="night"] .login-logo,
+body[data-time="evening"] .login-logo {
+  animation: loginLogoPulseNight 3s ease-in-out infinite !important;
+}
+
+/* Night/evening login error */
+body[data-time="night"] .login-err,
+body[data-time="evening"] .login-err {
+  color: #E8947A !important;
+}
+
+/* Night/evening welcome gate text */
+body[data-time="night"] #welcome-greeting,
+body[data-time="evening"] #welcome-greeting {
+  color: rgba(200,210,200,0.65) !important;
+}
+
+/* Night/evening sky scene: extend visibility */
+body[data-time="night"] .login-sky-scene,
+body[data-time="evening"] .login-sky-scene {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 80%) !important;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 80%) !important;
+}
+
+/* ===== BEACH + NIGHT/EVENING LOGIN ===== */
+/* Login background: transparent - inherits live aurora from body::before */
+body[data-sky-theme="beach"][data-time="night"] .login-btn,
+body[data-sky-theme="beach"][data-time="evening"] .login-btn {
+  background: linear-gradient(135deg, #3A7888 0%, #4A9098 40%, #58A8A0 100%) !important;
+  box-shadow: 0 4px 20px rgba(58,120,136,0.30), 0 1px 0 rgba(255,255,255,0.08) inset !important;
+  border: 1px solid rgba(100,180,180,0.18) !important;
+}
+
+/* ===== MOUNTAIN + NIGHT/EVENING LOGIN ===== */
+/* Login background: transparent - inherits live aurora from body::before */
+body[data-sky-theme="mountain"][data-time="night"] .login-btn,
+body[data-sky-theme="mountain"][data-time="evening"] .login-btn {
+  background: linear-gradient(135deg, #3A6A40 0%, #4A8050 40%, #5A9260 100%) !important;
+  box-shadow: 0 4px 20px rgba(58,106,64,0.30), 0 1px 0 rgba(255,255,255,0.08) inset !important;
+  border: 1px solid rgba(100,160,100,0.18) !important;
+}
+
+/* ===== DAWN/GOLDEN HOUR LOGIN ENHANCEMENTS ===== */
+/* Login background: transparent - inherits live aurora from body::before */
+body[data-time="dawn"] .login-input {
+  background: rgba(160,120,140,0.35) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  color: #F0E8E4 !important;
+  border: 1px solid rgba(220,180,190,0.15) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10) !important;
+}
+body[data-time="dawn"] .login-input::placeholder {
+  color: rgba(220,190,200,0.50) !important;
+}
+body[data-time="dawn"] .login-btn {
+  background: linear-gradient(135deg, #B86878 0%, #C88090 40%, #D8A0A0 100%) !important;
+  box-shadow: 0 4px 20px rgba(184,104,120,0.25) !important;
+}
+body[data-time="dawn"] .login h1 { color: #F4ECE8 !important; text-shadow: 0 1px 6px rgba(0,0,0,0.18) !important; }
+body[data-time="dawn"] .login .sub { color: rgba(240,220,220,0.78) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.20) !important; }
+body[data-time="dawn"] .login .lbl { color: rgba(240,220,220,0.82) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.20) !important; }
+body[data-time="dawn"] .login-logo {
+  background: rgba(200,140,160,0.10) !important;
+  border-color: rgba(220,160,180,0.20) !important;
+  color: rgba(240,210,220,0.65) !important;
+}
+
+/* Golden hour: warm amber glow */
+body[data-time="golden"] .login-input {
+  background: rgba(160,130,80,0.38) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  color: #F4ECE0 !important;
+  border: 1px solid rgba(220,190,140,0.15) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10) !important;
+}
+body[data-time="golden"] .login-input::placeholder {
+  color: rgba(220,200,170,0.50) !important;
+}
+body[data-time="golden"] .login-btn {
+  background: linear-gradient(135deg, #B87A20 0%, #C89030 40%, #D8A840 100%) !important;
+  box-shadow: 0 4px 20px rgba(184,122,32,0.30) !important;
+}
+body[data-time="golden"] .login h1 { color: #FFF4E4 !important; text-shadow: 0 1px 6px rgba(0,0,0,0.18) !important; }
+body[data-time="golden"] .login .sub { color: rgba(255,240,210,0.78) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.20) !important; }
+body[data-time="golden"] .login .lbl { color: rgba(255,240,210,0.82) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.20) !important; }
+body[data-time="golden"] .login-logo {
+  background: rgba(200,160,60,0.12) !important;
+  border-color: rgba(220,180,80,0.22) !important;
+  color: rgba(255,220,150,0.70) !important;
+}
+
+/* Morning/Afternoon: login background transparent - inherits live aurora */
+
+/* ===== NIGHT/EVENING APP-WIDE ENHANCEMENTS ===== */
+/* Bottom nav: deeper glass with subtle sage tint at night */
+body[data-time="night"] .bnav {
+  background: rgba(14,12,26,0.92) !important;
+  border-top-color: rgba(140,170,130,0.08) !important;
+  box-shadow: 0 -2px 20px rgba(0,0,0,0.25) !important;
+}
+body[data-time="evening"] .bnav {
+  background: rgba(26,22,48,0.90) !important;
+  border-top-color: rgba(160,150,200,0.08) !important;
+  box-shadow: 0 -2px 20px rgba(0,0,0,0.20) !important;
+}
+body[data-time="night"] .bnav-indicator {
+  background: linear-gradient(90deg, #6A9A68, #88B880) !important;
+  box-shadow: 0 0 12px rgba(106,154,104,0.30) !important;
+}
+body[data-time="evening"] .bnav-indicator {
+  background: linear-gradient(90deg, #C4964A, #D4A858) !important;
+  box-shadow: 0 0 12px rgba(196,150,74,0.25) !important;
+}
+body[data-time="night"] .bn.on { color: #88B880 !important; }
+body[data-time="evening"] .bn.on { color: #D4A858 !important; }
+
+/* Page headers: frosted glass at night/evening */
+body[data-time="night"] .page-header.compact,
+body[data-time="evening"] .page-header.compact {
+  background: rgba(14,12,26,0.65) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
+  backdrop-filter: blur(16px) saturate(1.2) !important;
+}
+
+/* Dashboard cards: deeper glass surfaces at night */
+body[data-time="night"] .dash-card,
+body[data-time="night"] .act-item,
+body[data-time="night"] .dash-gratitude,
+body[data-time="night"] .dash-goal-item,
+body[data-time="night"] .me-care-card {
+  background: rgba(22,20,38,0.72) !important;
+  border-color: rgba(140,170,130,0.06) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18), 0 0 0 1px rgba(140,170,130,0.04) !important;
+}
+body[data-time="evening"] .dash-card,
+body[data-time="evening"] .act-item,
+body[data-time="evening"] .dash-gratitude,
+body[data-time="evening"] .dash-goal-item,
+body[data-time="evening"] .me-care-card {
+  background: rgba(36,30,58,0.72) !important;
+  border-color: rgba(200,180,160,0.06) !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.14), 0 0 0 1px rgba(200,180,160,0.04) !important;
+}
+
+/* Hero cards at night: deeper tones */
+body[data-time="night"] .hero-card-us {
+  background: linear-gradient(135deg, rgba(140,170,130,0.10), rgba(100,140,100,0.06)) !important;
+}
+body[data-time="night"] .hero-card-me {
+  background: linear-gradient(135deg, rgba(100,120,180,0.10), rgba(80,100,160,0.06)) !important;
+}
+body[data-time="evening"] .hero-card-us {
+  background: linear-gradient(135deg, rgba(196,120,74,0.10), rgba(176,138,80,0.06)) !important;
+}
+body[data-time="evening"] .hero-card-me {
+  background: linear-gradient(135deg, rgba(100,80,160,0.10), rgba(123,104,174,0.06)) !important;
+}
+
+/* Stat mini cards: subtle sage glow at night */
+body[data-time="night"] .stat-mini {
+  background: rgba(140,170,130,0.06) !important;
+}
+body[data-time="evening"] .stat-mini {
+  background: rgba(200,180,160,0.06) !important;
+}
+
+/* Hub section cards at night/evening */
+body[data-time="night"] .dq-card,
+body[data-time="night"] .dt-current {
+  background: rgba(22,20,38,0.78) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18), 0 0 20px rgba(140,170,130,0.03) !important;
+}
+body[data-time="evening"] .dq-card,
+body[data-time="evening"] .dt-current {
+  background: rgba(36,30,58,0.78) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.14), 0 0 20px rgba(200,160,100,0.03) !important;
+}
+
+/* Form cards at night */
+body[data-time="night"] .form-card {
+  background: rgba(22,20,38,0.75) !important;
+  border-color: rgba(140,170,130,0.06) !important;
+}
+body[data-time="evening"] .form-card {
+  background: rgba(36,30,58,0.75) !important;
+  border-color: rgba(200,180,160,0.06) !important;
+}
+
+/* Inputs inside app (not login) at night: subtler glass */
+body[data-time="night"] .pg input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+body[data-time="night"] .pg textarea,
+body[data-time="night"] .pg select {
+  background: rgba(100,110,140,0.14) !important;
+  border: 1px solid rgba(140,170,130,0.08) !important;
+}
+body[data-time="night"] .pg input:focus,
+body[data-time="night"] .pg textarea:focus {
+  background: rgba(110,120,150,0.18) !important;
+  border-color: rgba(140,170,130,0.16) !important;
+  box-shadow: 0 0 0 3px rgba(140,170,130,0.10) !important;
+}
+body[data-time="evening"] .pg input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+body[data-time="evening"] .pg textarea,
+body[data-time="evening"] .pg select {
+  background: rgba(120,100,150,0.12) !important;
+  border: 1px solid rgba(200,180,160,0.08) !important;
+}
+body[data-time="evening"] .pg input:focus,
+body[data-time="evening"] .pg textarea:focus {
+  background: rgba(130,110,160,0.16) !important;
+  border-color: rgba(200,180,160,0.14) !important;
+  box-shadow: 0 0 0 3px rgba(200,160,100,0.10) !important;
+}
+
+/* Buttons at night: sage green accents */
+body[data-time="night"] .form-card .login-btn,
+body[data-time="night"] .modal .login-btn {
+  background: linear-gradient(135deg, #5A7A4A 0%, #6B8F5E 40%, #7DA068 100%) !important;
+  box-shadow: 0 4px 16px rgba(90,122,74,0.25) !important;
+}
+
+/* Modals and sheets at night */
+body[data-time="night"] .modal-inner,
+body[data-time="night"] .sheet-body {
+  background: rgba(22,20,40,0.96) !important;
+  border: 1px solid rgba(140,170,130,0.06) !important;
+}
+body[data-time="evening"] .modal-inner,
+body[data-time="evening"] .sheet-body {
+  background: rgba(36,30,60,0.96) !important;
+  border: 1px solid rgba(200,180,160,0.06) !important;
+}
+
+/* Affirmation card at night: sage-tinted */
+body[data-time="night"] .dash-affirmation {
+  background: linear-gradient(135deg, rgba(140,170,130,0.08), rgba(100,140,100,0.04)) !important;
+  border-color: rgba(140,170,130,0.06) !important;
+}
+
+/* Activity feed empty state */
+body[data-time="night"] .activity-empty {
+  background: rgba(22,20,38,0.65) !important;
+  border-color: rgba(140,170,130,0.06) !important;
+}
+
+/* Quick tap buttons at night */
+body[data-time="night"] .qt-btn {
+  background: rgba(140,170,130,0.08) !important;
+  border-color: rgba(140,170,130,0.10) !important;
+}
+body[data-time="night"] .qt-btn:active {
+  background: rgba(140,170,130,0.16) !important;
+}
+body[data-time="evening"] .qt-btn {
+  background: rgba(200,180,160,0.08) !important;
+  border-color: rgba(200,180,160,0.10) !important;
+}
+
+/* Hub action buttons at night */
+body[data-time="night"] .hub-action-btn {
+  background: rgba(140,170,130,0.06) !important;
+  border-color: rgba(140,170,130,0.08) !important;
+}
+body[data-time="evening"] .hub-action-btn {
+  background: rgba(200,180,160,0.06) !important;
+  border-color: rgba(200,180,160,0.08) !important;
+}
+
+/* Explore/More page items at night */
+body[data-time="night"] .explore-dir-item {
+  background: rgba(22,20,38,0.72) !important;
+  border-color: rgba(140,170,130,0.06) !important;
+}
+body[data-time="evening"] .explore-dir-item {
+  background: rgba(36,30,58,0.72) !important;
+  border-color: rgba(200,180,160,0.06) !important;
+}
+
+/* Toast at night */
+body[data-time="night"] #toast-msg {
+  background: rgba(140,170,130,0.85) !important;
+  color: #0E0C1A !important;
+}
+
+/* Offline banner at night */
+body[data-time="night"] .offline-banner.show {
+  background: rgba(200,120,80,0.90) !important;
+}
+
+/* Sound preview button */
+.ob-sound-preview-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px auto 0;
+  padding: 8px 18px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 20px;
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255,255,255,.7);
+  font-size: 12px;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+.ob-sound-preview-btn svg { flex-shrink:0; }
+.ob-sound-preview-btn:active {
+  transform: scale(0.96);
+}
+.ob-sound-preview-btn.playing {
+  background: rgba(var(--c-teal-rgb, 120,180,160), 0.15);
+  border-color: rgba(var(--c-teal-rgb, 120,180,160), 0.4);
+}
+
+/* ===== NEW TERRAIN ELEMENTS ===== */
+
+/* Mountain: Falling leaves */
+.terrain-falling-leaf {
+  position: absolute;
+  top: 30%;
+  width: 4px;
+  height: 4px;
+  opacity: 0.4;
+  background: rgba(160,120,40,0.7);
+  border-radius: 50% 0 50% 50%;
+  animation: leafFall 8s ease-in-out infinite;
+}
+@keyframes leafFall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.4; }
+  50% { transform: translate(15px, 80px) rotate(180deg); opacity: 0.3; }
+  100% { transform: translate(5px, 160px) rotate(360deg); opacity: 0; }
+}
+body[data-time="night"] .terrain-falling-leaf { opacity: 0; }
+
+/* Mountain: Campfire smoke */
+.terrain-smoke {
+  position: absolute;
+  width: 6px;
+  height: 20px;
+  opacity: 0.2;
+  pointer-events: none;
+}
+.terrain-smoke::before,
+.terrain-smoke::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(180,180,180,0.4);
+  animation: smokeRise 4s ease-out infinite;
+}
+.terrain-smoke::after { animation-delay: 2s; width: 3px; height: 3px; }
+@keyframes smokeRise {
+  0% { transform: translate(-50%, 0) scale(1); opacity: 0.3; }
+  100% { transform: translate(-50%, -20px) scale(2.5); opacity: 0; }
+}
+body[data-time="night"] .terrain-smoke::before,
+body[data-time="night"] .terrain-smoke::after { background: rgba(200,200,200,0.25); }
+
+/* Mountain: Goats on ridgeline */
+.terrain-mtn-goat {
+  position: absolute;
+  width: var(--goat-size, 5px);
+  height: calc(var(--goat-size, 5px) * 0.8);
+  opacity: 0.3;
+}
+.terrain-mtn-goat::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 70%;
+  background: rgba(200,200,200,0.7);
+  border-radius: 40% 50% 30% 30%;
+}
+body[data-time="night"] .terrain-mtn-goat { opacity: 0; }
+
+/* Beach: Beach towel */
+.terrain-beach-towel {
+  position: absolute;
+  bottom: 4%;
+  left: 55%;
+  width: 16px;
+  height: 8px;
+  opacity: 0.4;
+  background: linear-gradient(90deg, rgba(220,80,80,0.5) 0%, rgba(220,80,80,0.5) 33%, rgba(255,255,255,0.4) 33%, rgba(255,255,255,0.4) 66%, rgba(80,140,220,0.5) 66%);
+  border-radius: 1px;
+  transform: rotate(-3deg);
+}
+body[data-time="night"] .terrain-beach-towel { opacity: 0.12; }
+
+/* Beach: Coconuts */
+.terrain-coconut {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  opacity: 0.45;
+  background: rgba(100,70,30,0.7);
+  border-radius: 50%;
+}
+body[data-time="night"] .terrain-coconut { opacity: 0.15; }
+
+/* Beach: Sandcastle */
+.terrain-sandcastle {
+  position: absolute;
+  bottom: 4%;
+  left: 35%;
+  width: 12px;
+  height: 10px;
+  opacity: 0.35;
+}
+.terrain-sandcastle::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 12px;
+  height: 6px;
+  background: rgba(210,185,140,0.7);
+  border-radius: 2px 2px 0 0;
+}
+.terrain-sandcastle::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 3px;
+  width: 6px;
+  height: 5px;
+  background: rgba(200,175,130,0.65);
+  border-radius: 2px 2px 0 0;
+}
+body[data-time="night"] .terrain-sandcastle { opacity: 0.12; }
+
+/* Beach: Water sparkles */
+.terrain-water-sparkle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  opacity: 0;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  animation: waterSparkle 3s ease-in-out infinite;
+}
+@keyframes waterSparkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+body[data-time="night"] .terrain-water-sparkle { background: rgba(180,200,255,0.5); }
+body[data-time="golden"] .terrain-water-sparkle { background: rgba(255,220,100,0.8); }
+
+/* Beach: Pelican on rock */
+.terrain-pelican {
+  position: absolute;
+  bottom: 15%;
+  left: 52%;
+  width: 8px;
+  height: 7px;
+  opacity: 0.35;
+}
+.terrain-pelican::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: 60%;
+  height: 60%;
+  background: rgba(200,200,200,0.7);
+  border-radius: 40% 60% 30% 20%;
+}
+.terrain-pelican::after {
+  content: '';
+  position: absolute;
+  bottom: 50%;
+  left: 55%;
+  width: 30%;
+  height: 35%;
+  background: rgba(200,200,200,0.7);
+  border-radius: 50% 60% 40% 30%;
+}
+body[data-time="night"] .terrain-pelican { opacity: 0; }
+
+/* Meadow: Beehive */
+.terrain-beehive {
+  position: absolute;
+  bottom: 22%;
+  left: 68%;
+  width: 6px;
+  height: 7px;
+  opacity: 0.4;
+}
+.terrain-beehive::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 6px;
+  height: 7px;
+  background: rgba(180,150,60,0.6);
+  border-radius: 30% 30% 50% 50%;
+}
+body[data-time="night"] .terrain-beehive { opacity: 0.15; }
+
+/* Meadow: Mushrooms */
+.terrain-mushroom {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  opacity: 0.45;
+}
+.terrain-mushroom::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  height: 3px;
+  background: rgba(220,210,190,0.6);
+  transform: translateX(-50%);
+}
+.terrain-mushroom::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 5px;
+  height: 3px;
+  background: rgba(180,80,60,0.5);
+  border-radius: 50% 50% 0 0;
+}
+body[data-time="night"] .terrain-mushroom { opacity: 0.12; }
+
+/* Meadow: Dragonflies */
+.terrain-dragonfly {
+  position: absolute;
+  width: 8px;
+  height: 3px;
+  opacity: 0.45;
+  animation: dragonflyHover 6s ease-in-out infinite;
+}
+.terrain-dragonfly::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 1px;
+  background: rgba(80,160,200,0.6);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+.terrain-dragonfly::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 100%;
+  background: rgba(180,220,255,0.3);
+  border-radius: 50%;
+  animation: dragonflyWings 0.15s ease-in-out infinite alternate;
+}
+@keyframes dragonflyHover {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(8px, -4px); }
+  50% { transform: translate(3px, 2px); }
+  75% { transform: translate(-5px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes dragonflyWings {
+  0% { transform: scaleY(1); }
+  100% { transform: scaleY(0.3); }
+}
+body[data-time="night"] .terrain-dragonfly { opacity: 0; }
+
+/* Meadow: Sunflowers */
+.terrain-sunflower {
+  position: absolute;
+  bottom: 4%;
+  opacity: 0.55;
+}
+.terrain-sunflower::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  height: 12px;
+  background: rgba(60,100,30,0.5);
+  transform: translateX(-50%);
+}
+.terrain-sunflower::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  background: radial-gradient(circle, rgba(120,80,20,0.6) 30%, rgba(255,200,0,0.5) 30%);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  animation: sunflowerSway 5s ease-in-out infinite alternate;
+}
+@keyframes sunflowerSway {
+  0% { transform: translateX(-50%) rotate(-3deg); }
+  100% { transform: translateX(-50%) rotate(3deg); }
+}
+body[data-time="night"] .terrain-sunflower { opacity: 0.12; }
+
+/* Meadow: Ladybugs */
+.terrain-ladybug {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  opacity: 0.5;
+  background: rgba(220,40,30,0.6);
+  border-radius: 50%;
+  animation: ladybugCrawl 10s ease-in-out infinite;
+}
+.terrain-ladybug::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  transform: translateX(-50%);
+}
+@keyframes ladybugCrawl {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(3px, -1px); }
+  50% { transform: translate(5px, 1px); }
+  75% { transform: translate(2px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+body[data-time="night"] .terrain-ladybug { opacity: 0; }
+
+/* ===== ENVIRONMENT-SPECIFIC APP EFFECTS ===== */
+/* Make each environment feel distinctly different throughout the app */
+
+/* --- BEACH: Warm turquoise accents, sandy glow, coral highlights --- */
+body[data-sky-theme="beach"] .bnav-indicator {
+  background: linear-gradient(90deg, #38B8C0, #58D0D0) !important;
+  box-shadow: 0 0 14px rgba(56,184,192,0.35) !important;
+}
+body[data-sky-theme="beach"] .bn.on { color: #38B8C0 !important; }
+body[data-sky-theme="beach"] .dash-card,
+body[data-sky-theme="beach"] .act-item {
+  border-left-color: rgba(56,184,192,0.3) !important;
+}
+body[data-sky-theme="beach"] .hero-card-us {
+  background: linear-gradient(135deg, rgba(56,184,192,0.08), rgba(255,180,120,0.04)) !important;
+  border: 1px solid rgba(56,184,192,0.1) !important;
+}
+body[data-sky-theme="beach"] .hero-card-me {
+  background: linear-gradient(135deg, rgba(255,160,100,0.06), rgba(56,184,192,0.04)) !important;
+  border: 1px solid rgba(255,160,100,0.08) !important;
+}
+body[data-sky-theme="beach"] .stat-mini {
+  border-bottom: 2px solid rgba(56,184,192,0.15);
+}
+body[data-sky-theme="beach"] .dq-card {
+  border-left: 3px solid rgba(56,184,192,0.2);
+}
+body[data-sky-theme="beach"] input:focus,
+body[data-sky-theme="beach"] textarea:focus {
+  box-shadow: 0 0 0 3px rgba(56,184,192,0.15) !important;
+}
+body[data-sky-theme="beach"] .page-header .ph-title {
+  text-shadow: 0 0 20px rgba(56,184,192,0.08);
+}
+
+/* --- MOUNTAIN: Forest green accents, earthy depth, alpine blue highlights --- */
+body[data-sky-theme="mountain"] .bnav-indicator {
+  background: linear-gradient(90deg, #4A8048, #68A860) !important;
+  box-shadow: 0 0 14px rgba(74,128,72,0.35) !important;
+}
+body[data-sky-theme="mountain"] .bn.on { color: #4A8048 !important; }
+body[data-sky-theme="mountain"] .dash-card,
+body[data-sky-theme="mountain"] .act-item {
+  border-left-color: rgba(74,128,72,0.3) !important;
+}
+body[data-sky-theme="mountain"] .hero-card-us {
+  background: linear-gradient(135deg, rgba(74,128,72,0.08), rgba(80,140,200,0.04)) !important;
+  border: 1px solid rgba(74,128,72,0.1) !important;
+}
+body[data-sky-theme="mountain"] .hero-card-me {
+  background: linear-gradient(135deg, rgba(80,140,200,0.06), rgba(74,128,72,0.04)) !important;
+  border: 1px solid rgba(80,140,200,0.08) !important;
+}
+body[data-sky-theme="mountain"] .stat-mini {
+  border-bottom: 2px solid rgba(74,128,72,0.15);
+}
+body[data-sky-theme="mountain"] .dq-card {
+  border-left: 3px solid rgba(74,128,72,0.2);
+}
+body[data-sky-theme="mountain"] input:focus,
+body[data-sky-theme="mountain"] textarea:focus {
+  box-shadow: 0 0 0 3px rgba(74,128,72,0.15) !important;
+}
+body[data-sky-theme="mountain"] .page-header .ph-title {
+  text-shadow: 0 0 20px rgba(74,128,72,0.08);
+}
+
+/* --- BEACH night/evening overrides --- */
+body[data-sky-theme="beach"][data-time="night"] .bnav-indicator,
+body[data-sky-theme="beach"][data-time="evening"] .bnav-indicator {
+  background: linear-gradient(90deg, #38A8B0, #50C8C8) !important;
+  box-shadow: 0 0 16px rgba(56,168,176,0.4) !important;
+}
+body[data-sky-theme="beach"][data-time="night"] .bn.on,
+body[data-sky-theme="beach"][data-time="evening"] .bn.on { color: #50C8C8 !important; }
+body[data-sky-theme="beach"][data-time="night"] .dash-card,
+body[data-sky-theme="beach"][data-time="night"] .act-item {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18), 0 0 0 1px rgba(56,184,192,0.06) !important;
+}
+
+/* --- MOUNTAIN night/evening overrides --- */
+body[data-sky-theme="mountain"][data-time="night"] .bnav-indicator,
+body[data-sky-theme="mountain"][data-time="evening"] .bnav-indicator {
+  background: linear-gradient(90deg, #5A9858, #78B870) !important;
+  box-shadow: 0 0 16px rgba(90,152,88,0.4) !important;
+}
+body[data-sky-theme="mountain"][data-time="night"] .bn.on,
+body[data-sky-theme="mountain"][data-time="evening"] .bn.on { color: #78B870 !important; }
+body[data-sky-theme="mountain"][data-time="night"] .dash-card,
+body[data-sky-theme="mountain"][data-time="night"] .act-item {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18), 0 0 0 1px rgba(74,128,72,0.06) !important;
+}
+
