@@ -2456,6 +2456,12 @@
       <!-- ===== GRATITUDE ===== -->
       <div class="pg" id="pg-gratitude">
         <div class="ctn">
+          <!-- Partner Prompt -->
+          <div class="card mb-12" id="grat-partner-prompt">
+            <div class="t-xs c-t3 mb-4">Today's prompt</div>
+            <div class="t-body c-cream" id="grat-prompt-text">What did <span class="pname"></span> do recently that made you smile?</div>
+          </div>
+
           <div class="sec-head">
             <div class="sec-dot sd-amber"></div>
             <div class="sec-title">Today</div>
@@ -2558,185 +2564,18 @@
           <!-- Game Invite Banner -->
           <div id="game-invite" class="d-none"></div>
 
-          <!-- Competitive Games -->
+          <!-- Two Truths & a Lie -->
           <div class="sec-head">
             <div class="sec-dot sd-teal"></div>
-            <div class="sec-title">Competitive Games</div>
+            <div class="sec-title">Two Truths &amp; a Lie</div>
           </div>
-
-          <!-- Game Lobby -->
           <div id="game-lobby">
-            <div class="game-picker">
-              <button class="game-pick-btn" onclick="newTTT()">
-                <span class="gpb-icon">⊞</span><span class="gpb-name">Tic-Tac-Toe</span>
-              </button>
-              <button class="game-pick-btn" onclick="newC4()">
-                <span class="gpb-icon">⊚</span><span class="gpb-name">Connect 4</span>
-              </button>
-              <button class="game-pick-btn" onclick="newMemory()">
-                <span class="gpb-icon">🃏</span><span class="gpb-name">Memory</span>
-              </button>
-              <button class="game-pick-btn" onclick="newRPS()">
-                <span class="gpb-icon">✊</span><span class="gpb-name">RPS</span>
-              </button>
-              <button class="game-pick-btn" onclick="newEmojiGame()">
-                <span class="gpb-icon">🎭</span><span class="gpb-name">Emoji Guess</span>
-              </button>
-              <button class="game-pick-btn" onclick="new21Q()">
-                <span class="gpb-icon">❓</span><span class="gpb-name">21 Questions</span>
-              </button>
-              <button class="game-pick-btn" onclick="newTTAL()">
-                <span class="gpb-icon">🤥</span><span class="gpb-name">2 Truths</span>
-              </button>
-              <button class="game-pick-btn" onclick="newWordChain()">
-                <span class="gpb-icon">🔗</span><span class="gpb-name">Word Chain</span>
-              </button>
-              <button class="game-pick-btn" onclick="newTrivia()">
-                <span class="gpb-icon">🧠</span><span class="gpb-name">Trivia</span>
-              </button>
-              <button class="game-pick-btn" onclick="newWar()">
-                <span class="gpb-icon">🃏</span><span class="gpb-name">War</span>
-              </button>
-              <button class="game-pick-btn" onclick="newCheckers()">
-                <span class="gpb-icon">🏁</span><span class="gpb-name">Checkers</span>
-              </button>
-              <button class="game-pick-btn" onclick="newGoFish()">
-                <span class="gpb-icon">🐟</span><span class="gpb-name">Go Fish</span>
-              </button>
-              <button class="game-pick-btn" onclick="newHangman()">
-                <span class="gpb-icon">💀</span><span class="gpb-name">Hangman</span>
-              </button>
-              <button class="game-pick-btn" onclick="newBattleship()">
-                <span class="gpb-icon">🚢</span><span class="gpb-name">Battleship</span>
-              </button>
+            <div class="card mb-12">
+              <div class="card-h"><span class="card-t">Share 3 statements — one is false</span></div>
+              <div id="ttal-board"></div>
+              <button class="dq-submit" onclick="newTTAL()">New Round</button>
             </div>
             <div id="game-stats-board"></div>
-          </div>
-
-          <!-- Tic-Tac-Toe View -->
-          <div class="game-view d-none" id="gv-ttt">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Tic-Tac-Toe</span>
-            </div>
-            <div id="ttt-board"></div>
-          </div>
-
-          <!-- Connect Four View -->
-          <div class="game-view d-none" id="gv-c4">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Connect Four</span>
-            </div>
-            <div id="c4-board"></div>
-          </div>
-
-          <!-- Memory Match View -->
-          <div class="game-view d-none" id="gv-memory">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Memory Match</span>
-            </div>
-            <div id="mem-board"></div>
-          </div>
-
-          <!-- Rock Paper Scissors View -->
-          <div class="game-view d-none" id="gv-rps">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Rock Paper Scissors</span>
-            </div>
-            <div id="rps-board"></div>
-          </div>
-
-          <!-- Emoji Guessing View -->
-          <div class="game-view d-none" id="gv-emoji">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Emoji Guess</span>
-            </div>
-            <div id="emoji-board"></div>
-          </div>
-
-          <!-- 21 Questions View -->
-          <div class="game-view d-none" id="gv-21q">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">21 Questions</span>
-            </div>
-            <div id="q21-board"></div>
-          </div>
-
-          <!-- Two Truths and a Lie View -->
-          <div class="game-view d-none" id="gv-ttal">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Two Truths & a Lie</span>
-            </div>
-            <div id="ttal-board"></div>
-          </div>
-
-          <!-- Word Chain View -->
-          <div class="game-view d-none" id="gv-wordchain">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Word Chain</span>
-            </div>
-            <div id="wc-board"></div>
-          </div>
-
-          <!-- Trivia View -->
-          <div class="game-view d-none" id="gv-trivia">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Trivia</span>
-            </div>
-            <div id="trivia-board"></div>
-          </div>
-
-          <!-- War View -->
-          <div class="game-view d-none" id="gv-war">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">War</span>
-            </div>
-            <div id="war-board"></div>
-          </div>
-
-          <!-- Checkers View -->
-          <div class="game-view d-none" id="gv-checkers">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Checkers</span>
-            </div>
-            <div id="checkers-board"></div>
-          </div>
-
-          <!-- Go Fish View -->
-          <div class="game-view d-none" id="gv-gofish">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Go Fish</span>
-            </div>
-            <div id="gofish-board"></div>
-          </div>
-
-          <!-- Hangman View -->
-          <div class="game-view d-none" id="gv-hangman">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Hangman</span>
-            </div>
-            <div id="hangman-board"></div>
-          </div>
-
-          <!-- Battleship View -->
-          <div class="game-view d-none" id="gv-battleship">
-            <div class="gv-header">
-              <button class="gv-back" onclick="showGameLobby()">← Back</button>
-              <span class="gv-title">Battleship</span>
-            </div>
-            <div id="battleship-board"></div>
           </div>
 
           <!-- Compatibility Score -->
@@ -2845,6 +2684,13 @@
             <div class="sec-title">Date History</div>
           </div>
           <div id="dn-history"><div class="empty">Your date history starts here</div></div>
+
+          <!-- Post-Date Memory (shown after completing a date) -->
+          <div class="card mb-12 d-none" id="dn-memory-prompt">
+            <div class="t-body c-cream mb-8">How was the date?</div>
+            <textarea class="mood-note" id="dn-memory-text" placeholder="Write a quick memory of tonight..."></textarea>
+            <button class="dq-submit mt-8" onclick="saveDateMemory()">Save Memory</button>
+          </div>
         </div>
       </div>
       <!-- ===== WEEKLY CHECK-IN ===== -->
@@ -2881,6 +2727,16 @@
               </div>
             </div>
             <button class="dq-submit" onclick="submitCheckin()">Submit</button>
+          </div>
+
+          <!-- Talk Prompt (shown after both submit) -->
+          <div class="card mb-12 d-none" id="ci-talk-prompt">
+            <div class="t-body c-cream mb-8">Both of you have checked in this week</div>
+            <div class="card" style="background: var(--bg2); padding: 14px; border-radius: 10px;">
+              <div class="t-xs c-t3 mb-4">Now do this together:</div>
+              <div class="t-body c-cream">Set a 10-minute timer and talk about what you each wrote. Listen without interrupting. End with one thing you appreciate about each other.</div>
+            </div>
+            <button class="dq-submit mt-12" onclick="document.getElementById('ci-talk-prompt').classList.add('d-none')">We talked</button>
           </div>
 
           <div class="sec-head">
@@ -3009,906 +2865,140 @@
                 <span class="dh-si-label">Style</span><span class="dh-si-val" id="dh-s-style">Not set</span>
               </div>
               <div class="dh-sum-item">
-                <span class="dh-si-label">Specs</span><span class="dh-si-val" id="dh-s-specs">--</span>
-              </div>
-              <div class="dh-sum-item">
                 <span class="dh-si-label">Budget</span><span class="dh-si-val" id="dh-s-budget">Not set</span>
               </div>
               <div class="dh-sum-item">
                 <span class="dh-si-label">Saved</span><span class="dh-si-val" id="dh-s-saved">$0</span>
               </div>
-              <div class="dh-sum-item">
-                <span class="dh-si-label">Phase</span><span class="dh-si-val" id="dh-s-phase">Research</span>
-              </div>
             </div>
-            <div class="dh-sum-progress">
-              <div class="dh-sum-prog-label"><span>Planning Progress</span><span id="dh-sum-pct">0%</span></div>
-              <div class="dh-prog-bar">
-                <div class="dh-prog-fill" id="dh-sum-fill" style="width: 0%; background: var(--lavender)"></div>
+          </div>
+
+          <!-- Location & Vibe -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Where We Want to Live</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-field-row">
+              <input type="text" id="dh-location" class="quiz-q" placeholder="City, suburb, or area..." />
+              <button class="dh-save-btn" onclick="dhSave('location', document.getElementById('dh-location').value)">
+                Save
+              </button>
+            </div>
+            <div class="dh-tag-row" id="dh-location-prefs">
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Suburbs')">Suburbs</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'City')">City</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Rural')">Rural</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Coastal')">Coastal</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Mountain')">Mountain</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Lake')">Lake</span>
+            </div>
+            <div class="dh-saved-val" id="dh-location-saved"></div>
+          </div>
+
+          <!-- Style Preference -->
+          <div class="sec-head">
+            <div class="sec-dot sd-rose"></div>
+            <div class="sec-title">Style We Love</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-tag-row">
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Modern')">Modern</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Farmhouse')">Farmhouse</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Contemporary')">Contemporary</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Craftsman')">Craftsman</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Mediterranean')">Mediterranean</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Colonial')">Colonial</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Minimalist')">Minimalist</span>
+            </div>
+          </div>
+
+          <!-- House Specs -->
+          <div class="sec-head">
+            <div class="sec-dot sd-emerald"></div>
+            <div class="sec-title">What We Need</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-specs-grid">
+              <div class="dh-spec">
+                <label class="dh-spec-label">Bedrooms</label>
+                <div class="dh-stepper">
+                  <button onclick="dhStep('beds', -1)">&#8722;</button><span id="dh-val-beds">3</span><button onclick="dhStep('beds', 1)">+</button>
+                </div>
+              </div>
+              <div class="dh-spec">
+                <label class="dh-spec-label">Bathrooms</label>
+                <div class="dh-stepper">
+                  <button onclick="dhStep('baths', -1)">&#8722;</button><span id="dh-val-baths">2</span><button onclick="dhStep('baths', 1)">+</button>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Phase Tabs -->
-          <div class="dh-phases">
-            <span class="dh-phase on" onclick="dhPhase('vision', this)">Vision</span>
-            <span class="dh-phase" onclick="dhPhase('design', this)">Design</span>
-            <span class="dh-phase" onclick="dhPhase('rooms', this)">Rooms</span>
-            <span class="dh-phase" onclick="dhPhase('finance', this)">Finance</span>
+          <!-- Must-Haves -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Must-Haves</div>
           </div>
-
-          <!-- ====== VISION PHASE ====== -->
-          <div class="dh-panel dh-panel-on" id="dh-p-vision">
-            <!-- Location -->
-            <div class="sec-head">
-              <div class="sec-dot sd-lavender"></div>
-              <div class="sec-title">Location</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-field-row">
-                <input type="text" id="dh-location" class="quiz-q" placeholder="City, suburb, or area..." />
-                <button class="dh-save-btn" onclick="dhSave('location', document.getElementById('dh-location').value)">
-                  Save
-                </button>
-              </div>
-              <div class="dh-tag-row" id="dh-location-prefs">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Suburbs')">Suburbs</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'City')">City</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Rural')">Rural</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Coastal')">Coastal</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Mountain')">Mountain</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Lake')">Lake</span>
-              </div>
-              <div class="dh-saved-val" id="dh-location-saved"></div>
-            </div>
-
-            <!-- Neighbourhood Priorities -->
-            <div class="sec-head">
-              <div class="sec-dot sd-teal"></div>
-              <div class="sec-title">Neighbourhood Priorities</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-tag-row">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Good schools')">Good schools</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Low crime')">Low crime</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Parks nearby')">Parks nearby</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Walkable')">Walkable</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Close to work')">Close to work</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Public transport')"
-                  >Public transport</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Shopping nearby')"
-                  >Shopping nearby</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Quiet street')">Quiet street</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Family-friendly')"
-                  >Family-friendly</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Gated community')"
-                  >Gated community</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Gym / fitness')">Gym / fitness</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'neighbourhood', 'Restaurants')">Restaurants</span>
-              </div>
-            </div>
-
-            <!-- Plot / Land -->
-            <div class="sec-head">
-              <div class="sec-dot sd-gold"></div>
-              <div class="sec-title">Plot &amp; Land</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-size-grid">
-                <div class="dh-size-opt" onclick="dhSelectSize(this, 'small')">
-                  <div class="dh-size-icon">🏘️</div>
-                  <div class="dh-size-label">Small</div>
-                  <div class="dh-size-sub">Under 5,000 sq ft</div>
-                </div>
-                <div class="dh-size-opt" onclick="dhSelectSize(this, 'medium')">
-                  <div class="dh-size-icon">🏡</div>
-                  <div class="dh-size-label">Medium</div>
-                  <div class="dh-size-sub">5,000–15,000 sq ft</div>
-                </div>
-                <div class="dh-size-opt" onclick="dhSelectSize(this, 'large')">
-                  <div class="dh-size-icon">🏠</div>
-                  <div class="dh-size-label">Large</div>
-                  <div class="dh-size-sub">15,000–1 acre</div>
-                </div>
-                <div class="dh-size-opt" onclick="dhSelectSize(this, 'estate')">
-                  <div class="dh-size-icon">🏰</div>
-                  <div class="dh-size-label">Estate</div>
-                  <div class="dh-size-sub">1+ acres</div>
-                </div>
-              </div>
-              <div class="dh-tag-row" style="margin-top: 10px">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'terrain', 'Flat')">Flat</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'terrain', 'Sloped')">Sloped</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'terrain', 'Wooded')">Wooded</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'terrain', 'Waterfront')">Waterfront</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'terrain', 'Corner lot')">Corner lot</span>
-              </div>
-            </div>
-
-            <!-- Build Type -->
-            <div class="sec-head">
-              <div class="sec-dot sd-rose"></div>
-              <div class="sec-title">Build Type</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-build-grid">
-                <div class="dh-build-opt" onclick="dhSelectBuild(this, 'new')">
-                  <span class="dh-bo-icon">🔨</span><span class="dh-bo-label">New Build</span>
-                </div>
-                <div class="dh-build-opt" onclick="dhSelectBuild(this, 'reno')">
-                  <span class="dh-bo-icon">🔧</span><span class="dh-bo-label">Renovation</span>
-                </div>
-                <div class="dh-build-opt" onclick="dhSelectBuild(this, 'custom')">
-                  <span class="dh-bo-icon">✏️</span><span class="dh-bo-label">Custom Design</span>
-                </div>
-                <div class="dh-build-opt" onclick="dhSelectBuild(this, 'modular')">
-                  <span class="dh-bo-icon">📦</span><span class="dh-bo-label">Modular / Kit</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- House Config -->
-            <div class="sec-head">
-              <div class="sec-dot sd-emerald"></div>
-              <div class="sec-title">House Specs</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-specs-grid">
-                <div class="dh-spec">
-                  <label class="dh-spec-label">Stories</label>
-                  <div class="dh-stepper">
-                    <button onclick="dhStep('stories', -1)">−</button><span id="dh-val-stories">1</span
-                    ><button onclick="dhStep('stories', 1)">+</button>
-                  </div>
-                </div>
-                <div class="dh-spec">
-                  <label class="dh-spec-label">Bedrooms</label>
-                  <div class="dh-stepper">
-                    <button onclick="dhStep('beds', -1)">−</button><span id="dh-val-beds">3</span
-                    ><button onclick="dhStep('beds', 1)">+</button>
-                  </div>
-                </div>
-                <div class="dh-spec">
-                  <label class="dh-spec-label">Bathrooms</label>
-                  <div class="dh-stepper">
-                    <button onclick="dhStep('baths', -1)">−</button><span id="dh-val-baths">2</span
-                    ><button onclick="dhStep('baths', 1)">+</button>
-                  </div>
-                </div>
-                <div class="dh-spec">
-                  <label class="dh-spec-label">Garage</label>
-                  <div class="dh-stepper">
-                    <button onclick="dhStep('garage', -1)">−</button><span id="dh-val-garage">2</span
-                    ><button onclick="dhStep('garage', 1)">+</button>
-                  </div>
-                </div>
-              </div>
-              <div class="dh-field-row" style="margin-top: 10px">
-                <label class="dh-spec-label" style="min-width: 80px">Sq Footage</label>
-                <input type="number" id="dh-sqft" class="quiz-q" placeholder="e.g. 2500" style="flex: 1" />
-                <button class="dh-save-btn" onclick="dhSave('sqft', document.getElementById('dh-sqft').value)">
-                  Save
-                </button>
-              </div>
-            </div>
-
-            <!-- Must-Haves -->
-            <div class="sec-head">
-              <div class="sec-dot sd-lavender"></div>
-              <div class="sec-title">Must-Haves</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-tag-row" id="dh-musthaves">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Walk-in closet')">Walk-in closet</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Home office')">Home office</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Open plan')">Open plan</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Island kitchen')">Island kitchen</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Double garage')">Double garage</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Laundry room')">Laundry room</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Pantry')">Pantry</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Fireplace')">Fireplace</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Basement')">Basement</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Smart home')">Smart home</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Solar')">Solar</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Pool')">Pool</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Guest suite')">Guest suite</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Gym')">Gym</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Media room')">Media room</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Wine cellar')">Wine cellar</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Mudroom')">Mudroom</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Butler pantry')">Butler pantry</span>
-              </div>
-            </div>
-
-            <!-- Energy & Sustainability -->
-            <div class="sec-head">
-              <div class="sec-dot sd-teal"></div>
-              <div class="sec-title">Energy &amp; Sustainability</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-tag-row">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'energy', 'Solar panels')">Solar panels</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'energy', 'Battery storage')">Battery storage</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'energy', 'EV charger')">EV charger</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'energy', 'Rainwater tank')">Rainwater tank</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'energy', 'Double glazing')">Double glazing</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'energy', 'Insulation upgrade')"
-                  >Insulation upgrade</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'energy', 'Heat pump')">Heat pump</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'energy', 'Greywater recycling')"
-                  >Greywater recycling</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'energy', 'Smart thermostat')">Smart thermostat</span>
-              </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-tag-row" id="dh-musthaves">
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Walk-in closet')">Walk-in closet</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Home office')">Home office</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Open plan')">Open plan</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Island kitchen')">Island kitchen</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Garage')">Garage</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Laundry room')">Laundry room</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Fireplace')">Fireplace</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Pool')">Pool</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Garden')">Garden</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Smart home')">Smart home</span>
             </div>
           </div>
 
-          <!-- ====== DESIGN PHASE ====== -->
-          <div class="dh-panel" id="dh-p-design">
-            <!-- Architectural Style -->
-            <div class="sec-head">
-              <div class="sec-dot sd-lavender"></div>
-              <div class="sec-title">Architectural Style</div>
+          <!-- Budget & Savings -->
+          <div class="sec-head">
+            <div class="sec-dot sd-teal"></div>
+            <div class="sec-title">Budget &amp; Savings</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-field-row mb-10">
+              <span style="font-size: 16px; color: var(--gold); font-weight: 700">$</span>
+              <input type="number" id="dh-total-budget" class="quiz-q" placeholder="Total budget" style="flex: 1" />
+              <button class="dh-save-btn" onclick="dhSave('totalBudget', document.getElementById('dh-total-budget').value)">Set</button>
             </div>
-            <div class="dh-style-scroll">
-              <div class="dh-arch-card" onclick="dhSelectArch(this, 'modern')">
-                <div class="dh-arch-icon">◻️</div>
-                <div class="dh-arch-name">Modern</div>
-                <div class="dh-arch-desc">Clean lines, flat roofs, walls of glass</div>
-              </div>
-              <div class="dh-arch-card" onclick="dhSelectArch(this, 'contemporary')">
-                <div class="dh-arch-icon">🔳</div>
-                <div class="dh-arch-name">Contemporary</div>
-                <div class="dh-arch-desc">Mixed materials, organic shapes</div>
-              </div>
-              <div class="dh-arch-card" onclick="dhSelectArch(this, 'farmhouse')">
-                <div class="dh-arch-icon">🏚️</div>
-                <div class="dh-arch-name">Farmhouse</div>
-                <div class="dh-arch-desc">Wraparound porch, gabled roof</div>
-              </div>
-              <div class="dh-arch-card" onclick="dhSelectArch(this, 'craftsman')">
-                <div class="dh-arch-icon">🪵</div>
-                <div class="dh-arch-name">Craftsman</div>
-                <div class="dh-arch-desc">Covered porch, exposed beams</div>
-              </div>
-              <div class="dh-arch-card" onclick="dhSelectArch(this, 'mediterranean')">
-                <div class="dh-arch-icon">🏛️</div>
-                <div class="dh-arch-name">Mediterranean</div>
-                <div class="dh-arch-desc">Stucco walls, tile roof, arches</div>
-              </div>
-              <div class="dh-arch-card" onclick="dhSelectArch(this, 'colonial')">
-                <div class="dh-arch-icon">🏠</div>
-                <div class="dh-arch-name">Colonial</div>
-                <div class="dh-arch-desc">Symmetrical, brick, shutters</div>
-              </div>
-              <div class="dh-arch-card" onclick="dhSelectArch(this, 'minimalist')">
-                <div class="dh-arch-icon">▫️</div>
-                <div class="dh-arch-name">Minimalist</div>
-                <div class="dh-arch-desc">Less is more, pure function</div>
-              </div>
-              <div class="dh-arch-card" onclick="dhSelectArch(this, 'traditional')">
-                <div class="dh-arch-icon">🏡</div>
-                <div class="dh-arch-name">Traditional</div>
-                <div class="dh-arch-desc">Classic proportions, warm details</div>
-              </div>
+            <div class="dh-field-row">
+              <span style="font-size: 16px; color: var(--emerald); font-weight: 700">$</span>
+              <input type="number" id="dh-saved-amount" class="quiz-q" placeholder="Amount saved so far" style="flex: 1" />
+              <button class="dh-save-btn" onclick="dhSave('savedAmount', document.getElementById('dh-saved-amount').value)">Update</button>
             </div>
-            <div class="dh-saved-val" id="dh-arch-saved"></div>
+            <div id="dh-savings-bar" style="margin-top: 12px"></div>
+          </div>
 
-            <!-- Exterior -->
-            <div class="sec-head">
-              <div class="sec-dot sd-teal"></div>
-              <div class="sec-title">Exterior</div>
+          <!-- Wishlist -->
+          <div class="sec-head">
+            <div class="sec-dot sd-rose"></div>
+            <div class="sec-title">Home Wishlist</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-field-row">
+              <input type="text" id="dh-wish-name" class="quiz-q" placeholder="Item name" style="flex: 2" />
+              <input type="number" id="dh-wish-price" class="quiz-q" placeholder="$" style="flex: 1" min="0" />
+              <button class="dh-save-btn" onclick="addHomeWish()">+</button>
             </div>
-            <div class="card" style="margin-bottom: 12px">
-              <label class="dh-spec-label" style="margin-bottom: 6px; display: block">Facade Materials</label>
-              <div class="dh-tag-row">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'facade', 'Brick')">Brick</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'facade', 'Stone')">Stone</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'facade', 'Stucco')">Stucco</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'facade', 'Wood siding')">Wood siding</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'facade', 'Metal')">Metal</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'facade', 'Glass')">Glass</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'facade', 'Concrete')">Concrete</span>
-              </div>
-              <label class="dh-spec-label" style="margin: 12px 0 6px; display: block">Roof Style</label>
-              <div class="dh-tag-row">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'roof', 'Flat')">Flat</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'roof', 'Gable')">Gable</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'roof', 'Hip')">Hip</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'roof', 'Skillion')">Skillion</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'roof', 'Metal standing seam')"
-                  >Metal standing seam</span
-                >
-              </div>
-            </div>
-
-            <!-- Outdoor Living -->
-            <div class="sec-head">
-              <div class="sec-dot sd-emerald"></div>
-              <div class="sec-title">Outdoor Living</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-tag-row">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'outdoor', 'Covered patio')">Covered patio</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'outdoor', 'Deck')">Deck</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'outdoor', 'Pool')">Pool</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'outdoor', 'BBQ area')">BBQ area</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'outdoor', 'Fire pit')">Fire pit</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'outdoor', 'Garden')">Garden</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'outdoor', 'Outdoor shower')">Outdoor shower</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'outdoor', 'Pergola')">Pergola</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'outdoor', 'Courtyard')">Courtyard</span>
-              </div>
-            </div>
-
-            <!-- Interior Style -->
-            <div class="sec-head">
-              <div class="sec-dot sd-rose"></div>
-              <div class="sec-title">Interior Style</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-tag-row">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'intStyle', 'Scandinavian')">Scandinavian</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'intStyle', 'Industrial')">Industrial</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'intStyle', 'Mid-century')">Mid-century</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'intStyle', 'Bohemian')">Bohemian</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'intStyle', 'Coastal')">Coastal</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'intStyle', 'Rustic')">Rustic</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'intStyle', 'Japandi')">Japandi</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'intStyle', 'Luxury')">Luxury</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'intStyle', 'Transitional')">Transitional</span>
-              </div>
-            </div>
-
-            <!-- Color Palette -->
-            <div class="sec-head">
-              <div class="sec-dot sd-gold"></div>
-              <div class="sec-title">Color Palette</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-palette">
-                <div class="dh-color" style="background: #f5f0eb" onclick="dhToggleColor(this, '#F5F0EB')"></div>
-                <div class="dh-color" style="background: #e8ddd3" onclick="dhToggleColor(this, '#E8DDD3')"></div>
-                <div class="dh-color" style="background: #c4a882" onclick="dhToggleColor(this, '#C4A882')"></div>
-                <div class="dh-color" style="background: #8b7355" onclick="dhToggleColor(this, '#8B7355')"></div>
-                <div class="dh-color" style="background: #2c3e50" onclick="dhToggleColor(this, '#2C3E50')"></div>
-                <div class="dh-color" style="background: #1c2b4a" onclick="dhToggleColor(this, '#1C2B4A')"></div>
-                <div class="dh-color" style="background: #4a6741" onclick="dhToggleColor(this, '#4A6741')"></div>
-                <div class="dh-color" style="background: #7b6dae" onclick="dhToggleColor(this, '#7B6DAE')"></div>
-                <div class="dh-color" style="background: #d4627a" onclick="dhToggleColor(this, '#D4627A')"></div>
-                <div
-                  class="dh-color"
-                  style="background: #ffffff; border: 1px solid var(--bdr-s)"
-                  onclick="dhToggleColor(this, '#FFFFFF')"
-                ></div>
-                <div class="dh-color" style="background: #333333" onclick="dhToggleColor(this, '#333333')"></div>
-                <div class="dh-color" style="background: #b0d4d4" onclick="dhToggleColor(this, '#B0D4D4')"></div>
-              </div>
-            </div>
-
-            <!-- Flooring -->
-            <div class="sec-head">
-              <div class="sec-dot sd-gold"></div>
-              <div class="sec-title">Flooring</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-tag-row">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'flooring', 'Hardwood')">Hardwood</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'flooring', 'Engineered wood')">Engineered wood</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'flooring', 'Tile')">Tile</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'flooring', 'Polished concrete')"
-                  >Polished concrete</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'flooring', 'Marble')">Marble</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'flooring', 'Vinyl plank')">Vinyl plank</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'flooring', 'Carpet')">Carpet</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'flooring', 'Heated floors')">Heated floors</span>
-              </div>
-            </div>
-
-            <!-- Lighting -->
-            <div class="sec-head">
-              <div class="sec-dot sd-lavender"></div>
-              <div class="sec-title">Lighting &amp; Fixtures</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-tag-row">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'lighting', 'Recessed LED')">Recessed LED</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'lighting', 'Pendant lights')">Pendant lights</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'lighting', 'Chandeliers')">Chandeliers</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'lighting', 'Under-cabinet')">Under-cabinet</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'lighting', 'Dimmers')">Dimmers</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'lighting', 'Smart lighting')">Smart lighting</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'lighting', 'Skylights')">Skylights</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'lighting', 'Track lighting')">Track lighting</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'lighting', 'Outdoor lighting')">Outdoor lighting</span>
-              </div>
-            </div>
-
-            <!-- Countertops & Finishes -->
-            <div class="sec-head">
-              <div class="sec-dot sd-rose"></div>
-              <div class="sec-title">Countertops &amp; Finishes</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-tag-row">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'countertop', 'Granite')">Granite</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'countertop', 'Quartz')">Quartz</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'countertop', 'Marble')">Marble</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'countertop', 'Butcher block')">Butcher block</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'countertop', 'Concrete')">Concrete</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'countertop', 'Porcelain')">Porcelain</span>
-              </div>
-            </div>
-
-            <!-- Smart Home -->
-            <div class="sec-head">
-              <div class="sec-dot sd-teal"></div>
-              <div class="sec-title">Smart Home Tech</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-tag-row">
-                <span class="dh-tag" onclick="dhToggleTag(this, 'smarthome', 'Smart locks')">Smart locks</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'smarthome', 'Security cameras')"
-                  >Security cameras</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'smarthome', 'Video doorbell')">Video doorbell</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'smarthome', 'Automated blinds')"
-                  >Automated blinds</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'smarthome', 'Whole-home audio')"
-                  >Whole-home audio</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'smarthome', 'Smart irrigation')"
-                  >Smart irrigation</span
-                >
-                <span class="dh-tag" onclick="dhToggleTag(this, 'smarthome', 'Home automation')">Home automation</span>
-                <span class="dh-tag" onclick="dhToggleTag(this, 'smarthome', 'Wired ethernet')">Wired ethernet</span>
-              </div>
-            </div>
-
-            <!-- Notes -->
-            <div class="sec-head">
-              <div class="sec-dot sd-emerald"></div>
-              <div class="sec-title">Design Notes</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <textarea
-                id="dh-design-notes"
-                class="mood-note"
-                placeholder="Ideas, inspiration links, notes..."
-                rows="3"
-              ></textarea>
-              <button class="dh-save-btn" style="margin-top: 8px" onclick="dhSaveNote()">Save Note</button>
-              <div id="dh-notes-list" style="margin-top: 10px"></div>
+            <div id="dh-wishlist" style="margin-top: 10px">
+              <div class="empty">Add items to your home wishlist</div>
             </div>
           </div>
 
-          <!-- ====== ROOMS PHASE ====== -->
-          <div class="dh-panel" id="dh-p-rooms">
-            <div class="dh-rooms" id="dh-rooms">
-              <div class="dh-room" onclick="openRoom('living')">
-                <div class="dr-icon">🛋️</div>
-                <div class="dr-name">Living Room</div>
-                <div class="dr-notes" id="dh-living-ct">0 ideas</div>
-              </div>
-              <div class="dh-room" onclick="openRoom('kitchen')">
-                <div class="dr-icon">🍳</div>
-                <div class="dr-name">Kitchen</div>
-                <div class="dr-notes" id="dh-kitchen-ct">0 ideas</div>
-              </div>
-              <div class="dh-room" onclick="openRoom('bedroom')">
-                <div class="dr-icon">🛏️</div>
-                <div class="dr-name">Master Bedroom</div>
-                <div class="dr-notes" id="dh-bedroom-ct">0 ideas</div>
-              </div>
-              <div class="dh-room" onclick="openRoom('bathroom')">
-                <div class="dr-icon">🚿</div>
-                <div class="dr-name">Bathroom</div>
-                <div class="dr-notes" id="dh-bathroom-ct">0 ideas</div>
-              </div>
-              <div class="dh-room" onclick="openRoom('office')">
-                <div class="dr-icon">💻</div>
-                <div class="dr-name">Home Office</div>
-                <div class="dr-notes" id="dh-office-ct">0 ideas</div>
-              </div>
-              <div class="dh-room" onclick="openRoom('outdoor')">
-                <div class="dr-icon">🌿</div>
-                <div class="dr-name">Outdoor</div>
-                <div class="dr-notes" id="dh-outdoor-ct">0 ideas</div>
-              </div>
-              <div class="dh-room" onclick="openRoom('nursery')">
-                <div class="dr-icon">🧸</div>
-                <div class="dr-name">Nursery / Kids</div>
-                <div class="dr-notes" id="dh-nursery-ct">0 ideas</div>
-              </div>
-              <div class="dh-room" onclick="openRoom('garage')">
-                <div class="dr-icon">🚗</div>
-                <div class="dr-name">Garage</div>
-                <div class="dr-notes" id="dh-garage-ct">0 ideas</div>
-              </div>
-              <div class="dh-room" onclick="openRoom('laundry')">
-                <div class="dr-icon">🧺</div>
-                <div class="dr-name">Laundry</div>
-                <div class="dr-notes" id="dh-laundry-ct">0 ideas</div>
-              </div>
-              <div class="dh-room" onclick="openRoom('entertainment')">
-                <div class="dr-icon">🎬</div>
-                <div class="dr-name">Entertainment</div>
-                <div class="dr-notes" id="dh-entertainment-ct">0 ideas</div>
-              </div>
-            </div>
-
-            <!-- Room Detail (shown when a room is tapped) -->
-            <div id="dh-room-detail" style="display: none">
-              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px">
-                <button class="dh-back-btn" onclick="closeRoomDetail()">&larr;</button>
-                <h3 class="dh-room-title" id="dh-room-title">Room</h3>
-              </div>
-              <div class="card" style="margin-bottom: 12px">
-                <textarea
-                  id="dh-room-notes"
-                  class="mood-note"
-                  placeholder="Describe ideas for this room..."
-                  rows="2"
-                ></textarea>
-                <input
-                  type="text"
-                  id="dh-room-link"
-                  class="quiz-q"
-                  placeholder="Inspiration link (optional)"
-                  style="margin-top: 6px"
-                />
-                <div class="dh-field-row" style="margin-top: 6px">
-                  <input type="number" id="dh-room-budget" class="quiz-q" placeholder="Budget $" style="flex: 1" />
-                  <select id="dh-room-priority" class="select-field" style="flex: 1">
-                    <option value="must">Must have</option>
-                    <option value="nice">Nice to have</option>
-                    <option value="dream">Dream</option>
-                  </select>
-                </div>
-                <select id="dh-room-timeline" class="select-field" style="margin-top: 6px; width: 100%">
-                  <option value="move-in">Move-in ready</option>
-                  <option value="year1">Year 1</option>
-                  <option value="year2-3">Year 2–3</option>
-                  <option value="someday">Someday</option>
-                </select>
-                <button class="dh-save-btn" style="margin-top: 8px; width: 100%" onclick="addRoomIdea()">
-                  Add Idea
-                </button>
-              </div>
-              <div id="dh-room-ideas"></div>
-            </div>
+          <!-- Notes -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Ideas &amp; Inspiration</div>
           </div>
-
-          <!-- ====== FINANCE PHASE ====== -->
-          <div class="dh-panel" id="dh-p-finance">
-            <!-- Total Budget -->
-            <div class="sec-head">
-              <div class="sec-dot sd-gold"></div>
-              <div class="sec-title">Total Budget</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-field-row">
-                <span style="font-size: 18px; color: var(--gold); font-weight: 700">$</span>
-                <input
-                  type="number"
-                  id="dh-total-budget"
-                  class="quiz-q"
-                  placeholder="Total home budget"
-                  style="flex: 1; font-size: 16px"
-                />
-                <button
-                  class="dh-save-btn"
-                  onclick="dhSave('totalBudget', document.getElementById('dh-total-budget').value)"
-                >
-                  Set
-                </button>
-              </div>
-              <div id="dh-budget-overview" style="margin-top: 12px"></div>
-            </div>
-
-            <!-- Budget Breakdown -->
-            <div class="sec-head">
-              <div class="sec-dot sd-teal"></div>
-              <div class="sec-title">Budget Breakdown</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-breakdown" id="dh-breakdown">
-                <div class="dh-break-item">
-                  <label>Land / Plot</label>
-                  <div class="dh-field-row">
-                    <span class="dh-dollar">$</span
-                    ><input
-                      type="number"
-                      id="dh-b-land"
-                      class="quiz-q"
-                      placeholder="0"
-                      onchange="dhSaveBudget('land', this.value)"
-                    />
-                  </div>
-                </div>
-                <div class="dh-break-item">
-                  <label>Construction</label>
-                  <div class="dh-field-row">
-                    <span class="dh-dollar">$</span
-                    ><input
-                      type="number"
-                      id="dh-b-construction"
-                      class="quiz-q"
-                      placeholder="0"
-                      onchange="dhSaveBudget('construction', this.value)"
-                    />
-                  </div>
-                </div>
-                <div class="dh-break-item">
-                  <label>Architect / Design</label>
-                  <div class="dh-field-row">
-                    <span class="dh-dollar">$</span
-                    ><input
-                      type="number"
-                      id="dh-b-architect"
-                      class="quiz-q"
-                      placeholder="0"
-                      onchange="dhSaveBudget('architect', this.value)"
-                    />
-                  </div>
-                </div>
-                <div class="dh-break-item">
-                  <label>Interior / Finishes</label>
-                  <div class="dh-field-row">
-                    <span class="dh-dollar">$</span
-                    ><input
-                      type="number"
-                      id="dh-b-interior"
-                      class="quiz-q"
-                      placeholder="0"
-                      onchange="dhSaveBudget('interior', this.value)"
-                    />
-                  </div>
-                </div>
-                <div class="dh-break-item">
-                  <label>Landscaping</label>
-                  <div class="dh-field-row">
-                    <span class="dh-dollar">$</span
-                    ><input
-                      type="number"
-                      id="dh-b-landscape"
-                      class="quiz-q"
-                      placeholder="0"
-                      onchange="dhSaveBudget('landscape', this.value)"
-                    />
-                  </div>
-                </div>
-                <div class="dh-break-item">
-                  <label>Contingency</label>
-                  <div class="dh-field-row">
-                    <span class="dh-dollar">$</span
-                    ><input
-                      type="number"
-                      id="dh-b-contingency"
-                      class="quiz-q"
-                      placeholder="0"
-                      onchange="dhSaveBudget('contingency', this.value)"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div id="dh-budget-bar-wrap" style="margin-top: 12px"></div>
-            </div>
-
-            <!-- Savings Tracker -->
-            <div class="sec-head">
-              <div class="sec-dot sd-emerald"></div>
-              <div class="sec-title">Savings Progress</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-field-row">
-                <span class="dh-dollar">$</span>
-                <input
-                  type="number"
-                  id="dh-saved-amount"
-                  class="quiz-q"
-                  placeholder="Amount saved so far"
-                  style="flex: 1"
-                />
-                <button
-                  class="dh-save-btn"
-                  onclick="dhSave('savedAmount', document.getElementById('dh-saved-amount').value)"
-                >
-                  Update
-                </button>
-              </div>
-              <div id="dh-savings-bar" style="margin-top: 12px"></div>
-            </div>
-
-            <!-- Wishlist -->
-            <div class="sec-head">
-              <div class="sec-dot sd-rose"></div>
-              <div class="sec-title">Home Wishlist</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-field-row">
-                <input type="text" id="dh-wish-name" class="quiz-q" placeholder="Item name" style="flex: 2" />
-                <input type="number" id="dh-wish-price" class="quiz-q" placeholder="$" style="flex: 1" />
-                <button class="dh-save-btn" onclick="addHomeWish()">+</button>
-              </div>
-              <div id="dh-wishlist" style="margin-top: 10px">
-                <div class="empty">Add items to your home wishlist</div>
-              </div>
-            </div>
-
-            <!-- Mortgage Calculator -->
-            <div class="sec-head">
-              <div class="sec-dot sd-lavender"></div>
-              <div class="sec-title">Mortgage Estimate</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-mortgage-grid">
-                <div class="dh-mort-field">
-                  <label class="dh-spec-label">Home Price</label>
-                  <div class="dh-field-row">
-                    <span class="dh-dollar">$</span
-                    ><input
-                      type="number"
-                      id="dh-mort-price"
-                      class="quiz-q"
-                      placeholder="500000"
-                      oninput="dhCalcMortgage()"
-                    />
-                  </div>
-                </div>
-                <div class="dh-mort-field">
-                  <label class="dh-spec-label">Down Payment %</label>
-                  <div class="dh-field-row">
-                    <input
-                      type="number"
-                      id="dh-mort-down"
-                      class="quiz-q"
-                      placeholder="20"
-                      value="20"
-                      oninput="dhCalcMortgage()"
-                    /><span style="font-size: 12px; color: var(--t3)">%</span>
-                  </div>
-                </div>
-                <div class="dh-mort-field">
-                  <label class="dh-spec-label">Interest Rate %</label>
-                  <div class="dh-field-row">
-                    <input
-                      type="number"
-                      id="dh-mort-rate"
-                      class="quiz-q"
-                      placeholder="6.5"
-                      value="6.5"
-                      step="0.1"
-                      oninput="dhCalcMortgage()"
-                    /><span style="font-size: 12px; color: var(--t3)">%</span>
-                  </div>
-                </div>
-                <div class="dh-mort-field">
-                  <label class="dh-spec-label">Loan Term</label>
-                  <div class="dh-field-row">
-                    <select id="dh-mort-term" class="select-field" style="flex: 1" onchange="dhCalcMortgage()">
-                      <option value="30">30 years</option>
-                      <option value="25">25 years</option>
-                      <option value="20">20 years</option>
-                      <option value="15">15 years</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div id="dh-mort-result" class="dh-mort-result"></div>
-            </div>
-
-            <!-- Timeline -->
-            <div class="sec-head">
-              <div class="sec-dot sd-gold"></div>
-              <div class="sec-title">Build Timeline</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div class="dh-timeline-row">
-                <div class="dh-tl-phase" onclick="dhSetTimeline(this, 'research')">
-                  <div class="dh-tl-dot"></div>
-                  <div class="dh-tl-name">Research</div>
-                </div>
-                <div class="dh-tl-line"></div>
-                <div class="dh-tl-phase" onclick="dhSetTimeline(this, 'land')">
-                  <div class="dh-tl-dot"></div>
-                  <div class="dh-tl-name">Land</div>
-                </div>
-                <div class="dh-tl-line"></div>
-                <div class="dh-tl-phase" onclick="dhSetTimeline(this, 'design')">
-                  <div class="dh-tl-dot"></div>
-                  <div class="dh-tl-name">Design</div>
-                </div>
-                <div class="dh-tl-line"></div>
-                <div class="dh-tl-phase" onclick="dhSetTimeline(this, 'permits')">
-                  <div class="dh-tl-dot"></div>
-                  <div class="dh-tl-name">Permits</div>
-                </div>
-                <div class="dh-tl-line"></div>
-                <div class="dh-tl-phase" onclick="dhSetTimeline(this, 'build')">
-                  <div class="dh-tl-dot"></div>
-                  <div class="dh-tl-name">Build</div>
-                </div>
-                <div class="dh-tl-line"></div>
-                <div class="dh-tl-phase" onclick="dhSetTimeline(this, 'movein')">
-                  <div class="dh-tl-dot"></div>
-                  <div class="dh-tl-name">Move In</div>
-                </div>
-              </div>
-              <div class="dh-field-row" style="margin-top: 12px">
-                <input
-                  type="text"
-                  id="dh-target-date"
-                  class="quiz-q"
-                  placeholder="Target move-in date (e.g. Dec 2027)"
-                  style="flex: 1"
-                />
-                <button
-                  class="dh-save-btn"
-                  onclick="dhSave('targetDate', document.getElementById('dh-target-date').value)"
-                >
-                  Set
-                </button>
-              </div>
-              <div id="dh-target-saved" class="dh-saved-val"></div>
-            </div>
-
-            <!-- Checklist -->
-            <div class="sec-head">
-              <div class="sec-dot sd-emerald"></div>
-              <div class="sec-title">Build Checklist</div>
-            </div>
-            <div class="card" style="margin-bottom: 12px">
-              <div id="dh-checklist">
-                <div class="dh-check-item" onclick="dhToggleCheck(this)">
-                  <div class="dh-check-box"></div>
-                  <span>Research areas &amp; neighbourhoods</span>
-                </div>
-                <div class="dh-check-item" onclick="dhToggleCheck(this)">
-                  <div class="dh-check-box"></div>
-                  <span>Get pre-approved for financing</span>
-                </div>
-                <div class="dh-check-item" onclick="dhToggleCheck(this)">
-                  <div class="dh-check-box"></div>
-                  <span>Find &amp; secure land / property</span>
-                </div>
-                <div class="dh-check-item" onclick="dhToggleCheck(this)">
-                  <div class="dh-check-box"></div>
-                  <span>Hire architect / designer</span>
-                </div>
-                <div class="dh-check-item" onclick="dhToggleCheck(this)">
-                  <div class="dh-check-box"></div>
-                  <span>Finalise floor plans</span>
-                </div>
-                <div class="dh-check-item" onclick="dhToggleCheck(this)">
-                  <div class="dh-check-box"></div>
-                  <span>Select builder / contractor</span>
-                </div>
-                <div class="dh-check-item" onclick="dhToggleCheck(this)">
-                  <div class="dh-check-box"></div>
-                  <span>Get building permits</span>
-                </div>
-                <div class="dh-check-item" onclick="dhToggleCheck(this)">
-                  <div class="dh-check-box"></div>
-                  <span>Choose interior finishes</span>
-                </div>
-                <div class="dh-check-item" onclick="dhToggleCheck(this)">
-                  <div class="dh-check-box"></div>
-                  <span>Landscaping plan</span>
-                </div>
-                <div class="dh-check-item" onclick="dhToggleCheck(this)">
-                  <div class="dh-check-box"></div>
-                  <span>Final inspection &amp; handover</span>
-                </div>
-              </div>
-            </div>
+          <div class="card" style="margin-bottom: 12px">
+            <textarea id="dh-design-notes" class="mood-note" placeholder="Ideas, links, things we love..." rows="3"></textarea>
+            <button class="dh-save-btn" style="margin-top: 8px" onclick="dhSaveNote()">Save Note</button>
+            <div id="dh-notes-list" style="margin-top: 10px"></div>
           </div>
         </div>
       </div>
@@ -4182,489 +3272,111 @@
       <!-- ===== FITNESS HUB ===== -->
       <div class="pg" id="pg-fitness">
         <div class="ctn">
-          <!-- Baseline info from onboarding -->
-          <div
-            class="fit-baseline-info"
-            id="fit-baseline-info"
-            style="
-              display: none;
-              font-size: 12px;
-              color: var(--t3);
-              text-align: center;
-              margin-bottom: 8px;
-              letter-spacing: 0.5px;
-            "
-          ></div>
-          <!-- Weekly Summary -->
+          <!-- This Week Together -->
           <div class="fit-summary fit-summary-4" id="fit-summary">
             <div class="fit-stat">
               <div class="fit-stat-num" id="fit-sessions">0</div>
               <div class="fit-stat-label">Sessions</div>
             </div>
             <div class="fit-stat">
-              <div class="fit-stat-num" id="fit-volume">0</div>
-              <div class="fit-stat-label">Volume</div>
-            </div>
-            <div class="fit-stat">
               <div class="fit-stat-num" id="fit-streak">0</div>
               <div class="fit-stat-label">Streak</div>
             </div>
-            <div class="fit-stat">
-              <div class="fit-stat-num" id="fit-prs">0</div>
-              <div class="fit-stat-label">PRs</div>
-            </div>
           </div>
 
-          <!-- Muscle Map (visual overview) -->
-          <div class="fit-body-map" id="fit-body-map"></div>
-
-          <!-- Couple Fitness (Us mode) -->
-          <div class="us-only">
-            <div class="sec-head">
-              <div class="sec-dot sd-emerald"></div>
-              <div class="sec-title">Partner Activity</div>
-            </div>
-            <div class="card-data partner-card" id="fit-partner-status">
-              <div class="cd-accent" style="background: var(--emerald)"></div>
-              <div class="partner-card-inner">
-                <div class="presence-dot" id="fit-partner-dot"></div>
-                <div>
-                  <div class="partner-card-name" id="fit-partner-name">Partner</div>
-                  <div class="partner-card-status" id="fit-partner-last">No workouts yet</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Active Workout Session -->
-          <div class="workout-session d-none" id="ws-active">
-            <div class="ws-top">
-              <div>
-                <div class="ws-name" id="ws-title">Workout</div>
-                <div class="ws-time" id="ws-timer">00:00</div>
-              </div>
-              <div class="text-right">
-                <div class="ws-vol-num" id="ws-volume-live">0</div>
-                <div class="ws-vol-label">Volume</div>
-              </div>
-            </div>
-            <div class="ws-progress"><div class="ws-progress-bar" id="ws-bar" class="ws-bar-init"></div></div>
-            <div class="rest-config" id="rest-config">
-              <span class="rest-label-sm">Rest:</span>
-              <button class="rest-opt" onclick="setRestDuration(30)">30s</button>
-              <button class="rest-opt active" onclick="setRestDuration(60)">60s</button>
-              <button class="rest-opt" onclick="setRestDuration(90)">90s</button>
-              <button class="rest-opt" onclick="setRestDuration(120)">2m</button>
-            </div>
-            <div id="ws-exercises"></div>
-            <div class="rest-timer d-none" id="rest-timer">
-              <div class="rest-label">Rest</div>
-              <div class="rest-num" id="rest-countdown">60</div>
-              <button class="btn-sm" onclick="skipRest()">Skip</button>
-            </div>
-            <div class="ws-add-section">
-              <div class="ws-add-label">Add exercise:</div>
-              <div class="ws-add-row">
-                <input type="text" id="ws-add-ex-search" placeholder="Search exercises..." class="ws-add-input" />
-                <button class="ws-add-btn" onclick="searchAddExercise()">Add</button>
-              </div>
-              <div class="mt-4" id="ws-add-results"></div>
-            </div>
-            <div class="ws-actions">
-              <button class="dq-submit flex-1" onclick="finishWorkout()" class="btn-fitness">Finish Workout</button>
-              <button class="btn-sm c-red" onclick="cancelWorkout()">Cancel</button>
-            </div>
-          </div>
-
-          <!-- Workout Programs -->
+          <!-- Partner Activity -->
           <div class="sec-head">
             <div class="sec-dot sd-emerald"></div>
-            <div class="sec-title">Programs</div>
+            <div class="sec-title">Partner Activity</div>
           </div>
-          <div class="fit-programs grid-2">
-            <div class="fit-prog card-action" onclick="startWorkout('foundation')">
-              <div class="icon-badge ib-emerald ib-sz-32">&#x1F331;</div>
+          <div class="card-data partner-card" id="fit-partner-status">
+            <div class="cd-accent" style="background: var(--emerald)"></div>
+            <div class="partner-card-inner">
+              <div class="presence-dot" id="fit-partner-dot"></div>
               <div>
-                <div class="t-body fw-600 c-cream">Foundation</div>
-                <div class="t-xs c-t3">Beginner &bull; Full Body</div>
-              </div>
-            </div>
-            <div class="fit-prog card-action" onclick="startWorkout('elevated')">
-              <div class="icon-badge ib-teal ib-sz-32">&#x26A1;</div>
-              <div>
-                <div class="t-body fw-600 c-cream">Elevated</div>
-                <div class="t-xs c-t3">Advanced &bull; Split</div>
-              </div>
-            </div>
-            <div class="fit-prog card-action" onclick="startWorkout('fullbody')">
-              <div class="icon-badge ib-lavender ib-sz-32">&#x1F525;</div>
-              <div>
-                <div class="t-body fw-600 c-cream">Full Body</div>
-                <div class="t-xs c-t3">Complete &bull; All Levels</div>
-              </div>
-            </div>
-            <div class="fit-prog card-action" onclick="openWorkoutBuilder()" class="fit-prog-dashed">
-              <div class="icon-badge ib-amber ib-sz-32">&#x2795;</div>
-              <div>
-                <div class="t-body fw-600 c-cream">Create Workout</div>
-                <div class="t-xs c-t3">Build your own</div>
+                <div class="partner-card-name" id="fit-partner-name">Partner</div>
+                <div class="partner-card-status" id="fit-partner-last">No workouts yet</div>
               </div>
             </div>
           </div>
 
-          <!-- Saved Custom Programs -->
-          <div class="fit-saved-progs" id="fit-saved-progs"></div>
-
-          <!-- Workout Builder (hidden by default) -->
-          <div class="fit-builder" id="fit-builder">
-            <div class="fit-builder-header">
-              <div class="t-body fw-600 c-cream">Workout Builder</div>
-              <button class="modal-close" onclick="closeWorkoutBuilder()" aria-label="Close">&times;</button>
+          <!-- Couple Challenge -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Couple Challenge</div>
+          </div>
+          <div class="card" id="fit-couple-challenge">
+            <div class="t-body c-cream mb-8" id="fit-challenge-text">Do 20 squats together today</div>
+            <div class="d-flex gap-8">
+              <button class="dq-submit flex-1" onclick="completeFitChallenge()">Done!</button>
+              <button class="btn-sm" onclick="skipFitChallenge()">New challenge</button>
             </div>
-            <input
-              type="text"
-              id="fit-builder-name"
-              placeholder="Workout name (e.g., Push Day)"
-              class="form-input mb-12"
-            />
-            <!-- Muscle group filter -->
-            <div class="fit-mg-tabs" id="fit-mg-tabs">
-              <button class="fit-mg-tab active" onclick="filterExercises('all')">All</button>
-              <button class="fit-mg-tab" onclick="filterExercises('chest')">Chest</button>
-              <button class="fit-mg-tab" onclick="filterExercises('back')">Back</button>
-              <button class="fit-mg-tab" onclick="filterExercises('shoulders')">Shoulders</button>
-              <button class="fit-mg-tab" onclick="filterExercises('legs')">Legs</button>
-              <button class="fit-mg-tab" onclick="filterExercises('arms')">Arms</button>
-              <button class="fit-mg-tab" onclick="filterExercises('core')">Core</button>
-            </div>
-            <!-- Exercise search -->
-            <input
-              type="text"
-              id="fit-builder-search"
-              placeholder="Search exercises..."
-              oninput="searchExercises(this.value)"
-              class="form-input mb-8 form-input-sm"
-            />
-            <!-- Exercise list -->
-            <div class="fit-ex-list" id="fit-ex-list"></div>
-            <!-- Selected exercises -->
-            <div class="fit-selected" id="fit-selected">
-              <div class="t-label c-t3 mb-8">Selected Exercises (<span id="fit-sel-count">0</span>)</div>
-              <div id="fit-sel-list"></div>
-            </div>
-            <div class="d-flex gap-8 mt-16">
-              <button class="dq-submit flex-1" onclick="saveCustomProgram()" class="btn-emerald">Save Program</button>
-              <button class="dq-submit flex-1" onclick="startBuilderWorkout()" class="btn-fitness">Start Now</button>
-            </div>
+            <div class="t-xs c-t3 mt-8" id="fit-challenge-status"></div>
           </div>
 
           <!-- Quick Log -->
           <div class="sec-head">
             <div class="sec-dot sd-emerald"></div>
-            <div class="sec-title">Quick Log</div>
+            <div class="sec-title">Log Workout</div>
           </div>
           <div class="card" id="fit-quick-log-section">
+            <select id="fit-log-type" class="select-field mb-10" style="width:100%">
+              <option value="gym">Gym / Weights</option>
+              <option value="run">Run / Walk</option>
+              <option value="yoga">Yoga / Stretch</option>
+              <option value="cardio">Cardio</option>
+              <option value="sport">Sport</option>
+              <option value="home">Home Workout</option>
+              <option value="other">Other</option>
+            </select>
             <div class="d-flex gap-8 mb-10">
-              <input type="text" id="fit-ex-name" placeholder="Exercise" class="flex-2" list="fit-ex-datalist" />
-              <datalist id="fit-ex-datalist"></datalist>
-              <input type="number" id="fit-ex-sets" placeholder="Sets" class="flex-1" />
-              <input type="number" id="fit-ex-reps" placeholder="Reps" class="flex-1" />
-              <input type="number" id="fit-ex-weight" placeholder="lbs" class="flex-1" />
+              <input type="number" id="fit-log-duration" placeholder="Minutes" class="flex-1" min="1" />
+              <input type="text" id="fit-log-note" placeholder="Notes (optional)" class="flex-2" />
             </div>
-            <button class="dq-submit" onclick="quickLogExercise()">Log Exercise</button>
+            <button class="dq-submit" onclick="quickLogWorkout()">Log It</button>
           </div>
 
-          <!-- Analytics -->
-          <div class="sec-head" id="fit-analytics-anchor">
-            <div class="sec-dot sd-emerald"></div>
-            <div class="sec-title">Analytics</div>
+          <!-- Workout Guides -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Workout Guides</div>
           </div>
-          <div class="fit-chart-wrap">
-            <div class="fit-chart-title">Weekly Volume (last 8 weeks)</div>
-            <div class="fit-bar-chart" id="fit-vol-chart"></div>
-          </div>
-          <div class="fit-chart-wrap">
-            <div class="fit-chart-title">Workout Calendar (last 4 weeks)</div>
-            <div class="streak-day-labels">
-              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span
-              ><span>Sun</span>
+          <div class="fit-programs grid-2">
+            <div class="fit-prog card-action" onclick="go('w1')">
+              <div class="icon-badge ib-emerald ib-sz-32">&#x2726;</div>
+              <div>
+                <div class="t-body fw-600 c-cream">Foundation</div>
+                <div class="t-xs c-t3">Beginner &bull; Full Body</div>
+              </div>
             </div>
-            <div class="fit-heatmap" id="fit-heatmap"></div>
-          </div>
-          <div class="fit-chart-wrap">
-            <div class="fit-chart-title">Muscle Group Balance (this week)</div>
-            <div id="fit-muscle-balance"></div>
+            <div class="fit-prog card-action" onclick="go('w2')">
+              <div class="icon-badge ib-teal ib-sz-32">&#x25C6;</div>
+              <div>
+                <div class="t-body fw-600 c-cream">Elevated</div>
+                <div class="t-xs c-t3">Advanced &bull; Split</div>
+              </div>
+            </div>
+            <div class="fit-prog card-action" onclick="go('w3')">
+              <div class="icon-badge ib-lavender ib-sz-32">&#x2B21;</div>
+              <div>
+                <div class="t-body fw-600 c-cream">Full Body</div>
+                <div class="t-xs c-t3">Complete &bull; All Levels</div>
+              </div>
+            </div>
           </div>
 
-          <!-- Exercise History (enhanced) -->
+          <!-- Recent Workouts -->
           <div class="sec-head">
             <div class="sec-dot sd-emerald"></div>
             <div class="sec-title">Recent Workouts</div>
           </div>
-          <div id="fit-history"><div class="empty">Start your first workout to see history</div></div>
-
-          <!-- Body Metrics (enhanced) -->
-          <div class="me-only" id="fit-metrics-anchor">
-            <div class="sec-head">
-              <div class="sec-dot sd-emerald"></div>
-              <div class="sec-title">Body Metrics</div>
-            </div>
-            <div class="card">
-              <div class="fit-metric-row">
-                <span class="fmr-label">Weight (lbs)</span>
-                <input type="number" id="fit-weight" placeholder="--" />
-                <span class="fmr-trend" id="fit-weight-trend-arrow"></span>
-              </div>
-              <div class="fit-metric-row">
-                <span class="fmr-label">Body Fat %</span>
-                <input type="number" id="fit-bodyfat" placeholder="--" step="0.1" />
-                <span class="fmr-trend" id="fit-bf-trend"></span>
-              </div>
-              <div class="fit-metric-row">
-                <span class="fmr-label">Chest (in)</span>
-                <input type="number" id="fit-chest" placeholder="--" step="0.5" />
-                <span class="fmr-trend" id="fit-chest-trend"></span>
-              </div>
-              <div class="fit-metric-row">
-                <span class="fmr-label">Waist (in)</span>
-                <input type="number" id="fit-waist" placeholder="--" step="0.5" />
-                <span class="fmr-trend" id="fit-waist-trend"></span>
-              </div>
-              <div class="fit-metric-row">
-                <span class="fmr-label">Arms (in)</span>
-                <input type="number" id="fit-arms" placeholder="--" step="0.25" />
-                <span class="fmr-trend" id="fit-arms-trend"></span>
-              </div>
-              <div class="fit-metric-row">
-                <span class="fmr-label">Thighs (in)</span>
-                <input type="number" id="fit-thighs" placeholder="--" step="0.5" />
-                <span class="fmr-trend" id="fit-thighs-trend"></span>
-              </div>
-              <div class="fit-bmi-row">
-                <div class="fit-bmi-label">BMI: <span id="fit-bmi" class="fit-bmi-val">--</span></div>
-                <button class="dq-submit flex-shrink-0" onclick="logBodyMetrics()" style="padding: 8px 20px">
-                  Save
-                </button>
-              </div>
-              <div id="fit-weight-trend" class="fit-weight-note"></div>
-            </div>
-          </div>
-
-          <!-- Progress Photos -->
-          <div class="me-only">
-            <div class="sec-head">
-              <div class="sec-dot sd-emerald"></div>
-              <div class="sec-title">Progress Photos</div>
-            </div>
-            <div class="card mb-12">
-              <div class="d-flex gap-8 items-center mb-12">
-                <label class="dq-submit prog-photo-upload">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    id="prog-photo-input"
-                    onchange="handleProgressPhoto(this)"
-                    class="d-none"
-                  />
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
-                    <circle cx="12" cy="13" r="4" />
-                  </svg>
-                  Take Progress Photo
-                </label>
-              </div>
-              <select id="prog-photo-type" class="form-input-inline w-full mb-8">
-                <option value="front">Front</option>
-                <option value="side">Side</option>
-                <option value="back">Back</option>
-                <option value="flex">Flex / Pose</option>
-              </select>
-              <textarea
-                id="prog-photo-note"
-                placeholder="Optional note..."
-                class="form-textarea"
-                style="min-height: 36px; resize: none; font-size: 12px"
-              ></textarea>
-            </div>
-            <div id="prog-photos-gallery"></div>
-          </div>
-
-          <!-- PRs -->
-          <div class="sec-head">
-            <div class="sec-dot sd-emerald"></div>
-            <div class="sec-title">Personal Records</div>
-          </div>
-          <div id="fit-prs-list"><div class="empty">Set some PRs by logging workouts</div></div>
+          <div id="fit-history"><div class="empty">Log your first workout to see history</div></div>
         </div>
       </div>
 
       <!-- ===== NUTRITION ===== -->
       <div class="pg" id="pg-nutrition">
         <div class="ctn">
-          <!-- Calorie Ring Hero (Apple Health style) -->
-          <div class="nh-hero">
-            <div class="nh-ring-wrap">
-              <svg class="nh-ring-svg" viewBox="0 0 160 160">
-                <circle cx="80" cy="80" r="62" fill="none" stroke="var(--bg3)" stroke-width="10" opacity=".3" />
-                <circle
-                  cx="80"
-                  cy="80"
-                  r="62"
-                  fill="none"
-                  stroke="url(#nutrRingGrad)"
-                  stroke-width="10"
-                  stroke-linecap="round"
-                  stroke-dasharray="389.6"
-                  id="nutr-cal-ring"
-                  stroke-dashoffset="389.6"
-                  transform="rotate(-90 80 80)"
-                />
-                <defs>
-                  <linearGradient id="nutrRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="var(--emerald)" />
-                    <stop offset="100%" stop-color="var(--gold)" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <div class="nh-ring-inner">
-                <div class="nh-ring-num" id="nutr-cals">0</div>
-                <div class="nh-ring-label">calories</div>
-                <div class="nh-ring-target">of <span id="nutr-cal-target">2000</span></div>
-              </div>
-            </div>
-            <div class="nh-score-badge" id="nutr-score">--</div>
-          </div>
-
-          <!-- Macro Rings Row -->
-          <div class="nh-macros">
-            <div class="nh-macro-card">
-              <svg viewBox="0 0 48 48" class="nh-macro-ring">
-                <circle cx="24" cy="24" r="18" fill="none" stroke="var(--bg3)" stroke-width="5" opacity=".2" />
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="18"
-                  fill="none"
-                  stroke="var(--emerald)"
-                  stroke-width="5"
-                  stroke-linecap="round"
-                  stroke-dasharray="113.1"
-                  id="nutr-protein-ring"
-                  stroke-dashoffset="113.1"
-                  transform="rotate(-90 24 24)"
-                />
-              </svg>
-              <div class="nh-macro-val" id="nutr-protein">0g</div>
-              <div class="nh-macro-lbl">Protein</div>
-              <div class="nh-macro-target">/ 150g</div>
-            </div>
-            <div class="nh-macro-card">
-              <svg viewBox="0 0 48 48" class="nh-macro-ring">
-                <circle cx="24" cy="24" r="18" fill="none" stroke="var(--bg3)" stroke-width="5" opacity=".2" />
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="18"
-                  fill="none"
-                  stroke="var(--gold)"
-                  stroke-width="5"
-                  stroke-linecap="round"
-                  stroke-dasharray="113.1"
-                  id="nutr-carbs-ring"
-                  stroke-dashoffset="113.1"
-                  transform="rotate(-90 24 24)"
-                />
-              </svg>
-              <div class="nh-macro-val" id="nutr-carbs">0g</div>
-              <div class="nh-macro-lbl">Carbs</div>
-              <div class="nh-macro-target">/ 250g</div>
-            </div>
-            <div class="nh-macro-card">
-              <svg viewBox="0 0 48 48" class="nh-macro-ring">
-                <circle cx="24" cy="24" r="18" fill="none" stroke="var(--bg3)" stroke-width="5" opacity=".2" />
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="18"
-                  fill="none"
-                  stroke="var(--rose)"
-                  stroke-width="5"
-                  stroke-linecap="round"
-                  stroke-dasharray="113.1"
-                  id="nutr-fats-ring"
-                  stroke-dashoffset="113.1"
-                  transform="rotate(-90 24 24)"
-                />
-              </svg>
-              <div class="nh-macro-val" id="nutr-fats">0g</div>
-              <div class="nh-macro-lbl">Fats</div>
-              <div class="nh-macro-target">/ 65g</div>
-            </div>
-          </div>
-
-          <!-- Summary Stats Row -->
-          <div class="nh-stats-row">
-            <div class="nh-stat">
-              <div class="nh-stat-num" id="nutr-meals">0</div>
-              <div class="nh-stat-lbl">Meals</div>
-            </div>
-            <div class="nh-stat-divider"></div>
-            <div class="nh-stat">
-              <div class="nh-stat-num" id="nutr-water">0</div>
-              <div class="nh-stat-lbl">Glasses</div>
-            </div>
-            <div class="nh-stat-divider"></div>
-            <div class="nh-stat">
-              <div class="nh-stat-num" id="nutr-cal-total">0</div>
-              <div class="nh-stat-lbl">Cal eaten</div>
-            </div>
-          </div>
-
-          <!-- Quick Add -->
-          <div class="nh-section-label">Quick Add</div>
-          <div class="nh-quick-row" id="nutr-quick-add">
-            <button class="nh-quick-chip" onclick="quickAddFood('Chicken Breast', 165, 31, 0, 3.6)">
-              <span>🍗</span>Chicken
-            </button>
-            <button class="nh-quick-chip" onclick="quickAddFood('Rice (1 cup)', 206, 4, 45, 0.4)">
-              <span>🍚</span>Rice
-            </button>
-            <button class="nh-quick-chip" onclick="quickAddFood('Eggs (2)', 143, 13, 1, 10)">
-              <span>🥚</span>Eggs
-            </button>
-            <button class="nh-quick-chip" onclick="quickAddFood('Banana', 105, 1, 27, 0.4)">
-              <span>🍌</span>Banana
-            </button>
-            <button class="nh-quick-chip" onclick="quickAddFood('Oatmeal', 150, 5, 27, 3)">
-              <span>🥣</span>Oatmeal
-            </button>
-            <button class="nh-quick-chip" onclick="quickAddFood('Greek Yogurt', 100, 17, 6, 0.7)">
-              <span>🥛</span>Yogurt
-            </button>
-            <button class="nh-quick-chip" onclick="quickAddFood('Salmon', 208, 20, 0, 13)">
-              <span>🐟</span>Salmon
-            </button>
-            <button class="nh-quick-chip" onclick="quickAddFood('Sweet Potato', 103, 2, 24, 0.1)">
-              <span>🍠</span>Sw. Potato
-            </button>
-            <button class="nh-quick-chip" onclick="quickAddFood('Avocado', 240, 3, 12, 22)">
-              <span>🥑</span>Avocado
-            </button>
-            <button class="nh-quick-chip" onclick="quickAddFood('Protein Shake', 120, 25, 3, 1)">
-              <span>🥤</span>Shake
-            </button>
-          </div>
-
           <!-- Hydration -->
           <div class="nh-section-label">Hydration</div>
           <div class="nh-hydration-card">
@@ -4695,120 +3407,42 @@
               </button>
             </div>
             <div class="nh-water-label"><span id="water-count">0</span> / 8 glasses</div>
+            <div class="t-xs c-t3 mt-8" id="nutr-partner-water"></div>
           </div>
 
-          <!-- Meal Log -->
-          <div class="nh-section-label">Today's Meals</div>
-          <div class="nh-meal-list">
-            <div class="nh-meal-group">
-              <button class="nh-meal-header" onclick="toggleMealSection('breakfast')">
-                <span class="nh-meal-icon">🌅</span>
-                <span class="nh-meal-name">Breakfast</span>
-                <span class="nh-meal-badge" id="meal-breakfast-ct">0</span>
-                <svg class="nh-meal-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
-              <div class="nh-meal-body" id="meal-breakfast"></div>
-              <div class="nh-meal-add">
-                <input type="text" id="meal-breakfast-input" placeholder="Add food..." class="nh-meal-input" />
-                <input type="number" id="meal-breakfast-cal" placeholder="Cal" class="nh-meal-num nh-num-cal" />
-                <input
-                  type="number"
-                  id="meal-breakfast-protein"
-                  placeholder="P"
-                  class="nh-meal-num"
-                  title="Protein (g)"
-                />
-                <input type="number" id="meal-breakfast-carbs" placeholder="C" class="nh-meal-num" title="Carbs (g)" />
-                <input type="number" id="meal-breakfast-fats" placeholder="F" class="nh-meal-num" title="Fats (g)" />
-                <button class="nh-meal-add-btn" onclick="addMealItem('breakfast')">+</button>
-              </div>
+          <!-- Meal Planning -->
+          <div class="nh-section-label">What should we eat?</div>
+          <div class="card mb-12">
+            <div class="t-body c-cream mb-8">Plan meals together so you both eat well</div>
+            <div class="d-flex gap-8 mb-10">
+              <input type="text" id="meal-plan-input" placeholder="Meal idea for today..." class="flex-1" />
+              <select id="meal-plan-slot" class="select-field" style="width: auto">
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner" selected>Dinner</option>
+              </select>
             </div>
-            <div class="nh-meal-group">
-              <button class="nh-meal-header" onclick="toggleMealSection('lunch')">
-                <span class="nh-meal-icon">☀️</span>
-                <span class="nh-meal-name">Lunch</span>
-                <span class="nh-meal-badge" id="meal-lunch-ct">0</span>
-                <svg class="nh-meal-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
-              <div class="nh-meal-body" id="meal-lunch"></div>
-              <div class="nh-meal-add">
-                <input type="text" id="meal-lunch-input" placeholder="Add food..." class="nh-meal-input" />
-                <input type="number" id="meal-lunch-cal" placeholder="Cal" class="nh-meal-num nh-num-cal" />
-                <input type="number" id="meal-lunch-protein" placeholder="P" class="nh-meal-num" title="Protein (g)" />
-                <input type="number" id="meal-lunch-carbs" placeholder="C" class="nh-meal-num" title="Carbs (g)" />
-                <input type="number" id="meal-lunch-fats" placeholder="F" class="nh-meal-num" title="Fats (g)" />
-                <button class="nh-meal-add-btn" onclick="addMealItem('lunch')">+</button>
-              </div>
-            </div>
-            <div class="nh-meal-group">
-              <button class="nh-meal-header" onclick="toggleMealSection('dinner')">
-                <span class="nh-meal-icon">🌙</span>
-                <span class="nh-meal-name">Dinner</span>
-                <span class="nh-meal-badge" id="meal-dinner-ct">0</span>
-                <svg class="nh-meal-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
-              <div class="nh-meal-body" id="meal-dinner"></div>
-              <div class="nh-meal-add">
-                <input type="text" id="meal-dinner-input" placeholder="Add food..." class="nh-meal-input" />
-                <input type="number" id="meal-dinner-cal" placeholder="Cal" class="nh-meal-num nh-num-cal" />
-                <input type="number" id="meal-dinner-protein" placeholder="P" class="nh-meal-num" title="Protein (g)" />
-                <input type="number" id="meal-dinner-carbs" placeholder="C" class="nh-meal-num" title="Carbs (g)" />
-                <input type="number" id="meal-dinner-fats" placeholder="F" class="nh-meal-num" title="Fats (g)" />
-                <button class="nh-meal-add-btn" onclick="addMealItem('dinner')">+</button>
-              </div>
-            </div>
-            <div class="nh-meal-group">
-              <button class="nh-meal-header" onclick="toggleMealSection('snacks')">
-                <span class="nh-meal-icon">🍪</span>
-                <span class="nh-meal-name">Snacks</span>
-                <span class="nh-meal-badge" id="meal-snacks-ct">0</span>
-                <svg class="nh-meal-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
-              <div class="nh-meal-body" id="meal-snacks"></div>
-              <div class="nh-meal-add">
-                <input type="text" id="meal-snacks-input" placeholder="Snack item..." class="nh-meal-input" />
-                <input type="number" id="meal-snacks-cal" placeholder="Cal" class="nh-meal-num nh-num-cal" />
-                <input type="number" id="meal-snacks-protein" placeholder="P" class="nh-meal-num" title="Protein (g)" />
-                <input type="number" id="meal-snacks-carbs" placeholder="C" class="nh-meal-num" title="Carbs (g)" />
-                <input type="number" id="meal-snacks-fats" placeholder="F" class="nh-meal-num" title="Fats (g)" />
-                <button class="nh-meal-add-btn" onclick="addMealItem('snacks')">+</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Meal Planning lives in Home Life -->
-          <div class="us-only">
-            <div class="nh-section-label">Meal Planning</div>
-            <button class="nh-action-btn" onclick="go('homelife')" style="width:100%">Open Meal Ideas →</button>
+            <button class="dq-submit" onclick="addMealPlan()">Add</button>
+            <div id="meal-plan-list" class="mt-12"></div>
           </div>
 
           <!-- Shared Grocery List -->
-          <div class="us-only">
-            <div class="nh-section-label">Grocery List</div>
-            <div class="nh-grocery-form">
-              <input
-                type="text"
-                id="grocery-input"
-                class="nh-meal-input"
-                placeholder="Add item..."
-                onkeydown="if (event.key === 'Enter') addGroceryItem();"
-                style="flex: 1"
-              />
-              <button class="nh-meal-add-btn" onclick="addGroceryItem()">+</button>
-            </div>
-            <div id="grocery-list"><div class="empty">Build your shared grocery list</div></div>
+          <div class="nh-section-label">Grocery List</div>
+          <div class="nh-grocery-form">
+            <input
+              type="text"
+              id="grocery-input"
+              class="nh-meal-input"
+              placeholder="Add item..."
+              onkeydown="if (event.key === 'Enter') addGroceryItem();"
+              style="flex: 1"
+            />
+            <button class="nh-meal-add-btn" onclick="addGroceryItem()">+</button>
           </div>
+          <div id="grocery-list"><div class="empty">Build your shared grocery list</div></div>
 
           <!-- Recipes -->
-          <div class="nh-section-label">Saved Recipes</div>
+          <div class="nh-section-label">Our Recipes</div>
           <div class="nh-plan-card">
             <input type="text" id="recipe-name" placeholder="Recipe name" class="nh-meal-input mb-8" />
             <textarea

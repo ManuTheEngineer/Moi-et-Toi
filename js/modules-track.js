@@ -3329,3 +3329,127 @@ function renderDHVisionCompare(data) {
   });
   el.innerHTML = html;
 }
+
+// ========================================
+// ===== SIMPLIFIED FITNESS - COUPLE CHALLENGES & QUICK LOG =====
+// ========================================
+var FIT_CHALLENGES = [
+  'Do 20 squats together today',
+  'Take a 15-minute walk together',
+  'Hold a plank for 30 seconds — both of you',
+  'Do 10 push-ups and send a selfie after',
+  'Stretch together for 10 minutes',
+  'Dance to one full song together',
+  'Race each other: 20 jumping jacks, who finishes first?',
+  'Do wall sits for 45 seconds together',
+  'Go for a run (even a short one)',
+  'Try 10 burpees — cheer each other on',
+  'Yoga together for 15 minutes (YouTube a flow)',
+  'Take the stairs all day today',
+  'Do 30 crunches — partner holds your feet',
+  'Challenge: no sitting for 1 hour straight',
+  'Workout in the morning before checking your phone'
+];
+
+function completeFitChallenge() {
+  if (typeof db === 'undefined' || !db) return;
+  var today = localDate();
+  db.ref('fitness/' + user + '/challenges/' + today).set({
+    challenge: document.getElementById('fit-challenge-text').textContent,
+    completed: true,
+    timestamp: Date.now()
+  });
+  toast('Challenge done!');
+  if (typeof awardXP === 'function') awardXP(5);
+  var el = document.getElementById('fit-challenge-status');
+  if (el) el.textContent = 'Completed today!';
+}
+
+function skipFitChallenge() {
+  var idx = Math.floor(Math.random() * FIT_CHALLENGES.length);
+  var el = document.getElementById('fit-challenge-text');
+  if (el) el.textContent = FIT_CHALLENGES[idx];
+}
+
+function quickLogWorkout() {
+  if (typeof db === 'undefined' || !db) return;
+  var type = document.getElementById('fit-log-type').value;
+  var duration = parseInt(document.getElementById('fit-log-duration').value) || 0;
+  var note = (document.getElementById('fit-log-note').value || '').trim();
+  if (!duration) { toast('How many minutes?'); return; }
+  var today = localDate();
+  db.ref('fitness/' + user + '/workouts').push({
+    type: type,
+    duration: duration,
+    note: note,
+    date: today,
+    user: user,
+    timestamp: Date.now()
+  });
+  toast('Workout logged!');
+  if (typeof awardXP === 'function') awardXP(10);
+  document.getElementById('fit-log-duration').value = '';
+  document.getElementById('fit-log-note').value = '';
+}
+
+// ========================================
+// ===== SIMPLIFIED NUTRITION - MEAL PLANNING =====
+// ========================================
+function addMealPlan() {
+  if (typeof db === 'undefined' || !db) return;
+  var meal = (document.getElementById('meal-plan-input').value || '').trim();
+  var slot = document.getElementById('meal-plan-slot').value;
+  if (!meal) { toast('What are you eating?'); return; }
+  var today = localDate();
+  db.ref('nutrition/mealPlans/' + today).push({
+    meal: meal,
+    slot: slot,
+    user: user,
+    timestamp: Date.now()
+  });
+  toast('Meal planned!');
+  document.getElementById('meal-plan-input').value = '';
+}
+
+// ========================================
+// ===== GRATITUDE PARTNER PROMPTS =====
+// ========================================
+var GRAT_PARTNER_PROMPTS = [
+  'What did <span class="pname"></span> do recently that made you smile?',
+  'What quality in <span class="pname"></span> are you most grateful for?',
+  'When did <span class="pname"></span> last make you feel truly loved?',
+  'What sacrifice has <span class="pname"></span> made for you that you appreciate?',
+  'What is something <span class="pname"></span> does that you never want them to stop?',
+  'What is your favorite memory with <span class="pname"></span> this month?',
+  'How has <span class="pname"></span> helped you grow as a person?',
+  'What makes <span class="pname"></span> different from everyone else?',
+  'When was the last time <span class="pname"></span> surprised you with kindness?',
+  'What about <span class="pname"></span> makes you feel safe?'
+];
+
+function rotateGratPrompt() {
+  var el = document.getElementById('grat-prompt-text');
+  if (!el) return;
+  var day = new Date().getDay();
+  el.innerHTML = GRAT_PARTNER_PROMPTS[day % GRAT_PARTNER_PROMPTS.length];
+  if (typeof fillPartnerNames === 'function') fillPartnerNames();
+}
+
+// ========================================
+// ===== DATE NIGHT MEMORY =====
+// ========================================
+function saveDateMemory() {
+  if (typeof db === 'undefined' || !db) return;
+  var text = (document.getElementById('dn-memory-text').value || '').trim();
+  if (!text) { toast('Write a quick memory first'); return; }
+  db.ref('memories').push({
+    caption: text,
+    album: 'dates',
+    date: localDate(),
+    user: user,
+    timestamp: Date.now()
+  });
+  toast('Memory saved!');
+  document.getElementById('dn-memory-text').value = '';
+  document.getElementById('dn-memory-prompt').classList.add('d-none');
+}
