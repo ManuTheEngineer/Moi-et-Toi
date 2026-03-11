@@ -320,19 +320,150 @@ function setGlobalMode(mode) {
   localStorage.setItem('met_global_mode', mode);
 }
 
-// ===== PARTICLES =====
+// ===== PARTICLES & CREATURES =====
+const ENV_CREATURES = {
+  starry: {
+    particles: { count: 25, color: '#D4956A', glow: true },
+    creatures: [
+      { type: 'firefly', svg: '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" fill="#FFE4A0" opacity=".8"/><circle cx="5" cy="5" r="5" fill="#FFE4A0" opacity=".2"/></svg>', count: 8, size: [6,12], anim: 'fireflyDrift', dur: [12,22] },
+    ]
+  },
+  forest: {
+    particles: { count: 15, color: '#6EC48A', glow: true },
+    creatures: [
+      { type: 'firefly', svg: '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" fill="#C0FF70" opacity=".8"/><circle cx="5" cy="5" r="5" fill="#C0FF70" opacity=".25"/></svg>', count: 12, size: [5,10], anim: 'fireflyDrift', dur: [10,20] },
+      { type: 'butterfly', svg: '<svg viewBox="0 0 24 16"><ellipse cx="8" cy="6" rx="7" ry="5.5" fill="#88D4A0" opacity=".6"/><ellipse cx="16" cy="6" rx="7" ry="5.5" fill="#6EC48A" opacity=".6"/><ellipse cx="8" cy="11" rx="5" ry="4" fill="#A0E0B0" opacity=".4"/><ellipse cx="16" cy="11" rx="5" ry="4" fill="#80C890" opacity=".4"/><line x1="12" y1="2" x2="12" y2="14" stroke="#4A8A5A" stroke-width=".8"/></svg>', count: 4, size: [16,26], anim: 'butterflyFloat', dur: [18,30] },
+      { type: 'leaf', svg: '<svg viewBox="0 0 16 16"><path d="M2 14 C2 6 8 2 14 2 C14 10 8 14 2 14Z" fill="#5BA868" opacity=".5"/><path d="M2 14 L10 6" stroke="#4A8A5A" stroke-width=".5" fill="none"/></svg>', count: 5, size: [10,18], anim: 'leafDrift', dur: [15,25] },
+    ]
+  },
+  ocean: {
+    particles: { count: 12, color: '#58B8D8', glow: false },
+    creatures: [
+      { type: 'fish', svg: '<svg viewBox="0 0 24 14"><ellipse cx="12" cy="7" rx="10" ry="5.5" fill="#58B8D8" opacity=".45"/><polygon points="22,7 28,2 28,12" fill="#58B8D8" opacity=".35"/><circle cx="7" cy="6" r="1.2" fill="#D8F0F8" opacity=".6"/></svg>', count: 6, size: [18,30], anim: 'fishSwim', dur: [16,28] },
+      { type: 'jellyfish', svg: '<svg viewBox="0 0 20 28"><ellipse cx="10" cy="8" rx="8" ry="7" fill="#70A8D0" opacity=".3"/><path d="M4 14 Q5 20 3 26" stroke="#58B8D8" stroke-width=".6" fill="none" opacity=".3"/><path d="M8 14 Q9 22 7 28" stroke="#58B8D8" stroke-width=".6" fill="none" opacity=".3"/><path d="M12 14 Q11 22 13 28" stroke="#58B8D8" stroke-width=".6" fill="none" opacity=".3"/><path d="M16 14 Q15 20 17 26" stroke="#58B8D8" stroke-width=".6" fill="none" opacity=".3"/></svg>', count: 4, size: [20,34], anim: 'jellyBob', dur: [14,24] },
+      { type: 'bubble', svg: '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="none" stroke="#88D8F0" stroke-width=".5" opacity=".3"/><circle cx="3.5" cy="3.5" r="1" fill="#88D8F0" opacity=".15"/></svg>', count: 8, size: [6,14], anim: 'particleFloat', dur: [12,22] },
+    ]
+  },
+  blossom: {
+    particles: { count: 10, color: '#E090A8', glow: false },
+    creatures: [
+      { type: 'petal', svg: '<svg viewBox="0 0 14 14"><ellipse cx="7" cy="7" rx="6" ry="3" transform="rotate(30 7 7)" fill="#F0A8B8" opacity=".45"/></svg>', count: 12, size: [8,16], anim: 'petalFall', dur: [10,20] },
+      { type: 'butterfly', svg: '<svg viewBox="0 0 24 16"><ellipse cx="8" cy="6" rx="7" ry="5.5" fill="#F0889A" opacity=".5"/><ellipse cx="16" cy="6" rx="7" ry="5.5" fill="#E090A8" opacity=".5"/><ellipse cx="8" cy="11" rx="5" ry="4" fill="#F8A8B8" opacity=".35"/><ellipse cx="16" cy="11" rx="5" ry="4" fill="#E898B0" opacity=".35"/><line x1="12" y1="2" x2="12" y2="14" stroke="#A06878" stroke-width=".8"/></svg>', count: 5, size: [16,26], anim: 'butterflyFloat', dur: [18,28] },
+      { type: 'firefly', svg: '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" fill="#FFD0E0" opacity=".6"/><circle cx="5" cy="5" r="5" fill="#FFD0E0" opacity=".15"/></svg>', count: 6, size: [5,9], anim: 'fireflyDrift', dur: [12,20] },
+    ]
+  },
+  savanna: {
+    particles: { count: 8, color: '#E8A050', glow: true },
+    creatures: [
+      { type: 'bird', svg: '<svg viewBox="0 0 28 12"><path d="M0 6 Q7 0 14 5 Q21 0 28 6" stroke="#E8A050" stroke-width="1.2" fill="none" opacity=".45"/></svg>', count: 4, size: [20,32], anim: 'birdGlide', dur: [14,24] },
+      { type: 'firefly', svg: '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" fill="#FFD080" opacity=".7"/><circle cx="5" cy="5" r="5" fill="#FFD080" opacity=".2"/></svg>', count: 6, size: [5,10], anim: 'fireflyDrift', dur: [12,22] },
+      { type: 'leaf', svg: '<svg viewBox="0 0 16 16"><path d="M2 14 C2 6 8 2 14 2 C14 10 8 14 2 14Z" fill="#C8A048" opacity=".4"/><path d="M2 14 L10 6" stroke="#A08030" stroke-width=".5" fill="none"/></svg>', count: 4, size: [10,16], anim: 'leafDrift', dur: [16,26] },
+    ]
+  }
+};
+
 function initParticles() {
   const container = document.getElementById('particles');
   if (!container) return;
   container.innerHTML = '';
-  for (let i = 0; i < 25; i++) {
+  const env = getEnvironment();
+  const cfg = ENV_CREATURES[env] || ENV_CREATURES.starry;
+
+  // Base particles (small dots)
+  for (let i = 0; i < cfg.particles.count; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
     p.style.left = Math.random() * 100 + '%';
-    p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+    const sz = Math.random() * 3 + 1;
+    p.style.width = p.style.height = sz + 'px';
+    p.style.background = cfg.particles.color;
+    if (cfg.particles.glow) p.style.boxShadow = '0 0 ' + (sz * 2) + 'px ' + cfg.particles.color;
     p.style.animationDuration = (Math.random() * 15 + 10) + 's';
     p.style.animationDelay = (Math.random() * 10) + 's';
     p.style.opacity = Math.random() * 0.3 + 0.1;
     container.appendChild(p);
   }
+
+  // Creatures
+  if (cfg.creatures) {
+    cfg.creatures.forEach(c => {
+      for (let i = 0; i < c.count; i++) {
+        const el = document.createElement('div');
+        el.className = 'creature';
+        el.innerHTML = c.svg;
+        const sz = c.size[0] + Math.random() * (c.size[1] - c.size[0]);
+        el.style.width = sz + 'px';
+        el.style.height = sz + 'px';
+        el.style.left = Math.random() * 90 + 5 + '%';
+        el.style.top = Math.random() * 80 + 10 + '%';
+        const dur = c.dur[0] + Math.random() * (c.dur[1] - c.dur[0]);
+        el.style.animationName = c.anim;
+        el.style.animationDuration = dur + 's';
+        el.style.animationDelay = Math.random() * dur + 's';
+        el.style.animationTimingFunction = 'ease-in-out';
+        el.style.animationIterationCount = 'infinite';
+        container.appendChild(el);
+      }
+    });
+  }
+}
+
+// ===== ENVIRONMENT MANAGEMENT =====
+function getEnvironment() {
+  return localStorage.getItem('met_env') || 'starry';
+}
+
+function setEnvironment(env) {
+  localStorage.setItem('met_env', env);
+  applyEnvironment(env);
+  initParticles();
+  updateEnvGrid();
+  toast('Environment: ' + env.charAt(0).toUpperCase() + env.slice(1));
+}
+
+function applyEnvironment(env) {
+  if (!env || env === 'starry') {
+    document.body.removeAttribute('data-env');
+  } else {
+    document.body.dataset.env = env;
+  }
+}
+
+function renderEnvGrid() {
+  const grid = document.getElementById('env-grid');
+  if (!grid) return;
+  const envs = [
+    { id: 'starry', name: 'Starry Night', desc: 'The original dreamy glow', creatures: '✦' },
+    { id: 'forest', name: 'Enchanted Forest', desc: 'Fireflies & butterflies', creatures: '🦋' },
+    { id: 'ocean', name: 'Ocean Depths', desc: 'Fish & jellyfish drift', creatures: '🐠' },
+    { id: 'blossom', name: 'Cherry Blossom', desc: 'Petals & butterflies', creatures: '🌸' },
+    { id: 'savanna', name: 'Sunset Savanna', desc: 'Birds across warm skies', creatures: '🐦' },
+  ];
+  const current = getEnvironment();
+  grid.innerHTML = envs.map(e =>
+    '<div class="env-card' + (e.id === current ? ' active' : '') + '" data-env="' + e.id + '" onclick="setEnvironment(\'' + e.id + '\')">' +
+    '<span class="env-creatures">' + e.creatures + '</span>' +
+    '<div class="env-name">' + e.name + '</div>' +
+    '<div class="env-desc">' + e.desc + '</div>' +
+    '</div>'
+  ).join('');
+}
+
+function updateEnvGrid() {
+  const current = getEnvironment();
+  document.querySelectorAll('.env-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.env === current);
+  });
+}
+
+// Settings tab management
+function switchSettingsTab(tab) {
+  document.querySelectorAll('.set-tab').forEach((t, i) => {
+    const panels = ['profile', 'look', 'account'];
+    t.classList.toggle('active', panels[i] === tab);
+  });
+  document.querySelectorAll('.set-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('set-panel-' + tab);
+  if (panel) panel.classList.add('active');
+  if (tab === 'look') renderEnvGrid();
 }

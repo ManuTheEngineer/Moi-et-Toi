@@ -42,6 +42,100 @@ body[data-page="fitness"]::before{background:radial-gradient(ellipse 70% 50% at 
 body[data-page="nutrition"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(212,98,122,0.08) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(240,136,154,0.05) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(61,139,110,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(196,120,74,0.03) 0%,transparent 70%),var(--bg)}
 body[data-page="calendar"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(42,143,143,0.09) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(72,204,204,0.05) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(28,43,74,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(42,143,143,0.03) 0%,transparent 70%),var(--bg)}
 body[data-page="dreamhome"]::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(123,111,166,0.09) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(168,152,208,0.06) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(176,138,80,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(212,98,122,0.03) 0%,transparent 70%),var(--bg)}
+/* ===== ENVIRONMENT AURORA BACKGROUNDS ===== */
+body[data-env="forest"]::before{background:
+  radial-gradient(ellipse 70% 50% at 20% 20%,rgba(50,140,80,.12) 0%,transparent 70%),
+  radial-gradient(ellipse 60% 60% at 80% 15%,rgba(30,100,50,.10) 0%,transparent 70%),
+  radial-gradient(ellipse 80% 40% at 50% 90%,rgba(80,180,100,.06) 0%,transparent 70%),
+  radial-gradient(ellipse 50% 50% at 60% 50%,rgba(110,196,138,.04) 0%,transparent 70%),
+  var(--bg)!important}
+body[data-env="ocean"]::before{background:
+  radial-gradient(ellipse 70% 50% at 20% 30%,rgba(20,80,140,.14) 0%,transparent 70%),
+  radial-gradient(ellipse 60% 60% at 80% 15%,rgba(40,140,180,.10) 0%,transparent 70%),
+  radial-gradient(ellipse 80% 40% at 50% 85%,rgba(10,60,100,.08) 0%,transparent 70%),
+  radial-gradient(ellipse 50% 50% at 60% 50%,rgba(88,184,216,.04) 0%,transparent 70%),
+  var(--bg)!important}
+body[data-env="blossom"]::before{background:
+  radial-gradient(ellipse 70% 50% at 20% 20%,rgba(180,80,120,.12) 0%,transparent 70%),
+  radial-gradient(ellipse 60% 60% at 80% 15%,rgba(200,120,160,.08) 0%,transparent 70%),
+  radial-gradient(ellipse 80% 40% at 50% 90%,rgba(140,60,100,.06) 0%,transparent 70%),
+  radial-gradient(ellipse 50% 50% at 60% 50%,rgba(224,144,168,.04) 0%,transparent 70%),
+  var(--bg)!important}
+body[data-env="savanna"]::before{background:
+  radial-gradient(ellipse 70% 50% at 20% 20%,rgba(180,100,40,.14) 0%,transparent 70%),
+  radial-gradient(ellipse 60% 60% at 80% 15%,rgba(200,140,60,.10) 0%,transparent 70%),
+  radial-gradient(ellipse 80% 40% at 50% 90%,rgba(160,80,30,.06) 0%,transparent 70%),
+  radial-gradient(ellipse 50% 50% at 60% 50%,rgba(232,160,80,.04) 0%,transparent 70%),
+  var(--bg)!important}
+
+/* ===== CREATURE ANIMATIONS ===== */
+.creature{position:absolute;pointer-events:none;will-change:transform;opacity:0}
+.creature svg{width:100%;height:100%}
+
+/* Firefly — glowing drift */
+@keyframes fireflyDrift{
+  0%{transform:translate(0,0) scale(.8);opacity:0}
+  10%{opacity:.7}
+  30%{transform:translate(30px,-40px) scale(1)}
+  50%{opacity:.3}
+  70%{transform:translate(-20px,-80px) scale(.9);opacity:.8}
+  90%{opacity:.4}
+  100%{transform:translate(10px,-120px) scale(.7);opacity:0}}
+
+/* Butterfly — fluttery path */
+@keyframes butterflyFloat{
+  0%{transform:translate(0,0) rotate(0deg) scaleX(1);opacity:0}
+  5%{opacity:.6}
+  25%{transform:translate(60px,-50px) rotate(10deg) scaleX(.3)}
+  50%{transform:translate(30px,-100px) rotate(-5deg) scaleX(1)}
+  75%{transform:translate(80px,-150px) rotate(8deg) scaleX(.3)}
+  95%{opacity:.5}
+  100%{transform:translate(40px,-200px) rotate(0deg) scaleX(1);opacity:0}}
+
+/* Fish — horizontal swim with wave */
+@keyframes fishSwim{
+  0%{transform:translateX(-60px) translateY(0) scaleX(1);opacity:0}
+  10%{opacity:.5}
+  25%{transform:translateX(25vw) translateY(-15px)}
+  50%{transform:translateX(50vw) translateY(10px)}
+  75%{transform:translateX(75vw) translateY(-10px)}
+  90%{opacity:.5}
+  100%{transform:translateX(110vw) translateY(5px);opacity:0}}
+
+/* Jellyfish — slow bob */
+@keyframes jellyBob{
+  0%{transform:translateY(0) scale(.9);opacity:0}
+  10%{opacity:.4}
+  30%{transform:translateY(-30px) scale(1)}
+  60%{transform:translateY(-15px) scale(.95)}
+  90%{opacity:.3}
+  100%{transform:translateY(-60px) scale(.9);opacity:0}}
+
+/* Petal — gentle falling & spinning */
+@keyframes petalFall{
+  0%{transform:translate(0,0) rotate(0deg);opacity:0}
+  10%{opacity:.5}
+  50%{transform:translate(30px,40vh) rotate(180deg)}
+  90%{opacity:.3}
+  100%{transform:translate(50px,100vh) rotate(360deg);opacity:0}}
+
+/* Bird — glide across */
+@keyframes birdGlide{
+  0%{transform:translateX(-40px) translateY(0);opacity:0}
+  8%{opacity:.5}
+  50%{transform:translateX(50vw) translateY(-20px)}
+  92%{opacity:.4}
+  100%{transform:translateX(110vw) translateY(10px);opacity:0}}
+
+/* Leaf — tumble and drift */
+@keyframes leafDrift{
+  0%{transform:translate(0,0) rotate(0deg);opacity:0}
+  10%{opacity:.5}
+  35%{transform:translate(-20px,30vh) rotate(120deg)}
+  65%{transform:translate(15px,60vh) rotate(240deg)}
+  90%{opacity:.3}
+  100%{transform:translate(-10px,100vh) rotate(360deg);opacity:0}}
+
 /* Dark mode living background */
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body::before{background:radial-gradient(ellipse 70% 50% at 20% 20%,rgba(212,149,106,0.07) 0%,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 15%,rgba(201,168,76,0.05) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 50% 90%,rgba(128,104,176,0.04) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 60% 50%,rgba(212,98,122,0.03) 0%,transparent 70%),var(--bg)}
 :root:not([data-theme="light"]) body::after{opacity:0.035}}

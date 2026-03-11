@@ -202,6 +202,63 @@
   --shadow: 0 4px 24px rgba(0,0,0,.15); --shadow-lg: 0 8px 40px rgba(0,0,0,.25);
   --mode-us: var(--gold); --mode-me: var(--teal);
 }
+/* ===== ENVIRONMENT THEMES (dark mode overrides) ===== */
+/* Smooth transition for environment changes */
+body{transition:background .8s ease}
+body::before{transition:all .8s ease}
+
+/* FOREST — deep emeralds & mossy greens */
+body[data-env="forest"]{--bg:#081A0E;--bg2:#0E2816;--bg3:#163822;--bg-nav:rgba(8,26,14,.85);
+  --gold:#6EC48A;--gold-l:#88D4A0;--amber:#8BAA7A;--amber-s:#6A8A5A;
+  --cream:#E0F0E4;--cream-d:#B0D0B4;--t1:#E0F0E4;--t2:#8BAA7A;--t3:#5A7A50;
+  --bdr:rgba(110,196,138,.12);--bdr-s:rgba(110,196,138,.06);
+  --red:#C4A060;--red-s:rgba(196,160,96,.12);--vio:#80C090;--vio-s:rgba(128,192,144,.12);
+  --glow-gold:rgba(110,196,138,.22);
+  --card-bg:#122A18;--card-shadow:0 1px 3px rgba(0,0,0,.25),0 8px 28px rgba(0,0,0,.2);
+  --input-bg:rgba(110,196,138,.08);--focus-ring:0 0 0 3px rgba(110,196,138,.2);
+  --nav-bg:rgba(10,22,14,.92);--nav-shadow:0 -1px 0 rgba(110,196,138,.06),0 4px 24px rgba(0,0,0,.3);
+  --glass:rgba(14,40,22,.6);--overlay-bg:rgba(0,0,0,.6);--sheet-bg:#0A1A0E;
+  --rose:#D4886A;--teal:#4AB8A0;--lavender:#88A078;--emerald:#5BB898}
+
+/* OCEAN — deep blues & aqua teals */
+body[data-env="ocean"]{--bg:#06141E;--bg2:#0C2238;--bg3:#143050;--bg-nav:rgba(6,20,30,.85);
+  --gold:#58B8D8;--gold-l:#70CCE8;--amber:#7898B0;--amber-s:#5878A0;
+  --cream:#D8F0F8;--cream-d:#A0C8D8;--t1:#D8F0F8;--t2:#7898B0;--t3:#4A6880;
+  --bdr:rgba(88,184,216,.12);--bdr-s:rgba(88,184,216,.06);
+  --red:#D4886A;--red-s:rgba(212,136,106,.12);--vio:#70A8D0;--vio-s:rgba(112,168,208,.12);
+  --glow-gold:rgba(88,184,216,.22);
+  --card-bg:#0E2438;--card-shadow:0 1px 3px rgba(0,0,0,.25),0 8px 28px rgba(0,0,0,.2);
+  --input-bg:rgba(88,184,216,.08);--focus-ring:0 0 0 3px rgba(88,184,216,.2);
+  --nav-bg:rgba(6,16,26,.92);--nav-shadow:0 -1px 0 rgba(88,184,216,.06),0 4px 24px rgba(0,0,0,.3);
+  --glass:rgba(12,34,56,.6);--overlay-bg:rgba(0,0,0,.6);--sheet-bg:#081420;
+  --rose:#D87088;--teal:#48CCCC;--lavender:#8898C8;--emerald:#48B0A0}
+
+/* BLOSSOM — warm pinks & magentas */
+body[data-env="blossom"]{--bg:#1A0E18;--bg2:#2A1828;--bg3:#3A2238;--bg-nav:rgba(26,14,24,.85);
+  --gold:#E090A8;--gold-l:#F0A0B8;--amber:#B08898;--amber-s:#906878;
+  --cream:#F8E8F0;--cream-d:#D0B8C8;--t1:#F8E8F0;--t2:#B08898;--t3:#7A5868;
+  --bdr:rgba(224,144,168,.12);--bdr-s:rgba(224,144,168,.06);
+  --red:#D4886A;--red-s:rgba(212,136,106,.12);--vio:#C890D0;--vio-s:rgba(200,144,208,.12);
+  --glow-gold:rgba(224,144,168,.22);
+  --card-bg:#261832;--card-shadow:0 1px 3px rgba(0,0,0,.25),0 8px 28px rgba(0,0,0,.2);
+  --input-bg:rgba(224,144,168,.08);--focus-ring:0 0 0 3px rgba(224,144,168,.2);
+  --nav-bg:rgba(20,12,20,.92);--nav-shadow:0 -1px 0 rgba(224,144,168,.06),0 4px 24px rgba(0,0,0,.3);
+  --glass:rgba(38,24,50,.6);--overlay-bg:rgba(0,0,0,.6);--sheet-bg:#160E16;
+  --rose:#F0889A;--teal:#88C0B8;--lavender:#C8A0E0;--emerald:#80B898}
+
+/* SAVANNA — warm amber & sunset oranges */
+body[data-env="savanna"]{--bg:#1A1008;--bg2:#2A1E10;--bg3:#3A2C18;--bg-nav:rgba(26,16,8,.85);
+  --gold:#E8A050;--gold-l:#F0B468;--amber:#C09868;--amber-s:#A07848;
+  --cream:#F8F0E0;--cream-d:#D8C8A8;--t1:#F8F0E0;--t2:#C09868;--t3:#887050;
+  --bdr:rgba(232,160,80,.12);--bdr-s:rgba(232,160,80,.06);
+  --red:#D87048;--red-s:rgba(216,112,72,.12);--vio:#C8A848;--vio-s:rgba(200,168,72,.12);
+  --glow-gold:rgba(232,160,80,.22);
+  --card-bg:#2A1E14;--card-shadow:0 1px 3px rgba(0,0,0,.25),0 8px 28px rgba(0,0,0,.2);
+  --input-bg:rgba(232,160,80,.08);--focus-ring:0 0 0 3px rgba(232,160,80,.2);
+  --nav-bg:rgba(22,14,6,.92);--nav-shadow:0 -1px 0 rgba(232,160,80,.06),0 4px 24px rgba(0,0,0,.3);
+  --glass:rgba(42,30,20,.6);--overlay-bg:rgba(0,0,0,.6);--sheet-bg:#14100A;
+  --rose:#E08870;--teal:#88B8A0;--lavender:#C8A888;--emerald:#80A868}
+
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;scrollbar-width:none}
 *::-webkit-scrollbar{display:none}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}

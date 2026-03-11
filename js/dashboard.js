@@ -1401,12 +1401,33 @@ function loadSettings() {
   const nameEl = document.getElementById('set-name');
   const annivEl = document.getElementById('set-anniversary');
   const partnerEl = document.getElementById('set-partner-name');
+  const bdayEl = document.getElementById('set-birthday');
+  const nickEl = document.getElementById('set-nickname');
+  const themeBtn = document.getElementById('set-theme-btn');
+
   if (nameEl) nameEl.value = NAMES[user] || '';
   if (partnerEl) partnerEl.value = NAMES[partner] || '';
-  if (annivEl && db) {
-    db.ref('settings/anniversary').once('value', snap => {
-      if (snap.val()) annivEl.value = snap.val();
-    });
+  if (themeBtn) {
+    const labels = { auto: 'Auto', dark: 'Dark', light: 'Light' };
+    themeBtn.textContent = labels[getThemePref()] || 'Auto';
+  }
+
+  if (db) {
+    if (annivEl) {
+      db.ref('settings/anniversary').once('value', snap => {
+        if (snap.val()) annivEl.value = snap.val();
+      });
+    }
+    if (bdayEl) {
+      db.ref('settings/birthday_' + user).once('value', snap => {
+        if (snap.val()) bdayEl.value = snap.val();
+      });
+    }
+    if (nickEl) {
+      db.ref('settings/nickname_' + user).once('value', snap => {
+        if (snap.val()) nickEl.value = snap.val();
+      });
+    }
   }
 }
 
@@ -1414,8 +1435,13 @@ async function saveSettings() {
   if (!db || !user) return;
   const nameEl = document.getElementById('set-name');
   const annivEl = document.getElementById('set-anniversary');
+  const bdayEl = document.getElementById('set-birthday');
+  const nickEl = document.getElementById('set-nickname');
+
   const newName = nameEl ? nameEl.value.trim() : '';
   const newAnniv = annivEl ? annivEl.value : '';
+  const newBday = bdayEl ? bdayEl.value : '';
+  const newNick = nickEl ? nickEl.value.trim() : '';
 
   if (newName && newName !== NAMES[user]) {
     NAMES[user] = newName;
@@ -1424,6 +1450,12 @@ async function saveSettings() {
   }
   if (newAnniv) {
     await db.ref('settings/anniversary').set(newAnniv);
+  }
+  if (newBday) {
+    await db.ref('settings/birthday_' + user).set(newBday);
+  }
+  if (newNick !== undefined) {
+    await db.ref('settings/nickname_' + user).set(newNick);
   }
   toast('Settings saved');
   renderDashHero();
