@@ -3069,9 +3069,9 @@ function checkMorningMessage() {
   var KEY = 'met_morning_msg_' + user;
   if (localStorage.getItem(KEY) === today) return;
 
-  // Read your own morning message settings (each person sees their own config)
+  // Read partner's morning message settings (see what they wrote for you)
   var partnerRole = user === 'her' ? 'him' : 'her';
-  db.ref('settings/morningMsg/' + user).once('value', function (snap) {
+  db.ref('settings/morningMsg/' + partnerRole).once('value', function (snap) {
     var settings = snap.val();
     if (!settings || !settings.enabled) return;
 
@@ -3080,6 +3080,7 @@ function checkMorningMessage() {
     // Only show between 5am and 11am
     if (hour < 5 || hour > 11) return;
 
+    // Use the nickname YOU gave your partner (not what they call themselves)
     var nickname = NAMES[partnerRole] || settings.nickname || 'your love';
     var msg;
     if (settings.customMsg) {
