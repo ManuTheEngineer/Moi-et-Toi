@@ -146,8 +146,8 @@ async function init() {
         if (needsOnboarding()) {
           showFirstLocationPrompt();
         } else {
-          // Returning user — show welcome gate with biometric
-          showWelcomeGate();
+          // Returning user — go straight in
+          finishLogin();
         }
       } else {
         firebase.auth().signOut();
