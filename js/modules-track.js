@@ -7,6 +7,147 @@ let fitnessData = {},
   wsTimer = null,
   restInterval = null;
 
+// ===== WORKOUT PAGE TEMPLATE SYSTEM =====
+var WORKOUT_PAGES = {
+  w1: {
+    name: 'Foundation', icon: '\u2726', color: 'g', title: 'Your Sculpt Guide',
+    subtitle: 'Strength \u00b7 Shape \u00b7 Confidence', logType: 'Foundation',
+    intro: 'This plan is designed for <strong class="sg">beginners</strong>. Every move has clear timing and built-in rest. Go at your own pace. <strong class="sg">Showing up is what matters.</strong>',
+    sections: [
+      { label: 'Phase 1', title: 'Core Strengthening', exercises: [
+        { n: '01', name: 'Lying Leg Raises', desc: 'Lie flat. Raise straight legs to ceiling, lower without touching floor. Go slow. The slower, the better.', timing: ['10 reps', '3 sets', '45s rest'] },
+        { n: '02', name: 'Flutter Kicks', desc: 'Hands under hips, legs a few inches off ground. Small alternating kicks. Lower back pressed down.', timing: ['20 sec', '3 sets', '40s rest'] },
+        { n: '03', name: 'Reverse Crunches', desc: 'Knees bent, curl hips off floor bringing knees to chest. Hold 2 sec at top, lower gently.', timing: ['12 reps', '3 sets', '45s rest'] },
+        { n: '04', name: 'Mountain Climbers', desc: 'Push-up position. Drive knees to chest alternating. Like running on the floor. Keep hips level.', timing: ['25 sec', '3 sets', '50s rest'] },
+        { n: '05', name: 'Dead Bugs', desc: 'On back, arms up, knees 90 degrees. Extend opposite arm and leg slowly. Return, switch sides.', timing: ['8 each side', '3 sets', '40s rest'] }
+      ]},
+      { label: 'Phase 2', title: 'Waist Sculpting', exercises: [
+        { n: '06', name: 'Russian Twists', desc: 'Seated, lean back, feet off ground. Rotate torso side to side. Controlled. No rushing.', timing: ['16 reps (8/side)', '3 sets', '40s rest'] },
+        { n: '07', name: 'Side Plank Hip Dips', desc: 'Side plank on forearm. Dip hips down and back up. Feel it along the waistline.', timing: ['10 each side', '3 sets', '45s rest'] },
+        { n: '08', name: 'Standing Side Crunches', desc: 'Hand behind head. Lift knee to meet same-side elbow. Squeeze at top. No equipment needed.', timing: ['12 each side', '3 sets', '40s rest'] },
+        { n: '09', name: 'Woodchoppers', desc: 'Feet apart. Diagonal chopping motion from shoulder to opposite hip. Tightens the waist beautifully.', timing: ['10 each side', '3 sets', '45s rest'] }
+      ]},
+      { label: 'Every Day', title: 'Your Daily Practice', daily: {
+        tag: '\u2726 Do This Every Day', name: 'Stomach Vacuums',
+        desc: 'Breathe out completely. Pull belly button toward spine. Hold 15 to 20 seconds. Repeat. Trains your deepest core muscle. Like an internal corset.',
+        timing: ['15-20s hold', '5 rounds', '15s rest']
+      }},
+      { label: 'Phase 3', title: 'Shape & Silhouette', exercises: [
+        { n: '10', name: 'Hip Thrusts', desc: 'Back against couch. Feet flat, knees bent. Drive hips up, squeeze 2 seconds at top.', timing: ['15 reps', '3 sets', '50s rest'] },
+        { n: '11', name: 'Sumo Squats', desc: 'Wide stance, toes out. Squat deep, chest up. Press through heels to stand.', timing: ['15 reps', '3 sets', '50s rest'] },
+        { n: '12', name: 'Lateral Shoulder Raises', desc: 'Light weights at sides. Raise arms to shoulder height. Lower with control. Shapes the silhouette.', timing: ['12 reps', '3 sets', '40s rest'] }
+      ]}
+    ],
+    next: { id: 'w2', label: 'The Elevated Program', desc: 'Harder moves. Shorter rest. Deeper definition.', colorCls: 'nxr', colorVar: 'c-red' },
+    footer: { quote: "You're already becoming who you want to be.", caption: 'One day at a time', color: 'var(--gold-l)' }
+  },
+  w2: {
+    name: 'Elevated', icon: '\u25c6', color: 'r', title: 'Elevated Sculpt',
+    subtitle: 'Power \u00b7 Definition \u00b7 Shape', logType: 'Elevated',
+    intro: 'You made it here because you put in the work. <strong class="sr">Higher reps, shorter rest, more intense combinations.</strong> Trust the process. You\u2019ve already proven you can do this.',
+    sections: [
+      { label: 'Phase 1', title: 'Deep Core Sculpt', exercises: [
+        { n: '01', name: 'Hanging Leg Raises', desc: 'Hang from bar. Raise straight legs to 90 degrees. Lower with full control.', timing: ['12 reps', '4 sets', '30s rest'] },
+        { n: '02', name: 'Scissor Kicks', desc: 'Legs hovering, cross over each other in X pattern. Core tight. Lower legs = harder.', timing: ['40 sec', '4 sets', '25s rest'] },
+        { n: '03', name: 'Plank to Pike', desc: 'Plank position. Walk feet to hands, hips into inverted V. Walk back out. One fluid motion.', timing: ['12 reps', '4 sets', '30s rest'] },
+        { n: '04', name: 'V-Ups', desc: 'Lie flat. Lift legs and upper body simultaneously, reach for toes. Lower with control.', timing: ['15 reps', '4 sets', '30s rest'] },
+        { n: '05', name: 'Mountain Climber Sprints', desc: 'As fast as you can. Explosive knee drives. Full intensity cardio + core.', timing: ['45 sec', '4 sets', '25s rest'] }
+      ]},
+      { label: 'Phase 2', title: 'Waist Definition', exercises: [
+        { n: '06', name: 'Weighted Russian Twists', desc: 'Hold a dumbbell or heavy water bottle. Added resistance sculpts deeper waist definition.', timing: ['24 reps (12/side)', '4 sets', '25s rest'] },
+        { n: '07', name: 'Side Plank Reach Through', desc: 'Side plank. Thread top arm underneath body, rotating torso. Return. Sharpens the waistline.', timing: ['12 each side', '4 sets', '25s rest'] },
+        { n: '08', name: 'Band Woodchoppers', desc: 'Resistance band at head height. Pull diagonally across body. Controlled rotation.', timing: ['14 each side', '4 sets', '30s rest'] },
+        { n: '09', name: 'Slow Bicycle Crunches', desc: 'Elbow to opposite knee. Hold each twist 1 second. Slow is where results live.', timing: ['20 reps (10/side)', '4 sets', '25s rest'] }
+      ]},
+      { label: 'Phase 3', title: 'Power Sculpt', exercises: [
+        { n: '10', name: 'Weighted Hip Thrusts', desc: 'Weight across hips. Press up, squeeze 3 seconds at top. Number one curve builder.', timing: ['15 reps', '4 sets', '35s rest'] },
+        { n: '11', name: 'Bulgarian Split Squats', desc: 'One foot on couch behind you. Lower until front thigh is parallel. Press back up.', timing: ['12 each leg', '4 sets', '35s rest'] },
+        { n: '12', name: 'Arnold Press', desc: 'Dumbbells at chest, palms facing you. Press up rotating palms outward. Full shoulder sculpt.', timing: ['12 reps', '4 sets', '30s rest'] }
+      ]}
+    ],
+    next: { id: 'w3', label: 'Full Body Sculpt', desc: 'Every muscle group. One session. Total transformation.', colorCls: 'nxv', colorVar: 'c-vio' },
+    footer: { quote: "You didn't just dream it. You built it.", caption: 'Every rep counts', color: 'var(--red-tag)' }
+  },
+  w3: {
+    name: 'Full Body', icon: '\u2b21', color: 'v', title: 'Full Body Sculpt',
+    subtitle: 'Head to Toe \u00b7 One Session', logType: 'Full Body',
+    intro: '<strong class="sv">Every major muscle group in one workout.</strong> Upper body, core, waist, glutes, legs. Allow 60 to 75 minutes. Warm up 5 minutes first. You\u2019ve got this.',
+    sections: [
+      { label: 'Block A', title: 'Upper Body', exercises: [
+        { n: '01', name: 'Push-Ups', desc: 'Shoulder-width hands. Lower chest to floor, push back up. Drop to knees if needed.', timing: ['10 reps', '3 sets', '40s rest'] },
+        { n: '02', name: 'Lateral Raises', desc: 'Light weights. Raise arms to shoulder height. Lower slowly. Builds shoulder caps.', timing: ['15 reps', '3 sets', '35s rest'] },
+        { n: '03', name: 'Bent Over Rows', desc: 'Hinge forward. Pull weights to ribs, squeeze shoulder blades. Strengthens the back.', timing: ['12 reps', '3 sets', '40s rest'] },
+        { n: '04', name: 'Tricep Dips', desc: 'Edge of chair. Lower by bending elbows. Push back up. Tones back of arms.', timing: ['12 reps', '3 sets', '40s rest'] }
+      ]},
+      { label: 'Block B', title: 'Core + Waist', exercises: [
+        { n: '05', name: 'Leg Raises', desc: 'Raise straight legs, lower without touching floor. Lower back pressed down.', timing: ['12 reps', '3 sets', '35s rest'] },
+        { n: '06', name: 'Bicycle Crunches', desc: 'Elbow to opposite knee. Go slow. Hold each twist 1 second.', timing: ['20 reps', '3 sets', '35s rest'] },
+        { n: '07', name: 'Russian Twists', desc: 'Seated, lean back, feet off ground. Rotate side to side. Controlled and steady.', timing: ['20 reps', '3 sets', '35s rest'] },
+        { n: '08', name: 'Plank Hold', desc: "Forearms on ground, body straight. Hold. Breathe. Don't let hips sag.", timing: ['30-45 sec', '3 sets', '30s rest'] }
+      ]},
+      { label: 'Block C', title: 'Lower Body + Glutes', exercises: [
+        { n: '09', name: 'Sumo Squats', desc: 'Wide stance, toes out. Squat deep. Hold weight at center for extra challenge.', timing: ['15 reps', '3 sets', '40s rest'] },
+        { n: '10', name: 'Hip Thrusts', desc: 'Back against couch. Drive hips up, squeeze at top 2 to 3 seconds.', timing: ['15 reps', '3 sets', '40s rest'] },
+        { n: '11', name: 'Reverse Lunges', desc: 'Step back, lower knee toward ground. Push through front heel. Alternate legs.', timing: ['12 each leg', '3 sets', '40s rest'] },
+        { n: '12', name: 'Glute Bridges', desc: 'On back, knees bent. Lift hips, squeeze glutes at top. Hold 2 seconds.', timing: ['15 reps', '3 sets', '35s rest'] },
+        { n: '13', name: 'Calf Raises', desc: 'Rise onto toes, hold 1 second, lower slowly. Completes the leg sculpt.', timing: ['20 reps', '3 sets', '30s rest'] }
+      ]}
+    ],
+    next: null,
+    footer: { quote: 'The whole body. The whole vision. The whole her.', caption: 'Complete', color: 'var(--vio-tag)' }
+  }
+};
+
+function renderWorkoutPage(id) {
+  var w = WORKOUT_PAGES[id];
+  if (!w) return;
+  var ctn = document.getElementById(id + '-content');
+  if (!ctn) return;
+  if (ctn.dataset.rendered === id) return; // already rendered
+  var c = w.color;
+  var html = '<div class="who"><div class="wic w' + c + '">' + w.icon + '</div>' +
+    '<span class="wbdg wb' + c + '">' + w.name + '</span>' +
+    '<h1>' + w.title + '</h1><p>' + w.subtitle + '</p></div>' +
+    '<div class="wnt wn' + c + '">' + w.intro + '</div>';
+  w.sections.forEach(function(sec) {
+    html += '<div class="wsc"><div class="wsl l' + c + '">' + sec.label + '</div>' +
+      '<div class="wst">' + sec.title + '</div>';
+    if (sec.daily) {
+      var d = sec.daily;
+      html += '<div class="dc d' + c + '"><div class="dtg dg' + c + '">' + d.tag + '</div>' +
+        '<h3>' + d.name + '</h3><p>' + d.desc + '</p>' +
+        '<div class="tr" style="margin-top:9px;padding-top:9px;border-top:1px solid var(--bdr-s)">' +
+        '<span class="tb t' + c + '">\u23f1 ' + d.timing[0] + '</span>' +
+        '<span class="tb t' + c + '">\u21bb ' + d.timing[1] + '</span>' +
+        '<span class="tb t' + c + 'r">\u2601 ' + d.timing[2] + '</span></div></div>';
+    }
+    if (sec.exercises) {
+      sec.exercises.forEach(function(ex) {
+        html += '<div class="ec ec' + c + '"><div class="et">' +
+          '<div class="en n' + c + '">' + ex.n + '</div>' +
+          '<div class="ei"><h3>' + ex.name + '</h3><p>' + ex.desc + '</p></div></div>' +
+          '<div class="tr"><span class="tb t' + c + '">\u23f1 ' + ex.timing[0] + '</span>' +
+          '<span class="tb t' + c + '">\u21bb ' + ex.timing[1] + '</span>' +
+          '<span class="tb t' + c + 'r">\u2601 ' + ex.timing[2] + '</span></div></div>';
+      });
+    }
+    html += '</div>';
+  });
+  var btnCls = c !== 'g' ? ' lb' + c : '';
+  html += '<button class="lbtn' + btnCls + '" onclick="openLog(\'' + w.logType + '\')">Log workout</button>';
+  if (w.next) {
+    html += '<div class="nxt ' + w.next.colorCls + '" onclick="go(\'' + w.next.id + '\')">' +
+      '<div class="nxe ' + w.next.colorVar + '">When You\u2019re Ready</div>' +
+      '<div class="nxt-t">' + w.next.label + '</div>' +
+      '<div class="nxd">' + w.next.desc + '</div>' +
+      '<div class="nxa ' + w.next.colorVar + '">Enter \u279e</div></div>';
+  }
+  html += '<div class="wft"><div class="wfq" style="color:' + w.footer.color + '">' + w.footer.quote + '</div>' +
+    '<div class="wfs">' + w.footer.caption + '</div></div>';
+  ctn.innerHTML = html;
+  ctn.dataset.rendered = id;
+}
+
 // ===== EXERCISE DATABASE (60+ exercises) =====
 const MUSCLE_ICONS = { chest: '🫁', back: '🔙', shoulders: '🏔', legs: '🦵', arms: '💪', core: '🎯' };
 const MUSCLE_COLORS = {
@@ -427,15 +568,15 @@ function renderFitnessCharts(workouts) {
 
 // ===== WORKOUT BUILDER =====
 function openWorkoutBuilder() {
-  const builder = document.getElementById('fit-builder');
-  showEl(builder);
+  var builder = document.getElementById('fit-builder');
+  if (builder) builder.classList.add('on');
   builderExercises = [];
   renderExerciseList('all');
   renderBuilderSelected();
 }
 function closeWorkoutBuilder() {
-  const builder = document.getElementById('fit-builder');
-  hideEl(builder);
+  var builder = document.getElementById('fit-builder');
+  if (builder) builder.classList.remove('on');
   builderExercises = [];
 }
 function filterExercises(group) {

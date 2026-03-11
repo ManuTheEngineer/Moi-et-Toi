@@ -2821,10 +2821,13 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 900;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: 20px;
+}
+.agree-edit-overlay.on {
+  display: flex;
 }
 .agree-edit-card {
   background: var(--card-bg);
@@ -3631,12 +3634,16 @@
 }
 /* Fitness: Workout Builder */
 .fit-builder {
+  display: none;
   background: var(--card-bg);
   border-radius: 24px;
   padding: 20px;
   margin-bottom: 16px;
   box-shadow: var(--card-shadow);
   border: 1px solid var(--emerald-s);
+}
+.fit-builder.on {
+  display: block;
 }
 .fit-builder-header {
   display: flex;

@@ -24,15 +24,15 @@ const AFFIRMATIONS = [
 
 let affirmIdx = Math.floor(Math.random() * AFFIRMATIONS.length);
 
-function loadAffirmation() {
-  const el = document.getElementById('hs-affirm-text');
-  if (el) el.textContent = AFFIRMATIONS[affirmIdx % AFFIRMATIONS.length];
+function rotatePrompt(arr, elId, getIdx, incr) {
+  if (incr) arr._idx = (arr._idx || getIdx()) + 1;
+  else if (arr._idx === undefined) arr._idx = getIdx();
+  var el = document.getElementById(elId);
+  if (el) el.textContent = arr[arr._idx % arr.length];
 }
 
-function nextAffirmation() {
-  affirmIdx++;
-  loadAffirmation();
-}
+function loadAffirmation() { rotatePrompt(AFFIRMATIONS, 'hs-affirm-text', function() { return affirmIdx; }); }
+function nextAffirmation() { rotatePrompt(AFFIRMATIONS, 'hs-affirm-text', function() { return affirmIdx; }, true); }
 
 function logPeriodStart() {
   if (!db || !user) return;
@@ -147,15 +147,8 @@ const MOTIVATIONS = [
 
 let motivIdx = Math.floor(Math.random() * MOTIVATIONS.length);
 
-function loadMotivation() {
-  const el = document.getElementById('him-affirm-text');
-  if (el) el.textContent = MOTIVATIONS[motivIdx % MOTIVATIONS.length];
-}
-
-function nextMotivation() {
-  motivIdx++;
-  loadMotivation();
-}
+function loadMotivation() { rotatePrompt(MOTIVATIONS, 'him-affirm-text', function() { return motivIdx; }); }
+function nextMotivation() { rotatePrompt(MOTIVATIONS, 'him-affirm-text', function() { return motivIdx; }, true); }
 
 async function logPR() {
   if (!db || !user) return;
@@ -1382,12 +1375,12 @@ function openAgreementEdit(key, currentText) {
     textarea.value = currentText;
     textarea.focus();
   }
-  if (overlay) overlay.classList.remove('d-none');
+  if (overlay) overlay.classList.add('on');
 }
 
 function closeAgreementEdit() {
   var overlay = document.getElementById('agree-edit-overlay');
-  if (overlay) overlay.classList.add('d-none');
+  if (overlay) overlay.classList.remove('on');
   _agreeEditingKey = null;
 }
 

@@ -60,6 +60,9 @@ function go(p) {
   if (current) current.classList.remove('on');
   if (next) next.classList.add('on');
 
+  // Render workout pages on demand (template system)
+  if ((p === 'w1' || p === 'w2' || p === 'w3') && typeof renderWorkoutPage === 'function') renderWorkoutPage(p);
+
   // Set page-specific background accent
   document.body.dataset.page = p;
 

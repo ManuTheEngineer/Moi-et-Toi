@@ -687,302 +687,161 @@ function deleteDateIdea(key) {
 }
 
 // ===== HUB STATUS UPDATES =====
+// Generic hub badge updater — each config defines how to query and process data
+function _hubUpdate(elId, process) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  process(el);
+}
+
+function _hubBadge(el, text, cls) {
+  el.textContent = text;
+  el.className = 'hub-badge ' + (cls || 'count');
+}
+
+function _hubBothCheck(el, path, noLabel, doneLabel, waitLabel, yourLabel, noCls, doneCls, waitCls, yourCls) {
+  db.ref(path).once('value', function(snap) {
+    var d = snap.val();
+    if (!d) { _hubBadge(el, noLabel, noCls || 'pending'); }
+    else if (d[user] && d[partner]) { _hubBadge(el, doneLabel, doneCls || 'done'); }
+    else if (d[user]) { _hubBadge(el, waitLabel, waitCls || 'count'); }
+    else { _hubBadge(el, yourLabel, yourCls || 'pending'); }
+  });
+}
+
+function _hubCount(el, path, label, emptyLabel, doneKey) {
+  db.ref(path).once('value', function(snap) {
+    if (!snap.exists()) { _hubBadge(el, emptyLabel || 'Start'); return; }
+    var total = 0, done = 0;
+    snap.forEach(function(c) { total++; if (doneKey && c.val()[doneKey]) done++; });
+    if (doneKey) {
+      el.textContent = done + '/' + total + (label ? ' ' + label : '');
+      el.className = done === total && total > 0 ? 'hub-badge done' : 'hub-badge count';
+    } else {
+      _hubBadge(el, total + ' ' + label);
+    }
+  });
+}
+
 function updateHubStatuses() {
   if (!db) return;
-  updateHubCheckin();
-  updateHubBucket();
-  updateHubDreams();
-  updateHubWishlist();
-  updateHubGratitude();
-  updateHubDQ();
-  updateHubCulture();
-  updateHubFoundation();
-  updateHubFamily();
-  updateHubHomeLife();
-  updateHubSpiritual();
-  updateHubDateNight();
-  updateHubDeepTalk();
-  updateHubGames();
-  updateHubLL();
-}
 
-function updateHubCheckin() {
-  const el = document.getElementById('hub-ci-status');
-  if (!el || !db) return;
-  const week = getWeekId();
-  db.ref('checkins/' + week).once('value', snap => {
-    const data = snap.val();
-    if (!data) {
-      el.textContent = 'Check in';
-      el.className = 'hub-badge pending';
-    } else if (data[user] && data[partner]) {
-      el.textContent = 'Both done';
-      el.className = 'hub-badge done';
-    } else if (data[user]) {
-      el.textContent = '1/2 done';
-      el.className = 'hub-badge count';
-    } else {
-      el.textContent = 'Your turn';
-      el.className = 'hub-badge pending';
-    }
+  // Checkin — both-user check with week key
+  _hubUpdate('hub-ci-status', function(el) {
+    _hubBothCheck(el, 'checkins/' + getWeekId(), 'Check in', 'Both done', '1/2 done', 'Your turn');
   });
-}
 
-function updateHubBucket() {
-  const el = document.getElementById('hub-bl-status');
-  if (!el || !db) return;
-  db.ref('bucketList').once('value', snap => {
-    if (!snap.exists()) {
-      el.textContent = 'Start';
-      return;
-    }
-    let total = 0,
-      done = 0;
-    snap.forEach(c => {
-      total++;
-      if (c.val().completed) done++;
+  // Bucket list — done/total with 'completed' key
+  _hubUpdate('hub-bl-status', function(el) {
+    _hubCount(el, 'bucketList', 'done', 'Start', 'completed');
+  });
+
+  // Dreams — count with achieved
+  _hubUpdate('hub-dr-status', function(el) {
+    db.ref('dreams').once('value', function(snap) {
+      if (!snap.exists()) { _hubBadge(el, 'Start'); return; }
+      var total = 0, done = 0;
+      snap.forEach(function(c) { total++; if (c.val().achieved) done++; });
+      _hubBadge(el, done > 0 ? done + '/' + total : total + ' dreams');
     });
-    el.textContent = done + '/' + total + ' done';
-    el.className = done === total && total > 0 ? 'hub-badge done' : 'hub-badge count';
   });
-}
 
-function updateHubDreams() {
-  const el = document.getElementById('hub-dr-status');
-  if (!el || !db) return;
-  db.ref('dreams').once('value', snap => {
-    if (!snap.exists()) {
-      el.textContent = 'Start';
-      return;
-    }
-    let total = 0,
-      done = 0;
-    snap.forEach(c => {
-      total++;
-      if (c.val().achieved) done++;
+  // Wishlist — nested count
+  _hubUpdate('hub-wl-status', function(el) {
+    db.ref('wishlists').once('value', function(snap) {
+      if (!snap.exists()) { _hubBadge(el, 'Add items'); return; }
+      var total = 0;
+      snap.forEach(function(u) { u.forEach(function() { total++; }); });
+      _hubBadge(el, total + ' items');
     });
-    el.textContent = done > 0 ? done + '/' + total : total + ' dreams';
-    el.className = 'hub-badge count';
   });
-}
 
-function updateHubWishlist() {
-  const el = document.getElementById('hub-wl-status');
-  if (!el || !db) return;
-  db.ref('wishlists').once('value', snap => {
-    if (!snap.exists()) {
-      el.textContent = 'Add items';
-      return;
-    }
-    let total = 0;
-    snap.forEach(u => {
-      u.forEach(() => total++);
+  // Gratitude — date-filtered
+  _hubUpdate('hub-grat-status', function(el) {
+    db.ref('gratitude').orderByChild('date').equalTo(localDate()).once('value', function(snap) {
+      if (!snap.exists()) { _hubBadge(el, 'Share today', 'pending'); return; }
+      var count = 0;
+      snap.forEach(function() { count++; });
+      _hubBadge(el, count + ' today', 'done');
     });
-    el.textContent = total + ' items';
-    el.className = 'hub-badge count';
   });
-}
 
-function updateHubGratitude() {
-  const el = document.getElementById('hub-grat-status');
-  if (!el || !db) return;
-  const today = localDate();
-  db.ref('gratitude')
-    .orderByChild('date')
-    .equalTo(today)
-    .once('value', snap => {
-      if (!snap.exists()) {
-        el.textContent = 'Share today';
-        el.className = 'hub-badge pending';
-        return;
-      }
-      let count = 0;
-      snap.forEach(() => count++);
-      el.textContent = count + ' today';
-      el.className = 'hub-badge done';
+  // Daily Question — both-user check with date key
+  _hubUpdate('hub-dq-status', function(el) {
+    _hubBothCheck(el, 'dailyAnswers/' + localDate(), 'New', 'Both answered', 'Waiting', 'Answer', 'new');
+  });
+
+  // Culture — multi-path sum
+  _hubUpdate('hub-cx-status', function(el) {
+    var total = 0;
+    Promise.all(['culture/phrases', 'culture/traditions', 'culture/recipes'].map(function(p) {
+      return db.ref(p).once('value').then(function(s) { if (s.exists()) s.forEach(function() { total++; }); });
+    })).then(function() { _hubBadge(el, total > 0 ? total + ' items' : 'Start'); });
+  });
+
+  // Foundation — simple count
+  _hubUpdate('hub-fdn-status', function(el) {
+    db.ref('foundation/values').once('value', function(snap) {
+      var count = 0;
+      if (snap.exists()) snap.forEach(function() { count++; });
+      _hubBadge(el, count > 0 ? count + ' values' : 'Define');
     });
-}
-
-function updateHubDQ() {
-  const el = document.getElementById('hub-dq-status');
-  if (!el || !db) return;
-  const today = localDate();
-  db.ref('dailyAnswers/' + today).once('value', snap => {
-    const data = snap.val();
-    if (!data) {
-      el.textContent = 'New';
-      el.className = 'hub-badge new';
-    } else if (data[user] && data[partner]) {
-      el.textContent = 'Both answered';
-      el.className = 'hub-badge done';
-    } else if (data[user]) {
-      el.textContent = 'Waiting';
-      el.className = 'hub-badge count';
-    } else {
-      el.textContent = 'Answer';
-      el.className = 'hub-badge pending';
-    }
   });
-}
 
-function updateHubCulture() {
-  const el = document.getElementById('hub-cx-status');
-  if (!el || !db) return;
-  let total = 0;
-  const promises = [
-    db
-      .ref('culture/phrases')
-      .once('value')
-      .then(s => {
-        if (s.exists()) s.forEach(() => total++);
-      }),
-    db
-      .ref('culture/traditions')
-      .once('value')
-      .then(s => {
-        if (s.exists()) s.forEach(() => total++);
-      }),
-    db
-      .ref('culture/recipes')
-      .once('value')
-      .then(s => {
-        if (s.exists()) s.forEach(() => total++);
-      })
-  ];
-  Promise.all(promises).then(() => {
-    el.textContent = total > 0 ? total + ' items' : 'Start';
-    el.className = 'hub-badge count';
-  });
-}
-
-function updateHubFoundation() {
-  const el = document.getElementById('hub-fdn-status');
-  if (!el || !db) return;
-  db.ref('foundation/values').once('value', snap => {
-    let count = 0;
-    if (snap.exists()) snap.forEach(() => count++);
-    el.textContent = count > 0 ? count + ' values' : 'Define';
-    el.className = 'hub-badge count';
-  });
-}
-
-function updateHubFamily() {
-  const el = document.getElementById('hub-fam-status');
-  if (!el || !db) return;
-  db.ref('family/names').once('value', snap => {
-    let count = 0;
-    if (snap.exists()) snap.forEach(() => count++);
-    el.textContent = count > 0 ? count + ' names' : 'Plan';
-    el.className = 'hub-badge count';
-  });
-}
-
-function updateHubHomeLife() {
-  const el = document.getElementById('hub-hl-status');
-  if (!el || !db) return;
-  db.ref('homelife/chores').once('value', snap => {
-    if (!snap.exists()) {
-      el.textContent = 'Set up';
-      return;
-    }
-    let total = 0,
-      done = 0;
-    snap.forEach(c => {
-      total++;
-      if (c.val().done) done++;
+  // Family — simple count
+  _hubUpdate('hub-fam-status', function(el) {
+    db.ref('family/names').once('value', function(snap) {
+      var count = 0;
+      if (snap.exists()) snap.forEach(function() { count++; });
+      _hubBadge(el, count > 0 ? count + ' names' : 'Plan');
     });
-    el.textContent = done + '/' + total + ' tasks';
-    el.className = done === total && total > 0 ? 'hub-badge done' : 'hub-badge count';
   });
-}
 
-function updateHubSpiritual() {
-  const el = document.getElementById('hub-sp-status');
-  if (!el || !db) return;
-  db.ref('spiritual/prayers')
-    .orderByChild('timestamp')
-    .limitToLast(1)
-    .once('value', snap => {
-      if (!snap.exists()) {
-        el.textContent = 'Reflect';
-        el.className = 'hub-badge count';
-        return;
-      }
-      let latest = null;
-      snap.forEach(c => (latest = c.val()));
-      if (latest) {
-        const ago = timeAgo(new Date(latest.timestamp));
-        el.textContent = ago;
-        el.className = 'hub-badge count';
-      }
+  // Home Life — done/total with 'done' key
+  _hubUpdate('hub-hl-status', function(el) {
+    _hubCount(el, 'homelife/chores', 'tasks', 'Set up', 'done');
+  });
+
+  // Spiritual — latest timestamp
+  _hubUpdate('hub-sp-status', function(el) {
+    db.ref('spiritual/prayers').orderByChild('timestamp').limitToLast(1).once('value', function(snap) {
+      if (!snap.exists()) { _hubBadge(el, 'Reflect'); return; }
+      var latest = null;
+      snap.forEach(function(c) { latest = c.val(); });
+      if (latest) _hubBadge(el, timeAgo(new Date(latest.timestamp)));
     });
-}
+  });
 
-function updateHubDateNight() {
-  const el = document.getElementById('hub-dn-status');
-  if (!el || !db) return;
-  db.ref('dateNights').once('value', snap => {
-    if (!snap.exists()) {
-      el.textContent = 'Spin the wheel';
-      return;
-    }
-    let saved = 0,
-      done = 0;
-    snap.forEach(c => {
-      if (c.val().done) done++;
-      else saved++;
+  // Date Night — saved vs done split
+  _hubUpdate('hub-dn-status', function(el) {
+    db.ref('dateNights').once('value', function(snap) {
+      if (!snap.exists()) { _hubBadge(el, 'Spin the wheel'); return; }
+      var saved = 0, done = 0;
+      snap.forEach(function(c) { if (c.val().done) done++; else saved++; });
+      _hubBadge(el, saved > 0 ? saved + ' saved' : done + ' completed');
     });
-    el.textContent = saved > 0 ? saved + ' saved' : done + ' completed';
   });
-}
 
-function updateHubDeepTalk() {
-  const el = document.getElementById('hub-dt-status');
-  if (!el || !db) return;
-  db.ref('deepTalkJournal').once('value', snap => {
-    if (!snap.exists()) {
-      el.textContent = 'Start a conversation';
-      return;
-    }
-    let count = 0;
-    snap.forEach(() => count++);
-    el.textContent = count + ' reflections';
+  // Deep Talk — simple count
+  _hubUpdate('hub-dt-status', function(el) {
+    db.ref('deepTalkJournal').once('value', function(snap) {
+      if (!snap.exists()) { _hubBadge(el, 'Start a conversation'); return; }
+      var count = 0;
+      snap.forEach(function() { count++; });
+      _hubBadge(el, count + ' reflections');
+    });
   });
-}
 
-function updateHubGames() {
-  const el = document.getElementById('hub-games-status');
-  if (!el) return;
-  const compatEl = document.getElementById('compat-score');
-  if (compatEl && compatEl.textContent !== '--') {
-    el.textContent = compatEl.textContent + ' match';
-    el.className = 'hub-badge done';
-  } else {
-    el.textContent = 'Play';
-    el.className = 'hub-badge count';
-  }
-}
+  // Games — reads from DOM, not Firebase
+  _hubUpdate('hub-games-status', function(el) {
+    var compatEl = document.getElementById('compat-score');
+    if (compatEl && compatEl.textContent !== '--') { _hubBadge(el, compatEl.textContent + ' match', 'done'); }
+    else { _hubBadge(el, 'Play'); }
+  });
 
-function updateHubLL() {
-  const el = document.getElementById('hub-ll-status');
-  if (!el || !db) return;
-  db.ref('loveLang').once('value', snap => {
-    const data = snap.val();
-    if (!data) {
-      el.textContent = 'Take quiz';
-      el.className = 'hub-badge pending';
-      return;
-    }
-    if (data[user] && data[partner]) {
-      el.textContent = 'Both done';
-      el.className = 'hub-badge done';
-    } else if (data[user]) {
-      el.textContent = "You're done";
-      el.className = 'hub-badge count';
-    } else {
-      el.textContent = 'Take quiz';
-      el.className = 'hub-badge pending';
-    }
+  // Love Language — both-user check
+  _hubUpdate('hub-ll-status', function(el) {
+    _hubBothCheck(el, 'loveLang', 'Take quiz', 'Both done', "You're done", 'Take quiz');
   });
 }
 

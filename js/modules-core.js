@@ -4,29 +4,16 @@ let selectedSleep = 0;
 let selectedStress = 0;
 let selectedTags = [];
 
-function selMood(val, el) {
-  selectedMood = val;
-  document.querySelectorAll('#mood-grid .pill-btn').forEach(b => b.classList.remove('sel'));
+function selGrid(gridId, val, el) {
+  var setters = { 'mood-grid': function(v) { selectedMood = v; }, 'energy-grid': function(v) { selectedEnergy = v; }, 'sleep-grid': function(v) { selectedSleep = v; }, 'stress-grid': function(v) { selectedStress = v; } };
+  if (setters[gridId]) setters[gridId](val);
+  document.querySelectorAll('#' + gridId + ' .pill-btn').forEach(b => b.classList.remove('sel'));
   el.classList.add('sel');
 }
-
-function selEnergy(val, el) {
-  selectedEnergy = val;
-  document.querySelectorAll('#energy-grid .pill-btn').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
-function selSleep(val, el) {
-  selectedSleep = val;
-  document.querySelectorAll('#sleep-grid .pill-btn').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
-function selStress(val, el) {
-  selectedStress = val;
-  document.querySelectorAll('#stress-grid .pill-btn').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
-}
+function selMood(val, el) { selGrid('mood-grid', val, el); }
+function selEnergy(val, el) { selGrid('energy-grid', val, el); }
+function selSleep(val, el) { selGrid('sleep-grid', val, el); }
+function selStress(val, el) { selGrid('stress-grid', val, el); }
 
 function toggleTag(el) {
   const tag = el.dataset.tag;
