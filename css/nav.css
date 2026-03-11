@@ -234,13 +234,6 @@
   color: var(--red, #b86438);
   text-align: center;
 }
-.welcome-bio-hint {
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: var(--t2, rgba(26, 26, 46, 0.7));
-  margin-bottom: 14px;
-  text-align: center;
-}
 .login h1 {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 300;

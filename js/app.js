@@ -256,8 +256,7 @@ async function doLogin() {
     if (needsOnboarding()) {
       showFirstLocationPrompt();
     } else {
-      // First manual login — go straight in but offer biometric setup
-      offerBiometricAfterLogin();
+      finishLogin();
     }
   } catch (e) {
     console.error('Login error:', e.code, e.message);
@@ -1519,13 +1518,7 @@ async function finishOnboarding(startTour) {
 
   document.getElementById('login').classList.remove('onboard-active');
   finishLogin();
-  // Force biometric setup after onboarding completes
-  var bioAvailable = await checkBiometricAvailable();
-  if (bioAvailable && !hasBiometricCredential()) {
-    setTimeout(function () {
-      showBiometricSetupModal();
-    }, 800);
-  } else if (startTour) {
+  if (startTour) {
     setTimeout(function () {
       startAppTour();
     }, 600);
@@ -1770,201 +1763,18 @@ function showWelcomeGate() {
       }
     });
   }
-  // Update biometric button state
-  updateBiometricUI();
-}
-
-// ===== BIOMETRIC / FACE ID AUTH =====
-var _biometricAvailable = false;
-
-function isBiometricSupported() {
-  return (
-    window.PublicKeyCredential !== undefined &&
-    typeof window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function'
-  );
-}
-
-async function checkBiometricAvailable() {
-  if (!isBiometricSupported()) return false;
-  try {
-    return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-  } catch (e) {
-    return false;
-  }
-}
-
-function hasBiometricCredential() {
-  try {
-    return !!localStorage.getItem('met_bio_cred_' + user);
-  } catch (e) {
-    return false;
-  }
-}
-
-// Register a WebAuthn credential after first successful login
-async function registerBiometric() {
-  if (!isBiometricSupported()) return false;
-  try {
-    var userId = new Uint8Array(16);
-    crypto.getRandomValues(userId);
-    var challenge = new Uint8Array(32);
-    crypto.getRandomValues(challenge);
-
-    var credential = await navigator.credentials.create({
-      publicKey: {
-        rp: { name: 'Moi et Toi', id: location.hostname },
-        user: {
-          id: userId,
-          name: authUser.email,
-          displayName: NAMES[user] || authUser.email
-        },
-        challenge: challenge,
-        pubKeyCredParams: [
-          { type: 'public-key', alg: -7 },
-          { type: 'public-key', alg: -257 }
-        ],
-        authenticatorSelection: {
-          authenticatorAttachment: 'platform',
-          userVerification: 'required'
-        },
-        timeout: 60000,
-        attestation: 'none'
-      }
-    });
-
-    if (credential) {
-      // Store credential ID for future verification
-      var credId = btoa(String.fromCharCode.apply(null, new Uint8Array(credential.rawId)));
-      localStorage.setItem('met_bio_cred_' + user, credId);
-      return true;
-    }
-  } catch (e) {
-    // Biometric registration skipped (user cancelled or unsupported)
-  }
-  return false;
-}
-
-// Verify biometric on returning session — accepts optional credId to avoid needing `user`
-async function verifyBiometric(credIdOverride) {
-  var credId = credIdOverride || localStorage.getItem('met_bio_cred_' + user);
-  if (!credId) return false;
-  try {
-    var rawId = Uint8Array.from(atob(credId), function (c) {
-      return c.charCodeAt(0);
-    });
-    var challenge = new Uint8Array(32);
-    crypto.getRandomValues(challenge);
-
-    var assertion = await navigator.credentials.get({
-      publicKey: {
-        challenge: challenge,
-        rpId: location.hostname,
-        allowCredentials: [
-          {
-            type: 'public-key',
-            id: rawId,
-            transports: ['internal']
-          }
-        ],
-        userVerification: 'required',
-        timeout: 60000
-      }
-    });
-    return !!assertion;
-  } catch (e) {
-    // If credential is permanently invalid, clear it so user can re-register
-    if (e.name === 'InvalidStateError' || e.name === 'SecurityError') {
-      console.log('Clearing invalid biometric credential:', e.name);
-      try {
-        localStorage.removeItem('met_bio_cred_her');
-      } catch (ex) {}
-      try {
-        localStorage.removeItem('met_bio_cred_him');
-      } catch (ex) {}
-    }
-    // NotAllowedError with no user cancellation can indicate a missing credential
-    // (e.g. device was wiped, Face ID re-enrolled) — log for diagnostics
-    if (e.name === 'NotAllowedError') {
-      console.log('Biometric not allowed — user may have cancelled or credential missing');
-    }
-    return false;
-  }
-}
-
-// Find stored biometric credential ID without needing the `user` variable
-function _findStoredCredId() {
-  try {
-    return localStorage.getItem('met_bio_cred_her') || localStorage.getItem('met_bio_cred_him') || null;
-  } catch (e) {
-    return null;
-  }
 }
 
 // Called when user taps Enter on welcome gate
-var _bioFailCount = 0;
 async function enterApp() {
   var enterBtn = document.getElementById('welcome-enter-btn');
   if (enterBtn) {
-    enterBtn.textContent = 'Verifying...';
+    enterBtn.textContent = 'Loading...';
     enterBtn.disabled = true;
   }
 
-  // Check for stored credential SYNCHRONOUSLY (no awaits that kill the gesture)
-  var storedCredId = _findStoredCredId();
-
-  if (storedCredId) {
-    // CRITICAL: call Face ID IMMEDIATELY — no awaits before this point
-    // Any async gap would consume the iOS user-gesture activation
-    var verified = await verifyBiometric(storedCredId);
-
-    if (verified) {
-      _bioFailCount = 0;
-      // Now wait for Firebase auth if needed (gesture no longer matters)
-      if (!user || !authUser) {
-        if (enterBtn) enterBtn.textContent = 'Loading...';
-        var waited = await _waitForAuth(8000);
-        if (!waited || !user || !authUser) {
-          // Auth failed — user session expired, fall back to login form
-          toast('Session expired — please sign in');
-          if (enterBtn) {
-            enterBtn.textContent = 'Enter';
-            enterBtn.disabled = false;
-          }
-          return;
-        }
-      }
-      finishLogin();
-      return;
-    }
-
-    // Verification failed or cancelled
-    _bioFailCount++;
-    if (_bioFailCount >= 2) {
-      // Wait for auth before showing bypass modal
-      if (!user || !authUser) await _waitForAuth(5000);
-      if (user && authUser) {
-        showBiometricBypassModal();
-      } else {
-        // Auth expired — just show login form
-        toast('Session expired — please sign in');
-        if (enterBtn) {
-          enterBtn.textContent = 'Enter';
-          enterBtn.disabled = false;
-        }
-      }
-    } else {
-      if (enterBtn) {
-        enterBtn.textContent = 'Try again';
-        enterBtn.disabled = false;
-      }
-      toast('Face ID required — tap to retry');
-    }
-    return;
-  }
-
-  // No stored credential — wait for auth first
+  // Wait for Firebase auth if not ready yet
   if (!user || !authUser) {
-    if (enterBtn) enterBtn.textContent = 'Loading...';
     var waited = await _waitForAuth(8000);
     if (!waited || !user || !authUser) {
       if (_authResolved) {
@@ -1980,20 +1790,7 @@ async function enterApp() {
     }
   }
 
-  // Try to register Face ID directly (prompts biometric immediately, no modal)
-  var bioAvailable = await checkBiometricAvailable();
-  _biometricAvailable = bioAvailable;
-
-  if (bioAvailable) {
-    var registered = await registerBiometric();
-    if (registered) {
-      toast('Face ID enabled!');
-    }
-    // Enter regardless — don't block the user if they cancel Face ID
-    finishLogin();
-  } else {
-    finishLogin();
-  }
+  finishLogin();
 }
 
 // Wait for Firebase auth to resolve (user/authUser to be set)
@@ -2020,155 +1817,6 @@ function _waitForAuth(timeout) {
       }
     }, 100);
   });
-}
-
-// Shown after repeated Face ID failures so the user isn't permanently locked out
-function showBiometricBypassModal() {
-  var modal = document.getElementById('generic-modal');
-  var content = document.getElementById('generic-modal-content');
-  if (!modal || !content) {
-    finishLogin();
-    return;
-  }
-  content.innerHTML =
-    '<div style="text-align:center;padding:8px 0">' +
-    '<div style="font-size:40px;margin-bottom:12px">🔓</div>' +
-    '<h2 style="font-size:18px;font-weight:600;color:var(--t1);margin:0 0 8px">Face ID not working?</h2>' +
-    '<p style="font-size:13px;color:var(--t2);line-height:1.5;margin:0 0 20px">Verification failed. You can retry Face ID, enter without it this time, or reset Face ID to set it up again.</p>' +
-    '<button class="dq-submit w-full" onclick="retryBiometricFromModal()" style="margin-bottom:10px">Retry Face ID</button>' +
-    '<button class="dq-submit w-full" onclick="bypassBiometric()" style="margin-bottom:10px;background:var(--input-bg);color:var(--t1)">Enter without Face ID</button>' +
-    '<div style="font-size:11px;color:var(--t3);cursor:pointer;padding:8px" onclick="resetBiometricAndEnter()">Reset Face ID</div>' +
-    '</div>';
-  modal.classList.add('on');
-  document.body.classList.add('modal-open');
-}
-
-async function retryBiometricFromModal() {
-  var modal = document.getElementById('generic-modal');
-  if (modal) modal.classList.remove('on');
-  document.body.classList.remove('modal-open');
-  // Use stored cred ID so it works even if `user` isn't set yet
-  var credId = _findStoredCredId();
-  var verified = await verifyBiometric(credId);
-  if (verified) {
-    _bioFailCount = 0;
-    if (!user || !authUser) await _waitForAuth(5000);
-    finishLogin();
-  } else {
-    toast('Verification failed');
-    showBiometricBypassModal();
-  }
-}
-
-function bypassBiometric() {
-  var modal = document.getElementById('generic-modal');
-  if (modal) modal.classList.remove('on');
-  document.body.classList.remove('modal-open');
-  _bioFailCount = 0;
-  if (!user || !authUser) {
-    _waitForAuth(5000).then(function () {
-      finishLogin();
-    });
-  } else {
-    finishLogin();
-  }
-}
-
-function resetBiometricAndEnter() {
-  // Clear both credentials so user can re-register next time
-  try {
-    localStorage.removeItem('met_bio_cred_her');
-  } catch (e) {}
-  try {
-    localStorage.removeItem('met_bio_cred_him');
-  } catch (e) {}
-  var modal = document.getElementById('generic-modal');
-  if (modal) modal.classList.remove('on');
-  document.body.classList.remove('modal-open');
-  _bioFailCount = 0;
-  toast('Face ID reset — you can set it up again in Settings');
-  if (!user || !authUser) {
-    _waitForAuth(5000).then(function () {
-      finishLogin();
-    });
-  } else {
-    finishLogin();
-  }
-}
-
-function updateBiometricUI() {
-  var bioHint = document.getElementById('welcome-bio-hint');
-  var enterBtn = document.getElementById('welcome-enter-btn');
-  checkBiometricAvailable().then(function (available) {
-    _biometricAvailable = available;
-    if (bioHint) {
-      if (available && hasBiometricCredential()) {
-        bioHint.textContent = 'Tap to verify with Face ID';
-        bioHint.style.display = '';
-      } else if (available && !hasBiometricCredential()) {
-        bioHint.textContent = 'Set up Face ID on entry';
-        bioHint.style.display = '';
-      } else {
-        bioHint.style.display = 'none';
-      }
-    }
-    if (enterBtn) {
-      enterBtn.textContent = 'Enter';
-      enterBtn.disabled = false;
-    }
-  });
-}
-
-// After first manual login, prompt Face ID registration directly then enter
-async function offerBiometricAfterLogin() {
-  var available = await checkBiometricAvailable();
-  if (available && !hasBiometricCredential()) {
-    var registered = await registerBiometric();
-    if (registered) {
-      toast('Face ID enabled!');
-    }
-  }
-  // Always enter — don't block the user if they cancel Face ID
-  finishLogin();
-}
-
-function showBiometricSetupModal() {
-  var modal = document.getElementById('generic-modal');
-  var content = document.getElementById('generic-modal-content');
-  if (!modal || !content) {
-    finishLogin();
-    return;
-  }
-  content.innerHTML =
-    '<div style="text-align:center;padding:8px 0">' +
-    '<div style="font-size:40px;margin-bottom:12px">🔐</div>' +
-    '<h2 style="font-size:18px;font-weight:600;color:var(--t1);margin:0 0 8px">Secure your space</h2>' +
-    '<p style="font-size:13px;color:var(--t2);line-height:1.5;margin:0 0 20px">Set up Face ID so only you can access Moi & Toi. This keeps your private world safe.</p>' +
-    '<button class="dq-submit w-full" onclick="handleBiometricSetup()" style="margin-bottom:8px">Enable Face ID</button>' +
-    '<div style="font-size:11px;color:var(--t3);cursor:pointer;padding:8px" onclick="skipBiometricSetup()">I\'ll do this later</div>' +
-    '</div>';
-  modal.classList.add('on');
-  document.body.classList.add('modal-open');
-}
-
-async function handleBiometricSetup() {
-  var modal = document.getElementById('generic-modal');
-  var registered = await registerBiometric();
-  if (modal) modal.classList.remove('on');
-  document.body.classList.remove('modal-open');
-  if (registered) {
-    toast('Face ID enabled! Your space is secure.');
-  } else {
-    toast('Face ID setup skipped');
-  }
-  finishLogin();
-}
-
-function skipBiometricSetup() {
-  var modal = document.getElementById('generic-modal');
-  if (modal) modal.classList.remove('on');
-  document.body.classList.remove('modal-open');
-  finishLogin();
 }
 
 function finishLogin() {
@@ -2331,8 +1979,6 @@ function finishLogin() {
   if (typeof initVoiceNotes === 'function') setTimeout(initVoiceNotes, 2000);
   // Update push notification button state
   updateNotifButton();
-  // Initialize biometric settings toggle
-  initBiometricSettings();
 }
 
 function switchUser() {
@@ -2444,36 +2090,6 @@ function switchSettingsTab(tab) {
   var pg = document.getElementById('pg-settings');
   if (pg) pg.scrollTop = 0;
   window.scrollTo({ top: 0 });
-}
-
-// ===== BIOMETRIC SETTINGS =====
-function initBiometricSettings() {
-  checkBiometricAvailable().then(function (available) {
-    var card = document.getElementById('biometric-settings-card');
-    var toggle = document.getElementById('set-biometric');
-    if (card && available) {
-      card.style.display = '';
-      if (toggle) toggle.checked = hasBiometricCredential();
-    }
-  });
-}
-
-async function toggleBiometricSetting(enabled) {
-  if (enabled) {
-    var registered = await registerBiometric();
-    if (registered) {
-      toast('Face ID enabled');
-    } else {
-      var toggle = document.getElementById('set-biometric');
-      if (toggle) toggle.checked = false;
-      toast('Could not enable Face ID');
-    }
-  } else {
-    try {
-      localStorage.removeItem('met_bio_cred_' + user);
-    } catch (e) {}
-    toast('Face ID disabled');
-  }
 }
 
 // ===== PUSH NOTIFICATIONS (#15) =====

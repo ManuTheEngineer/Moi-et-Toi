@@ -82,42 +82,12 @@
         />
         <button onclick="doLogin()" class="login-btn">Come in</button>
       </div>
-      <!-- Welcome gate (shown when already authenticated, with Face ID) -->
+      <!-- Welcome gate (shown when already authenticated) -->
       <div id="welcome-gate" class="login-inner d-none">
         <div class="welcome-photo" id="welcome-photo"></div>
         <div class="lbl" id="welcome-greeting"></div>
-        <div class="welcome-bio-hint" id="welcome-bio-hint" style="display: none"></div>
         <button onclick="enterApp()" class="login-btn" id="welcome-enter-btn">Enter</button>
       </div>
-      <script>
-        // Early biometric gate: if user has a stored biometric credential,
-        // immediately show the welcome gate instead of login form (avoids flash)
-        (function () {
-          try {
-            var hasHer = localStorage.getItem('met_bio_cred_her');
-            var hasHim = localStorage.getItem('met_bio_cred_him');
-            if (hasHer || hasHim) {
-              var form = document.getElementById('login-form');
-              var gate = document.getElementById('welcome-gate');
-              if (form) form.classList.add('d-none');
-              if (gate) gate.classList.remove('d-none');
-              var h = new Date().getHours();
-              var greet =
-                h < 5
-                  ? 'Good night'
-                  : h < 12
-                    ? 'Good morning'
-                    : h < 17
-                      ? 'Good afternoon'
-                      : h < 21
-                        ? 'Good evening'
-                        : 'Good night';
-              var el = document.getElementById('welcome-greeting');
-              if (el) el.textContent = greet;
-            }
-          } catch (e) {}
-        })();
-      </script>
       <!-- First-time location prompt (shown before onboarding) -->
       <div id="first-location-prompt" class="login-inner d-none">
         <h1 class="onboard-title">Your Living World</h1>
@@ -6895,18 +6865,6 @@
 
           <!-- TAB: Account -->
           <div class="stab-panel" id="stab-account">
-            <div class="form-card" id="biometric-settings-card" style="display: none">
-              <div class="settings-row mb-0">
-                <div>
-                  <span class="settings-label">Face ID / Biometric</span>
-                  <div class="form-hint mt-2">Quick unlock with Face ID or fingerprint</div>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" id="set-biometric" onchange="toggleBiometricSetting(this.checked)" />
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
             <div class="form-card">
               <div class="settings-row">
                 <span class="settings-label">AI API Key</span>
