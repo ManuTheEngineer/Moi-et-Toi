@@ -1599,12 +1599,18 @@ async function verifyBiometric() {
     });
     return !!assertion;
   } catch(e) {
-    console.log('Biometric verification failed:', e.message);
+    console.log('Biometric verification failed:', e.name, e.message);
+    // If credential is permanently invalid, clear it so user can re-register
+    if (e.name === 'InvalidStateError' || e.name === 'SecurityError') {
+      console.log('Clearing invalid biometric credential');
+      try { localStorage.removeItem('met_bio_cred_' + user); } catch(ex) {}
+    }
     return false;
   }
 }
 
 // Called when user taps Enter on welcome gate
+var _bioFailCount = 0;
 async function enterApp() {
   // Guard: wait for Firebase auth to complete and user to be set
   if (!user || !authUser) {
@@ -1626,23 +1632,81 @@ async function enterApp() {
   var hasBio = hasBiometricCredential();
 
   if (hasBio) {
-    // Returning user with biometric — verify with Face ID
+    // Returning user with biometric — prompt Face ID
     var verified = await verifyBiometric();
     if (verified) {
+      _bioFailCount = 0;
       finishLogin();
       return;
     }
-    // Verification failed or cancelled — let them retry
-    if (enterBtn) { enterBtn.textContent = 'Try again'; enterBtn.disabled = false; }
-    toast('Verification required to enter');
+    // Verification failed or cancelled
+    _bioFailCount++;
+    if (_bioFailCount >= 2) {
+      // After 2 failures, offer a bypass so user isn't locked out
+      showBiometricBypassModal();
+    } else {
+      if (enterBtn) { enterBtn.textContent = 'Try again'; enterBtn.disabled = false; }
+      toast('Face ID required — tap to retry');
+    }
     return;
   } else if (bioAvailable) {
-    // Biometric available but not registered — force setup
+    // Biometric available but not registered — prompt setup
     showBiometricSetupModal();
   } else {
     // No biometric support — just enter
     finishLogin();
   }
+}
+
+// Shown after repeated Face ID failures so the user isn't permanently locked out
+function showBiometricBypassModal() {
+  var modal = document.getElementById('generic-modal');
+  var content = document.getElementById('generic-modal-content');
+  if (!modal || !content) { finishLogin(); return; }
+  content.innerHTML =
+    '<div style="text-align:center;padding:8px 0">' +
+      '<div style="font-size:40px;margin-bottom:12px">🔓</div>' +
+      '<h2 style="font-size:18px;font-weight:600;color:var(--t1);margin:0 0 8px">Face ID not working?</h2>' +
+      '<p style="font-size:13px;color:var(--t2);line-height:1.5;margin:0 0 20px">Verification failed. You can retry Face ID, enter without it this time, or reset Face ID to set it up again.</p>' +
+      '<button class="dq-submit w-full" onclick="retryBiometricFromModal()" style="margin-bottom:10px">Retry Face ID</button>' +
+      '<button class="dq-submit w-full" onclick="bypassBiometric()" style="margin-bottom:10px;background:var(--input-bg);color:var(--t1)">Enter without Face ID</button>' +
+      '<div style="font-size:11px;color:var(--t3);cursor:pointer;padding:8px" onclick="resetBiometricAndEnter()">Reset Face ID</div>' +
+    '</div>';
+  modal.classList.add('on');
+  document.body.classList.add('modal-open');
+}
+
+async function retryBiometricFromModal() {
+  var modal = document.getElementById('generic-modal');
+  if (modal) modal.classList.remove('on');
+  document.body.classList.remove('modal-open');
+  var verified = await verifyBiometric();
+  if (verified) {
+    _bioFailCount = 0;
+    finishLogin();
+  } else {
+    toast('Verification failed');
+    showBiometricBypassModal();
+  }
+}
+
+function bypassBiometric() {
+  var modal = document.getElementById('generic-modal');
+  if (modal) modal.classList.remove('on');
+  document.body.classList.remove('modal-open');
+  _bioFailCount = 0;
+  finishLogin();
+}
+
+function resetBiometricAndEnter() {
+  // Clear the stored credential so user can re-register next time
+  try { localStorage.removeItem('met_bio_cred_' + user); } catch(e) {}
+  var modal = document.getElementById('generic-modal');
+  if (modal) modal.classList.remove('on');
+  document.body.classList.remove('modal-open');
+  _bioFailCount = 0;
+  toast('Face ID reset — you can set it up again in Settings');
+  finishLogin();
 }
 
 function updateBiometricUI() {
