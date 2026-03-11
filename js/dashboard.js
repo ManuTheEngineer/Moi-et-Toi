@@ -604,7 +604,7 @@ function renderDashCountdown() {
         pill.style.cssText =
           'padding:6px 14px;background:var(--tint);border-radius:20px;font-size:11px;color:var(--gold);white-space:nowrap;cursor:pointer';
         pill.textContent = nearestDays + 'd to ' + nearest.title;
-        pill.onclick = () => go('story');
+        pill.onclick = () => go('calendar');
         nudges.appendChild(pill);
       }
     }

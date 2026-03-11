@@ -870,18 +870,11 @@ function getWeekId() {
   return d.getFullYear() + '-W' + String(weekNum).padStart(2, '0');
 }
 
-function updCIEnergy() {
-  const v = document.getElementById('ci-energy').value;
-  const labels = ['', 'Distant', 'Low', 'Steady', 'Strong', 'Thriving'];
-  document.getElementById('ci-energy-val').textContent = labels[v];
-}
-
 async function submitCheckin() {
   if (!db || !user) return;
   const well = document.getElementById('ci-well').value.trim();
   const better = document.getElementById('ci-better').value.trim();
   const need = document.getElementById('ci-need').value.trim();
-  const energy = parseInt(document.getElementById('ci-energy').value);
   if (!well && !better && !need) {
     toast('Share at least one thought');
     return;
@@ -896,7 +889,6 @@ async function submitCheckin() {
     well,
     better,
     need,
-    energy,
     userName: NAMES[user],
     timestamp: Date.now()
   });
