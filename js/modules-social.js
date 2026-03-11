@@ -1382,7 +1382,7 @@ function renderMemory(data, key) {
     <span class="${user === 'him' ? 'me' : ''}">${NAMES.him}: ${data.scores?.him || 0}</span>
     <span class="${user === 'her' ? 'me' : ''}">${NAMES.her}: ${data.scores?.her || 0}</span>
   </div>`;
-  html += '<div class="mem-grid">';
+  html += '<div class="mm-grid">';
   for (let i = 0; i < 16; i++) {
     const shown = data.revealed[i] || data.matched[i];
     const matched = data.matched[i];

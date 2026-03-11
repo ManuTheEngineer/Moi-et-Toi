@@ -1,6 +1,5 @@
 /* ===== EXPLORE PAGE (reimagined More tab) ===== */
-.explore-header{padding:28px 0 16px;text-align:center}
-.explore-featured{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+/* .explore-header and .explore-featured defined in modules.css */
 .explore-feat{border-radius:22px;padding:20px 16px;color:#fff;position:relative;overflow:hidden;cursor:pointer;transition:all .25s;min-height:100px}
 .explore-feat:active{transform:scale(.97)}
 .explore-feat .ef-icon{font-size:28px;margin-bottom:8px}
