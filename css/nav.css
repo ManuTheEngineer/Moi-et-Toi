@@ -277,7 +277,7 @@ body.touring .bnav{z-index:3001}
 body.touring .bn{pointer-events:none}
 
 /* ===== SHELL ===== */
-.shell{display:none;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh;min-height:var(--real-h,100dvh);transition:padding-bottom .25s ease}
+.shell{display:none;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));min-height:100vh;min-height:100dvh;min-height:var(--real-h,100dvh);transition:padding-bottom .25s ease;position:relative;z-index:2}
 .shell.on{display:block}
 .ctn{max-width:480px;margin:0 auto;padding:4px 20px 32px;position:relative;z-index:1}
 

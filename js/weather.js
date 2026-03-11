@@ -2171,8 +2171,10 @@ function handleLocationAllow() {
       toast('Location enabled - fetching weather...');
       fetchWeather().then(function(data) {
         if (data) {
+          if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
           var container = document.getElementById('sky-scene');
           if (container && livingSkyEnabled) renderLivingSky(container);
+          if (typeof renderTerrain === 'function') renderTerrain();
           updateAmbientAudio();
           updateWeatherInfoUI();
           toast('Weather loaded: ' + Math.round(data.temp) + '° ' + data.condition);
@@ -2653,8 +2655,12 @@ function initWeatherSystem() {
       if (btn) btn.textContent = 'Refresh';
 
       fetchWeather().then(function() {
+        // Update time-of-day with real sunrise/sunset from location data
+        if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
         var container = document.getElementById('sky-scene');
         if (container && livingSkyEnabled) renderLivingSky(container);
+        // Re-render terrain to match updated time colors
+        if (typeof renderTerrain === 'function') renderTerrain();
         updateWeatherInfoUI();
         // Queue ambient audio - will play once AudioContext is unlocked by user gesture
         if (WEATHER.audioEnabled) {
@@ -2682,6 +2688,7 @@ function initWeatherSystem() {
       if (document.hidden) return;
       if (WEATHER.locationGranted) {
         fetchWeather().then(function() {
+          if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
           var container = document.getElementById('sky-scene');
           if (container && livingSkyEnabled) renderLivingSky(container);
           updateWeatherInfoUI();

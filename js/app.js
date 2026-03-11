@@ -109,10 +109,11 @@ async function init() {
         user = role;
         partner = role === 'her' ? 'him' : 'her';
         await loadProfiles();
-        // Load living sky preference (don't render yet — shell is hidden)
+        // Load living sky preference and render (sky-scene is outside shell, always visible)
         db.ref('settings/livingSky/' + role).once('value', snap => {
           var val = snap.val();
           livingSkyEnabled = val !== false;
+          if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
         });
         if (needsOnboarding()) {
           showFirstLocationPrompt();
@@ -198,10 +199,11 @@ async function doLogin() {
     user = role;
     partner = role === 'her' ? 'him' : 'her';
     await loadProfiles();
-    // Load living sky preference (don't render yet — shell is hidden)
+    // Load living sky preference and render (sky-scene is outside shell, always visible)
     db.ref('settings/livingSky/' + role).once('value', snap => {
       var val = snap.val();
       livingSkyEnabled = val !== false;
+      if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
     });
     if (needsOnboarding()) {
       showFirstLocationPrompt();
@@ -1253,16 +1255,15 @@ async function finishOnboarding(startTour) {
     try { await Notification.requestPermission(); } catch(e) {}
   }
 
-  // Living Sky — save settings but DON'T render yet (shell is hidden)
-  // finishLogin() will render after the shell is visible
+  // Living Sky — sky-scene is outside shell so it can render immediately
   livingSkyEnabled = onboardData.livingSky;
   await db.ref('settings/livingSky/' + user).set(onboardData.livingSky);
-  // Cache sky theme for finishLogin to pick up immediately
+  if (typeof setLivingSky === 'function') setLivingSky(onboardData.livingSky);
+
+  // Sky theme
   var skyTheme = onboardData.skyTheme || 'mixed';
   await db.ref('settings/skyTheme/' + user).set(skyTheme);
-  try { localStorage.setItem('met_sky_theme', skyTheme); } catch(e) {}
-  if (typeof currentSkyTheme !== 'undefined') currentSkyTheme = skyTheme;
-  document.body.setAttribute('data-sky-theme', skyTheme);
+  if (typeof applySkyTheme === 'function') applySkyTheme(skyTheme);
 
   // Nature sounds preference
   await db.ref('settings/natureSounds/' + user).set(onboardData.natureSoundsEnabled);
@@ -1619,7 +1620,9 @@ async function enterApp() {
     enterBtn.disabled = true;
   }
 
-  var needsBioSetup = _biometricAvailable && !hasBiometricCredential();
+  // Always check biometric availability fresh (don't rely on cached flag)
+  var bioAvailable = await checkBiometricAvailable();
+  _biometricAvailable = bioAvailable;
   var hasBio = hasBiometricCredential();
 
   if (hasBio) {
@@ -1633,8 +1636,8 @@ async function enterApp() {
     if (enterBtn) { enterBtn.textContent = 'Try again'; enterBtn.disabled = false; }
     toast('Verification required to enter');
     return;
-  } else if (needsBioSetup) {
-    // First time on this device — force biometric registration
+  } else if (bioAvailable) {
+    // Biometric available but not registered — force setup
     showBiometricSetupModal();
   } else {
     // No biometric support — just enter
@@ -1811,17 +1814,13 @@ function finishLogin() {
   if (typeof renderMoodSoundsGrid === 'function') renderMoodSoundsGrid();
   // Initialize weather system (must run after user/db are set)
   if (typeof initWeatherSystem === 'function') initWeatherSystem();
-  // Render sky/terrain NOW (shell is already visible), then re-render when Firebase theme loads
-  requestAnimationFrame(function() {
-    // Apply cached theme for instant sky
-    var cachedTheme = localStorage.getItem('met_sky_theme');
-    if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
-    // Render living sky and terrain immediately
-    if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
-    initDynamicVisuals();
-    // Then load the authoritative theme from Firebase (re-renders if different)
-    if (typeof loadSkyTheme === 'function') loadSkyTheme();
-  });
+  // Sky/terrain are now outside shell (position:fixed, always in DOM).
+  // Apply cached theme, render sky, then load authoritative theme from Firebase.
+  var cachedTheme = localStorage.getItem('met_sky_theme');
+  if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
+  if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
+  initDynamicVisuals();
+  if (typeof loadSkyTheme === 'function') loadSkyTheme();
   // AI Background Service — content curator, relationship monitor, etc.
   setTimeout(() => { if (typeof initAIBackgroundService === 'function') initAIBackgroundService(); }, 5000);
   setTimeout(() => { if (typeof loadAIDailyContent === 'function') loadAIDailyContent(); }, 3000);

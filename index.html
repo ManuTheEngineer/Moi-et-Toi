@@ -226,17 +226,14 @@
   <div id="login-err" class="login-err"></div>
 </div>
 
+<!-- Sky/terrain/particles are OUTSIDE the shell so they render regardless of shell display state -->
+<!-- They use position:fixed so DOM position doesn't affect layout -->
+<div class="sky-scene" id="sky-scene"></div>
+<div class="terrain-scene" id="terrain-scene"></div>
+<div class="particles" id="particles"></div>
+
 <!-- ===== APP SHELL ===== -->
 <div class="shell" id="shell">
-
-<!-- Sky Scene (moon/stars or sun/clouds) -->
-<div class="sky-scene" id="sky-scene"></div>
-
-<!-- Terrain Scene (environment silhouettes - mountains, beach, meadow) -->
-<div class="terrain-scene" id="terrain-scene"></div>
-
-<!-- Floating Particles -->
-<div class="particles" id="particles"></div>
 
 <!-- Page Header Bar -->
 <header class="page-header hidden" id="page-header">
