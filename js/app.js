@@ -1868,6 +1868,7 @@ function finishLogin() {
   listenDailyAnswers();
   listenStreak();
   listenGratitude();
+  if (typeof rotateGratPrompt === 'function') rotateGratPrompt();
   loadDailyQuestion();
   loadWYR();
   listenQuiz();

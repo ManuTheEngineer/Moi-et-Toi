@@ -94,28 +94,6 @@ function submitKYPEdit(field) {
   toast('Saved');
 }
 
-async function addKYPDate() {
-  const label = document.getElementById('kyp-date-label').value.trim();
-  const date = document.getElementById('kyp-date-val').value;
-  if (!label || !date) {
-    toast('Enter label and date');
-    return;
-  }
-  await db.ref('knowYou/dates').push({ label, date, user, timestamp: Date.now() });
-  document.getElementById('kyp-date-label').value = '';
-  toast('Date saved');
-  // Auto-add to calendar
-  await db.ref('calendar').push({
-    title: label,
-    date,
-    type: 'recurring',
-    notes: 'From Know Your Person',
-    createdBy: user,
-    timestamp: Date.now()
-  });
-  awardXP(5);
-}
-
 function renderKYPDates() {
   const container = document.getElementById('kyp-dates');
   if (!container) return;
