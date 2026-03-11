@@ -1673,12 +1673,11 @@ async function enterApp() {
     return;
   }
 
-  // No stored credential — wait for auth, then check if biometric setup is available
+  // No stored credential — wait for auth first
   if (!user || !authUser) {
     if (enterBtn) enterBtn.textContent = 'Loading...';
     var waited = await _waitForAuth(8000);
     if (!waited || !user || !authUser) {
-      // Auth resolved but no user — session expired
       if (_authResolved) {
         toast('Session expired — please sign in');
       } else {
@@ -1689,11 +1688,17 @@ async function enterApp() {
     }
   }
 
+  // Try to register Face ID directly (prompts biometric immediately, no modal)
   var bioAvailable = await checkBiometricAvailable();
   _biometricAvailable = bioAvailable;
 
   if (bioAvailable) {
-    showBiometricSetupModal();
+    var registered = await registerBiometric();
+    if (registered) {
+      toast('Face ID enabled!');
+    }
+    // Enter regardless — don't block the user if they cancel Face ID
+    finishLogin();
   } else {
     finishLogin();
   }
@@ -1800,15 +1805,17 @@ function updateBiometricUI() {
   });
 }
 
-// After first manual login, force biometric registration before entering the app
+// After first manual login, prompt Face ID registration directly then enter
 async function offerBiometricAfterLogin() {
   var available = await checkBiometricAvailable();
   if (available && !hasBiometricCredential()) {
-    // Force biometric registration — show a modal the user must complete
-    showBiometricSetupModal();
-  } else {
-    finishLogin();
+    var registered = await registerBiometric();
+    if (registered) {
+      toast('Face ID enabled!');
+    }
   }
+  // Always enter — don't block the user if they cancel Face ID
+  finishLogin();
 }
 
 function showBiometricSetupModal() {
