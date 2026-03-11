@@ -468,11 +468,46 @@ function computeRelationshipHealth() {
     else if (pct >= 20) { if (labelEl) labelEl.textContent = 'Warming up'; if (tipEl) tipEl.textContent = 'Check in with each other today'; }
     else { if (labelEl) labelEl.textContent = 'Getting started'; if (tipEl) tipEl.textContent = 'Start with a mood check-in'; }
 
+    // Compare against relationship baseline from onboarding
+    renderBaselineProgress(pct);
+
     // Store weekly snapshot
     storeWeeklyAnalytics(pct);
 
     MET._listeners.forEach(fn => fn('relationship'));
   });
+}
+
+// ===== RELATIONSHIP BASELINE PROGRESS =====
+function renderBaselineProgress(currentPct) {
+  var tipEl = document.getElementById('dash-pulse-tip');
+  if (!tipEl || !db) return;
+  var bl = window._relBaselines;
+  if (!bl) return;
+  // Average both partners' baseline ratings (1-10 scale)
+  var ratings = [];
+  ['her', 'him'].forEach(function(r) {
+    if (bl[r] && bl[r].relationship) {
+      var rel = bl[r].relationship;
+      var avg = 0, count = 0;
+      if (rel.communication) { avg += rel.communication; count++; }
+      if (rel.qualityTime) { avg += rel.qualityTime; count++; }
+      if (rel.connection) { avg += rel.connection; count++; }
+      if (count) ratings.push((avg / count) * 10); // Convert 1-10 to 10-100%
+    }
+  });
+  if (!ratings.length) return;
+  var baselinePct = Math.round(ratings.reduce(function(a, b) { return a + b; }, 0) / ratings.length);
+  var diff = currentPct - baselinePct;
+  // Show progress from baseline in the tip
+  if (diff > 5) {
+    tipEl.textContent = 'Up ' + diff + ' points from where you started';
+    tipEl.style.color = 'var(--emerald)';
+  } else if (diff < -5) {
+    tipEl.textContent = 'Down ' + Math.abs(diff) + ' points from where you started';
+    tipEl.style.color = 'var(--rose)';
+  }
+  // If close to baseline, keep the default tip message
 }
 
 // ===== WEEKLY ANALYTICS SNAPSHOT =====
@@ -844,4 +879,56 @@ function updateMoodPageAnalytics() {
   // Update Me dashboard stats if visible
   const meAvg = document.getElementById('dash-me-mood-avg');
   if (meAvg && stats.avg30d) meAvg.textContent = stats.avg30d;
+
+  // Show mood baseline comparison (from onboarding)
+  renderMoodBaseline(u, stats);
+}
+
+function renderMoodBaseline(u, stats) {
+  var card = document.getElementById('mood-baseline-card');
+  if (!card || !db) return;
+  var bl = window._relBaselines && window._relBaselines[u] && window._relBaselines[u].mood;
+  if (!bl) {
+    // Try loading if not cached yet
+    db.ref('baselines/' + u + '/mood').once('value', function(snap) {
+      var data = snap.val();
+      if (!data) return;
+      if (!window._relBaselines) window._relBaselines = {};
+      if (!window._relBaselines[u]) window._relBaselines[u] = {};
+      window._relBaselines[u].mood = data;
+      renderMoodBaseline(u, stats);
+    });
+    return;
+  }
+
+  card.style.display = '';
+  var moodLabels = ['', 'Low', 'Okay', 'Good', 'Great', 'Amazing'];
+  var energyLabels = ['', 'Drained', 'Tired', 'Normal', 'Energized', 'On Fire'];
+  var stressLabels = ['', 'Calm', 'Low', 'Moderate', 'High', 'Overwhelmed'];
+
+  var blMood = document.getElementById('mood-bl-mood');
+  var blEnergy = document.getElementById('mood-bl-energy');
+  var blStress = document.getElementById('mood-bl-stress');
+  var blProgress = document.getElementById('mood-bl-progress');
+
+  if (blMood) blMood.textContent = moodLabels[bl.mood] || bl.mood;
+  if (blEnergy) blEnergy.textContent = energyLabels[bl.energy] || bl.energy;
+  if (blStress) blStress.textContent = stressLabels[bl.stress] || bl.stress;
+
+  // Compare current average to baseline
+  if (blProgress && stats && stats.avg30d) {
+    var currentAvg = parseFloat(stats.avg30d);
+    var baselineMood = bl.mood || 3;
+    var diff = currentAvg - baselineMood;
+    if (diff > 0.3) {
+      blProgress.textContent = 'Your mood has improved since you started';
+      blProgress.style.color = 'var(--emerald)';
+    } else if (diff < -0.3) {
+      blProgress.textContent = 'Your mood has dipped since you started';
+      blProgress.style.color = 'var(--rose)';
+    } else {
+      blProgress.textContent = 'Your mood is steady since you started';
+      blProgress.style.color = 'var(--t3)';
+    }
+  }
 }

@@ -433,6 +433,53 @@ function renderDashHero() {
       }
     });
   }
+
+  // Birthday countdown — show days until partner's next birthday
+  var bdayCard = document.getElementById('dash-birthday-card');
+  var bdayNum = document.getElementById('dash-birthday-num');
+  var bdayLabel = document.getElementById('dash-birthday-label');
+  if (bdayCard && bdayNum && db) {
+    db.ref('settings/birthday/' + partner).once('value', function(snap) {
+      var bday = snap.val();
+      if (!bday) return;
+      var parts = bday.split('-');
+      var now = new Date();
+      var thisYear = now.getFullYear();
+      var next = new Date(thisYear, parseInt(parts[1]) - 1, parseInt(parts[2]));
+      if (next <= now) next.setFullYear(thisYear + 1);
+      var days = Math.ceil((next - now) / 86400000);
+      bdayCard.style.display = '';
+      if (days === 0) {
+        bdayNum.textContent = '🎂';
+        bdayLabel.textContent = NAMES[partner] + "'s Birthday!";
+      } else {
+        bdayNum.textContent = days;
+        bdayLabel.textContent = days <= 7 ? NAMES[partner] + "'s Bday" : 'Partner Bday';
+      }
+    });
+    // Also show own birthday countdown
+    db.ref('settings/birthday/' + user).once('value', function(snap) {
+      var bday = snap.val();
+      if (!bday) return;
+      var parts = bday.split('-');
+      var now = new Date();
+      var thisYear = now.getFullYear();
+      var next = new Date(thisYear, parseInt(parts[1]) - 1, parseInt(parts[2]));
+      if (next <= now) next.setFullYear(thisYear + 1);
+      var days = Math.ceil((next - now) / 86400000);
+      // If own birthday is sooner or partner's isn't set, show own
+      var currentDays = parseInt(bdayNum.textContent);
+      if (days === 0) {
+        bdayCard.style.display = '';
+        bdayNum.textContent = '🎂';
+        bdayLabel.textContent = 'Happy Birthday!';
+      } else if (isNaN(currentDays) || days < currentDays) {
+        bdayCard.style.display = '';
+        bdayNum.textContent = days;
+        bdayLabel.textContent = 'Your Birthday';
+      }
+    });
+  }
 }
 
 // ===== DASHBOARD NUDGES (unread letters, actions needed) =====

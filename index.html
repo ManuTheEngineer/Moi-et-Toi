@@ -324,6 +324,10 @@
           <div class="stat-mini-num gold" id="dash-together-num">--</div>
           <div class="stat-mini-label">Days Together</div>
         </div>
+        <div class="stat-mini" id="dash-birthday-card" style="display:none">
+          <div class="stat-mini-num gold" id="dash-birthday-num">--</div>
+          <div class="stat-mini-label" id="dash-birthday-label">Birthday</div>
+        </div>
         <div class="stat-mini cursor-pointer" onclick="event.stopPropagation();go('mood')">
           <div id="dash-sparkline" class="w-full" style="height:24px"></div>
           <div class="stat-mini-label">This Week</div>
@@ -915,6 +919,25 @@
       <div class="mood-stat-num" id="mood-trend-dir">--</div>
       <div class="mood-stat-label">Trend</div>
     </div>
+  </div>
+
+  <!-- Baseline comparison (from onboarding) -->
+  <div id="mood-baseline-card" class="mood-sync-card" style="display:none">
+    <div class="mood-stat-row grid-3">
+      <div class="mood-stat-box">
+        <div class="mood-stat-num" id="mood-bl-mood">--</div>
+        <div class="mood-stat-label">Mood at Start</div>
+      </div>
+      <div class="mood-stat-box">
+        <div class="mood-stat-num" id="mood-bl-energy">--</div>
+        <div class="mood-stat-label">Energy at Start</div>
+      </div>
+      <div class="mood-stat-box">
+        <div class="mood-stat-num" id="mood-bl-stress">--</div>
+        <div class="mood-stat-label">Stress at Start</div>
+      </div>
+    </div>
+    <div class="mood-stat-label" id="mood-bl-progress" style="text-align:center;margin-top:8px;font-size:12px"></div>
   </div>
 
   <div class="mood-sync-card" id="mood-sync-card">
