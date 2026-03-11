@@ -120,15 +120,15 @@ async function init() {
     );
   }
 
-  // Load email-to-role mapping from Firebase (keeps emails out of source code)
-  await loadEmailMap();
+  // Load email-to-role mapping (non-blocking — auth listener must register ASAP)
+  loadEmailMap();
 
   // Check if already signed in
   firebase.auth().onAuthStateChanged(async fbUser => {
     if (fbUser) {
       _authResolved = true;
       authUser = fbUser;
-      // Retry loading email map if it's empty — Firebase rules may require auth
+      // Ensure email map is loaded (may need auth for Firebase rules)
       if (Object.keys(EMAIL_MAP).length === 0) {
         await loadEmailMap();
       }
@@ -183,6 +183,15 @@ async function init() {
       showEl('login-form');
     }
   });
+
+  // Safety net: if still stuck on loading after 10s, show login form
+  setTimeout(function () {
+    if (!user && !authUser) {
+      _authResolved = true;
+      hideEl('login-loading');
+      showEl('login-form');
+    }
+  }, 10000);
 }
 
 // Load email-to-role mapping from Firebase, with localStorage fallback.
