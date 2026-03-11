@@ -44,6 +44,11 @@ body.sky-off::before{animation-play-state:paused!important}
 .sky-scene{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;transition:opacity 1.5s ease;
   -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%);
   mask-image:linear-gradient(to bottom,#000 0%,#000 35%,transparent 70%)}
+/* Night/evening: extend sky visibility for stars and moon */
+body[data-time="night"] .sky-scene,
+body[data-time="evening"] .sky-scene{
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 50%,transparent 85%);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 50%,transparent 85%)}
 
 /* Atmospheric depth layers */
 .sky-atmo{position:absolute;inset:0;pointer-events:none}
