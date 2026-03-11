@@ -109,11 +109,10 @@ async function init() {
         user = role;
         partner = role === 'her' ? 'him' : 'her';
         await loadProfiles();
-        // Load living sky preference
+        // Load living sky preference (don't render yet — shell is hidden)
         db.ref('settings/livingSky/' + role).once('value', snap => {
           var val = snap.val();
           livingSkyEnabled = val !== false;
-          setLivingSky(livingSkyEnabled);
         });
         if (needsOnboarding()) {
           showFirstLocationPrompt();
@@ -199,11 +198,10 @@ async function doLogin() {
     user = role;
     partner = role === 'her' ? 'him' : 'her';
     await loadProfiles();
-    // Load living sky preference
+    // Load living sky preference (don't render yet — shell is hidden)
     db.ref('settings/livingSky/' + role).once('value', snap => {
       var val = snap.val();
       livingSkyEnabled = val !== false;
-      setLivingSky(livingSkyEnabled);
     });
     if (needsOnboarding()) {
       showFirstLocationPrompt();
@@ -794,7 +792,7 @@ function renderOnboardStep() {
       document.getElementById('ob-morning-toggle').checked = onboardData.morningMsgEnabled;
       var customTA = document.getElementById('ob-morning-custom');
       if (customTA) { customTA.style.display = ''; customTA.value = onboardData.morningCustomMsg; }
-      // Show preview: what your partner will see (signed with YOUR nickname for them)
+      // Show preview: what partner will see, signed with the nickname you gave them
       var preview = document.getElementById('ob-morning-preview');
       if (preview) {
         var sampleMsgs = [
@@ -803,19 +801,9 @@ function renderOnboardStep() {
           "You're the first thing on my mind today, and every day."
         ];
         var sample = sampleMsgs[Math.floor(Math.random() * sampleMsgs.length)];
-        // "from" = your nickname (what you call your partner) — this is what they'll see
         var yourNick = onboardData.nickname || 'your love';
-        // Also show what YOU'LL see: signed with partner's nickname for you (live from their onboarding)
-        var theirNick = obPartnerData.nickname || '';
-        var previewHTML = '<div class="ob-morning-preview-label">What ' + esc(pNick) + ' will see:</div>';
-        previewHTML += '<div class="ob-morning-quote">"' + sample + '"</div>';
-        previewHTML += '<div class="ob-morning-from">\u2014 ' + esc(yourNick) + '</div>';
-        if (theirNick) {
-          previewHTML += '<div class="ob-morning-preview-label" style="margin-top:12px">What you\'ll see:</div>';
-          previewHTML += '<div class="ob-morning-quote">"' + sampleMsgs[(Math.floor(Math.random() * sampleMsgs.length) + 1) % sampleMsgs.length] + '"</div>';
-          previewHTML += '<div class="ob-morning-from">\u2014 ' + esc(theirNick) + '</div>';
-        }
-        preview.innerHTML = previewHTML;
+        preview.innerHTML = '<div class="ob-morning-quote">\u201C' + sample + '\u201D</div>' +
+          '<div class="ob-morning-from">\u2014 ' + esc(yourNick) + '</div>';
       }
       btn.textContent = 'Next';
     }
@@ -1265,14 +1253,16 @@ async function finishOnboarding(startTour) {
     try { await Notification.requestPermission(); } catch(e) {}
   }
 
-  // Living Sky
+  // Living Sky — save settings but DON'T render yet (shell is hidden)
+  // finishLogin() will render after the shell is visible
   livingSkyEnabled = onboardData.livingSky;
   await db.ref('settings/livingSky/' + user).set(onboardData.livingSky);
-  setLivingSky(onboardData.livingSky);
-
-  // Sky theme
-  await db.ref('settings/skyTheme/' + user).set(onboardData.skyTheme || 'mixed');
-  if (typeof applySkyTheme === 'function') applySkyTheme(onboardData.skyTheme || 'mixed');
+  // Cache sky theme for finishLogin to pick up immediately
+  var skyTheme = onboardData.skyTheme || 'mixed';
+  await db.ref('settings/skyTheme/' + user).set(skyTheme);
+  try { localStorage.setItem('met_sky_theme', skyTheme); } catch(e) {}
+  if (typeof currentSkyTheme !== 'undefined') currentSkyTheme = skyTheme;
+  document.body.setAttribute('data-sky-theme', skyTheme);
 
   // Nature sounds preference
   await db.ref('settings/natureSounds/' + user).set(onboardData.natureSoundsEnabled);
@@ -1723,15 +1713,9 @@ function skipBiometricSetup() {
 }
 
 function finishLogin() {
-  // Ensure time-of-day and sky theme are set BEFORE showing the shell
-  // so the background matches the login screen seamlessly
+  // Set time-of-day colors before showing shell
   if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
-  // Apply cached sky theme immediately for consistency
-  var cachedTheme = localStorage.getItem('met_sky_theme');
-  if (cachedTheme && typeof applySkyTheme === 'function') {
-    applySkyTheme(cachedTheme);
-  }
-  // Now show the shell — background should already match login
+  // Show the shell FIRST so sky/terrain render into a visible container
   document.getElementById('login').classList.add('h');
   document.getElementById('shell').classList.add('on');
   document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
@@ -1825,17 +1809,19 @@ function finishLogin() {
   listenGrowData();
   // Render sound grids personalized for user
   if (typeof renderMoodSoundsGrid === 'function') renderMoodSoundsGrid();
-  // Load sky theme FIRST, then initialize sky scene and weather system.
-  // This prevents the sky rendering with default theme before Firebase data loads.
-  if (typeof loadSkyTheme === 'function') loadSkyTheme();
   // Initialize weather system (must run after user/db are set)
   if (typeof initWeatherSystem === 'function') initWeatherSystem();
-  // Initialize sky scene after a short delay to let theme/weather load from Firebase
-  setTimeout(function() {
-    // Ensure living sky is on (re-initialize cleanly now that shell is visible)
+  // Render sky/terrain NOW (shell is already visible), then re-render when Firebase theme loads
+  requestAnimationFrame(function() {
+    // Apply cached theme for instant sky
+    var cachedTheme = localStorage.getItem('met_sky_theme');
+    if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
+    // Render living sky and terrain immediately
     if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
     initDynamicVisuals();
-  }, 500);
+    // Then load the authoritative theme from Firebase (re-renders if different)
+    if (typeof loadSkyTheme === 'function') loadSkyTheme();
+  });
   // AI Background Service — content curator, relationship monitor, etc.
   setTimeout(() => { if (typeof initAIBackgroundService === 'function') initAIBackgroundService(); }, 5000);
   setTimeout(() => { if (typeof loadAIDailyContent === 'function') loadAIDailyContent(); }, 3000);
