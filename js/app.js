@@ -158,12 +158,28 @@ async function init() {
         );
       }
     } else {
-      // Firebase may fire null initially while restoring a persisted session.
-      // Delay _authResolved so _waitForAuth keeps polling for the real callback.
+      // Firebase session expired or first load — try auto-login with saved credentials
+      try {
+        var saved = JSON.parse(localStorage.getItem('met_auto_login'));
+        if (saved && saved.e && saved.p) {
+          firebase
+            .auth()
+            .signInWithEmailAndPassword(saved.e, atob(saved.p))
+            .catch(function () {
+              // Saved credentials invalid — clear them and show login form
+              localStorage.removeItem('met_auto_login');
+              _authResolved = true;
+              showEl('login-form');
+              hideEl('welcome-gate');
+            });
+          return; // onAuthStateChanged will fire again with the user
+        }
+      } catch (e) {}
+      // No saved credentials — show login form after a short delay
+      // (Firebase may fire null initially while restoring a persisted session)
       setTimeout(function () {
         if (!user && !authUser) {
           _authResolved = true;
-          // Only show login form if still no user after delay
           showEl('login-form');
           hideEl('welcome-gate');
         }
@@ -227,6 +243,10 @@ async function doLogin() {
   try {
     const result = await firebase.auth().signInWithEmailAndPassword(email, pass);
     showError(''); // Clear any previous error message on successful login
+    // Save credentials so we can auto-login on cold start if Firebase session expires
+    try {
+      localStorage.setItem('met_auto_login', JSON.stringify({ e: email, p: btoa(pass) }));
+    } catch (e) {}
     authUser = result.user;
     // Reload email map now that we're authenticated (rules may require auth)
     if (Object.keys(EMAIL_MAP).length === 0) {
@@ -1983,11 +2003,17 @@ function finishLogin() {
 
 function switchUser() {
   fbOffAll();
+  try {
+    localStorage.removeItem('met_auto_login');
+  } catch (e) {}
   firebase.auth().signOut();
   location.reload();
 }
 function logout() {
   fbOffAll();
+  try {
+    localStorage.removeItem('met_auto_login');
+  } catch (e) {}
   firebase.auth().signOut();
   location.reload();
 }
