@@ -141,6 +141,153 @@ function showWelcomeGate() {
   const h = new Date().getHours();
   const timeLabel = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
   if (greeting) greeting.textContent = timeLabel + ', ' + (NAMES[user] || '');
+  // Show Face ID hint if biometrics available
+  updateBiometricHint();
+}
+
+// ===== BIOMETRIC (Face ID / Touch ID) =====
+
+function isBiometricAvailable() {
+  return window.PublicKeyCredential &&
+    typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function';
+}
+
+async function checkBiometricSupport() {
+  if (!isBiometricAvailable()) return false;
+  try {
+    return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+  } catch(e) { return false; }
+}
+
+function getBiometricCredId() {
+  try { return localStorage.getItem('met_bio_cred_' + user); } catch(e) { return null; }
+}
+
+function saveBiometricCredId(id) {
+  try { localStorage.setItem('met_bio_cred_' + user, id); } catch(e) {}
+}
+
+function arrayBufToBase64(buf) {
+  return btoa(String.fromCharCode(...new Uint8Array(buf)));
+}
+
+function base64ToArrayBuf(b64) {
+  const bin = atob(b64);
+  const buf = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+  return buf.buffer;
+}
+
+async function registerBiometric() {
+  const supported = await checkBiometricSupport();
+  if (!supported) return false;
+  try {
+    const userId = new TextEncoder().encode(authUser.uid);
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const credential = await navigator.credentials.create({
+      publicKey: {
+        challenge: challenge,
+        rp: { name: 'Manu & Taylor', id: location.hostname },
+        user: {
+          id: userId,
+          name: authUser.email,
+          displayName: NAMES[user] || authUser.email
+        },
+        pubKeyCredParams: [
+          { alg: -7, type: 'public-key' },
+          { alg: -257, type: 'public-key' }
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: 'platform',
+          userVerification: 'required',
+          residentKey: 'preferred'
+        },
+        timeout: 60000,
+        attestation: 'none'
+      }
+    });
+    if (credential && credential.rawId) {
+      saveBiometricCredId(arrayBufToBase64(credential.rawId));
+      return true;
+    }
+    return false;
+  } catch(e) {
+    console.log('Biometric registration skipped:', e.message);
+    return false;
+  }
+}
+
+async function verifyBiometric() {
+  const credId = getBiometricCredId();
+  if (!credId) return false;
+  try {
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge: challenge,
+        allowCredentials: [{
+          id: base64ToArrayBuf(credId),
+          type: 'public-key',
+          transports: ['internal']
+        }],
+        userVerification: 'required',
+        timeout: 60000
+      }
+    });
+    return !!assertion;
+  } catch(e) {
+    console.log('Biometric verification failed:', e.message);
+    return false;
+  }
+}
+
+async function updateBiometricHint() {
+  const hint = document.getElementById('bio-hint');
+  if (!hint) return;
+  const supported = await checkBiometricSupport();
+  if (supported) {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    hint.textContent = isIOS ? 'Face ID protected' : 'Biometric protected';
+    hint.style.display = '';
+  } else {
+    hint.style.display = 'none';
+  }
+}
+
+async function enterWithBiometric() {
+  const enterBtn = document.getElementById('enter-btn');
+  const supported = await checkBiometricSupport();
+
+  if (!supported) {
+    finishLogin();
+    return;
+  }
+
+  const credId = getBiometricCredId();
+
+  if (!credId) {
+    // First time: register biometric credential
+    if (enterBtn) { enterBtn.textContent = 'Setting up...'; enterBtn.disabled = true; }
+    const registered = await registerBiometric();
+    if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
+    if (registered) {
+      toast('Biometric set up successfully!');
+    }
+    finishLogin();
+    return;
+  }
+
+  // Returning user: verify with biometric
+  if (enterBtn) { enterBtn.textContent = 'Verifying...'; enterBtn.disabled = true; }
+  const verified = await verifyBiometric();
+  if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
+
+  if (verified) {
+    finishLogin();
+  } else {
+    showError('Verification failed. Try again.');
+  }
 }
 
 function finishLogin() {
