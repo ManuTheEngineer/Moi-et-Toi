@@ -1955,6 +1955,13 @@ function renderAINudges() {
 
 async function dismissAINudge(key) {
   if (!db) return;
+  // Animate out the card before removing
+  var btn = event && event.currentTarget;
+  var card = btn ? btn.closest('.ai-nudge-card') : null;
+  if (card) {
+    card.classList.add('nudge-dismiss');
+    card.addEventListener('animationend', function () { card.remove(); });
+  }
   await db.ref('ai/nudges/' + user + '/' + key + '/dismissed').set(true);
 }
 
