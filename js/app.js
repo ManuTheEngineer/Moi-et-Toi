@@ -342,16 +342,23 @@ function listenPartnerPhoto() {
 }
 
 function applyPartnerPhoto() {
-  const avatarEl = document.getElementById('dash-partner-avatar');
-  if (avatarEl) {
+  var els = [
+    document.getElementById('dash-partner-avatar'),
+    document.getElementById('set-partner-photo')
+  ];
+  els.forEach(function (el) {
+    if (!el) return;
     if (partnerPhoto) {
-      avatarEl.style.backgroundImage = 'url(' + partnerPhoto + ')';
-      avatarEl.classList.add('has-photo');
+      el.style.backgroundImage = 'url(' + partnerPhoto + ')';
+      el.classList.add('has-photo');
     } else {
-      avatarEl.style.backgroundImage = '';
-      avatarEl.classList.remove('has-photo');
+      el.style.backgroundImage = '';
+      el.classList.remove('has-photo');
     }
-  }
+  });
+  // Hide placeholder when photo is set
+  var placeholder = document.getElementById('set-photo-placeholder');
+  if (placeholder) placeholder.style.display = partnerPhoto ? 'none' : '';
 }
 
 // Change partner photo (daily update from dashboard)

@@ -7973,6 +7973,46 @@
   flex-direction: column;
   gap: 16px;
 }
+.settings-photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px 0 4px;
+}
+.settings-photo-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--input-bg);
+  border: 2px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  transition: all 0.3s;
+  overflow: hidden;
+}
+.settings-photo-avatar.has-photo {
+  border-style: solid;
+  border-color: rgba(184, 134, 11, 0.4);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+.settings-photo-avatar:active {
+  transform: scale(0.95);
+}
+.settings-photo-placeholder {
+  font-size: 28px;
+  color: var(--t3);
+  font-weight: 300;
+}
+.settings-photo-label {
+  font-size: 12px;
+  color: var(--t2);
+  letter-spacing: 0.3px;
+}
 .settings-field-group {
   display: flex;
   flex-direction: column;
@@ -8387,8 +8427,8 @@
   cursor: pointer;
 }
 .dash-partner-avatar {
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: var(--input-bg);
   display: flex;
