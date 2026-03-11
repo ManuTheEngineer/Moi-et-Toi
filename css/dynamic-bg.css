@@ -2152,7 +2152,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   left: -5%;
   right: -5%;
   height: 45%;
-  opacity: 0.45;
+  opacity: 0.7;
   transition: opacity 2s ease;
   clip-path: polygon(
     0% 100%, 0% 65%, 3% 58%, 6% 50%, 9% 42%, 11% 38%,
@@ -2177,7 +2177,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   left: -3%;
   right: -3%;
   height: 38%;
-  opacity: 0.50;
+  opacity: 0.75;
   transition: opacity 2s ease;
   clip-path: polygon(
     0% 100%, 0% 70%, 4% 62%, 7% 55%, 10% 48%,
@@ -2204,7 +2204,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   left: -2%;
   right: -2%;
   height: 28%;
-  opacity: 0.50;
+  opacity: 0.8;
   transition: opacity 2s ease;
   clip-path: polygon(
     0% 100%, 0% 50%,
@@ -2242,21 +2242,21 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   left: 0;
   right: 0;
   height: 18%;
-  opacity: 0.30;
-  background: linear-gradient(180deg, transparent 0%, rgba(200,210,220,0.6) 40%, rgba(220,230,240,0.4) 70%, transparent 100%);
+  opacity: 0.5;
+  background: linear-gradient(180deg, transparent 0%, rgba(200,210,220,0.7) 40%, rgba(220,230,240,0.5) 70%, transparent 100%);
   animation: mistDrift 25s ease-in-out infinite alternate;
 }
 @keyframes mistDrift {
-  0% { transform: translateX(-3%) scaleY(0.9); opacity: 0.10; }
-  100% { transform: translateX(3%) scaleY(1.1); opacity: 0.16; }
+  0% { transform: translateX(-3%) scaleY(0.9); opacity: 0.2; }
+  100% { transform: translateX(3%) scaleY(1.1); opacity: 0.35; }
 }
 
 /* Waterfall - thin animated streak on a mountain face */
 .terrain-waterfall {
   position: absolute;
-  width: 2px;
+  width: 3px;
   height: 12%;
-  opacity: 0.50;
+  opacity: 0.7;
   overflow: hidden;
 }
 .terrain-waterfall::before {
@@ -2297,7 +2297,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   bottom: 0;
   width: 0;
   height: 0;
-  opacity: 0.50;
+  opacity: 0.75;
 }
 .terrain-pine::before {
   content: '';
@@ -2331,7 +2331,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   left: -5%;
   right: -5%;
   height: 30%;
-  opacity: 0.50;
+  opacity: 0.8;
   transition: opacity 2s ease;
 }
 .terrain-ocean-body {
@@ -2351,7 +2351,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   left: -10%;
   right: -10%;
   height: 8px;
-  opacity: 0.55;
+  opacity: 0.75;
   border-radius: 50%;
 }
 .terrain-wave-1 {
@@ -2405,18 +2405,18 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   bottom: 0;
   left: 0;
   right: 0;
-  height: 10%;
+  height: 12%;
   background: linear-gradient(180deg,
-    rgba(220,195,150,0.35) 0%,
-    rgba(230,205,165,0.45) 40%,
-    rgba(240,215,175,0.50) 100%);
+    rgba(220,195,150,0.5) 0%,
+    rgba(230,205,165,0.65) 40%,
+    rgba(240,215,175,0.75) 100%);
 }
 
 /* Palm tree silhouette */
 .terrain-palm {
   position: absolute;
   bottom: 0;
-  opacity: 0.50;
+  opacity: 0.75;
 }
 .terrain-palm-trunk {
   position: absolute;
@@ -2496,7 +2496,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   left: -5%;
   right: -5%;
   height: 22%;
-  opacity: 0.40;
+  opacity: 0.65;
   border-radius: 60% 50% 0 0;
   transition: opacity 2s ease;
 }
@@ -2506,7 +2506,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   left: -3%;
   right: -3%;
   height: 18%;
-  opacity: 0.45;
+  opacity: 0.7;
   border-radius: 45% 55% 0 0;
   transition: opacity 2s ease;
 }
@@ -2516,7 +2516,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   left: -2%;
   right: -2%;
   height: 14%;
-  opacity: 0.45;
+  opacity: 0.75;
   border-radius: 50% 50% 0 0;
   transition: opacity 2s ease;
 }
@@ -2525,7 +2525,7 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
 .terrain-tree {
   position: absolute;
   bottom: 0;
-  opacity: 0.45;
+  opacity: 0.7;
 }
 .terrain-tree-trunk {
   position: absolute;
@@ -2553,8 +2553,8 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
 }
 .terrain-flower-dot {
   position: absolute;
-  width: 3px;
-  height: 3px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   animation: flowerSway 4s ease-in-out infinite alternate;
 }
@@ -2569,10 +2569,10 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
   bottom: 0;
   left: 0;
   right: 0;
-  height: 4%;
+  height: 5%;
   background: repeating-linear-gradient(90deg,
     transparent 0px, transparent 3px,
-    rgba(80,140,40,0.20) 3px, rgba(80,140,40,0.20) 4px);
+    rgba(80,140,40,0.35) 3px, rgba(80,140,40,0.35) 4px);
   animation: grassWave 5s ease-in-out infinite alternate;
 }
 @keyframes grassWave {
@@ -2583,61 +2583,61 @@ body[data-sky-theme="mountain"][data-time="evening"] .particle { --particle-colo
 /* ===== TERRAIN TIME-OF-DAY COLORS ===== */
 
 /* Mountain colors by time */
-body[data-time="dawn"] .terrain-mountain-far { background: rgba(80,60,100,0.8); }
-body[data-time="dawn"] .terrain-mountain-mid { background: rgba(60,80,70,0.7); }
-body[data-time="dawn"] .terrain-mountain-near { background: rgba(30,60,35,0.7); }
-body[data-time="dawn"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(255,180,160,0.3), transparent); }
-body[data-time="dawn"] .terrain-waterfall::before { background: linear-gradient(180deg, transparent, rgba(255,200,220,0.6), transparent); }
+body[data-time="dawn"] .terrain-mountain-far { background: rgba(80,60,100,0.95); }
+body[data-time="dawn"] .terrain-mountain-mid { background: rgba(60,80,70,0.9); }
+body[data-time="dawn"] .terrain-mountain-near { background: rgba(30,60,35,0.9); }
+body[data-time="dawn"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(255,180,160,0.45), transparent); }
+body[data-time="dawn"] .terrain-waterfall::before { background: linear-gradient(180deg, transparent, rgba(255,200,220,0.7), transparent); }
 
-body[data-time="morning"] .terrain-mountain-far { background: rgba(100,120,140,0.7); }
-body[data-time="morning"] .terrain-mountain-mid { background: rgba(60,100,60,0.7); }
-body[data-time="morning"] .terrain-mountain-near { background: rgba(30,70,30,0.7); }
-body[data-time="morning"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(220,230,240,0.4), transparent); }
+body[data-time="morning"] .terrain-mountain-far { background: rgba(100,120,140,0.9); }
+body[data-time="morning"] .terrain-mountain-mid { background: rgba(60,100,60,0.9); }
+body[data-time="morning"] .terrain-mountain-near { background: rgba(30,70,30,0.9); }
+body[data-time="morning"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(220,230,240,0.5), transparent); }
 
-body[data-time="afternoon"] .terrain-mountain-far { background: rgba(90,110,140,0.6); }
-body[data-time="afternoon"] .terrain-mountain-mid { background: rgba(50,90,60,0.65); }
-body[data-time="afternoon"] .terrain-mountain-near { background: rgba(30,65,30,0.65); }
-body[data-time="afternoon"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(200,220,240,0.3), transparent); }
+body[data-time="afternoon"] .terrain-mountain-far { background: rgba(90,110,140,0.85); }
+body[data-time="afternoon"] .terrain-mountain-mid { background: rgba(50,90,60,0.85); }
+body[data-time="afternoon"] .terrain-mountain-near { background: rgba(30,65,30,0.85); }
+body[data-time="afternoon"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(200,220,240,0.4), transparent); }
 
-body[data-time="golden"] .terrain-mountain-far { background: rgba(140,80,40,0.75); }
-body[data-time="golden"] .terrain-mountain-mid { background: rgba(100,80,30,0.7); }
-body[data-time="golden"] .terrain-mountain-near { background: rgba(50,60,20,0.7); }
-body[data-time="golden"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(255,180,80,0.3), transparent); }
-body[data-time="golden"] .terrain-waterfall::before { background: linear-gradient(180deg, transparent, rgba(255,220,150,0.6), transparent); }
+body[data-time="golden"] .terrain-mountain-far { background: rgba(140,80,40,0.9); }
+body[data-time="golden"] .terrain-mountain-mid { background: rgba(100,80,30,0.9); }
+body[data-time="golden"] .terrain-mountain-near { background: rgba(50,60,20,0.9); }
+body[data-time="golden"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(255,180,80,0.4), transparent); }
+body[data-time="golden"] .terrain-waterfall::before { background: linear-gradient(180deg, transparent, rgba(255,220,150,0.7), transparent); }
 
-body[data-time="evening"] .terrain-mountain-far { background: rgba(40,30,60,0.8); }
-body[data-time="evening"] .terrain-mountain-mid { background: rgba(30,40,50,0.75); }
-body[data-time="evening"] .terrain-mountain-near { background: rgba(20,35,25,0.75); }
-body[data-time="evening"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(80,60,120,0.2), transparent); }
+body[data-time="evening"] .terrain-mountain-far { background: rgba(40,30,60,0.95); }
+body[data-time="evening"] .terrain-mountain-mid { background: rgba(30,40,50,0.9); }
+body[data-time="evening"] .terrain-mountain-near { background: rgba(20,35,25,0.9); }
+body[data-time="evening"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(80,60,120,0.3), transparent); }
 
-body[data-time="night"] .terrain-mountain-far { background: rgba(10,10,20,0.85); }
-body[data-time="night"] .terrain-mountain-mid { background: rgba(8,12,15,0.8); }
-body[data-time="night"] .terrain-mountain-near { background: rgba(5,10,8,0.8); }
-body[data-time="night"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(15,20,35,0.15), transparent); opacity: 0.06; }
-body[data-time="night"] .terrain-waterfall::before { background: linear-gradient(180deg, transparent, rgba(100,140,200,0.3), transparent); }
+body[data-time="night"] .terrain-mountain-far { background: rgba(10,10,20,0.95); }
+body[data-time="night"] .terrain-mountain-mid { background: rgba(8,12,15,0.9); }
+body[data-time="night"] .terrain-mountain-near { background: rgba(5,10,8,0.9); }
+body[data-time="night"] .terrain-mountain-mist { background: linear-gradient(180deg, transparent, rgba(15,20,35,0.2), transparent); opacity: 0.12; }
+body[data-time="night"] .terrain-waterfall::before { background: linear-gradient(180deg, transparent, rgba(100,140,200,0.4), transparent); }
 
 /* Beach ocean colors by time */
-body[data-time="dawn"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(180,120,140,0.3), rgba(150,100,120,0.4), rgba(120,80,100,0.5)); }
-body[data-time="dawn"] .terrain-wave { background: rgba(255,200,180,0.3); }
-body[data-time="dawn"] .terrain-shore { background: linear-gradient(180deg, rgba(230,200,170,0.10), rgba(240,210,180,0.18)); }
+body[data-time="dawn"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(180,120,140,0.5), rgba(150,100,120,0.6), rgba(120,80,100,0.7)); }
+body[data-time="dawn"] .terrain-wave { background: rgba(255,200,180,0.5); }
+body[data-time="dawn"] .terrain-shore { background: linear-gradient(180deg, rgba(230,200,170,0.2), rgba(240,210,180,0.35)); }
 
-body[data-time="morning"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(60,160,200,0.3), rgba(40,140,180,0.4), rgba(20,120,160,0.5)); }
-body[data-time="morning"] .terrain-wave { background: rgba(200,235,250,0.4); }
+body[data-time="morning"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(60,160,200,0.5), rgba(40,140,180,0.6), rgba(20,120,160,0.7)); }
+body[data-time="morning"] .terrain-wave { background: rgba(200,235,250,0.6); }
 
-body[data-time="afternoon"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(30,150,200,0.35), rgba(20,130,180,0.45), rgba(10,100,160,0.55)); }
-body[data-time="afternoon"] .terrain-wave { background: rgba(180,225,250,0.45); }
+body[data-time="afternoon"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(30,150,200,0.55), rgba(20,130,180,0.65), rgba(10,100,160,0.75)); }
+body[data-time="afternoon"] .terrain-wave { background: rgba(180,225,250,0.6); }
 
-body[data-time="golden"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(200,120,60,0.3), rgba(180,100,40,0.4), rgba(150,80,30,0.5)); }
-body[data-time="golden"] .terrain-wave { background: rgba(255,200,120,0.4); }
-body[data-time="golden"] .terrain-shore { background: linear-gradient(180deg, rgba(240,200,140,0.15), rgba(250,210,150,0.25)); }
+body[data-time="golden"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(200,120,60,0.5), rgba(180,100,40,0.6), rgba(150,80,30,0.7)); }
+body[data-time="golden"] .terrain-wave { background: rgba(255,200,120,0.6); }
+body[data-time="golden"] .terrain-shore { background: linear-gradient(180deg, rgba(240,200,140,0.3), rgba(250,210,150,0.45)); }
 
-body[data-time="evening"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(40,30,80,0.35), rgba(30,25,70,0.45), rgba(20,15,50,0.55)); }
-body[data-time="evening"] .terrain-wave { background: rgba(100,80,160,0.3); }
-body[data-time="evening"] .terrain-shore { background: linear-gradient(180deg, rgba(180,160,140,0.10), rgba(190,170,150,0.15)); }
+body[data-time="evening"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(40,30,80,0.55), rgba(30,25,70,0.65), rgba(20,15,50,0.75)); }
+body[data-time="evening"] .terrain-wave { background: rgba(100,80,160,0.45); }
+body[data-time="evening"] .terrain-shore { background: linear-gradient(180deg, rgba(180,160,140,0.2), rgba(190,170,150,0.3)); }
 
-body[data-time="night"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(8,15,35,0.4), rgba(5,10,25,0.5), rgba(3,5,15,0.6)); }
-body[data-time="night"] .terrain-wave { background: rgba(40,60,100,0.2); }
-body[data-time="night"] .terrain-shore { background: linear-gradient(180deg, rgba(40,35,30,0.08), rgba(50,45,40,0.12)); }
+body[data-time="night"] .terrain-ocean-body { background: linear-gradient(180deg, rgba(8,15,35,0.6), rgba(5,10,25,0.7), rgba(3,5,15,0.8)); }
+body[data-time="night"] .terrain-wave { background: rgba(40,60,100,0.35); }
+body[data-time="night"] .terrain-shore { background: linear-gradient(180deg, rgba(40,35,30,0.15), rgba(50,45,40,0.25)); }
 
 /* Beach ocean shimmer - moonlight / sunlight reflections */
 .terrain-ocean-shimmer {
@@ -2668,29 +2668,29 @@ body[data-time="night"] .terrain-ocean-shimmer {
 }
 
 /* Meadow hill colors by time */
-body[data-time="dawn"] .terrain-hill-far { background: rgba(100,80,60,0.6); }
-body[data-time="dawn"] .terrain-hill-mid { background: rgba(80,100,60,0.5); }
-body[data-time="dawn"] .terrain-hill-near { background: rgba(90,120,60,0.4); }
+body[data-time="dawn"] .terrain-hill-far { background: rgba(100,80,60,0.8); }
+body[data-time="dawn"] .terrain-hill-mid { background: rgba(80,100,60,0.75); }
+body[data-time="dawn"] .terrain-hill-near { background: rgba(90,120,60,0.7); }
 
-body[data-time="morning"] .terrain-hill-far { background: rgba(80,130,60,0.5); }
-body[data-time="morning"] .terrain-hill-mid { background: rgba(90,150,70,0.45); }
-body[data-time="morning"] .terrain-hill-near { background: rgba(100,160,70,0.4); }
+body[data-time="morning"] .terrain-hill-far { background: rgba(80,130,60,0.75); }
+body[data-time="morning"] .terrain-hill-mid { background: rgba(90,150,70,0.7); }
+body[data-time="morning"] .terrain-hill-near { background: rgba(100,160,70,0.65); }
 
-body[data-time="afternoon"] .terrain-hill-far { background: rgba(70,120,60,0.45); }
-body[data-time="afternoon"] .terrain-hill-mid { background: rgba(80,140,60,0.4); }
-body[data-time="afternoon"] .terrain-hill-near { background: rgba(90,150,60,0.35); }
+body[data-time="afternoon"] .terrain-hill-far { background: rgba(70,120,60,0.7); }
+body[data-time="afternoon"] .terrain-hill-mid { background: rgba(80,140,60,0.65); }
+body[data-time="afternoon"] .terrain-hill-near { background: rgba(90,150,60,0.6); }
 
-body[data-time="golden"] .terrain-hill-far { background: rgba(160,120,50,0.5); }
-body[data-time="golden"] .terrain-hill-mid { background: rgba(140,130,40,0.45); }
-body[data-time="golden"] .terrain-hill-near { background: rgba(120,140,40,0.4); }
+body[data-time="golden"] .terrain-hill-far { background: rgba(160,120,50,0.75); }
+body[data-time="golden"] .terrain-hill-mid { background: rgba(140,130,40,0.7); }
+body[data-time="golden"] .terrain-hill-near { background: rgba(120,140,40,0.65); }
 
-body[data-time="evening"] .terrain-hill-far { background: rgba(50,40,60,0.55); }
-body[data-time="evening"] .terrain-hill-mid { background: rgba(40,50,40,0.5); }
-body[data-time="evening"] .terrain-hill-near { background: rgba(35,45,35,0.45); }
+body[data-time="evening"] .terrain-hill-far { background: rgba(50,40,60,0.8); }
+body[data-time="evening"] .terrain-hill-mid { background: rgba(40,50,40,0.75); }
+body[data-time="evening"] .terrain-hill-near { background: rgba(35,45,35,0.7); }
 
-body[data-time="night"] .terrain-hill-far { background: rgba(10,12,15,0.6); }
-body[data-time="night"] .terrain-hill-mid { background: rgba(8,10,12,0.55); }
-body[data-time="night"] .terrain-hill-near { background: rgba(6,8,10,0.5); }
+body[data-time="night"] .terrain-hill-far { background: rgba(10,12,15,0.85); }
+body[data-time="night"] .terrain-hill-mid { background: rgba(8,10,12,0.8); }
+body[data-time="night"] .terrain-hill-near { background: rgba(6,8,10,0.75); }
 
 /* Meadow flower colors by time */
 body[data-time="dawn"] .terrain-flower-dot { box-shadow: 0 0 3px currentColor; }
@@ -2698,12 +2698,12 @@ body[data-time="golden"] .terrain-flower-dot { box-shadow: 0 0 4px rgba(255,180,
 body[data-time="night"] .terrain-flower-dot { opacity: 0.05; }
 
 /* Mountain pine tree colors by time */
-body[data-time="dawn"] .terrain-pine::before { border-bottom-color: rgba(30,50,30,0.7); }
-body[data-time="morning"] .terrain-pine::before { border-bottom-color: rgba(20,60,25,0.7); }
-body[data-time="afternoon"] .terrain-pine::before { border-bottom-color: rgba(25,55,25,0.65); }
-body[data-time="golden"] .terrain-pine::before { border-bottom-color: rgba(50,50,15,0.7); }
-body[data-time="evening"] .terrain-pine::before { border-bottom-color: rgba(15,25,15,0.75); }
-body[data-time="night"] .terrain-pine::before { border-bottom-color: rgba(5,10,5,0.8); }
+body[data-time="dawn"] .terrain-pine::before { border-bottom-color: rgba(30,50,30,0.85); }
+body[data-time="morning"] .terrain-pine::before { border-bottom-color: rgba(20,60,25,0.85); }
+body[data-time="afternoon"] .terrain-pine::before { border-bottom-color: rgba(25,55,25,0.8); }
+body[data-time="golden"] .terrain-pine::before { border-bottom-color: rgba(50,50,15,0.85); }
+body[data-time="evening"] .terrain-pine::before { border-bottom-color: rgba(15,25,15,0.9); }
+body[data-time="night"] .terrain-pine::before { border-bottom-color: rgba(5,10,5,0.9); }
 
 /* Palm tree colors by time */
 body[data-time="dawn"] .terrain-palm-trunk { background: rgba(80,50,30,0.5); }
@@ -2731,18 +2731,18 @@ body[data-time="night"] .terrain-palm-frond-5,
 body[data-time="night"] .terrain-palm-frond-6 { --palm-color: rgba(5,10,5,0.75); }
 
 /* Meadow tree canopy/trunk colors by time */
-body[data-time="dawn"] .terrain-tree-canopy { background: rgba(60,80,40,0.6); }
-body[data-time="dawn"] .terrain-tree-trunk { background: rgba(70,45,25,0.5); }
-body[data-time="morning"] .terrain-tree-canopy { background: rgba(50,100,40,0.55); }
-body[data-time="morning"] .terrain-tree-trunk { background: rgba(80,55,30,0.5); }
-body[data-time="afternoon"] .terrain-tree-canopy { background: rgba(55,95,40,0.5); }
-body[data-time="afternoon"] .terrain-tree-trunk { background: rgba(75,50,28,0.45); }
-body[data-time="golden"] .terrain-tree-canopy { background: rgba(100,90,30,0.55); }
-body[data-time="golden"] .terrain-tree-trunk { background: rgba(90,60,20,0.5); }
-body[data-time="evening"] .terrain-tree-canopy { background: rgba(25,35,20,0.6); }
-body[data-time="evening"] .terrain-tree-trunk { background: rgba(35,25,15,0.55); }
-body[data-time="night"] .terrain-tree-canopy { background: rgba(8,12,6,0.65); }
-body[data-time="night"] .terrain-tree-trunk { background: rgba(10,8,5,0.6); }
+body[data-time="dawn"] .terrain-tree-canopy { background: rgba(60,80,40,0.8); }
+body[data-time="dawn"] .terrain-tree-trunk { background: rgba(70,45,25,0.7); }
+body[data-time="morning"] .terrain-tree-canopy { background: rgba(50,100,40,0.75); }
+body[data-time="morning"] .terrain-tree-trunk { background: rgba(80,55,30,0.7); }
+body[data-time="afternoon"] .terrain-tree-canopy { background: rgba(55,95,40,0.7); }
+body[data-time="afternoon"] .terrain-tree-trunk { background: rgba(75,50,28,0.65); }
+body[data-time="golden"] .terrain-tree-canopy { background: rgba(100,90,30,0.75); }
+body[data-time="golden"] .terrain-tree-trunk { background: rgba(90,60,20,0.7); }
+body[data-time="evening"] .terrain-tree-canopy { background: rgba(25,35,20,0.8); }
+body[data-time="evening"] .terrain-tree-trunk { background: rgba(35,25,15,0.75); }
+body[data-time="night"] .terrain-tree-canopy { background: rgba(8,12,6,0.85); }
+body[data-time="night"] .terrain-tree-trunk { background: rgba(10,8,5,0.8); }
 
 /* ===== ENHANCED TERRAIN REALISM ===== */
 
@@ -2822,8 +2822,8 @@ body[data-time="night"] .terrain-hill-far::after {
 /* Mountain: snow caps on highest peaks */
 .terrain-snow-cap {
   position: absolute;
-  opacity: 0.55;
-  background: rgba(255,255,255,0.7);
+  opacity: 0.75;
+  background: rgba(255,255,255,0.85);
   clip-path: polygon(20% 100%, 50% 0%, 80% 100%);
 }
 
@@ -2907,7 +2907,7 @@ body[data-time="afternoon"] .terrain-hill-near::before {
   width: 30%;
   height: 5%;
   border-radius: 50%;
-  opacity: 0.45;
+  opacity: 0.7;
   background: linear-gradient(180deg, rgba(80,140,200,0.6) 0%, rgba(60,120,180,0.8) 50%, rgba(40,100,160,0.6) 100%);
   filter: blur(0.5px);
 }
@@ -2938,7 +2938,7 @@ body[data-time="evening"] .terrain-lake { background: linear-gradient(180deg, rg
   position: absolute;
   width: var(--eagle-size, 10px);
   height: calc(var(--eagle-size, 10px) * 0.35);
-  opacity: 0.45;
+  opacity: 0.65;
   animation: eagleSoar 18s ease-in-out infinite;
 }
 .terrain-eagle::before,
@@ -2982,7 +2982,7 @@ body[data-time="night"] .terrain-eagle { opacity: 0; }
   left: 60%;
   width: 14px;
   height: 10px;
-  opacity: 0.16;
+  opacity: 0.45;
 }
 .terrain-cabin::before {
   content: '';
@@ -3017,8 +3017,8 @@ body[data-time="evening"] .terrain-cabin::before {
 /* ===== MOUNTAIN: Rocky outcrops ===== */
 .terrain-rock {
   position: absolute;
-  opacity: 0.40;
-  background: rgba(80,70,60,0.7);
+  opacity: 0.6;
+  background: rgba(80,70,60,0.85);
   border-radius: 40% 50% 45% 55%;
   clip-path: polygon(10% 100%, 0% 50%, 15% 20%, 35% 0%, 65% 5%, 85% 15%, 100% 45%, 90% 100%);
 }
@@ -3030,7 +3030,7 @@ body[data-time="golden"] .terrain-rock { background: rgba(120,80,40,0.6); }
   position: absolute;
   width: var(--gull-size, 10px);
   height: calc(var(--gull-size, 10px) * 0.3);
-  opacity: 0.50;
+  opacity: 0.7;
   animation: gullGlide 14s ease-in-out infinite;
 }
 .terrain-seagull::before,
@@ -3076,7 +3076,7 @@ body[data-time="evening"] .terrain-seagull { opacity: 0.10; }
   left: 70%;
   width: 16px;
   height: 20px;
-  opacity: 0.18;
+  opacity: 0.45;
   animation: sailboatDrift 20s ease-in-out infinite alternate;
 }
 .terrain-sailboat::before {
@@ -3116,7 +3116,7 @@ body[data-time="golden"] .terrain-sailboat::after { border-bottom-color: rgba(25
   left: 92%;
   width: 5px;
   height: 18px;
-  opacity: 0.16;
+  opacity: 0.45;
 }
 .terrain-lighthouse::before {
   content: '';
@@ -3154,9 +3154,9 @@ body[data-time="evening"] .terrain-lighthouse::after {
 /* ===== BEACH: Seashells ===== */
 .terrain-seashell {
   position: absolute;
-  width: 4px;
-  height: 3px;
-  opacity: 0.35;
+  width: 5px;
+  height: 4px;
+  opacity: 0.55;
   background: rgba(240,220,190,0.6);
   border-radius: 50% 50% 50% 0;
 }
@@ -3170,7 +3170,7 @@ body[data-time="night"] .terrain-seashell { opacity: 0.05; }
   left: 30%;
   width: 40%;
   height: 8%;
-  opacity: 0.40;
+  opacity: 0.6;
   overflow: hidden;
 }
 .terrain-stream::before {
@@ -3217,9 +3217,9 @@ body[data-time="night"] .terrain-stream-sparkle { background: repeating-linear-g
 /* ===== MEADOW: Butterflies ===== */
 .terrain-butterfly {
   position: absolute;
-  width: 6px;
-  height: 6px;
-  opacity: 0.55;
+  width: 7px;
+  height: 7px;
+  opacity: 0.7;
   border-radius: 50% 0 50% 50%;
   animation: butterflyFloat 12s ease-in-out infinite;
 }
@@ -3263,9 +3263,9 @@ body[data-time="evening"] .terrain-butterfly { opacity: 0.12; }
 /* ===== MEADOW: Stone path ===== */
 .terrain-path-stone {
   position: absolute;
-  width: 6px;
-  height: 4px;
-  opacity: 0.35;
+  width: 7px;
+  height: 5px;
+  opacity: 0.55;
   background: rgba(160,150,130,0.6);
   border-radius: 50%;
 }
@@ -3279,7 +3279,7 @@ body[data-time="golden"] .terrain-path-stone { background: rgba(200,170,120,0.5)
   left: 5%;
   width: 25%;
   height: 8px;
-  opacity: 0.12;
+  opacity: 0.35;
 }
 .terrain-fence::before {
   content: '';
@@ -3311,7 +3311,7 @@ body[data-time="night"] .terrain-fence::after { background: repeating-linear-gra
   left: 15%;
   width: 70%;
   height: 6%;
-  opacity: 0.35;
+  opacity: 0.55;
   overflow: hidden;
 }
 .terrain-mtn-river::before {
@@ -3341,7 +3341,7 @@ body[data-time="night"] .terrain-mtn-river::before { background: linear-gradient
   position: absolute;
   width: var(--deer-size, 10px);
   height: calc(var(--deer-size, 10px) * 1.2);
-  opacity: 0.35;
+  opacity: 0.55;
 }
 .terrain-deer::before {
   content: '';
@@ -3373,7 +3373,7 @@ body[data-time="evening"] .terrain-deer { opacity: 0.18; }
   left: 42%;
   width: 16%;
   height: 3px;
-  opacity: 0.35;
+  opacity: 0.55;
   background: rgba(90,60,30,0.6);
   border-radius: 2px;
 }
@@ -3395,7 +3395,7 @@ body[data-time="night"] .terrain-bridge::after { background: rgba(12,10,6,0.6); 
 /* ===== MOUNTAIN: Valley fog ===== */
 .terrain-valley-fog {
   position: absolute;
-  opacity: 0.15;
+  opacity: 0.3;
   border-radius: 50%;
   background: radial-gradient(ellipse, rgba(200,210,230,0.5) 0%, transparent 70%);
   animation: valleyFogDrift 20s ease-in-out infinite alternate;
@@ -3411,10 +3411,10 @@ body[data-time="golden"] .terrain-valley-fog { background: radial-gradient(ellip
 .terrain-mtn-flower {
   position: absolute;
   bottom: 2%;
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  opacity: 0.35;
+  opacity: 0.55;
   background: rgba(200,160,255,0.6);
   animation: mtnFlowerSway 3s ease-in-out infinite alternate;
 }
@@ -3438,7 +3438,7 @@ body[data-time="night"] .terrain-mtn-flower { opacity: 0.08; }
   position: absolute;
   bottom: 5%;
   left: 48%;
-  opacity: 0.35;
+  opacity: 0.55;
 }
 .terrain-umbrella::before {
   content: '';
@@ -3466,9 +3466,9 @@ body[data-time="night"] .terrain-umbrella { opacity: 0.12; }
 /* ===== BEACH: Starfish ===== */
 .terrain-starfish {
   position: absolute;
-  width: 6px;
-  height: 6px;
-  opacity: 0.30;
+  width: 7px;
+  height: 7px;
+  opacity: 0.5;
 }
 .terrain-starfish::before {
   content: '';
@@ -3484,7 +3484,7 @@ body[data-time="golden"] .terrain-starfish::before { background: rgba(255,180,10
 .terrain-tidepool {
   position: absolute;
   border-radius: 50%;
-  opacity: 0.25;
+  opacity: 0.45;
   background: radial-gradient(ellipse, rgba(60,140,200,0.5) 0%, rgba(80,160,220,0.3) 60%, transparent 100%);
   animation: tidepoolShimmer 5s ease-in-out infinite alternate;
 }
@@ -3497,8 +3497,8 @@ body[data-time="night"] .terrain-tidepool { background: radial-gradient(ellipse,
 /* ===== BEACH: Driftwood ===== */
 .terrain-driftwood {
   position: absolute;
-  height: 2px;
-  opacity: 0.30;
+  height: 3px;
+  opacity: 0.5;
   background: rgba(140,110,70,0.5);
   border-radius: 2px;
 }
@@ -3522,7 +3522,7 @@ body[data-time="night"] .terrain-driftwood { background: rgba(20,16,10,0.5); }
   left: 30%;
   width: 20px;
   height: 6px;
-  opacity: 0.18;
+  opacity: 0.35;
   animation: cargoShipDrift 60s linear infinite;
 }
 .terrain-cargo-ship::before {
@@ -3573,7 +3573,7 @@ body[data-time="night"] .terrain-cargo-ship { opacity: 0.08; }
   position: absolute;
   width: var(--rabbit-size, 6px);
   height: calc(var(--rabbit-size, 6px) * 0.8);
-  opacity: 0.35;
+  opacity: 0.55;
 }
 .terrain-rabbit::before {
   content: '';
@@ -3601,9 +3601,9 @@ body[data-time="evening"] .terrain-rabbit { opacity: 0.15; }
 /* ===== MEADOW: Hay bales ===== */
 .terrain-hay-bale {
   position: absolute;
-  width: 10px;
-  height: 8px;
-  opacity: 0.35;
+  width: 12px;
+  height: 9px;
+  opacity: 0.55;
   border-radius: 50%;
   background: rgba(180,150,80,0.5);
   border: 1px solid rgba(160,130,60,0.3);
@@ -3619,7 +3619,7 @@ body[data-time="golden"] .terrain-hay-bale { background: rgba(220,180,80,0.5); }
   width: 18%;
   height: 4%;
   border-radius: 50%;
-  opacity: 0.35;
+  opacity: 0.55;
   background: linear-gradient(180deg, rgba(80,140,200,0.5) 0%, rgba(60,120,180,0.7) 50%, rgba(40,100,160,0.5) 100%);
 }
 .terrain-pond-shimmer {
@@ -3645,9 +3645,9 @@ body[data-time="golden"] .terrain-pond { background: linear-gradient(180deg, rgb
 /* ===== MEADOW: Dandelion seeds ===== */
 .terrain-dandelion-seed {
   position: absolute;
-  width: 3px;
-  height: 3px;
-  opacity: 0.30;
+  width: 4px;
+  height: 4px;
+  opacity: 0.5;
   background: rgba(255,255,255,0.5);
   border-radius: 50%;
   animation: dandelionFloat 12s ease-in-out infinite;
@@ -3674,9 +3674,9 @@ body[data-time="night"] .terrain-dandelion-seed { opacity: 0; }
 /* ===== MEADOW: Flower bushes ===== */
 .terrain-flower-bush {
   position: absolute;
-  width: 14px;
-  height: 10px;
-  opacity: 0.40;
+  width: 16px;
+  height: 12px;
+  opacity: 0.6;
 }
 .terrain-flower-bush::before {
   content: '';
@@ -3705,7 +3705,7 @@ body[data-time="night"] .terrain-flower-bush { opacity: 0.10; }
   position: absolute;
   bottom: 24%;
   left: 35%;
-  opacity: 0.30;
+  opacity: 0.5;
 }
 .terrain-birdhouse::before {
   content: '';
@@ -4419,5 +4419,425 @@ body[data-time="night"] .offline-banner.show {
 .ob-sound-preview-btn.playing {
   background: rgba(var(--c-teal-rgb, 120,180,160), 0.15);
   border-color: rgba(var(--c-teal-rgb, 120,180,160), 0.4);
+}
+
+/* ===== NEW TERRAIN ELEMENTS ===== */
+
+/* Mountain: Falling leaves */
+.terrain-falling-leaf {
+  position: absolute;
+  top: 30%;
+  width: 4px;
+  height: 4px;
+  opacity: 0.4;
+  background: rgba(160,120,40,0.7);
+  border-radius: 50% 0 50% 50%;
+  animation: leafFall 8s ease-in-out infinite;
+}
+@keyframes leafFall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.4; }
+  50% { transform: translate(15px, 80px) rotate(180deg); opacity: 0.3; }
+  100% { transform: translate(5px, 160px) rotate(360deg); opacity: 0; }
+}
+body[data-time="night"] .terrain-falling-leaf { opacity: 0; }
+
+/* Mountain: Campfire smoke */
+.terrain-smoke {
+  position: absolute;
+  width: 6px;
+  height: 20px;
+  opacity: 0.2;
+  pointer-events: none;
+}
+.terrain-smoke::before,
+.terrain-smoke::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(180,180,180,0.4);
+  animation: smokeRise 4s ease-out infinite;
+}
+.terrain-smoke::after { animation-delay: 2s; width: 3px; height: 3px; }
+@keyframes smokeRise {
+  0% { transform: translate(-50%, 0) scale(1); opacity: 0.3; }
+  100% { transform: translate(-50%, -20px) scale(2.5); opacity: 0; }
+}
+body[data-time="night"] .terrain-smoke::before,
+body[data-time="night"] .terrain-smoke::after { background: rgba(200,200,200,0.25); }
+
+/* Mountain: Goats on ridgeline */
+.terrain-mtn-goat {
+  position: absolute;
+  width: var(--goat-size, 5px);
+  height: calc(var(--goat-size, 5px) * 0.8);
+  opacity: 0.3;
+}
+.terrain-mtn-goat::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 70%;
+  background: rgba(200,200,200,0.7);
+  border-radius: 40% 50% 30% 30%;
+}
+body[data-time="night"] .terrain-mtn-goat { opacity: 0; }
+
+/* Beach: Beach towel */
+.terrain-beach-towel {
+  position: absolute;
+  bottom: 4%;
+  left: 55%;
+  width: 16px;
+  height: 8px;
+  opacity: 0.4;
+  background: linear-gradient(90deg, rgba(220,80,80,0.5) 0%, rgba(220,80,80,0.5) 33%, rgba(255,255,255,0.4) 33%, rgba(255,255,255,0.4) 66%, rgba(80,140,220,0.5) 66%);
+  border-radius: 1px;
+  transform: rotate(-3deg);
+}
+body[data-time="night"] .terrain-beach-towel { opacity: 0.12; }
+
+/* Beach: Coconuts */
+.terrain-coconut {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  opacity: 0.45;
+  background: rgba(100,70,30,0.7);
+  border-radius: 50%;
+}
+body[data-time="night"] .terrain-coconut { opacity: 0.15; }
+
+/* Beach: Sandcastle */
+.terrain-sandcastle {
+  position: absolute;
+  bottom: 4%;
+  left: 35%;
+  width: 12px;
+  height: 10px;
+  opacity: 0.35;
+}
+.terrain-sandcastle::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 12px;
+  height: 6px;
+  background: rgba(210,185,140,0.7);
+  border-radius: 2px 2px 0 0;
+}
+.terrain-sandcastle::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 3px;
+  width: 6px;
+  height: 5px;
+  background: rgba(200,175,130,0.65);
+  border-radius: 2px 2px 0 0;
+}
+body[data-time="night"] .terrain-sandcastle { opacity: 0.12; }
+
+/* Beach: Water sparkles */
+.terrain-water-sparkle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  opacity: 0;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  animation: waterSparkle 3s ease-in-out infinite;
+}
+@keyframes waterSparkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+body[data-time="night"] .terrain-water-sparkle { background: rgba(180,200,255,0.5); }
+body[data-time="golden"] .terrain-water-sparkle { background: rgba(255,220,100,0.8); }
+
+/* Beach: Pelican on rock */
+.terrain-pelican {
+  position: absolute;
+  bottom: 15%;
+  left: 52%;
+  width: 8px;
+  height: 7px;
+  opacity: 0.35;
+}
+.terrain-pelican::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: 60%;
+  height: 60%;
+  background: rgba(200,200,200,0.7);
+  border-radius: 40% 60% 30% 20%;
+}
+.terrain-pelican::after {
+  content: '';
+  position: absolute;
+  bottom: 50%;
+  left: 55%;
+  width: 30%;
+  height: 35%;
+  background: rgba(200,200,200,0.7);
+  border-radius: 50% 60% 40% 30%;
+}
+body[data-time="night"] .terrain-pelican { opacity: 0; }
+
+/* Meadow: Beehive */
+.terrain-beehive {
+  position: absolute;
+  bottom: 22%;
+  left: 68%;
+  width: 6px;
+  height: 7px;
+  opacity: 0.4;
+}
+.terrain-beehive::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 6px;
+  height: 7px;
+  background: rgba(180,150,60,0.6);
+  border-radius: 30% 30% 50% 50%;
+}
+body[data-time="night"] .terrain-beehive { opacity: 0.15; }
+
+/* Meadow: Mushrooms */
+.terrain-mushroom {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  opacity: 0.45;
+}
+.terrain-mushroom::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  height: 3px;
+  background: rgba(220,210,190,0.6);
+  transform: translateX(-50%);
+}
+.terrain-mushroom::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 5px;
+  height: 3px;
+  background: rgba(180,80,60,0.5);
+  border-radius: 50% 50% 0 0;
+}
+body[data-time="night"] .terrain-mushroom { opacity: 0.12; }
+
+/* Meadow: Dragonflies */
+.terrain-dragonfly {
+  position: absolute;
+  width: 8px;
+  height: 3px;
+  opacity: 0.45;
+  animation: dragonflyHover 6s ease-in-out infinite;
+}
+.terrain-dragonfly::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 1px;
+  background: rgba(80,160,200,0.6);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+.terrain-dragonfly::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 100%;
+  background: rgba(180,220,255,0.3);
+  border-radius: 50%;
+  animation: dragonflyWings 0.15s ease-in-out infinite alternate;
+}
+@keyframes dragonflyHover {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(8px, -4px); }
+  50% { transform: translate(3px, 2px); }
+  75% { transform: translate(-5px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes dragonflyWings {
+  0% { transform: scaleY(1); }
+  100% { transform: scaleY(0.3); }
+}
+body[data-time="night"] .terrain-dragonfly { opacity: 0; }
+
+/* Meadow: Sunflowers */
+.terrain-sunflower {
+  position: absolute;
+  bottom: 4%;
+  opacity: 0.55;
+}
+.terrain-sunflower::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  height: 12px;
+  background: rgba(60,100,30,0.5);
+  transform: translateX(-50%);
+}
+.terrain-sunflower::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  background: radial-gradient(circle, rgba(120,80,20,0.6) 30%, rgba(255,200,0,0.5) 30%);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  animation: sunflowerSway 5s ease-in-out infinite alternate;
+}
+@keyframes sunflowerSway {
+  0% { transform: translateX(-50%) rotate(-3deg); }
+  100% { transform: translateX(-50%) rotate(3deg); }
+}
+body[data-time="night"] .terrain-sunflower { opacity: 0.12; }
+
+/* Meadow: Ladybugs */
+.terrain-ladybug {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  opacity: 0.5;
+  background: rgba(220,40,30,0.6);
+  border-radius: 50%;
+  animation: ladybugCrawl 10s ease-in-out infinite;
+}
+.terrain-ladybug::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  transform: translateX(-50%);
+}
+@keyframes ladybugCrawl {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(3px, -1px); }
+  50% { transform: translate(5px, 1px); }
+  75% { transform: translate(2px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+body[data-time="night"] .terrain-ladybug { opacity: 0; }
+
+/* ===== ENVIRONMENT-SPECIFIC APP EFFECTS ===== */
+/* Make each environment feel distinctly different throughout the app */
+
+/* --- BEACH: Warm turquoise accents, sandy glow, coral highlights --- */
+body[data-sky-theme="beach"] .bnav-indicator {
+  background: linear-gradient(90deg, #38B8C0, #58D0D0) !important;
+  box-shadow: 0 0 14px rgba(56,184,192,0.35) !important;
+}
+body[data-sky-theme="beach"] .bn.on { color: #38B8C0 !important; }
+body[data-sky-theme="beach"] .dash-card,
+body[data-sky-theme="beach"] .act-item {
+  border-left-color: rgba(56,184,192,0.3) !important;
+}
+body[data-sky-theme="beach"] .hero-card-us {
+  background: linear-gradient(135deg, rgba(56,184,192,0.08), rgba(255,180,120,0.04)) !important;
+  border: 1px solid rgba(56,184,192,0.1) !important;
+}
+body[data-sky-theme="beach"] .hero-card-me {
+  background: linear-gradient(135deg, rgba(255,160,100,0.06), rgba(56,184,192,0.04)) !important;
+  border: 1px solid rgba(255,160,100,0.08) !important;
+}
+body[data-sky-theme="beach"] .stat-mini {
+  border-bottom: 2px solid rgba(56,184,192,0.15);
+}
+body[data-sky-theme="beach"] .dq-card {
+  border-left: 3px solid rgba(56,184,192,0.2);
+}
+body[data-sky-theme="beach"] input:focus,
+body[data-sky-theme="beach"] textarea:focus {
+  box-shadow: 0 0 0 3px rgba(56,184,192,0.15) !important;
+}
+body[data-sky-theme="beach"] .page-header .ph-title {
+  text-shadow: 0 0 20px rgba(56,184,192,0.08);
+}
+
+/* --- MOUNTAIN: Forest green accents, earthy depth, alpine blue highlights --- */
+body[data-sky-theme="mountain"] .bnav-indicator {
+  background: linear-gradient(90deg, #4A8048, #68A860) !important;
+  box-shadow: 0 0 14px rgba(74,128,72,0.35) !important;
+}
+body[data-sky-theme="mountain"] .bn.on { color: #4A8048 !important; }
+body[data-sky-theme="mountain"] .dash-card,
+body[data-sky-theme="mountain"] .act-item {
+  border-left-color: rgba(74,128,72,0.3) !important;
+}
+body[data-sky-theme="mountain"] .hero-card-us {
+  background: linear-gradient(135deg, rgba(74,128,72,0.08), rgba(80,140,200,0.04)) !important;
+  border: 1px solid rgba(74,128,72,0.1) !important;
+}
+body[data-sky-theme="mountain"] .hero-card-me {
+  background: linear-gradient(135deg, rgba(80,140,200,0.06), rgba(74,128,72,0.04)) !important;
+  border: 1px solid rgba(80,140,200,0.08) !important;
+}
+body[data-sky-theme="mountain"] .stat-mini {
+  border-bottom: 2px solid rgba(74,128,72,0.15);
+}
+body[data-sky-theme="mountain"] .dq-card {
+  border-left: 3px solid rgba(74,128,72,0.2);
+}
+body[data-sky-theme="mountain"] input:focus,
+body[data-sky-theme="mountain"] textarea:focus {
+  box-shadow: 0 0 0 3px rgba(74,128,72,0.15) !important;
+}
+body[data-sky-theme="mountain"] .page-header .ph-title {
+  text-shadow: 0 0 20px rgba(74,128,72,0.08);
+}
+
+/* --- BEACH night/evening overrides --- */
+body[data-sky-theme="beach"][data-time="night"] .bnav-indicator,
+body[data-sky-theme="beach"][data-time="evening"] .bnav-indicator {
+  background: linear-gradient(90deg, #38A8B0, #50C8C8) !important;
+  box-shadow: 0 0 16px rgba(56,168,176,0.4) !important;
+}
+body[data-sky-theme="beach"][data-time="night"] .bn.on,
+body[data-sky-theme="beach"][data-time="evening"] .bn.on { color: #50C8C8 !important; }
+body[data-sky-theme="beach"][data-time="night"] .dash-card,
+body[data-sky-theme="beach"][data-time="night"] .act-item {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18), 0 0 0 1px rgba(56,184,192,0.06) !important;
+}
+
+/* --- MOUNTAIN night/evening overrides --- */
+body[data-sky-theme="mountain"][data-time="night"] .bnav-indicator,
+body[data-sky-theme="mountain"][data-time="evening"] .bnav-indicator {
+  background: linear-gradient(90deg, #5A9858, #78B870) !important;
+  box-shadow: 0 0 16px rgba(90,152,88,0.4) !important;
+}
+body[data-sky-theme="mountain"][data-time="night"] .bn.on,
+body[data-sky-theme="mountain"][data-time="evening"] .bn.on { color: #78B870 !important; }
+body[data-sky-theme="mountain"][data-time="night"] .dash-card,
+body[data-sky-theme="mountain"][data-time="night"] .act-item {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18), 0 0 0 1px rgba(74,128,72,0.06) !important;
 }
 

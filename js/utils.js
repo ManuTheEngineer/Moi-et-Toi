@@ -1071,6 +1071,33 @@ function renderMountainTerrain(container) {
     mFlower.style.cssText = 'left:' + mtnFlowerPositions[mf] + '%;animation-delay:' + (mf * 0.8) + 's';
     container.appendChild(mFlower);
   }
+
+  // Falling leaves (mountain autumn feel)
+  for (var fl = 0; fl < 5; fl++) {
+    var leaf = document.createElement('div');
+    leaf.className = 'terrain-falling-leaf';
+    leaf.style.cssText = 'left:' + (10 + Math.random() * 80) + '%;animation-delay:' + (fl * 3) + 's';
+    container.appendChild(leaf);
+  }
+
+  // Distant campfire smoke at cabin
+  var smoke = document.createElement('div');
+  smoke.className = 'terrain-smoke';
+  smoke.style.cssText = 'left:62%;bottom:20%';
+  container.appendChild(smoke);
+
+  // Mountain goats on distant ridgeline
+  var goatPositions = [
+    { left: 30, bottom: 30, size: 5 },
+    { left: 74, bottom: 28, size: 4 }
+  ];
+  for (var mg = 0; mg < goatPositions.length; mg++) {
+    var gp = goatPositions[mg];
+    var goat = document.createElement('div');
+    goat.className = 'terrain-mtn-goat';
+    goat.style.cssText = 'left:' + gp.left + '%;bottom:' + gp.bottom + '%;--goat-size:' + gp.size + 'px';
+    container.appendChild(goat);
+  }
 }
 
 function renderBeachTerrain(container) {
@@ -1253,6 +1280,38 @@ function renderBeachTerrain(container) {
     splash.style.cssText = 'left:' + splashPositions[ws] + '%;animation-delay:' + (ws * 1.2) + 's';
     container.appendChild(splash);
   }
+
+  // Beach towel / blanket
+  var towel = document.createElement('div');
+  towel.className = 'terrain-beach-towel';
+  container.appendChild(towel);
+
+  // Coconuts near palm tree
+  var coconutPos = [{ left: 10, bottom: 3 }, { left: 12, bottom: 2.5 }];
+  for (var cn = 0; cn < coconutPos.length; cn++) {
+    var nut = document.createElement('div');
+    nut.className = 'terrain-coconut';
+    nut.style.cssText = 'left:' + coconutPos[cn].left + '%;bottom:' + coconutPos[cn].bottom + '%';
+    container.appendChild(nut);
+  }
+
+  // Sandcastle
+  var castle = document.createElement('div');
+  castle.className = 'terrain-sandcastle';
+  container.appendChild(castle);
+
+  // Sun reflection sparkles on water
+  for (var sp = 0; sp < 6; sp++) {
+    var sparkle = document.createElement('div');
+    sparkle.className = 'terrain-water-sparkle';
+    sparkle.style.cssText = 'left:' + (15 + Math.random() * 70) + '%;bottom:' + (18 + Math.random() * 10) + '%;animation-delay:' + (sp * 1.5) + 's';
+    container.appendChild(sparkle);
+  }
+
+  // Pelican on a rock
+  var pelican = document.createElement('div');
+  pelican.className = 'terrain-pelican';
+  container.appendChild(pelican);
 }
 
 function renderPalmTree(container, leftPct, heightPct, tiltDeg) {
@@ -1512,6 +1571,54 @@ function renderMeadowTerrain(container) {
   var birdhouse = document.createElement('div');
   birdhouse.className = 'terrain-birdhouse';
   container.appendChild(birdhouse);
+
+  // Beehive hanging from a tree
+  var beehive = document.createElement('div');
+  beehive.className = 'terrain-beehive';
+  container.appendChild(beehive);
+
+  // Mushrooms near tree trunks
+  var mushroomPos = [
+    { left: 34, bottom: 8 },
+    { left: 67, bottom: 7 },
+    { left: 21, bottom: 9 }
+  ];
+  for (var ms = 0; ms < mushroomPos.length; ms++) {
+    var mush = document.createElement('div');
+    mush.className = 'terrain-mushroom';
+    mush.style.cssText = 'left:' + mushroomPos[ms].left + '%;bottom:' + mushroomPos[ms].bottom + '%';
+    container.appendChild(mush);
+  }
+
+  // Dragonflies near the pond
+  var dflyPos = [
+    { left: 76, bottom: 10, delay: 0 },
+    { left: 82, bottom: 12, delay: 3 }
+  ];
+  for (var df = 0; df < dflyPos.length; df++) {
+    var dfly = document.createElement('div');
+    dfly.className = 'terrain-dragonfly';
+    dfly.style.cssText = 'left:' + dflyPos[df].left + '%;bottom:' + dflyPos[df].bottom + '%;animation-delay:' + dflyPos[df].delay + 's';
+    container.appendChild(dfly);
+  }
+
+  // Sunflowers (taller, more prominent)
+  var sfPos = [8, 52, 86];
+  for (var sf = 0; sf < sfPos.length; sf++) {
+    var sunf = document.createElement('div');
+    sunf.className = 'terrain-sunflower';
+    sunf.style.cssText = 'left:' + sfPos[sf] + '%;animation-delay:' + (sf * 1.5) + 's';
+    container.appendChild(sunf);
+  }
+
+  // Ladybugs on flowers
+  var lbPos = [{ left: 16, bottom: 6 }, { left: 72, bottom: 5 }];
+  for (var lb = 0; lb < lbPos.length; lb++) {
+    var bug = document.createElement('div');
+    bug.className = 'terrain-ladybug';
+    bug.style.cssText = 'left:' + lbPos[lb].left + '%;bottom:' + lbPos[lb].bottom + '%';
+    container.appendChild(bug);
+  }
 }
 
 // ===== SKY THEME (beach / mountain / mixed) =====

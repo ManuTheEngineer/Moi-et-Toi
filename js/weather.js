@@ -994,76 +994,81 @@ function generateNoise(type) {
       break;
     }
     case 'wind': {
-      // Rich wind: layered brown noise with slow modulation (gusts)
+      // Gentle meadow breeze: soft, slow undulation - no harsh gusts or whistling
       var b0 = 0, b1 = 0;
       for (i = 0; i < len; i++) {
         t = i / sr;
-        var gust = 0.5 + 0.5 * Math.sin(PI2 * 0.08 * t + Math.sin(PI2 * 0.03 * t) * 2);
-        b0 = 0.97 * b0 + 0.03 * (Math.random() * 2 - 1);
-        b1 = 0.985 * b1 + 0.015 * (Math.random() * 2 - 1);
-        L[i] = (b0 * 2.5 + b1 * 0.8) * gust;
-        R[i] = (b0 * 0.8 + b1 * 2.5) * gust;
-        // Whistling overtones during strong gusts
-        if (gust > 0.75) {
-          var whistle = Math.sin(PI2 * (400 + gust * 200) * t) * 0.04 * (gust - 0.75) * 4;
-          L[i] += whistle; R[i] += whistle * 0.7;
-        }
+        // Very slow, gentle breathing motion
+        var breeze = 0.4 + 0.3 * Math.sin(PI2 * 0.05 * t) + 0.15 * Math.sin(PI2 * 0.02 * t);
+        b0 = 0.985 * b0 + 0.015 * (Math.random() * 2 - 1);
+        b1 = 0.99 * b1 + 0.01 * (Math.random() * 2 - 1);
+        L[i] = (b0 * 1.0 + b1 * 0.5) * breeze;
+        R[i] = (b0 * 0.5 + b1 * 1.0) * breeze;
+        // No whistling - just pure soft wind
         L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
       }
+      // Low-pass for warmth
+      for (i = 1; i < len; i++) { L[i] = L[i] * 0.7 + L[i-1] * 0.3; R[i] = R[i] * 0.7 + R[i-1] * 0.3; }
       break;
     }
     case 'forestWind': {
-      // Forest breeze + leaf rustles + distant bird + creaking
+      // Gentle forest breeze: soft wind through pines + very gentle leaf sounds
       var bw = 0;
       for (i = 0; i < len; i++) {
         t = i / sr;
-        var breeze = 0.4 + 0.3 * Math.sin(PI2 * 0.1 * t) + 0.2 * Math.sin(PI2 * 0.04 * t);
-        bw = 0.98 * bw + 0.02 * (Math.random() * 2 - 1);
-        L[i] = bw * 1.2 * breeze;
-        R[i] = bw * 1.0 * breeze + (Math.random() * 2 - 1) * 0.08 * breeze;
+        // Slower, gentler breeze modulation
+        var breeze = 0.3 + 0.2 * Math.sin(PI2 * 0.06 * t) + 0.1 * Math.sin(PI2 * 0.025 * t);
+        bw = 0.99 * bw + 0.01 * (Math.random() * 2 - 1);
+        L[i] = bw * 0.7 * breeze;
+        R[i] = bw * 0.6 * breeze + (Math.random() * 2 - 1) * 0.02 * breeze;
       }
-      // Leaf rustles
-      for (var r = 0; r < 30; r++) {
+      // Softer, fewer leaf rustles - like distant trees swaying
+      for (var r = 0; r < 10; r++) {
         var pos = Math.floor(Math.random() * (len - sr * 0.3));
-        var rLen = Math.floor(sr * (0.05 + Math.random() * 0.2));
+        var rLen = Math.floor(sr * (0.1 + Math.random() * 0.25));
         var pan = Math.random();
         for (k = 0; k < rLen && pos + k < len; k++) {
-          var s = (Math.random() * 2 - 1) * 0.3 * Math.exp(-k / (rLen * 0.4));
+          var s = (Math.random() * 2 - 1) * 0.08 * Math.exp(-k / (rLen * 0.5));
           L[pos + k] += s * (1 - pan * 0.5); R[pos + k] += s * (0.5 + pan * 0.5);
         }
       }
-      // A few distant birds
-      for (var b = 0; b < 4; b++) {
-        var bPos = Math.floor(sr * 1.5 + Math.random() * (len - sr * 3));
-        _addBird(L, sr, bPos, b);
-        // Quieter in right channel (distance effect)
+      // 1-2 very distant birds (barely audible, peaceful)
+      for (var b = 0; b < 1 + Math.floor(Math.random() * 2); b++) {
+        var bPos = Math.floor(sr * 3 + Math.random() * (len - sr * 5));
         var tmp = new Float32Array(len);
         _addBird(tmp, sr, bPos, b);
-        for (i = bPos; i < Math.min(bPos + sr, len); i++) R[i] += tmp[i] * 0.4;
+        // Very distant - barely there
+        for (i = bPos; i < Math.min(bPos + sr * 2, len); i++) {
+          L[i] += tmp[i] * 0.12; R[i] += tmp[i] * 0.08;
+        }
       }
+      // Low-pass for softness
+      for (i = 1; i < len; i++) { L[i] = L[i] * 0.7 + L[i-1] * 0.3; R[i] = R[i] * 0.7 + R[i-1] * 0.3; }
       for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'waves': {
-      // Ocean: rolling surf cycles with undertow, foam hiss, deep rumble
+      // Gentle ocean: slow rolling waves, soothing and rhythmic like breathing
       for (i = 0; i < len; i++) {
         t = i / sr;
-        // Wave cycle: ~7 seconds per wave
-        var wave = Math.sin(PI2 * 0.14 * t);
-        var surf = Math.max(0, wave); // only positive half = wave crashing
-        var pull = Math.max(0, -wave) * 0.4; // undertow
-        // Deep ocean rumble
-        var rumble = Math.sin(PI2 * 55 * t + Math.sin(PI2 * 0.2 * t) * 3) * 0.08 +
-                     Math.sin(PI2 * 38 * t) * 0.05;
-        // Surf noise (filtered white noise shaped by wave envelope)
+        // Slower wave cycle (~10 seconds) - like deep slow breathing
+        var wave = Math.sin(PI2 * 0.1 * t + Math.sin(PI2 * 0.03 * t) * 0.4);
+        var surf = Math.max(0, wave) * 0.6; // gentler crest
+        var pull = Math.max(0, -wave) * 0.2; // softer undertow
+        // Warm deep tone instead of harsh rumble
+        var depth = Math.sin(PI2 * 42 * t) * 0.02;
+        // Soft filtered noise shaped by wave
         var noise = (Math.random() * 2 - 1);
-        var surfNoise = noise * (surf * 0.5 + 0.15);
-        var pullNoise = noise * pull * 0.3;
-        // Foam hiss (high frequency, during crash)
-        var foam = (Math.random() * 2 - 1) * surf * surf * 0.3;
-        L[i] = _clamp(rumble + surfNoise + pullNoise + foam * 0.8);
-        R[i] = _clamp(rumble + surfNoise * 0.9 + pullNoise + foam);
+        var surfNoise = noise * (surf * 0.2 + 0.05);
+        var pullNoise = noise * pull * 0.12;
+        // Very subtle foam (no harsh hiss)
+        var foam = (Math.random() * 2 - 1) * surf * 0.06;
+        L[i] = depth + surfNoise + pullNoise + foam;
+        R[i] = depth + surfNoise * 0.9 + pullNoise * 1.1 + foam * 0.8 + (Math.random() * 2 - 1) * 0.01;
       }
+      // Gentle low-pass to remove any harshness
+      for (i = 1; i < len; i++) { L[i] = L[i] * 0.7 + L[i-1] * 0.3; R[i] = R[i] * 0.7 + R[i-1] * 0.3; }
+      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'thunder': {
@@ -1101,131 +1106,184 @@ function generateNoise(type) {
       break;
     }
     case 'crickets': {
-      // Night ambience: multiple crickets at different distances + gentle breeze + tree frogs
-      _brownNoise(L, len, 0.12);
-      _brownNoise(R, len, 0.12);
-      // Near crickets (loud, distinct)
-      for (var c = 0; c < 40; c++) {
-        var cPos = Math.floor(Math.random() * (len - sr));
-        _addCricketChorus(L, sr, cPos);
-        if (Math.random() > 0.5) _addCricketChorus(R, sr, cPos + Math.floor(Math.random() * sr * 0.05));
-      }
-      // Distant cricket bed (continuous, softer)
+      // Peaceful night: very gentle cricket bed + warm breeze + distant peepers
+      // Soft brown noise - like a warm summer night breeze
+      _brownNoise(L, len, 0.05);
+      _brownNoise(R, len, 0.05);
+      // Very gentle continuous cricket bed - soft, blended, not harsh chirps
+      // Use filtered noise modulated at cricket rhythm instead of sharp sine waves
       for (i = 0; i < len; i++) {
         t = i / sr;
-        var chirp = Math.sin(PI2 * 4100 * t) * Math.max(0, Math.sin(PI2 * 3.5 * t)) * 0.06;
-        L[i] += chirp; R[i] += chirp * 0.7;
+        // Soft rhythmic pulse at cricket tempo, heavily filtered
+        var pulse1 = Math.max(0, Math.sin(PI2 * 3.2 * t)) * 0.015;
+        var pulse2 = Math.max(0, Math.sin(PI2 * 2.8 * t + 1.5)) * 0.012;
+        // Use filtered noise instead of pure sine for organic texture
+        var tex = (Math.random() * 2 - 1) * 0.02;
+        L[i] += (pulse1 + tex * pulse1 * 2) * (0.7 + 0.3 * Math.sin(PI2 * 0.08 * t));
+        R[i] += (pulse2 + tex * pulse2 * 2) * (0.7 + 0.3 * Math.sin(PI2 * 0.1 * t));
       }
-      // Occasional tree frog
-      for (var f = 0; f < 3; f++) {
-        var fPos = Math.floor(Math.random() * (len - sr * 0.5));
-        var fLen = Math.floor(sr * (0.1 + Math.random() * 0.15));
-        var fFreq = 1200 + Math.random() * 600;
-        for (k = 0; k < fLen && fPos + k < len; k++) {
-          var env = Math.sin(Math.PI * k / fLen);
-          var s = Math.sin(PI2 * fFreq * k / sr) * 0.15 * env;
-          R[fPos + k] += s; L[fPos + k] += s * 0.3;
+      // A few very soft, distant cricket events (not sharp)
+      for (var c = 0; c < 8; c++) {
+        var cPos = Math.floor(Math.random() * (len - sr * 0.5));
+        var cLen = Math.floor(sr * (0.03 + Math.random() * 0.04));
+        var cPan = Math.random();
+        var cFreq = 3200 + Math.random() * 400; // slightly lower freq
+        for (k = 0; k < cLen && cPos + k < len; k++) {
+          var env = Math.sin(Math.PI * k / cLen);
+          var s = Math.sin(PI2 * cFreq * k / sr) * 0.03 * env; // very quiet
+          L[cPos + k] += s * (1 - cPan * 0.4);
+          R[cPos + k] += s * (0.4 + cPan * 0.6);
         }
       }
+      // 1-2 very distant peeper frogs - gentle low tone
+      for (var f = 0; f < 1 + Math.floor(Math.random() * 2); f++) {
+        var fPos = Math.floor(sr * 2 + Math.random() * (len - sr * 4));
+        var fLen = Math.floor(sr * (0.15 + Math.random() * 0.1));
+        var fFreq = 600 + Math.random() * 200; // much lower, gentle
+        for (k = 0; k < fLen && fPos + k < len; k++) {
+          var env = Math.sin(Math.PI * k / fLen);
+          var s = Math.sin(PI2 * fFreq * k / sr) * 0.025 * env;
+          R[fPos + k] += s; L[fPos + k] += s * 0.4;
+        }
+      }
+      // Heavy low-pass to keep everything warm and soft
+      for (i = 1; i < len; i++) { L[i] = L[i] * 0.6 + L[i-1] * 0.4; R[i] = R[i] * 0.6 + R[i-1] * 0.4; }
       for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'birdsong': {
-      // Dawn chorus: multiple bird species + gentle breeze + soft ambience
-      _pinkNoise(L, len, 0.08);
-      _pinkNoise(R, len, 0.08);
-      // Layer 8-12 bird events across the 10 seconds
-      var numBirds = 8 + Math.floor(Math.random() * 5);
+      // Gentle dawn chorus: soft distant birds with warm breeze - very calming
+      // Very soft pink noise bed - like a gentle morning breeze
+      _pinkNoise(L, len, 0.04);
+      _pinkNoise(R, len, 0.04);
+      // Warm low-frequency pad for depth
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var warmPad = Math.sin(PI2 * 120 * t) * 0.008 + Math.sin(PI2 * 180 * t) * 0.005;
+        var swell = 0.5 + 0.5 * Math.sin(PI2 * 0.06 * t);
+        L[i] += warmPad * swell; R[i] += warmPad * swell * 0.9;
+      }
+      // Fewer, softer, more distant birds - 4-6 instead of 8-12
+      var numBirds = 4 + Math.floor(Math.random() * 3);
       for (var b = 0; b < numBirds; b++) {
         var bPos = Math.floor(Math.random() * (len - sr * 1.5));
         var species = Math.floor(Math.random() * 4);
         var channel = Math.random() > 0.5 ? L : R;
-        _addBird(channel, sr, bPos, species);
-        // Bleed into other channel at lower volume (spatial)
+        // Use temp buffer so we can attenuate
+        var tmpMain = new Float32Array(len);
+        _addBird(tmpMain, sr, bPos, species);
+        // Much quieter - sounds distant and peaceful
+        var dist = 0.25 + Math.random() * 0.2; // distance attenuation
+        for (i = bPos; i < Math.min(bPos + sr * 2, len); i++) channel[i] += tmpMain[i] * dist;
+        // Softer bleed into other channel
         var other = channel === L ? R : L;
-        var tmpBuf = new Float32Array(len);
-        _addBird(tmpBuf, sr, bPos, species);
-        var bleed = 0.2 + Math.random() * 0.3;
-        for (i = bPos; i < Math.min(bPos + sr * 2, len); i++) other[i] += tmpBuf[i] * bleed;
+        for (i = bPos; i < Math.min(bPos + sr * 2, len); i++) other[i] += tmpMain[i] * dist * 0.3;
       }
+      // Gentle low-pass effect - soften any harsh high frequencies
+      var prev = 0;
+      for (i = 1; i < len; i++) { L[i] = L[i] * 0.7 + L[i-1] * 0.3; R[i] = R[i] * 0.7 + R[i-1] * 0.3; }
       for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'seagulls': {
-      // Beach: ocean surf + gull cries + distant shore ambience
-      // Ocean base
+      // Peaceful beach: very gentle ocean wash + rare distant gull + warm breeze
+      // Soft ocean base - slow rolling waves, very gentle
       for (i = 0; i < len; i++) {
         t = i / sr;
-        var wave = Math.sin(PI2 * 0.12 * t);
-        var surf = Math.max(0, wave) * 0.4;
-        var noise = (Math.random() * 2 - 1) * (surf + 0.12);
-        L[i] = noise; R[i] = noise * 0.85 + (Math.random() * 2 - 1) * 0.04;
+        // Much slower waves (~11 second cycle) for deep relaxation
+        var wave = Math.sin(PI2 * 0.09 * t + Math.sin(PI2 * 0.03 * t) * 0.5);
+        var surf = Math.max(0, wave) * 0.2;
+        var pull = Math.max(0, -wave) * 0.08;
+        // Filtered noise for soft wash sound
+        var noise = (Math.random() * 2 - 1) * (surf + 0.06);
+        var pullN = (Math.random() * 2 - 1) * pull;
+        // Warm low-frequency ocean depth
+        var depth = Math.sin(PI2 * 45 * t) * 0.015;
+        L[i] = noise + pullN + depth;
+        R[i] = noise * 0.85 + pullN * 1.1 + depth + (Math.random() * 2 - 1) * 0.02;
       }
-      // Gull calls
-      for (var g = 0; g < 5; g++) {
-        var gPos = Math.floor(Math.random() * (len - sr * 1.5));
-        var gLen = Math.floor(sr * (0.6 + Math.random() * 0.8));
-        var cries = 2 + Math.floor(Math.random() * 3);
-        var p = gPos;
-        var pan = Math.random();
-        for (var c = 0; c < cries; c++) {
-          var cLen = Math.floor(sr * (0.15 + Math.random() * 0.15));
-          for (k = 0; k < cLen && p + k < len; k++) {
-            var freq = 1400 + 500 * Math.sin(PI2 * 4 * k / sr) + c * 100;
-            var env = Math.sin(Math.PI * k / cLen);
-            var s = Math.sin(PI2 * freq * k / sr) * 0.2 * env;
-            L[p + k] += s * (1 - pan * 0.6);
-            R[p + k] += s * (0.4 + pan * 0.6);
-          }
-          p += cLen + Math.floor(sr * 0.05);
+      // Only 1-2 very distant, soft gull calls (not squawky)
+      for (var g = 0; g < 1 + Math.floor(Math.random() * 2); g++) {
+        var gPos = Math.floor(sr * 3 + Math.random() * (len - sr * 6));
+        var cLen = Math.floor(sr * (0.3 + Math.random() * 0.2));
+        var pan = 0.3 + Math.random() * 0.4;
+        for (k = 0; k < cLen && gPos + k < len; k++) {
+          // Lower frequency, smoother - like a distant melodic call
+          var freq = 800 + 150 * Math.sin(PI2 * 2 * k / sr);
+          var env = Math.sin(Math.PI * k / cLen) * Math.sin(Math.PI * k / cLen); // squared for softer
+          var s = Math.sin(PI2 * freq * k / sr) * 0.04 * env; // much quieter
+          L[gPos + k] += s * (1 - pan * 0.4);
+          R[gPos + k] += s * (0.4 + pan * 0.6);
         }
       }
+      // Low-pass to soften everything
+      for (i = 1; i < len; i++) { L[i] = L[i] * 0.65 + L[i-1] * 0.35; R[i] = R[i] * 0.65 + R[i-1] * 0.35; }
       for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'owls': {
-      // Night forest: deep quiet + owl hoots + distant rustles + very faint wind
-      _brownNoise(L, len, 0.06);
-      _brownNoise(R, len, 0.06);
-      // 2-3 owl hoot sequences
-      for (var o = 0; o < 2 + Math.floor(Math.random() * 2); o++) {
-        var oPos = Math.floor(sr * (0.5 + Math.random() * 7));
-        var hoots = 2 + Math.floor(Math.random() * 3); // "hoo-hoo-hoooo"
-        var p = oPos;
-        var pan = 0.3 + Math.random() * 0.4;
-        for (var h = 0; h < hoots; h++) {
-          var hLen = Math.floor(sr * (h === hoots - 1 ? 0.5 : 0.2)); // last hoot longer
-          var freq = 320 + Math.random() * 60;
-          for (k = 0; k < hLen && p + k < len; k++) {
-            var env = Math.sin(Math.PI * k / hLen) * (h === hoots - 1 ? 1 : 0.7);
-            var s = (Math.sin(PI2 * freq * k / sr) * 0.3 + Math.sin(PI2 * freq * 2 * k / sr) * 0.08) * env;
-            L[p + k] += s * (1 - pan * 0.5);
-            R[p + k] += s * (0.5 + pan * 0.5);
-          }
-          p += hLen + Math.floor(sr * (h === hoots - 1 ? 0 : 0.15));
-        }
+      // Serene forest night: deep stillness + 1 distant owl + soft nocturnal ambience
+      // Very soft brown noise bed - deep forest quiet
+      _brownNoise(L, len, 0.03);
+      _brownNoise(R, len, 0.03);
+      // Warm low pad - the stillness of the forest at night
+      for (i = 0; i < len; i++) {
+        t = i / sr;
+        var nightPad = Math.sin(PI2 * 80 * t) * 0.006 + Math.sin(PI2 * 55 * t) * 0.004;
+        var swell = 0.6 + 0.4 * Math.sin(PI2 * 0.04 * t);
+        L[i] += nightPad * swell; R[i] += nightPad * swell * 0.85;
       }
+      // Just 1 owl hoot sequence - distant and soothing
+      var oPos = Math.floor(sr * (4 + Math.random() * 8)); // well into the loop
+      var hoots = 2 + Math.floor(Math.random() * 2);
+      var p = oPos;
+      var pan = 0.3 + Math.random() * 0.4;
+      for (var h = 0; h < hoots; h++) {
+        var hLen = Math.floor(sr * (h === hoots - 1 ? 0.6 : 0.25));
+        var freq = 280 + Math.random() * 40; // lower, warmer
+        for (k = 0; k < hLen && p + k < len; k++) {
+          var env = Math.sin(Math.PI * k / hLen) * (h === hoots - 1 ? 0.8 : 0.5);
+          // Pure, warm tone with gentle harmonics - no harshness
+          var s = (Math.sin(PI2 * freq * k / sr) * 0.08 + Math.sin(PI2 * freq * 2 * k / sr) * 0.015) * env;
+          L[p + k] += s * (1 - pan * 0.5);
+          R[p + k] += s * (0.5 + pan * 0.5);
+        }
+        p += hLen + Math.floor(sr * (h === hoots - 1 ? 0 : 0.2));
+      }
+      // Low-pass for warmth
+      for (i = 1; i < len; i++) { L[i] = L[i] * 0.6 + L[i-1] * 0.4; R[i] = R[i] * 0.6 + R[i-1] * 0.4; }
       for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
     case 'insects':
     case 'forestAmbient': {
-      // Summer forest: cicadas + various insects + breeze
-      _pinkNoise(L, len, 0.1);
-      _pinkNoise(R, len, 0.1);
-      // Cicada drone (rises and falls)
+      // Peaceful afternoon: gentle warm breeze with subtle buzzing - no harsh cicadas
+      _pinkNoise(L, len, 0.04);
+      _pinkNoise(R, len, 0.04);
+      // Warm ambient bed instead of harsh cicada drone
       for (i = 0; i < len; i++) {
         t = i / sr;
-        var vol = 0.3 + 0.2 * Math.sin(PI2 * 0.15 * t);
-        var cicada = Math.sin(PI2 * 2800 * t) * vol * 0.08 +
-                     Math.sin(PI2 * 3200 * t + Math.sin(PI2 * 8 * t)) * vol * 0.05;
-        L[i] += cicada; R[i] += cicada * 0.8;
+        // Very subtle, filtered buzz - like distant summer sounds
+        var buzz = (Math.random() * 2 - 1) * 0.01 * (0.5 + 0.3 * Math.sin(PI2 * 0.1 * t));
+        // Warm low hum
+        var warmth = Math.sin(PI2 * 100 * t) * 0.005 * (0.6 + 0.4 * Math.sin(PI2 * 0.08 * t));
+        L[i] += buzz + warmth; R[i] += buzz * 0.8 + warmth;
       }
-      // Scattered insect chirps
-      for (var ins = 0; ins < 20; ins++) {
+      // Very few, soft chirps - distant and gentle
+      for (var ins = 0; ins < 5; ins++) {
         var iPos = Math.floor(Math.random() * (len - sr * 0.1));
-        _addCricketChorus(Math.random() > 0.5 ? L : R, sr, iPos);
+        var iLen = Math.floor(sr * 0.02);
+        var iFreq = 2800 + Math.random() * 400;
+        var iPan = Math.random();
+        for (k = 0; k < iLen && iPos + k < len; k++) {
+          var env = Math.sin(Math.PI * k / iLen);
+          var s = Math.sin(PI2 * iFreq * k / sr) * 0.015 * env;
+          L[iPos + k] += s * (1 - iPan * 0.4);
+          R[iPos + k] += s * (0.4 + iPan * 0.6);
+        }
       }
+      // Heavy low-pass for warmth
+      for (i = 1; i < len; i++) { L[i] = L[i] * 0.6 + L[i-1] * 0.4; R[i] = R[i] * 0.6 + R[i-1] * 0.4; }
       for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
       break;
     }
@@ -1853,6 +1911,10 @@ function updateAmbientAudio() {
     if (keep.indexOf(k) === -1) stopAmbientSound(k);
   });
 
+  // Clear cached buffers when sound type changes so new sounds are generated
+  if (_noiseCache[soundType] && _noiseCache._lastVersion !== 2) {
+    _noiseCache = {}; _noiseCache._lastVersion = 2;
+  }
   // Single environment sound — soft and calm
   playAmbientSound(soundType, 0.0012);
   if (WEATHER.data) {
