@@ -1466,14 +1466,28 @@ async function updateStreak() {
   const yesterday = localDate(new Date(Date.now() - 86400000));
   const herToday = data.lastCheckIn.her === today;
   const himToday = data.lastCheckIn.him === today;
-  const herYesterday = data.lastCheckIn.her === yesterday || data.lastCheckIn.her === today;
-  const himYesterday = data.lastCheckIn.him === yesterday || data.lastCheckIn.him === today;
 
   if (herToday && himToday) {
-    if (!herYesterday || !himYesterday) data.current = 1;
-    else data.current = (data.current || 0) + 1;
-    if (data.current > (data.longest || 0)) data.longest = data.current;
+    // Guard: only bump once per day
+    if (data.lastBump === today) {
+      // Already counted today — just save the lastCheckIn update
+    } else {
+      // Check if BOTH had checked in yesterday (continuity for streak)
+      const herHadYesterday = data.prevCheckIn && data.prevCheckIn.her === yesterday;
+      const himHadYesterday = data.prevCheckIn && data.prevCheckIn.him === yesterday;
+      if (herHadYesterday && himHadYesterday) {
+        data.current = (data.current || 0) + 1;
+      } else {
+        data.current = 1;
+      }
+      if (data.current > (data.longest || 0)) data.longest = data.current;
+      data.lastBump = today;
+    }
   }
+  // Store previous check-in dates before overwriting (for next day's continuity check)
+  if (!data.prevCheckIn) data.prevCheckIn = {};
+  if (data.lastCheckIn.her && data.lastCheckIn.her !== today) data.prevCheckIn.her = data.lastCheckIn.her;
+  if (data.lastCheckIn.him && data.lastCheckIn.him !== today) data.prevCheckIn.him = data.lastCheckIn.him;
 
   await db.ref('streaks').set(data);
 }

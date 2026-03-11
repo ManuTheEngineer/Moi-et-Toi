@@ -3243,14 +3243,13 @@ function sendMoodToPartner(moodKey) {
     type: 'mood-sound',
     from: user,
     fromName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
+    message: 'Set the mood to ' + mood.label,
     mood: moodKey,
     label: mood.label,
     icon: mood.icon,
-    ts: Date.now()
+    timestamp: Date.now(),
+    read: false
   });
-  if (typeof sendInAppNotif === 'function') {
-    sendInAppNotif('mood', 'Set the mood to ' + mood.label, mood.icon);
-  }
   toast('Sent ' + mood.label + ' mood to partner');
 }
 

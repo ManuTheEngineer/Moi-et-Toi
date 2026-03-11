@@ -1841,7 +1841,7 @@ go = function (p) {
     loadSettings();
   }
   if (p === 'fitness') renderFitnessHub();
-  if (p === 'nutrition') renderNutritionDay();
+  if (p === 'nutrition') { listenNutritionData(); renderNutritionDay(); }
   if (p === 'calendar') renderCalendar();
   if (p === 'dreamhome') {
     renderDreamHome();
@@ -2802,7 +2802,8 @@ var NOTIF_PAGE_MAP = {
   'listen-together': 'connect',
   fitness: 'fitness',
   checkin: 'mood',
-  song: 'connect'
+  song: 'connect',
+  music: 'connect'
 };
 
 function showNotifToast(fromName, message, icon, targetPage) {

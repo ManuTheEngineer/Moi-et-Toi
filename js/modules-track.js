@@ -2090,9 +2090,15 @@ async function saveGrowReflection() {
 let nutritionData = {},
   recipeData = {};
 
+var _nutrListenDate = null;
 function listenNutritionData() {
   if (!db) return;
-  const today = localDate();
+  var today = localDate();
+  // If date changed (e.g., past midnight), detach old listener and re-attach
+  if (_nutrListenDate && _nutrListenDate !== today) {
+    db.ref('nutrition/' + user + '/meals/' + _nutrListenDate).off();
+  }
+  _nutrListenDate = today;
   db.ref('nutrition/' + user + '/meals/' + today).on('value', snap => {
     nutritionData = snap.val() || {};
     renderNutritionDay();
@@ -2141,8 +2147,18 @@ function renderNutritionDay() {
   const el = id => document.getElementById(id);
   if (el('nutr-meals')) el('nutr-meals').textContent = mealCount;
   if (el('nutr-cals')) el('nutr-cals').textContent = totalCals;
-  // Macros - update ring SVGs
-  const calTarget = 2000;
+  // Macros - update ring SVGs (use baseline if available, else default 2000)
+  let calTarget = 2000;
+  if (fitBaseline) {
+    const weight = parseFloat(fitBaseline.weight) || 150;
+    const actMult = [0, 1.2, 1.375, 1.55, 1.725, 1.9][fitBaseline.activityLevel || 2];
+    const bmr = weight * 10 + 800; // simplified estimate
+    let tdee = Math.round(bmr * actMult);
+    const goal = fitBaseline.fitnessGoal;
+    if (goal === 1) tdee -= 400;       // Lose Weight
+    else if (goal === 2) tdee += 300;  // Build Muscle
+    calTarget = Math.max(1200, Math.min(4000, tdee));
+  }
   if (el('nutr-protein')) el('nutr-protein').textContent = totalP + 'g';
   if (el('nutr-carbs')) el('nutr-carbs').textContent = totalC + 'g';
   if (el('nutr-fats')) el('nutr-fats').textContent = totalF + 'g';

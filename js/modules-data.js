@@ -880,9 +880,17 @@ async function checkAchievements() {
   if (chCount >= 3) unlockBadge('challenge-three', 'Challenge Royalty');
   renderAchProgress('ach-prog-challenges', chCount, 3);
 
-  // Check streak for week, month, and century badges
-  const streakEl = document.getElementById('fit-streak');
-  const currentStreak = streakEl ? parseInt(streakEl.textContent) : 0;
+  // Check streak for week, month, and century badges (compute from data, not DOM)
+  let currentStreak = 0;
+  if (typeof fitnessData !== 'undefined' && fitnessData) {
+    const wDates = Object.values(fitnessData).map(w => w.date).sort().reverse();
+    let ck = localDate();
+    for (let si = 0; si < 60; si++) {
+      if (wDates.includes(ck)) { currentStreak++; }
+      else if (si > 0) break;
+      const sd = new Date(ck); sd.setDate(sd.getDate() - 1); ck = localDate(sd);
+    }
+  }
   if (currentStreak >= 7) unlockBadge('week-streak', 'Week Streak');
   if (currentStreak >= 30) unlockBadge('month-strong', 'Month Strong');
   if (currentStreak >= 100) unlockBadge('century', 'Century Club');
