@@ -1393,9 +1393,7 @@ function showWelcomeGate() {
   const greeting = document.getElementById('welcome-greeting');
   hideEl(form);
   showEl(gate);
-  const h = new Date().getHours();
-  const timeLabel = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-  if (greeting) greeting.textContent = timeLabel + ', ' + (NAMES[user] || '');
+  if (greeting) greeting.textContent = getGreetingText() + ', ' + (NAMES[user] || '');
   // Show photo partner chose for you on the welcome gate
   const welcomePhotoEl = document.getElementById('welcome-photo');
   if (welcomePhotoEl && db) {

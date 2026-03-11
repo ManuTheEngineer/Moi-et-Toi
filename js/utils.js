@@ -137,9 +137,42 @@ function updateTimeOfDay() {
   if (prev && prev !== time && typeof spawnOrbs === 'function') spawnOrbs();
 }
 
+// ===== TIME-BASED GREETING SYSTEM =====
+function getGreetingText() {
+  var h = new Date().getHours();
+  if (h < 5) return 'Good night';
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  if (h < 21) return 'Good evening';
+  return 'Good night';
+}
+
+// Update all greeting elements throughout the app
+function updateGreetings() {
+  var greeting = getGreetingText();
+
+  // Welcome gate greeting
+  var welcomeEl = document.getElementById('welcome-greeting');
+  if (welcomeEl && welcomeEl.textContent) {
+    // Preserve the name portion after the comma
+    var parts = welcomeEl.textContent.split(', ');
+    if (parts.length > 1) {
+      welcomeEl.textContent = greeting + ', ' + parts.slice(1).join(', ');
+    }
+  }
+
+  // Dashboard time label
+  var dashTimeEl = document.getElementById('dash-time-label');
+  if (dashTimeEl) dashTimeEl.textContent = greeting;
+
+  // Wake-up module hero title (only update if visible and in appropriate context)
+  if (typeof updateWakeUpHero === 'function') updateWakeUpHero();
+}
+
 // Update every 5 minutes
 updateTimeOfDay();
-setInterval(updateTimeOfDay, 5 * 60 * 1000);
+updateGreetings();
+setInterval(function() { updateTimeOfDay(); updateGreetings(); }, 5 * 60 * 1000);
 
 // ===== TOAST NOTIFICATION =====
 function toast(msg, duration) {

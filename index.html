@@ -75,7 +75,7 @@
         if (form) form.classList.add('d-none');
         if (gate) gate.classList.remove('d-none');
         var h = new Date().getHours();
-        var greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+        var greet = h < 5 ? 'Good night' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : h < 21 ? 'Good evening' : 'Good night';
         var el = document.getElementById('welcome-greeting');
         if (el) el.textContent = greet;
       }

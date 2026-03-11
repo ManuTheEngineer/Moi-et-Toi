@@ -407,18 +407,11 @@ function updateDashStreak(data) {
 
 // ===== DASHBOARD HERO (time-aware) =====
 function renderDashHero() {
-  const h = new Date().getHours();
   const timeLabel = document.getElementById('dash-time-label');
   const greeting = document.getElementById('dash-greeting');
   if (timeLabel && greeting) {
-    let timeText, greetText;
-    if (h < 6) { timeText = 'Late night'; greetText = NAMES[user]; }
-    else if (h < 12) { timeText = 'Good morning'; greetText = NAMES[user]; }
-    else if (h < 17) { timeText = 'Good afternoon'; greetText = NAMES[user]; }
-    else if (h < 21) { timeText = 'Good evening'; greetText = NAMES[user]; }
-    else { timeText = 'Good night'; greetText = NAMES[user]; }
-    timeLabel.textContent = timeText;
-    greeting.textContent = greetText;
+    timeLabel.textContent = getGreetingText();
+    greeting.textContent = NAMES[user];
   }
 
   // Update partner name and photo on dashboard
