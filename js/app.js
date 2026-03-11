@@ -1282,7 +1282,11 @@ async function finishOnboarding(startTour) {
 
   document.getElementById('login').classList.remove('onboard-active');
   finishLogin();
-  if (startTour) {
+  // Force biometric setup after onboarding completes
+  var bioAvailable = await checkBiometricAvailable();
+  if (bioAvailable && !hasBiometricCredential()) {
+    setTimeout(function() { showBiometricSetupModal(); }, 800);
+  } else if (startTour) {
     setTimeout(function() { startAppTour(); }, 600);
   }
 }
@@ -1629,22 +1633,19 @@ async function enterApp() {
   var hasBio = hasBiometricCredential();
 
   if (hasBio) {
-    // Returning user with biometric — verify
+    // Returning user with biometric — verify with Face ID
     var verified = await verifyBiometric();
     if (verified) {
       finishLogin();
       return;
     }
-    // Verification failed or cancelled — still let them in
-    toast('Biometric cancelled — entering anyway');
-    finishLogin();
+    // Verification failed or cancelled — let them retry
+    if (enterBtn) { enterBtn.textContent = 'Try again'; enterBtn.disabled = false; }
+    toast('Verification required to enter');
+    return;
   } else if (needsBioSetup) {
-    // First time after login — offer to register biometric
-    var registered = await registerBiometric();
-    if (registered) {
-      toast('Face ID enabled for next time!');
-    }
-    finishLogin();
+    // First time on this device — force biometric registration
+    showBiometricSetupModal();
   } else {
     // No biometric support — just enter
     finishLogin();
@@ -1674,20 +1675,63 @@ function updateBiometricUI() {
   });
 }
 
-// After first manual login, go straight in but offer biometric registration
+// After first manual login, force biometric registration before entering the app
 async function offerBiometricAfterLogin() {
-  finishLogin();
-  // Offer biometric setup after a short delay so user sees the app first
   var available = await checkBiometricAvailable();
   if (available && !hasBiometricCredential()) {
-    setTimeout(async function() {
-      var registered = await registerBiometric();
-      if (registered) toast('Face ID enabled! Next time just tap Enter.');
-    }, 2000);
+    // Force biometric registration — show a modal the user must complete
+    showBiometricSetupModal();
+  } else {
+    finishLogin();
   }
 }
 
+function showBiometricSetupModal() {
+  var modal = document.getElementById('generic-modal');
+  var content = document.getElementById('generic-modal-content');
+  if (!modal || !content) { finishLogin(); return; }
+  content.innerHTML =
+    '<div style="text-align:center;padding:8px 0">' +
+      '<div style="font-size:40px;margin-bottom:12px">🔐</div>' +
+      '<h2 style="font-size:18px;font-weight:600;color:var(--t1);margin:0 0 8px">Secure your space</h2>' +
+      '<p style="font-size:13px;color:var(--t2);line-height:1.5;margin:0 0 20px">Set up Face ID so only you can access Moi & Toi. This keeps your private world safe.</p>' +
+      '<button class="dq-submit w-full" onclick="handleBiometricSetup()" style="margin-bottom:8px">Enable Face ID</button>' +
+      '<div style="font-size:11px;color:var(--t3);cursor:pointer;padding:8px" onclick="skipBiometricSetup()">I\'ll do this later</div>' +
+    '</div>';
+  modal.classList.add('on');
+  document.body.classList.add('modal-open');
+}
+
+async function handleBiometricSetup() {
+  var modal = document.getElementById('generic-modal');
+  var registered = await registerBiometric();
+  if (modal) modal.classList.remove('on');
+  document.body.classList.remove('modal-open');
+  if (registered) {
+    toast('Face ID enabled! Your space is secure.');
+  } else {
+    toast('Face ID setup skipped');
+  }
+  finishLogin();
+}
+
+function skipBiometricSetup() {
+  var modal = document.getElementById('generic-modal');
+  if (modal) modal.classList.remove('on');
+  document.body.classList.remove('modal-open');
+  finishLogin();
+}
+
 function finishLogin() {
+  // Ensure time-of-day and sky theme are set BEFORE showing the shell
+  // so the background matches the login screen seamlessly
+  if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+  // Apply cached sky theme immediately for consistency
+  var cachedTheme = localStorage.getItem('met_sky_theme');
+  if (cachedTheme && typeof applySkyTheme === 'function') {
+    applySkyTheme(cachedTheme);
+  }
+  // Now show the shell — background should already match login
   document.getElementById('login').classList.add('h');
   document.getElementById('shell').classList.add('on');
   document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
@@ -1767,7 +1811,6 @@ function finishLogin() {
   initMetricsEngine(); // Phase 15: data engine replaces calculateRelationshipPulse
   listenMoodUpdates(); // incremental mood index updates
   onMetricsUpdate(() => renderRelHealthCard());
-  initDynamicVisuals();
   initViewToggle();
   // New modules v3 - enhanced features
   listenFitnessData();
@@ -1782,9 +1825,17 @@ function finishLogin() {
   listenGrowData();
   // Render sound grids personalized for user
   if (typeof renderMoodSoundsGrid === 'function') renderMoodSoundsGrid();
+  // Load sky theme FIRST, then initialize sky scene and weather system.
+  // This prevents the sky rendering with default theme before Firebase data loads.
   if (typeof loadSkyTheme === 'function') loadSkyTheme();
   // Initialize weather system (must run after user/db are set)
   if (typeof initWeatherSystem === 'function') initWeatherSystem();
+  // Initialize sky scene after a short delay to let theme/weather load from Firebase
+  setTimeout(function() {
+    // Ensure living sky is on (re-initialize cleanly now that shell is visible)
+    if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
+    initDynamicVisuals();
+  }, 500);
   // AI Background Service — content curator, relationship monitor, etc.
   setTimeout(() => { if (typeof initAIBackgroundService === 'function') initAIBackgroundService(); }, 5000);
   setTimeout(() => { if (typeof loadAIDailyContent === 'function') loadAIDailyContent(); }, 3000);

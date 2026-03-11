@@ -373,6 +373,8 @@ function setLivingSky(on) {
   livingSkyEnabled = on;
   const container = document.getElementById('sky-scene');
   if (on) {
+    // Ensure time-of-day colors are set
+    if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
     // Show terrain and particles
     var terrain = document.getElementById('terrain-scene');
     if (terrain) terrain.style.opacity = '';
@@ -384,6 +386,7 @@ function setLivingSky(on) {
       startCreatureLoop(container);
       // Restart periodic sky refresh
       clearInterval(SKY.sceneTimer);
+      clearInterval(SKY.creatureTimer);
       SKY.sceneTimer = setInterval(function() {
         if (!livingSkyEnabled || document.hidden) return;
         renderLivingSky(container);
@@ -414,8 +417,13 @@ function initSkyScene() {
   const container = document.getElementById('sky-scene');
   if (!container) return;
   if (!livingSkyEnabled) return;
+  // Clear any existing timers to prevent duplicates
+  clearInterval(SKY.sceneTimer);
+  clearInterval(SKY.creatureTimer);
   renderLivingSky(container);
   startCreatureLoop(container);
+  // Also ensure terrain is rendered (may have been cleared or not yet rendered)
+  if (typeof renderTerrain === 'function') renderTerrain();
   // Update sky every 2 minutes — sun position changes slowly (skip when tab hidden)
   SKY.sceneTimer = setInterval(function() {
     if (!livingSkyEnabled || document.hidden) return;
