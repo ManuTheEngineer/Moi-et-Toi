@@ -1,7 +1,7 @@
 // ===== VIEWPORT FIX (PWA full-screen coverage) =====
-(function(){
+(function () {
   var fullH = 0;
-  function fillScreen(){
+  function fillScreen() {
     // Use window.innerHeight (not visualViewport) for the stable page height.
     // visualViewport.height shrinks when the keyboard opens, which would cause
     // the entire layout to jump. innerHeight stays stable on iOS/Android PWAs.
@@ -12,11 +12,16 @@
   }
   fillScreen();
   var _resizeTimer;
-  window.addEventListener('resize', function() {
+  window.addEventListener('resize', function () {
     if (_resizeTimer) return;
-    _resizeTimer = requestAnimationFrame(function() { fillScreen(); _resizeTimer = 0; });
+    _resizeTimer = requestAnimationFrame(function () {
+      fillScreen();
+      _resizeTimer = 0;
+    });
   });
-  document.addEventListener('visibilitychange', function(){ if(!document.hidden) fillScreen(); });
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) fillScreen();
+  });
 
   // Track visual viewport for keyboard-aware layouts
   if (window.visualViewport) {
@@ -29,13 +34,16 @@
       // Detect keyboard open: viewport shrinks significantly.
       // Debounce the class toggle to prevent rapid add/remove flicker
       // which causes layout thrashing (padding, nav transform, etc.)
-      var keyboardOpen = fullH > 0 && (fullH - h) > 100;
+      var keyboardOpen = fullH > 0 && fullH - h > 100;
       if (keyboardOpen !== wasKeyboardOpen) {
         clearTimeout(kbTimer);
-        kbTimer = setTimeout(function() {
-          wasKeyboardOpen = keyboardOpen;
-          document.body.classList.toggle('keyboard-open', keyboardOpen);
-        }, keyboardOpen ? 50 : 200); // open fast, close slow to avoid bounce
+        kbTimer = setTimeout(
+          function () {
+            wasKeyboardOpen = keyboardOpen;
+            document.body.classList.toggle('keyboard-open', keyboardOpen);
+          },
+          keyboardOpen ? 50 : 200
+        ); // open fast, close slow to avoid bounce
       }
     }
     vv.addEventListener('resize', onVVResize);
@@ -48,65 +56,87 @@
   // which was triggering blur → keyboard close → scroll → reopen loop).
   var scrollTick = false;
   var lastFocusTime = 0;
-  document.addEventListener('focusin', function(e) {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-      lastFocusTime = Date.now();
-    }
-  }, true);
-  window.addEventListener('scroll', function() {
-    // Skip if an input was just focused (browser auto-scrolls to show it)
-    if (Date.now() - lastFocusTime < 800) return;
-    if (!scrollTick) {
-      scrollTick = true;
-      requestAnimationFrame(function() {
-        var active = document.activeElement;
-        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')
-          && !active.closest('.chat-input-wrap')
-          && !active.closest('#onboard-steps')
-          && !active.closest('#login-form')
-          && !active.closest('.generic-modal-overlay')
-          && !active.closest('.generic-modal-box')
-          && !active.closest('.lmod')
-          && !active.closest('.form-card')) {
-          if (window.scrollY > 120) active.blur();
-        }
-        scrollTick = false;
-      });
-    }
-  }, { passive: true });
+  document.addEventListener(
+    'focusin',
+    function (e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        lastFocusTime = Date.now();
+      }
+    },
+    true
+  );
+  window.addEventListener(
+    'scroll',
+    function () {
+      // Skip if an input was just focused (browser auto-scrolls to show it)
+      if (Date.now() - lastFocusTime < 800) return;
+      if (!scrollTick) {
+        scrollTick = true;
+        requestAnimationFrame(function () {
+          var active = document.activeElement;
+          if (
+            active &&
+            (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') &&
+            !active.closest('.chat-input-wrap') &&
+            !active.closest('#onboard-steps') &&
+            !active.closest('#login-form') &&
+            !active.closest('.generic-modal-overlay') &&
+            !active.closest('.generic-modal-box') &&
+            !active.closest('.lmod') &&
+            !active.closest('.form-card')
+          ) {
+            if (window.scrollY > 120) active.blur();
+          }
+          scrollTick = false;
+        });
+      }
+    },
+    { passive: true }
+  );
 
   // Reset iOS zoom after input blur - iOS sometimes stays zoomed in after
   // the keyboard dismisses, especially on inputs that had small font-sizes.
-  document.addEventListener('focusout', function(e) {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
-      // Small delay to let keyboard animation finish, then reset viewport scale
-      setTimeout(function() {
-        if (document.activeElement === document.body || !document.activeElement ||
-            (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'SELECT')) {
-          // Reset any residual zoom by toggling the viewport meta
-          var vp = document.querySelector('meta[name="viewport"]');
-          if (vp) {
-            var original = vp.content;
-            vp.content = original + ', maximum-scale=1';
-            setTimeout(function() { vp.content = original; }, 50);
+  document.addEventListener(
+    'focusout',
+    function (e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        // Small delay to let keyboard animation finish, then reset viewport scale
+        setTimeout(function () {
+          if (
+            document.activeElement === document.body ||
+            !document.activeElement ||
+            (document.activeElement.tagName !== 'INPUT' &&
+              document.activeElement.tagName !== 'TEXTAREA' &&
+              document.activeElement.tagName !== 'SELECT')
+          ) {
+            // Reset any residual zoom by toggling the viewport meta
+            var vp = document.querySelector('meta[name="viewport"]');
+            if (vp) {
+              var original = vp.content;
+              vp.content = original + ', maximum-scale=1';
+              setTimeout(function () {
+                vp.content = original;
+              }, 50);
+            }
+            window.scrollTo({ top: window.scrollY, behavior: 'instant' });
           }
-          window.scrollTo({ top: window.scrollY, behavior: 'instant' });
-        }
-      }, 300);
-    }
-  }, true);
+        }, 300);
+      }
+    },
+    true
+  );
 })();
 
 // ===== EARLY THEME APPLICATION =====
 // Apply sky theme immediately to avoid flash of wrong theme.
-(function() {
+(function () {
   try {
     var saved = localStorage.getItem('met_sky_theme');
     window._cachedSkyTheme = saved;
     if (saved) {
       document.body.setAttribute('data-sky-theme', saved);
     }
-  } catch(e) {}
+  } catch (e) {}
 })();
 
 // ===== RENDER LIVING SKY ON LOGIN PAGE =====
@@ -123,7 +153,7 @@ function renderLoginSky() {
       if (cached) {
         WEATHER.data = JSON.parse(cached);
       }
-    } catch(e) {}
+    } catch (e) {}
   }
   // Restore cached location for weather-aware login rendering
   if (typeof WEATHER !== 'undefined' && !WEATHER.lat) {
@@ -135,7 +165,7 @@ function renderLoginSky() {
         WEATHER.lon = loc.lon;
         WEATHER.locationGranted = true;
       }
-    } catch(e) {}
+    } catch (e) {}
   }
 
   if (typeof renderLivingSky === 'function') renderLivingSky(skyC);
@@ -169,9 +199,30 @@ function updateTimeOfDay() {
   document.body.setAttribute('data-time', time);
   // Update browser chrome color to match theme + sky theme
   var themeColors = {
-    mixed:    { dawn: '#F0E6E8', morning: '#F5F0E6', afternoon: '#EFF3F5', golden: '#F2E8D8', evening: '#2A2440', night: '#1A1828' },
-    beach:    { dawn: '#F4E0D8', morning: '#F8EEE0', afternoon: '#E4F2F4', golden: '#F6E2C8', evening: '#26203A', night: '#161824' },
-    mountain: { dawn: '#E6E8E4', morning: '#E8EEE2', afternoon: '#E2ECF0', golden: '#ECE2D4', evening: '#202838', night: '#141C24' }
+    mixed: {
+      dawn: '#F0E6E8',
+      morning: '#F5F0E6',
+      afternoon: '#EFF3F5',
+      golden: '#F2E8D8',
+      evening: '#2A2440',
+      night: '#1A1828'
+    },
+    beach: {
+      dawn: '#F4E0D8',
+      morning: '#F8EEE0',
+      afternoon: '#E4F2F4',
+      golden: '#F6E2C8',
+      evening: '#26203A',
+      night: '#161824'
+    },
+    mountain: {
+      dawn: '#E6E8E4',
+      morning: '#E8EEE2',
+      afternoon: '#E2ECF0',
+      golden: '#ECE2D4',
+      evening: '#202838',
+      night: '#141C24'
+    }
   };
   var sky = (typeof currentSkyTheme !== 'undefined' && currentSkyTheme) || 'mixed';
   var colors = themeColors[sky] || themeColors.mixed;
@@ -216,7 +267,13 @@ function updateGreetings() {
 // Update every 5 minutes
 updateTimeOfDay();
 updateGreetings();
-setInterval(function() { updateTimeOfDay(); updateGreetings(); }, 5 * 60 * 1000);
+setInterval(
+  function () {
+    updateTimeOfDay();
+    updateGreetings();
+  },
+  5 * 60 * 1000
+);
 
 // ===== TOAST NOTIFICATION =====
 function toast(msg, duration) {
@@ -226,12 +283,17 @@ function toast(msg, duration) {
   var el = document.createElement('div');
   el.id = 'toast-msg';
   el.textContent = msg;
-  el.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.82);color:#fff;padding:10px 22px;border-radius:20px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:80vw;text-align:center;font-family:Outfit,sans-serif';
+  el.style.cssText =
+    'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.82);color:#fff;padding:10px 22px;border-radius:20px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:80vw;text-align:center;font-family:Outfit,sans-serif';
   document.body.appendChild(el);
-  requestAnimationFrame(function() { el.style.opacity = '1'; });
-  setTimeout(function() {
+  requestAnimationFrame(function () {
+    el.style.opacity = '1';
+  });
+  setTimeout(function () {
     el.style.opacity = '0';
-    setTimeout(function() { el.remove(); }, 300);
+    setTimeout(function () {
+      el.remove();
+    }, 300);
   }, duration);
 }
 
@@ -281,7 +343,8 @@ function hideEl(id) {
 function toggleEl(id) {
   const el = typeof id === 'string' ? document.getElementById(id) : id;
   if (!el) return;
-  if (el.classList.contains('d-none')) showEl(el); else hideEl(el);
+  if (el.classList.contains('d-none')) showEl(el);
+  else hideEl(el);
 }
 
 // ===== FLOATING ORBS SYSTEM =====
@@ -387,7 +450,7 @@ function setLivingSky(on) {
       // Restart periodic sky refresh
       clearInterval(SKY.sceneTimer);
       clearInterval(SKY.creatureTimer);
-      SKY.sceneTimer = setInterval(function() {
+      SKY.sceneTimer = setInterval(function () {
         if (!livingSkyEnabled || document.hidden) return;
         renderLivingSky(container);
       }, 120000);
@@ -406,7 +469,10 @@ function setLivingSky(on) {
     document.body.classList.add('sky-off');
     // Hide terrain
     var terrain = document.getElementById('terrain-scene');
-    if (terrain) { terrain.innerHTML = ''; terrain.style.opacity = '0'; }
+    if (terrain) {
+      terrain.innerHTML = '';
+      terrain.style.opacity = '0';
+    }
     // Remove orbs and particles
     var particles = document.getElementById('particles');
     if (particles) particles.style.display = 'none';
@@ -425,7 +491,7 @@ function initSkyScene() {
   // Also ensure terrain is rendered (may have been cleared or not yet rendered)
   if (typeof renderTerrain === 'function') renderTerrain();
   // Update sky every 2 minutes — sun position changes slowly (skip when tab hidden)
-  SKY.sceneTimer = setInterval(function() {
+  SKY.sceneTimer = setInterval(function () {
     if (!livingSkyEnabled || document.hidden) return;
     renderLivingSky(container);
   }, 120000);
@@ -440,12 +506,13 @@ function getSunPosition() {
   // Sun rises at 6, sets at 20 (simplified)
   // Arc from left(0%) to right(100%) over 6am-8pm
   // Y follows a parabola (highest at noon)
-  var sunrise = 6, sunset = 20;
+  var sunrise = 6,
+    sunset = 20;
   var dayLength = sunset - sunrise;
 
   if (t < sunrise || t >= sunset) {
     // Night - return moon position
-    var nightT = t < sunrise ? (t + 24 - sunset) : (t - sunset);
+    var nightT = t < sunrise ? t + 24 - sunset : t - sunset;
     var nightLen = 24 - dayLength;
     var nx = 15 + (nightT / nightLen) * 70; // moon drifts across
     var ny = 8 + 15 * Math.sin((nightT / nightLen) * Math.PI); // gentle arc
@@ -462,7 +529,7 @@ function getSunPosition() {
 
 function getSunColor() {
   var time = getTimeOfDay();
-  var sky = (typeof currentSkyTheme !== 'undefined') ? currentSkyTheme : 'mixed';
+  var sky = typeof currentSkyTheme !== 'undefined' ? currentSkyTheme : 'mixed';
   // Environment-aware sun tints
   var sunColors = {
     mixed: {
@@ -502,28 +569,36 @@ function renderLivingSky(container) {
   // 1. Atmospheric haze - environment-aware
   var atmo = document.createElement('div');
   atmo.className = 'sky-atmo-day';
-  var skyTheme = (typeof currentSkyTheme !== 'undefined') ? currentSkyTheme : 'mixed';
+  var skyTheme = typeof currentSkyTheme !== 'undefined' ? currentSkyTheme : 'mixed';
   if (skyTheme === 'beach') {
     if (isGolden || isEvening) {
-      atmo.style.background = 'linear-gradient(180deg,rgba(255,160,80,0.06) 0%,rgba(255,190,120,0.08) 40%,rgba(255,200,140,0.12) 100%)';
+      atmo.style.background =
+        'linear-gradient(180deg,rgba(255,160,80,0.06) 0%,rgba(255,190,120,0.08) 40%,rgba(255,200,140,0.12) 100%)';
     } else if (isDawn) {
-      atmo.style.background = 'linear-gradient(180deg,rgba(255,180,140,0.04) 0%,rgba(255,200,160,0.06) 50%,rgba(255,220,180,0.10) 100%)';
+      atmo.style.background =
+        'linear-gradient(180deg,rgba(255,180,140,0.04) 0%,rgba(255,200,160,0.06) 50%,rgba(255,220,180,0.10) 100%)';
     } else {
-      atmo.style.background = 'linear-gradient(180deg,rgba(80,200,220,0.04) 0%,rgba(120,220,240,0.06) 40%,rgba(200,235,245,0.08) 100%)';
+      atmo.style.background =
+        'linear-gradient(180deg,rgba(80,200,220,0.04) 0%,rgba(120,220,240,0.06) 40%,rgba(200,235,245,0.08) 100%)';
     }
   } else if (skyTheme === 'mountain') {
     if (isGolden || isEvening) {
-      atmo.style.background = 'linear-gradient(180deg,rgba(180,140,60,0.04) 0%,rgba(160,180,80,0.06) 40%,rgba(140,160,100,0.08) 100%)';
+      atmo.style.background =
+        'linear-gradient(180deg,rgba(180,140,60,0.04) 0%,rgba(160,180,80,0.06) 40%,rgba(140,160,100,0.08) 100%)';
     } else if (isDawn) {
-      atmo.style.background = 'linear-gradient(180deg,rgba(140,180,120,0.03) 0%,rgba(160,200,140,0.05) 50%,rgba(180,210,160,0.08) 100%)';
+      atmo.style.background =
+        'linear-gradient(180deg,rgba(140,180,120,0.03) 0%,rgba(160,200,140,0.05) 50%,rgba(180,210,160,0.08) 100%)';
     } else {
-      atmo.style.background = 'linear-gradient(180deg,rgba(100,160,200,0.03) 0%,rgba(120,180,160,0.05) 40%,rgba(140,200,180,0.07) 100%)';
+      atmo.style.background =
+        'linear-gradient(180deg,rgba(100,160,200,0.03) 0%,rgba(120,180,160,0.05) 40%,rgba(140,200,180,0.07) 100%)';
     }
   } else {
     if (isGolden || isEvening) {
-      atmo.style.background = 'linear-gradient(180deg,rgba(255,180,100,0.04) 0%,rgba(255,200,140,0.06) 40%,rgba(255,210,160,0.1) 100%)';
+      atmo.style.background =
+        'linear-gradient(180deg,rgba(255,180,100,0.04) 0%,rgba(255,200,140,0.06) 40%,rgba(255,210,160,0.1) 100%)';
     } else if (isDawn) {
-      atmo.style.background = 'linear-gradient(180deg,rgba(180,140,255,0.03) 0%,rgba(255,160,140,0.05) 50%,rgba(255,200,150,0.08) 100%)';
+      atmo.style.background =
+        'linear-gradient(180deg,rgba(180,140,255,0.03) 0%,rgba(255,160,140,0.05) 50%,rgba(255,200,150,0.08) 100%)';
     }
   }
   container.appendChild(atmo);
@@ -533,7 +608,8 @@ function renderLivingSky(container) {
     // Deep night sky overlay
     var nightOverlay = document.createElement('div');
     nightOverlay.className = 'sky-atmo-day';
-    nightOverlay.style.background = 'linear-gradient(180deg,rgba(8,12,30,0.35) 0%,rgba(15,20,50,0.25) 30%,rgba(20,25,60,0.15) 60%,rgba(25,30,55,0.08) 100%)';
+    nightOverlay.style.background =
+      'linear-gradient(180deg,rgba(8,12,30,0.35) 0%,rgba(15,20,50,0.25) 30%,rgba(20,25,60,0.15) 60%,rgba(25,30,55,0.08) 100%)';
     container.appendChild(nightOverlay);
 
     renderMoon(container, pos);
@@ -544,12 +620,15 @@ function renderLivingSky(container) {
     hz.className = 'sky-horizon';
     if (skyTheme === 'beach') {
       // Ocean reflection glow at night
-      hz.style.cssText = 'height:180px;background:linear-gradient(to top,rgba(15,35,70,0.14),rgba(25,45,90,0.08),rgba(20,50,80,0.04),transparent)';
+      hz.style.cssText =
+        'height:180px;background:linear-gradient(to top,rgba(15,35,70,0.14),rgba(25,45,90,0.08),rgba(20,50,80,0.04),transparent)';
     } else if (skyTheme === 'mountain') {
       // Deep forest silhouette
-      hz.style.cssText = 'height:200px;background:linear-gradient(to top,rgba(10,20,15,0.16),rgba(15,30,25,0.08),rgba(20,35,30,0.04),transparent)';
+      hz.style.cssText =
+        'height:200px;background:linear-gradient(to top,rgba(10,20,15,0.16),rgba(15,30,25,0.08),rgba(20,35,30,0.04),transparent)';
     } else {
-      hz.style.cssText = 'height:120px;background:linear-gradient(to top,rgba(40,50,100,0.08),rgba(60,70,120,0.04),transparent)';
+      hz.style.cssText =
+        'height:120px;background:linear-gradient(to top,rgba(40,50,100,0.08),rgba(60,70,120,0.04),transparent)';
     }
     container.appendChild(hz);
 
@@ -563,7 +642,7 @@ function renderLivingSky(container) {
     renderSun(container, pos, sunColor, isGolden);
 
     // Light shafts
-    var shaftCount = isGolden ? 2 : (isEvening ? 1 : 1);
+    var shaftCount = isGolden ? 2 : isEvening ? 1 : 1;
     for (var s = 0; s < shaftCount; s++) {
       var shaft = document.createElement('div');
       shaft.className = 'sky-light-shaft';
@@ -572,16 +651,31 @@ function renderLivingSky(container) {
       var shaftAngle = -15 + Math.random() * 30;
       var shaftX = pos.x - 10 + Math.random() * 20;
       var shaftOpacity = isGolden ? 0.06 : 0.03;
-      shaft.style.cssText = 'width:' + shaftW + 'px;height:' + shaftH + 'px;left:' + shaftX + '%;top:' + pos.y + '%;' +
-        '--shaft-angle:' + shaftAngle + 'deg;--shaft-opacity:' + shaftOpacity + ';animation-delay:' + (s * 2) + 's';
+      shaft.style.cssText =
+        'width:' +
+        shaftW +
+        'px;height:' +
+        shaftH +
+        'px;left:' +
+        shaftX +
+        '%;top:' +
+        pos.y +
+        '%;' +
+        '--shaft-angle:' +
+        shaftAngle +
+        'deg;--shaft-opacity:' +
+        shaftOpacity +
+        ';animation-delay:' +
+        s * 2 +
+        's';
       if (isGolden || isEvening) {
-        shaft.style.background = 'linear-gradient(180deg,rgba(255,200,120,' + (shaftOpacity * 1.5) + '),transparent)';
+        shaft.style.background = 'linear-gradient(180deg,rgba(255,200,120,' + shaftOpacity * 1.5 + '),transparent)';
       }
       container.appendChild(shaft);
     }
 
     // Clouds - reduced for performance
-    var cloudCount = time === 'morning' ? 2 : (isGolden ? 2 : 3);
+    var cloudCount = time === 'morning' ? 2 : isGolden ? 2 : 3;
     if (skyTheme === 'beach') cloudCount = Math.max(1, cloudCount - 1);
     if (skyTheme === 'mountain') cloudCount = Math.min(cloudCount + 1, 3);
     for (var i = 0; i < cloudCount; i++) {
@@ -593,27 +687,36 @@ function renderLivingSky(container) {
     hz1.className = 'sky-horizon';
     if (skyTheme === 'beach') {
       if (isGolden || isEvening) {
-        hz1.style.cssText = 'height:280px;background:linear-gradient(to top,rgba(255,130,40,0.14),rgba(255,170,70,0.08),rgba(255,200,120,0.04),transparent)';
+        hz1.style.cssText =
+          'height:280px;background:linear-gradient(to top,rgba(255,130,40,0.14),rgba(255,170,70,0.08),rgba(255,200,120,0.04),transparent)';
       } else if (isDawn) {
-        hz1.style.cssText = 'height:220px;background:linear-gradient(to top,rgba(255,180,140,0.10),rgba(255,200,170,0.06),transparent)';
+        hz1.style.cssText =
+          'height:220px;background:linear-gradient(to top,rgba(255,180,140,0.10),rgba(255,200,170,0.06),transparent)';
       } else {
-        hz1.style.cssText = 'height:180px;background:linear-gradient(to top,rgba(100,210,230,0.08),rgba(160,225,240,0.04),transparent)';
+        hz1.style.cssText =
+          'height:180px;background:linear-gradient(to top,rgba(100,210,230,0.08),rgba(160,225,240,0.04),transparent)';
       }
     } else if (skyTheme === 'mountain') {
       if (isGolden || isEvening) {
-        hz1.style.cssText = 'height:260px;background:linear-gradient(to top,rgba(180,130,50,0.10),rgba(140,160,80,0.06),rgba(120,140,100,0.03),transparent)';
+        hz1.style.cssText =
+          'height:260px;background:linear-gradient(to top,rgba(180,130,50,0.10),rgba(140,160,80,0.06),rgba(120,140,100,0.03),transparent)';
       } else if (isDawn) {
-        hz1.style.cssText = 'height:200px;background:linear-gradient(to top,rgba(120,160,100,0.08),rgba(140,180,120,0.04),transparent)';
+        hz1.style.cssText =
+          'height:200px;background:linear-gradient(to top,rgba(120,160,100,0.08),rgba(140,180,120,0.04),transparent)';
       } else {
-        hz1.style.cssText = 'height:170px;background:linear-gradient(to top,rgba(80,140,120,0.07),rgba(100,160,140,0.04),transparent)';
+        hz1.style.cssText =
+          'height:170px;background:linear-gradient(to top,rgba(80,140,120,0.07),rgba(100,160,140,0.04),transparent)';
       }
     } else {
       if (isGolden || isEvening) {
-        hz1.style.cssText = 'height:250px;background:linear-gradient(to top,rgba(255,140,50,0.1),rgba(255,180,80,0.05),rgba(255,200,120,0.02),transparent)';
+        hz1.style.cssText =
+          'height:250px;background:linear-gradient(to top,rgba(255,140,50,0.1),rgba(255,180,80,0.05),rgba(255,200,120,0.02),transparent)';
       } else if (isDawn) {
-        hz1.style.cssText = 'height:200px;background:linear-gradient(to top,rgba(255,150,120,0.08),rgba(255,180,160,0.04),transparent)';
+        hz1.style.cssText =
+          'height:200px;background:linear-gradient(to top,rgba(255,150,120,0.08),rgba(255,180,160,0.04),transparent)';
       } else {
-        hz1.style.cssText = 'height:150px;background:linear-gradient(to top,rgba(180,200,230,0.06),rgba(200,215,240,0.03),transparent)';
+        hz1.style.cssText =
+          'height:150px;background:linear-gradient(to top,rgba(180,200,230,0.06),rgba(200,215,240,0.03),transparent)';
       }
     }
     container.appendChild(hz1);
@@ -622,7 +725,8 @@ function renderLivingSky(container) {
     var flare = document.createElement('div');
     flare.className = 'sky-sun-flare';
     var fs = 100 + Math.random() * 80;
-    flare.style.cssText = 'width:' + fs + 'px;height:' + (fs * 0.5) + 'px;left:' + (pos.x - 5) + '%;top:' + (pos.y + 3) + '%';
+    flare.style.cssText =
+      'width:' + fs + 'px;height:' + fs * 0.5 + 'px;left:' + (pos.x - 5) + '%;top:' + (pos.y + 3) + '%';
     if (isGolden) flare.style.background = 'radial-gradient(ellipse,rgba(255,200,100,.15),transparent 70%)';
     container.appendChild(flare);
   }
@@ -632,7 +736,8 @@ function renderSun(container, pos, color, isGolden) {
   var size = color.size;
   var sun = document.createElement('div');
   sun.className = 'sky-sun';
-  sun.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + pos.x + '%;top:' + pos.y + '%;transform:translate(-50%,-50%)';
+  sun.style.cssText =
+    'width:' + size + 'px;height:' + size + 'px;left:' + pos.x + '%;top:' + pos.y + '%;transform:translate(-50%,-50%)';
   sun.style.background = 'radial-gradient(circle,' + color.body + ' 0%,' + color.mid + ' 40%,' + color.edge + ' 100%)';
   sun.style.boxShadow = '0 0 60px ' + color.glow + ',0 0 120px ' + color.glow.replace(/[\d.]+\)$/, '0.2)');
 
@@ -642,7 +747,16 @@ function renderSun(container, pos, color, isGolden) {
     ray.className = 'sky-sun-ray';
     var angle = (360 / 4) * i;
     var len = 30 + Math.random() * 40;
-    ray.style.cssText = 'width:' + len + 'px;--ray-angle:' + angle + 'deg;transform:rotate(' + angle + 'deg);animation-delay:' + (i * 0.3) + 's';
+    ray.style.cssText =
+      'width:' +
+      len +
+      'px;--ray-angle:' +
+      angle +
+      'deg;transform:rotate(' +
+      angle +
+      'deg);animation-delay:' +
+      i * 0.3 +
+      's';
     if (isGolden) ray.style.background = 'linear-gradient(90deg,rgba(255,180,60,.4),transparent)';
     sun.appendChild(ray);
   }
@@ -651,13 +765,23 @@ function renderSun(container, pos, color, isGolden) {
   var glow = document.createElement('div');
   glow.className = 'sky-sun-glow';
   var gs = size * 3;
-  glow.style.cssText = 'width:' + gs + 'px;height:' + gs + 'px;top:' + (-(gs - size) / 2) + 'px;left:' + (-(gs - size) / 2) + 'px';
+  glow.style.cssText =
+    'width:' + gs + 'px;height:' + gs + 'px;top:' + -(gs - size) / 2 + 'px;left:' + -(gs - size) / 2 + 'px';
   sun.appendChild(glow);
 
   var glow2 = document.createElement('div');
   glow2.className = 'sky-sun-glow';
   var gs2 = size * 5;
-  glow2.style.cssText = 'width:' + gs2 + 'px;height:' + gs2 + 'px;top:' + (-(gs2 - size) / 2) + 'px;left:' + (-(gs2 - size) / 2) + 'px;' +
+  glow2.style.cssText =
+    'width:' +
+    gs2 +
+    'px;height:' +
+    gs2 +
+    'px;top:' +
+    -(gs2 - size) / 2 +
+    'px;left:' +
+    -(gs2 - size) / 2 +
+    'px;' +
     'background:radial-gradient(circle,rgba(255,220,100,.06),transparent 60%);animation-delay:3s';
   sun.appendChild(glow2);
 
@@ -665,7 +789,8 @@ function renderSun(container, pos, color, isGolden) {
   var corona = document.createElement('div');
   corona.className = 'sky-sun-corona';
   var cs = size * 2;
-  corona.style.cssText = 'width:' + cs + 'px;height:' + cs + 'px;top:' + (-(cs - size) / 2) + 'px;left:' + (-(cs - size) / 2) + 'px';
+  corona.style.cssText =
+    'width:' + cs + 'px;height:' + cs + 'px;top:' + -(cs - size) / 2 + 'px;left:' + -(cs - size) / 2 + 'px';
   if (isGolden) corona.style.borderColor = 'rgba(255,180,60,.15)';
   sun.appendChild(corona);
 
@@ -695,9 +820,13 @@ function renderStars(container) {
   var starCount = 30 + Math.floor(Math.random() * 15);
   // Star colors for realism: most white, some blue-white, a few warm
   var starColors = [
-    'rgba(255,255,255,', 'rgba(255,255,255,', 'rgba(255,255,255,',
-    'rgba(200,220,255,', 'rgba(220,230,255,', // blue-white
-    'rgba(255,230,200,', 'rgba(255,210,180,'  // warm stars
+    'rgba(255,255,255,',
+    'rgba(255,255,255,',
+    'rgba(255,255,255,',
+    'rgba(200,220,255,',
+    'rgba(220,230,255,', // blue-white
+    'rgba(255,230,200,',
+    'rgba(255,210,180,' // warm stars
   ];
   for (var i = 0; i < starCount; i++) {
     var star = document.createElement('div');
@@ -709,14 +838,29 @@ function renderStars(container) {
     var dur = 2 + Math.random() * 5;
     // Vary brightness with more bright stars near zenith
     var zenithFactor = 1 - (y / 65) * 0.3;
-    var brightness = Math.random() < 0.12 ? zenithFactor : ((0.3 + Math.random() * 0.4) * zenithFactor);
+    var brightness = Math.random() < 0.12 ? zenithFactor : (0.3 + Math.random() * 0.4) * zenithFactor;
     var color = starColors[Math.floor(Math.random() * starColors.length)];
-    star.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + '%;top:' + y +
-      '%;animation-delay:' + delay + 's;animation-duration:' + dur + 's;opacity:' + brightness +
-      ';background:' + color + '1);border-radius:50%';
+    star.style.cssText =
+      'width:' +
+      size +
+      'px;height:' +
+      size +
+      'px;left:' +
+      x +
+      '%;top:' +
+      y +
+      '%;animation-delay:' +
+      delay +
+      's;animation-duration:' +
+      dur +
+      's;opacity:' +
+      brightness +
+      ';background:' +
+      color +
+      '1);border-radius:50%';
     // Bright stars get a subtle glow
     if (brightness > 0.8 && size > 1.8) {
-      star.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + color + '0.4)';
+      star.style.boxShadow = '0 0 ' + size * 2 + 'px ' + color + '0.4)';
     }
     container.appendChild(star);
   }
@@ -732,7 +876,7 @@ function renderStars(container) {
 
 function scheduleShootingStar(container) {
   var delay = 8000 + Math.random() * 20000;
-  setTimeout(function() {
+  setTimeout(function () {
     if (!livingSkyEnabled) return;
     var pos = getSunPosition();
     if (!pos.isNight) return;
@@ -742,7 +886,9 @@ function scheduleShootingStar(container) {
     var y = 5 + Math.random() * 25;
     star.style.cssText = 'left:' + x + '%;top:' + y + '%';
     container.appendChild(star);
-    setTimeout(function() { if (star.parentNode) star.remove(); }, 1500);
+    setTimeout(function () {
+      if (star.parentNode) star.remove();
+    }, 1500);
     scheduleShootingStar(container);
   }, delay);
 }
@@ -752,8 +898,10 @@ function startCreatureLoop(container) {
   clearInterval(SKY.creatureTimer);
   spawnCreatures(container);
   // Spawn a second batch after a short delay for immediate liveliness
-  setTimeout(function() { if (livingSkyEnabled) spawnCreatures(container); }, 3000);
-  SKY.creatureTimer = setInterval(function() {
+  setTimeout(function () {
+    if (livingSkyEnabled) spawnCreatures(container);
+  }, 3000);
+  SKY.creatureTimer = setInterval(function () {
     if (!livingSkyEnabled || document.hidden) return;
     spawnCreatures(container);
   }, 10000);
@@ -796,7 +944,8 @@ function renderBird(container) {
   var dy = -(15 + Math.random() * 35);
   var dur = 8 + Math.random() * 8;
 
-  bird.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--bird-dx:' + dx + 'px;--bird-dy:' + dy + 'px;--bird-dur:' + dur + 's';
+  bird.style.cssText =
+    'left:' + startX + '%;top:' + startY + '%;--bird-dx:' + dx + 'px;--bird-dy:' + dy + 'px;--bird-dur:' + dur + 's';
 
   var wl = document.createElement('div');
   wl.className = 'sky-bird-wing sky-bird-wing-l';
@@ -806,7 +955,12 @@ function renderBird(container) {
   bird.appendChild(wr);
 
   container.appendChild(bird);
-  setTimeout(function() { if (bird.parentNode) bird.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (bird.parentNode) bird.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 function renderButterfly(container) {
@@ -822,7 +976,8 @@ function renderButterfly(container) {
   var colors = ['rgba(255,150,200,0.7)', 'rgba(200,160,255,0.7)', 'rgba(255,200,100,0.7)', 'rgba(150,220,255,0.7)'];
   var col = colors[Math.floor(Math.random() * colors.length)];
 
-  bf.style.cssText = 'left:' + x + '%;top:' + y + '%;--bf-dx:' + dx + 'px;--bf-dy:' + dy + 'px;--bf-dur:' + dur + 's;--bf-color:' + col;
+  bf.style.cssText =
+    'left:' + x + '%;top:' + y + '%;--bf-dx:' + dx + 'px;--bf-dy:' + dy + 'px;--bf-dur:' + dur + 's;--bf-color:' + col;
 
   var wl = document.createElement('div');
   wl.className = 'sky-bf-wing sky-bf-wing-l';
@@ -832,7 +987,12 @@ function renderButterfly(container) {
   bf.appendChild(wr);
 
   container.appendChild(bf);
-  setTimeout(function() { if (bf.parentNode) bf.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (bf.parentNode) bf.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 function renderFirefly(container) {
@@ -844,10 +1004,16 @@ function renderFirefly(container) {
   var dy = (Math.random() - 0.5) * 60;
   var dur = 6 + Math.random() * 8;
 
-  ff.style.cssText = 'left:' + x + '%;top:' + y + '%;--ff-dx:' + dx + 'px;--ff-dy:' + dy + 'px;animation-duration:' + dur + 's';
+  ff.style.cssText =
+    'left:' + x + '%;top:' + y + '%;--ff-dx:' + dx + 'px;--ff-dy:' + dy + 'px;animation-duration:' + dur + 's';
 
   container.appendChild(ff);
-  setTimeout(function() { if (ff.parentNode) ff.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (ff.parentNode) ff.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderCloud(container, isDarkMode, isGolden) {
@@ -860,12 +1026,24 @@ function renderCloud(container, isDarkMode, isGolden) {
   const dur = 50 + Math.random() * 50;
   const delay = Math.random() * 30;
   const dir = Math.random() < 0.5 ? -1 : 1;
-  const opacity = isDarkMode ? (0.3 + Math.random() * 0.3) : (0.4 + Math.random() * 0.3);
+  const opacity = isDarkMode ? 0.3 + Math.random() * 0.3 : 0.4 + Math.random() * 0.3;
 
-  cloud.style.cssText = 'top:' + y + '%;--cloud-dur:' + dur + 's;--cloud-delay:' + delay + 's;' +
-    '--cloud-start:' + (dir > 0 ? '-' + (w + 50) + 'px' : '110vw') + ';' +
-    '--cloud-end:' + (dir > 0 ? '110vw' : '-' + (w + 50) + 'px') + ';' +
-    '--cloud-opacity:' + opacity;
+  cloud.style.cssText =
+    'top:' +
+    y +
+    '%;--cloud-dur:' +
+    dur +
+    's;--cloud-delay:' +
+    delay +
+    's;' +
+    '--cloud-start:' +
+    (dir > 0 ? '-' + (w + 50) + 'px' : '110vw') +
+    ';' +
+    '--cloud-end:' +
+    (dir > 0 ? '110vw' : '-' + (w + 50) + 'px') +
+    ';' +
+    '--cloud-opacity:' +
+    opacity;
 
   const body = document.createElement('div');
   body.className = 'sky-cloud-body';
@@ -878,8 +1056,9 @@ function renderCloud(container, isDarkMode, isGolden) {
     var puff = document.createElement('div');
     puff.className = 'sky-cloud-puff';
     var pw = h * (0.8 + Math.random() * 0.6);
-    var px = (w * 0.15) + Math.random() * (w * 0.6);
-    puff.style.cssText = 'width:' + pw + 'px;height:' + pw + 'px;left:' + px + 'px;top:' + (-(pw * 0.4)) + 'px;border-radius:50%';
+    var px = w * 0.15 + Math.random() * (w * 0.6);
+    puff.style.cssText =
+      'width:' + pw + 'px;height:' + pw + 'px;left:' + px + 'px;top:' + -(pw * 0.4) + 'px;border-radius:50%';
     if (isGolden && !isDarkMode) puff.style.background = 'rgba(255,220,180,0.35)';
     cloud.appendChild(puff);
   }
@@ -887,13 +1066,15 @@ function renderCloud(container, isDarkMode, isGolden) {
   if (!isDarkMode) {
     var shadow = document.createElement('div');
     shadow.className = 'sky-cloud-shadow';
-    shadow.style.cssText = 'width:' + (w * 0.85) + 'px;height:' + (h * 0.5) + 'px;left:' + (w * 0.1) + 'px;bottom:-' + (h * 0.15) + 'px';
+    shadow.style.cssText =
+      'width:' + w * 0.85 + 'px;height:' + h * 0.5 + 'px;left:' + w * 0.1 + 'px;bottom:-' + h * 0.15 + 'px';
     if (isGolden) shadow.style.background = 'rgba(180,100,40,.06)';
     cloud.appendChild(shadow);
 
     var highlight = document.createElement('div');
     highlight.className = 'sky-cloud-highlight';
-    highlight.style.cssText = 'width:' + (w * 0.6) + 'px;height:' + (h * 0.3) + 'px;left:' + (w * 0.15) + 'px;top:-' + (h * 0.25) + 'px';
+    highlight.style.cssText =
+      'width:' + w * 0.6 + 'px;height:' + h * 0.3 + 'px;left:' + w * 0.15 + 'px;top:-' + h * 0.25 + 'px';
     if (isGolden) highlight.style.background = 'rgba(255,240,200,.15)';
     cloud.appendChild(highlight);
 
@@ -901,9 +1082,16 @@ function renderCloud(container, isDarkMode, isGolden) {
       var wisp = document.createElement('div');
       wisp.className = 'sky-cloud-wisp';
       var wispW = w * 0.4;
-      wisp.style.cssText = 'width:' + wispW + 'px;height:' + (h * 0.4) + 'px;' +
-        (Math.random() < 0.5 ? 'right:-' + (wispW * 0.3) + 'px' : 'left:-' + (wispW * 0.3) + 'px') +
-        ';top:' + (h * 0.1) + 'px;background:rgba(255,255,255,.2)';
+      wisp.style.cssText =
+        'width:' +
+        wispW +
+        'px;height:' +
+        h * 0.4 +
+        'px;' +
+        (Math.random() < 0.5 ? 'right:-' + wispW * 0.3 + 'px' : 'left:-' + wispW * 0.3 + 'px') +
+        ';top:' +
+        h * 0.1 +
+        'px;background:rgba(255,255,255,.2)';
       if (isGolden) wisp.style.background = 'rgba(255,220,180,.15)';
       cloud.appendChild(wisp);
     }
@@ -1031,7 +1219,16 @@ function renderMountainTerrain(container) {
     var ep = eaglePositions[e];
     var eagle = document.createElement('div');
     eagle.className = 'terrain-eagle';
-    eagle.style.cssText = 'left:' + ep.left + '%;bottom:' + ep.bottom + '%;--eagle-size:' + ep.size + 'px;animation-delay:' + ep.delay + 's';
+    eagle.style.cssText =
+      'left:' +
+      ep.left +
+      '%;bottom:' +
+      ep.bottom +
+      '%;--eagle-size:' +
+      ep.size +
+      'px;animation-delay:' +
+      ep.delay +
+      's';
     container.appendChild(eagle);
   }
 
@@ -1073,7 +1270,14 @@ function renderMountainTerrain(container) {
     var dp = deerPositions[d];
     var deer = document.createElement('div');
     deer.className = 'terrain-deer';
-    deer.style.cssText = 'left:' + dp.left + '%;bottom:' + dp.bottom + '%;--deer-size:' + dp.size + 'px' +
+    deer.style.cssText =
+      'left:' +
+      dp.left +
+      '%;bottom:' +
+      dp.bottom +
+      '%;--deer-size:' +
+      dp.size +
+      'px' +
       (dp.flip ? ';transform:scaleX(-1)' : '');
     container.appendChild(deer);
   }
@@ -1092,7 +1296,18 @@ function renderMountainTerrain(container) {
     var fp = fogPositions[fg];
     var fog = document.createElement('div');
     fog.className = 'terrain-valley-fog';
-    fog.style.cssText = 'left:' + fp.left + '%;bottom:' + fp.bottom + '%;width:' + fp.w + 'px;height:' + fp.h + 'px;animation-delay:' + fp.delay + 's';
+    fog.style.cssText =
+      'left:' +
+      fp.left +
+      '%;bottom:' +
+      fp.bottom +
+      '%;width:' +
+      fp.w +
+      'px;height:' +
+      fp.h +
+      'px;animation-delay:' +
+      fp.delay +
+      's';
     container.appendChild(fog);
   }
 
@@ -1101,7 +1316,7 @@ function renderMountainTerrain(container) {
   for (var mf = 0; mf < mtnFlowerPositions.length; mf++) {
     var mFlower = document.createElement('div');
     mFlower.className = 'terrain-mtn-flower';
-    mFlower.style.cssText = 'left:' + mtnFlowerPositions[mf] + '%;animation-delay:' + (mf * 0.8) + 's';
+    mFlower.style.cssText = 'left:' + mtnFlowerPositions[mf] + '%;animation-delay:' + mf * 0.8 + 's';
     container.appendChild(mFlower);
   }
 
@@ -1109,7 +1324,7 @@ function renderMountainTerrain(container) {
   for (var fl = 0; fl < 5; fl++) {
     var leaf = document.createElement('div');
     leaf.className = 'terrain-falling-leaf';
-    leaf.style.cssText = 'left:' + (10 + Math.random() * 80) + '%;animation-delay:' + (fl * 3) + 's';
+    leaf.style.cssText = 'left:' + (10 + Math.random() * 80) + '%;animation-delay:' + fl * 3 + 's';
     container.appendChild(leaf);
   }
 
@@ -1206,7 +1421,7 @@ function renderBeachTerrain(container) {
   for (var fp = 0; fp < fpPositions.length; fp++) {
     var dot = document.createElement('div');
     dot.className = 'terrain-footprint';
-    dot.style.cssText = 'left:' + fpPositions[fp] + '%;bottom:' + (Math.random() * 60) + '%';
+    dot.style.cssText = 'left:' + fpPositions[fp] + '%;bottom:' + Math.random() * 60 + '%';
     footprints.appendChild(dot);
   }
   container.appendChild(footprints);
@@ -1222,7 +1437,8 @@ function renderBeachTerrain(container) {
     var gp = gullPositions[g];
     var gull = document.createElement('div');
     gull.className = 'terrain-seagull';
-    gull.style.cssText = 'left:' + gp.left + '%;bottom:' + gp.bottom + '%;--gull-size:' + gp.size + 'px;animation-delay:' + gp.delay + 's';
+    gull.style.cssText =
+      'left:' + gp.left + '%;bottom:' + gp.bottom + '%;--gull-size:' + gp.size + 'px;animation-delay:' + gp.delay + 's';
     container.appendChild(gull);
   }
 
@@ -1251,7 +1467,8 @@ function renderBeachTerrain(container) {
     var sp = shellPositions[sh];
     var shell = document.createElement('div');
     shell.className = 'terrain-seashell';
-    shell.style.cssText = 'left:' + sp.left + '%;bottom:' + sp.bottom + '%;transform:rotate(' + (Math.random() * 360) + 'deg)';
+    shell.style.cssText =
+      'left:' + sp.left + '%;bottom:' + sp.bottom + '%;transform:rotate(' + Math.random() * 360 + 'deg)';
     container.appendChild(shell);
   }
 
@@ -1270,7 +1487,8 @@ function renderBeachTerrain(container) {
     var sfp = starfishPositions[sf];
     var starfish = document.createElement('div');
     starfish.className = 'terrain-starfish';
-    starfish.style.cssText = 'left:' + sfp.left + '%;bottom:' + sfp.bottom + '%;transform:rotate(' + (Math.random() * 360) + 'deg)';
+    starfish.style.cssText =
+      'left:' + sfp.left + '%;bottom:' + sfp.bottom + '%;transform:rotate(' + Math.random() * 360 + 'deg)';
     container.appendChild(starfish);
   }
 
@@ -1283,7 +1501,8 @@ function renderBeachTerrain(container) {
     var tpp = tidePools[tp];
     var pool = document.createElement('div');
     pool.className = 'terrain-tidepool';
-    pool.style.cssText = 'left:' + tpp.left + '%;bottom:' + tpp.bottom + '%;width:' + tpp.w + 'px;height:' + tpp.h + 'px';
+    pool.style.cssText =
+      'left:' + tpp.left + '%;bottom:' + tpp.bottom + '%;width:' + tpp.w + 'px;height:' + tpp.h + 'px';
     container.appendChild(pool);
   }
 
@@ -1296,7 +1515,8 @@ function renderBeachTerrain(container) {
     var dwp = driftPositions[dw];
     var drift = document.createElement('div');
     drift.className = 'terrain-driftwood';
-    drift.style.cssText = 'left:' + dwp.left + '%;bottom:' + dwp.bottom + '%;width:' + dwp.w + 'px;transform:rotate(' + dwp.rot + 'deg)';
+    drift.style.cssText =
+      'left:' + dwp.left + '%;bottom:' + dwp.bottom + '%;width:' + dwp.w + 'px;transform:rotate(' + dwp.rot + 'deg)';
     container.appendChild(drift);
   }
 
@@ -1310,7 +1530,7 @@ function renderBeachTerrain(container) {
   for (var ws = 0; ws < splashPositions.length; ws++) {
     var splash = document.createElement('div');
     splash.className = 'terrain-wave-splash';
-    splash.style.cssText = 'left:' + splashPositions[ws] + '%;animation-delay:' + (ws * 1.2) + 's';
+    splash.style.cssText = 'left:' + splashPositions[ws] + '%;animation-delay:' + ws * 1.2 + 's';
     container.appendChild(splash);
   }
 
@@ -1320,7 +1540,10 @@ function renderBeachTerrain(container) {
   container.appendChild(towel);
 
   // Coconuts near palm tree
-  var coconutPos = [{ left: 10, bottom: 3 }, { left: 12, bottom: 2.5 }];
+  var coconutPos = [
+    { left: 10, bottom: 3 },
+    { left: 12, bottom: 2.5 }
+  ];
   for (var cn = 0; cn < coconutPos.length; cn++) {
     var nut = document.createElement('div');
     nut.className = 'terrain-coconut';
@@ -1337,7 +1560,14 @@ function renderBeachTerrain(container) {
   for (var sp = 0; sp < 6; sp++) {
     var sparkle = document.createElement('div');
     sparkle.className = 'terrain-water-sparkle';
-    sparkle.style.cssText = 'left:' + (15 + Math.random() * 70) + '%;bottom:' + (18 + Math.random() * 10) + '%;animation-delay:' + (sp * 1.5) + 's';
+    sparkle.style.cssText =
+      'left:' +
+      (15 + Math.random() * 70) +
+      '%;bottom:' +
+      (18 + Math.random() * 10) +
+      '%;animation-delay:' +
+      sp * 1.5 +
+      's';
     container.appendChild(sparkle);
   }
 
@@ -1363,7 +1593,7 @@ function renderPalmTree(container, leftPct, heightPct, tiltDeg) {
   var canopy = document.createElement('div');
   canopy.className = 'terrain-palm-canopy';
   // Position canopy at top of trunk, accounting for tilt
-  var radians = tiltDeg * Math.PI / 180;
+  var radians = (tiltDeg * Math.PI) / 180;
   var canopyBottom = trunkH;
   var canopyLeft = Math.sin(radians) * trunkH * 0.5;
   canopy.style.cssText = 'bottom:' + canopyBottom + '%;left:' + canopyLeft + 'px';
@@ -1451,15 +1681,26 @@ function renderMeadowTerrain(container) {
   var flowers = document.createElement('div');
   flowers.className = 'terrain-flowers';
   var flowerColors = [
-    'rgba(255,180,100,0.4)', 'rgba(255,140,160,0.4)', 'rgba(200,160,255,0.35)',
-    'rgba(255,220,100,0.35)', 'rgba(180,220,255,0.3)', 'rgba(255,160,120,0.35)'
+    'rgba(255,180,100,0.4)',
+    'rgba(255,140,160,0.4)',
+    'rgba(200,160,255,0.35)',
+    'rgba(255,220,100,0.35)',
+    'rgba(180,220,255,0.3)',
+    'rgba(255,160,120,0.35)'
   ];
   for (var f = 0; f < 20; f++) {
     var dot = document.createElement('div');
     dot.className = 'terrain-flower-dot';
-    dot.style.cssText = 'left:' + (5 + Math.random() * 90) + '%;bottom:' + (Math.random() * 80) +
-      '%;background:' + flowerColors[f % flowerColors.length] +
-      ';animation-delay:' + (Math.random() * 4) + 's';
+    dot.style.cssText =
+      'left:' +
+      (5 + Math.random() * 90) +
+      '%;bottom:' +
+      Math.random() * 80 +
+      '%;background:' +
+      flowerColors[f % flowerColors.length] +
+      ';animation-delay:' +
+      Math.random() * 4 +
+      's';
     flowers.appendChild(dot);
   }
   container.appendChild(flowers);
@@ -1491,14 +1732,19 @@ function renderMeadowTerrain(container) {
     var bp = bflyPositions[b];
     var bfly = document.createElement('div');
     bfly.className = 'terrain-butterfly';
-    bfly.style.cssText = 'left:' + bp.left + '%;bottom:' + bp.bottom + '%;background:' + bp.color + ';animation-delay:' + bp.delay + 's';
+    bfly.style.cssText =
+      'left:' + bp.left + '%;bottom:' + bp.bottom + '%;background:' + bp.color + ';animation-delay:' + bp.delay + 's';
     container.appendChild(bfly);
   }
 
   // Stone path winding through the meadow
   var pathStones = [
-    { left: 44, bottom: 3 }, { left: 46, bottom: 5 }, { left: 45, bottom: 7 },
-    { left: 47, bottom: 9 }, { left: 48, bottom: 11 }, { left: 47, bottom: 13 },
+    { left: 44, bottom: 3 },
+    { left: 46, bottom: 5 },
+    { left: 45, bottom: 7 },
+    { left: 47, bottom: 9 },
+    { left: 48, bottom: 11 },
+    { left: 47, bottom: 13 },
     { left: 46, bottom: 15 }
   ];
   for (var ps = 0; ps < pathStones.length; ps++) {
@@ -1524,8 +1770,18 @@ function renderMeadowTerrain(container) {
     var dp = dapplePositions[d];
     var dapple = document.createElement('div');
     dapple.className = 'terrain-dapple';
-    dapple.style.cssText = 'left:' + dp.left + '%;bottom:' + dp.bottom + '%;width:' + dp.w + 'px;height:' + dp.h +
-      'px;animation-delay:' + (d * 2) + 's';
+    dapple.style.cssText =
+      'left:' +
+      dp.left +
+      '%;bottom:' +
+      dp.bottom +
+      '%;width:' +
+      dp.w +
+      'px;height:' +
+      dp.h +
+      'px;animation-delay:' +
+      d * 2 +
+      's';
     container.appendChild(dapple);
   }
 
@@ -1538,7 +1794,14 @@ function renderMeadowTerrain(container) {
     var rbp = rabbitPositions[rb];
     var rabbit = document.createElement('div');
     rabbit.className = 'terrain-rabbit';
-    rabbit.style.cssText = 'left:' + rbp.left + '%;bottom:' + rbp.bottom + '%;--rabbit-size:' + rbp.size + 'px' +
+    rabbit.style.cssText =
+      'left:' +
+      rbp.left +
+      '%;bottom:' +
+      rbp.bottom +
+      '%;--rabbit-size:' +
+      rbp.size +
+      'px' +
       (rbp.flip ? ';transform:scaleX(-1)' : '');
     container.appendChild(rabbit);
   }
@@ -1631,7 +1894,8 @@ function renderMeadowTerrain(container) {
   for (var df = 0; df < dflyPos.length; df++) {
     var dfly = document.createElement('div');
     dfly.className = 'terrain-dragonfly';
-    dfly.style.cssText = 'left:' + dflyPos[df].left + '%;bottom:' + dflyPos[df].bottom + '%;animation-delay:' + dflyPos[df].delay + 's';
+    dfly.style.cssText =
+      'left:' + dflyPos[df].left + '%;bottom:' + dflyPos[df].bottom + '%;animation-delay:' + dflyPos[df].delay + 's';
     container.appendChild(dfly);
   }
 
@@ -1640,12 +1904,15 @@ function renderMeadowTerrain(container) {
   for (var sf = 0; sf < sfPos.length; sf++) {
     var sunf = document.createElement('div');
     sunf.className = 'terrain-sunflower';
-    sunf.style.cssText = 'left:' + sfPos[sf] + '%;animation-delay:' + (sf * 1.5) + 's';
+    sunf.style.cssText = 'left:' + sfPos[sf] + '%;animation-delay:' + sf * 1.5 + 's';
     container.appendChild(sunf);
   }
 
   // Ladybugs on flowers
-  var lbPos = [{ left: 16, bottom: 6 }, { left: 72, bottom: 5 }];
+  var lbPos = [
+    { left: 16, bottom: 6 },
+    { left: 72, bottom: 5 }
+  ];
   for (var lb = 0; lb < lbPos.length; lb++) {
     var bug = document.createElement('div');
     bug.className = 'terrain-ladybug';
@@ -1662,7 +1929,9 @@ function applySkyTheme(theme) {
   currentSkyTheme = theme || 'mixed';
   document.body.setAttribute('data-sky-theme', currentSkyTheme);
   // Cache for instant apply on next load (login page, before Firebase)
-  try { localStorage.setItem('met_sky_theme', currentSkyTheme); } catch(e) {}
+  try {
+    localStorage.setItem('met_sky_theme', currentSkyTheme);
+  } catch (e) {}
   // Re-render the living sky with the new theme
   var container = document.getElementById('sky-scene');
   if (container && livingSkyEnabled) renderLivingSky(container);
@@ -1705,7 +1974,7 @@ function applySkyTheme(theme) {
 // Load sky theme from Firebase on login
 function loadSkyTheme() {
   if (!db || !user) return;
-  db.ref('settings/skyTheme/' + user).once('value', function(snap) {
+  db.ref('settings/skyTheme/' + user).once('value', function (snap) {
     var theme = snap.val() || 'mixed';
     applySkyTheme(theme);
   });
@@ -1720,7 +1989,8 @@ function renderSeagull(container) {
   var dx = 300 + Math.random() * 400;
   var dy = -(5 + Math.random() * 25);
   var dur = 10 + Math.random() * 10;
-  bird.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--bird-dx:' + dx + 'px;--bird-dy:' + dy + 'px;--bird-dur:' + dur + 's';
+  bird.style.cssText =
+    'left:' + startX + '%;top:' + startY + '%;--bird-dx:' + dx + 'px;--bird-dy:' + dy + 'px;--bird-dur:' + dur + 's';
   var wl = document.createElement('div');
   wl.className = 'sky-bird-wing sky-bird-wing-l';
   wl.style.background = 'rgba(255,255,255,.6)';
@@ -1730,7 +2000,12 @@ function renderSeagull(container) {
   bird.appendChild(wl);
   bird.appendChild(wr);
   container.appendChild(bird);
-  setTimeout(function() { if (bird.parentNode) bird.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (bird.parentNode) bird.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 function renderCrab(container) {
@@ -1739,10 +2014,15 @@ function renderCrab(container) {
   var startX = Math.random() * 80;
   var dir = Math.random() < 0.5 ? 1 : -1;
   var dur = 8 + Math.random() * 6;
-  crab.style.cssText = 'left:' + startX + '%;bottom:4%;--crab-dir:' + (dir * 60) + 'px;animation-duration:' + dur + 's';
+  crab.style.cssText = 'left:' + startX + '%;bottom:4%;--crab-dir:' + dir * 60 + 'px;animation-duration:' + dur + 's';
   crab.innerHTML = '<div class="crab-body"></div>';
   container.appendChild(crab);
-  setTimeout(function() { if (crab.parentNode) crab.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (crab.parentNode) crab.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 // Mountain creatures
@@ -1754,7 +2034,8 @@ function renderEagle(container) {
   var dx = 200 + Math.random() * 300;
   var dy = -(10 + Math.random() * 20);
   var dur = 14 + Math.random() * 10;
-  eagle.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--bird-dx:' + dx + 'px;--bird-dy:' + dy + 'px;--bird-dur:' + dur + 's';
+  eagle.style.cssText =
+    'left:' + startX + '%;top:' + startY + '%;--bird-dx:' + dx + 'px;--bird-dy:' + dy + 'px;--bird-dur:' + dur + 's';
   var wl = document.createElement('div');
   wl.className = 'sky-bird-wing sky-bird-wing-l sky-eagle-wing';
   var wr = document.createElement('div');
@@ -1762,7 +2043,12 @@ function renderEagle(container) {
   eagle.appendChild(wl);
   eagle.appendChild(wr);
   container.appendChild(eagle);
-  setTimeout(function() { if (eagle.parentNode) eagle.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (eagle.parentNode) eagle.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 // Night creatures by theme
@@ -1775,12 +2061,17 @@ function renderOwl(container) {
   owl.style.cssText = 'left:' + x + '%;top:' + y + '%;animation-duration:' + dur + 's;width:12px;height:6px';
   owl.innerHTML = '<span class="owl-eye"></span><span class="owl-eye"></span>';
   container.appendChild(owl);
-  setTimeout(function() { if (owl.parentNode) owl.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (owl.parentNode) owl.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 // Override spawnCreatures to be theme-aware
 var _origSpawnCreatures = spawnCreatures;
-spawnCreatures = function(container) {
+spawnCreatures = function (container) {
   var time = getTimeOfDay();
   var pos = getSunPosition();
   var theme = currentSkyTheme;
@@ -1814,28 +2105,31 @@ spawnCreatures = function(container) {
 };
 
 // Init on load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   spawnOrbs();
   addMeshLayer();
   initSkyScene();
   // Render terrain for current theme
   renderTerrain();
   // Re-render sky when time period changes (orbs handled by updateTimeOfDay)
-  setInterval(function() {
-    var current = document.body.getAttribute('data-time');
-    var now = getTimeOfDay();
-    if (current !== now) {
-      updateTimeOfDay();
-      var container = document.getElementById('sky-scene');
-      if (container && livingSkyEnabled) renderLivingSky(container);
-    }
-  }, 5 * 60 * 1000);
+  setInterval(
+    function () {
+      var current = document.body.getAttribute('data-time');
+      var now = getTimeOfDay();
+      if (current !== now) {
+        updateTimeOfDay();
+        var container = document.getElementById('sky-scene');
+        if (container && livingSkyEnabled) renderLivingSky(container);
+      }
+    },
+    5 * 60 * 1000
+  );
 });
 
 // ===== PAGE VISIBILITY — THROTTLE ANIMATIONS =====
-(function() {
+(function () {
   // Pause CSS animations & JS timers when the tab is hidden to save battery/CPU
-  document.addEventListener('visibilitychange', function() {
+  document.addEventListener('visibilitychange', function () {
     var hidden = document.hidden;
     // Pause/resume all CSS animations globally
     document.body.style.animationPlayState = hidden ? 'paused' : 'running';

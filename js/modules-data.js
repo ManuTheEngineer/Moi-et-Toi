@@ -1,7 +1,10 @@
 // ========================================
 // ===== KNOW YOUR PERSON MODULE =====
 // ========================================
-let kypData = {}, kypNotes = {}, kypDates = {}, kypLoveNotes = {};
+let kypData = {},
+  kypNotes = {},
+  kypDates = {},
+  kypLoveNotes = {};
 
 function listenKnowYou() {
   if (!db) return;
@@ -26,8 +29,29 @@ function listenKnowYou() {
 }
 
 function renderKnowYou() {
-  const favFields = ['food','color','movie','song','book','place','season','coffee','drink','flower','hobby','sport','restaurant','vacationspot','scent','tvshow','dessert','comfortfood','quote','fear'];
-  const sizeFields = ['shirt','pants','shoe','ring'];
+  const favFields = [
+    'food',
+    'color',
+    'movie',
+    'song',
+    'book',
+    'place',
+    'season',
+    'coffee',
+    'drink',
+    'flower',
+    'hobby',
+    'sport',
+    'restaurant',
+    'vacationspot',
+    'scent',
+    'tvshow',
+    'dessert',
+    'comfortfood',
+    'quote',
+    'fear'
+  ];
+  const sizeFields = ['shirt', 'pants', 'shoe', 'ring'];
   const allFields = favFields.concat(sizeFields);
   let filled = 0;
   allFields.forEach(f => {
@@ -37,7 +61,7 @@ function renderKnowYou() {
   });
   const scoreEl = document.getElementById('kyp-score');
   if (scoreEl) {
-    const pct = allFields.length ? Math.round(filled / allFields.length * 100) : 0;
+    const pct = allFields.length ? Math.round((filled / allFields.length) * 100) : 0;
     scoreEl.textContent = pct + '%';
   }
 }
@@ -46,16 +70,22 @@ function editKYP(field) {
   const current = kypData[field] || '';
   openModal(`
     <div style="padding:8px 0">
-      <div style="font-size:14px;font-weight:600;color:var(--cream);margin-bottom:10px;text-transform:capitalize">${field.replace(/([A-Z])/g,' $1')}</div>
-      <input type="text" id="kyp-edit-input" value="${(current||'').replace(/"/g,'&quot;')}" placeholder="Enter your ${field}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input-bg);color:var(--cream);font-size:14px;box-sizing:border-box">
+      <div style="font-size:14px;font-weight:600;color:var(--cream);margin-bottom:10px;text-transform:capitalize">${field.replace(/([A-Z])/g, ' $1')}</div>
+      <input type="text" id="kyp-edit-input" value="${(current || '').replace(/"/g, '&quot;')}" placeholder="Enter your ${field}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input-bg);color:var(--cream);font-size:14px;box-sizing:border-box">
       <button onclick="submitKYPEdit('${field}')" class="dq-submit" style="margin-top:10px;width:100%">Save</button>
     </div>
   `);
-  setTimeout(function(){ var el=document.getElementById('kyp-edit-input'); if(el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 300);
+  setTimeout(function () {
+    var el = document.getElementById('kyp-edit-input');
+    if (el) {
+      el.focus();
+      el.setSelectionRange(el.value.length, el.value.length);
+    }
+  }, 300);
 }
 
 function submitKYPEdit(field) {
-  var val = (document.getElementById('kyp-edit-input').value||'').trim();
+  var val = (document.getElementById('kyp-edit-input').value || '').trim();
   db.ref('knowYou/' + user + '/favorites/' + field).set(val);
   var el = document.getElementById('kyp-' + field);
   if (el) el.textContent = val || 'Tap to add';
@@ -67,12 +97,22 @@ function submitKYPEdit(field) {
 async function addKYPDate() {
   const label = document.getElementById('kyp-date-label').value.trim();
   const date = document.getElementById('kyp-date-val').value;
-  if (!label || !date) { toast('Enter label and date'); return; }
+  if (!label || !date) {
+    toast('Enter label and date');
+    return;
+  }
   await db.ref('knowYou/dates').push({ label, date, user, timestamp: Date.now() });
   document.getElementById('kyp-date-label').value = '';
   toast('Date saved');
   // Auto-add to calendar
-  await db.ref('calendar').push({ title: label, date, type: 'recurring', notes: 'From Know Your Person', createdBy: user, timestamp: Date.now() });
+  await db.ref('calendar').push({
+    title: label,
+    date,
+    type: 'recurring',
+    notes: 'From Know Your Person',
+    createdBy: user,
+    timestamp: Date.now()
+  });
   awardXP(5);
 }
 
@@ -80,13 +120,20 @@ function renderKYPDates() {
   const container = document.getElementById('kyp-dates');
   if (!container) return;
   const items = Object.entries(kypDates);
-  if (!items.length) { container.innerHTML = '<div class="empty">Add birthdays, anniversaries, and special dates</div>'; return; }
-  container.innerHTML = items.map(([k, d]) => `
+  if (!items.length) {
+    container.innerHTML = '<div class="empty">Add birthdays, anniversaries, and special dates</div>';
+    return;
+  }
+  container.innerHTML = items
+    .map(
+      ([k, d]) => `
     <div class="card-data" style="margin-bottom:6px">
       <div class="cd-accent" style="background:var(--gold)"></div>
       <div class="cd-number" style="font-size:11px;color:var(--gold)">${d.date.slice(5)}</div>
       <div class="cd-info"><div class="cd-label">${esc(d.label)}</div></div>
-    </div>`).join('');
+    </div>`
+    )
+    .join('');
 }
 
 async function addKYPNote() {
@@ -103,18 +150,29 @@ function renderKYPNotes() {
   const container = document.getElementById('kyp-notes');
   if (!container) return;
   const items = Object.entries(kypNotes);
-  if (!items.length) { container.innerHTML = '<div class="empty">Jot down things to remember</div>'; return; }
-  container.innerHTML = items.sort((a, b) => b[1].timestamp - a[1].timestamp).map(([k, n]) => `
+  if (!items.length) {
+    container.innerHTML = '<div class="empty">Jot down things to remember</div>';
+    return;
+  }
+  container.innerHTML = items
+    .sort((a, b) => b[1].timestamp - a[1].timestamp)
+    .map(
+      ([k, n]) => `
     <div class="kyp-note" style="padding:10px 0;border-bottom:1px solid var(--tint);display:flex;align-items:center;gap:10px">
       <span style="flex:1;font-size:13px;color:var(--cream)">${esc(n.text)}</span>
       <span style="font-size:10px;color:var(--t3)">${timeAgo(n.timestamp)}</span>
       <button onclick="db.ref('knowYou/${user}/notes/${k}').remove()" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
-    </div>`).join('');
+    </div>`
+    )
+    .join('');
 }
 
 async function addLoveNote() {
   const text = document.getElementById('kyp-love-note').value.trim();
-  if (!text) { toast('Write a note first'); return; }
+  if (!text) {
+    toast('Write a note first');
+    return;
+  }
   await db.ref('knowYou/' + user + '/loveNotes').push({ text, timestamp: Date.now() });
   document.getElementById('kyp-love-note').value = '';
   toast('Love note saved');
@@ -125,12 +183,20 @@ function renderKYPLoveNotes() {
   const container = document.getElementById('kyp-love-notes');
   if (!container) return;
   const items = Object.entries(kypLoveNotes);
-  if (!items.length) { container.innerHTML = '<div class="empty">Your private notes about what they love</div>'; return; }
-  container.innerHTML = items.sort((a, b) => b[1].timestamp - a[1].timestamp).map(([k, n]) => `
+  if (!items.length) {
+    container.innerHTML = '<div class="empty">Your private notes about what they love</div>';
+    return;
+  }
+  container.innerHTML = items
+    .sort((a, b) => b[1].timestamp - a[1].timestamp)
+    .map(
+      ([k, n]) => `
     <div class="card-story" style="margin-bottom:8px">
       <div style="font-size:13px;color:var(--cream);white-space:pre-wrap">${esc(n.text)}</div>
       <div style="font-size:10px;color:var(--t3);margin-top:6px">${timeAgo(n.timestamp)}</div>
-    </div>`).join('');
+    </div>`
+    )
+    .join('');
 }
 
 // ===== KYP QUIZ SYSTEM =====
@@ -139,22 +205,54 @@ let kypQuizStats = { correct: 0, total: 0 };
 
 function startKYPQuiz() {
   const filledFields = Object.entries(kypData).filter(([k, v]) => v && v.trim());
-  if (!filledFields.length) { toast('Your partner hasn\'t added any favorites yet'); return; }
+  if (!filledFields.length) {
+    toast("Your partner hasn't added any favorites yet");
+    return;
+  }
   const [field, value] = filledFields[Math.floor(Math.random() * filledFields.length)];
   currentQuizField = field;
-  const labels = {food:'favorite food',color:'favorite color',movie:'favorite movie',song:'favorite song',book:'favorite book',place:'favorite place',season:'favorite season',coffee:'coffee order',drink:'favorite drink',flower:'favorite flower',hobby:'favorite hobby',sport:'favorite sport',restaurant:'favorite restaurant',vacationspot:'dream vacation spot',scent:'favorite scent',tvshow:'favorite TV show',dessert:'favorite dessert',comfortfood:'comfort food',quote:'favorite quote',fear:'biggest fear',shirt:'shirt size',pants:'pants size',shoe:'shoe size',ring:'ring size'};
+  const labels = {
+    food: 'favorite food',
+    color: 'favorite color',
+    movie: 'favorite movie',
+    song: 'favorite song',
+    book: 'favorite book',
+    place: 'favorite place',
+    season: 'favorite season',
+    coffee: 'coffee order',
+    drink: 'favorite drink',
+    flower: 'favorite flower',
+    hobby: 'favorite hobby',
+    sport: 'favorite sport',
+    restaurant: 'favorite restaurant',
+    vacationspot: 'dream vacation spot',
+    scent: 'favorite scent',
+    tvshow: 'favorite TV show',
+    dessert: 'favorite dessert',
+    comfortfood: 'comfort food',
+    quote: 'favorite quote',
+    fear: 'biggest fear',
+    shirt: 'shirt size',
+    pants: 'pants size',
+    shoe: 'shoe size',
+    ring: 'ring size'
+  };
   const q = document.getElementById('kyp-quiz-q');
-  if (q) q.textContent = 'What is ' + (NAMES[partner] || 'your partner') + '\'s ' + (labels[field] || field) + '?';
+  if (q) q.textContent = 'What is ' + (NAMES[partner] || 'your partner') + "'s " + (labels[field] || field) + '?';
   const ans = document.getElementById('kyp-quiz-answer');
-  if (ans) { ans.value = ''; ans.focus(); }
+  if (ans) {
+    ans.value = '';
+    ans.focus();
+  }
   const res = document.getElementById('kyp-quiz-result');
   if (res) res.innerHTML = '';
   showEl('kyp-quiz');
   // Load stats
-  if (db) db.ref('knowYou/' + user + '/quizStats').once('value', snap => {
-    kypQuizStats = snap.val() || { correct: 0, total: 0 };
-    renderKYPQuizStats();
-  });
+  if (db)
+    db.ref('knowYou/' + user + '/quizStats').once('value', snap => {
+      kypQuizStats = snap.val() || { correct: 0, total: 0 };
+      renderKYPQuizStats();
+    });
 }
 
 function checkKYPQuiz() {
@@ -164,11 +262,13 @@ function checkKYPQuiz() {
   const res = document.getElementById('kyp-quiz-result');
   kypQuizStats.total = (kypQuizStats.total || 0) + 1;
   if (correct && answer && (correct.includes(answer) || answer.includes(correct))) {
-    if (res) res.innerHTML = '<span style="color:var(--green)">Correct! It\'s ' + esc(kypData[currentQuizField]) + '</span>';
+    if (res)
+      res.innerHTML = '<span style="color:var(--green)">Correct! It\'s ' + esc(kypData[currentQuizField]) + '</span>';
     kypQuizStats.correct = (kypQuizStats.correct || 0) + 1;
     awardXP(10);
   } else {
-    if (res) res.innerHTML = '<span style="color:var(--red)">Not quite. It\'s ' + esc(kypData[currentQuizField]) + '</span>';
+    if (res)
+      res.innerHTML = '<span style="color:var(--red)">Not quite. It\'s ' + esc(kypData[currentQuizField]) + '</span>';
   }
   if (db) db.ref('knowYou/' + user + '/quizStats').set(kypQuizStats);
   renderKYPQuizStats();
@@ -188,7 +288,7 @@ function skipKYPQuiz() {
 function renderKYPQuizStats() {
   const el = document.getElementById('kyp-quiz-stats');
   if (!el) return;
-  const pct = kypQuizStats.total ? Math.round(kypQuizStats.correct / kypQuizStats.total * 100) : 0;
+  const pct = kypQuizStats.total ? Math.round((kypQuizStats.correct / kypQuizStats.total) * 100) : 0;
   el.textContent = kypQuizStats.correct + '/' + kypQuizStats.total + ' correct (' + pct + '%)';
 }
 
@@ -207,7 +307,10 @@ function saveKYPCategory(cat) {
   const el = document.getElementById('kyp-cat-' + cat);
   if (!el) return;
   const text = el.value.trim();
-  if (!text) { toast('Write something first'); return; }
+  if (!text) {
+    toast('Write something first');
+    return;
+  }
   db.ref('knowYou/' + user + '/categories/' + cat).push({ text, timestamp: Date.now() });
   el.value = '';
   toast('Saved');
@@ -215,18 +318,26 @@ function saveKYPCategory(cat) {
 }
 
 function renderKYPCategories() {
-  const cats = ['happy','petpeeves','dreams','fears'];
+  const cats = ['happy', 'petpeeves', 'dreams', 'fears'];
   cats.forEach(cat => {
     const container = document.getElementById('kyp-cat-list-' + cat);
     if (!container) return;
     const items = kypCategories[cat] ? Object.entries(kypCategories[cat]) : [];
-    if (!items.length) { container.innerHTML = '<div class="empty" style="font-size:12px">Nothing added yet</div>'; return; }
-    container.innerHTML = items.sort((a, b) => b[1].timestamp - a[1].timestamp).map(([k, n]) => `
+    if (!items.length) {
+      container.innerHTML = '<div class="empty" style="font-size:12px">Nothing added yet</div>';
+      return;
+    }
+    container.innerHTML = items
+      .sort((a, b) => b[1].timestamp - a[1].timestamp)
+      .map(
+        ([k, n]) => `
       <div style="padding:8px 0;border-bottom:1px solid var(--tint);display:flex;align-items:center;gap:8px">
         <span style="flex:1;font-size:13px;color:var(--cream)">${esc(n.text)}</span>
         <span style="font-size:10px;color:var(--t3)">${timeAgo(n.timestamp)}</span>
         <button onclick="db.ref('knowYou/${user}/categories/${cat}/${k}').remove()" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
-      </div>`).join('');
+      </div>`
+      )
+      .join('');
   });
 }
 
@@ -239,11 +350,12 @@ function listenMemories() {
   if (!db) return;
   // Load custom albums into selectors
   memCustomAlbums.forEach(a => {
-    ['mem-album','mem-detail-album'].forEach(selId => {
+    ['mem-album', 'mem-detail-album'].forEach(selId => {
       const sel = document.getElementById(selId);
       if (sel && !sel.querySelector('option[value="' + a + '"]')) {
         const opt = document.createElement('option');
-        opt.value = a; opt.textContent = a;
+        opt.value = a;
+        opt.textContent = a;
         sel.appendChild(opt);
       }
     });
@@ -253,11 +365,13 @@ function listenMemories() {
   const savedView = localStorage.getItem('met_mem_view');
   if (savedView === 'timeline') toggleMemoryView('timeline');
   // Listen for data changes
-  db.ref('memories').orderByChild('timestamp').on('value', snap => {
-    memoriesData = snap.val() || {};
-    renderMemories();
-    checkOnThisDay();
-  });
+  db.ref('memories')
+    .orderByChild('timestamp')
+    .on('value', snap => {
+      memoriesData = snap.val() || {};
+      renderMemories();
+      checkOnThisDay();
+    });
 }
 
 let memCurrentAlbum = 'all';
@@ -279,13 +393,18 @@ function renderMemories() {
   if (!container) return;
   const items = getFilteredMemories();
   if (!items.length) {
-    const msg = memCurrentAlbum === 'all' ? 'Upload your first photo together' :
-                memCurrentAlbum === 'favorites' ? 'No favorites yet. Tap a photo to favorite it.' :
-                'No memories in this album yet';
+    const msg =
+      memCurrentAlbum === 'all'
+        ? 'Upload your first photo together'
+        : memCurrentAlbum === 'favorites'
+          ? 'No favorites yet. Tap a photo to favorite it.'
+          : 'No memories in this album yet';
     container.innerHTML = '<div class="empty">' + msg + '</div>';
     return;
   }
-  container.innerHTML = items.map(([k, m]) => `
+  container.innerHTML = items
+    .map(
+      ([k, m]) => `
     <div class="mem-item" onclick="openMemoryDetail('${k}')">
       <button class="mem-fav-btn ${m.favorite ? 'active' : ''}" onclick="event.stopPropagation();toggleMemFavorite('${k}')">
         ${m.favorite ? '&#9733;' : '&#9734;'}
@@ -295,10 +414,14 @@ function renderMemories() {
         <div style="font-size:12px;font-weight:500">${esc(m.caption || '')}</div>
         <div style="font-size:10px;opacity:.7">${m.date || ''} &bull; ${NAMES[m.uploadedBy] || ''}</div>
       </div>
-    </div>`).join('');
+    </div>`
+    )
+    .join('');
   // Update section title
   const titleEl = document.getElementById('mem-section-title');
-  if (titleEl) titleEl.textContent = memCurrentAlbum === 'all' ? 'All Memories' : memCurrentAlbum === 'favorites' ? 'Favorites' : memCurrentAlbum;
+  if (titleEl)
+    titleEl.textContent =
+      memCurrentAlbum === 'all' ? 'All Memories' : memCurrentAlbum === 'favorites' ? 'Favorites' : memCurrentAlbum;
   // Also update timeline if visible
   if (memCurrentView === 'timeline') renderMemoryTimeline();
   // Update prompt
@@ -309,16 +432,27 @@ function previewMemory(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     // Compress image
     const img = new Image();
-    img.onload = function() {
+    img.onload = function () {
       const canvas = document.createElement('canvas');
       const maxSize = 400;
-      let w = img.width, h = img.height;
-      if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } }
-      else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
-      canvas.width = w; canvas.height = h;
+      let w = img.width,
+        h = img.height;
+      if (w > h) {
+        if (w > maxSize) {
+          h *= maxSize / w;
+          w = maxSize;
+        }
+      } else {
+        if (h > maxSize) {
+          w *= maxSize / h;
+          h = maxSize;
+        }
+      }
+      canvas.width = w;
+      canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       const compressed = canvas.toDataURL('image/jpeg', 0.6);
       document.getElementById('mem-preview-img').src = compressed;
@@ -333,7 +467,10 @@ function previewMemory(input) {
 async function saveMemory() {
   const imgEl = document.getElementById('mem-preview-img');
   const imageData = imgEl ? imgEl.dataset.data : '';
-  if (!imageData) { toast('Upload a photo first'); return; }
+  if (!imageData) {
+    toast('Upload a photo first');
+    return;
+  }
   const caption = document.getElementById('mem-caption').value.trim();
   const date = document.getElementById('mem-date').value || localDate();
   const albumSel = document.getElementById('mem-album');
@@ -352,16 +489,22 @@ async function saveMemory() {
 function checkOnThisDay() {
   const today = new Date();
   const monthDay = String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-  const matches = Object.values(memoriesData).filter(m => m.date && m.date.slice(5) === monthDay && m.date.slice(0, 4) !== String(today.getFullYear()));
+  const matches = Object.values(memoriesData).filter(
+    m => m.date && m.date.slice(5) === monthDay && m.date.slice(0, 4) !== String(today.getFullYear())
+  );
   const container = document.getElementById('mem-onthisday');
   const content = document.getElementById('mem-otd-content');
   if (matches.length && container && content) {
     showEl(container);
-    content.innerHTML = matches.map(m => `
+    content.innerHTML = matches
+      .map(
+        m => `
       <div class="mb-8">
         <img src="${m.imageData}" style="width:100%;border-radius:12px;max-height:150px;object-fit:cover">
         <div class="t-sm c-cream mt-4">${esc(m.caption || '')} &bull; ${m.date}</div>
-      </div>`).join('');
+      </div>`
+      )
+      .join('');
   } else if (container) {
     hideEl(container);
   }
@@ -388,12 +531,15 @@ function addCustomAlbum() {
       <button onclick="submitCustomAlbum()" class="dq-submit" style="margin-top:10px;width:100%">Create</button>
     </div>
   `);
-  setTimeout(function(){ var el=document.getElementById('album-name-input'); if(el) el.focus(); }, 300);
+  setTimeout(function () {
+    var el = document.getElementById('album-name-input');
+    if (el) el.focus();
+  }, 300);
   return;
 }
 
 function submitCustomAlbum() {
-  var name = (document.getElementById('album-name-input').value||'').trim();
+  var name = (document.getElementById('album-name-input').value || '').trim();
   closeModal();
   if (!name) return;
   const albumName = name.trim();
@@ -405,13 +551,15 @@ function submitCustomAlbum() {
     const sel = document.getElementById('mem-album');
     if (sel) {
       const opt = document.createElement('option');
-      opt.value = albumName; opt.textContent = albumName;
+      opt.value = albumName;
+      opt.textContent = albumName;
       sel.appendChild(opt);
     }
     const detailSel = document.getElementById('mem-detail-album');
     if (detailSel) {
       const opt2 = document.createElement('option');
-      opt2.value = albumName; opt2.textContent = albumName;
+      opt2.value = albumName;
+      opt2.textContent = albumName;
       detailSel.appendChild(opt2);
     }
   }
@@ -421,13 +569,30 @@ function submitCustomAlbum() {
 function refreshAlbumBar() {
   const bar = document.getElementById('mem-album-bar');
   if (!bar) return;
-  const defaults = ['all','favorites','Dates','Trips','Home','Milestones'];
-  let html = defaults.map(a => {
-    const label = a === 'all' ? 'All' : a === 'favorites' ? 'Favorites' : a;
-    return '<button class="mem-album-pill' + (memCurrentAlbum === a ? ' active' : '') + '" onclick="filterMemAlbum(\'' + a + '\')">' + label + '</button>';
-  }).join('');
+  const defaults = ['all', 'favorites', 'Dates', 'Trips', 'Home', 'Milestones'];
+  let html = defaults
+    .map(a => {
+      const label = a === 'all' ? 'All' : a === 'favorites' ? 'Favorites' : a;
+      return (
+        '<button class="mem-album-pill' +
+        (memCurrentAlbum === a ? ' active' : '') +
+        '" onclick="filterMemAlbum(\'' +
+        a +
+        '\')">' +
+        label +
+        '</button>'
+      );
+    })
+    .join('');
   memCustomAlbums.forEach(a => {
-    html += '<button class="mem-album-pill' + (memCurrentAlbum === a ? ' active' : '') + '" onclick="filterMemAlbum(\'' + esc(a) + '\')">' + esc(a) + '</button>';
+    html +=
+      '<button class="mem-album-pill' +
+      (memCurrentAlbum === a ? ' active' : '') +
+      '" onclick="filterMemAlbum(\'' +
+      esc(a) +
+      '\')">' +
+      esc(a) +
+      '</button>';
   });
   html += '<button class="mem-album-pill" onclick="addCustomAlbum()" style="border-style:dashed">+ New</button>';
   bar.innerHTML = html;
@@ -459,7 +624,10 @@ function renderMemoryTimeline() {
   const container = document.getElementById('mem-timeline');
   if (!container) return;
   const items = getFilteredMemories();
-  if (!items.length) { container.innerHTML = '<div class="empty">No memories to show</div>'; return; }
+  if (!items.length) {
+    container.innerHTML = '<div class="empty">No memories to show</div>';
+    return;
+  }
   // Group by month
   const months = {};
   items.forEach(([k, m]) => {
@@ -467,20 +635,31 @@ function renderMemoryTimeline() {
     if (!months[monthKey]) months[monthKey] = [];
     months[monthKey].push([k, m]);
   });
-  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  container.innerHTML = Object.entries(months).sort((a, b) => b[0].localeCompare(a[0])).map(([month, memories]) => {
-    const [y, mo] = month.split('-');
-    const label = monthNames[parseInt(mo) - 1] + ' ' + y;
-    return '<div class="mem-tl-month">' + label + '</div>' +
-      memories.map(([k, m]) => `
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  container.innerHTML = Object.entries(months)
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([month, memories]) => {
+      const [y, mo] = month.split('-');
+      const label = monthNames[parseInt(mo) - 1] + ' ' + y;
+      return (
+        '<div class="mem-tl-month">' +
+        label +
+        '</div>' +
+        memories
+          .map(
+            ([k, m]) => `
         <div class="mem-tl-item" onclick="openMemoryDetail('${k}')">
           <img src="${m.imageData}" alt="" loading="lazy">
           <div class="mem-tl-info">
             <div class="mem-tl-caption">${esc(m.caption || 'No caption')}</div>
             <div class="mem-tl-meta">${m.date || ''} &bull; ${NAMES[m.uploadedBy] || ''} ${m.album ? '&bull; ' + esc(m.album) : ''}</div>
           </div>
-        </div>`).join('');
-  }).join('');
+        </div>`
+          )
+          .join('')
+      );
+    })
+    .join('');
 }
 
 // ===== MEMORY FAVORITES =====
@@ -578,7 +757,8 @@ function deleteMemory() {
 function confirmDeleteMemory() {
   if (!currentMemoryKey || !db) return;
   db.ref('memories/' + currentMemoryKey).remove();
-  closeModal(); closeMemoryDetail();
+  closeModal();
+  closeMemoryDetail();
   toast('Memory deleted');
 }
 
@@ -605,7 +785,8 @@ function renderAchievements() {
   if (el('ach-level')) el('ach-level').textContent = level;
   if (el('ach-xp')) el('ach-xp').textContent = xp;
   if (el('ach-xp-next')) el('ach-xp-next').textContent = xpForNext;
-  if (el('ach-xp-bar')) el('ach-xp-bar').style.width = Math.min(100, (xp % (level * 100)) / (level * 100) * 100) + '%';
+  if (el('ach-xp-bar'))
+    el('ach-xp-bar').style.width = Math.min(100, ((xp % (level * 100)) / (level * 100)) * 100) + '%';
 
   // Unlock badges
   const badges = data.badges || {};
@@ -728,7 +909,11 @@ async function checkAchievements() {
   if (currentStreak >= 100) unlockBadge('century', 'Century Club');
 
   // Check fit couple - both worked out this week
-  const partnerFitSnap = await db.ref('fitness/' + partner + '/workouts').orderByChild('date').limitToLast(7).once('value');
+  const partnerFitSnap = await db
+    .ref('fitness/' + partner + '/workouts')
+    .orderByChild('date')
+    .limitToLast(7)
+    .once('value');
   const partnerWorkouts = partnerFitSnap.val() ? Object.values(partnerFitSnap.val()) : [];
   const weekAgo = localDate(new Date(Date.now() - 7 * 86400000));
   const myWeek = Object.values(fitnessData).some(w => w.date >= weekAgo);
@@ -756,7 +941,11 @@ function initPresence() {
   connRef.on('value', snap => {
     if (snap.val() === true) {
       presRef.onDisconnect().set({ online: false, lastSeen: firebase.database.ServerValue.TIMESTAMP });
-      presRef.set({ online: true, currentPage: document.body.dataset.page || 'dash', lastSeen: firebase.database.ServerValue.TIMESTAMP });
+      presRef.set({
+        online: true,
+        currentPage: document.body.dataset.page || 'dash',
+        lastSeen: firebase.database.ServerValue.TIMESTAMP
+      });
     }
   });
   // Listen to partner presence (green dot only when online, hidden when offline)
@@ -770,27 +959,104 @@ function initPresence() {
     const nameEl = document.getElementById('fit-partner-name');
     if (nameEl) nameEl.textContent = NAMES[partner];
     const lastEl = document.getElementById('fit-partner-last');
-    if (lastEl) lastEl.textContent = p.online ? 'Online now' : (p.lastSeen ? 'Last seen ' + timeAgo(p.lastSeen) : 'Offline');
+    if (lastEl)
+      lastEl.textContent = p.online ? 'Online now' : p.lastSeen ? 'Last seen ' + timeAgo(p.lastSeen) : 'Offline';
   });
 }
 
 // ===== IDENTITY QUIZ =====
 const ID_QUIZ_QUESTIONS = [
-  { id: 'personality', q: 'How would you describe your personality?', type: 'choice', opts: ['Introvert', 'Extrovert', 'Ambivert'] },
-  { id: 'conflict', q: 'How do you handle conflict?', type: 'choice', opts: ['Talk it out immediately', 'Need space first, then talk', 'Avoid confrontation', 'Write down my feelings'] },
-  { id: 'love_give', q: 'How do you prefer to show love?', type: 'choice', opts: ['Words of affirmation', 'Acts of service', 'Physical touch', 'Quality time', 'Gift giving'] },
-  { id: 'love_receive', q: 'How do you prefer to receive love?', type: 'choice', opts: ['Words of affirmation', 'Acts of service', 'Physical touch', 'Quality time', 'Receiving gifts'] },
-  { id: 'morning', q: 'Are you a morning or night person?', type: 'choice', opts: ['Early bird', 'Night owl', 'Depends on the day'] },
-  { id: 'social_battery', q: 'How quickly does your social battery drain?', type: 'choice', opts: ['Very fast - need lots of alone time', 'Moderate - balanced', 'Slow - love being around people'] },
-  { id: 'stress_relief', q: 'What helps you de-stress?', type: 'multi', opts: ['Exercise', 'Being alone', 'Talking to someone', 'Music', 'Nature', 'Sleep', 'Creative outlet', 'Food'] },
-  { id: 'apology', q: 'What matters most in an apology?', type: 'choice', opts: ["Hearing 'I\\'m sorry'", 'Understanding what went wrong', 'Changed behavior', 'Making amends/gestures'] },
-  { id: 'values', q: 'Your top 3 values?', type: 'multi', opts: ['Family', 'Honesty', 'Loyalty', 'Adventure', 'Faith', 'Growth', 'Freedom', 'Security', 'Creativity', 'Kindness'] },
+  {
+    id: 'personality',
+    q: 'How would you describe your personality?',
+    type: 'choice',
+    opts: ['Introvert', 'Extrovert', 'Ambivert']
+  },
+  {
+    id: 'conflict',
+    q: 'How do you handle conflict?',
+    type: 'choice',
+    opts: ['Talk it out immediately', 'Need space first, then talk', 'Avoid confrontation', 'Write down my feelings']
+  },
+  {
+    id: 'love_give',
+    q: 'How do you prefer to show love?',
+    type: 'choice',
+    opts: ['Words of affirmation', 'Acts of service', 'Physical touch', 'Quality time', 'Gift giving']
+  },
+  {
+    id: 'love_receive',
+    q: 'How do you prefer to receive love?',
+    type: 'choice',
+    opts: ['Words of affirmation', 'Acts of service', 'Physical touch', 'Quality time', 'Receiving gifts']
+  },
+  {
+    id: 'morning',
+    q: 'Are you a morning or night person?',
+    type: 'choice',
+    opts: ['Early bird', 'Night owl', 'Depends on the day']
+  },
+  {
+    id: 'social_battery',
+    q: 'How quickly does your social battery drain?',
+    type: 'choice',
+    opts: ['Very fast - need lots of alone time', 'Moderate - balanced', 'Slow - love being around people']
+  },
+  {
+    id: 'stress_relief',
+    q: 'What helps you de-stress?',
+    type: 'multi',
+    opts: ['Exercise', 'Being alone', 'Talking to someone', 'Music', 'Nature', 'Sleep', 'Creative outlet', 'Food']
+  },
+  {
+    id: 'apology',
+    q: 'What matters most in an apology?',
+    type: 'choice',
+    opts: ["Hearing 'I\\'m sorry'", 'Understanding what went wrong', 'Changed behavior', 'Making amends/gestures']
+  },
+  {
+    id: 'values',
+    q: 'Your top 3 values?',
+    type: 'multi',
+    opts: [
+      'Family',
+      'Honesty',
+      'Loyalty',
+      'Adventure',
+      'Faith',
+      'Growth',
+      'Freedom',
+      'Security',
+      'Creativity',
+      'Kindness'
+    ]
+  },
   { id: 'dream_life', q: 'Your ideal life in 5 years?', type: 'text' },
   { id: 'dealbreaker', q: "What's a relationship dealbreaker for you?", type: 'text' },
   { id: 'happiest', q: 'When are you happiest?', type: 'text' },
-  { id: 'attachment', q: 'How would you describe your attachment style?', type: 'choice', opts: ['Secure - comfortable with closeness', 'Anxious - crave reassurance', 'Avoidant - value independence', 'Not sure'] },
-  { id: 'communication', q: 'Preferred communication style?', type: 'choice', opts: ['Direct and blunt', 'Gentle and diplomatic', 'Through humor', 'Through actions more than words'] },
-  { id: 'energy', q: 'Perfect weekend?', type: 'choice', opts: ['Stay in, relax, recharge', 'Go out, explore, socialize', 'Mix of both', 'Whatever my partner wants'] }
+  {
+    id: 'attachment',
+    q: 'How would you describe your attachment style?',
+    type: 'choice',
+    opts: [
+      'Secure - comfortable with closeness',
+      'Anxious - crave reassurance',
+      'Avoidant - value independence',
+      'Not sure'
+    ]
+  },
+  {
+    id: 'communication',
+    q: 'Preferred communication style?',
+    type: 'choice',
+    opts: ['Direct and blunt', 'Gentle and diplomatic', 'Through humor', 'Through actions more than words']
+  },
+  {
+    id: 'energy',
+    q: 'Perfect weekend?',
+    type: 'choice',
+    opts: ['Stay in, relax, recharge', 'Go out, explore, socialize', 'Mix of both', 'Whatever my partner wants']
+  }
 ];
 
 let idQuizIdx = 0;
@@ -810,7 +1076,10 @@ function startIdentityQuiz() {
 function renderIdQuizQuestion() {
   const el = document.getElementById('id-quiz-active');
   if (!el) return;
-  if (idQuizIdx >= ID_QUIZ_QUESTIONS.length) { saveIdentityQuiz(); return; }
+  if (idQuizIdx >= ID_QUIZ_QUESTIONS.length) {
+    saveIdentityQuiz();
+    return;
+  }
   const q = ID_QUIZ_QUESTIONS[idQuizIdx];
   const progress = Math.round((idQuizIdx / ID_QUIZ_QUESTIONS.length) * 100);
   let html = `<div class="card" style="border:1px solid var(--lavender)">
@@ -822,31 +1091,46 @@ function renderIdQuizQuestion() {
     <div style="font-size:15px;color:var(--cream);font-weight:500;margin-bottom:16px">${q.q}</div>`;
   if (q.type === 'choice') {
     html += '<div class="id-opts">';
-    q.opts.forEach(opt => { html += `<button class="id-opt" onclick="answerIdQuiz('${opt.replace(/'/g,"\\'")}')">${opt}</button>`; });
+    q.opts.forEach(opt => {
+      html += `<button class="id-opt" onclick="answerIdQuiz('${opt.replace(/'/g, "\\'")}')">${opt}</button>`;
+    });
     html += '</div>';
   } else if (q.type === 'multi') {
     idMultiSelections = [];
     html += '<div class="id-opts multi">';
-    q.opts.forEach(opt => { html += `<button class="id-opt multi" onclick="toggleIdMulti(this,'${opt}')">${opt}</button>`; });
-    html += '</div><button class="dq-submit" onclick="submitIdMulti()" style="margin-top:12px;background:var(--lavender)">Continue</button>';
+    q.opts.forEach(opt => {
+      html += `<button class="id-opt multi" onclick="toggleIdMulti(this,'${opt}')">${opt}</button>`;
+    });
+    html +=
+      '</div><button class="dq-submit" onclick="submitIdMulti()" style="margin-top:12px;background:var(--lavender)">Continue</button>';
   } else if (q.type === 'text') {
     html += `<textarea id="id-text-answer" rows="3" placeholder="Type your answer..." style="width:100%;padding:12px;border-radius:14px;border:none;background:var(--input-bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:13px;resize:vertical;box-sizing:border-box;margin-bottom:12px"></textarea>`;
     html += `<button class="dq-submit" onclick="submitIdText()" style="background:var(--lavender)">Continue</button>`;
   }
-  if (idQuizIdx > 0) html += `<div style="text-align:center;margin-top:12px"><span style="font-size:12px;color:var(--t3);cursor:pointer" onclick="idQuizIdx--;renderIdQuizQuestion()">← Back</span></div>`;
+  if (idQuizIdx > 0)
+    html += `<div style="text-align:center;margin-top:12px"><span style="font-size:12px;color:var(--t3);cursor:pointer" onclick="idQuizIdx--;renderIdQuizQuestion()">← Back</span></div>`;
   html += '</div>';
   el.innerHTML = html;
 }
 
 function toggleIdMulti(btn, opt) {
   const idx = idMultiSelections.indexOf(opt);
-  if (idx > -1) { idMultiSelections.splice(idx, 1); btn.classList.remove('selected'); }
-  else if (idMultiSelections.length < 3) { idMultiSelections.push(opt); btn.classList.add('selected'); }
-  else { toast('Select up to 3'); }
+  if (idx > -1) {
+    idMultiSelections.splice(idx, 1);
+    btn.classList.remove('selected');
+  } else if (idMultiSelections.length < 3) {
+    idMultiSelections.push(opt);
+    btn.classList.add('selected');
+  } else {
+    toast('Select up to 3');
+  }
 }
 
 function submitIdMulti() {
-  if (!idMultiSelections.length) { toast('Select at least one'); return; }
+  if (!idMultiSelections.length) {
+    toast('Select at least one');
+    return;
+  }
   idQuizAnswers[ID_QUIZ_QUESTIONS[idQuizIdx].id] = [...idMultiSelections];
   idMultiSelections = [];
   idQuizIdx++;
@@ -855,7 +1139,10 @@ function submitIdMulti() {
 
 function submitIdText() {
   const input = document.getElementById('id-text-answer');
-  if (!input || !input.value.trim()) { toast('Write something'); return; }
+  if (!input || !input.value.trim()) {
+    toast('Write something');
+    return;
+  }
   idQuizAnswers[ID_QUIZ_QUESTIONS[idQuizIdx].id] = input.value.trim();
   idQuizIdx++;
   renderIdQuizQuestion();
@@ -883,7 +1170,10 @@ function loadIdentityProfiles() {
     const data = snap.val() || {};
     renderIdentityProfiles(data);
     const startEl = document.getElementById('id-quiz-start');
-    if (startEl) { if (data[user]) hideEl(startEl); else showEl(startEl); }
+    if (startEl) {
+      if (data[user]) hideEl(startEl);
+      else showEl(startEl);
+    }
   });
 }
 
@@ -904,11 +1194,16 @@ function renderIdentityProfiles(data) {
         ${isMe ? '<span style="font-size:10px;color:var(--t3);cursor:pointer" onclick="startIdentityQuiz()">Retake</span>' : ''}
       </div>`;
     const fields = [
-      { key: 'personality', label: 'Personality' }, { key: 'morning', label: 'Chronotype' },
-      { key: 'love_give', label: 'Gives Love Via' }, { key: 'love_receive', label: 'Receives Love Via' },
-      { key: 'conflict', label: 'Conflict Style' }, { key: 'attachment', label: 'Attachment' },
-      { key: 'communication', label: 'Communication' }, { key: 'social_battery', label: 'Social Battery' },
-      { key: 'energy', label: 'Perfect Weekend' }, { key: 'apology', label: 'Apology Style' }
+      { key: 'personality', label: 'Personality' },
+      { key: 'morning', label: 'Chronotype' },
+      { key: 'love_give', label: 'Gives Love Via' },
+      { key: 'love_receive', label: 'Receives Love Via' },
+      { key: 'conflict', label: 'Conflict Style' },
+      { key: 'attachment', label: 'Attachment' },
+      { key: 'communication', label: 'Communication' },
+      { key: 'social_battery', label: 'Social Battery' },
+      { key: 'energy', label: 'Perfect Weekend' },
+      { key: 'apology', label: 'Apology Style' }
     ];
     html += '<div class="kyp-grid" style="margin-bottom:12px">';
     fields.forEach(f => {
@@ -918,8 +1213,10 @@ function renderIdentityProfiles(data) {
       }
     });
     html += '</div>';
-    if (a.values) html += `<div style="margin-bottom:8px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Core Values</div><div style="display:flex;gap:4px;flex-wrap:wrap">${a.values.map(v => '<span style="padding:3px 10px;border-radius:10px;font-size:11px;background:var(--tint);color:var(--gold)">' + esc(v) + '</span>').join('')}</div></div>`;
-    if (a.stress_relief) html += `<div style="margin-bottom:8px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Stress Relief</div><div style="display:flex;gap:4px;flex-wrap:wrap">${a.stress_relief.map(v => '<span style="padding:3px 10px;border-radius:10px;font-size:11px;background:rgba(42,143,143,.1);color:var(--teal)">' + esc(v) + '</span>').join('')}</div></div>`;
+    if (a.values)
+      html += `<div style="margin-bottom:8px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Core Values</div><div style="display:flex;gap:4px;flex-wrap:wrap">${a.values.map(v => '<span style="padding:3px 10px;border-radius:10px;font-size:11px;background:var(--tint);color:var(--gold)">' + esc(v) + '</span>').join('')}</div></div>`;
+    if (a.stress_relief)
+      html += `<div style="margin-bottom:8px"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Stress Relief</div><div style="display:flex;gap:4px;flex-wrap:wrap">${a.stress_relief.map(v => '<span style="padding:3px 10px;border-radius:10px;font-size:11px;background:rgba(42,143,143,.1);color:var(--teal)">' + esc(v) + '</span>').join('')}</div></div>`;
     ['dream_life', 'dealbreaker', 'happiest'].forEach(key => {
       if (a[key]) {
         const labels = { dream_life: 'Ideal Life in 5 Years', dealbreaker: 'Dealbreaker', happiest: 'Happiest When' };
@@ -930,4 +1227,3 @@ function renderIdentityProfiles(data) {
   });
   el.innerHTML = html;
 }
-

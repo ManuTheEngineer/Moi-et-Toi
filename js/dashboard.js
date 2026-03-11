@@ -9,32 +9,47 @@ function initPullToRefresh() {
   let pulling = false;
   const threshold = 100;
 
-  document.addEventListener('touchstart', function(e) {
-    if (window.scrollY === 0) {
-      startY = e.touches[0].clientY;
-      pulling = true;
-    }
-  }, { passive: true });
+  document.addEventListener(
+    'touchstart',
+    function (e) {
+      if (window.scrollY === 0) {
+        startY = e.touches[0].clientY;
+        pulling = true;
+      }
+    },
+    { passive: true }
+  );
 
-  document.addEventListener('touchmove', function(e) {
-    if (!pulling) return;
-    const dy = e.touches[0].clientY - startY;
-    const ptr = document.getElementById('ptr');
-    if (dy > 20 && dy < threshold && window.scrollY === 0 && ptr) {
-      ptr.style.height = Math.min(dy * 0.5, 40) + 'px';
-      ptr.classList.add('show');
-    }
-    if (dy > threshold && window.scrollY === 0) {
+  document.addEventListener(
+    'touchmove',
+    function (e) {
+      if (!pulling) return;
+      const dy = e.touches[0].clientY - startY;
+      const ptr = document.getElementById('ptr');
+      if (dy > 20 && dy < threshold && window.scrollY === 0 && ptr) {
+        ptr.style.height = Math.min(dy * 0.5, 40) + 'px';
+        ptr.classList.add('show');
+      }
+      if (dy > threshold && window.scrollY === 0) {
+        pulling = false;
+        softRefresh();
+      }
+    },
+    { passive: true }
+  );
+
+  document.addEventListener(
+    'touchend',
+    function () {
       pulling = false;
-      softRefresh();
-    }
-  }, { passive: true });
-
-  document.addEventListener('touchend', function() {
-    pulling = false;
-    const ptr = document.getElementById('ptr');
-    if (ptr) { ptr.style.height = '0'; ptr.classList.remove('show', 'refreshing'); }
-  }, { passive: true });
+      const ptr = document.getElementById('ptr');
+      if (ptr) {
+        ptr.style.height = '0';
+        ptr.classList.remove('show', 'refreshing');
+      }
+    },
+    { passive: true }
+  );
 }
 
 function softRefresh() {
@@ -63,9 +78,11 @@ function softRefresh() {
 
     // Refresh weather if available
     if (typeof WEATHER !== 'undefined' && WEATHER.locationGranted && typeof fetchWeather === 'function') {
-      fetchWeather().then(function() {
-        if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
-      }).catch(function() {});
+      fetchWeather()
+        .then(function () {
+          if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
+        })
+        .catch(function () {});
     }
 
     // Update time of day visuals
@@ -74,16 +91,18 @@ function softRefresh() {
     if (typeof renderTerrain === 'function') renderTerrain();
 
     toast('Refreshed');
-  } catch(e) {
+  } catch (e) {
     console.error('Soft refresh error:', e);
   }
 
   // Hide PTR indicator after a short delay
-  setTimeout(function() {
+  setTimeout(function () {
     if (ptr) {
       ptr.classList.remove('refreshing');
       ptr.style.height = '0';
-      setTimeout(function() { ptr.classList.remove('show'); }, 300);
+      setTimeout(function () {
+        ptr.classList.remove('show');
+      }, 300);
     }
   }, 800);
 }
@@ -93,7 +112,9 @@ function openModal(html) {
   var el = document.getElementById('generic-modal');
   var box = document.getElementById('generic-modal-content');
   if (box) box.innerHTML = html;
-  if (el) { el.classList.add('on'); }
+  if (el) {
+    el.classList.add('on');
+  }
   // Lock body scroll to prevent iOS from scrolling behind the fixed overlay
   document.body.dataset.scrollY = window.scrollY;
   document.body.style.top = '-' + window.scrollY + 'px';
@@ -102,9 +123,9 @@ function openModal(html) {
   if (box) {
     var inputs = box.querySelectorAll('input, textarea');
     for (var i = 0; i < inputs.length; i++) {
-      (function(input) {
+      (function (input) {
         // Force focus on touchend to bypass iOS fixed-overlay input issues
-        input.addEventListener('touchend', function(e) {
+        input.addEventListener('touchend', function (e) {
           e.preventDefault();
           input.focus();
         });
@@ -122,7 +143,9 @@ function closeModal() {
   if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
     active.blur();
   }
-  if (el) { el.classList.remove('on'); }
+  if (el) {
+    el.classList.remove('on');
+  }
   var scrollY = parseInt(document.body.dataset.scrollY || '0', 10);
   document.body.classList.remove('modal-open');
   document.body.style.top = '';
@@ -175,7 +198,7 @@ function saveConfig() {
     let config;
     try {
       config = JSON.parse(atob(raw));
-    } catch(e) {
+    } catch (e) {
       // Try as raw JSON
       config = JSON.parse(raw);
     }
@@ -185,7 +208,7 @@ function saveConfig() {
     localStorage.setItem('met_fb_config', JSON.stringify(config));
     FIREBASE_CONFIG = config;
     location.reload();
-  } catch(e) {
+  } catch (e) {
     document.getElementById('config-err').textContent = 'Invalid key. Try again.';
   }
 }
@@ -199,42 +222,42 @@ const TOD_TRUTHS = [
   "What's something small I do that always makes you smile?",
   "What's a fear you have about our future together?",
   "What's the most attractive quality I have that isn't physical?",
-  "What song makes you think of me?",
+  'What song makes you think of me?',
   "What's a moment with me you replay in your head?",
   "What's something you want us to try together?",
-  "When did you realize you loved me?",
+  'When did you realize you loved me?',
   "What's something I do that you find adorable but haven't mentioned?",
   "What's your favorite memory of us so far?",
-  "If you could change one thing about how we met, what would it be?",
+  'If you could change one thing about how we met, what would it be?',
   "What's something you're grateful for about our relationship?",
-  "What does home feel like to you?",
+  'What does home feel like to you?',
   "What's a compliment you've wanted to give me but felt shy about?",
   "What's your ideal lazy Sunday with me?",
-  "What habit of mine do you secretly love?",
+  'What habit of mine do you secretly love?',
   "What's the bravest thing you've done for love?"
 ];
 
 const TOD_DARES = [
-  "Send me a voice note saying what you love about me",
-  "Write a 4-line poem about us right now",
-  "Text me three things you find attractive about me",
-  "Set a timer and tell me everything you appreciate for 60 seconds",
-  "Share the last photo you took of us",
-  "Send me a song that reminds you of us",
-  "Describe your perfect date with me in detail",
-  "Tell me something you want to do together this month",
-  "Close your eyes and describe my face from memory",
-  "Create a nickname for us as a couple",
-  "Share something from your camera roll that makes you think of me",
-  "Plan our next date and share it right now",
-  "Write me a short love letter in under 2 minutes",
+  'Send me a voice note saying what you love about me',
+  'Write a 4-line poem about us right now',
+  'Text me three things you find attractive about me',
+  'Set a timer and tell me everything you appreciate for 60 seconds',
+  'Share the last photo you took of us',
+  'Send me a song that reminds you of us',
+  'Describe your perfect date with me in detail',
+  'Tell me something you want to do together this month',
+  'Close your eyes and describe my face from memory',
+  'Create a nickname for us as a couple',
+  'Share something from your camera roll that makes you think of me',
+  'Plan our next date and share it right now',
+  'Write me a short love letter in under 2 minutes',
   "Record yourself saying 'I love you' in 3 different ways",
   "Send me a list of 5 reasons I'm your person",
-  "Make up a handshake for just the two of us",
-  "Describe our love story in exactly 10 words",
-  "Name 3 things on your bucket list that include me",
-  "Send me your favorite photo of us and explain why",
-  "Tell me something new you want to learn together"
+  'Make up a handshake for just the two of us',
+  'Describe our love story in exactly 10 words',
+  'Name 3 things on your bucket list that include me',
+  'Send me your favorite photo of us and explain why',
+  'Tell me something new you want to learn together'
 ];
 
 function drawTOD(type) {
@@ -260,26 +283,26 @@ function drawTOD(type) {
 
 // ===== THIS OR THAT =====
 const TOT_QUESTIONS = [
-  {a: "Morning person", b: "Night owl"},
-  {a: "Beach vacation", b: "Mountain getaway"},
-  {a: "Cooking together", b: "Ordering takeout"},
-  {a: "Texting all day", b: "One long phone call"},
-  {a: "Rainy day inside", b: "Sunny day outside"},
-  {a: "Big wedding", b: "Intimate elopement"},
-  {a: "City apartment", b: "Country house"},
-  {a: "Road trip", b: "Flying there"},
-  {a: "Movie night", b: "Game night"},
-  {a: "Sweet breakfast", b: "Savory breakfast"},
-  {a: "Dancing together", b: "Singing together"},
-  {a: "Love letter", b: "Surprise gift"},
-  {a: "Matching outfits", b: "Coordinated colors"},
-  {a: "First to say sorry", b: "First to make them laugh"},
-  {a: "Sunset walks", b: "Stargazing nights"},
-  {a: "Adopt a cat", b: "Adopt a dog"},
-  {a: "Coffee date", b: "Wine night"},
-  {a: "Plan everything", b: "Be spontaneous"},
-  {a: "PDA everywhere", b: "Private affection"},
-  {a: "Classic romance", b: "Adventure love"}
+  { a: 'Morning person', b: 'Night owl' },
+  { a: 'Beach vacation', b: 'Mountain getaway' },
+  { a: 'Cooking together', b: 'Ordering takeout' },
+  { a: 'Texting all day', b: 'One long phone call' },
+  { a: 'Rainy day inside', b: 'Sunny day outside' },
+  { a: 'Big wedding', b: 'Intimate elopement' },
+  { a: 'City apartment', b: 'Country house' },
+  { a: 'Road trip', b: 'Flying there' },
+  { a: 'Movie night', b: 'Game night' },
+  { a: 'Sweet breakfast', b: 'Savory breakfast' },
+  { a: 'Dancing together', b: 'Singing together' },
+  { a: 'Love letter', b: 'Surprise gift' },
+  { a: 'Matching outfits', b: 'Coordinated colors' },
+  { a: 'First to say sorry', b: 'First to make them laugh' },
+  { a: 'Sunset walks', b: 'Stargazing nights' },
+  { a: 'Adopt a cat', b: 'Adopt a dog' },
+  { a: 'Coffee date', b: 'Wine night' },
+  { a: 'Plan everything', b: 'Be spontaneous' },
+  { a: 'PDA everywhere', b: 'Private affection' },
+  { a: 'Classic romance', b: 'Adventure love' }
 ];
 
 let totIndex = 0;
@@ -290,7 +313,12 @@ function loadTOT() {
   const bEl = document.getElementById('tot-b');
   if (!aEl || !bEl) return;
   var wrap = document.getElementById('tot-wrap');
-  if (wrap) { wrap.style.opacity = '0'; setTimeout(function(){ wrap.style.opacity = '1'; }, 50); }
+  if (wrap) {
+    wrap.style.opacity = '0';
+    setTimeout(function () {
+      wrap.style.opacity = '1';
+    }, 50);
+  }
   aEl.textContent = q.a;
   bEl.textContent = q.b;
   // Reset styles
@@ -334,13 +362,20 @@ async function pickTOT(choice) {
   updateEnhancedCompat();
 }
 
-function nextTOT() { totIndex = (totIndex + 1) % TOT_QUESTIONS.length; loadTOT(); }
-function prevTOT() { totIndex = (totIndex - 1 + TOT_QUESTIONS.length) % TOT_QUESTIONS.length; loadTOT(); }
+function nextTOT() {
+  totIndex = (totIndex + 1) % TOT_QUESTIONS.length;
+  loadTOT();
+}
+function prevTOT() {
+  totIndex = (totIndex - 1 + TOT_QUESTIONS.length) % TOT_QUESTIONS.length;
+  loadTOT();
+}
 
 // ===== COMPATIBILITY SCORE =====
 function updateCompat() {
   if (!db) return;
-  let matches = 0, total = 0;
+  let matches = 0,
+    total = 0;
 
   // Check WYR answers
   const wyrChecks = WYR_QUESTIONS.map((_, i) => db.ref('games/wyr/' + i).once('value'));
@@ -439,7 +474,7 @@ function renderDashHero() {
   var bdayNum = document.getElementById('dash-birthday-num');
   var bdayLabel = document.getElementById('dash-birthday-label');
   if (bdayCard && bdayNum && db) {
-    db.ref('settings/birthday/' + partner).once('value', function(snap) {
+    db.ref('settings/birthday/' + partner).once('value', function (snap) {
       var bday = snap.val();
       if (!bday) return;
       var parts = bday.split('-');
@@ -458,7 +493,7 @@ function renderDashHero() {
       }
     });
     // Also show own birthday countdown
-    db.ref('settings/birthday/' + user).once('value', function(snap) {
+    db.ref('settings/birthday/' + user).once('value', function (snap) {
       var bday = snap.val();
       if (!bday) return;
       var parts = bday.split('-');
@@ -491,40 +526,56 @@ function renderDashNudges() {
   const today = localDate();
 
   // Check for unread letters
-  db.ref('letters').orderByChild('timestamp').limitToLast(10).once('value', snap => {
-    let unreadCount = 0;
-    snap.forEach(c => {
-      const l = c.val();
-      if (l.from === partner && !l.read) unreadCount++;
-    });
-
-    if (unreadCount > 0) {
-      nudges.push(`<div onclick="go('connect')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:var(--gold);color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">${unreadCount} unread letter${unreadCount > 1 ? 's' : ''} 💌</div>`);
-    }
-
-    // Check if user hasn't done mood today
-    db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value', moodSnap => {
-      let checkedIn = false;
-      moodSnap.forEach(c => {
-        const m = c.val();
-        if (m.user === user && m.date === today) checkedIn = true;
+  db.ref('letters')
+    .orderByChild('timestamp')
+    .limitToLast(10)
+    .once('value', snap => {
+      let unreadCount = 0;
+      snap.forEach(c => {
+        const l = c.val();
+        if (l.from === partner && !l.read) unreadCount++;
       });
 
-      if (!checkedIn) {
-        nudges.push(`<div onclick="go('mood')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:12px;color:var(--cream);cursor:pointer;white-space:nowrap;font-weight:500">Check in today ◎</div>`);
+      if (unreadCount > 0) {
+        nudges.push(
+          `<div onclick="go('connect')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:var(--gold);color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">${unreadCount} unread letter${unreadCount > 1 ? 's' : ''} 💌</div>`
+        );
       }
 
-      // Check daily question
-      db.ref('dailyAnswers/' + today + '/' + user).once('value', dqSnap => {
-        if (!dqSnap.exists()) {
-          nudges.push(`<div onclick="go('question')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:12px;color:var(--cream);cursor:pointer;white-space:nowrap;font-weight:500">Answer today's question ❓</div>`);
-        }
+      // Check if user hasn't done mood today
+      db.ref('moods')
+        .orderByChild('timestamp')
+        .limitToLast(10)
+        .once('value', moodSnap => {
+          let checkedIn = false;
+          moodSnap.forEach(c => {
+            const m = c.val();
+            if (m.user === user && m.date === today) checkedIn = true;
+          });
 
-        container.innerHTML = nudges.join('');
-        if (nudges.length === 0) hideEl(container); else { showEl(container); container.style.display = 'flex'; }
-      });
+          if (!checkedIn) {
+            nudges.push(
+              `<div onclick="go('mood')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:12px;color:var(--cream);cursor:pointer;white-space:nowrap;font-weight:500">Check in today ◎</div>`
+            );
+          }
+
+          // Check daily question
+          db.ref('dailyAnswers/' + today + '/' + user).once('value', dqSnap => {
+            if (!dqSnap.exists()) {
+              nudges.push(
+                `<div onclick="go('question')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:12px;color:var(--cream);cursor:pointer;white-space:nowrap;font-weight:500">Answer today's question ❓</div>`
+              );
+            }
+
+            container.innerHTML = nudges.join('');
+            if (nudges.length === 0) hideEl(container);
+            else {
+              showEl(container);
+              container.style.display = 'flex';
+            }
+          });
+        });
     });
-  });
 }
 
 // ===== DASHBOARD UPCOMING COUNTDOWN =====
@@ -534,7 +585,8 @@ function renderDashCountdown() {
   db.ref('countdowns').once('value', snap => {
     if (!snap.exists()) return;
     const now = new Date();
-    let nearest = null, nearestDays = Infinity;
+    let nearest = null,
+      nearestDays = Infinity;
     snap.forEach(c => {
       const cd = c.val();
       if (!cd.date) return;
@@ -549,7 +601,8 @@ function renderDashCountdown() {
       const nudges = document.getElementById('dash-nudges');
       if (nudges) {
         const pill = document.createElement('div');
-        pill.style.cssText = 'padding:6px 14px;background:var(--tint);border-radius:20px;font-size:11px;color:var(--gold);white-space:nowrap;cursor:pointer';
+        pill.style.cssText =
+          'padding:6px 14px;background:var(--tint);border-radius:20px;font-size:11px;color:var(--gold);white-space:nowrap;cursor:pointer';
         pill.textContent = nearestDays + 'd to ' + nearest.title;
         pill.onclick = () => go('story');
         nudges.appendChild(pill);
@@ -570,8 +623,14 @@ function showConfirmDialog(title, msg, actionLabel, cb) {
   confirmCallback = cb;
   overlay.classList.add('on');
 }
-function closeConfirm() { document.getElementById('confirm-dialog').classList.remove('on'); confirmCallback = null; }
-function doConfirm() { if (confirmCallback) confirmCallback(); closeConfirm(); }
+function closeConfirm() {
+  document.getElementById('confirm-dialog').classList.remove('on');
+  confirmCallback = null;
+}
+function doConfirm() {
+  if (confirmCallback) confirmCallback();
+  closeConfirm();
+}
 
 // ===== DELETE HELPERS =====
 function deleteBucketItem(key) {
@@ -653,10 +712,19 @@ function updateHubCheckin() {
   const week = getWeekId();
   db.ref('checkins/' + week).once('value', snap => {
     const data = snap.val();
-    if (!data) { el.textContent = 'Check in'; el.className = 'hub-badge pending'; }
-    else if (data[user] && data[partner]) { el.textContent = 'Both done'; el.className = 'hub-badge done'; }
-    else if (data[user]) { el.textContent = '1/2 done'; el.className = 'hub-badge count'; }
-    else { el.textContent = 'Your turn'; el.className = 'hub-badge pending'; }
+    if (!data) {
+      el.textContent = 'Check in';
+      el.className = 'hub-badge pending';
+    } else if (data[user] && data[partner]) {
+      el.textContent = 'Both done';
+      el.className = 'hub-badge done';
+    } else if (data[user]) {
+      el.textContent = '1/2 done';
+      el.className = 'hub-badge count';
+    } else {
+      el.textContent = 'Your turn';
+      el.className = 'hub-badge pending';
+    }
   });
 }
 
@@ -664,9 +732,16 @@ function updateHubBucket() {
   const el = document.getElementById('hub-bl-status');
   if (!el || !db) return;
   db.ref('bucketList').once('value', snap => {
-    if (!snap.exists()) { el.textContent = 'Start'; return; }
-    let total = 0, done = 0;
-    snap.forEach(c => { total++; if (c.val().completed) done++; });
+    if (!snap.exists()) {
+      el.textContent = 'Start';
+      return;
+    }
+    let total = 0,
+      done = 0;
+    snap.forEach(c => {
+      total++;
+      if (c.val().completed) done++;
+    });
     el.textContent = done + '/' + total + ' done';
     el.className = done === total && total > 0 ? 'hub-badge done' : 'hub-badge count';
   });
@@ -676,9 +751,16 @@ function updateHubDreams() {
   const el = document.getElementById('hub-dr-status');
   if (!el || !db) return;
   db.ref('dreams').once('value', snap => {
-    if (!snap.exists()) { el.textContent = 'Start'; return; }
-    let total = 0, done = 0;
-    snap.forEach(c => { total++; if (c.val().achieved) done++; });
+    if (!snap.exists()) {
+      el.textContent = 'Start';
+      return;
+    }
+    let total = 0,
+      done = 0;
+    snap.forEach(c => {
+      total++;
+      if (c.val().achieved) done++;
+    });
     el.textContent = done > 0 ? done + '/' + total : total + ' dreams';
     el.className = 'hub-badge count';
   });
@@ -688,9 +770,14 @@ function updateHubWishlist() {
   const el = document.getElementById('hub-wl-status');
   if (!el || !db) return;
   db.ref('wishlists').once('value', snap => {
-    if (!snap.exists()) { el.textContent = 'Add items'; return; }
+    if (!snap.exists()) {
+      el.textContent = 'Add items';
+      return;
+    }
     let total = 0;
-    snap.forEach(u => { u.forEach(() => total++); });
+    snap.forEach(u => {
+      u.forEach(() => total++);
+    });
     el.textContent = total + ' items';
     el.className = 'hub-badge count';
   });
@@ -700,12 +787,20 @@ function updateHubGratitude() {
   const el = document.getElementById('hub-grat-status');
   if (!el || !db) return;
   const today = localDate();
-  db.ref('gratitude').orderByChild('date').equalTo(today).once('value', snap => {
-    if (!snap.exists()) { el.textContent = 'Share today'; el.className = 'hub-badge pending'; return; }
-    let count = 0; snap.forEach(() => count++);
-    el.textContent = count + ' today';
-    el.className = 'hub-badge done';
-  });
+  db.ref('gratitude')
+    .orderByChild('date')
+    .equalTo(today)
+    .once('value', snap => {
+      if (!snap.exists()) {
+        el.textContent = 'Share today';
+        el.className = 'hub-badge pending';
+        return;
+      }
+      let count = 0;
+      snap.forEach(() => count++);
+      el.textContent = count + ' today';
+      el.className = 'hub-badge done';
+    });
 }
 
 function updateHubDQ() {
@@ -714,10 +809,19 @@ function updateHubDQ() {
   const today = localDate();
   db.ref('dailyAnswers/' + today).once('value', snap => {
     const data = snap.val();
-    if (!data) { el.textContent = 'New'; el.className = 'hub-badge new'; }
-    else if (data[user] && data[partner]) { el.textContent = 'Both answered'; el.className = 'hub-badge done'; }
-    else if (data[user]) { el.textContent = 'Waiting'; el.className = 'hub-badge count'; }
-    else { el.textContent = 'Answer'; el.className = 'hub-badge pending'; }
+    if (!data) {
+      el.textContent = 'New';
+      el.className = 'hub-badge new';
+    } else if (data[user] && data[partner]) {
+      el.textContent = 'Both answered';
+      el.className = 'hub-badge done';
+    } else if (data[user]) {
+      el.textContent = 'Waiting';
+      el.className = 'hub-badge count';
+    } else {
+      el.textContent = 'Answer';
+      el.className = 'hub-badge pending';
+    }
   });
 }
 
@@ -726,9 +830,24 @@ function updateHubCulture() {
   if (!el || !db) return;
   let total = 0;
   const promises = [
-    db.ref('culture/phrases').once('value').then(s => { if (s.exists()) s.forEach(() => total++); }),
-    db.ref('culture/traditions').once('value').then(s => { if (s.exists()) s.forEach(() => total++); }),
-    db.ref('culture/recipes').once('value').then(s => { if (s.exists()) s.forEach(() => total++); })
+    db
+      .ref('culture/phrases')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => total++);
+      }),
+    db
+      .ref('culture/traditions')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => total++);
+      }),
+    db
+      .ref('culture/recipes')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => total++);
+      })
   ];
   Promise.all(promises).then(() => {
     el.textContent = total > 0 ? total + ' items' : 'Start';
@@ -762,9 +881,16 @@ function updateHubHomeLife() {
   const el = document.getElementById('hub-hl-status');
   if (!el || !db) return;
   db.ref('homelife/chores').once('value', snap => {
-    if (!snap.exists()) { el.textContent = 'Set up'; return; }
-    let total = 0, done = 0;
-    snap.forEach(c => { total++; if (c.val().done) done++; });
+    if (!snap.exists()) {
+      el.textContent = 'Set up';
+      return;
+    }
+    let total = 0,
+      done = 0;
+    snap.forEach(c => {
+      total++;
+      if (c.val().done) done++;
+    });
     el.textContent = done + '/' + total + ' tasks';
     el.className = done === total && total > 0 ? 'hub-badge done' : 'hub-badge count';
   });
@@ -773,25 +899,39 @@ function updateHubHomeLife() {
 function updateHubSpiritual() {
   const el = document.getElementById('hub-sp-status');
   if (!el || !db) return;
-  db.ref('spiritual/prayers').orderByChild('timestamp').limitToLast(1).once('value', snap => {
-    if (!snap.exists()) { el.textContent = 'Reflect'; el.className = 'hub-badge count'; return; }
-    let latest = null;
-    snap.forEach(c => latest = c.val());
-    if (latest) {
-      const ago = timeAgo(new Date(latest.timestamp));
-      el.textContent = ago;
-      el.className = 'hub-badge count';
-    }
-  });
+  db.ref('spiritual/prayers')
+    .orderByChild('timestamp')
+    .limitToLast(1)
+    .once('value', snap => {
+      if (!snap.exists()) {
+        el.textContent = 'Reflect';
+        el.className = 'hub-badge count';
+        return;
+      }
+      let latest = null;
+      snap.forEach(c => (latest = c.val()));
+      if (latest) {
+        const ago = timeAgo(new Date(latest.timestamp));
+        el.textContent = ago;
+        el.className = 'hub-badge count';
+      }
+    });
 }
 
 function updateHubDateNight() {
   const el = document.getElementById('hub-dn-status');
   if (!el || !db) return;
   db.ref('dateNights').once('value', snap => {
-    if (!snap.exists()) { el.textContent = 'Spin the wheel'; return; }
-    let saved = 0, done = 0;
-    snap.forEach(c => { if (c.val().done) done++; else saved++; });
+    if (!snap.exists()) {
+      el.textContent = 'Spin the wheel';
+      return;
+    }
+    let saved = 0,
+      done = 0;
+    snap.forEach(c => {
+      if (c.val().done) done++;
+      else saved++;
+    });
     el.textContent = saved > 0 ? saved + ' saved' : done + ' completed';
   });
 }
@@ -800,8 +940,12 @@ function updateHubDeepTalk() {
   const el = document.getElementById('hub-dt-status');
   if (!el || !db) return;
   db.ref('deepTalkJournal').once('value', snap => {
-    if (!snap.exists()) { el.textContent = 'Start a conversation'; return; }
-    let count = 0; snap.forEach(() => count++);
+    if (!snap.exists()) {
+      el.textContent = 'Start a conversation';
+      return;
+    }
+    let count = 0;
+    snap.forEach(() => count++);
     el.textContent = count + ' reflections';
   });
 }
@@ -824,10 +968,21 @@ function updateHubLL() {
   if (!el || !db) return;
   db.ref('loveLang').once('value', snap => {
     const data = snap.val();
-    if (!data) { el.textContent = 'Take quiz'; el.className = 'hub-badge pending'; return; }
-    if (data[user] && data[partner]) { el.textContent = 'Both done'; el.className = 'hub-badge done'; }
-    else if (data[user]) { el.textContent = 'You\'re done'; el.className = 'hub-badge count'; }
-    else { el.textContent = 'Take quiz'; el.className = 'hub-badge pending'; }
+    if (!data) {
+      el.textContent = 'Take quiz';
+      el.className = 'hub-badge pending';
+      return;
+    }
+    if (data[user] && data[partner]) {
+      el.textContent = 'Both done';
+      el.className = 'hub-badge done';
+    } else if (data[user]) {
+      el.textContent = "You're done";
+      el.className = 'hub-badge count';
+    } else {
+      el.textContent = 'Take quiz';
+      el.className = 'hub-badge pending';
+    }
   });
 }
 
@@ -847,10 +1002,17 @@ function updateBLStats() {
   const el = document.getElementById('bl-stats');
   if (!el || !db) return;
   db.ref('bucketList').once('value', snap => {
-    if (!snap.exists()) { el.innerHTML = ''; return; }
-    let total = 0, done = 0;
-    snap.forEach(c => { total++; if (c.val().completed) done++; });
-    const pct = total ? Math.round((done/total)*100) : 0;
+    if (!snap.exists()) {
+      el.innerHTML = '';
+      return;
+    }
+    let total = 0,
+      done = 0;
+    snap.forEach(c => {
+      total++;
+      if (c.val().completed) done++;
+    });
+    const pct = total ? Math.round((done / total) * 100) : 0;
     el.innerHTML = `
       <div class="mod-stat"><div class="mod-stat-num">${total}</div><div class="mod-stat-label">Total</div></div>
       <div class="mod-stat"><div class="mod-stat-num">${done}</div><div class="mod-stat-label">Done</div></div>
@@ -863,22 +1025,53 @@ function updateBLStats() {
 function updateHLStats() {
   const el = document.getElementById('hl-stats');
   if (!el || !db) return;
-  let savings = 0, target = 0, choresTotal = 0, choresDone = 0, meals = 0;
+  let savings = 0,
+    target = 0,
+    choresTotal = 0,
+    choresDone = 0,
+    meals = 0;
   Promise.all([
-    db.ref('homelife/savings').once('value').then(s => {
-      if (s.exists()) s.forEach(c => { const v = c.val(); savings += v.saved||0; target += v.target||0; });
-    }),
-    db.ref('homelife/chores').once('value').then(s => {
-      if (s.exists()) s.forEach(c => { choresTotal++; if (c.val().done) choresDone++; });
-    }),
-    db.ref('homelife/meals').once('value').then(s => {
-      if (s.exists()) s.forEach(() => meals++);
-    })
+    db
+      .ref('homelife/savings')
+      .once('value')
+      .then(s => {
+        if (s.exists())
+          s.forEach(c => {
+            const v = c.val();
+            savings += v.saved || 0;
+            target += v.target || 0;
+          });
+      }),
+    db
+      .ref('homelife/chores')
+      .once('value')
+      .then(s => {
+        if (s.exists())
+          s.forEach(c => {
+            choresTotal++;
+            if (c.val().done) choresDone++;
+          });
+      }),
+    db
+      .ref('homelife/meals')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => meals++);
+      })
   ]).then(() => {
     const parts = [];
-    if (target > 0) parts.push(`<div class="mod-stat"><div class="mod-stat-num">$${Math.round(savings/1000)}k</div><div class="mod-stat-label">Saved</div></div>`);
-    if (choresTotal > 0) parts.push(`<div class="mod-stat"><div class="mod-stat-num">${choresDone}/${choresTotal}</div><div class="mod-stat-label">Tasks</div></div>`);
-    if (meals > 0) parts.push(`<div class="mod-stat"><div class="mod-stat-num">${meals}</div><div class="mod-stat-label">Meals</div></div>`);
+    if (target > 0)
+      parts.push(
+        `<div class="mod-stat"><div class="mod-stat-num">$${Math.round(savings / 1000)}k</div><div class="mod-stat-label">Saved</div></div>`
+      );
+    if (choresTotal > 0)
+      parts.push(
+        `<div class="mod-stat"><div class="mod-stat-num">${choresDone}/${choresTotal}</div><div class="mod-stat-label">Tasks</div></div>`
+      );
+    if (meals > 0)
+      parts.push(
+        `<div class="mod-stat"><div class="mod-stat-num">${meals}</div><div class="mod-stat-label">Meals</div></div>`
+      );
     el.innerHTML = parts.join('');
   });
 }
@@ -886,13 +1079,33 @@ function updateHLStats() {
 function updateCXStats() {
   const el = document.getElementById('cx-stats');
   if (!el || !db) return;
-  let phrases = 0, traditions = 0, recipes = 0;
+  let phrases = 0,
+    traditions = 0,
+    recipes = 0;
   Promise.all([
-    db.ref('culture/phrases').once('value').then(s => { if (s.exists()) s.forEach(() => phrases++); }),
-    db.ref('culture/traditions').once('value').then(s => { if (s.exists()) s.forEach(() => traditions++); }),
-    db.ref('culture/recipes').once('value').then(s => { if (s.exists()) s.forEach(() => recipes++); })
+    db
+      .ref('culture/phrases')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => phrases++);
+      }),
+    db
+      .ref('culture/traditions')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => traditions++);
+      }),
+    db
+      .ref('culture/recipes')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => recipes++);
+      })
   ]).then(() => {
-    if (phrases + traditions + recipes === 0) { el.innerHTML = ''; return; }
+    if (phrases + traditions + recipes === 0) {
+      el.innerHTML = '';
+      return;
+    }
     el.innerHTML = `
       <div class="mod-stat"><div class="mod-stat-num">${phrases}</div><div class="mod-stat-label">Phrases</div></div>
       <div class="mod-stat"><div class="mod-stat-num">${traditions}</div><div class="mod-stat-label">Traditions</div></div>
@@ -903,13 +1116,33 @@ function updateCXStats() {
 function updateSPStats() {
   const el = document.getElementById('sp-stats');
   if (!el || !db) return;
-  let prayers = 0, blessings = 0, intentions = 0;
+  let prayers = 0,
+    blessings = 0,
+    intentions = 0;
   Promise.all([
-    db.ref('spiritual/prayers').once('value').then(s => { if (s.exists()) s.forEach(() => prayers++); }),
-    db.ref('spiritual/blessings').once('value').then(s => { if (s.exists()) s.forEach(() => blessings++); }),
-    db.ref('spiritual/intentions').once('value').then(s => { if (s.exists()) s.forEach(() => intentions++); })
+    db
+      .ref('spiritual/prayers')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => prayers++);
+      }),
+    db
+      .ref('spiritual/blessings')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => blessings++);
+      }),
+    db
+      .ref('spiritual/intentions')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => intentions++);
+      })
   ]).then(() => {
-    if (prayers + blessings + intentions === 0) { el.innerHTML = ''; return; }
+    if (prayers + blessings + intentions === 0) {
+      el.innerHTML = '';
+      return;
+    }
     el.innerHTML = `
       <div class="mod-stat"><div class="mod-stat-num">${prayers}</div><div class="mod-stat-label">Prayers</div></div>
       <div class="mod-stat"><div class="mod-stat-num">${blessings}</div><div class="mod-stat-label">Blessings</div></div>
@@ -920,15 +1153,27 @@ function updateSPStats() {
 function updateFDNStats() {
   const el = document.getElementById('fdn-stats');
   if (!el || !db) return;
-  let values = 0, agrees = 0;
+  let values = 0,
+    agrees = 0;
   Promise.all([
-    db.ref('foundation/values').once('value').then(s => { if (s.exists()) s.forEach(() => values++); }),
-    db.ref('foundation/agreements/' + user).once('value').then(s => {
-      const data = s.val() || {};
-      agrees = Object.values(data).filter(Boolean).length;
-    })
+    db
+      .ref('foundation/values')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => values++);
+      }),
+    db
+      .ref('foundation/agreements/' + user)
+      .once('value')
+      .then(s => {
+        const data = s.val() || {};
+        agrees = Object.values(data).filter(Boolean).length;
+      })
   ]).then(() => {
-    if (values === 0 && agrees === 0) { el.innerHTML = ''; return; }
+    if (values === 0 && agrees === 0) {
+      el.innerHTML = '';
+      return;
+    }
     el.innerHTML = `
       <div class="mod-stat"><div class="mod-stat-num">${values}</div><div class="mod-stat-label">Values</div></div>
       <div class="mod-stat"><div class="mod-stat-num">${agrees}/6</div><div class="mod-stat-label">Agreed</div></div>`;
@@ -938,15 +1183,35 @@ function updateFDNStats() {
 function updateFAMStats() {
   const el = document.getElementById('fam-stats');
   if (!el || !db) return;
-  let names = 0, goals = 0;
+  let names = 0,
+    goals = 0;
   Promise.all([
-    db.ref('family/names').once('value').then(s => { if (s.exists()) s.forEach(() => names++); }),
-    db.ref('family/goals').once('value').then(s => { if (s.exists()) s.forEach(() => goals++); })
+    db
+      .ref('family/names')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => names++);
+      }),
+    db
+      .ref('family/goals')
+      .once('value')
+      .then(s => {
+        if (s.exists()) s.forEach(() => goals++);
+      })
   ]).then(() => {
-    if (names === 0 && goals === 0) { el.innerHTML = ''; return; }
+    if (names === 0 && goals === 0) {
+      el.innerHTML = '';
+      return;
+    }
     const parts = [];
-    if (names > 0) parts.push(`<div class="mod-stat"><div class="mod-stat-num">${names}</div><div class="mod-stat-label">Names</div></div>`);
-    if (goals > 0) parts.push(`<div class="mod-stat"><div class="mod-stat-num">${goals}</div><div class="mod-stat-label">Goals</div></div>`);
+    if (names > 0)
+      parts.push(
+        `<div class="mod-stat"><div class="mod-stat-num">${names}</div><div class="mod-stat-label">Names</div></div>`
+      );
+    if (goals > 0)
+      parts.push(
+        `<div class="mod-stat"><div class="mod-stat-num">${goals}</div><div class="mod-stat-label">Goals</div></div>`
+      );
     el.innerHTML = parts.join('');
   });
 }
@@ -963,9 +1228,16 @@ function updateDNStats() {
   const el = document.getElementById('dn-stats');
   if (!el || !db) return;
   db.ref('dateNights').once('value', snap => {
-    if (!snap.exists()) { el.innerHTML = ''; return; }
-    let saved = 0, done = 0;
-    snap.forEach(c => { if (c.val().done) done++; else saved++; });
+    if (!snap.exists()) {
+      el.innerHTML = '';
+      return;
+    }
+    let saved = 0,
+      done = 0;
+    snap.forEach(c => {
+      if (c.val().done) done++;
+      else saved++;
+    });
     el.innerHTML = `
       <div class="mod-stat"><div class="mod-stat-num">${saved}</div><div class="mod-stat-label">Saved</div></div>
       <div class="mod-stat"><div class="mod-stat-num">${done}</div><div class="mod-stat-label">Done</div></div>
@@ -978,12 +1250,15 @@ function updateDashQuickNav() {
   if (!db) return;
 
   // Letters count
-  db.ref('letters').orderByChild('timestamp').limitToLast(50).once('value', snap => {
-    let total = 0;
-    if (snap.exists()) snap.forEach(() => total++);
-    const el = document.getElementById('dash-qn-letters');
-    if (el) el.textContent = total > 0 ? total + ' total' : 'Write';
-  });
+  db.ref('letters')
+    .orderByChild('timestamp')
+    .limitToLast(50)
+    .once('value', snap => {
+      let total = 0;
+      if (snap.exists()) snap.forEach(() => total++);
+      const el = document.getElementById('dash-qn-letters');
+      if (el) el.textContent = total > 0 ? total + ' total' : 'Write';
+    });
 
   // Compat score
   setTimeout(() => {
@@ -995,7 +1270,10 @@ function updateDashQuickNav() {
   // Date nights
   db.ref('dateNights').once('value', snap => {
     let saved = 0;
-    if (snap.exists()) snap.forEach(c => { if (!c.val().done) saved++; });
+    if (snap.exists())
+      snap.forEach(c => {
+        if (!c.val().done) saved++;
+      });
     const el = document.getElementById('dash-qn-dates');
     if (el) el.textContent = saved > 0 ? saved + ' saved' : 'Spin';
   });
@@ -1009,7 +1287,6 @@ function updateDashQuickNav() {
   });
 }
 
-
 // ===== US/ME VIEW TOGGLE =====
 let viewMode = localStorage.getItem('met_viewMode') || 'us';
 
@@ -1019,7 +1296,13 @@ function setViewMode(mode) {
   document.querySelectorAll('.vt-option').forEach(e => e.classList.toggle('active', e.dataset.mode === mode));
   const slider = document.getElementById('vt-slider');
   if (slider) slider.classList.toggle('me', mode === 'me');
-  if (mode === 'us') { showEl('dash-us'); hideEl('dash-me'); } else { hideEl('dash-us'); showEl('dash-me'); }
+  if (mode === 'us') {
+    showEl('dash-us');
+    hideEl('dash-me');
+  } else {
+    hideEl('dash-us');
+    showEl('dash-me');
+  }
   if (mode === 'me') renderMeDashboard();
 }
 
@@ -1030,25 +1313,36 @@ function initViewToggle() {
 function renderMeDashboard() {
   if (!db || !user) return;
   // Personal mood average
-  db.ref('moods').orderByChild('timestamp').limitToLast(30).once('value', snap => {
-    const moods = [];
-    snap.forEach(c => { const m = c.val(); if (m.user === user) moods.push(m); });
-    if (moods.length > 0) {
-      const avgMood = (moods.reduce((s,m) => s + m.mood, 0) / moods.length).toFixed(1);
-      const avgEnergy = (moods.reduce((s,m) => s + (m.energy||3), 0) / moods.length).toFixed(1);
-      const el = document.getElementById('dash-me-mood-avg');
-      if (el) el.textContent = avgMood;
-      const eEl = document.getElementById('dash-me-energy');
-      if (eEl) eEl.textContent = avgEnergy;
-    }
-    // Render personal mood chart
-    renderMeMoodChart(moods.slice(-7));
-  });
+  db.ref('moods')
+    .orderByChild('timestamp')
+    .limitToLast(30)
+    .once('value', snap => {
+      const moods = [];
+      snap.forEach(c => {
+        const m = c.val();
+        if (m.user === user) moods.push(m);
+      });
+      if (moods.length > 0) {
+        const avgMood = (moods.reduce((s, m) => s + m.mood, 0) / moods.length).toFixed(1);
+        const avgEnergy = (moods.reduce((s, m) => s + (m.energy || 3), 0) / moods.length).toFixed(1);
+        const el = document.getElementById('dash-me-mood-avg');
+        if (el) el.textContent = avgMood;
+        const eEl = document.getElementById('dash-me-energy');
+        if (eEl) eEl.textContent = avgEnergy;
+      }
+      // Render personal mood chart
+      renderMeMoodChart(moods.slice(-7));
+    });
   // Personal goals count
   const who = user;
   db.ref('personalGoals/' + who).once('value', snap => {
-    let done = 0, total = 0;
-    if (snap.exists()) snap.forEach(c => { total++; if (c.val().done) done++; });
+    let done = 0,
+      total = 0;
+    if (snap.exists())
+      snap.forEach(c => {
+        total++;
+        if (c.val().done) done++;
+      });
     const el = document.getElementById('dash-me-goals');
     if (el) el.textContent = done;
     // Personal growth score
@@ -1061,15 +1355,23 @@ function renderMeDashboard() {
     const listEl = document.getElementById('dash-me-goals-list');
     if (listEl && snap.exists()) {
       const items = [];
-      snap.forEach(c => { const v = c.val(); v._key = c.key; items.push(v); });
+      snap.forEach(c => {
+        const v = c.val();
+        v._key = c.key;
+        items.push(v);
+      });
       items.reverse();
       if (items.length > 0) {
-        listEl.innerHTML = items.slice(0, 5).map(i =>
-          `<div class="dash-goal-item">
-            <div class="dash-goal-check${i.done?' done':''}">${i.done?'✓':''}</div>
-            <div class="dash-goal-text${i.done?' done':''}">${i.title}</div>
+        listEl.innerHTML = items
+          .slice(0, 5)
+          .map(
+            i =>
+              `<div class="dash-goal-item">
+            <div class="dash-goal-check${i.done ? ' done' : ''}">${i.done ? '✓' : ''}</div>
+            <div class="dash-goal-text${i.done ? ' done' : ''}">${i.title}</div>
           </div>`
-        ).join('');
+          )
+          .join('');
       }
     }
   });
@@ -1079,9 +1381,13 @@ function renderMeMoodChart(moods) {
   const chartEl = document.getElementById('me-chart-line');
   const areaEl = document.getElementById('me-chart-area');
   if (!chartEl || !areaEl || moods.length < 2) return;
-  const w = 295, h = 80, startX = 20, startY = 10;
+  const w = 295,
+    h = 80,
+    startX = 20,
+    startY = 10;
   const stepX = w / (moods.length - 1);
-  let linePath = '', areaPath = `M${startX},${startY + h} `;
+  let linePath = '',
+    areaPath = `M${startX},${startY + h} `;
   moods.forEach((m, i) => {
     const x = startX + i * stepX;
     const y = startY + h - ((m.mood - 1) / 4) * h;
@@ -1102,7 +1408,8 @@ function renderDashSparkline(moods) {
     el.innerHTML = '<div style="font-size:18px;color:var(--t3);text-align:center;line-height:24px">--</div>';
     return;
   }
-  const w = el.clientWidth || 60, h = 28;
+  const w = el.clientWidth || 60,
+    h = 28;
   const stepX = w / (userMoods.length - 1);
   let d = '';
   userMoods.forEach((m, i) => {
@@ -1110,7 +1417,18 @@ function renderDashSparkline(moods) {
     const y = h - ((m.mood - 1) / 4) * h;
     d += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1) + ' ';
   });
-  el.innerHTML = '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" style="overflow:visible"><path d="' + d + '" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  el.innerHTML =
+    '<svg width="' +
+    w +
+    '" height="' +
+    h +
+    '" viewBox="0 0 ' +
+    w +
+    ' ' +
+    h +
+    '" style="overflow:visible"><path d="' +
+    d +
+    '" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"/></svg>';
 }
 
 // ===== RELATIONSHIP HEALTH SCORE =====
@@ -1118,7 +1436,8 @@ function calculateRelationshipPulse() {
   if (!db || !user) return;
   const today = localDate();
   const week = getWeekId();
-  let score = 0, maxScore = 0;
+  let score = 0,
+    maxScore = 0;
 
   Promise.all([
     // Communication: taps + letters in last 7 days
@@ -1134,23 +1453,31 @@ function calculateRelationshipPulse() {
     // Gratitude
     db.ref('gratitude').orderByChild('timestamp').limitToLast(10).once('value'),
     // Deep talk
-    db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(5).once('value'),
+    db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(5).once('value')
   ]).then(([taps, letters, todayMoods, checkin, wyr, tot, gratitude, deepTalk]) => {
     const now = Date.now();
     const weekMs = 7 * 86400000;
 
     // Communication score (max 25)
     maxScore += 25;
-    let recentTaps = 0, recentLetters = 0;
-    if (taps.exists()) taps.forEach(c => { if (now - c.val().timestamp < weekMs) recentTaps++; });
-    if (letters.exists()) letters.forEach(c => { if (now - c.val().timestamp < weekMs) recentLetters++; });
-    score += Math.min(25, (recentTaps * 2) + (recentLetters * 5));
+    let recentTaps = 0,
+      recentLetters = 0;
+    if (taps.exists())
+      taps.forEach(c => {
+        if (now - c.val().timestamp < weekMs) recentTaps++;
+      });
+    if (letters.exists())
+      letters.forEach(c => {
+        if (now - c.val().timestamp < weekMs) recentLetters++;
+      });
+    score += Math.min(25, recentTaps * 2 + recentLetters * 5);
 
     // Mood score (max 20)
     maxScore += 20;
     let bothMood = false;
     if (todayMoods.exists()) {
-      let userMood = false, partnerMood = false;
+      let userMood = false,
+        partnerMood = false;
       todayMoods.forEach(c => {
         const m = c.val();
         if (m.user === user) userMood = true;
@@ -1171,20 +1498,34 @@ function calculateRelationshipPulse() {
     // Games score (max 15)
     maxScore += 15;
     let gamesPlayed = 0;
-    if (wyr.exists()) wyr.forEach(c => { const d = c.val(); if (d && d[user] && d[partner]) gamesPlayed++; });
-    if (tot.exists()) tot.forEach(c => { const d = c.val(); if (d && d[user] && d[partner]) gamesPlayed++; });
+    if (wyr.exists())
+      wyr.forEach(c => {
+        const d = c.val();
+        if (d && d[user] && d[partner]) gamesPlayed++;
+      });
+    if (tot.exists())
+      tot.forEach(c => {
+        const d = c.val();
+        if (d && d[user] && d[partner]) gamesPlayed++;
+      });
     score += Math.min(15, gamesPlayed * 2);
 
     // Gratitude score (max 10)
     maxScore += 10;
     let recentGrat = 0;
-    if (gratitude.exists()) gratitude.forEach(c => { if (now - c.val().timestamp < weekMs) recentGrat++; });
+    if (gratitude.exists())
+      gratitude.forEach(c => {
+        if (now - c.val().timestamp < weekMs) recentGrat++;
+      });
     score += Math.min(10, recentGrat * 3);
 
     // Deep talk score (max 10)
     maxScore += 10;
     let recentDeep = 0;
-    if (deepTalk.exists()) deepTalk.forEach(c => { if (now - c.val().timestamp < weekMs * 2) recentDeep++; });
+    if (deepTalk.exists())
+      deepTalk.forEach(c => {
+        if (now - c.val().timestamp < weekMs * 2) recentDeep++;
+      });
     score += Math.min(10, recentDeep * 5);
 
     const pct = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
@@ -1197,11 +1538,22 @@ function calculateRelationshipPulse() {
     if (ring) ring.setAttribute('stroke-dashoffset', String(314 - (pct / 100) * 314));
     if (scoreEl) scoreEl.textContent = pct;
 
-    if (pct >= 80) { if (labelEl) labelEl.textContent = 'Thriving'; if (tipEl) tipEl.textContent = 'You two are on fire together'; }
-    else if (pct >= 60) { if (labelEl) labelEl.textContent = 'Strong'; if (tipEl) tipEl.textContent = 'Keep the momentum going'; }
-    else if (pct >= 40) { if (labelEl) labelEl.textContent = 'Growing'; if (tipEl) tipEl.textContent = 'Try a game or deep talk together'; }
-    else if (pct >= 20) { if (labelEl) labelEl.textContent = 'Warming up'; if (tipEl) tipEl.textContent = 'Check in with each other today'; }
-    else { if (labelEl) labelEl.textContent = 'Getting started'; if (tipEl) tipEl.textContent = 'Start with a mood check-in'; }
+    if (pct >= 80) {
+      if (labelEl) labelEl.textContent = 'Thriving';
+      if (tipEl) tipEl.textContent = 'You two are on fire together';
+    } else if (pct >= 60) {
+      if (labelEl) labelEl.textContent = 'Strong';
+      if (tipEl) tipEl.textContent = 'Keep the momentum going';
+    } else if (pct >= 40) {
+      if (labelEl) labelEl.textContent = 'Growing';
+      if (tipEl) tipEl.textContent = 'Try a game or deep talk together';
+    } else if (pct >= 20) {
+      if (labelEl) labelEl.textContent = 'Warming up';
+      if (tipEl) tipEl.textContent = 'Check in with each other today';
+    } else {
+      if (labelEl) labelEl.textContent = 'Getting started';
+      if (tipEl) tipEl.textContent = 'Start with a mood check-in';
+    }
   });
 }
 
@@ -1209,37 +1561,47 @@ function calculateRelationshipPulse() {
 function logActivity(module, description) {
   if (!db || !user) return;
   db.ref('activity').push({
-    module, description, user, userName: NAMES[user], timestamp: Date.now()
+    module,
+    description,
+    user,
+    userName: NAMES[user],
+    timestamp: Date.now()
   });
 }
 
 function renderActivityFeed() {
   if (!db) return;
-  db.ref('activity').orderByChild('timestamp').limitToLast(12).on('value', snap => {
-    const el = document.getElementById('dash-activity-feed');
-    if (!el) return;
-    const items = [];
-    snap.forEach(c => items.push(c.val()));
-    items.reverse();
-    if (!items.length) { el.innerHTML = '<div class="empty" style="padding:16px">Activity from both of you shows here</div>'; return; }
+  db.ref('activity')
+    .orderByChild('timestamp')
+    .limitToLast(12)
+    .on('value', snap => {
+      const el = document.getElementById('dash-activity-feed');
+      if (!el) return;
+      const items = [];
+      snap.forEach(c => items.push(c.val()));
+      items.reverse();
+      if (!items.length) {
+        el.innerHTML = '<div class="empty" style="padding:16px">Activity from both of you shows here</div>';
+        return;
+      }
 
-    function renderItem(i) {
-      const ts = timeAgo(new Date(i.timestamp));
-      const isMe = i.user === user;
-      return `<div class="act-item">
-        <div class="act-avatar ${isMe?'me':'them'}">${(isMe ? 'You' : i.userName).charAt(0)}</div>
+      function renderItem(i) {
+        const ts = timeAgo(new Date(i.timestamp));
+        const isMe = i.user === user;
+        return `<div class="act-item">
+        <div class="act-avatar ${isMe ? 'me' : 'them'}">${(isMe ? 'You' : i.userName).charAt(0)}</div>
         <div class="act-body">${isMe ? 'You' : i.userName} ${i.description}</div>
         <div class="act-time">${ts}</div>
       </div>`;
-    }
+      }
 
-    let html = items.slice(0, 3).map(renderItem).join('');
-    if (items.length > 3) {
-      html += `<div id="activity-extra" class="d-none">${items.slice(3).map(renderItem).join('')}</div>`;
-      html += `<div id="activity-toggle" class="act-more" onclick="toggleActivityFeed()">Show more</div>`;
-    }
-    el.innerHTML = html;
-  });
+      let html = items.slice(0, 3).map(renderItem).join('');
+      if (items.length > 3) {
+        html += `<div id="activity-extra" class="d-none">${items.slice(3).map(renderItem).join('')}</div>`;
+        html += `<div id="activity-toggle" class="act-more" onclick="toggleActivityFeed()">Show more</div>`;
+      }
+      el.innerHTML = html;
+    });
 }
 
 function toggleActivityFeed() {
@@ -1257,17 +1619,27 @@ function renderDashMeGratitude() {
   const card = document.getElementById('dash-me-gratitude');
   const list = document.getElementById('dash-me-grat-list');
   if (!card || !list) return;
-  db.ref('gratitude').orderByChild('timestamp').limitToLast(5).once('value', snap => {
-    if (!snap.exists()) return;
-    const items = [];
-    snap.forEach(c => { const v = c.val(); if (v.from === user) items.push(v); });
-    if (!items.length) return;
-    items.reverse();
-    list.innerHTML = items.slice(0, 3).map(i =>
-      `<div class="d-flex gap-8 items-baseline mb-4"><span class="c-gold" style="font-size:10px">&#9679;</span><span>${esc(i.message || '')}</span></div>`
-    ).join('');
-    showEl(card);
-  });
+  db.ref('gratitude')
+    .orderByChild('timestamp')
+    .limitToLast(5)
+    .once('value', snap => {
+      if (!snap.exists()) return;
+      const items = [];
+      snap.forEach(c => {
+        const v = c.val();
+        if (v.from === user) items.push(v);
+      });
+      if (!items.length) return;
+      items.reverse();
+      list.innerHTML = items
+        .slice(0, 3)
+        .map(
+          i =>
+            `<div class="d-flex gap-8 items-baseline mb-4"><span class="c-gold" style="font-size:10px">&#9679;</span><span>${esc(i.message || '')}</span></div>`
+        )
+        .join('');
+      showEl(card);
+    });
 }
 
 function renderDashMeAffirmation() {
@@ -1275,13 +1647,13 @@ function renderDashMeAffirmation() {
   const text = document.getElementById('dash-me-affirm-text');
   if (!card || !text) return;
   const affirmations = [
-    "I am worthy of love and kindness, starting with myself.",
-    "Today I choose progress over perfection.",
-    "My feelings are valid. I honor them without judgment.",
+    'I am worthy of love and kindness, starting with myself.',
+    'Today I choose progress over perfection.',
+    'My feelings are valid. I honor them without judgment.',
     "I am building a life I'm proud of, one step at a time.",
-    "I bring value to my relationship and to the world.",
-    "I am growing stronger and wiser every day.",
-    "I deserve rest, joy, and peace.",
+    'I bring value to my relationship and to the world.',
+    'I am growing stronger and wiser every day.',
+    'I deserve rest, joy, and peace.',
     "I trust my journey, even when I can't see the full path."
   ];
   const idx = Math.floor(Date.now() / 86400000) % affirmations.length;
@@ -1335,54 +1707,78 @@ function renderSmartNudges() {
     db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(1).once('value'),
     db.ref('games/wyr').once('value'),
     db.ref('dateNights').once('value'),
-    db.ref('countdowns').once('value'),
+    db.ref('countdowns').once('value')
   ]).then(([letters, moods, dq, checkin, deepTalk, games, dates, countdowns]) => {
     // Unread letters
     let unread = 0;
-    if (letters.exists()) letters.forEach(c => { const l = c.val(); if (l.from === partner && !l.read) unread++; });
-    if (unread > 0) nudges.push({ text: unread + ' unread letter' + (unread>1?'s':'') + ' 💌', page: 'connect', priority: true });
+    if (letters.exists())
+      letters.forEach(c => {
+        const l = c.val();
+        if (l.from === partner && !l.read) unread++;
+      });
+    if (unread > 0)
+      nudges.push({
+        text: unread + ' unread letter' + (unread > 1 ? 's' : '') + ' 💌',
+        page: 'connect',
+        priority: true
+      });
 
     // Mood
     let checkedIn = false;
-    if (moods.exists()) moods.forEach(c => { if (c.val().user === user && c.val().date === today) checkedIn = true; });
+    if (moods.exists())
+      moods.forEach(c => {
+        if (c.val().user === user && c.val().date === today) checkedIn = true;
+      });
     if (!checkedIn) nudges.push({ text: 'Check in today', page: 'mood' });
 
     // Daily question
-    if (!dq.exists()) nudges.push({ text: 'Answer today\'s question', page: 'question' });
+    if (!dq.exists()) nudges.push({ text: "Answer today's question", page: 'question' });
 
     // Weekly check-in
     if (!checkin.exists()) nudges.push({ text: 'Weekly check-in', page: 'checkin' });
 
     // Deep talk (if older than 2 weeks)
     let lastDeep = 0;
-    if (deepTalk.exists()) deepTalk.forEach(c => { lastDeep = Math.max(lastDeep, c.val().timestamp); });
+    if (deepTalk.exists())
+      deepTalk.forEach(c => {
+        lastDeep = Math.max(lastDeep, c.val().timestamp);
+      });
     if (now - lastDeep > 14 * 86400000) nudges.push({ text: 'Deep talk time', page: 'deeptalk' });
 
     // Date night
     let savedDates = 0;
-    if (dates.exists()) dates.forEach(c => { if (!c.val().done) savedDates++; });
+    if (dates.exists())
+      dates.forEach(c => {
+        if (!c.val().done) savedDates++;
+      });
     if (savedDates === 0) nudges.push({ text: 'Spin for a date', page: 'datenight' });
 
     // Upcoming countdown
     if (countdowns.exists()) {
-      let nearest = null, nearestDays = Infinity;
+      let nearest = null,
+        nearestDays = Infinity;
       countdowns.forEach(c => {
         const cd = c.val();
         if (!cd.date) return;
         const diff = Math.ceil((new Date(cd.date + 'T00:00:00') - new Date()) / 86400000);
-        if (diff > 0 && diff < nearestDays) { nearestDays = diff; nearest = cd; }
+        if (diff > 0 && diff < nearestDays) {
+          nearestDays = diff;
+          nearest = cd;
+        }
       });
       if (nearest) nudges.push({ text: nearestDays + 'd to ' + esc(nearest.title), page: 'story', countdown: true });
     }
 
-    container.innerHTML = nudges.slice(0, 6).map(n => {
-      const bg = n.priority ? 'var(--gold)' : n.countdown ? 'var(--tint)' : 'var(--card-bg)';
-      const color = n.priority ? '#fff' : n.countdown ? 'var(--gold)' : 'var(--cream)';
-      const border = n.priority ? 'transparent' : 'var(--bdr-s)';
-      const dot = (!n.countdown && !n.priority) ? '<span class="nudge-dot"></span>' : '';
-      return `<div onclick="go('${n.page}')" style="position:relative;padding:7px 14px;border-radius:50px;background:${bg};color:${color};font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;box-shadow:var(--card-shadow);border:1px solid ${border}">${dot}${n.text}</div>`;
-    }
-    ).join('');
+    container.innerHTML = nudges
+      .slice(0, 6)
+      .map(n => {
+        const bg = n.priority ? 'var(--gold)' : n.countdown ? 'var(--tint)' : 'var(--card-bg)';
+        const color = n.priority ? '#fff' : n.countdown ? 'var(--gold)' : 'var(--cream)';
+        const border = n.priority ? 'transparent' : 'var(--bdr-s)';
+        const dot = !n.countdown && !n.priority ? '<span class="nudge-dot"></span>' : '';
+        return `<div onclick="go('${n.page}')" style="position:relative;padding:7px 14px;border-radius:50px;background:${bg};color:${color};font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;box-shadow:var(--card-shadow);border:1px solid ${border}">${dot}${n.text}</div>`;
+      })
+      .join('');
     container.style.display = nudges.length === 0 ? 'none' : 'flex';
   });
 }
@@ -1397,11 +1793,14 @@ function renderDailyTasks() {
     db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value'),
     db.ref('dailyAnswers/' + today + '/' + user).once('value'),
     db.ref('checkins/' + week + '/' + user).once('value'),
-    db.ref('gratitude').orderByChild('timestamp').limitToLast(5).once('value'),
+    db.ref('gratitude').orderByChild('timestamp').limitToLast(5).once('value')
   ]).then(([moods, dq, checkin, gratitude]) => {
     // Check mood
     let moodDone = false;
-    if (moods.exists()) moods.forEach(c => { if (c.val().user === user && c.val().date === today) moodDone = true; });
+    if (moods.exists())
+      moods.forEach(c => {
+        if (c.val().user === user && c.val().date === today) moodDone = true;
+      });
 
     // Check daily question
     const dqDone = dq.exists();
@@ -1411,13 +1810,17 @@ function renderDailyTasks() {
 
     // Check gratitude today
     let gratDone = false;
-    if (gratitude.exists()) gratitude.forEach(c => { const v = c.val(); if (v.from === user && v.timestamp && localDate(new Date(v.timestamp)) === today) gratDone = true; });
+    if (gratitude.exists())
+      gratitude.forEach(c => {
+        const v = c.val();
+        if (v.from === user && v.timestamp && localDate(new Date(v.timestamp)) === today) gratDone = true;
+      });
 
     const tasks = [
       { label: 'Mood check-in', done: moodDone, page: 'mood', desc: 'How are you feeling today?' },
-      { label: 'Daily question', done: dqDone, page: 'question', desc: 'Answer & see your partner\'s answer' },
+      { label: 'Daily question', done: dqDone, page: 'question', desc: "Answer & see your partner's answer" },
       { label: 'Share gratitude', done: gratDone, page: 'gratitude', desc: 'What are you grateful for?' },
-      { label: 'Weekly check-in', done: checkinDone, page: 'checkin', desc: 'Reflect on the week together' },
+      { label: 'Weekly check-in', done: checkinDone, page: 'checkin', desc: 'Reflect on the week together' }
     ];
 
     const doneCount = tasks.filter(t => t.done).length;
@@ -1438,22 +1841,24 @@ function renderTaskList(containerId, listId, countId, tasks, doneCount) {
   if (!container || !list) return;
 
   count.textContent = doneCount + '/' + tasks.length + ' done';
-  list.innerHTML = tasks.map(t => {
-    const checkColor = t.done ? 'var(--gold)' : 'var(--bg3)';
-    const checkIcon = t.done
-      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>'
-      : '<div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--t3)"></div>';
-    const textColor = t.done ? 'var(--t3)' : 'var(--cream)';
-    const textDecor = t.done ? 'line-through' : 'none';
-    return `<div class="dash-task" onclick="go('${t.page}')">
-      <div class="dash-task-check${t.done?' done':''}">${checkIcon}</div>
+  list.innerHTML = tasks
+    .map(t => {
+      const checkColor = t.done ? 'var(--gold)' : 'var(--bg3)';
+      const checkIcon = t.done
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>'
+        : '<div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--t3)"></div>';
+      const textColor = t.done ? 'var(--t3)' : 'var(--cream)';
+      const textDecor = t.done ? 'line-through' : 'none';
+      return `<div class="dash-task" onclick="go('${t.page}')">
+      <div class="dash-task-check${t.done ? ' done' : ''}">${checkIcon}</div>
       <div style="flex:1;min-width:0">
-        <div class="dash-task-label${t.done?' done':''}">${t.label}</div>
+        <div class="dash-task-label${t.done ? ' done' : ''}">${t.label}</div>
         ${!t.done ? '<div class="dash-task-desc">' + t.desc + '</div>' : ''}
       </div>
       ${!t.done ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>' : ''}
     </div>`;
-  }).join('');
+    })
+    .join('');
   showEl(container);
 }
 
@@ -1490,10 +1895,13 @@ function scheduleDailyReminder() {
     // Check the two most important daily tasks (mood + daily question)
     Promise.all([
       db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value'),
-      db.ref('dailyAnswers/' + today + '/' + user).once('value'),
+      db.ref('dailyAnswers/' + today + '/' + user).once('value')
     ]).then(([moods, dq]) => {
       let moodDone = false;
-      if (moods.exists()) moods.forEach(c => { if (c.val().user === user && c.val().date === today) moodDone = true; });
+      if (moods.exists())
+        moods.forEach(c => {
+          if (c.val().user === user && c.val().date === today) moodDone = true;
+        });
       const dqDone = dq.exists();
 
       // Only notify if at least one core task is pending
@@ -1514,18 +1922,16 @@ function scheduleDailyReminder() {
 
 function sendNotification(pendingTasks) {
   if (Notification.permission !== 'granted') return;
-  var partnerRole = (typeof user !== 'undefined' && user === 'her') ? 'him' : 'her';
+  var partnerRole = typeof user !== 'undefined' && user === 'her' ? 'him' : 'her';
   var nickname = (typeof NAMES !== 'undefined' && NAMES[partnerRole]) || 'Love';
   var msgs = {
     1: {
       'mood check-in': 'Take a moment to check in with yourself today',
-      'daily question': 'A new question is waiting for you and your partner',
+      'daily question': 'A new question is waiting for you and your partner'
     },
     multi: 'Your mood check-in and daily question are waiting for you'
   };
-  var body = pendingTasks.length === 1
-    ? (msgs[1][pendingTasks[0]] || 'You have something waiting for you')
-    : msgs.multi;
+  var body = pendingTasks.length === 1 ? msgs[1][pendingTasks[0]] || 'You have something waiting for you' : msgs.multi;
   try {
     new Notification(nickname, {
       body: body,
@@ -1533,9 +1939,9 @@ function sendNotification(pendingTasks) {
       badge: 'icons/icon-96x96.png',
       tag: 'daily-reminder',
       renotify: false,
-      silent: false,
+      silent: false
     });
-  } catch(e) {}
+  } catch (e) {}
 }
 
 function checkDailyNotification(tasks, doneCount) {
@@ -1545,10 +1951,15 @@ function checkDailyNotification(tasks, doneCount) {
 // ===== WIRE UP STATUS UPDATES =====
 // Override go() to refresh statuses when navigating
 const _originalGo = go;
-go = function(p) {
+go = function (p) {
   _originalGo(p);
-  if (p === 'explore' || p === 'more') { updateHubStatuses(); }
-  if (p === 'together' || p === 'wellness' || p === 'plan') { updateHubStatuses(); updateModuleStats(); }
+  if (p === 'explore' || p === 'more') {
+    updateHubStatuses();
+  }
+  if (p === 'together' || p === 'wellness' || p === 'plan') {
+    updateHubStatuses();
+    updateModuleStats();
+  }
   if (p === 'bucket') updateBLStats();
   if (p === 'dreams') updateDRStats();
   if (p === 'lists') updateBLStats();
@@ -1559,19 +1970,35 @@ go = function(p) {
   if (p === 'family') updateFAMStats();
   if (p === 'games') updateGamesStats();
   if (p === 'datenight') updateDNStats();
-  if (p === 'connect') { loadVoiceNoteFeed(); }
-  if (p === 'dash') { renderDailyTasks(); renderDashHero(); checkPartnerVoiceNote(); }
-  if (p === 'settings') { loadSettings(); }
+  if (p === 'connect') {
+    loadVoiceNoteFeed();
+  }
+  if (p === 'dash') {
+    renderDailyTasks();
+    renderDashHero();
+    checkPartnerVoiceNote();
+  }
+  if (p === 'settings') {
+    loadSettings();
+  }
   if (p === 'fitness') renderFitnessHub();
   if (p === 'nutrition') renderNutritionDay();
   if (p === 'calendar') renderCalendar();
-  if (p === 'dreamhome') { renderDreamHome(); dhLoadAll(); }
+  if (p === 'dreamhome') {
+    renderDreamHome();
+    dhLoadAll();
+  }
   if (p === 'knowyou') renderKnowYou();
   if (p === 'wakeup') initWakeUp();
   if (p === 'memories') renderMemories();
-  if (p === 'achievements') { renderAchievements(); checkAchievements(); }
+  if (p === 'achievements') {
+    renderAchievements();
+    checkAchievements();
+  }
   if (p === 'mood') renderStreakCalendar();
-  if (p === 'story') { updateModuleStats(); }
+  if (p === 'story') {
+    updateModuleStats();
+  }
   // Update presence
   if (db && user) db.ref('presence/' + user + '/currentPage').set(p);
 };
@@ -1616,7 +2043,7 @@ function loadSettings() {
   if (db && user) {
     db.ref('settings/skyTheme/' + user).once('value', snap => {
       var theme = snap.val() || 'mixed';
-      document.querySelectorAll('#set-sky-theme .sky-theme-btn').forEach(function(b) {
+      document.querySelectorAll('#set-sky-theme .sky-theme-btn').forEach(function (b) {
         b.classList.toggle('active', b.getAttribute('data-theme') === theme);
       });
     });
@@ -1640,14 +2067,14 @@ function setSkyTheme(theme) {
     db.ref('settings/skyTheme/' + user).set(theme);
   }
   // Update UI
-  document.querySelectorAll('#set-sky-theme .sky-theme-btn, #ob-sky-theme-grid .sky-theme-btn').forEach(function(b) {
+  document.querySelectorAll('#set-sky-theme .sky-theme-btn, #ob-sky-theme-grid .sky-theme-btn').forEach(function (b) {
     b.classList.toggle('active', b.getAttribute('data-theme') === theme);
   });
   if (typeof applySkyTheme === 'function') applySkyTheme(theme);
   // Update scene selection UI to match the synced scene
   var sceneMap = { beach: 'coastal', mountain: 'forest', mixed: 'meadow' };
   var scene = sceneMap[theme] || 'meadow';
-  document.querySelectorAll('.scene-option').forEach(function(opt) {
+  document.querySelectorAll('.scene-option').forEach(function (opt) {
     opt.classList.toggle('active', opt.getAttribute('data-scene') === scene);
   });
   var envNames = { beach: 'Beach', mountain: 'Mountain', mixed: 'Mixed' };
@@ -1659,7 +2086,7 @@ function handleLocationSettingsBtn() {
   var btn = document.getElementById('set-location-btn');
   if (WEATHER.locationGranted) {
     // Already granted - refresh weather
-    fetchWeather().then(function() {
+    fetchWeather().then(function () {
       updateWeatherInfoUI();
       var container = document.getElementById('sky-scene');
       if (container && livingSkyEnabled) renderLivingSky(container);
@@ -1686,7 +2113,7 @@ function loadWeatherSettings() {
   var audioToggle = document.getElementById('set-ambient-audio');
   if (audioToggle) audioToggle.checked = WEATHER.audioEnabled;
   // Scene selection
-  document.querySelectorAll('.scene-option').forEach(function(opt) {
+  document.querySelectorAll('.scene-option').forEach(function (opt) {
     opt.classList.toggle('active', opt.getAttribute('data-scene') === WEATHER.scene);
   });
 }
@@ -1701,7 +2128,9 @@ function getSpotifyEmbedUrl(url) {
   return null;
 }
 function getYouTubeEmbedUrl(url) {
-  var m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|music\.youtube\.com\/watch\?v=)([a-zA-Z0-9_-]+)/);
+  var m = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|music\.youtube\.com\/watch\?v=)([a-zA-Z0-9_-]+)/
+  );
   if (m) return 'https://www.youtube.com/embed/' + m[1] + '?autoplay=0';
   // YouTube Music playlist
   var mp = url.match(/(?:youtube\.com|music\.youtube\.com)\/playlist\?list=([a-zA-Z0-9_-]+)/);
@@ -1717,15 +2146,15 @@ function connectSpotify() {
       '<p style="font-size:13px;color:var(--t2);margin:0 0 14px;line-height:1.5">Paste a song, album, or playlist link to share with your partner.</p>' +
       '<input type="url" inputmode="url" id="spotify-link" placeholder="Paste Spotify link..." class="form-input" style="margin-bottom:10px;font-size:16px" autocomplete="off" autocorrect="off" autocapitalize="off">' +
       '<div style="display:flex;gap:8px">' +
-        '<button class="dq-submit" style="flex:1" onclick="saveSpotifyLink()">Save</button>' +
-        '<button class="dq-submit" style="flex:1;background:var(--gold)" onclick="shareSongWithPartner(\'spotify\')">Send to Partner</button>' +
+      '<button class="dq-submit" style="flex:1" onclick="saveSpotifyLink()">Save</button>' +
+      '<button class="dq-submit" style="flex:1;background:var(--gold)" onclick="shareSongWithPartner(\'spotify\')">Send to Partner</button>' +
       '</div>' +
       '<div id="spotify-embed" style="margin-top:14px;border-radius:12px;overflow:hidden"></div>' +
       '<div id="spotify-partner-section" style="margin-top:14px"></div>' +
-    '</div>'
+      '</div>'
   );
   if (db && user) {
-    db.ref('settings/music/' + user + '/spotify').once('value', function(s) {
+    db.ref('settings/music/' + user + '/spotify').once('value', function (s) {
       var el = document.getElementById('spotify-link');
       if (el && s.val()) {
         el.value = s.val();
@@ -1733,13 +2162,20 @@ function connectSpotify() {
       }
     });
     var partnerRole = user === 'her' ? 'him' : 'her';
-    db.ref('settings/music/' + partnerRole + '/spotify').once('value', function(s) {
+    db.ref('settings/music/' + partnerRole + '/spotify').once('value', function (s) {
       var el = document.getElementById('spotify-partner-section');
       if (el && s.val()) {
         var embedUrl = getSpotifyEmbedUrl(s.val());
-        el.innerHTML = '<div style="font-size:12px;color:var(--t3);margin-bottom:8px">Partner\'s Spotify:</div>' +
-          (embedUrl ? '<iframe src="' + embedUrl + '" width="100%" height="80" frameborder="0" allow="encrypted-media" style="border-radius:12px"></iframe>' : '') +
-          '<a href="' + s.val() + '" target="_blank" style="display:block;margin-top:6px;color:var(--gold);font-size:12px">Open in Spotify</a>';
+        el.innerHTML =
+          '<div style="font-size:12px;color:var(--t3);margin-bottom:8px">Partner\'s Spotify:</div>' +
+          (embedUrl
+            ? '<iframe src="' +
+              embedUrl +
+              '" width="100%" height="80" frameborder="0" allow="encrypted-media" style="border-radius:12px"></iframe>'
+            : '') +
+          '<a href="' +
+          s.val() +
+          '" target="_blank" style="display:block;margin-top:6px;color:var(--gold);font-size:12px">Open in Spotify</a>';
       }
     });
   }
@@ -1749,7 +2185,10 @@ function showSpotifyEmbed(url) {
   var embedUrl = getSpotifyEmbedUrl(url);
   var el = document.getElementById('spotify-embed');
   if (el && embedUrl) {
-    el.innerHTML = '<iframe src="' + embedUrl + '" width="100%" height="80" frameborder="0" allow="encrypted-media" style="border-radius:12px"></iframe>';
+    el.innerHTML =
+      '<iframe src="' +
+      embedUrl +
+      '" width="100%" height="80" frameborder="0" allow="encrypted-media" style="border-radius:12px"></iframe>';
   }
 }
 
@@ -1771,15 +2210,15 @@ function connectYouTubeMusic() {
       '<p style="font-size:13px;color:var(--t2);margin:0 0 14px;line-height:1.5">Paste a song or playlist link to share with your partner.</p>' +
       '<input type="url" inputmode="url" id="ytm-link" placeholder="Paste YouTube Music link..." class="form-input" style="margin-bottom:10px;font-size:16px" autocomplete="off" autocorrect="off" autocapitalize="off">' +
       '<div style="display:flex;gap:8px">' +
-        '<button class="dq-submit" style="flex:1" onclick="saveYTMLink()">Save</button>' +
-        '<button class="dq-submit" style="flex:1;background:var(--gold)" onclick="shareSongWithPartner(\'youtube\')">Send to Partner</button>' +
+      '<button class="dq-submit" style="flex:1" onclick="saveYTMLink()">Save</button>' +
+      '<button class="dq-submit" style="flex:1;background:var(--gold)" onclick="shareSongWithPartner(\'youtube\')">Send to Partner</button>' +
       '</div>' +
       '<div id="ytm-embed" style="margin-top:14px;border-radius:12px;overflow:hidden"></div>' +
       '<div id="ytm-partner-section" style="margin-top:14px"></div>' +
-    '</div>'
+      '</div>'
   );
   if (db && user) {
-    db.ref('settings/music/' + user + '/youtube').once('value', function(s) {
+    db.ref('settings/music/' + user + '/youtube').once('value', function (s) {
       var el = document.getElementById('ytm-link');
       if (el && s.val()) {
         el.value = s.val();
@@ -1787,13 +2226,20 @@ function connectYouTubeMusic() {
       }
     });
     var partnerRole = user === 'her' ? 'him' : 'her';
-    db.ref('settings/music/' + partnerRole + '/youtube').once('value', function(s) {
+    db.ref('settings/music/' + partnerRole + '/youtube').once('value', function (s) {
       var el = document.getElementById('ytm-partner-section');
       if (el && s.val()) {
         var embedUrl = getYouTubeEmbedUrl(s.val());
-        el.innerHTML = '<div style="font-size:12px;color:var(--t3);margin-bottom:8px">Partner\'s YouTube Music:</div>' +
-          (embedUrl ? '<iframe src="' + embedUrl + '" width="100%" height="200" frameborder="0" allow="autoplay; encrypted-media" style="border-radius:12px"></iframe>' : '') +
-          '<a href="' + s.val() + '" target="_blank" style="display:block;margin-top:6px;color:var(--gold);font-size:12px">Open in YouTube Music</a>';
+        el.innerHTML =
+          '<div style="font-size:12px;color:var(--t3);margin-bottom:8px">Partner\'s YouTube Music:</div>' +
+          (embedUrl
+            ? '<iframe src="' +
+              embedUrl +
+              '" width="100%" height="200" frameborder="0" allow="autoplay; encrypted-media" style="border-radius:12px"></iframe>'
+            : '') +
+          '<a href="' +
+          s.val() +
+          '" target="_blank" style="display:block;margin-top:6px;color:var(--gold);font-size:12px">Open in YouTube Music</a>';
       }
     });
   }
@@ -1803,7 +2249,10 @@ function showYTMEmbed(url) {
   var embedUrl = getYouTubeEmbedUrl(url);
   var el = document.getElementById('ytm-embed');
   if (el && embedUrl) {
-    el.innerHTML = '<iframe src="' + embedUrl + '" width="100%" height="200" frameborder="0" allow="autoplay; encrypted-media" style="border-radius:12px"></iframe>';
+    el.innerHTML =
+      '<iframe src="' +
+      embedUrl +
+      '" width="100%" height="200" frameborder="0" allow="autoplay; encrypted-media" style="border-radius:12px"></iframe>';
   }
 }
 
@@ -1820,9 +2269,15 @@ function saveYTMLink() {
 // Share a song link with partner as a notification/message
 function shareSongWithPartner(platform) {
   var linkEl = document.getElementById(platform === 'spotify' ? 'spotify-link' : 'ytm-link');
-  if (!linkEl || !linkEl.value.trim()) { toast('Paste a link first'); return; }
+  if (!linkEl || !linkEl.value.trim()) {
+    toast('Paste a link first');
+    return;
+  }
   var url = linkEl.value.trim();
-  if (!db || !user) { toast('Not connected'); return; }
+  if (!db || !user) {
+    toast('Not connected');
+    return;
+  }
 
   var partnerRole = user === 'her' ? 'him' : 'her';
   var senderName = typeof NAMES !== 'undefined' ? NAMES[user] : user;
@@ -1857,31 +2312,56 @@ function shareSongWithPartner(platform) {
 function loadSharedMusicFeed() {
   var feed = document.getElementById('shared-music-feed');
   if (!feed || !db) return;
-  db.ref('shared-music').orderByChild('ts').limitToLast(5).once('value', function(snap) {
-    var songs = [];
-    snap.forEach(function(child) { songs.push(child.val()); });
-    songs.reverse();
-    if (!songs.length) { feed.innerHTML = ''; return; }
-    var html = '<div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:8px">Recently Shared</div>';
-    songs.forEach(function(song) {
-      var icon = song.platform === 'spotify' ? '🎵' : '🎶';
-      var ago = typeof timeAgo === 'function' ? timeAgo(song.ts) : '';
-      var embedUrl = song.platform === 'spotify' ? getSpotifyEmbedUrl(song.url) : getYouTubeEmbedUrl(song.url);
-      html += '<div style="background:var(--input-bg);border-radius:14px;padding:12px;margin-bottom:8px">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
-          '<span style="font-size:13px;font-weight:500;color:var(--t1)">' + icon + ' ' + esc(song.fromName || song.from || '') + '</span>' +
-          '<span style="font-size:11px;color:var(--t3)">' + ago + '</span>' +
-        '</div>';
-      if (embedUrl) {
-        var h = song.platform === 'spotify' ? '80' : '150';
-        html += '<iframe src="' + embedUrl + '" width="100%" height="' + h + '" frameborder="0" allow="encrypted-media" style="border-radius:10px"></iframe>';
+  db.ref('shared-music')
+    .orderByChild('ts')
+    .limitToLast(5)
+    .once('value', function (snap) {
+      var songs = [];
+      snap.forEach(function (child) {
+        songs.push(child.val());
+      });
+      songs.reverse();
+      if (!songs.length) {
+        feed.innerHTML = '';
+        return;
       }
-      var safeUrl = /^https?:\/\//.test(song.url || '') ? esc(song.url) : '';
-      if (safeUrl) html += '<a href="' + safeUrl + '" target="_blank" rel="noopener" style="display:block;margin-top:6px;font-size:11px;color:var(--gold)">Open in app</a>';
-      html += '</div>';
+      var html =
+        '<div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:8px">Recently Shared</div>';
+      songs.forEach(function (song) {
+        var icon = song.platform === 'spotify' ? '🎵' : '🎶';
+        var ago = typeof timeAgo === 'function' ? timeAgo(song.ts) : '';
+        var embedUrl = song.platform === 'spotify' ? getSpotifyEmbedUrl(song.url) : getYouTubeEmbedUrl(song.url);
+        html +=
+          '<div style="background:var(--input-bg);border-radius:14px;padding:12px;margin-bottom:8px">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
+          '<span style="font-size:13px;font-weight:500;color:var(--t1)">' +
+          icon +
+          ' ' +
+          esc(song.fromName || song.from || '') +
+          '</span>' +
+          '<span style="font-size:11px;color:var(--t3)">' +
+          ago +
+          '</span>' +
+          '</div>';
+        if (embedUrl) {
+          var h = song.platform === 'spotify' ? '80' : '150';
+          html +=
+            '<iframe src="' +
+            embedUrl +
+            '" width="100%" height="' +
+            h +
+            '" frameborder="0" allow="encrypted-media" style="border-radius:10px"></iframe>';
+        }
+        var safeUrl = /^https?:\/\//.test(song.url || '') ? esc(song.url) : '';
+        if (safeUrl)
+          html +=
+            '<a href="' +
+            safeUrl +
+            '" target="_blank" rel="noopener" style="display:block;margin-top:6px;font-size:11px;color:var(--gold)">Open in app</a>';
+        html += '</div>';
+      });
+      feed.innerHTML = html;
     });
-    feed.innerHTML = html;
-  });
 }
 
 async function saveSettings() {
@@ -1898,7 +2378,7 @@ async function saveSettings() {
   if (newName && newName !== NAMES[user]) {
     NAMES[user] = newName;
     await db.ref('profiles/' + user).set(newName);
-    document.querySelectorAll('.uname').forEach(e => e.textContent = newName);
+    document.querySelectorAll('.uname').forEach(e => (e.textContent = newName));
   }
   if (newAnniv) {
     await db.ref('settings/anniversary').set(newAnniv);
@@ -1911,8 +2391,8 @@ async function saveSettings() {
     NICKNAMES[nickKey] = newNick;
     NAMES[partner] = newNick;
     await db.ref('profiles/' + nickKey).set(newNick);
-    document.querySelectorAll('.pname').forEach(e => e.textContent = newNick);
-    document.querySelectorAll('.partner-nick').forEach(e => e.textContent = newNick);
+    document.querySelectorAll('.pname').forEach(e => (e.textContent = newNick));
+    document.querySelectorAll('.partner-nick').forEach(e => (e.textContent = newNick));
   }
   toast('Settings saved');
   renderDashHero();
@@ -1924,10 +2404,13 @@ function initHubPages() {
   const today = localDate();
 
   // Together hub stats
-  db.ref('letters').orderByChild('timestamp').limitToLast(50).once('value', snap => {
-    const el = document.getElementById('hub-tg-letters');
-    if (el) el.textContent = snap.numChildren() || 0;
-  });
+  db.ref('letters')
+    .orderByChild('timestamp')
+    .limitToLast(50)
+    .once('value', snap => {
+      const el = document.getElementById('hub-tg-letters');
+      if (el) el.textContent = snap.numChildren() || 0;
+    });
   db.ref('daily_answers/' + today).once('value', snap => {
     // Use streak from existing streak logic
     const el = document.getElementById('hub-tg-streak');
@@ -1936,48 +2419,70 @@ function initHubPages() {
   });
 
   // Together recent feed (last 3 activities: taps, letters, answers)
-  db.ref('taps').orderByChild('ts').limitToLast(3).once('value', snap => {
-    const feed = document.getElementById('together-recent-feed');
-    if (!feed || !snap.exists()) return;
-    const items = [];
-    snap.forEach(c => {
-      const t = c.val();
-      const who = t.from === user ? 'You' : (NAMES[t.from] || 'Partner');
-      const ago = _timeAgo(t.ts);
-      items.unshift('<div class="hub-feed-item"><span class="hub-feed-emoji">' + (t.emoji || '💕') + '</span><span class="hub-feed-text">' + who + ' sent a ' + (t.type || 'tap') + '</span><span class="hub-feed-time">' + ago + '</span></div>');
+  db.ref('taps')
+    .orderByChild('ts')
+    .limitToLast(3)
+    .once('value', snap => {
+      const feed = document.getElementById('together-recent-feed');
+      if (!feed || !snap.exists()) return;
+      const items = [];
+      snap.forEach(c => {
+        const t = c.val();
+        const who = t.from === user ? 'You' : NAMES[t.from] || 'Partner';
+        const ago = _timeAgo(t.ts);
+        items.unshift(
+          '<div class="hub-feed-item"><span class="hub-feed-emoji">' +
+            (t.emoji || '💕') +
+            '</span><span class="hub-feed-text">' +
+            who +
+            ' sent a ' +
+            (t.type || 'tap') +
+            '</span><span class="hub-feed-time">' +
+            ago +
+            '</span></div>'
+        );
+      });
+      if (items.length > 0) feed.innerHTML = items.join('');
     });
-    if (items.length > 0) feed.innerHTML = items.join('');
-  });
 
   // Track hub stats
-  db.ref('moods').orderByChild('timestamp').limitToLast(7).once('value', snap => {
-    const el = document.getElementById('hub-tr-mood');
-    const snapMood = document.getElementById('track-snap-mood-val');
-    if (!snap.exists()) return;
-    let sum = 0, count = 0, todayMood = null, todayEnergy = null;
-    const MOOD_LABELS = ['','Rough','Off','Okay','Good','Great'];
-    const ENERGY_LABELS = ['','Drained','Low','Steady','Wired','Charged'];
-    snap.forEach(c => {
-      const m = c.val();
-      if (m.user === user) {
-        sum += m.mood || 0;
-        count++;
-        if (m.date === today) {
-          todayMood = m.mood;
-          todayEnergy = m.energy;
+  db.ref('moods')
+    .orderByChild('timestamp')
+    .limitToLast(7)
+    .once('value', snap => {
+      const el = document.getElementById('hub-tr-mood');
+      const snapMood = document.getElementById('track-snap-mood-val');
+      if (!snap.exists()) return;
+      let sum = 0,
+        count = 0,
+        todayMood = null,
+        todayEnergy = null;
+      const MOOD_LABELS = ['', 'Rough', 'Off', 'Okay', 'Good', 'Great'];
+      const ENERGY_LABELS = ['', 'Drained', 'Low', 'Steady', 'Wired', 'Charged'];
+      snap.forEach(c => {
+        const m = c.val();
+        if (m.user === user) {
+          sum += m.mood || 0;
+          count++;
+          if (m.date === today) {
+            todayMood = m.mood;
+            todayEnergy = m.energy;
+          }
         }
-      }
+      });
+      if (el && count > 0) el.textContent = (sum / count).toFixed(1);
+      if (snapMood && todayMood) snapMood.textContent = MOOD_LABELS[todayMood] || todayMood;
+      const snapEnergy = document.getElementById('track-snap-energy-val');
+      if (snapEnergy && todayEnergy) snapEnergy.textContent = ENERGY_LABELS[todayEnergy] || todayEnergy;
     });
-    if (el && count > 0) el.textContent = (sum / count).toFixed(1);
-    if (snapMood && todayMood) snapMood.textContent = MOOD_LABELS[todayMood] || todayMood;
-    const snapEnergy = document.getElementById('track-snap-energy-val');
-    if (snapEnergy && todayEnergy) snapEnergy.textContent = ENERGY_LABELS[todayEnergy] || todayEnergy;
-  });
 
-  db.ref('gratitude').orderByChild('timestamp').limitToLast(20).once('value', snap => {
-    const el = document.getElementById('hub-tr-gratitude');
-    if (el) el.textContent = snap.numChildren() || 0;
-  });
+  db.ref('gratitude')
+    .orderByChild('timestamp')
+    .limitToLast(20)
+    .once('value', snap => {
+      const el = document.getElementById('hub-tr-gratitude');
+      if (el) el.textContent = snap.numChildren() || 0;
+    });
 
   // Build hub stats
   db.ref('dreams').once('value', snap => {
@@ -2043,46 +2548,53 @@ function startVoiceRecord() {
     channelCount: 1,
     sampleRate: 44100
   };
-  navigator.mediaDevices.getUserMedia({ audio: audioConstraints }).then(function(stream) {
-    vnChunks = [];
-    vnBlob = null;
-    var options = {};
-    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-      options.mimeType = 'audio/webm;codecs=opus';
-    } else if (MediaRecorder.isTypeSupported('audio/webm')) {
-      options.mimeType = 'audio/webm';
-    } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-      options.mimeType = 'audio/mp4';
-    }
-    vnRecorder = new MediaRecorder(stream, options);
-    vnRecorder.ondataavailable = function(e) {
-      if (e.data.size > 0) vnChunks.push(e.data);
-    };
-    vnRecorder.onstop = function() {
-      vnBlob = new Blob(vnChunks, { type: vnRecorder.mimeType || 'audio/webm' });
-      stream.getTracks().forEach(function(t) { t.stop(); });
-      showVoiceNotePreview();
-    };
-    vnRecorder.start(250); // collect chunks every 250ms for smoother data
-    vnRecording = true;
-    vnStartTime = Date.now();
-    var btn = document.getElementById('vn-record-btn');
-    var label = document.getElementById('vn-record-label');
-    if (btn) btn.classList.add('recording');
-    if (label) label.textContent = 'Recording... tap to stop';
-    var vnControls = document.getElementById('vn-controls');
-    if (vnControls) vnControls.classList.remove('show');
-    vnTimerInterval = setInterval(updateVnTimer, 500);
-    // Auto-stop at 60s
-    setTimeout(function() { if (vnRecording) stopVoiceRecord(); }, 60000);
-  }).catch(function(err) {
-    console.error('Mic access denied:', err);
-    // Resume audio if mic was denied
-    if (typeof WEATHER !== 'undefined' && WEATHER.audioCtx && WEATHER._priorAudioState === 'running') {
-      WEATHER.audioCtx.resume();
-    }
-    toast('Microphone access denied');
-  });
+  navigator.mediaDevices
+    .getUserMedia({ audio: audioConstraints })
+    .then(function (stream) {
+      vnChunks = [];
+      vnBlob = null;
+      var options = {};
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        options.mimeType = 'audio/webm;codecs=opus';
+      } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+        options.mimeType = 'audio/webm';
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        options.mimeType = 'audio/mp4';
+      }
+      vnRecorder = new MediaRecorder(stream, options);
+      vnRecorder.ondataavailable = function (e) {
+        if (e.data.size > 0) vnChunks.push(e.data);
+      };
+      vnRecorder.onstop = function () {
+        vnBlob = new Blob(vnChunks, { type: vnRecorder.mimeType || 'audio/webm' });
+        stream.getTracks().forEach(function (t) {
+          t.stop();
+        });
+        showVoiceNotePreview();
+      };
+      vnRecorder.start(250); // collect chunks every 250ms for smoother data
+      vnRecording = true;
+      vnStartTime = Date.now();
+      var btn = document.getElementById('vn-record-btn');
+      var label = document.getElementById('vn-record-label');
+      if (btn) btn.classList.add('recording');
+      if (label) label.textContent = 'Recording... tap to stop';
+      var vnControls = document.getElementById('vn-controls');
+      if (vnControls) vnControls.classList.remove('show');
+      vnTimerInterval = setInterval(updateVnTimer, 500);
+      // Auto-stop at 60s
+      setTimeout(function () {
+        if (vnRecording) stopVoiceRecord();
+      }, 60000);
+    })
+    .catch(function (err) {
+      console.error('Mic access denied:', err);
+      // Resume audio if mic was denied
+      if (typeof WEATHER !== 'undefined' && WEATHER.audioCtx && WEATHER._priorAudioState === 'running') {
+        WEATHER.audioCtx.resume();
+      }
+      toast('Microphone access denied');
+    });
 }
 
 function stopVoiceRecord() {
@@ -2138,8 +2650,12 @@ function previewVoiceNote() {
   vnPreviewAudio.setAttribute('playsinline', '');
   vnPreviewAudio.setAttribute('webkit-playsinline', '');
   vnPreviewAudio.volume = 0.08;
-  vnPreviewAudio.play().catch(function(e) { console.warn('Voice preview blocked:', e); });
-  vnPreviewAudio.onended = function() { vnPreviewAudio = null; };
+  vnPreviewAudio.play().catch(function (e) {
+    console.warn('Voice preview blocked:', e);
+  });
+  vnPreviewAudio.onended = function () {
+    vnPreviewAudio = null;
+  };
 }
 
 function discardVoiceNote() {
@@ -2160,7 +2676,7 @@ function sendVoiceNote() {
 
   // Convert blob to base64 for Firebase Realtime DB
   var reader = new FileReader();
-  reader.onloadend = function() {
+  reader.onloadend = function () {
     var base64 = reader.result;
     var noteData = {
       from: user,
@@ -2172,16 +2688,22 @@ function sendVoiceNote() {
       expirySec: expirySec,
       maxReplays: maxReplays,
       playCount: 0,
-      expiresAt: expirySec > 0 ? Date.now() + (expirySec * 1000) : 0
+      expiresAt: expirySec > 0 ? Date.now() + expirySec * 1000 : 0
     };
-    db.ref('voiceNotes').push(noteData).then(function() {
-      // Send notification to partner
-      sendInAppNotif('voiceNote', 'Sent you a voice note', '🎙');
-      toast('Voice note sent');
-      discardVoiceNote();
-      loadVoiceNoteFeed();
-      checkPartnerVoiceNote();
-    }).catch(function(e) { console.error('Voice note save failed:', e); toast('Failed to send'); });
+    db.ref('voiceNotes')
+      .push(noteData)
+      .then(function () {
+        // Send notification to partner
+        sendInAppNotif('voiceNote', 'Sent you a voice note', '🎙');
+        toast('Voice note sent');
+        discardVoiceNote();
+        loadVoiceNoteFeed();
+        checkPartnerVoiceNote();
+      })
+      .catch(function (e) {
+        console.error('Voice note save failed:', e);
+        toast('Failed to send');
+      });
   };
   reader.readAsDataURL(vnBlob);
 }
@@ -2191,41 +2713,64 @@ function loadVoiceNoteFeed() {
   if (!db) return;
   var feed = document.getElementById('vn-feed');
   if (!feed) return;
-  db.ref('voiceNotes').orderByChild('timestamp').limitToLast(10).once('value', function(snap) {
-    if (!snap.exists()) { feed.innerHTML = ''; return; }
-    var notes = [];
-    snap.forEach(function(c) {
-      var v = c.val();
-      v._key = c.key;
-      // Check expiry
-      if (v.expiresAt && v.expiresAt > 0 && Date.now() > v.expiresAt) {
-        db.ref('voiceNotes/' + c.key).remove();
+  db.ref('voiceNotes')
+    .orderByChild('timestamp')
+    .limitToLast(10)
+    .once('value', function (snap) {
+      if (!snap.exists()) {
+        feed.innerHTML = '';
         return;
       }
-      // Check max replays
-      if (v.maxReplays > 0 && (v.playCount || 0) >= v.maxReplays) {
-        db.ref('voiceNotes/' + c.key).remove();
+      var notes = [];
+      snap.forEach(function (c) {
+        var v = c.val();
+        v._key = c.key;
+        // Check expiry
+        if (v.expiresAt && v.expiresAt > 0 && Date.now() > v.expiresAt) {
+          db.ref('voiceNotes/' + c.key).remove();
+          return;
+        }
+        // Check max replays
+        if (v.maxReplays > 0 && (v.playCount || 0) >= v.maxReplays) {
+          db.ref('voiceNotes/' + c.key).remove();
+          return;
+        }
+        notes.push(v);
+      });
+      notes.reverse();
+      if (notes.length === 0) {
+        feed.innerHTML = '';
         return;
       }
-      notes.push(v);
+      feed.innerHTML = notes
+        .map(function (n) {
+          var replaysLeft = n.maxReplays > 0 ? n.maxReplays - (n.playCount || 0) + ' plays left' : 'unlimited';
+          var timeAgo = _timeAgo(n.timestamp);
+          return (
+            '<div class="vn-feed-item">' +
+            '<button class="vn-feed-play" onclick="playVoiceNoteFeed(\'' +
+            n._key +
+            '\')">&#9654;</button>' +
+            '<div class="vn-feed-info"><div class="vn-feed-from">from ' +
+            esc(n.fromName || n.from || '') +
+            '</div>' +
+            '<div class="vn-feed-meta">' +
+            (n.duration || 0) +
+            's · ' +
+            timeAgo +
+            '</div></div>' +
+            '<div class="vn-feed-replays">' +
+            replaysLeft +
+            '</div></div>'
+          );
+        })
+        .join('');
     });
-    notes.reverse();
-    if (notes.length === 0) { feed.innerHTML = ''; return; }
-    feed.innerHTML = notes.map(function(n) {
-      var replaysLeft = n.maxReplays > 0 ? (n.maxReplays - (n.playCount || 0)) + ' plays left' : 'unlimited';
-      var timeAgo = _timeAgo(n.timestamp);
-      return '<div class="vn-feed-item">' +
-        '<button class="vn-feed-play" onclick="playVoiceNoteFeed(\'' + n._key + '\')">&#9654;</button>' +
-        '<div class="vn-feed-info"><div class="vn-feed-from">from ' + esc(n.fromName || n.from || '') + '</div>' +
-        '<div class="vn-feed-meta">' + (n.duration || 0) + 's · ' + timeAgo + '</div></div>' +
-        '<div class="vn-feed-replays">' + replaysLeft + '</div></div>';
-    }).join('');
-  });
 }
 
 function playVoiceNoteFeed(key) {
   if (!db || !key) return;
-  db.ref('voiceNotes/' + key).once('value', function(snap) {
+  db.ref('voiceNotes/' + key).once('value', function (snap) {
     if (!snap.exists()) return;
     var note = snap.val();
     // Increment play count
@@ -2233,7 +2778,10 @@ function playVoiceNoteFeed(key) {
     db.ref('voiceNotes/' + key + '/playCount').set(newCount);
     // Check if should be removed after this play
     if (note.maxReplays > 0 && newCount >= note.maxReplays) {
-      setTimeout(function() { db.ref('voiceNotes/' + key).remove(); loadVoiceNoteFeed(); }, 2000);
+      setTimeout(function () {
+        db.ref('voiceNotes/' + key).remove();
+        loadVoiceNoteFeed();
+      }, 2000);
     }
     // Play audio as background-style
     playVoiceAudioBackground(note.audio);
@@ -2243,51 +2791,57 @@ function playVoiceNoteFeed(key) {
 // ===== VOICE NOTE ON PARTNER AVATAR (Dashboard) =====
 function checkPartnerVoiceNote() {
   if (!db || !user) return;
-  db.ref('voiceNotes').orderByChild('timestamp').limitToLast(5).once('value', function(snap) {
-    var avatar = document.getElementById('dash-partner-avatar');
-    if (!avatar) return;
-    // Remove existing play button
-    var existing = avatar.querySelector('.vn-avatar-play');
-    if (existing) existing.remove();
-    if (!snap.exists()) return;
-    var latestNote = null;
-    snap.forEach(function(c) {
-      var v = c.val();
-      v._key = c.key;
-      // Only show notes FROM partner TO this user
-      if (v.from !== user) {
-        // Check expiry
-        if (v.expiresAt && v.expiresAt > 0 && Date.now() > v.expiresAt) return;
-        // Check replays
-        if (v.maxReplays > 0 && (v.playCount || 0) >= v.maxReplays) return;
-        latestNote = v;
+  db.ref('voiceNotes')
+    .orderByChild('timestamp')
+    .limitToLast(5)
+    .once('value', function (snap) {
+      var avatar = document.getElementById('dash-partner-avatar');
+      if (!avatar) return;
+      // Remove existing play button
+      var existing = avatar.querySelector('.vn-avatar-play');
+      if (existing) existing.remove();
+      if (!snap.exists()) return;
+      var latestNote = null;
+      snap.forEach(function (c) {
+        var v = c.val();
+        v._key = c.key;
+        // Only show notes FROM partner TO this user
+        if (v.from !== user) {
+          // Check expiry
+          if (v.expiresAt && v.expiresAt > 0 && Date.now() > v.expiresAt) return;
+          // Check replays
+          if (v.maxReplays > 0 && (v.playCount || 0) >= v.maxReplays) return;
+          latestNote = v;
+        }
+      });
+      if (latestNote) {
+        var playBtn = document.createElement('div');
+        playBtn.className = 'vn-avatar-play';
+        playBtn.setAttribute('data-vn-key', latestNote._key);
+        playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+        playBtn.onclick = function (e) {
+          e.stopPropagation();
+          playAvatarVoiceNote(latestNote._key);
+        };
+        avatar.appendChild(playBtn);
       }
     });
-    if (latestNote) {
-      var playBtn = document.createElement('div');
-      playBtn.className = 'vn-avatar-play';
-      playBtn.setAttribute('data-vn-key', latestNote._key);
-      playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
-      playBtn.onclick = function(e) {
-        e.stopPropagation();
-        playAvatarVoiceNote(latestNote._key);
-      };
-      avatar.appendChild(playBtn);
-    }
-  });
 }
 
 function playAvatarVoiceNote(key) {
   if (!db || !key) return;
   if (vnAvatarPlaying) {
     // Stop current playback
-    if (vnAvatarAudio) { vnAvatarAudio.pause(); vnAvatarAudio = null; }
+    if (vnAvatarAudio) {
+      vnAvatarAudio.pause();
+      vnAvatarAudio = null;
+    }
     vnAvatarPlaying = false;
     var playBtn = document.querySelector('.vn-avatar-play');
     if (playBtn) playBtn.classList.remove('vn-avatar-playing');
     return;
   }
-  db.ref('voiceNotes/' + key).once('value', function(snap) {
+  db.ref('voiceNotes/' + key).once('value', function (snap) {
     if (!snap.exists()) return;
     var note = snap.val();
     // Increment play count
@@ -2297,7 +2851,7 @@ function playAvatarVoiceNote(key) {
     vnAvatarPlaying = true;
     var playBtn = document.querySelector('.vn-avatar-play');
     if (playBtn) playBtn.classList.add('vn-avatar-playing');
-    playVoiceAudioBackground(note.audio, function() {
+    playVoiceAudioBackground(note.audio, function () {
       vnAvatarPlaying = false;
       if (playBtn) playBtn.classList.remove('vn-avatar-playing');
       // Remove play button if max replays reached
@@ -2313,13 +2867,17 @@ function playAvatarVoiceNote(key) {
 // ===== BACKGROUND-STYLE VOICE AUDIO PLAYBACK =====
 function playVoiceAudioBackground(dataUrl, onEnded) {
   // Use regular Audio element with lower volume for background feel
-  if (vnAvatarAudio) { vnAvatarAudio.pause(); }
+  if (vnAvatarAudio) {
+    vnAvatarAudio.pause();
+  }
   vnAvatarAudio = new Audio(dataUrl);
   vnAvatarAudio.setAttribute('playsinline', '');
   vnAvatarAudio.setAttribute('webkit-playsinline', '');
   vnAvatarAudio.volume = 0.045; // Background-level volume
-  vnAvatarAudio.play().catch(function(e) { console.error('Voice playback error:', e); });
-  vnAvatarAudio.onended = function() {
+  vnAvatarAudio.play().catch(function (e) {
+    console.error('Voice playback error:', e);
+  });
+  vnAvatarAudio.onended = function () {
     vnAvatarAudio = null;
     if (typeof onEnded === 'function') onEnded();
   };
@@ -2343,41 +2901,44 @@ function sendInAppNotif(type, message, icon) {
 
 function listenNotifications() {
   if (!db || !user) return;
-  db.ref('notifications/' + user).orderByChild('timestamp').limitToLast(1).on('child_added', function(snap) {
-    var notif = snap.val();
-    if (!notif || notif.read) return;
-    // Only show if recent (within last 10 seconds)
-    if (Date.now() - notif.timestamp > 10000) return;
-    // Determine which page this notification should navigate to
-    var notifPage = NOTIF_PAGE_MAP[notif.type] || null;
-    showNotifToast(notif.fromName || notif.from, notif.message, notif.icon, notifPage);
-    // Mark as read
-    db.ref('notifications/' + user + '/' + snap.key + '/read').set(true);
-    // If voice note, refresh avatar play button
-    if (notif.type === 'voiceNote') {
-      checkPartnerVoiceNote();
-    }
-    // If mood sound from partner, play it
-    if (notif.type === 'mood-sound' && notif.mood && typeof playMoodSound === 'function') {
-      playMoodSound(notif.mood);
-    }
-  });
+  db.ref('notifications/' + user)
+    .orderByChild('timestamp')
+    .limitToLast(1)
+    .on('child_added', function (snap) {
+      var notif = snap.val();
+      if (!notif || notif.read) return;
+      // Only show if recent (within last 10 seconds)
+      if (Date.now() - notif.timestamp > 10000) return;
+      // Determine which page this notification should navigate to
+      var notifPage = NOTIF_PAGE_MAP[notif.type] || null;
+      showNotifToast(notif.fromName || notif.from, notif.message, notif.icon, notifPage);
+      // Mark as read
+      db.ref('notifications/' + user + '/' + snap.key + '/read').set(true);
+      // If voice note, refresh avatar play button
+      if (notif.type === 'voiceNote') {
+        checkPartnerVoiceNote();
+      }
+      // If mood sound from partner, play it
+      if (notif.type === 'mood-sound' && notif.mood && typeof playMoodSound === 'function') {
+        playMoodSound(notif.mood);
+      }
+    });
 }
 
 // Map notification types to the page they should navigate to
 var NOTIF_PAGE_MAP = {
-  'tap': 'connect',
-  'letter': 'connect',
-  'voiceNote': 'connect',
+  tap: 'connect',
+  letter: 'connect',
+  voiceNote: 'connect',
   'mood-sound': 'connect',
-  'mood': 'mood',
+  mood: 'mood',
   'game-invite': 'games',
-  'challenge': 'together',
+  challenge: 'together',
   'morning-msg': 'connect',
   'listen-together': 'connect',
-  'fitness': 'fitness',
-  'checkin': 'mood',
-  'song': 'connect'
+  fitness: 'fitness',
+  checkin: 'mood',
+  song: 'connect'
 };
 
 function showNotifToast(fromName, message, icon, targetPage) {
@@ -2393,7 +2954,7 @@ function showNotifToast(fromName, message, icon, targetPage) {
   el.onclick = null;
   if (targetPage && typeof go === 'function') {
     el.style.cursor = 'pointer';
-    el.onclick = function() {
+    el.onclick = function () {
       el.classList.remove('show');
       go(targetPage);
     };
@@ -2402,14 +2963,16 @@ function showNotifToast(fromName, message, icon, targetPage) {
   }
   el.classList.add('show');
   // Auto hide after 4 seconds
-  setTimeout(function() { el.classList.remove('show'); }, 4000);
+  setTimeout(function () {
+    el.classList.remove('show');
+  }, 4000);
   // Haptic
   if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
 }
 
 // ===== ENHANCED NOTIFICATIONS FOR EXISTING ACTIONS =====
 // Patch sendTap to also send in-app notification
-(function() {
+(function () {
   if (typeof window._origSendTap === 'undefined') {
     window._origSendTap = window.sendTap;
   }
@@ -2418,9 +2981,15 @@ function showNotifToast(fromName, message, icon, targetPage) {
 function patchSendTapNotif() {
   if (typeof sendTap === 'function' && !sendTap._patched) {
     var origSendTap = sendTap;
-    window.sendTap = async function(e, type, emoji) {
+    window.sendTap = async function (e, type, emoji) {
       await origSendTap(e, type, emoji);
-      var TAP_MSGS = { hug:'Sent you a hug', kiss:'Blew you a kiss', love:'Sent you love', miss:'Misses you', thinking:'Is thinking of you' };
+      var TAP_MSGS = {
+        hug: 'Sent you a hug',
+        kiss: 'Blew you a kiss',
+        love: 'Sent you love',
+        miss: 'Misses you',
+        thinking: 'Is thinking of you'
+      };
       sendInAppNotif('tap', TAP_MSGS[type] || 'Sent a tap', emoji || '💕');
     };
     window.sendTap._patched = true;
@@ -2433,7 +3002,9 @@ function initVoiceNotes() {
   listenNotifications();
   patchSendTapNotif();
   // Refresh avatar play button periodically
-  setInterval(function() { if (!document.hidden) checkPartnerVoiceNote(); }, 60000);
+  setInterval(function () {
+    if (!document.hidden) checkPartnerVoiceNote();
+  }, 60000);
   // Load feed if on connect page
   loadVoiceNoteFeed();
 }
@@ -2442,26 +3013,26 @@ function initVoiceNotes() {
 // Partner wakes up to a compliment, affirmation, or poem "...from [nickname]"
 var MORNING_MESSAGES = {
   compliments: [
-    "You make every room brighter just by walking in.",
-    "The way you love is something most people only dream about.",
+    'You make every room brighter just by walking in.',
+    'The way you love is something most people only dream about.',
     "You have the most beautiful soul I've ever known.",
-    "Your smile is my favorite thing in this entire world.",
+    'Your smile is my favorite thing in this entire world.',
     "You are the most incredible person I've ever met.",
-    "Everything about you makes me fall deeper in love.",
+    'Everything about you makes me fall deeper in love.',
     "You don't even realize how amazing you are, and that's part of your magic.",
-    "I still get butterflies every time I see your face.",
+    'I still get butterflies every time I see your face.',
     "The world doesn't deserve you, but I'm so grateful I get to love you.",
-    "You are beautiful in ways that have nothing to do with how you look."
+    'You are beautiful in ways that have nothing to do with how you look.'
   ],
   affirmations: [
-    "You are enough, exactly as you are right now.",
-    "Your light inspires everyone around you.",
-    "You are worthy of all the love you give to others.",
+    'You are enough, exactly as you are right now.',
+    'Your light inspires everyone around you.',
+    'You are worthy of all the love you give to others.',
     "Today is going to be a beautiful day because you're in it.",
-    "You carry so much grace in everything you do.",
-    "The strength you show every day is extraordinary.",
-    "Your heart is pure and the world is better for it.",
-    "You are becoming everything you were meant to be.",
+    'You carry so much grace in everything you do.',
+    'The strength you show every day is extraordinary.',
+    'Your heart is pure and the world is better for it.',
+    'You are becoming everything you were meant to be.',
     "Never forget how far you've come and how much you've grown.",
     "You deserve every good thing that's coming your way."
   ],
@@ -2474,10 +3045,10 @@ var MORNING_MESSAGES = {
   ],
   words: [
     "Word of the day: Saudade - the deep, nostalgic longing for someone you love. That's what I feel every moment we're apart.",
-    "Word of the day: Kilig - the rush of butterflies you feel when something romantic happens. You give me this every single day.",
-    "Word of the day: Mamihlapinatapai - a look shared between two people, each wishing the other would start something they both want. Our whole love story.",
+    'Word of the day: Kilig - the rush of butterflies you feel when something romantic happens. You give me this every single day.',
+    'Word of the day: Mamihlapinatapai - a look shared between two people, each wishing the other would start something they both want. Our whole love story.',
     "Word of the day: Forelsket - the euphoria of falling in love. I'm still falling, every day, with you.",
-    "Word of the day: Merak - the pursuit of small pleasures that make life worth living. You are my merak."
+    'Word of the day: Merak - the pursuit of small pleasures that make life worth living. You are my merak.'
   ]
 };
 
@@ -2500,7 +3071,7 @@ function checkMorningMessage() {
 
   // Check if partner has enabled morning messages for us
   var partnerRole = user === 'her' ? 'him' : 'her';
-  db.ref('settings/morningMsg/' + partnerRole).once('value', function(snap) {
+  db.ref('settings/morningMsg/' + partnerRole).once('value', function (snap) {
     var settings = snap.val();
     if (!settings || !settings.enabled) return;
 
@@ -2513,7 +3084,12 @@ function checkMorningMessage() {
     var msg;
     if (settings.customMsg) {
       // Use custom messages (can be multiple separated by |)
-      var customs = settings.customMsg.split('|').map(function(s) { return s.trim(); }).filter(Boolean);
+      var customs = settings.customMsg
+        .split('|')
+        .map(function (s) {
+          return s.trim();
+        })
+        .filter(Boolean);
       var dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
       msg = { category: 'custom', message: customs[dayOfYear % customs.length] };
     } else {
@@ -2522,8 +3098,11 @@ function checkMorningMessage() {
 
     // Save to Firebase so it persists and partner can see what was sent
     db.ref('morningMessages/' + user + '/' + today).set({
-      message: msg.message, category: msg.category, from: partnerRole,
-      fromNickname: nickname, timestamp: Date.now()
+      message: msg.message,
+      category: msg.category,
+      from: partnerRole,
+      fromNickname: nickname,
+      timestamp: Date.now()
     });
 
     // Show as notification
@@ -2533,7 +3112,7 @@ function checkMorningMessage() {
     // Send notification via service worker for reliability
     if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
       try {
-        navigator.serviceWorker.ready.then(function(reg) {
+        navigator.serviceWorker.ready.then(function (reg) {
           reg.showNotification(nickname, {
             body: msg.message,
             icon: 'icons/icon-192x192.png',
@@ -2544,13 +3123,13 @@ function checkMorningMessage() {
             data: './'
           });
         });
-      } catch(e) {
+      } catch (e) {
         try {
           new Notification(nickname, {
             body: msg.message,
             icon: 'icons/icon-192x192.png'
           });
-        } catch(e2) {}
+        } catch (e2) {}
       }
     }
   });
@@ -2563,12 +3142,13 @@ function showMorningMessageOverlay(message, nickname) {
     overlay = document.createElement('div');
     overlay.id = 'morning-msg-overlay';
     overlay.className = 'morning-overlay';
-    overlay.innerHTML = '<div class="morning-card">' +
+    overlay.innerHTML =
+      '<div class="morning-card">' +
       '<div class="morning-icon">☀️</div>' +
       '<div class="morning-text" id="morning-text"></div>' +
       '<div class="morning-from" id="morning-from"></div>' +
       '<button class="morning-close" onclick="closeMorningMessage()">Start my day</button>' +
-    '</div>';
+      '</div>';
     document.body.appendChild(overlay);
   }
   var textEl = document.getElementById('morning-text');
@@ -2582,4 +3162,3 @@ function closeMorningMessage() {
   var overlay = document.getElementById('morning-msg-overlay');
   if (overlay) overlay.classList.remove('on');
 }
-

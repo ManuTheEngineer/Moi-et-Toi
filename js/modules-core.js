@@ -39,9 +39,15 @@ function toggleTag(el) {
 }
 
 async function submitMood() {
-  if (!selectedMood) { toast('Pick a mood first'); return; }
+  if (!selectedMood) {
+    toast('Pick a mood first');
+    return;
+  }
   const btn = document.getElementById('mood-submit-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+  }
   const entry = {
     mood: selectedMood,
     energy: selectedEnergy,
@@ -66,44 +72,61 @@ async function submitMood() {
   selectedSleep = 0;
   selectedStress = 0;
   selectedTags = [];
-  document.querySelectorAll('#mood-grid .pill-btn, #energy-grid .pill-btn, #sleep-grid .pill-btn, #stress-grid .pill-btn').forEach(b => b.classList.remove('sel'));
+  document
+    .querySelectorAll('#mood-grid .pill-btn, #energy-grid .pill-btn, #sleep-grid .pill-btn, #stress-grid .pill-btn')
+    .forEach(b => b.classList.remove('sel'));
   document.querySelectorAll('.mood-tag').forEach(b => b.classList.remove('sel'));
   updateStreak();
   if (typeof logActivity === 'function') logActivity('mood', 'checked in');
   if (entry.dedicatedTo) toast('Dedicated to ' + NAMES[partner] + ' 💕');
   else toast('Checked in');
-  if (btn) { btn.textContent = 'Saved'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Check in'; }, 1500); }
+  if (btn) {
+    btn.textContent = 'Saved';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'Check in';
+    }, 1500);
+  }
 }
 
 function listenMoods() {
-  db.ref('moods').orderByChild('timestamp').limitToLast(50).on('value', snap => {
-    const moods = [];
-    snap.forEach(c => moods.push(c.val()));
-    moods.reverse();
-    renderMoodFeed(moods);
-    renderDashMoods(moods);
-  });
+  db.ref('moods')
+    .orderByChild('timestamp')
+    .limitToLast(50)
+    .on('value', snap => {
+      const moods = [];
+      snap.forEach(c => moods.push(c.val()));
+      moods.reverse();
+      renderMoodFeed(moods);
+      renderDashMoods(moods);
+    });
 }
 
 function renderMoodFeed(moods) {
   const el = document.getElementById('mood-feed');
-  if (!moods.length) { el.innerHTML = '<div class="empty">Your mood story starts with one check-in</div>'; return; }
+  if (!moods.length) {
+    el.innerHTML = '<div class="empty">Your mood story starts with one check-in</div>';
+    return;
+  }
   const emojis = ['', '😴', '😐', '🙂', '😊', '🔥'];
   const energyLbls = ['', 'Drained', 'Low', 'Steady', 'Strong', 'On fire'];
   const sleepLbls = ['', 'Awful', 'Poor', 'Okay', 'Good', 'Amazing'];
   const stressLbls = ['', 'Calm', 'Light', 'Some', 'High', 'Max'];
-  el.innerHTML = moods.map(m => {
-    const t = new Date(m.timestamp);
-    const ts = timeAgo(t);
-    let details = [energyLbls[m.energy] + ' energy'];
-    if (m.sleep) details.push(sleepLbls[m.sleep] + ' sleep');
-    if (m.stress) details.push(stressLbls[m.stress] + ' stress');
-    const tagHtml = m.tags ? m.tags.map(t => `<span class="mh-tag">#${t}</span>`).join('') : '';
-    const dedicateHtml = m.dedicatedTo ? `<div class="mh-dedicate">💕 For ${m.dedicatedTo === user ? 'you' : NAMES[m.dedicatedTo]}</div>` : '';
-    return `<div class="mh-item">
+  el.innerHTML = moods
+    .map(m => {
+      const t = new Date(m.timestamp);
+      const ts = timeAgo(t);
+      let details = [energyLbls[m.energy] + ' energy'];
+      if (m.sleep) details.push(sleepLbls[m.sleep] + ' sleep');
+      if (m.stress) details.push(stressLbls[m.stress] + ' stress');
+      const tagHtml = m.tags ? m.tags.map(t => `<span class="mh-tag">#${t}</span>`).join('') : '';
+      const dedicateHtml = m.dedicatedTo
+        ? `<div class="mh-dedicate">💕 For ${m.dedicatedTo === user ? 'you' : NAMES[m.dedicatedTo]}</div>`
+        : '';
+      return `<div class="mh-item">
       <div class="mh-emoji">${emojis[m.mood]}</div>
       <div class="mh-info">
-        <div class="mh-name">${m.user === user ? 'You' : (m.userName || '?')}</div>
+        <div class="mh-name">${m.user === user ? 'You' : m.userName || '?'}</div>
         <div class="mh-detail">${details.join(' · ')}</div>
         ${tagHtml ? `<div class="mh-tags">${tagHtml}</div>` : ''}
         ${m.note ? `<div class="mh-note">${esc(m.note)}</div>` : ''}
@@ -111,7 +134,8 @@ function renderMoodFeed(moods) {
       </div>
       <div class="mh-time">${ts}</div>
     </div>`;
-  }).join('');
+    })
+    .join('');
 }
 
 function renderDashMoods(moods) {
@@ -162,7 +186,8 @@ function renderMoodChart(moods) {
   // Get last 7 days of mood data
   const days = [];
   for (let i = 6; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
+    const d = new Date();
+    d.setDate(d.getDate() - i);
     days.push(localDate(d));
   }
 
@@ -176,20 +201,35 @@ function renderMoodChart(moods) {
   });
 
   // Chart dimensions
-  const xStart = 25, xEnd = 310, yTop = 10, yBot = 90;
+  const xStart = 25,
+    xEnd = 310,
+    yTop = 10,
+    yBot = 90;
   const xStep = (xEnd - xStart) / 6;
 
-  function moodToY(v) { return yBot - ((v - 1) / 4) * (yBot - yTop); }
+  function moodToY(v) {
+    return yBot - ((v - 1) / 4) * (yBot - yTop);
+  }
 
   // Build path for user's moods
-  let lineD = '', areaD = '', first = true;
+  let lineD = '',
+    areaD = '',
+    first = true;
   myMoods.forEach((v, i) => {
     if (v === null) return;
-    const x = xStart + i * xStep, y = moodToY(v);
-    if (first) { lineD = `M${x},${y}`; areaD = `M${x},${yBot} L${x},${y}`; first = false; }
-    else { lineD += ` L${x},${y}`; areaD += ` L${x},${y}`; }
+    const x = xStart + i * xStep,
+      y = moodToY(v);
+    if (first) {
+      lineD = `M${x},${y}`;
+      areaD = `M${x},${yBot} L${x},${y}`;
+      first = false;
+    } else {
+      lineD += ` L${x},${y}`;
+      areaD += ` L${x},${y}`;
+    }
   });
-  if (!first) areaD += ` L${xStart + (myMoods.length - 1 - [...myMoods].reverse().findIndex(v => v !== null)) * xStep},${yBot} Z`;
+  if (!first)
+    areaD += ` L${xStart + (myMoods.length - 1 - [...myMoods].reverse().findIndex(v => v !== null)) * xStep},${yBot} Z`;
 
   line.setAttribute('d', lineD || `M${xStart},50`);
   area.setAttribute('d', areaD || `M${xStart},${yBot} L${xEnd},${yBot}`);
@@ -207,17 +247,23 @@ function renderMoodChart(moods) {
     pLine.setAttribute('opacity', '0.7');
     svg.appendChild(pLine);
   }
-  let pLineD = '', pFirst = true;
+  let pLineD = '',
+    pFirst = true;
   partnerMoods.forEach((v, i) => {
     if (v === null) return;
-    const x = xStart + i * xStep, y = moodToY(v);
-    if (pFirst) { pLineD = `M${x},${y}`; pFirst = false; }
-    else { pLineD += ` L${x},${y}`; }
+    const x = xStart + i * xStep,
+      y = moodToY(v);
+    if (pFirst) {
+      pLineD = `M${x},${y}`;
+      pFirst = false;
+    } else {
+      pLineD += ` L${x},${y}`;
+    }
   });
   pLine.setAttribute('d', pLineD || '');
 
   // Add day labels
-  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   let existingLabels = svg.querySelectorAll('.chart-day-label');
   existingLabels.forEach(l => l.remove());
   days.forEach((d, i) => {
@@ -266,7 +312,9 @@ function renderMoodDonut(moods) {
 
   // Count distribution
   const counts = [0, 0, 0, 0, 0]; // moods 1-5
-  myMoods.forEach(m => { if (m.mood >= 1 && m.mood <= 5) counts[m.mood - 1]++; });
+  myMoods.forEach(m => {
+    if (m.mood >= 1 && m.mood <= 5) counts[m.mood - 1]++;
+  });
   const total = myMoods.length;
   const avg = (myMoods.reduce((s, m) => s + m.mood, 0) / total).toFixed(1);
   avgEl.textContent = avg;
@@ -278,7 +326,8 @@ function renderMoodDonut(moods) {
   svg.querySelectorAll('.donut-seg').forEach(s => s.remove());
 
   // Draw donut segments
-  const r = 52, circumference = 2 * Math.PI * r;
+  const r = 52,
+    circumference = 2 * Math.PI * r;
   let offset = 0;
   counts.forEach((count, i) => {
     if (count === 0) return;
@@ -300,11 +349,14 @@ function renderMoodDonut(moods) {
   });
 
   // Build legend
-  legendEl.innerHTML = counts.map((c, i) => {
-    if (c === 0) return '';
-    const pct = Math.round(c / total * 100);
-    return `<div class="chart-legend-item"><div class="chart-legend-dot" style="background:${colors[i]}"></div>${moodLabels[i]} <span style="color:var(--t3);margin-left:4px">${pct}%</span></div>`;
-  }).filter(Boolean).join('');
+  legendEl.innerHTML = counts
+    .map((c, i) => {
+      if (c === 0) return '';
+      const pct = Math.round((c / total) * 100);
+      return `<div class="chart-legend-item"><div class="chart-legend-dot" style="background:${colors[i]}"></div>${moodLabels[i]} <span style="color:var(--t3);margin-left:4px">${pct}%</span></div>`;
+    })
+    .filter(Boolean)
+    .join('');
 }
 
 // ===== STREAK CALENDAR (Mood Page) =====
@@ -312,38 +364,42 @@ function renderStreakCalendar() {
   const el = document.getElementById('streak-cal');
   if (!el || !db) return;
 
-  db.ref('moods').orderByChild('timestamp').limitToLast(100).once('value', snap => {
-    const moods = [];
-    snap.forEach(c => moods.push(c.val()));
+  db.ref('moods')
+    .orderByChild('timestamp')
+    .limitToLast(100)
+    .once('value', snap => {
+      const moods = [];
+      snap.forEach(c => moods.push(c.val()));
 
-    // Build a map of date -> which users checked in
-    const dayMap = {};
-    moods.forEach(m => {
-      if (!m.date) return;
-      if (!dayMap[m.date]) dayMap[m.date] = new Set();
-      dayMap[m.date].add(m.user);
+      // Build a map of date -> which users checked in
+      const dayMap = {};
+      moods.forEach(m => {
+        if (!m.date) return;
+        if (!dayMap[m.date]) dayMap[m.date] = new Set();
+        dayMap[m.date].add(m.user);
+      });
+
+      // Generate last 28 days
+      const today = new Date();
+      const todayStr = localDate(today);
+      let html = '';
+      for (let i = 27; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(today.getDate() - i);
+        const dateStr = localDate(d);
+        const users = dayMap[dateStr];
+        const isToday = dateStr === todayStr;
+        const hasMe = users && users.has(user);
+        const hasBoth = users && users.has(user) && users.has(partner);
+
+        let cls = 'streak-day';
+        if (hasMe) cls += ' active';
+        if (hasBoth) cls += ' both';
+        if (isToday) cls += ' today';
+        html += `<div class="${cls}" title="${dateStr}">${d.getDate()}</div>`;
+      }
+      el.innerHTML = html;
     });
-
-    // Generate last 28 days
-    const today = new Date();
-    const todayStr = localDate(today);
-    let html = '';
-    for (let i = 27; i >= 0; i--) {
-      const d = new Date(); d.setDate(today.getDate() - i);
-      const dateStr = localDate(d);
-      const users = dayMap[dateStr];
-      const isToday = dateStr === todayStr;
-      const hasMe = users && users.has(user);
-      const hasBoth = users && users.has(user) && users.has(partner);
-
-      let cls = 'streak-day';
-      if (hasMe) cls += ' active';
-      if (hasBoth) cls += ' both';
-      if (isToday) cls += ' today';
-      html += `<div class="${cls}" title="${dateStr}">${d.getDate()}</div>`;
-    }
-    el.innerHTML = html;
-  });
 }
 
 // ===== AI CHAT =====
@@ -364,7 +420,12 @@ const AI_TOOLS = [
     input_schema: {
       type: 'object',
       properties: {
-        mood: { type: 'integer', minimum: 1, maximum: 5, description: '1=struggling, 2=low, 3=okay, 4=good, 5=thriving' },
+        mood: {
+          type: 'integer',
+          minimum: 1,
+          maximum: 5,
+          description: '1=struggling, 2=low, 3=okay, 4=good, 5=thriving'
+        },
         energy: { type: 'integer', minimum: 1, maximum: 5, description: '1=drained to 5=energized' },
         note: { type: 'string', description: 'Optional note about the mood' }
       },
@@ -390,7 +451,10 @@ const AI_TOOLS = [
       type: 'object',
       properties: {
         amount: { type: 'number', description: 'Amount in dollars' },
-        category: { type: 'string', enum: ['food', 'transport', 'housing', 'entertainment', 'shopping', 'health', 'subscriptions', 'other'] },
+        category: {
+          type: 'string',
+          enum: ['food', 'transport', 'housing', 'entertainment', 'shopping', 'health', 'subscriptions', 'other']
+        },
         note: { type: 'string', description: 'What the expense was for' }
       },
       required: ['amount', 'category']
@@ -409,7 +473,8 @@ const AI_TOOLS = [
   },
   {
     name: 'get_relationship_health',
-    description: 'Get the relationship health score with detailed breakdown. Shows mood sync, communication, goals, fitness, and financial alignment.',
+    description:
+      'Get the relationship health score with detailed breakdown. Shows mood sync, communication, goals, fitness, and financial alignment.',
     input_schema: { type: 'object', properties: {} }
   },
   {
@@ -533,8 +598,10 @@ async function executeAITool(toolName, toolInput) {
         mood: toolInput.mood,
         energy: toolInput.energy,
         note: toolInput.note || '',
-        user, userName: NAMES[user],
-        timestamp: Date.now(), date: today
+        user,
+        userName: NAMES[user],
+        timestamp: Date.now(),
+        date: today
       });
       return { success: true, message: `Mood logged: ${toolInput.mood}/5, energy ${toolInput.energy}/5` };
     }
@@ -544,8 +611,18 @@ async function executeAITool(toolName, toolInput) {
       const stats = MET.mood.stats;
       if (target === 'both') {
         return {
-          him: { avg7d: stats.him?.avg7d, avg30d: stats.him?.avg30d, streak: stats.him?.streak, total: stats.him?.total },
-          her: { avg7d: stats.her?.avg7d, avg30d: stats.her?.avg30d, streak: stats.her?.streak, total: stats.her?.total },
+          him: {
+            avg7d: stats.him?.avg7d,
+            avg30d: stats.him?.avg30d,
+            streak: stats.him?.streak,
+            total: stats.him?.total
+          },
+          her: {
+            avg7d: stats.her?.avg7d,
+            avg30d: stats.her?.avg30d,
+            streak: stats.her?.streak,
+            total: stats.her?.total
+          },
           joint: { syncScore: stats.joint?.syncScore, bestDay: stats.joint?.bestDay, streak: stats.joint?.streak }
         };
       }
@@ -568,9 +645,11 @@ async function executeAITool(toolName, toolInput) {
     case 'send_note': {
       if (!db) return { error: 'Database not connected' };
       await db.ref('letters').push({
-        from: user, fromName: NAMES[user],
+        from: user,
+        fromName: NAMES[user],
         message: toolInput.message,
-        timestamp: Date.now(), read: false
+        timestamp: Date.now(),
+        read: false
       });
       return { success: true, message: 'Note sent to ' + NAMES[partner] };
     }
@@ -625,7 +704,10 @@ async function sendAI() {
         <button class="btn-sm" onclick="submitAIKey()" style="flex:1">Save &amp; Send</button>
       </div>
     </div>`);
-    setTimeout(function(){ var el=document.getElementById('ai-key-input'); if(el) el.focus(); }, 100);
+    setTimeout(function () {
+      var el = document.getElementById('ai-key-input');
+      if (el) el.focus();
+    }, 100);
     return;
   }
 
@@ -654,7 +736,12 @@ async function sendAI() {
 
     function aiFetchHeaders() {
       if (AI_PROXY_URL) return { 'Content-Type': 'application/json' };
-      return { 'Content-Type': 'application/json', 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' };
+      return {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      };
     }
     const aiEndpoint = AI_PROXY_URL || 'https://api.anthropic.com/v1/messages';
 
@@ -677,7 +764,16 @@ async function sendAI() {
       for (const block of assistantContent) {
         if (block.type === 'tool_use') {
           // Show tool use in UI
-          const toolLabel = { log_mood: '📊 Logging mood', get_mood_stats: '📈 Getting mood stats', add_expense: '💳 Logging expense', send_note: '💌 Sending note', get_relationship_health: '💕 Checking relationship health', add_calendar_event: '📅 Adding event', create_goal: '🎯 Creating goal', get_financial_summary: '💰 Getting finances' };
+          const toolLabel = {
+            log_mood: '📊 Logging mood',
+            get_mood_stats: '📈 Getting mood stats',
+            add_expense: '💳 Logging expense',
+            send_note: '💌 Sending note',
+            get_relationship_health: '💕 Checking relationship health',
+            add_calendar_event: '📅 Adding event',
+            create_goal: '🎯 Creating goal',
+            get_financial_summary: '💰 Getting finances'
+          };
           msgEl.innerHTML += `<div class="chat-tool-call">${toolLabel[block.name] || '🔧 ' + block.name}</div>`;
           msgEl.scrollTop = msgEl.scrollHeight;
 
@@ -724,7 +820,10 @@ async function sendAI() {
 async function submitAIKey() {
   var key = (document.getElementById('ai-key-input') || {}).value || '';
   key = key.trim();
-  if (!key || !key.startsWith('sk-ant-')) { toast('Invalid API key'); return; }
+  if (!key || !key.startsWith('sk-ant-')) {
+    toast('Invalid API key');
+    return;
+  }
   CLAUDE_API_KEY = key;
   await db.ref('profiles/apiKey').set(key);
   closeModal();
@@ -742,14 +841,17 @@ function formatAIReply(text) {
 
 // ===== WORKOUT LOG =====
 function openLog(type) {
-  logType = type; logExercises = [];
+  logType = type;
+  logExercises = [];
   document.getElementById('log-type').textContent = type;
   document.getElementById('ex-list').innerHTML = '';
   document.getElementById('log-notes').value = '';
   document.getElementById('lmod').classList.add('on');
   updLogSliders();
 }
-function closeLog() { document.getElementById('lmod').classList.remove('on'); }
+function closeLog() {
+  document.getElementById('lmod').classList.remove('on');
+}
 
 function addEx() {
   const n = document.getElementById('ex-n').value.trim();
@@ -757,7 +859,8 @@ function addEx() {
   const r = document.getElementById('ex-r').value.trim();
   if (!n) return;
   logExercises.push({ name: n, sets: s, reps: r });
-  document.getElementById('ex-list').innerHTML += `<div class="lei"><span>${esc(n)}</span><span>${s ? esc(s) + 's ' : ''}${r ? esc(r) + 'r' : ''}</span></div>`;
+  document.getElementById('ex-list').innerHTML +=
+    `<div class="lei"><span>${esc(n)}</span><span>${s ? esc(s) + 's ' : ''}${r ? esc(r) + 'r' : ''}</span></div>`;
   document.getElementById('ex-n').value = '';
   document.getElementById('ex-s').value = '';
   document.getElementById('ex-r').value = '';
@@ -767,8 +870,12 @@ function addEx() {
 function updLogSliders() {
   const eLabels = ['', 'Drained', 'Low', 'Steady', 'Strong', 'On fire'];
   const mLabels = ['', 'Tough', 'Okay', 'Good', 'Great', 'Amazing'];
-  document.getElementById('log-e').oninput = function() { document.getElementById('log-ev').textContent = eLabels[this.value]; };
-  document.getElementById('log-m').oninput = function() { document.getElementById('log-mv').textContent = mLabels[this.value]; };
+  document.getElementById('log-e').oninput = function () {
+    document.getElementById('log-ev').textContent = eLabels[this.value];
+  };
+  document.getElementById('log-m').oninput = function () {
+    document.getElementById('log-mv').textContent = mLabels[this.value];
+  };
 }
 
 async function submitLog() {
@@ -798,7 +905,7 @@ const TAP_MSGS = {
   miss: 'Missing you right now',
   thinking: 'Thinking of you'
 };
-const TAP_EMOJIS = { hug:'🤗', kiss:'💋', love:'❤️', miss:'🥺', thinking:'💭' };
+const TAP_EMOJIS = { hug: '🤗', kiss: '💋', love: '❤️', miss: '🥺', thinking: '💭' };
 
 async function sendTap(e, type, emoji) {
   if (!db || !user) return;
@@ -814,41 +921,53 @@ async function sendTap(e, type, emoji) {
   // Haptic feedback if available
   if (navigator.vibrate) navigator.vibrate(50);
   // Show sent animation on the button
-  if (btn) { btn.classList.add('sent'); setTimeout(() => btn.classList.remove('sent'), 500); }
+  if (btn) {
+    btn.classList.add('sent');
+    setTimeout(() => btn.classList.remove('sent'), 500);
+  }
   toast(TAP_MSGS[type] + ' ♡');
 }
 
 function listenTaps() {
-  db.ref('taps').orderByChild('timestamp').limitToLast(20).on('value', snap => {
-    const taps = [];
-    snap.forEach(c => taps.push(c.val()));
-    taps.reverse();
-    renderTapFeed(taps);
-    // Check for new incoming tap to show overlay
-    if (taps.length > 0) {
-      const latest = taps[0];
-      if (latest.from !== user && Date.now() - latest.timestamp < 5000) {
-        showTapOverlay(latest.type);
+  db.ref('taps')
+    .orderByChild('timestamp')
+    .limitToLast(20)
+    .on('value', snap => {
+      const taps = [];
+      snap.forEach(c => taps.push(c.val()));
+      taps.reverse();
+      renderTapFeed(taps);
+      // Check for new incoming tap to show overlay
+      if (taps.length > 0) {
+        const latest = taps[0];
+        if (latest.from !== user && Date.now() - latest.timestamp < 5000) {
+          showTapOverlay(latest.type);
+        }
       }
-    }
-  });
+    });
 }
 
 function renderTapFeed(taps) {
   const el = document.getElementById('tap-feed');
   if (!el) return;
-  if (!taps.length) { el.innerHTML = '<div class="empty">Send a quick tap - let them know you are thinking of them</div>'; return; }
-  el.innerHTML = taps.slice(0, 15).map(t => {
-    const time = new Date(t.timestamp);
-    const ts = timeAgo(time);
-    const emoji = TAP_EMOJIS[t.type] || '♡';
-    const isMe = t.from === user;
-    return `<div class="tap-item">
+  if (!taps.length) {
+    el.innerHTML = '<div class="empty">Send a quick tap - let them know you are thinking of them</div>';
+    return;
+  }
+  el.innerHTML = taps
+    .slice(0, 15)
+    .map(t => {
+      const time = new Date(t.timestamp);
+      const ts = timeAgo(time);
+      const emoji = TAP_EMOJIS[t.type] || '♡';
+      const isMe = t.from === user;
+      return `<div class="tap-item">
       <div class="tap-type">${emoji}</div>
       <div class="tap-from">${isMe ? 'You' : esc(t.fromName || '')} <span style="color:var(--t3);font-weight:300;font-size:10px">${TAP_MSGS[t.type] || ''}</span></div>
       <div class="tap-time">${ts}</div>
     </div>`;
-  }).join('');
+    })
+    .join('');
 }
 
 function showTapOverlay(type) {
@@ -867,7 +986,8 @@ function showTapOverlay(type) {
 function letterFormat(before, after) {
   const ta = document.getElementById('letter-input');
   if (!ta) return;
-  const start = ta.selectionStart, end = ta.selectionEnd;
+  const start = ta.selectionStart,
+    end = ta.selectionEnd;
   const text = ta.value;
   const selected = text.substring(start, end) || 'text';
   ta.value = text.substring(0, start) + before + selected + after + text.substring(end);
@@ -894,7 +1014,10 @@ function formatLetterText(text) {
 function toggleOpenWhen() {
   const check = document.getElementById('ow-check');
   const select = document.getElementById('ow-tag');
-  if (select) { if (check.checked) showEl(select); else hideEl(select); }
+  if (select) {
+    if (check.checked) showEl(select);
+    else hideEl(select);
+  }
 }
 
 async function sendLetter() {
@@ -902,20 +1025,29 @@ async function sendLetter() {
   const input = document.getElementById('letter-input');
   const btn = document.getElementById('letter-send-btn');
   const text = input.value.trim();
-  if (!text) { toast('Write something first'); return; }
+  if (!text) {
+    toast('Write something first');
+    return;
+  }
 
   const owCheck = document.getElementById('ow-check');
   const owTag = document.getElementById('ow-tag');
   const isOpenWhen = owCheck && owCheck.checked && owTag && owTag.value;
 
-  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+  }
 
   if (isOpenWhen) {
     // Save as sealed "open when" letter
     await db.ref('openWhenLetters').push({
-      from: user, fromName: NAMES[user],
-      message: text, openWhen: owTag.value,
-      timestamp: Date.now(), opened: false
+      from: user,
+      fromName: NAMES[user],
+      message: text,
+      openWhen: owTag.value,
+      timestamp: Date.now(),
+      opened: false
     });
     owCheck.checked = false;
     hideEl(owTag);
@@ -923,8 +1055,11 @@ async function sendLetter() {
     toast('Sealed letter saved 💌');
   } else {
     const entry = {
-      from: user, fromName: NAMES[user],
-      message: text, timestamp: Date.now(), read: false
+      from: user,
+      fromName: NAMES[user],
+      message: text,
+      timestamp: Date.now(),
+      read: false
     };
     await db.ref('letters').push(entry);
     if (typeof sendInAppNotif === 'function') sendInAppNotif('letter', 'Sent you a letter', '💌');
@@ -932,17 +1067,29 @@ async function sendLetter() {
   }
   input.value = '';
   if (typeof logActivity === 'function') logActivity('letters', 'sent a letter');
-  if (btn) { btn.textContent = 'Sent'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Send'; }, 1500); }
+  if (btn) {
+    btn.textContent = 'Sent';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'Send';
+    }, 1500);
+  }
 }
 
 function listenOpenWhenLetters() {
   if (!db) return;
-  db.ref('openWhenLetters').orderByChild('timestamp').on('value', snap => {
-    const letters = [];
-    snap.forEach(c => { const v = c.val(); v._key = c.key; letters.push(v); });
-    letters.reverse();
-    renderOpenWhenLetters(letters);
-  });
+  db.ref('openWhenLetters')
+    .orderByChild('timestamp')
+    .on('value', snap => {
+      const letters = [];
+      snap.forEach(c => {
+        const v = c.val();
+        v._key = c.key;
+        letters.push(v);
+      });
+      letters.reverse();
+      renderOpenWhenLetters(letters);
+    });
 }
 
 function renderOpenWhenLetters(letters) {
@@ -951,24 +1098,42 @@ function renderOpenWhenLetters(letters) {
   // Show only letters addressed to me (from partner)
   const forMe = letters.filter(l => l.from === partner);
   const fromMe = letters.filter(l => l.from === user);
-  if (!letters.length) { el.innerHTML = '<div class="empty">No sealed letters yet</div>'; return; }
+  if (!letters.length) {
+    el.innerHTML = '<div class="empty">No sealed letters yet</div>';
+    return;
+  }
 
-  const owLabels = { sad: '😢 When you\'re sad', miss: '💭 When you miss me', happy: '😊 When you\'re happy', stressed: '😰 When you\'re stressed', angry: '😤 When you\'re angry at me', bored: '🥱 When you\'re bored', proud: '💪 When you\'re proud', love: '❤️ When you need love', birthday: '🎂 On your birthday', anniversary: 'On our anniversary' };
+  const owLabels = {
+    sad: "😢 When you're sad",
+    miss: '💭 When you miss me',
+    happy: "😊 When you're happy",
+    stressed: "😰 When you're stressed",
+    angry: "😤 When you're angry at me",
+    bored: "🥱 When you're bored",
+    proud: "💪 When you're proud",
+    love: '❤️ When you need love',
+    birthday: '🎂 On your birthday',
+    anniversary: 'On our anniversary'
+  };
 
   let html = '';
   if (forMe.length) {
-    html += forMe.map(l => {
-      if (l.opened) {
-        return `<div class="ow-card opened"><div class="ow-tag">${owLabels[l.openWhen] || esc(l.openWhen || '')}</div><div class="ow-msg">${formatLetterText(l.message)}</div><div class="ow-from">From ${esc(l.fromName || '')} · ${timeAgo(l.timestamp)}</div></div>`;
-      }
-      return `<div class="ow-card sealed" onclick="openSealedLetter('${l._key}')"><div class="ow-seal">💌</div><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-hint">Tap to open</div></div>`;
-    }).join('');
+    html += forMe
+      .map(l => {
+        if (l.opened) {
+          return `<div class="ow-card opened"><div class="ow-tag">${owLabels[l.openWhen] || esc(l.openWhen || '')}</div><div class="ow-msg">${formatLetterText(l.message)}</div><div class="ow-from">From ${esc(l.fromName || '')} · ${timeAgo(l.timestamp)}</div></div>`;
+        }
+        return `<div class="ow-card sealed" onclick="openSealedLetter('${l._key}')"><div class="ow-seal">💌</div><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-hint">Tap to open</div></div>`;
+      })
+      .join('');
   }
   if (fromMe.length) {
     html += `<div class="t-label c-t3 mt-12 mb-6">Sent by you</div>`;
-    html += fromMe.map(l => {
-      return `<div class="ow-card sent"><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-status">${l.opened ? 'Opened' : 'Sealed'}</div></div>`;
-    }).join('');
+    html += fromMe
+      .map(l => {
+        return `<div class="ow-card sent"><div class="ow-tag">${owLabels[l.openWhen] || l.openWhen}</div><div class="ow-status">${l.opened ? 'Opened' : 'Sealed'}</div></div>`;
+      })
+      .join('');
   }
   el.innerHTML = html;
 }
@@ -980,36 +1145,48 @@ async function openSealedLetter(key) {
 }
 
 function listenLetters() {
-  db.ref('letters').orderByChild('timestamp').limitToLast(30).on('value', snap => {
-    const letters = [];
-    snap.forEach(c => { const v = c.val(); v._key = c.key; letters.push(v); });
-    letters.reverse();
-    renderLetterFeed(letters);
-    // Mark unread letters from partner as read
-    letters.forEach(l => {
-      if (l.from !== user && !l.read) {
-        db.ref('letters/' + l._key + '/read').set(true);
-      }
+  db.ref('letters')
+    .orderByChild('timestamp')
+    .limitToLast(30)
+    .on('value', snap => {
+      const letters = [];
+      snap.forEach(c => {
+        const v = c.val();
+        v._key = c.key;
+        letters.push(v);
+      });
+      letters.reverse();
+      renderLetterFeed(letters);
+      // Mark unread letters from partner as read
+      letters.forEach(l => {
+        if (l.from !== user && !l.read) {
+          db.ref('letters/' + l._key + '/read').set(true);
+        }
+      });
     });
-  });
 }
 
 function renderLetterFeed(letters) {
   const el = document.getElementById('letter-feed');
   if (!el) return;
-  if (!letters.length) { el.innerHTML = '<div class="empty">Write something only they will read</div>'; return; }
-  el.innerHTML = letters.map(l => {
-    const time = new Date(l.timestamp);
-    const ts = timeAgo(time);
-    const isMe = l.from === user;
-    return `<div class="letter-card ${isMe ? 'from-me' : 'from-them'}">
+  if (!letters.length) {
+    el.innerHTML = '<div class="empty">Write something only they will read</div>';
+    return;
+  }
+  el.innerHTML = letters
+    .map(l => {
+      const time = new Date(l.timestamp);
+      const ts = timeAgo(time);
+      const isMe = l.from === user;
+      return `<div class="letter-card ${isMe ? 'from-me' : 'from-them'}">
       <div class="letter-header">
         <span class="letter-from">${isMe ? 'You' : esc(l.fromName || '')}${!isMe && !l.read ? '<span class="letter-unread"></span>' : ''}</span>
         <span class="letter-time">${ts}</span>
       </div>
       <div class="letter-body">${formatLetterText(l.message)}</div>
     </div>`;
-  }).join('');
+    })
+    .join('');
 }
 
 // ===== MILESTONES & TIMELINE =====
@@ -1023,44 +1200,66 @@ async function saveMilestone() {
   const date = document.getElementById('ms-date').value;
   const emoji = document.getElementById('ms-emoji').value.trim() || '✨';
   const desc = document.getElementById('ms-desc').value.trim();
-  if (!title || !date) { toast('Title and date required'); return; }
-  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+  if (!title || !date) {
+    toast('Title and date required');
+    return;
+  }
+  const btn = event?.target;
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+  }
   const entry = {
-    title, date, emoji, description: desc,
-    user: user, userName: NAMES[user], timestamp: Date.now()
+    title,
+    date,
+    emoji,
+    description: desc,
+    user: user,
+    userName: NAMES[user],
+    timestamp: Date.now()
   };
   await db.ref('milestones').push(entry);
   document.getElementById('ms-title').value = '';
   document.getElementById('ms-date').value = '';
   document.getElementById('ms-emoji').value = '';
   document.getElementById('ms-desc').value = '';
-  if (btn) { btn.disabled = false; btn.textContent = 'Save milestone'; }
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Save milestone';
+  }
   toggleMsForm();
   toast('Milestone saved');
 }
 
 function listenMilestones() {
-  db.ref('milestones').orderByChild('date').on('value', snap => {
-    const milestones = [];
-    snap.forEach(c => milestones.push(c.val()));
-    milestones.reverse();
-    renderTimeline(milestones);
-  });
+  db.ref('milestones')
+    .orderByChild('date')
+    .on('value', snap => {
+      const milestones = [];
+      snap.forEach(c => milestones.push(c.val()));
+      milestones.reverse();
+      renderTimeline(milestones);
+    });
 }
 
 function renderTimeline(milestones) {
   const el = document.getElementById('timeline');
   if (!el) return;
-  if (!milestones.length) { el.innerHTML = '<div class="empty">Add your first milestone together</div>'; return; }
-  el.innerHTML = milestones.map(m => {
-    const d = new Date(m.date + 'T00:00:00');
-    const dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    return `<div class="tl-item">
+  if (!milestones.length) {
+    el.innerHTML = '<div class="empty">Add your first milestone together</div>';
+    return;
+  }
+  el.innerHTML = milestones
+    .map(m => {
+      const d = new Date(m.date + 'T00:00:00');
+      const dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      return `<div class="tl-item">
       <div class="tl-date">${dateStr}</div>
       <div class="tl-title"><span class="tl-emoji">${m.emoji || '✨'}</span>${m.title}</div>
       ${m.description ? `<div class="tl-desc">${m.description}</div>` : ''}
     </div>`;
-  }).join('');
+    })
+    .join('');
 }
 
 // ===== COUNTDOWNS =====
@@ -1073,17 +1272,30 @@ async function saveCountdown() {
   const title = document.getElementById('cd-title').value.trim();
   const date = document.getElementById('cd-date').value;
   const emoji = document.getElementById('cd-emoji').value.trim() || '⏳';
-  if (!title || !date) { toast('Title and date required'); return; }
-  const btn = event?.target; if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+  if (!title || !date) {
+    toast('Title and date required');
+    return;
+  }
+  const btn = event?.target;
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+  }
   const entry = {
-    title, date, emoji,
-    createdBy: user, timestamp: Date.now()
+    title,
+    date,
+    emoji,
+    createdBy: user,
+    timestamp: Date.now()
   };
   await db.ref('countdowns').push(entry);
   document.getElementById('cd-title').value = '';
   document.getElementById('cd-date').value = '';
   document.getElementById('cd-emoji').value = '';
-  if (btn) { btn.disabled = false; btn.textContent = 'Add countdown'; }
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Add countdown';
+  }
   toggleCdForm();
   toast('Countdown added');
 }
@@ -1100,74 +1312,78 @@ function renderCountdowns(countdowns) {
   const el = document.getElementById('countdown-grid');
   if (!el) return;
   const now = new Date();
-  now.setHours(0,0,0,0);
+  now.setHours(0, 0, 0, 0);
   const cards = countdowns
     .map(c => {
       const target = new Date(c.date + 'T00:00:00');
-      const diff = Math.ceil((target - now) / (1000*60*60*24));
+      const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
       return { ...c, daysLeft: diff };
     })
     .filter(c => c.daysLeft >= 0)
-    .sort((a,b) => a.daysLeft - b.daysLeft);
+    .sort((a, b) => a.daysLeft - b.daysLeft);
 
-  let html = cards.map(c => `<div class="cd-card">
+  let html = cards
+    .map(
+      c => `<div class="cd-card">
     <div class="cd-emoji">${c.emoji || '⏳'}</div>
     <div class="cd-days">${c.daysLeft}</div>
     <div class="cd-unit">${c.daysLeft === 1 ? 'day' : 'days'}</div>
     <div class="cd-title">${c.title}</div>
     <div class="cd-date">${new Date(c.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
-  </div>`).join('');
+  </div>`
+    )
+    .join('');
   html += '<div class="cd-add" onclick="toggleCdForm()"><span>+</span><div>Add Countdown</div></div>';
   el.innerHTML = html;
 }
 
 // ===== DAILY QUESTIONS =====
 const QUESTIONS = [
-  {q:"What's a memory of us you replay in your head?",c:"Memory"},
-  {q:"What's something small I do that makes your day?",c:"Deep"},
-  {q:"If we could teleport anywhere right now, where would you pick?",c:"Fun"},
-  {q:"What song makes you think of us?",c:"Memory"},
-  {q:"What's one thing you'd love for us to try together?",c:"Future"},
-  {q:"What was your first impression of me?",c:"Memory"},
-  {q:"What quality do you admire most in me?",c:"Deep"},
-  {q:"Describe your perfect lazy Sunday with me.",c:"Fun"},
-  {q:"What's a goal you want us to achieve together this year?",c:"Future"},
-  {q:"What's the funniest moment we've shared?",c:"Memory"},
-  {q:"What do you think makes our relationship unique?",c:"Deep"},
-  {q:"If you wrote a book about us, what would the title be?",c:"Fun"},
-  {q:"What's something new you've learned about yourself because of us?",c:"Deep"},
-  {q:"What's a place you've always wanted to visit with me?",c:"Future"},
-  {q:"What's one thing I do that always makes you smile?",c:"Deep"},
-  {q:"What's your favorite meal we've had together?",c:"Memory"},
-  {q:"If we had a whole week off together, what would we do?",c:"Future"},
-  {q:"What's a challenge we've overcome that made us stronger?",c:"Deep"},
-  {q:"What do you love most about how we communicate?",c:"Deep"},
-  {q:"What's a tradition you'd love for us to start?",c:"Future"},
-  {q:"What's the best surprise you've ever gotten from me?",c:"Memory"},
-  {q:"What does 'home' feel like to you?",c:"Deep"},
-  {q:"What would our couple superpower be?",c:"Fun"},
-  {q:"What's a lesson love has taught you?",c:"Deep"},
-  {q:"What's on your relationship bucket list?",c:"Future"},
-  {q:"What's a movie or show that reminds you of us?",c:"Fun"},
-  {q:"How do you know when I'm thinking about you?",c:"Deep"},
-  {q:"What's the bravest thing you've done for love?",c:"Deep"},
-  {q:"If you could relive one day with me, which would it be?",c:"Memory"},
-  {q:"What does your dream future with me look like?",c:"Future"},
-  {q:"What's something you've never told me but want to?",c:"Deep"},
-  {q:"What's your favorite inside joke we have?",c:"Fun"},
-  {q:"What do you need more of in our relationship?",c:"Deep"},
-  {q:"What's a skill you'd love for us to learn together?",c:"Future"},
-  {q:"What moment made you realize this was real?",c:"Memory"},
-  {q:"What does unconditional love mean to you?",c:"Deep"},
-  {q:"Beach vacation or mountain getaway with me?",c:"Fun"},
-  {q:"What's the hardest part about missing each other?",c:"Deep"},
-  {q:"What's a date idea you've been wanting to try?",c:"Future"},
-  {q:"What's the most thoughtful thing I've done for you?",c:"Memory"},
+  { q: "What's a memory of us you replay in your head?", c: 'Memory' },
+  { q: "What's something small I do that makes your day?", c: 'Deep' },
+  { q: 'If we could teleport anywhere right now, where would you pick?', c: 'Fun' },
+  { q: 'What song makes you think of us?', c: 'Memory' },
+  { q: "What's one thing you'd love for us to try together?", c: 'Future' },
+  { q: 'What was your first impression of me?', c: 'Memory' },
+  { q: 'What quality do you admire most in me?', c: 'Deep' },
+  { q: 'Describe your perfect lazy Sunday with me.', c: 'Fun' },
+  { q: "What's a goal you want us to achieve together this year?", c: 'Future' },
+  { q: "What's the funniest moment we've shared?", c: 'Memory' },
+  { q: 'What do you think makes our relationship unique?', c: 'Deep' },
+  { q: 'If you wrote a book about us, what would the title be?', c: 'Fun' },
+  { q: "What's something new you've learned about yourself because of us?", c: 'Deep' },
+  { q: "What's a place you've always wanted to visit with me?", c: 'Future' },
+  { q: "What's one thing I do that always makes you smile?", c: 'Deep' },
+  { q: "What's your favorite meal we've had together?", c: 'Memory' },
+  { q: 'If we had a whole week off together, what would we do?', c: 'Future' },
+  { q: "What's a challenge we've overcome that made us stronger?", c: 'Deep' },
+  { q: 'What do you love most about how we communicate?', c: 'Deep' },
+  { q: "What's a tradition you'd love for us to start?", c: 'Future' },
+  { q: "What's the best surprise you've ever gotten from me?", c: 'Memory' },
+  { q: "What does 'home' feel like to you?", c: 'Deep' },
+  { q: 'What would our couple superpower be?', c: 'Fun' },
+  { q: "What's a lesson love has taught you?", c: 'Deep' },
+  { q: "What's on your relationship bucket list?", c: 'Future' },
+  { q: "What's a movie or show that reminds you of us?", c: 'Fun' },
+  { q: "How do you know when I'm thinking about you?", c: 'Deep' },
+  { q: "What's the bravest thing you've done for love?", c: 'Deep' },
+  { q: 'If you could relive one day with me, which would it be?', c: 'Memory' },
+  { q: 'What does your dream future with me look like?', c: 'Future' },
+  { q: "What's something you've never told me but want to?", c: 'Deep' },
+  { q: "What's your favorite inside joke we have?", c: 'Fun' },
+  { q: 'What do you need more of in our relationship?', c: 'Deep' },
+  { q: "What's a skill you'd love for us to learn together?", c: 'Future' },
+  { q: 'What moment made you realize this was real?', c: 'Memory' },
+  { q: 'What does unconditional love mean to you?', c: 'Deep' },
+  { q: 'Beach vacation or mountain getaway with me?', c: 'Fun' },
+  { q: "What's the hardest part about missing each other?", c: 'Deep' },
+  { q: "What's a date idea you've been wanting to try?", c: 'Future' },
+  { q: "What's the most thoughtful thing I've done for you?", c: 'Memory' }
 ];
 
 function getTodayQuestion() {
   const today = new Date();
-  const dayOfYear = Math.floor((today - new Date(today.getFullYear(),0,0)) / (1000*60*60*24));
+  const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
   return QUESTIONS[dayOfYear % QUESTIONS.length];
 }
 
@@ -1184,16 +1400,26 @@ async function submitDailyAnswer() {
   const input = document.getElementById('dq-answer');
   const btn = document.getElementById('dq-submit-btn');
   const answer = input.value.trim();
-  if (!answer) { toast('Write an answer first'); return; }
-  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+  if (!answer) {
+    toast('Write an answer first');
+    return;
+  }
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+  }
   const today = localDate();
   await db.ref('dailyAnswers/' + today + '/' + user).set({
-    answer, userName: NAMES[user], timestamp: Date.now()
+    answer,
+    userName: NAMES[user],
+    timestamp: Date.now()
   });
   input.value = '';
   if (typeof logActivity === 'function') logActivity('daily-q', 'answered the daily question');
   if (typeof renderSmartNudges === 'function') renderSmartNudges();
-  if (btn) { btn.textContent = 'Saved'; }
+  if (btn) {
+    btn.textContent = 'Saved';
+  }
   toast('Answer submitted');
 }
 
@@ -1226,7 +1452,7 @@ function renderDailyAnswers(data) {
   if (theirAnswer) {
     html += `<div class="dq-answer theirs"><div class="dq-answer-name">${NAMES[partner]}</div>${esc(theirAnswer.answer)}</div>`;
   } else if (myAnswer) {
-    html += '<div class="dq-waiting">' + NAMES[partner] + ' hasn\'t answered yet</div>';
+    html += '<div class="dq-waiting">' + NAMES[partner] + " hasn't answered yet</div>";
   }
   el.innerHTML = html;
 }
@@ -1271,8 +1497,14 @@ async function submitGratitude() {
   const input = document.getElementById('grat-input');
   const btn = document.getElementById('grat-submit-btn');
   const text = input.value.trim();
-  if (!text) { toast('Write something first'); return; }
-  if (btn) { btn.disabled = true; btn.textContent = 'Sharing...'; }
+  if (!text) {
+    toast('Write something first');
+    return;
+  }
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Sharing...';
+  }
   const entry = {
     from: user,
     fromName: NAMES[user],
@@ -1283,32 +1515,46 @@ async function submitGratitude() {
   await db.ref('gratitude').push(entry);
   input.value = '';
   if (typeof logActivity === 'function') logActivity('gratitude', 'shared gratitude');
-  if (btn) { btn.textContent = 'Shared'; setTimeout(() => { btn.disabled = false; btn.textContent = 'Share'; }, 1500); }
+  if (btn) {
+    btn.textContent = 'Shared';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'Share';
+    }, 1500);
+  }
   toast('Shared');
 }
 
 function listenGratitude() {
-  db.ref('gratitude').orderByChild('timestamp').limitToLast(20).on('value', snap => {
-    const entries = [];
-    snap.forEach(c => entries.push(c.val()));
-    entries.reverse();
-    renderGratitude(entries);
-  });
+  db.ref('gratitude')
+    .orderByChild('timestamp')
+    .limitToLast(20)
+    .on('value', snap => {
+      const entries = [];
+      snap.forEach(c => entries.push(c.val()));
+      entries.reverse();
+      renderGratitude(entries);
+    });
 }
 
 function renderGratitude(entries) {
   const el = document.getElementById('grat-feed');
   if (!el) return;
-  if (!entries.length) { el.innerHTML = '<div class="empty">Tell them what you are grateful for today</div>'; return; }
-  el.innerHTML = entries.map(g => {
-    const time = new Date(g.timestamp);
-    const ts = timeAgo(time);
-    const isMe = g.from === user;
-    return `<div class="grat-card">
+  if (!entries.length) {
+    el.innerHTML = '<div class="empty">Tell them what you are grateful for today</div>';
+    return;
+  }
+  el.innerHTML = entries
+    .map(g => {
+      const time = new Date(g.timestamp);
+      const ts = timeAgo(time);
+      const isMe = g.from === user;
+      return `<div class="grat-card">
       <div class="grat-from">${isMe ? 'You' : esc(g.fromName || '')} · ${ts}</div>
       <div class="grat-msg">${esc(g.message)}</div>
     </div>`;
-  }).join('');
+    })
+    .join('');
 }
 
 // ========================================
@@ -1380,14 +1626,17 @@ function initAIBackgroundService() {
     });
   });
   // Listen for nudges
-  db.ref('ai/nudges/' + user).orderByChild('timestamp').limitToLast(5).on('value', snap => {
-    aiNudges = [];
-    snap.forEach(c => {
-      const n = c.val();
-      if (n && !n.dismissed) aiNudges.push({ ...n, key: c.key });
+  db.ref('ai/nudges/' + user)
+    .orderByChild('timestamp')
+    .limitToLast(5)
+    .on('value', snap => {
+      aiNudges = [];
+      snap.forEach(c => {
+        const n = c.val();
+        if (n && !n.dismissed) aiNudges.push({ ...n, key: c.key });
+      });
+      renderAINudges();
     });
-    renderAINudges();
-  });
 }
 
 async function runAIRole(roleKey, role) {
@@ -1586,7 +1835,12 @@ async function callAIBackground(prompt) {
   if (!CLAUDE_API_KEY) return null;
   const headers = AI_PROXY_URL
     ? { 'Content-Type': 'application/json' }
-    : { 'Content-Type': 'application/json', 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' };
+    : {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      };
   const endpoint = AI_PROXY_URL || 'https://api.anthropic.com/v1/messages';
 
   const resp = await fetch(endpoint, {
@@ -1600,8 +1854,15 @@ async function callAIBackground(prompt) {
     })
   });
   const data = await resp.json();
-  const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-  try { return JSON.parse(text); } catch { return null; }
+  const text = (data.content || [])
+    .filter(b => b.type === 'text')
+    .map(b => b.text)
+    .join('');
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
 }
 
 async function processAIRoleResult(roleKey, result) {
@@ -1615,19 +1876,25 @@ async function processAIRoleResult(roleKey, result) {
       if (result.dailyQuestion) await db.ref('ai/content/' + today + '/dailyQuestion').set(result.dailyQuestion);
       if (result.dateIdea) await db.ref('ai/content/' + today + '/dateIdea').set(result.dateIdea);
       if (result.affirmation) await db.ref('ai/content/' + today + '/affirmation').set(result.affirmation);
-      if (result.conversationStarter) await db.ref('ai/content/' + today + '/conversationStarter').set(result.conversationStarter);
+      if (result.conversationStarter)
+        await db.ref('ai/content/' + today + '/conversationStarter').set(result.conversationStarter);
       if (result.challenge) await db.ref('ai/content/' + today + '/challenge').set(result.challenge);
       break;
     }
     case 'relationshipMonitor': {
-      if (result.nudgeHim) await db.ref('ai/nudges/him').push({ message: result.nudgeHim, type: 'relationship', timestamp: now });
-      if (result.nudgeHer) await db.ref('ai/nudges/her').push({ message: result.nudgeHer, type: 'relationship', timestamp: now });
-      if (result.insight) await db.ref('ai/insights/relationship').push({ insight: result.insight, status: result.status, timestamp: now });
+      if (result.nudgeHim)
+        await db.ref('ai/nudges/him').push({ message: result.nudgeHim, type: 'relationship', timestamp: now });
+      if (result.nudgeHer)
+        await db.ref('ai/nudges/her').push({ message: result.nudgeHer, type: 'relationship', timestamp: now });
+      if (result.insight)
+        await db
+          .ref('ai/insights/relationship')
+          .push({ insight: result.insight, status: result.status, timestamp: now });
       break;
     }
     case 'milestoneTracker': {
       if (result.upcoming && result.upcoming.length > 0) {
-        result.upcoming.forEach(async (item) => {
+        result.upcoming.forEach(async item => {
           if (item.daysAway <= 3) {
             await db.ref('ai/nudges/him').push({ message: item.reminder, type: 'milestone', timestamp: now });
             await db.ref('ai/nudges/her').push({ message: item.reminder, type: 'milestone', timestamp: now });
@@ -1637,8 +1904,10 @@ async function processAIRoleResult(roleKey, result) {
       break;
     }
     case 'goalCoach': {
-      if (result.nudgeHim) await db.ref('ai/nudges/him').push({ message: result.nudgeHim, type: 'goals', timestamp: now });
-      if (result.nudgeHer) await db.ref('ai/nudges/her').push({ message: result.nudgeHer, type: 'goals', timestamp: now });
+      if (result.nudgeHim)
+        await db.ref('ai/nudges/him').push({ message: result.nudgeHim, type: 'goals', timestamp: now });
+      if (result.nudgeHer)
+        await db.ref('ai/nudges/her').push({ message: result.nudgeHer, type: 'goals', timestamp: now });
       break;
     }
     case 'wellnessAdvisor': {
@@ -1665,15 +1934,22 @@ async function processAIRoleResult(roleKey, result) {
 function renderAINudges() {
   const container = document.getElementById('ai-nudges');
   if (!container) return;
-  if (!aiNudges.length) { container.innerHTML = ''; return; }
+  if (!aiNudges.length) {
+    container.innerHTML = '';
+    return;
+  }
   const typeIcons = { relationship: '💕', milestone: '📅', goals: '🎯', wellness: '💪', finance: '💰' };
-  container.innerHTML = aiNudges.map(n => `
+  container.innerHTML = aiNudges
+    .map(
+      n => `
     <div class="ai-nudge-card">
       <span class="ai-nudge-icon">${typeIcons[n.type] || '✨'}</span>
       <div class="ai-nudge-text">${esc(n.message)}</div>
       <button class="ai-nudge-dismiss" onclick="dismissAINudge('${n.key}')" aria-label="Dismiss">&times;</button>
     </div>
-  `).join('');
+  `
+    )
+    .join('');
 }
 
 async function dismissAINudge(key) {
@@ -1699,4 +1975,3 @@ async function loadAIDailyContent() {
   const aiConvo = document.getElementById('ai-convo-starter');
   if (aiConvo && content.conversationStarter) aiConvo.textContent = content.conversationStarter;
 }
-

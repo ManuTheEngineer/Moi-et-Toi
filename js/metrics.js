@@ -2,14 +2,14 @@
 // Client-side indexing, computed metrics, and data aggregation.
 // Rebuilt on data load, updated incrementally on changes.
 
-const MET = window.MET = {
+const MET = (window.MET = {
   mood: { byUser: {}, byDate: {}, byWeek: {}, byMonth: {}, all: [], stats: {} },
   fitness: { workouts: [], stats: {} },
   finance: { expenses: [], stats: {} },
   relationship: { score: 0, breakdown: {}, history: [] },
   _ready: false,
   _listeners: []
-};
+});
 
 // ===== HELPERS =====
 function weekId(d) {
@@ -18,9 +18,18 @@ function weekId(d) {
   const wn = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
   return d.getFullYear() + '-W' + String(wn).padStart(2, '0');
 }
-function monthId(d) { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
-function daysAgo(n) { const d = new Date(); d.setDate(d.getDate() - n); return d; }
-function dayOfWeek(dateStr) { return new Date(dateStr + 'T12:00:00').getDay(); } // 0=Sun
+function monthId(d) {
+  d = d || new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+}
+function daysAgo(n) {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d;
+}
+function dayOfWeek(dateStr) {
+  return new Date(dateStr + 'T12:00:00').getDay();
+} // 0=Sun
 
 // ===== MOOD INDEX =====
 function buildMoodIndex(moods) {
@@ -68,17 +77,22 @@ function buildMoodIndex(moods) {
 function computeMoodStats(moods) {
   if (!moods.length) return { avg7d: 0, avg30d: 0, avg90d: 0, streak: 0, total: 0, trend: 'stable', dayOfWeek: [] };
   const now = Date.now();
-  const d7 = now - 7 * 86400000, d30 = now - 30 * 86400000, d90 = now - 90 * 86400000;
+  const d7 = now - 7 * 86400000,
+    d30 = now - 30 * 86400000,
+    d90 = now - 90 * 86400000;
   const m7 = moods.filter(m => m.timestamp > d7);
   const m30 = moods.filter(m => m.timestamp > d30);
   const m90 = moods.filter(m => m.timestamp > d90);
 
-  const avg = arr => arr.length ? +(arr.reduce((s, m) => s + m.mood, 0) / arr.length).toFixed(2) : 0;
-  const avgE = arr => arr.length ? +(arr.reduce((s, m) => s + (m.energy || 3), 0) / arr.length).toFixed(2) : 0;
+  const avg = arr => (arr.length ? +(arr.reduce((s, m) => s + m.mood, 0) / arr.length).toFixed(2) : 0);
+  const avgE = arr => (arr.length ? +(arr.reduce((s, m) => s + (m.energy || 3), 0) / arr.length).toFixed(2) : 0);
 
   // Rolling averages
-  const avg7d = avg(m7), avg30d = avg(m30), avg90d = avg(m90);
-  const energy7d = avgE(m7), energy30d = avgE(m30);
+  const avg7d = avg(m7),
+    avg30d = avg(m30),
+    avg90d = avg(m90);
+  const energy7d = avgE(m7),
+    energy30d = avgE(m30);
 
   // Trend direction: compare last 7d avg to previous 7d avg
   const d14 = now - 14 * 86400000;
@@ -93,8 +107,12 @@ function computeMoodStats(moods) {
   for (let i = 0; i < 365; i++) {
     const ds = localDate(checkDate);
     const found = moods.some(m => m.date === ds);
-    if (found) { streak++; checkDate.setDate(checkDate.getDate() - 1); }
-    else if (ds === today) { checkDate.setDate(checkDate.getDate() - 1); } // today might not be checked yet
+    if (found) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else if (ds === today) {
+      checkDate.setDate(checkDate.getDate() - 1);
+    } // today might not be checked yet
     else break;
   }
 
@@ -104,13 +122,16 @@ function computeMoodStats(moods) {
   m30.forEach(m => {
     if (!m.date) return;
     const d = dayOfWeek(m.date);
-    dow[d] += m.mood; dowC[d]++;
+    dow[d] += m.mood;
+    dowC[d]++;
   });
-  const dayOfWeekAvg = dow.map((s, i) => dowC[i] ? +(s / dowC[i]).toFixed(1) : 0);
+  const dayOfWeekAvg = dow.map((s, i) => (dowC[i] ? +(s / dowC[i]).toFixed(1) : 0));
 
   // Mood distribution (last 30d)
   const dist = [0, 0, 0, 0, 0]; // 1-5
-  m30.forEach(m => { if (m.mood >= 1 && m.mood <= 5) dist[m.mood - 1]++; });
+  m30.forEach(m => {
+    if (m.mood >= 1 && m.mood <= 5) dist[m.mood - 1]++;
+  });
 
   // Mood-energy correlation (Pearson r, last 30d)
   let correlation = 0;
@@ -118,22 +139,39 @@ function computeMoodStats(moods) {
   if (paired.length >= 5) {
     const mA = paired.reduce((s, m) => s + m.mood, 0) / paired.length;
     const eA = paired.reduce((s, m) => s + m.energy, 0) / paired.length;
-    let num = 0, denM = 0, denE = 0;
+    let num = 0,
+      denM = 0,
+      denE = 0;
     paired.forEach(m => {
-      const dm = m.mood - mA, de = m.energy - eA;
-      num += dm * de; denM += dm * dm; denE += de * de;
+      const dm = m.mood - mA,
+        de = m.energy - eA;
+      num += dm * de;
+      denM += dm * dm;
+      denE += de * de;
     });
     correlation = denM && denE ? +(num / Math.sqrt(denM * denE)).toFixed(2) : 0;
   }
 
-  return { avg7d, avg30d, avg90d, energy7d, energy30d, streak, total: moods.length,
-    trend, dayOfWeek: dayOfWeekAvg, distribution: dist, moodEnergyCorr: correlation };
+  return {
+    avg7d,
+    avg30d,
+    avg90d,
+    energy7d,
+    energy30d,
+    streak,
+    total: moods.length,
+    trend,
+    dayOfWeek: dayOfWeekAvg,
+    distribution: dist,
+    moodEnergyCorr: correlation
+  };
 }
 
 function computeJointMoodStats(idx) {
   // Sync score: % of days (last 30) where both checked in and moods within 1 of each other
   const now = Date.now();
-  let syncDays = 0, bothDays = 0;
+  let syncDays = 0,
+    bothDays = 0;
   for (let i = 0; i < 30; i++) {
     const ds = localDate(daysAgo(i));
     const dayMoods = idx.byDate[ds] || [];
@@ -159,16 +197,22 @@ function computeJointMoodStats(idx) {
   if (pairs.length >= 5) {
     const hA = pairs.reduce((s, p) => s + p.her, 0) / pairs.length;
     const mA = pairs.reduce((s, p) => s + p.him, 0) / pairs.length;
-    let num = 0, dH = 0, dM = 0;
+    let num = 0,
+      dH = 0,
+      dM = 0;
     pairs.forEach(p => {
-      const dh = p.her - hA, dm = p.him - mA;
-      num += dh * dm; dH += dh * dh; dM += dm * dm;
+      const dh = p.her - hA,
+        dm = p.him - mA;
+      num += dh * dm;
+      dH += dh * dh;
+      dM += dm * dm;
     });
     crossCorrelation = dH && dM ? +(num / Math.sqrt(dH * dM)).toFixed(2) : 0;
   }
 
   // Best day together (highest combined mood)
-  let bestDay = null, bestScore = 0;
+  let bestDay = null,
+    bestScore = 0;
   Object.keys(idx.byDate).forEach(ds => {
     const dayMoods = idx.byDate[ds];
     const herM = dayMoods.find(m => m.user === 'her');
@@ -187,9 +231,12 @@ function computeJointMoodStats(idx) {
     const ds = localDate(cd);
     const dayMoods = idx.byDate[ds] || [];
     const both = dayMoods.some(m => m.user === 'her') && dayMoods.some(m => m.user === 'him');
-    if (both) { jointStreak++; cd.setDate(cd.getDate() - 1); }
-    else if (ds === today) { cd.setDate(cd.getDate() - 1); }
-    else break;
+    if (both) {
+      jointStreak++;
+      cd.setDate(cd.getDate() - 1);
+    } else if (ds === today) {
+      cd.setDate(cd.getDate() - 1);
+    } else break;
   }
 
   return { syncScore, crossCorrelation, bestDay, bothDays, jointStreak };
@@ -197,12 +244,16 @@ function computeJointMoodStats(idx) {
 
 // ===== FITNESS INDEX =====
 function buildFitnessIndex(workouts) {
-  if (!workouts || !workouts.length) { MET.fitness = { workouts: [], stats: {} }; return; }
+  if (!workouts || !workouts.length) {
+    MET.fitness = { workouts: [], stats: {} };
+    return;
+  }
   workouts.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
   MET.fitness.workouts = workouts;
 
   const now = Date.now();
-  const d7 = now - 7 * 86400000, d30 = now - 30 * 86400000;
+  const d7 = now - 7 * 86400000,
+    d30 = now - 30 * 86400000;
   const w7 = workouts.filter(w => (w.timestamp || new Date(w.date).getTime()) > d7);
   const w30 = workouts.filter(w => (w.timestamp || new Date(w.date).getTime()) > d30);
 
@@ -234,29 +285,32 @@ function buildFitnessIndex(workouts) {
 
   // Muscle group distribution (last 30d)
   const muscleGroups = {};
-  w30.forEach(w => (w.exercises || []).forEach(e => {
-    const cat = e.category || e.muscles || 'other';
-    const key = Array.isArray(cat) ? cat[0] : cat;
-    if (key) muscleGroups[key] = (muscleGroups[key] || 0) + 1;
-  }));
+  w30.forEach(w =>
+    (w.exercises || []).forEach(e => {
+      const cat = e.category || e.muscles || 'other';
+      const key = Array.isArray(cat) ? cat[0] : cat;
+      if (key) muscleGroups[key] = (muscleGroups[key] || 0) + 1;
+    })
+  );
 
   // Personal records
   const prs = {};
-  workouts.forEach(w => (w.exercises || []).forEach(e => {
-    if (e.weight && e.name) {
-      const key = e.name.toLowerCase();
-      if (!prs[key] || e.weight > prs[key].weight) {
-        prs[key] = { weight: e.weight, date: w.date, user: w.user };
+  workouts.forEach(w =>
+    (w.exercises || []).forEach(e => {
+      if (e.weight && e.name) {
+        const key = e.name.toLowerCase();
+        if (!prs[key] || e.weight > prs[key].weight) {
+          prs[key] = { weight: e.weight, date: w.date, user: w.user };
+        }
       }
-    }
-  }));
+    })
+  );
 
   MET.fitness.stats = { freq7d, freq30d, totalVol7d, totalVol30d, userStats, syncDays, muscleGroups, prs };
 }
 
 function calcVolume(workout) {
-  return (workout.exercises || []).reduce((s, e) =>
-    s + (e.sets || 1) * (e.reps || 1) * (e.weight || 0), 0);
+  return (workout.exercises || []).reduce((s, e) => s + (e.sets || 1) * (e.reps || 1) * (e.weight || 0), 0);
 }
 
 // ===== FINANCE INDEX =====
@@ -283,7 +337,7 @@ function buildFinanceIndex(expenses, budgets, savingsGoals) {
       if (e.paidBy) userTotals[e.paidBy] = (userTotals[e.paidBy] || 0) + (e.amount || 0);
     }
     if (e.timestamp > d30 || (e.date && new Date(e.date + 'T12:00:00').getTime() > d30)) {
-      total30d += (e.amount || 0);
+      total30d += e.amount || 0;
     }
   });
 
@@ -294,7 +348,7 @@ function buildFinanceIndex(expenses, budgets, savingsGoals) {
   Object.keys(budgetCategories).forEach(cat => {
     const spent = categoryTotals[cat] || 0;
     const limit = budgetCategories[cat] || 0;
-    utilization[cat] = { spent, limit, pct: limit ? Math.round(spent / limit * 100) : 0 };
+    utilization[cat] = { spent, limit, pct: limit ? Math.round((spent / limit) * 100) : 0 };
   });
   const totalBudget = budget.totalBudget || Object.values(budgetCategories).reduce((s, v) => s + v, 0);
   const totalSpent = Object.values(categoryTotals).reduce((s, v) => s + v, 0);
@@ -302,16 +356,20 @@ function buildFinanceIndex(expenses, budgets, savingsGoals) {
   // Spending trend (compare this month so far vs last month same period)
   const today = new Date();
   const dayOfMonth = today.getDate();
-  const lastMonth = new Date(today); lastMonth.setMonth(lastMonth.getMonth() - 1);
+  const lastMonth = new Date(today);
+  lastMonth.setMonth(lastMonth.getMonth() - 1);
   const lastMonthId = monthId(lastMonth);
-  const lastMonthSameDay = expenses.filter(e => {
-    if (!e.date) return false;
-    const mo = e.date.substring(0, 7);
-    if (mo !== lastMonthId) return false;
-    const d = parseInt(e.date.substring(8, 10));
-    return d <= dayOfMonth;
-  }).reduce((s, e) => s + (e.amount || 0), 0);
-  const spendTrend = totalSpent > lastMonthSameDay * 1.1 ? 'increasing' : totalSpent < lastMonthSameDay * 0.9 ? 'decreasing' : 'stable';
+  const lastMonthSameDay = expenses
+    .filter(e => {
+      if (!e.date) return false;
+      const mo = e.date.substring(0, 7);
+      if (mo !== lastMonthId) return false;
+      const d = parseInt(e.date.substring(8, 10));
+      return d <= dayOfMonth;
+    })
+    .reduce((s, e) => s + (e.amount || 0), 0);
+  const spendTrend =
+    totalSpent > lastMonthSameDay * 1.1 ? 'increasing' : totalSpent < lastMonthSameDay * 0.9 ? 'decreasing' : 'stable';
 
   // Partner balance
   const balance = userTotals.him - userTotals.her; // positive = him paid more
@@ -319,14 +377,22 @@ function buildFinanceIndex(expenses, budgets, savingsGoals) {
   // Savings goal progress
   const goals = (savingsGoals || []).map(g => ({
     ...g,
-    pct: g.target ? Math.round((g.current || 0) / g.target * 100) : 0,
+    pct: g.target ? Math.round(((g.current || 0) / g.target) * 100) : 0,
     remaining: (g.target || 0) - (g.current || 0),
     projectedDate: g.target && g.current && g.createdAt ? projectDate(g) : null
   }));
 
   MET.finance.stats = {
-    thisMonth: totalSpent, total30d, monthlyTotals, categoryTotals, utilization,
-    totalBudget, spendTrend, balance, userTotals, savingsGoals: goals
+    thisMonth: totalSpent,
+    total30d,
+    monthlyTotals,
+    categoryTotals,
+    utilization,
+    totalBudget,
+    spendTrend,
+    balance,
+    userTotals,
+    savingsGoals: goals
   };
 }
 
@@ -358,20 +424,22 @@ function computeRelationshipHealth() {
     db.ref('finances/expenses').orderByChild('timestamp').limitToLast(30).once('value'),
     db.ref('gratitude').orderByChild('timestamp').limitToLast(10).once('value'),
     db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(5).once('value'),
-    db.ref('checkins/' + weekId()).once('value'),
+    db.ref('checkins/' + weekId()).once('value')
   ]).then(([moodSnap, letterSnap, goalSnap, wyrSnap, totSnap, fitSnap, expSnap, gratSnap, dtSnap, ciSnap]) => {
     const breakdown = {};
-    let totalWeight = 0, totalScore = 0;
+    let totalWeight = 0,
+      totalScore = 0;
 
     // 1. Mood check-in frequency (20%)
     const weight1 = 20;
     totalWeight += weight1;
     let moodDays = 0;
     const moodDates = new Set();
-    if (moodSnap.exists()) moodSnap.forEach(c => {
-      const m = c.val();
-      if (m.date && now - m.timestamp < weekMs) moodDates.add(m.user + ':' + m.date);
-    });
+    if (moodSnap.exists())
+      moodSnap.forEach(c => {
+        const m = c.val();
+        if (m.date && now - m.timestamp < weekMs) moodDates.add(m.user + ':' + m.date);
+      });
     // Count days both checked in this week
     for (let i = 0; i < 7; i++) {
       const ds = localDate(daysAgo(i));
@@ -391,23 +459,43 @@ function computeRelationshipHealth() {
     // 3. Notes/communication (15%)
     const weight3 = 15;
     totalWeight += weight3;
-    let recentNotes = 0, recentGrat = 0, recentDeep = 0;
-    if (letterSnap.exists()) letterSnap.forEach(c => { if (now - c.val().timestamp < weekMs) recentNotes++; });
-    if (gratSnap.exists()) gratSnap.forEach(c => { if (now - c.val().timestamp < weekMs) recentGrat++; });
-    if (dtSnap.exists()) dtSnap.forEach(c => { if (now - c.val().timestamp < weekMs * 2) recentDeep++; });
-    const commScore = Math.min(1, (recentNotes * 0.15 + recentGrat * 0.1 + recentDeep * 0.2));
-    breakdown.communication = { score: commScore, weight: weight3, detail: recentNotes + ' notes, ' + recentGrat + ' gratitude' };
+    let recentNotes = 0,
+      recentGrat = 0,
+      recentDeep = 0;
+    if (letterSnap.exists())
+      letterSnap.forEach(c => {
+        if (now - c.val().timestamp < weekMs) recentNotes++;
+      });
+    if (gratSnap.exists())
+      gratSnap.forEach(c => {
+        if (now - c.val().timestamp < weekMs) recentGrat++;
+      });
+    if (dtSnap.exists())
+      dtSnap.forEach(c => {
+        if (now - c.val().timestamp < weekMs * 2) recentDeep++;
+      });
+    const commScore = Math.min(1, recentNotes * 0.15 + recentGrat * 0.1 + recentDeep * 0.2);
+    breakdown.communication = {
+      score: commScore,
+      weight: weight3,
+      detail: recentNotes + ' notes, ' + recentGrat + ' gratitude'
+    };
     totalScore += commScore * weight3;
 
     // 4. Goals progress (15%)
     const weight4 = 15;
     totalWeight += weight4;
-    let sharedDone = 0, sharedTotal = 0;
-    if (goalSnap.exists()) goalSnap.forEach(c => {
-      const g = c.val();
-      if (g.type === 'shared') { sharedTotal++; if (g.completedAt) sharedDone++; }
-    });
-    const goalScore = sharedTotal ? Math.min(1, (sharedDone / sharedTotal) + 0.3) : 0.3;
+    let sharedDone = 0,
+      sharedTotal = 0;
+    if (goalSnap.exists())
+      goalSnap.forEach(c => {
+        const g = c.val();
+        if (g.type === 'shared') {
+          sharedTotal++;
+          if (g.completedAt) sharedDone++;
+        }
+      });
+    const goalScore = sharedTotal ? Math.min(1, sharedDone / sharedTotal + 0.3) : 0.3;
     breakdown.goals = { score: goalScore, weight: weight4, detail: sharedDone + '/' + sharedTotal + ' shared goals' };
     totalScore += goalScore * weight4;
 
@@ -415,8 +503,16 @@ function computeRelationshipHealth() {
     const weight5 = 10;
     totalWeight += weight5;
     let gamesPlayed = 0;
-    if (wyrSnap.exists()) wyrSnap.forEach(c => { const d = c.val(); if (d && d.her && d.him) gamesPlayed++; });
-    if (totSnap.exists()) totSnap.forEach(c => { const d = c.val(); if (d && d.her && d.him) gamesPlayed++; });
+    if (wyrSnap.exists())
+      wyrSnap.forEach(c => {
+        const d = c.val();
+        if (d && d.her && d.him) gamesPlayed++;
+      });
+    if (totSnap.exists())
+      totSnap.forEach(c => {
+        const d = c.val();
+        if (d && d.her && d.him) gamesPlayed++;
+      });
     const gameScore = Math.min(1, gamesPlayed * 0.1);
     breakdown.games = { score: gameScore, weight: weight5, detail: gamesPlayed + ' played together' };
     totalScore += gameScore * weight5;
@@ -432,8 +528,9 @@ function computeRelationshipHealth() {
     // 7. Financial alignment (10%)
     const weight7 = 10;
     totalWeight += weight7;
-    const budgetUtil = MET.finance.stats.totalBudget ?
-      Math.min(1, 1 - Math.abs(MET.finance.stats.thisMonth / MET.finance.stats.totalBudget - 1)) : 0.5;
+    const budgetUtil = MET.finance.stats.totalBudget
+      ? Math.min(1, 1 - Math.abs(MET.finance.stats.thisMonth / MET.finance.stats.totalBudget - 1))
+      : 0.5;
     const finScore = Math.max(0, budgetUtil);
     breakdown.finance = { score: finScore, weight: weight7, detail: 'Budget utilization' };
     totalScore += finScore * weight7;
@@ -451,7 +548,7 @@ function computeRelationshipHealth() {
     breakdown.weeklyCheckin = { score: ciScore, weight: weight8, detail: ciDone + '/2 completed' };
     totalScore += ciScore * weight8;
 
-    const pct = totalWeight ? Math.round(totalScore / totalWeight * 100) : 0;
+    const pct = totalWeight ? Math.round((totalScore / totalWeight) * 100) : 0;
 
     MET.relationship = { score: pct, breakdown, timestamp: now };
 
@@ -462,11 +559,22 @@ function computeRelationshipHealth() {
     const tipEl = document.getElementById('dash-pulse-tip');
     if (ring) ring.setAttribute('stroke-dashoffset', String(314 - (pct / 100) * 314));
     if (scoreEl) scoreEl.textContent = pct;
-    if (pct >= 80) { if (labelEl) labelEl.textContent = 'Thriving'; if (tipEl) tipEl.textContent = 'You two are on fire together'; }
-    else if (pct >= 60) { if (labelEl) labelEl.textContent = 'Strong'; if (tipEl) tipEl.textContent = 'Keep the momentum going'; }
-    else if (pct >= 40) { if (labelEl) labelEl.textContent = 'Growing'; if (tipEl) tipEl.textContent = 'Try a game or deep talk'; }
-    else if (pct >= 20) { if (labelEl) labelEl.textContent = 'Warming up'; if (tipEl) tipEl.textContent = 'Check in with each other today'; }
-    else { if (labelEl) labelEl.textContent = 'Getting started'; if (tipEl) tipEl.textContent = 'Start with a mood check-in'; }
+    if (pct >= 80) {
+      if (labelEl) labelEl.textContent = 'Thriving';
+      if (tipEl) tipEl.textContent = 'You two are on fire together';
+    } else if (pct >= 60) {
+      if (labelEl) labelEl.textContent = 'Strong';
+      if (tipEl) tipEl.textContent = 'Keep the momentum going';
+    } else if (pct >= 40) {
+      if (labelEl) labelEl.textContent = 'Growing';
+      if (tipEl) tipEl.textContent = 'Try a game or deep talk';
+    } else if (pct >= 20) {
+      if (labelEl) labelEl.textContent = 'Warming up';
+      if (tipEl) tipEl.textContent = 'Check in with each other today';
+    } else {
+      if (labelEl) labelEl.textContent = 'Getting started';
+      if (tipEl) tipEl.textContent = 'Start with a mood check-in';
+    }
 
     // Compare against relationship baseline from onboarding
     renderBaselineProgress(pct);
@@ -486,18 +594,32 @@ function renderBaselineProgress(currentPct) {
   if (!bl) return;
   // Average both partners' baseline ratings (1-10 scale)
   var ratings = [];
-  ['her', 'him'].forEach(function(r) {
+  ['her', 'him'].forEach(function (r) {
     if (bl[r] && bl[r].relationship) {
       var rel = bl[r].relationship;
-      var avg = 0, count = 0;
-      if (rel.communication) { avg += rel.communication; count++; }
-      if (rel.qualityTime) { avg += rel.qualityTime; count++; }
-      if (rel.connection) { avg += rel.connection; count++; }
+      var avg = 0,
+        count = 0;
+      if (rel.communication) {
+        avg += rel.communication;
+        count++;
+      }
+      if (rel.qualityTime) {
+        avg += rel.qualityTime;
+        count++;
+      }
+      if (rel.connection) {
+        avg += rel.connection;
+        count++;
+      }
       if (count) ratings.push((avg / count) * 10); // Convert 1-10 to 10-100%
     }
   });
   if (!ratings.length) return;
-  var baselinePct = Math.round(ratings.reduce(function(a, b) { return a + b; }, 0) / ratings.length);
+  var baselinePct = Math.round(
+    ratings.reduce(function (a, b) {
+      return a + b;
+    }, 0) / ratings.length
+  );
   var diff = currentPct - baselinePct;
   // Show progress from baseline in the tip
   if (diff > 5) {
@@ -516,7 +638,10 @@ function storeWeeklyAnalytics(healthScore) {
   const wk = weekId();
   const stats = {
     moodAvg: { her: MET.mood.stats.her?.avg7d || 0, him: MET.mood.stats.him?.avg7d || 0 },
-    workoutCount: { her: MET.fitness.stats.userStats?.her?.freq7d || 0, him: MET.fitness.stats.userStats?.him?.freq7d || 0 },
+    workoutCount: {
+      her: MET.fitness.stats.userStats?.her?.freq7d || 0,
+      him: MET.fitness.stats.userStats?.him?.freq7d || 0
+    },
     expenseTotal: MET.finance.stats.total30d || 0,
     relationshipHealthScore: healthScore || 0,
     updatedAt: Date.now()
@@ -531,16 +656,21 @@ function renderMoodHeatmap(containerId, userFilter) {
   const el = document.getElementById(containerId);
   if (!el) return;
   const stats = userFilter ? MET.mood.stats[userFilter] : MET.mood.stats.her; // default to current user
-  if (!stats || !stats.dayOfWeek) { el.innerHTML = '<div class="empty" style="padding:8px;font-size:11px">Not enough data</div>'; return; }
+  if (!stats || !stats.dayOfWeek) {
+    el.innerHTML = '<div class="empty" style="padding:8px;font-size:11px">Not enough data</div>';
+    return;
+  }
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const max = Math.max(...stats.dayOfWeek.filter(v => v > 0), 1);
-  el.innerHTML = stats.dayOfWeek.map((v, i) => {
-    const intensity = v ? Math.round((v / 5) * 100) : 0;
-    return `<div style="text-align:center;flex:1" title="${days[i]}: ${v}">
-      <div style="width:100%;aspect-ratio:1;border-radius:6px;background:rgba(196,120,74,${intensity / 100 * 0.6 + 0.05});margin-bottom:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--cream);font-weight:500">${v || ''}</div>
+  el.innerHTML = stats.dayOfWeek
+    .map((v, i) => {
+      const intensity = v ? Math.round((v / 5) * 100) : 0;
+      return `<div style="text-align:center;flex:1" title="${days[i]}: ${v}">
+      <div style="width:100%;aspect-ratio:1;border-radius:6px;background:rgba(196,120,74,${(intensity / 100) * 0.6 + 0.05});margin-bottom:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--cream);font-weight:500">${v || ''}</div>
       <div style="font-size:8px;color:var(--t3)">${days[i]}</div>
     </div>`;
-  }).join('');
+    })
+    .join('');
 }
 
 // Bar chart for weekly workout frequency or spending
@@ -550,16 +680,18 @@ function renderBarChart(containerId, data, options) {
   const opts = options || {};
   const max = Math.max(...data.map(d => d.value), 1);
   const barColor = opts.color || 'var(--gold)';
-  el.innerHTML = data.map(d => {
-    const h = Math.max((d.value / max) * 100, 3);
-    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+  el.innerHTML = data
+    .map(d => {
+      const h = Math.max((d.value / max) * 100, 3);
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
       <div style="font-size:9px;color:var(--t3)">${opts.formatValue ? opts.formatValue(d.value) : d.value}</div>
       <div style="width:100%;max-width:24px;background:var(--bg3);border-radius:4px;height:60px;position:relative;overflow:hidden">
         <div style="position:absolute;bottom:0;width:100%;height:${h}%;background:${barColor};border-radius:4px;transition:height .6s ease"></div>
       </div>
       <div style="font-size:8px;color:var(--t3)">${d.label}</div>
     </div>`;
-  }).join('');
+    })
+    .join('');
 }
 
 // Radar/spider chart for partner comparison (quiz profiles, wellness dimensions)
@@ -568,7 +700,10 @@ function renderRadarChart(containerId, dimensions) {
   if (!el) return;
   const n = dimensions.length;
   if (n < 3) return;
-  const size = 140, cx = size / 2, cy = size / 2, r = size / 2 - 20;
+  const size = 140,
+    cx = size / 2,
+    cy = size / 2,
+    r = size / 2 - 20;
   const angleStep = (2 * Math.PI) / n;
 
   // Grid lines
@@ -600,8 +735,16 @@ function renderRadarChart(containerId, dimensions) {
     return `<polygon points="${pts}" fill="${color}" fill-opacity="${opacity}" stroke="${color}" stroke-width="1.5"/>`;
   }
 
-  const herPoly = dataPolygon(dimensions.map(d => d.her || 0), 'var(--rose)', 0.15);
-  const himPoly = dataPolygon(dimensions.map(d => d.him || 0), 'var(--teal)', 0.15);
+  const herPoly = dataPolygon(
+    dimensions.map(d => d.her || 0),
+    'var(--rose)',
+    0.15
+  );
+  const himPoly = dataPolygon(
+    dimensions.map(d => d.him || 0),
+    'var(--teal)',
+    0.15
+  );
 
   // Labels
   let labels = '';
@@ -625,8 +768,13 @@ function renderScatterPlot(containerId, userKey) {
   if (!el) return;
   const moods = MET.mood.byUser[userKey || user] || [];
   const recent = moods.filter(m => m.energy != null).slice(-30);
-  if (recent.length < 3) { el.innerHTML = '<div class="empty" style="padding:8px;font-size:11px">Need more data</div>'; return; }
-  const w = 160, h = 120, pad = 20;
+  if (recent.length < 3) {
+    el.innerHTML = '<div class="empty" style="padding:8px;font-size:11px">Need more data</div>';
+    return;
+  }
+  const w = 160,
+    h = 120,
+    pad = 20;
   let dots = '';
   recent.forEach(m => {
     const x = pad + ((m.mood - 1) / 4) * (w - 2 * pad);
@@ -647,21 +795,32 @@ function renderSpendingDonut(containerId) {
   const el = document.getElementById(containerId);
   if (!el) return;
   const cats = MET.finance.stats.categoryTotals || {};
-  const entries = Object.entries(cats).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
-  if (!entries.length) { el.innerHTML = '<div class="empty" style="padding:8px;font-size:11px">No spending data</div>'; return; }
+  const entries = Object.entries(cats)
+    .filter(([, v]) => v > 0)
+    .sort((a, b) => b[1] - a[1]);
+  if (!entries.length) {
+    el.innerHTML = '<div class="empty" style="padding:8px;font-size:11px">No spending data</div>';
+    return;
+  }
   const total = entries.reduce((s, [, v]) => s + v, 0);
   const colors = ['var(--gold)', 'var(--rose)', 'var(--teal)', 'var(--emerald)', 'var(--lavender)', 'var(--amber)'];
-  const r = 40, circumference = 2 * Math.PI * r;
-  let offset = 0, segments = '';
+  const r = 40,
+    circumference = 2 * Math.PI * r;
+  let offset = 0,
+    segments = '';
   entries.forEach(([, v], i) => {
     const pct = v / total;
     const dash = pct * circumference;
     segments += `<circle cx="50" cy="50" r="${r}" fill="none" stroke="${colors[i % colors.length]}" stroke-width="20" stroke-dasharray="${dash} ${circumference - dash}" stroke-dashoffset="${-offset}" transform="rotate(-90 50 50)"/>`;
     offset += dash;
   });
-  const legend = entries.slice(0, 5).map(([cat, v], i) =>
-    `<div style="display:flex;align-items:center;gap:6px;font-size:10px"><div style="width:8px;height:8px;border-radius:50%;background:${colors[i % colors.length]}"></div><span style="color:var(--cream)">${cat}</span><span style="color:var(--t3);margin-left:auto">$${v.toFixed(0)}</span></div>`
-  ).join('');
+  const legend = entries
+    .slice(0, 5)
+    .map(
+      ([cat, v], i) =>
+        `<div style="display:flex;align-items:center;gap:6px;font-size:10px"><div style="width:8px;height:8px;border-radius:50%;background:${colors[i % colors.length]}"></div><span style="color:var(--cream)">${cat}</span><span style="color:var(--t3);margin-left:auto">$${v.toFixed(0)}</span></div>`
+    )
+    .join('');
   el.innerHTML = `<div style="display:flex;align-items:center;gap:16px">
     <svg width="100" height="100" viewBox="0 0 100 100">${segments}
       <text x="50" y="48" text-anchor="middle" fill="var(--gold)" font-size="14" font-weight="600" font-family="Outfit">$${total.toFixed(0)}</text>
@@ -696,23 +855,34 @@ function renderTimeMachine(containerId, dateStr) {
   const el = document.getElementById(containerId);
   if (!el) return;
   const data = getTimeMachineData(dateStr);
-  const formatted = new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const formatted = new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
   const emojis = { 1: '😴', 2: '😕', 3: '😊', 4: '😃', 5: '🔥' };
 
   let moodHtml = '';
   if (data.moods.length) {
-    moodHtml = data.moods.map(m =>
-      `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">${emojis[m.mood] || '?'}</span><span style="font-size:12px;color:var(--cream)">${m.userName || m.user}</span>${m.note ? `<span style="font-size:11px;color:var(--t3);font-style:italic">"${esc(m.note)}"</span>` : ''}</div>`
-    ).join('');
+    moodHtml = data.moods
+      .map(
+        m =>
+          `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">${emojis[m.mood] || '?'}</span><span style="font-size:12px;color:var(--cream)">${m.userName || m.user}</span>${m.note ? `<span style="font-size:11px;color:var(--t3);font-style:italic">"${esc(m.note)}"</span>` : ''}</div>`
+      )
+      .join('');
   } else {
     moodHtml = '<div style="font-size:11px;color:var(--t3)">No check-ins</div>';
   }
 
   let workoutHtml = '';
   if (data.workouts.length) {
-    workoutHtml = data.workouts.map(w =>
-      `<div style="font-size:11px;color:var(--cream)">${w.userName || w.user} - ${w.workoutType || 'Workout'} (${(w.exercises || []).length} exercises)</div>`
-    ).join('');
+    workoutHtml = data.workouts
+      .map(
+        w =>
+          `<div style="font-size:11px;color:var(--cream)">${w.userName || w.user} - ${w.workoutType || 'Workout'} (${(w.exercises || []).length} exercises)</div>`
+      )
+      .join('');
   }
 
   el.innerHTML = `<div style="padding:16px;background:var(--card-bg);border-radius:16px;box-shadow:var(--card-shadow);border:1px solid var(--bdr-s)">
@@ -728,10 +898,16 @@ function renderTimeMachine(containerId, dateStr) {
 function getThisTimeLast(period) {
   const now = new Date();
   let compareDate;
-  if (period === 'week') { compareDate = new Date(now); compareDate.setDate(compareDate.getDate() - 7); }
-  else if (period === 'month') { compareDate = new Date(now); compareDate.setMonth(compareDate.getMonth() - 1); }
-  else if (period === 'year') { compareDate = new Date(now); compareDate.setFullYear(compareDate.getFullYear() - 1); }
-  else return null;
+  if (period === 'week') {
+    compareDate = new Date(now);
+    compareDate.setDate(compareDate.getDate() - 7);
+  } else if (period === 'month') {
+    compareDate = new Date(now);
+    compareDate.setMonth(compareDate.getMonth() - 1);
+  } else if (period === 'year') {
+    compareDate = new Date(now);
+    compareDate.setFullYear(compareDate.getFullYear() - 1);
+  } else return null;
   return getTimeMachineData(localDate(compareDate));
 }
 
@@ -741,30 +917,56 @@ function initMetricsEngine() {
   if (!db) return;
 
   // Load moods
-  db.ref('moods').orderByChild('timestamp').limitToLast(500).once('value', snap => {
-    const moods = [];
-    if (snap.exists()) snap.forEach(c => { const m = c.val(); m._key = c.key; moods.push(m); });
-    buildMoodIndex(moods);
-  });
+  db.ref('moods')
+    .orderByChild('timestamp')
+    .limitToLast(500)
+    .once('value', snap => {
+      const moods = [];
+      if (snap.exists())
+        snap.forEach(c => {
+          const m = c.val();
+          m._key = c.key;
+          moods.push(m);
+        });
+      buildMoodIndex(moods);
+    });
 
   // Load workouts
-  db.ref('workoutLogs').orderByChild('timestamp').limitToLast(200).once('value', snap => {
-    const workouts = [];
-    if (snap.exists()) snap.forEach(c => { const w = c.val(); w._key = c.key; workouts.push(w); });
-    buildFitnessIndex(workouts);
-  });
+  db.ref('workoutLogs')
+    .orderByChild('timestamp')
+    .limitToLast(200)
+    .once('value', snap => {
+      const workouts = [];
+      if (snap.exists())
+        snap.forEach(c => {
+          const w = c.val();
+          w._key = c.key;
+          workouts.push(w);
+        });
+      buildFitnessIndex(workouts);
+    });
 
   // Load finances
   Promise.all([
     db.ref('finances/expenses').orderByChild('timestamp').limitToLast(300).once('value'),
     db.ref('finances/budgets/' + monthId()).once('value'),
-    db.ref('finances/savingsGoals').once('value'),
+    db.ref('finances/savingsGoals').once('value')
   ]).then(([expSnap, budSnap, savSnap]) => {
     const expenses = [];
-    if (expSnap.exists()) expSnap.forEach(c => { const e = c.val(); e._key = c.key; expenses.push(e); });
+    if (expSnap.exists())
+      expSnap.forEach(c => {
+        const e = c.val();
+        e._key = c.key;
+        expenses.push(e);
+      });
     const budget = budSnap.val() || {};
     const goals = [];
-    if (savSnap.exists()) savSnap.forEach(c => { const g = c.val(); g._key = c.key; goals.push(g); });
+    if (savSnap.exists())
+      savSnap.forEach(c => {
+        const g = c.val();
+        g._key = c.key;
+        goals.push(g);
+      });
     buildFinanceIndex(expenses, budget, goals);
   });
 
@@ -781,17 +983,28 @@ function initMetricsEngine() {
 // Listen for incremental mood updates
 function listenMoodUpdates() {
   if (!db) return;
-  db.ref('moods').orderByChild('timestamp').limitToLast(1).on('child_added', () => {
-    // Debounced rebuild
-    clearTimeout(MET._moodDebounce);
-    MET._moodDebounce = setTimeout(() => {
-      db.ref('moods').orderByChild('timestamp').limitToLast(500).once('value', snap => {
-        const moods = [];
-        if (snap.exists()) snap.forEach(c => { const m = c.val(); m._key = c.key; moods.push(m); });
-        buildMoodIndex(moods);
-      });
-    }, 1000);
-  });
+  db.ref('moods')
+    .orderByChild('timestamp')
+    .limitToLast(1)
+    .on('child_added', () => {
+      // Debounced rebuild
+      clearTimeout(MET._moodDebounce);
+      MET._moodDebounce = setTimeout(() => {
+        db.ref('moods')
+          .orderByChild('timestamp')
+          .limitToLast(500)
+          .once('value', snap => {
+            const moods = [];
+            if (snap.exists())
+              snap.forEach(c => {
+                const m = c.val();
+                m._key = c.key;
+                moods.push(m);
+              });
+            buildMoodIndex(moods);
+          });
+      }, 1000);
+    });
 }
 
 // Subscribe to metric changes
@@ -813,15 +1026,21 @@ function renderPulseBreakdown() {
   if (!el || !MET.relationship.breakdown) return;
   const bd = MET.relationship.breakdown;
   const labels = {
-    moodFrequency: 'Mood Check-ins', moodSync: 'Mood Sync', communication: 'Communication',
-    goals: 'Shared Goals', games: 'Games & Fun', fitness: 'Fitness Sync',
-    finance: 'Financial', weeklyCheckin: 'Weekly Check-in'
+    moodFrequency: 'Mood Check-ins',
+    moodSync: 'Mood Sync',
+    communication: 'Communication',
+    goals: 'Shared Goals',
+    games: 'Games & Fun',
+    fitness: 'Fitness Sync',
+    finance: 'Financial',
+    weeklyCheckin: 'Weekly Check-in'
   };
-  el.innerHTML = Object.keys(bd).map(key => {
-    const item = bd[key];
-    const pct = Math.round(item.score * 100);
-    const color = pct >= 70 ? 'var(--emerald)' : pct >= 40 ? 'var(--gold)' : 'var(--rose)';
-    return `<div style="margin-bottom:6px">
+  el.innerHTML = Object.keys(bd)
+    .map(key => {
+      const item = bd[key];
+      const pct = Math.round(item.score * 100);
+      const color = pct >= 70 ? 'var(--emerald)' : pct >= 40 ? 'var(--gold)' : 'var(--rose)';
+      return `<div style="margin-bottom:6px">
       <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px">
         <span style="color:var(--cream)">${labels[key] || key}</span>
         <span style="color:var(--t3)">${item.detail}</span>
@@ -830,11 +1049,12 @@ function renderPulseBreakdown() {
         <div style="height:100%;width:${pct}%;background:${color};border-radius:2px;transition:width .6s ease"></div>
       </div>
     </div>`;
-  }).join('');
+    })
+    .join('');
 }
 
 // ===== AUTO-UPDATE UI WHEN METRICS CHANGE =====
-onMetricsUpdate(function(type) {
+onMetricsUpdate(function (type) {
   if (type === 'mood') updateMoodPageAnalytics();
 });
 
@@ -890,7 +1110,7 @@ function renderMoodBaseline(u, stats) {
   var bl = window._relBaselines && window._relBaselines[u] && window._relBaselines[u].mood;
   if (!bl) {
     // Try loading if not cached yet
-    db.ref('baselines/' + u + '/mood').once('value', function(snap) {
+    db.ref('baselines/' + u + '/mood').once('value', function (snap) {
       var data = snap.val();
       if (!data) return;
       if (!window._relBaselines) window._relBaselines = {};
