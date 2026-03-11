@@ -130,19 +130,21 @@ var WEATHER_EFFECTS = {
 
 // ===== GEOLOCATION =====
 function requestLocationPermission() {
-  return new Promise(function(resolve) {
+  return new Promise(function (resolve) {
     if (!navigator.geolocation) {
       toast('Geolocation not supported on this device');
       resolve(false);
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      function(pos) {
+      function (pos) {
         WEATHER.lat = pos.coords.latitude;
         WEATHER.lon = pos.coords.longitude;
         WEATHER.locationGranted = true;
         // Cache location for instant login page rendering
-        try { localStorage.setItem('met_weather_location', JSON.stringify({ lat: WEATHER.lat, lon: WEATHER.lon })); } catch(e) {}
+        try {
+          localStorage.setItem('met_weather_location', JSON.stringify({ lat: WEATHER.lat, lon: WEATHER.lon }));
+        } catch (e) {}
         if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
           db.ref('settings/weather/' + user + '/location').set({
             lat: WEATHER.lat,
@@ -153,7 +155,7 @@ function requestLocationPermission() {
         }
         resolve(true);
       },
-      function(err) {
+      function (err) {
         WEATHER.locationGranted = false;
         if (err.code === 1) {
           toast('Location permission denied - you can enable it in settings later');
@@ -179,13 +181,13 @@ function getSunTimes() {
   var now = new Date();
   var doy = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
   var lat = WEATHER.lat || 35;
-  var declination = 23.45 * Math.sin((2 * Math.PI / 365) * (doy - 81));
-  var latRad = lat * Math.PI / 180;
-  var decRad = declination * Math.PI / 180;
+  var declination = 23.45 * Math.sin(((2 * Math.PI) / 365) * (doy - 81));
+  var latRad = (lat * Math.PI) / 180;
+  var decRad = (declination * Math.PI) / 180;
   var cosHA = -Math.tan(latRad) * Math.tan(decRad);
   cosHA = Math.max(-1, Math.min(1, cosHA));
   var hourAngle = Math.acos(cosHA);
-  var dayHours = (2 * hourAngle * 180 / Math.PI) / 15;
+  var dayHours = (2 * hourAngle * 180) / Math.PI / 15;
   var noon = 12;
   var sunriseH = noon - dayHours / 2;
   var sunsetH = noon + dayHours / 2;
@@ -219,7 +221,7 @@ function getSunPositionWeather() {
   var nightLength = 24 - dayLength;
 
   if (h < sunriseH || h >= sunsetH) {
-    var nightT = h < sunriseH ? (h + 24 - sunsetH) : (h - sunsetH);
+    var nightT = h < sunriseH ? h + 24 - sunsetH : h - sunsetH;
     var nx = 15 + (nightT / nightLength) * 70;
     var ny = 8 + 15 * Math.sin((nightT / nightLength) * Math.PI);
     return { isNight: true, x: nx, y: ny, progress: nightT / nightLength };
@@ -236,14 +238,19 @@ function getSunPositionWeather() {
 function fetchWeather() {
   if (!WEATHER.lat || !WEATHER.lon) return Promise.resolve(null);
 
-  var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + WEATHER.lat +
-    '&longitude=' + WEATHER.lon +
+  var url =
+    'https://api.open-meteo.com/v1/forecast?latitude=' +
+    WEATHER.lat +
+    '&longitude=' +
+    WEATHER.lon +
     '&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,cloud_cover' +
     '&daily=sunrise,sunset&timezone=auto&forecast_days=1';
 
   return fetch(url)
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
+    .then(function (r) {
+      return r.json();
+    })
+    .then(function (data) {
       if (!data || !data.current) return null;
       var code = data.current.weather_code;
       var condition = mapWMOCode(code);
@@ -260,7 +267,9 @@ function fetchWeather() {
         }
       };
       // Cache weather data in localStorage for instant login page rendering
-      try { localStorage.setItem('met_weather_cache', JSON.stringify(WEATHER.data)); } catch(e) {}
+      try {
+        localStorage.setItem('met_weather_cache', JSON.stringify(WEATHER.data));
+      } catch (e) {}
       // Update location button
       var btn = document.getElementById('set-location-btn');
       if (btn) btn.textContent = 'Refresh';
@@ -268,7 +277,7 @@ function fetchWeather() {
       if (infoEl) infoEl.classList.remove('d-none');
       return WEATHER.data;
     })
-    .catch(function(e) {
+    .catch(function (e) {
       console.warn('Weather fetch failed:', e);
       return null;
     });
@@ -329,21 +338,38 @@ function renderWeatherEffects(container) {
       p.className = 'weather-particle weather-' + condition;
       var x = Math.random() * 120 - 10;
       var delay = Math.random() * 3;
-      var dur = condition === 'snow' ? (3 + Math.random() * 4) :
-                condition === 'hail' ? (0.6 + Math.random() * 0.8) :
-                condition === 'dust' || condition === 'sand' ? (2 + Math.random() * 3) :
-                (0.4 + Math.random() * 0.6);
-      var size = condition === 'snow' ? (3 + Math.random() * 5) :
-                 condition === 'hail' ? (4 + Math.random() * 6) :
-                 condition === 'dust' || condition === 'sand' ? (2 + Math.random() * 3) :
-                 (1 + Math.random() * 1.5);
+      var dur =
+        condition === 'snow'
+          ? 3 + Math.random() * 4
+          : condition === 'hail'
+            ? 0.6 + Math.random() * 0.8
+            : condition === 'dust' || condition === 'sand'
+              ? 2 + Math.random() * 3
+              : 0.4 + Math.random() * 0.6;
+      var size =
+        condition === 'snow'
+          ? 3 + Math.random() * 5
+          : condition === 'hail'
+            ? 4 + Math.random() * 6
+            : condition === 'dust' || condition === 'sand'
+              ? 2 + Math.random() * 3
+              : 1 + Math.random() * 1.5;
 
-      p.style.cssText = 'left:' + x + '%;width:' + size + 'px;height:' +
+      p.style.cssText =
+        'left:' +
+        x +
+        '%;width:' +
+        size +
+        'px;height:' +
         (condition === 'rain' || condition === 'drizzle' || condition === 'thunderstorm' ? size * 8 : size) +
-        'px;animation-delay:' + delay + 's;animation-duration:' + dur + 's';
+        'px;animation-delay:' +
+        delay +
+        's;animation-duration:' +
+        dur +
+        's';
 
       if (WEATHER.data.windSpeed > 15) {
-        p.style.setProperty('--wind-offset', (WEATHER.data.windSpeed * 2) + 'px');
+        p.style.setProperty('--wind-offset', WEATHER.data.windSpeed * 2 + 'px');
       }
       layer.appendChild(p);
     }
@@ -368,7 +394,14 @@ function renderWeatherEffects(container) {
     for (var w = 0; w < 8; w++) {
       var streak = document.createElement('div');
       streak.className = 'weather-wind-streak';
-      streak.style.cssText = 'top:' + (Math.random() * 80) + '%;animation-delay:' + (Math.random() * 4) + 's;animation-duration:' + (1 + Math.random() * 2) + 's';
+      streak.style.cssText =
+        'top:' +
+        Math.random() * 80 +
+        '%;animation-delay:' +
+        Math.random() * 4 +
+        's;animation-duration:' +
+        (1 + Math.random() * 2) +
+        's';
       layer.appendChild(streak);
     }
   }
@@ -385,7 +418,22 @@ function renderWeatherEffects(container) {
       var cLeft = -10 + (c / cloudCount) * 110;
       var cDur = 40 + Math.random() * 60;
       var cOpacity = Math.min(0.15 + (WEATHER.data.clouds / 100) * 0.35, 0.5);
-      cloud.style.cssText = 'width:' + cSize + 'px;height:' + (cSize * 0.4) + 'px;top:' + cTop + '%;left:' + cLeft + '%;opacity:' + cOpacity + ';animation-duration:' + cDur + 's;animation-delay:' + (c * -8) + 's';
+      cloud.style.cssText =
+        'width:' +
+        cSize +
+        'px;height:' +
+        cSize * 0.4 +
+        'px;top:' +
+        cTop +
+        '%;left:' +
+        cLeft +
+        '%;opacity:' +
+        cOpacity +
+        ';animation-duration:' +
+        cDur +
+        's;animation-delay:' +
+        c * -8 +
+        's';
       layer.appendChild(cloud);
     }
   }
@@ -405,18 +453,22 @@ function renderWeatherEffects(container) {
 
 function scheduleLightning(layer) {
   var delay = 5000 + Math.random() * 15000;
-  setTimeout(function() {
+  setTimeout(function () {
     if (!layer.parentNode || !livingSkyEnabled) return;
     var flash = document.createElement('div');
     flash.className = 'weather-lightning';
     layer.appendChild(flash);
-    setTimeout(function() { if (flash.parentNode) flash.remove(); }, 300);
+    setTimeout(function () {
+      if (flash.parentNode) flash.remove();
+    }, 300);
     if (Math.random() < 0.4) {
-      setTimeout(function() {
+      setTimeout(function () {
         var flash2 = document.createElement('div');
         flash2.className = 'weather-lightning';
         layer.appendChild(flash2);
-        setTimeout(function() { if (flash2.parentNode) flash2.remove(); }, 200);
+        setTimeout(function () {
+          if (flash2.parentNode) flash2.remove();
+        }, 200);
       }, 150);
     }
     scheduleLightning(layer);
@@ -426,30 +478,79 @@ function scheduleLightning(layer) {
 // ===== SCENE CREATURES =====
 function renderSceneCreature(container, type) {
   switch (type) {
-    case 'rabbit': renderRabbit(container); break;
-    case 'bee': renderBee(container); break;
-    case 'dragonfly': renderDragonfly(container); break;
-    case 'deer': renderDeer(container); break;
-    case 'owl': renderOwl(container); break;
-    case 'bat': renderBat(container); break;
-    case 'fox': renderFox(container); break;
-    case 'squirrel': renderSquirrel(container); break;
-    case 'woodpecker': renderWoodpecker(container); break;
-    case 'seagull': renderSeagull(container); break;
-    case 'pelican': renderPelican(container); break;
-    case 'heron': renderHeron(container); break;
-    case 'crab': renderCrab(container); break;
-    case 'dolphin': renderDolphin(container); break;
-    case 'fish': renderFish(container); break;
-    case 'jellyfish': renderJellyfish(container); break;
-    case 'turtle': renderTurtle(container); break;
-    case 'whale': renderWhale(container); break;
-    case 'hawk': renderHawk(container); break;
-    case 'swallow': renderSwallow(container); break;
-    case 'sparrow': renderSparrow(container); break;
-    case 'songbird': case 'bird': renderBird(container); break;
-    case 'butterfly': renderButterfly(container); break;
-    case 'firefly': renderFirefly(container); break;
+    case 'rabbit':
+      renderRabbit(container);
+      break;
+    case 'bee':
+      renderBee(container);
+      break;
+    case 'dragonfly':
+      renderDragonfly(container);
+      break;
+    case 'deer':
+      renderDeer(container);
+      break;
+    case 'owl':
+      renderOwl(container);
+      break;
+    case 'bat':
+      renderBat(container);
+      break;
+    case 'fox':
+      renderFox(container);
+      break;
+    case 'squirrel':
+      renderSquirrel(container);
+      break;
+    case 'woodpecker':
+      renderWoodpecker(container);
+      break;
+    case 'seagull':
+      renderSeagull(container);
+      break;
+    case 'pelican':
+      renderPelican(container);
+      break;
+    case 'heron':
+      renderHeron(container);
+      break;
+    case 'crab':
+      renderCrab(container);
+      break;
+    case 'dolphin':
+      renderDolphin(container);
+      break;
+    case 'fish':
+      renderFish(container);
+      break;
+    case 'jellyfish':
+      renderJellyfish(container);
+      break;
+    case 'turtle':
+      renderTurtle(container);
+      break;
+    case 'whale':
+      renderWhale(container);
+      break;
+    case 'hawk':
+      renderHawk(container);
+      break;
+    case 'swallow':
+      renderSwallow(container);
+      break;
+    case 'sparrow':
+      renderSparrow(container);
+      break;
+    case 'songbird':
+    case 'bird':
+      renderBird(container);
+      break;
+    case 'butterfly':
+      renderButterfly(container);
+      break;
+    case 'firefly':
+      renderFirefly(container);
+      break;
   }
 }
 
@@ -459,9 +560,15 @@ function renderRabbit(container) {
   var x = 10 + Math.random() * 70;
   var dur = 12 + Math.random() * 10;
   el.style.cssText = 'left:' + x + '%;bottom:8%;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="rabbit-body"></div><div class="rabbit-ear rabbit-ear-l"></div><div class="rabbit-ear rabbit-ear-r"></div><div class="rabbit-tail"></div>';
+  el.innerHTML =
+    '<div class="rabbit-body"></div><div class="rabbit-ear rabbit-ear-l"></div><div class="rabbit-ear rabbit-ear-r"></div><div class="rabbit-tail"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderBee(container) {
@@ -472,10 +579,17 @@ function renderBee(container) {
   var dur = 16 + Math.random() * 14;
   var dx = 100 + Math.random() * 200;
   var dy = (Math.random() - 0.5) * 80;
-  el.style.cssText = 'left:' + x + '%;top:' + y + '%;--bee-dx:' + dx + 'px;--bee-dy:' + dy + 'px;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="bee-body"></div><div class="bee-wing bee-wing-l"></div><div class="bee-wing bee-wing-r"></div>';
+  el.style.cssText =
+    'left:' + x + '%;top:' + y + '%;--bee-dx:' + dx + 'px;--bee-dy:' + dy + 'px;animation-duration:' + dur + 's';
+  el.innerHTML =
+    '<div class="bee-body"></div><div class="bee-wing bee-wing-l"></div><div class="bee-wing bee-wing-r"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderDragonfly(container) {
@@ -486,9 +600,15 @@ function renderDragonfly(container) {
   var dur = 12 + Math.random() * 10;
   var dx = 150 + Math.random() * 200;
   el.style.cssText = 'left:' + x + '%;top:' + y + '%;--df-dx:' + dx + 'px;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="df-body"></div><div class="df-wing df-wing-l"></div><div class="df-wing df-wing-r"></div>';
+  el.innerHTML =
+    '<div class="df-body"></div><div class="df-wing df-wing-l"></div><div class="df-wing df-wing-r"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderDeer(container) {
@@ -496,11 +616,24 @@ function renderDeer(container) {
   el.className = 'scene-creature creature-deer';
   var dur = 22 + Math.random() * 14;
   var dir = Math.random() < 0.5 ? 1 : -1;
-  el.style.cssText = 'bottom:6%;' + (dir > 0 ? 'left:-5%' : 'right:-5%') + ';--deer-dir:' + (dir * 300) + 'px;animation-duration:' + dur + 's';
+  el.style.cssText =
+    'bottom:6%;' +
+    (dir > 0 ? 'left:-5%' : 'right:-5%') +
+    ';--deer-dir:' +
+    dir * 300 +
+    'px;animation-duration:' +
+    dur +
+    's';
   if (dir < 0) el.style.transform = 'scaleX(-1)';
-  el.innerHTML = '<div class="deer-body"></div><div class="deer-head"></div><div class="deer-antler deer-antler-l"></div><div class="deer-antler deer-antler-r"></div><div class="deer-leg deer-leg-fl"></div><div class="deer-leg deer-leg-fr"></div><div class="deer-leg deer-leg-bl"></div><div class="deer-leg deer-leg-br"></div>';
+  el.innerHTML =
+    '<div class="deer-body"></div><div class="deer-head"></div><div class="deer-antler deer-antler-l"></div><div class="deer-antler deer-antler-r"></div><div class="deer-leg deer-leg-fl"></div><div class="deer-leg deer-leg-fr"></div><div class="deer-leg deer-leg-bl"></div><div class="deer-leg deer-leg-br"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 function renderOwl(container) {
@@ -509,9 +642,12 @@ function renderOwl(container) {
   var x = 15 + Math.random() * 60;
   var y = 10 + Math.random() * 20;
   el.style.cssText = 'left:' + x + '%;top:' + y + '%';
-  el.innerHTML = '<div class="owl-body"></div><div class="owl-eye owl-eye-l"></div><div class="owl-eye owl-eye-r"></div><div class="owl-wing owl-wing-l"></div><div class="owl-wing owl-wing-r"></div>';
+  el.innerHTML =
+    '<div class="owl-body"></div><div class="owl-eye owl-eye-l"></div><div class="owl-eye owl-eye-r"></div><div class="owl-wing owl-wing-l"></div><div class="owl-wing owl-wing-r"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, 15000);
+  setTimeout(function () {
+    if (el.parentNode) el.remove();
+  }, 15000);
 }
 
 function renderBat(container) {
@@ -522,10 +658,17 @@ function renderBat(container) {
   var dur = 10 + Math.random() * 8;
   var dx = 200 + Math.random() * 300;
   var dy = (Math.random() - 0.5) * 80;
-  el.style.cssText = 'left:' + x + '%;top:' + y + '%;--bat-dx:' + dx + 'px;--bat-dy:' + dy + 'px;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="bat-body"></div><div class="bat-wing bat-wing-l"></div><div class="bat-wing bat-wing-r"></div>';
+  el.style.cssText =
+    'left:' + x + '%;top:' + y + '%;--bat-dx:' + dx + 'px;--bat-dy:' + dy + 'px;animation-duration:' + dur + 's';
+  el.innerHTML =
+    '<div class="bat-body"></div><div class="bat-wing bat-wing-l"></div><div class="bat-wing bat-wing-r"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderFox(container) {
@@ -533,11 +676,24 @@ function renderFox(container) {
   el.className = 'scene-creature creature-fox';
   var dur = 18 + Math.random() * 14;
   var dir = Math.random() < 0.5 ? 1 : -1;
-  el.style.cssText = 'bottom:6%;' + (dir > 0 ? 'left:-5%' : 'right:-5%') + ';--fox-dir:' + (dir * 250) + 'px;animation-duration:' + dur + 's';
+  el.style.cssText =
+    'bottom:6%;' +
+    (dir > 0 ? 'left:-5%' : 'right:-5%') +
+    ';--fox-dir:' +
+    dir * 250 +
+    'px;animation-duration:' +
+    dur +
+    's';
   if (dir < 0) el.style.transform = 'scaleX(-1)';
-  el.innerHTML = '<div class="fox-body"></div><div class="fox-tail"></div><div class="fox-ear fox-ear-l"></div><div class="fox-ear fox-ear-r"></div>';
+  el.innerHTML =
+    '<div class="fox-body"></div><div class="fox-tail"></div><div class="fox-ear fox-ear-l"></div><div class="fox-ear fox-ear-r"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 function renderSquirrel(container) {
@@ -548,7 +704,12 @@ function renderSquirrel(container) {
   el.style.cssText = 'left:' + x + '%;bottom:10%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="squirrel-body"></div><div class="squirrel-tail"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderWoodpecker(container) {
@@ -559,7 +720,9 @@ function renderWoodpecker(container) {
   el.style.cssText = 'left:' + x + '%;top:' + y + '%';
   el.innerHTML = '<div class="wp-body"></div><div class="wp-beak"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, 10000);
+  setTimeout(function () {
+    if (el.parentNode) el.remove();
+  }, 10000);
 }
 
 function renderSeagull(container) {
@@ -570,10 +733,17 @@ function renderSeagull(container) {
   var dur = 14 + Math.random() * 12;
   var dx = 300 + Math.random() * 300;
   var dy = (Math.random() - 0.5) * 50;
-  el.style.cssText = 'left:' + x + '%;top:' + y + '%;--sg-dx:' + dx + 'px;--sg-dy:' + dy + 'px;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="sg-body"></div><div class="sg-wing sg-wing-l"></div><div class="sg-wing sg-wing-r"></div>';
+  el.style.cssText =
+    'left:' + x + '%;top:' + y + '%;--sg-dx:' + dx + 'px;--sg-dy:' + dy + 'px;animation-duration:' + dur + 's';
+  el.innerHTML =
+    '<div class="sg-body"></div><div class="sg-wing sg-wing-l"></div><div class="sg-wing sg-wing-r"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderCrab(container) {
@@ -581,10 +751,23 @@ function renderCrab(container) {
   el.className = 'scene-creature creature-crab';
   var dur = 16 + Math.random() * 10;
   var dir = Math.random() < 0.5 ? 1 : -1;
-  el.style.cssText = 'bottom:4%;' + (dir > 0 ? 'left:5%' : 'right:5%') + ';--crab-dir:' + (dir * 120) + 'px;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="crab-body"></div><div class="crab-claw crab-claw-l"></div><div class="crab-claw crab-claw-r"></div>';
+  el.style.cssText =
+    'bottom:4%;' +
+    (dir > 0 ? 'left:5%' : 'right:5%') +
+    ';--crab-dir:' +
+    dir * 120 +
+    'px;animation-duration:' +
+    dur +
+    's';
+  el.innerHTML =
+    '<div class="crab-body"></div><div class="crab-claw crab-claw-l"></div><div class="crab-claw crab-claw-r"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderDolphin(container) {
@@ -594,7 +777,12 @@ function renderDolphin(container) {
   el.style.cssText = 'bottom:12%;left:-10%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="dolphin-body"></div><div class="dolphin-fin"></div><div class="dolphin-tail"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderFish(container) {
@@ -605,7 +793,12 @@ function renderFish(container) {
   el.style.cssText = 'left:-5%;top:' + y + '%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="fish-body"></div><div class="fish-tail"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderJellyfish(container) {
@@ -614,9 +807,15 @@ function renderJellyfish(container) {
   var x = 20 + Math.random() * 60;
   var dur = 18 + Math.random() * 14;
   el.style.cssText = 'left:' + x + '%;bottom:15%;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="jf-body"></div><div class="jf-tentacle jf-t1"></div><div class="jf-tentacle jf-t2"></div><div class="jf-tentacle jf-t3"></div>';
+  el.innerHTML =
+    '<div class="jf-body"></div><div class="jf-tentacle jf-t1"></div><div class="jf-tentacle jf-t2"></div><div class="jf-tentacle jf-t3"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderTurtle(container) {
@@ -624,9 +823,15 @@ function renderTurtle(container) {
   el.className = 'scene-creature creature-turtle';
   var dur = 28 + Math.random() * 16;
   el.style.cssText = 'bottom:5%;left:-5%;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="turtle-shell"></div><div class="turtle-head"></div><div class="turtle-leg turtle-leg-fl"></div><div class="turtle-leg turtle-leg-fr"></div>';
+  el.innerHTML =
+    '<div class="turtle-shell"></div><div class="turtle-head"></div><div class="turtle-leg turtle-leg-fl"></div><div class="turtle-leg turtle-leg-fr"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 function renderWhale(container) {
@@ -636,7 +841,12 @@ function renderWhale(container) {
   el.style.cssText = 'bottom:20%;left:-15%;animation-duration:' + dur + 's';
   el.innerHTML = '<div class="whale-body"></div><div class="whale-tail"></div><div class="whale-spout"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 // ===== NEW CREATURE RENDERERS =====
@@ -648,10 +858,27 @@ function renderHawk(container) {
   var dur = 18 + Math.random() * 14;
   var dx = 350 + Math.random() * 300;
   var dy = -(10 + Math.random() * 20);
-  el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--hawk-dx:' + dx + 'px;--hawk-dy:' + dy + 'px;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="hawk-body"></div><div class="hawk-wing hawk-wing-l"></div><div class="hawk-wing hawk-wing-r"></div>';
+  el.style.cssText =
+    'left:' +
+    startX +
+    '%;top:' +
+    startY +
+    '%;--hawk-dx:' +
+    dx +
+    'px;--hawk-dy:' +
+    dy +
+    'px;animation-duration:' +
+    dur +
+    's';
+  el.innerHTML =
+    '<div class="hawk-body"></div><div class="hawk-wing hawk-wing-l"></div><div class="hawk-wing hawk-wing-r"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 function renderSwallow(container) {
@@ -660,13 +887,30 @@ function renderSwallow(container) {
   var startX = Math.random() < 0.5 ? -8 : 108;
   var startY = 10 + Math.random() * 30;
   var dur = 8 + Math.random() * 8;
-  var dx = startX < 0 ? (300 + Math.random() * 200) : -(300 + Math.random() * 200);
+  var dx = startX < 0 ? 300 + Math.random() * 200 : -(300 + Math.random() * 200);
   var dy = (Math.random() - 0.5) * 120;
-  el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--sw-dx:' + dx + 'px;--sw-dy:' + dy + 'px;animation-duration:' + dur + 's';
+  el.style.cssText =
+    'left:' +
+    startX +
+    '%;top:' +
+    startY +
+    '%;--sw-dx:' +
+    dx +
+    'px;--sw-dy:' +
+    dy +
+    'px;animation-duration:' +
+    dur +
+    's';
   if (startX > 50) el.style.transform = 'scaleX(-1)';
-  el.innerHTML = '<div class="sw-body"></div><div class="sw-wing sw-wing-l"></div><div class="sw-wing sw-wing-r"></div><div class="sw-tail"></div>';
+  el.innerHTML =
+    '<div class="sw-body"></div><div class="sw-wing sw-wing-l"></div><div class="sw-wing sw-wing-r"></div><div class="sw-tail"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderSparrow(container) {
@@ -677,10 +921,27 @@ function renderSparrow(container) {
   var dur = 12 + Math.random() * 10;
   var dx = 200 + Math.random() * 250;
   var dy = -(10 + Math.random() * 30);
-  el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--sp-dx:' + dx + 'px;--sp-dy:' + dy + 'px;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="sp-body"></div><div class="sp-wing sp-wing-l"></div><div class="sp-wing sp-wing-r"></div>';
+  el.style.cssText =
+    'left:' +
+    startX +
+    '%;top:' +
+    startY +
+    '%;--sp-dx:' +
+    dx +
+    'px;--sp-dy:' +
+    dy +
+    'px;animation-duration:' +
+    dur +
+    's';
+  el.innerHTML =
+    '<div class="sp-body"></div><div class="sp-wing sp-wing-l"></div><div class="sp-wing sp-wing-r"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 1) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 1) * 1000
+  );
 }
 
 function renderHeron(container) {
@@ -691,10 +952,27 @@ function renderHeron(container) {
   var startY = 8 + Math.random() * 15;
   var dx = 400 + Math.random() * 200;
   var dy = -(5 + Math.random() * 15);
-  el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--hr-dx:' + dx + 'px;--hr-dy:' + dy + 'px;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="hr-body"></div><div class="hr-wing hr-wing-l"></div><div class="hr-wing hr-wing-r"></div><div class="hr-neck"></div>';
+  el.style.cssText =
+    'left:' +
+    startX +
+    '%;top:' +
+    startY +
+    '%;--hr-dx:' +
+    dx +
+    'px;--hr-dy:' +
+    dy +
+    'px;animation-duration:' +
+    dur +
+    's';
+  el.innerHTML =
+    '<div class="hr-body"></div><div class="hr-wing hr-wing-l"></div><div class="hr-wing hr-wing-r"></div><div class="hr-neck"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 function renderPelican(container) {
@@ -705,10 +983,27 @@ function renderPelican(container) {
   var startY = 10 + Math.random() * 18;
   var dx = 350 + Math.random() * 250;
   var dy = (Math.random() - 0.5) * 40;
-  el.style.cssText = 'left:' + startX + '%;top:' + startY + '%;--pl-dx:' + dx + 'px;--pl-dy:' + dy + 'px;animation-duration:' + dur + 's';
-  el.innerHTML = '<div class="pl-body"></div><div class="pl-wing pl-wing-l"></div><div class="pl-wing pl-wing-r"></div><div class="pl-beak"></div>';
+  el.style.cssText =
+    'left:' +
+    startX +
+    '%;top:' +
+    startY +
+    '%;--pl-dx:' +
+    dx +
+    'px;--pl-dy:' +
+    dy +
+    'px;animation-duration:' +
+    dur +
+    's';
+  el.innerHTML =
+    '<div class="pl-body"></div><div class="pl-wing pl-wing-l"></div><div class="pl-wing pl-wing-r"></div><div class="pl-beak"></div>';
   container.appendChild(el);
-  setTimeout(function() { if (el.parentNode) el.remove(); }, (dur + 2) * 1000);
+  setTimeout(
+    function () {
+      if (el.parentNode) el.remove();
+    },
+    (dur + 2) * 1000
+  );
 }
 
 // ===== AMBIENT AUDIO SYSTEM =====
@@ -724,7 +1019,7 @@ function _ensureAudioCtx() {
       _attachCtxStateListener(WEATHER.audioCtx);
     }
     return WEATHER.audioCtx;
-  } catch(e) {
+  } catch (e) {
     return null;
   }
 }
@@ -732,13 +1027,13 @@ function _ensureAudioCtx() {
 // Listen for AudioContext state changes (iOS interruptions, background, etc.)
 function _attachCtxStateListener(ctx) {
   if (!ctx) return;
-  ctx.onstatechange = function() {
+  ctx.onstatechange = function () {
     // When iOS interrupts audio (phone call, Siri, etc.) and then returns,
     // the context goes interrupted -> suspended -> running. Auto-resume it.
     if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
       // Try to resume — this will succeed if we're in a user gesture or
       // if the interruption has ended
-      ctx.resume().catch(function(){});
+      ctx.resume().catch(function () {});
     }
     // If context recovered to running, restart sounds
     if (ctx.state === 'running' && WEATHER.audioEnabled) {
@@ -753,14 +1048,16 @@ function _attachCtxStateListener(ctx) {
 function _recreateAudioCtx() {
   try {
     if (WEATHER.audioCtx) {
-      try { WEATHER.audioCtx.close(); } catch(e) {}
+      try {
+        WEATHER.audioCtx.close();
+      } catch (e) {}
     }
     WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     _noiseCache = {};
     WEATHER.audioNodes = {};
     _attachCtxStateListener(WEATHER.audioCtx);
     return WEATHER.audioCtx;
-  } catch(e) {
+  } catch (e) {
     return null;
   }
 }
@@ -781,7 +1078,7 @@ function _resumeCtx(ctx) {
     g.connect(ctx.destination);
     o.start(0);
     o.stop(ctx.currentTime + 0.05);
-  } catch(e) {}
+  } catch (e) {}
   // Prime via HTML Audio element for iOS PWAs (WKWebView)
   // Must re-prime every time — iOS resets audio session after background/interruption
   _primeHtmlAudio();
@@ -801,8 +1098,8 @@ function _primeHtmlAudio() {
     }
     _htmlAudioEl.volume = 0.001;
     _htmlAudioEl.currentTime = 0;
-    _htmlAudioEl.play().catch(function(){});
-  } catch(e) {}
+    _htmlAudioEl.play().catch(function () {});
+  } catch (e) {}
 }
 
 // Audio unlock - requires user gesture on iOS/Safari
@@ -820,7 +1117,9 @@ function _onAudioReady() {
     setTimeout(updateAmbientAudio, 100);
   }
   if (WEATHER.moodPlaying) {
-    setTimeout(function() { playMoodSound(WEATHER.moodPlaying); }, 200);
+    setTimeout(function () {
+      playMoodSound(WEATHER.moodPlaying);
+    }, 200);
   }
 }
 
@@ -837,7 +1136,9 @@ function _tryUnlock() {
     return;
   }
   if (_unlockTimer) return;
-  _unlockTimer = setTimeout(function() { _unlockTimer = null; }, 300);
+  _unlockTimer = setTimeout(function () {
+    _unlockTimer = null;
+  }, 300);
 
   // If context exists but is stuck suspended, it was likely created outside a user gesture.
   // Recreate immediately during THIS user gesture so it can actually be resumed.
@@ -858,7 +1159,9 @@ document.addEventListener('click', _tryUnlock);
 
 // ===== SOUND GENERATION ENGINE =====
 // Helper: clamp sample values
-function _clamp(v) { return v > 1 ? 1 : v < -1 ? -1 : v; }
+function _clamp(v) {
+  return v > 1 ? 1 : v < -1 ? -1 : v;
+}
 
 // Helper: generate brown noise into a buffer
 function _brownNoise(d, len, gain) {
@@ -871,13 +1174,23 @@ function _brownNoise(d, len, gain) {
 
 // Helper: generate pink noise into a buffer
 function _pinkNoise(d, len, gain) {
-  var b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+  var b0 = 0,
+    b1 = 0,
+    b2 = 0,
+    b3 = 0,
+    b4 = 0,
+    b5 = 0,
+    b6 = 0;
   for (var i = 0; i < len; i++) {
     var w = Math.random() * 2 - 1;
-    b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
-    b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
-    b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
-    d[i]+=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11*(gain||1); b6=w*0.115926;
+    b0 = 0.99886 * b0 + w * 0.0555179;
+    b1 = 0.99332 * b1 + w * 0.0750759;
+    b2 = 0.969 * b2 + w * 0.153852;
+    b3 = 0.8665 * b3 + w * 0.3104856;
+    b4 = 0.55 * b4 + w * 0.5329522;
+    b5 = -0.7616 * b5 - w * 0.016898;
+    d[i] += (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11 * (gain || 1);
+    b6 = w * 0.115926;
   }
 }
 
@@ -888,47 +1201,47 @@ function _addBird(d, sr, pos, species) {
   // Different bird species have distinct call patterns
   var patterns = [
     // Robin: rapid descending trill
-    function(d, sr, pos) {
+    function (d, sr, pos) {
       var notes = 3 + Math.floor(Math.random() * 4);
       var p = pos;
       for (var n = 0; n < notes; n++) {
         var f = 3200 - n * 180 + Math.random() * 300;
         var nLen = Math.min(Math.floor(sr * (0.06 + Math.random() * 0.08)), len - p);
         for (var k = 0; k < nLen; k++) {
-          var env = Math.sin(Math.PI * k / nLen); // smooth envelope
-          d[p + k] += Math.sin(PI2 * (f + 400 * Math.sin(PI2 * 12 * k / sr)) * k / sr) * 0.22 * env;
+          var env = Math.sin((Math.PI * k) / nLen); // smooth envelope
+          d[p + k] += Math.sin((PI2 * (f + 400 * Math.sin((PI2 * 12 * k) / sr)) * k) / sr) * 0.22 * env;
         }
         p += nLen + Math.floor(sr * 0.02);
         if (p >= len) break;
       }
     },
     // Warbler: rising two-tone whistle
-    function(d, sr, pos) {
+    function (d, sr, pos) {
       var dur = Math.min(Math.floor(sr * (0.4 + Math.random() * 0.3)), len - pos);
       for (var k = 0; k < dur; k++) {
         var t = k / dur;
         var f = 2400 + t * 1200 + 200 * Math.sin(PI2 * 6 * t);
         var env = Math.sin(Math.PI * t) * 0.8;
-        d[pos + k] += Math.sin(PI2 * f * k / sr) * 0.18 * env;
+        d[pos + k] += Math.sin((PI2 * f * k) / sr) * 0.18 * env;
       }
     },
     // Sparrow: short repeated peeps
-    function(d, sr, pos) {
+    function (d, sr, pos) {
       var peeps = 2 + Math.floor(Math.random() * 3);
       var p = pos;
       for (var n = 0; n < peeps; n++) {
         var f = 3800 + Math.random() * 600;
         var pLen = Math.min(Math.floor(sr * 0.05), len - p);
         for (var k = 0; k < pLen; k++) {
-          var env = Math.sin(Math.PI * k / pLen);
-          d[p + k] += Math.sin(PI2 * f * k / sr) * 0.2 * env;
+          var env = Math.sin((Math.PI * k) / pLen);
+          d[p + k] += Math.sin((PI2 * f * k) / sr) * 0.2 * env;
         }
         p += pLen + Math.floor(sr * (0.08 + Math.random() * 0.1));
         if (p >= len) break;
       }
     },
     // Thrush: rich melodic phrase with harmonics
-    function(d, sr, pos) {
+    function (d, sr, pos) {
       var dur = Math.min(Math.floor(sr * (0.5 + Math.random() * 0.5)), len - pos);
       var baseF = 1800 + Math.random() * 400;
       for (var k = 0; k < dur; k++) {
@@ -936,7 +1249,7 @@ function _addBird(d, sr, pos, species) {
         var fm = Math.sin(PI2 * 4 * t) * 300;
         var f = baseF + fm + t * 600 * Math.sin(PI2 * 2 * t);
         var env = (1 - Math.pow(2 * t - 1, 2)) * 0.7; // bell curve
-        d[pos + k] += (Math.sin(PI2 * f * k / sr) * 0.15 + Math.sin(PI2 * f * 2 * k / sr) * 0.05) * env;
+        d[pos + k] += (Math.sin((PI2 * f * k) / sr) * 0.15 + Math.sin((PI2 * f * 2 * k) / sr) * 0.05) * env;
       }
     }
   ];
@@ -955,8 +1268,8 @@ function _addCricketChorus(d, sr, pos) {
   for (var n = 0; n < pulses; n++) {
     var pLen = Math.min(Math.floor(sr * 0.015), len - p);
     for (var k = 0; k < pLen; k++) {
-      var env = Math.sin(Math.PI * k / pLen);
-      d[p + k] += Math.sin(PI2 * baseF * k / sr) * 0.3 * env;
+      var env = Math.sin((Math.PI * k) / pLen);
+      d[p + k] += Math.sin((PI2 * baseF * k) / sr) * 0.3 * env;
     }
     p += pLen + Math.floor(sr * 0.012);
     if (p >= len) break;
@@ -987,7 +1300,8 @@ function generateNoise(type) {
       // Add filtered white noise for hiss
       for (i = 0; i < len; i++) {
         var w = (Math.random() * 2 - 1) * 0.35;
-        L[i] += w; R[i] += w * 0.9 + (Math.random() * 2 - 1) * 0.05;
+        L[i] += w;
+        R[i] += w * 0.9 + (Math.random() * 2 - 1) * 0.05;
       }
       // Droplet impacts - varied sizes, random stereo position
       for (var drop = 0; drop < 200; drop++) {
@@ -997,7 +1311,7 @@ function generateNoise(type) {
         var pan = Math.random(); // 0=left, 1=right
         var freq = 2000 + (1 - size) * 4000; // smaller drops = higher pitch
         for (k = 0; k < dropLen && pos + k < len; k++) {
-          var s = Math.sin(PI2 * freq * k / sr) * size * 0.4 * Math.exp(-k / (dropLen * 0.3));
+          var s = Math.sin((PI2 * freq * k) / sr) * size * 0.4 * Math.exp(-k / (dropLen * 0.3));
           L[pos + k] += s * (1 - pan * 0.6);
           R[pos + k] += s * (0.4 + pan * 0.6);
         }
@@ -1006,8 +1320,10 @@ function generateNoise(type) {
       for (i = 0; i < len; i++) {
         t = i / sr;
         var intensity = 0.7 + 0.3 * Math.sin(PI2 * 0.15 * t);
-        L[i] *= intensity; R[i] *= intensity;
-        L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
+        L[i] *= intensity;
+        R[i] *= intensity;
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
       }
       break;
     }
@@ -1021,17 +1337,21 @@ function generateNoise(type) {
         var pan = Math.random();
         var freq = 3000 + Math.random() * 3000;
         for (k = 0; k < dLen && pos + k < len; k++) {
-          var s = Math.sin(PI2 * freq * k / sr) * 0.25 * Math.exp(-k / (dLen * 0.25));
+          var s = Math.sin((PI2 * freq * k) / sr) * 0.25 * Math.exp(-k / (dLen * 0.25));
           L[pos + k] += s * (1 - pan * 0.5);
           R[pos + k] += s * (0.5 + pan * 0.5);
         }
       }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'wind': {
       // Gentle meadow breeze: soft, slow undulation - no harsh gusts or whistling
-      var b0 = 0, b1 = 0;
+      var b0 = 0,
+        b1 = 0;
       for (i = 0; i < len; i++) {
         t = i / sr;
         // Very slow, gentle breathing motion
@@ -1041,10 +1361,14 @@ function generateNoise(type) {
         L[i] = (b0 * 1.0 + b1 * 0.5) * breeze;
         R[i] = (b0 * 0.5 + b1 * 1.0) * breeze;
         // No whistling - just pure soft wind
-        L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
       }
       // Low-pass for warmth
-      for (i = 1; i < len; i++) { L[i] = L[i] * 0.7 + L[i-1] * 0.3; R[i] = R[i] * 0.7 + R[i-1] * 0.3; }
+      for (i = 1; i < len; i++) {
+        L[i] = L[i] * 0.7 + L[i - 1] * 0.3;
+        R[i] = R[i] * 0.7 + R[i - 1] * 0.3;
+      }
       break;
     }
     case 'forestWind': {
@@ -1065,7 +1389,8 @@ function generateNoise(type) {
         var pan = Math.random();
         for (k = 0; k < rLen && pos + k < len; k++) {
           var s = (Math.random() * 2 - 1) * 0.08 * Math.exp(-k / (rLen * 0.5));
-          L[pos + k] += s * (1 - pan * 0.5); R[pos + k] += s * (0.5 + pan * 0.5);
+          L[pos + k] += s * (1 - pan * 0.5);
+          R[pos + k] += s * (0.5 + pan * 0.5);
         }
       }
       // 1-2 very distant birds (barely audible, peaceful)
@@ -1075,12 +1400,19 @@ function generateNoise(type) {
         _addBird(tmp, sr, bPos, b);
         // Very distant - barely there
         for (i = bPos; i < Math.min(bPos + sr * 2, len); i++) {
-          L[i] += tmp[i] * 0.12; R[i] += tmp[i] * 0.08;
+          L[i] += tmp[i] * 0.12;
+          R[i] += tmp[i] * 0.08;
         }
       }
       // Low-pass for softness
-      for (i = 1; i < len; i++) { L[i] = L[i] * 0.7 + L[i-1] * 0.3; R[i] = R[i] * 0.7 + R[i-1] * 0.3; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 1; i < len; i++) {
+        L[i] = L[i] * 0.7 + L[i - 1] * 0.3;
+        R[i] = R[i] * 0.7 + R[i - 1] * 0.3;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'waves': {
@@ -1094,7 +1426,7 @@ function generateNoise(type) {
         // Warm deep tone instead of harsh rumble
         var depth = Math.sin(PI2 * 42 * t) * 0.02;
         // Soft filtered noise shaped by wave
-        var noise = (Math.random() * 2 - 1);
+        var noise = Math.random() * 2 - 1;
         var surfNoise = noise * (surf * 0.2 + 0.05);
         var pullNoise = noise * pull * 0.12;
         // Very subtle foam (no harsh hiss)
@@ -1103,8 +1435,14 @@ function generateNoise(type) {
         R[i] = depth + surfNoise * 0.9 + pullNoise * 1.1 + foam * 0.8 + (Math.random() * 2 - 1) * 0.01;
       }
       // Gentle low-pass to remove any harshness
-      for (i = 1; i < len; i++) { L[i] = L[i] * 0.7 + L[i-1] * 0.3; R[i] = R[i] * 0.7 + R[i-1] * 0.3; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 1; i < len; i++) {
+        L[i] = L[i] * 0.7 + L[i - 1] * 0.3;
+        R[i] = R[i] * 0.7 + R[i - 1] * 0.3;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'thunder': {
@@ -1112,7 +1450,8 @@ function generateNoise(type) {
       // Rain base
       for (i = 0; i < len; i++) {
         var w = (Math.random() * 2 - 1) * 0.25;
-        L[i] = w; R[i] = w * 0.85 + (Math.random() * 2 - 1) * 0.04;
+        L[i] = w;
+        R[i] = w * 0.85 + (Math.random() * 2 - 1) * 0.04;
       }
       _brownNoise(L, len, 0.2);
       _brownNoise(R, len, 0.2);
@@ -1124,7 +1463,8 @@ function generateNoise(type) {
         var crackLen = Math.floor(sr * 0.05);
         for (k = 0; k < crackLen && tPos + k < len; k++) {
           var s = (Math.random() * 2 - 1) * 0.8 * Math.exp(-k / (crackLen * 0.15));
-          L[tPos + k] += s; R[tPos + k] += s * 0.9;
+          L[tPos + k] += s;
+          R[tPos + k] += s * 0.9;
         }
         // Rolling rumble - long decay with low-frequency content
         var rumbleLen = Math.floor(sr * (2 + Math.random() * 2));
@@ -1133,12 +1473,15 @@ function generateNoise(type) {
         for (k = 0; k < rumbleLen && rStart + k < len; k++) {
           bx = 0.985 * bx + 0.015 * (Math.random() * 2 - 1);
           var env = Math.exp(-k / (rumbleLen * 0.5));
-          var rumble = bx * 2.5 * env + Math.sin(PI2 * 40 * k / sr) * 0.15 * env;
+          var rumble = bx * 2.5 * env + Math.sin((PI2 * 40 * k) / sr) * 0.15 * env;
           L[rStart + k] += rumble;
-          R[rStart + k] += rumble * (0.7 + 0.3 * Math.sin(PI2 * 0.5 * k / sr)); // pan wander
+          R[rStart + k] += rumble * (0.7 + 0.3 * Math.sin((PI2 * 0.5 * k) / sr)); // pan wander
         }
       }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'crickets': {
@@ -1165,8 +1508,8 @@ function generateNoise(type) {
         var cPan = Math.random();
         var cFreq = 3200 + Math.random() * 400; // slightly lower freq
         for (k = 0; k < cLen && cPos + k < len; k++) {
-          var env = Math.sin(Math.PI * k / cLen);
-          var s = Math.sin(PI2 * cFreq * k / sr) * 0.03 * env; // very quiet
+          var env = Math.sin((Math.PI * k) / cLen);
+          var s = Math.sin((PI2 * cFreq * k) / sr) * 0.03 * env; // very quiet
           L[cPos + k] += s * (1 - cPan * 0.4);
           R[cPos + k] += s * (0.4 + cPan * 0.6);
         }
@@ -1177,14 +1520,21 @@ function generateNoise(type) {
         var fLen = Math.floor(sr * (0.15 + Math.random() * 0.1));
         var fFreq = 600 + Math.random() * 200; // much lower, gentle
         for (k = 0; k < fLen && fPos + k < len; k++) {
-          var env = Math.sin(Math.PI * k / fLen);
-          var s = Math.sin(PI2 * fFreq * k / sr) * 0.025 * env;
-          R[fPos + k] += s; L[fPos + k] += s * 0.4;
+          var env = Math.sin((Math.PI * k) / fLen);
+          var s = Math.sin((PI2 * fFreq * k) / sr) * 0.025 * env;
+          R[fPos + k] += s;
+          L[fPos + k] += s * 0.4;
         }
       }
       // Heavy low-pass to keep everything warm and soft
-      for (i = 1; i < len; i++) { L[i] = L[i] * 0.6 + L[i-1] * 0.4; R[i] = R[i] * 0.6 + R[i-1] * 0.4; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 1; i < len; i++) {
+        L[i] = L[i] * 0.6 + L[i - 1] * 0.4;
+        R[i] = R[i] * 0.6 + R[i - 1] * 0.4;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'birdsong': {
@@ -1197,7 +1547,8 @@ function generateNoise(type) {
         t = i / sr;
         var warmPad = Math.sin(PI2 * 120 * t) * 0.008 + Math.sin(PI2 * 180 * t) * 0.005;
         var swell = 0.5 + 0.5 * Math.sin(PI2 * 0.06 * t);
-        L[i] += warmPad * swell; R[i] += warmPad * swell * 0.9;
+        L[i] += warmPad * swell;
+        R[i] += warmPad * swell * 0.9;
       }
       // Fewer, softer, more distant birds - 4-6 instead of 8-12
       var numBirds = 4 + Math.floor(Math.random() * 3);
@@ -1217,8 +1568,14 @@ function generateNoise(type) {
       }
       // Gentle low-pass effect - soften any harsh high frequencies
       var prev = 0;
-      for (i = 1; i < len; i++) { L[i] = L[i] * 0.7 + L[i-1] * 0.3; R[i] = R[i] * 0.7 + R[i-1] * 0.3; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 1; i < len; i++) {
+        L[i] = L[i] * 0.7 + L[i - 1] * 0.3;
+        R[i] = R[i] * 0.7 + R[i - 1] * 0.3;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'seagulls': {
@@ -1245,16 +1602,22 @@ function generateNoise(type) {
         var pan = 0.3 + Math.random() * 0.4;
         for (k = 0; k < cLen && gPos + k < len; k++) {
           // Lower frequency, smoother - like a distant melodic call
-          var freq = 800 + 150 * Math.sin(PI2 * 2 * k / sr);
-          var env = Math.sin(Math.PI * k / cLen) * Math.sin(Math.PI * k / cLen); // squared for softer
-          var s = Math.sin(PI2 * freq * k / sr) * 0.04 * env; // much quieter
+          var freq = 800 + 150 * Math.sin((PI2 * 2 * k) / sr);
+          var env = Math.sin((Math.PI * k) / cLen) * Math.sin((Math.PI * k) / cLen); // squared for softer
+          var s = Math.sin((PI2 * freq * k) / sr) * 0.04 * env; // much quieter
           L[gPos + k] += s * (1 - pan * 0.4);
           R[gPos + k] += s * (0.4 + pan * 0.6);
         }
       }
       // Low-pass to soften everything
-      for (i = 1; i < len; i++) { L[i] = L[i] * 0.65 + L[i-1] * 0.35; R[i] = R[i] * 0.65 + R[i-1] * 0.35; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 1; i < len; i++) {
+        L[i] = L[i] * 0.65 + L[i - 1] * 0.35;
+        R[i] = R[i] * 0.65 + R[i - 1] * 0.35;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'owls': {
@@ -1267,7 +1630,8 @@ function generateNoise(type) {
         t = i / sr;
         var nightPad = Math.sin(PI2 * 80 * t) * 0.006 + Math.sin(PI2 * 55 * t) * 0.004;
         var swell = 0.6 + 0.4 * Math.sin(PI2 * 0.04 * t);
-        L[i] += nightPad * swell; R[i] += nightPad * swell * 0.85;
+        L[i] += nightPad * swell;
+        R[i] += nightPad * swell * 0.85;
       }
       // Just 1 owl hoot sequence - distant and soothing
       var oPos = Math.floor(sr * (4 + Math.random() * 8)); // well into the loop
@@ -1278,17 +1642,23 @@ function generateNoise(type) {
         var hLen = Math.floor(sr * (h === hoots - 1 ? 0.6 : 0.25));
         var freq = 280 + Math.random() * 40; // lower, warmer
         for (k = 0; k < hLen && p + k < len; k++) {
-          var env = Math.sin(Math.PI * k / hLen) * (h === hoots - 1 ? 0.8 : 0.5);
+          var env = Math.sin((Math.PI * k) / hLen) * (h === hoots - 1 ? 0.8 : 0.5);
           // Pure, warm tone with gentle harmonics - no harshness
-          var s = (Math.sin(PI2 * freq * k / sr) * 0.08 + Math.sin(PI2 * freq * 2 * k / sr) * 0.015) * env;
+          var s = (Math.sin((PI2 * freq * k) / sr) * 0.08 + Math.sin((PI2 * freq * 2 * k) / sr) * 0.015) * env;
           L[p + k] += s * (1 - pan * 0.5);
           R[p + k] += s * (0.5 + pan * 0.5);
         }
         p += hLen + Math.floor(sr * (h === hoots - 1 ? 0 : 0.2));
       }
       // Low-pass for warmth
-      for (i = 1; i < len; i++) { L[i] = L[i] * 0.6 + L[i-1] * 0.4; R[i] = R[i] * 0.6 + R[i-1] * 0.4; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 1; i < len; i++) {
+        L[i] = L[i] * 0.6 + L[i - 1] * 0.4;
+        R[i] = R[i] * 0.6 + R[i - 1] * 0.4;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'insects':
@@ -1303,7 +1673,8 @@ function generateNoise(type) {
         var buzz = (Math.random() * 2 - 1) * 0.01 * (0.5 + 0.3 * Math.sin(PI2 * 0.1 * t));
         // Warm low hum
         var warmth = Math.sin(PI2 * 100 * t) * 0.005 * (0.6 + 0.4 * Math.sin(PI2 * 0.08 * t));
-        L[i] += buzz + warmth; R[i] += buzz * 0.8 + warmth;
+        L[i] += buzz + warmth;
+        R[i] += buzz * 0.8 + warmth;
       }
       // Very few, soft chirps - distant and gentle
       for (var ins = 0; ins < 5; ins++) {
@@ -1312,15 +1683,21 @@ function generateNoise(type) {
         var iFreq = 2800 + Math.random() * 400;
         var iPan = Math.random();
         for (k = 0; k < iLen && iPos + k < len; k++) {
-          var env = Math.sin(Math.PI * k / iLen);
-          var s = Math.sin(PI2 * iFreq * k / sr) * 0.015 * env;
+          var env = Math.sin((Math.PI * k) / iLen);
+          var s = Math.sin((PI2 * iFreq * k) / sr) * 0.015 * env;
           L[iPos + k] += s * (1 - iPan * 0.4);
           R[iPos + k] += s * (0.4 + iPan * 0.6);
         }
       }
       // Heavy low-pass for warmth
-      for (i = 1; i < len; i++) { L[i] = L[i] * 0.6 + L[i-1] * 0.4; R[i] = R[i] * 0.6 + R[i-1] * 0.4; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 1; i < len; i++) {
+        L[i] = L[i] * 0.6 + L[i - 1] * 0.4;
+        R[i] = R[i] * 0.6 + R[i - 1] * 0.4;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
 
@@ -1354,7 +1731,10 @@ function generateNoise(type) {
       // Gentle pine wind
       _pinkNoise(L, len, 0.04);
       _pinkNoise(R, len, 0.04);
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'beachBreeze': {
@@ -1372,19 +1752,24 @@ function generateNoise(type) {
         // Deep warmth
         var warmth = Math.sin(PI2 * 50 * t) * 0.03;
         L[i] = surf * (Math.random() * 2 - 1) * 0.5 + pull * (Math.random() * 2 - 1) * 0.3 + wind + foam * 0.7 + warmth;
-        R[i] = surf * (Math.random() * 2 - 1) * 0.45 + pull * (Math.random() * 2 - 1) * 0.3 + wind * 0.9 + foam + warmth;
+        R[i] =
+          surf * (Math.random() * 2 - 1) * 0.45 + pull * (Math.random() * 2 - 1) * 0.3 + wind * 0.9 + foam + warmth;
       }
       // Occasional palm frond rustle
       for (var r = 0; r < 8; r++) {
         var rPos = Math.floor(Math.random() * (len - sr * 0.3));
         var rLen = Math.floor(sr * (0.1 + Math.random() * 0.2));
         for (k = 0; k < rLen && rPos + k < len; k++) {
-          var env = Math.sin(Math.PI * k / rLen);
+          var env = Math.sin((Math.PI * k) / rLen);
           var s = (Math.random() * 2 - 1) * 0.08 * env;
-          L[rPos + k] += s; R[rPos + k] += s * 0.6;
+          L[rPos + k] += s;
+          R[rPos + k] += s * 0.6;
         }
       }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'mountainWind': {
@@ -1395,23 +1780,29 @@ function generateNoise(type) {
       for (i = 0; i < len; i++) {
         t = i / sr;
         var gust = 0.5 + 0.5 * Math.sin(PI2 * 0.12 * t + Math.sin(PI2 * 0.04 * t) * 2);
-        L[i] *= gust; R[i] *= gust * 0.9;
+        L[i] *= gust;
+        R[i] *= gust * 0.9;
         // Whistling through rocks
         var whistle = Math.sin(PI2 * (800 + 200 * Math.sin(PI2 * 0.3 * t)) * t) * 0.02 * gust;
-        L[i] += whistle * 0.7; R[i] += whistle;
+        L[i] += whistle * 0.7;
+        R[i] += whistle;
       }
       // Eagle cry (1-2 distant calls)
       for (var e = 0; e < 1 + Math.floor(Math.random() * 2); e++) {
         var ePos = Math.floor(sr * (2 + Math.random() * 6));
         var eLen = Math.floor(sr * (0.8 + Math.random() * 0.5));
         for (k = 0; k < eLen && ePos + k < len; k++) {
-          var env = Math.sin(Math.PI * k / eLen);
+          var env = Math.sin((Math.PI * k) / eLen);
           var freq = 1800 - 400 * (k / eLen); // descending cry
-          var s = Math.sin(PI2 * freq * k / sr) * 0.08 * env;
-          L[ePos + k] += s * 0.6; R[ePos + k] += s;
+          var s = Math.sin((PI2 * freq * k) / sr) * 0.08 * env;
+          L[ePos + k] += s * 0.6;
+          R[ePos + k] += s;
         }
       }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
 
@@ -1419,10 +1810,22 @@ function generateNoise(type) {
     case 'moodRelaxing': {
       // Soft piano: slow arpeggiated Dmaj7 with sustain pedal feel
       var relaxNotes = [
-        {f: 146.8, t: 0.0}, {f: 185.0, t: 0.5}, {f: 220.0, t: 1.0}, {f: 277.2, t: 1.5},
-        {f: 293.7, t: 2.5}, {f: 220.0, t: 3.0}, {f: 185.0, t: 3.5}, {f: 146.8, t: 4.0},
-        {f: 130.8, t: 5.0}, {f: 164.8, t: 5.5}, {f: 220.0, t: 6.0}, {f: 261.6, t: 6.5},
-        {f: 293.7, t: 7.5}, {f: 261.6, t: 8.0}, {f: 220.0, t: 8.5}, {f: 164.8, t: 9.0}
+        { f: 146.8, t: 0.0 },
+        { f: 185.0, t: 0.5 },
+        { f: 220.0, t: 1.0 },
+        { f: 277.2, t: 1.5 },
+        { f: 293.7, t: 2.5 },
+        { f: 220.0, t: 3.0 },
+        { f: 185.0, t: 3.5 },
+        { f: 146.8, t: 4.0 },
+        { f: 130.8, t: 5.0 },
+        { f: 164.8, t: 5.5 },
+        { f: 220.0, t: 6.0 },
+        { f: 261.6, t: 6.5 },
+        { f: 293.7, t: 7.5 },
+        { f: 261.6, t: 8.0 },
+        { f: 220.0, t: 8.5 },
+        { f: 164.8, t: 9.0 }
       ];
       for (var n = 0; n < relaxNotes.length; n++) {
         var note = relaxNotes[n];
@@ -1430,25 +1833,45 @@ function generateNoise(type) {
         var dur = Math.floor(sr * 2.5);
         for (k = 0; k < dur && start + k < len; k++) {
           var env = Math.exp(-k / (sr * 1.8)) * (1 - Math.exp(-k / (sr * 0.005)));
-          var s = (Math.sin(PI2 * note.f * k / sr) * 0.22 +
-                   Math.sin(PI2 * note.f * 2 * k / sr) * 0.06 * Math.exp(-k / (sr * 0.8)) +
-                   Math.sin(PI2 * note.f * 3 * k / sr) * 0.02 * Math.exp(-k / (sr * 0.4))) * env;
-          L[start + k] += s * 0.9; R[start + k] += s * 0.75;
+          var s =
+            (Math.sin((PI2 * note.f * k) / sr) * 0.22 +
+              Math.sin((PI2 * note.f * 2 * k) / sr) * 0.06 * Math.exp(-k / (sr * 0.8)) +
+              Math.sin((PI2 * note.f * 3 * k) / sr) * 0.02 * Math.exp(-k / (sr * 0.4))) *
+            env;
+          L[start + k] += s * 0.9;
+          R[start + k] += s * 0.75;
         }
       }
       // Soft reverb tail
       var dly = Math.floor(sr * 0.12);
-      for (i = dly; i < len; i++) { L[i] += L[i - dly] * 0.15; R[i] += R[i - dly] * 0.18; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = dly; i < len; i++) {
+        L[i] += L[i - dly] * 0.15;
+        R[i] += R[i - dly] * 0.18;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'moodRomantic': {
       // Romantic piano: slow, tender melody in Am with warm harmonics
       var romNotes = [
-        {f: 220, t: 0.0}, {f: 261.6, t: 0.6}, {f: 329.6, t: 1.2}, {f: 392, t: 1.8},
-        {f: 329.6, t: 2.8}, {f: 293.7, t: 3.3}, {f: 261.6, t: 3.8},
-        {f: 220, t: 4.8}, {f: 196, t: 5.4}, {f: 220, t: 6.0}, {f: 261.6, t: 6.6},
-        {f: 246.9, t: 7.6}, {f: 220, t: 8.2}, {f: 196, t: 8.8}, {f: 174.6, t: 9.4}
+        { f: 220, t: 0.0 },
+        { f: 261.6, t: 0.6 },
+        { f: 329.6, t: 1.2 },
+        { f: 392, t: 1.8 },
+        { f: 329.6, t: 2.8 },
+        { f: 293.7, t: 3.3 },
+        { f: 261.6, t: 3.8 },
+        { f: 220, t: 4.8 },
+        { f: 196, t: 5.4 },
+        { f: 220, t: 6.0 },
+        { f: 261.6, t: 6.6 },
+        { f: 246.9, t: 7.6 },
+        { f: 220, t: 8.2 },
+        { f: 196, t: 8.8 },
+        { f: 174.6, t: 9.4 }
       ];
       for (var n = 0; n < romNotes.length; n++) {
         var note = romNotes[n];
@@ -1456,11 +1879,14 @@ function generateNoise(type) {
         var dur = Math.floor(sr * 2.8);
         for (k = 0; k < dur && start + k < len; k++) {
           var env = Math.exp(-k / (sr * 2.2)) * (1 - Math.exp(-k / (sr * 0.004)));
-          var vib = Math.sin(PI2 * 5 * k / sr) * 0.8;
-          var s = (Math.sin(PI2 * (note.f + vib) * k / sr) * 0.25 +
-                   Math.sin(PI2 * (note.f + vib) * 2 * k / sr) * 0.07 * Math.exp(-k / (sr * 1.0)) +
-                   Math.sin(PI2 * (note.f + vib) * 3 * k / sr) * 0.03 * Math.exp(-k / (sr * 0.5))) * env;
-          L[start + k] += s * 0.85; R[start + k] += s * 0.8;
+          var vib = Math.sin((PI2 * 5 * k) / sr) * 0.8;
+          var s =
+            (Math.sin((PI2 * (note.f + vib) * k) / sr) * 0.25 +
+              Math.sin((PI2 * (note.f + vib) * 2 * k) / sr) * 0.07 * Math.exp(-k / (sr * 1.0)) +
+              Math.sin((PI2 * (note.f + vib) * 3 * k) / sr) * 0.03 * Math.exp(-k / (sr * 0.5))) *
+            env;
+          L[start + k] += s * 0.85;
+          R[start + k] += s * 0.8;
         }
       }
       // Warm pad underneath
@@ -1468,27 +1894,34 @@ function generateNoise(type) {
         t = i / sr;
         var pad = Math.sin(PI2 * 110 * t) * 0.03 + Math.sin(PI2 * 165 * t) * 0.02;
         var swell = 0.6 + 0.4 * Math.sin(PI2 * 0.08 * t);
-        L[i] += pad * swell; R[i] += pad * swell;
+        L[i] += pad * swell;
+        R[i] += pad * swell;
       }
       var dly = Math.floor(sr * 0.15);
-      for (i = dly; i < len; i++) { L[i] += L[i - dly] * 0.12; R[i] += R[i - dly] * 0.15; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = dly; i < len; i++) {
+        L[i] += L[i - dly] * 0.12;
+        R[i] += R[i - dly] * 0.15;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'moodLively': {
       // Upbeat acoustic guitar strum: major key arpeggios with rhythm
       var livelyChords = [
-        {notes: [329.6, 415.3, 523.3], t: 0.0}, // E major
-        {notes: [349.2, 440, 523.3], t: 0.8},    // F major
-        {notes: [392, 493.9, 587.3], t: 1.6},    // G major
-        {notes: [261.6, 329.6, 392], t: 2.4},    // C major
-        {notes: [329.6, 415.3, 523.3], t: 3.6},
-        {notes: [293.7, 370, 440], t: 4.4},      // D major
-        {notes: [392, 493.9, 587.3], t: 5.2},
-        {notes: [261.6, 329.6, 392], t: 6.0},
-        {notes: [349.2, 440, 523.3], t: 7.2},
-        {notes: [329.6, 415.3, 523.3], t: 8.0},
-        {notes: [293.7, 370, 440], t: 8.8}
+        { notes: [329.6, 415.3, 523.3], t: 0.0 }, // E major
+        { notes: [349.2, 440, 523.3], t: 0.8 }, // F major
+        { notes: [392, 493.9, 587.3], t: 1.6 }, // G major
+        { notes: [261.6, 329.6, 392], t: 2.4 }, // C major
+        { notes: [329.6, 415.3, 523.3], t: 3.6 },
+        { notes: [293.7, 370, 440], t: 4.4 }, // D major
+        { notes: [392, 493.9, 587.3], t: 5.2 },
+        { notes: [261.6, 329.6, 392], t: 6.0 },
+        { notes: [349.2, 440, 523.3], t: 7.2 },
+        { notes: [329.6, 415.3, 523.3], t: 8.0 },
+        { notes: [293.7, 370, 440], t: 8.8 }
       ];
       for (var c = 0; c < livelyChords.length; c++) {
         var chord = livelyChords[c];
@@ -1499,16 +1932,22 @@ function generateNoise(type) {
           var freq = chord.notes[ni];
           for (k = 0; k < dur && start + k < len; k++) {
             var env = Math.exp(-k / (sr * 0.35)) * (1 - Math.exp(-k / (sr * 0.001)));
-            var s = (Math.sin(PI2 * freq * k / sr) * 0.14 +
-                     Math.sin(PI2 * freq * 2 * k / sr) * 0.08 * Math.exp(-k / (sr * 0.15)) +
-                     Math.sin(PI2 * freq * 3 * k / sr) * 0.04 * Math.exp(-k / (sr * 0.1)) +
-                     Math.sin(PI2 * freq * 4 * k / sr) * 0.02 * Math.exp(-k / (sr * 0.08))) * env;
+            var s =
+              (Math.sin((PI2 * freq * k) / sr) * 0.14 +
+                Math.sin((PI2 * freq * 2 * k) / sr) * 0.08 * Math.exp(-k / (sr * 0.15)) +
+                Math.sin((PI2 * freq * 3 * k) / sr) * 0.04 * Math.exp(-k / (sr * 0.1)) +
+                Math.sin((PI2 * freq * 4 * k) / sr) * 0.02 * Math.exp(-k / (sr * 0.08))) *
+              env;
             var pan = 0.4 + ni * 0.15;
-            L[start + k] += s * (1 - pan); R[start + k] += s * pan;
+            L[start + k] += s * (1 - pan);
+            R[start + k] += s * pan;
           }
         }
       }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'moodCozy': {
@@ -1540,16 +1979,19 @@ function generateNoise(type) {
           R[cPos + cLen + k] += s * 0.8;
         }
       }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'moodFocused': {
       // Lo-fi focus: gentle piano chords + binaural undertone + vinyl crackle
       var focChords = [
-        {notes: [261.6, 329.6, 392], t: 0},     // Cmaj
-        {notes: [220, 293.7, 349.2], t: 2.5},   // Dm
-        {notes: [196, 246.9, 329.6], t: 5.0},    // Em
-        {notes: [174.6, 220, 293.7], t: 7.5}     // Dm low
+        { notes: [261.6, 329.6, 392], t: 0 }, // Cmaj
+        { notes: [220, 293.7, 349.2], t: 2.5 }, // Dm
+        { notes: [196, 246.9, 329.6], t: 5.0 }, // Em
+        { notes: [174.6, 220, 293.7], t: 7.5 } // Dm low
       ];
       for (var c = 0; c < focChords.length; c++) {
         var chord = focChords[c];
@@ -1559,9 +2001,12 @@ function generateNoise(type) {
           var freq = chord.notes[ni];
           for (k = 0; k < dur && start + k < len; k++) {
             var env = Math.exp(-k / (sr * 2.0)) * (1 - Math.exp(-k / (sr * 0.006)));
-            var s = (Math.sin(PI2 * freq * k / sr) * 0.16 +
-                     Math.sin(PI2 * freq * 2 * k / sr) * 0.04 * Math.exp(-k / (sr * 0.6))) * env;
-            L[start + k] += s * 0.8; R[start + k] += s * 0.7;
+            var s =
+              (Math.sin((PI2 * freq * k) / sr) * 0.16 +
+                Math.sin((PI2 * freq * 2 * k) / sr) * 0.04 * Math.exp(-k / (sr * 0.6))) *
+              env;
+            L[start + k] += s * 0.8;
+            R[start + k] += s * 0.7;
           }
         }
       }
@@ -1578,20 +2023,42 @@ function generateNoise(type) {
         R[pos] += (Math.random() - 0.5) * 0.06;
       }
       var dly = Math.floor(sr * 0.1);
-      for (i = dly; i < len; i++) { L[i] += L[i - dly] * 0.12; R[i] += R[i - dly] * 0.14; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = dly; i < len; i++) {
+        L[i] += L[i - dly] * 0.12;
+        R[i] += R[i - dly] * 0.14;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'moodPlayful': {
       // Playful xylophone/music box melody in G major
       var playNotes = [
-        {f: 784, t: 0.0}, {f: 880, t: 0.25}, {f: 784, t: 0.5}, {f: 659.3, t: 0.75},
-        {f: 587.3, t: 1.25}, {f: 659.3, t: 1.5}, {f: 784, t: 1.75},
-        {f: 523.3, t: 2.5}, {f: 587.3, t: 2.75}, {f: 659.3, t: 3.0}, {f: 784, t: 3.5},
-        {f: 880, t: 4.0}, {f: 784, t: 4.5}, {f: 659.3, t: 5.0},
-        {f: 587.3, t: 5.5}, {f: 523.3, t: 6.0}, {f: 587.3, t: 6.5},
-        {f: 392, t: 7.0}, {f: 440, t: 7.5}, {f: 523.3, t: 8.0}, {f: 587.3, t: 8.5},
-        {f: 659.3, t: 9.0}, {f: 784, t: 9.5}
+        { f: 784, t: 0.0 },
+        { f: 880, t: 0.25 },
+        { f: 784, t: 0.5 },
+        { f: 659.3, t: 0.75 },
+        { f: 587.3, t: 1.25 },
+        { f: 659.3, t: 1.5 },
+        { f: 784, t: 1.75 },
+        { f: 523.3, t: 2.5 },
+        { f: 587.3, t: 2.75 },
+        { f: 659.3, t: 3.0 },
+        { f: 784, t: 3.5 },
+        { f: 880, t: 4.0 },
+        { f: 784, t: 4.5 },
+        { f: 659.3, t: 5.0 },
+        { f: 587.3, t: 5.5 },
+        { f: 523.3, t: 6.0 },
+        { f: 587.3, t: 6.5 },
+        { f: 392, t: 7.0 },
+        { f: 440, t: 7.5 },
+        { f: 523.3, t: 8.0 },
+        { f: 587.3, t: 8.5 },
+        { f: 659.3, t: 9.0 },
+        { f: 784, t: 9.5 }
       ];
       for (var n = 0; n < playNotes.length; n++) {
         var note = playNotes[n];
@@ -1599,25 +2066,45 @@ function generateNoise(type) {
         var dur = Math.floor(sr * 0.5);
         for (k = 0; k < dur && start + k < len; k++) {
           var env = Math.exp(-k / (sr * 0.18)) * (1 - Math.exp(-k / (sr * 0.0005)));
-          var s = (Math.sin(PI2 * note.f * k / sr) * 0.18 +
-                   Math.sin(PI2 * note.f * 3 * k / sr) * 0.06 * Math.exp(-k / (sr * 0.08)) +
-                   Math.sin(PI2 * note.f * 5 * k / sr) * 0.02 * Math.exp(-k / (sr * 0.04))) * env;
+          var s =
+            (Math.sin((PI2 * note.f * k) / sr) * 0.18 +
+              Math.sin((PI2 * note.f * 3 * k) / sr) * 0.06 * Math.exp(-k / (sr * 0.08)) +
+              Math.sin((PI2 * note.f * 5 * k) / sr) * 0.02 * Math.exp(-k / (sr * 0.04))) *
+            env;
           var pan = 0.3 + (note.f / 1000) * 0.4;
-          L[start + k] += s * (1 - pan); R[start + k] += s * pan;
+          L[start + k] += s * (1 - pan);
+          R[start + k] += s * pan;
         }
       }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'moodDreamy': {
       // Ethereal harp arpeggios with long reverb
       var dreamNotes = [
-        {f: 261.6, t: 0.0}, {f: 392, t: 0.4}, {f: 523.3, t: 0.8}, {f: 659.3, t: 1.2},
-        {f: 784, t: 1.6}, {f: 659.3, t: 2.4}, {f: 523.3, t: 2.8},
-        {f: 293.7, t: 3.6}, {f: 440, t: 4.0}, {f: 587.3, t: 4.4}, {f: 784, t: 4.8},
-        {f: 880, t: 5.2}, {f: 784, t: 6.0}, {f: 587.3, t: 6.4},
-        {f: 246.9, t: 7.2}, {f: 370, t: 7.6}, {f: 493.9, t: 8.0}, {f: 659.3, t: 8.4},
-        {f: 784, t: 8.8}, {f: 659.3, t: 9.4}
+        { f: 261.6, t: 0.0 },
+        { f: 392, t: 0.4 },
+        { f: 523.3, t: 0.8 },
+        { f: 659.3, t: 1.2 },
+        { f: 784, t: 1.6 },
+        { f: 659.3, t: 2.4 },
+        { f: 523.3, t: 2.8 },
+        { f: 293.7, t: 3.6 },
+        { f: 440, t: 4.0 },
+        { f: 587.3, t: 4.4 },
+        { f: 784, t: 4.8 },
+        { f: 880, t: 5.2 },
+        { f: 784, t: 6.0 },
+        { f: 587.3, t: 6.4 },
+        { f: 246.9, t: 7.2 },
+        { f: 370, t: 7.6 },
+        { f: 493.9, t: 8.0 },
+        { f: 659.3, t: 8.4 },
+        { f: 784, t: 8.8 },
+        { f: 659.3, t: 9.4 }
       ];
       for (var n = 0; n < dreamNotes.length; n++) {
         var note = dreamNotes[n];
@@ -1625,70 +2112,107 @@ function generateNoise(type) {
         var dur = Math.floor(sr * 3.0);
         for (k = 0; k < dur && start + k < len; k++) {
           var env = Math.exp(-k / (sr * 2.5)) * (1 - Math.exp(-k / (sr * 0.002)));
-          var s = (Math.sin(PI2 * note.f * k / sr) * 0.15 +
-                   Math.sin(PI2 * note.f * 2 * k / sr) * 0.05 * Math.exp(-k / (sr * 1.0)) +
-                   Math.sin(PI2 * note.f * 0.5 * k / sr) * 0.03) * env;
-          L[start + k] += s * (0.6 + 0.3 * Math.sin(PI2 * 0.2 * k / sr));
-          R[start + k] += s * (0.7 + 0.2 * Math.sin(PI2 * 0.15 * k / sr));
+          var s =
+            (Math.sin((PI2 * note.f * k) / sr) * 0.15 +
+              Math.sin((PI2 * note.f * 2 * k) / sr) * 0.05 * Math.exp(-k / (sr * 1.0)) +
+              Math.sin((PI2 * note.f * 0.5 * k) / sr) * 0.03) *
+            env;
+          L[start + k] += s * (0.6 + 0.3 * Math.sin((PI2 * 0.2 * k) / sr));
+          R[start + k] += s * (0.7 + 0.2 * Math.sin((PI2 * 0.15 * k) / sr));
         }
       }
       // Long reverb
-      var dly1 = Math.floor(sr * 0.17), dly2 = Math.floor(sr * 0.37);
+      var dly1 = Math.floor(sr * 0.17),
+        dly2 = Math.floor(sr * 0.37);
       for (i = dly2; i < len; i++) {
         L[i] += L[i - dly1] * 0.2 + L[i - dly2] * 0.12;
         R[i] += R[i - dly1] * 0.15 + R[i - dly2] * 0.18;
-        L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
       }
       break;
     }
     case 'moodSerene': {
       // Singing bowls with gentle melodic progression
       var bowlNotes = [
-        {f: 349.2, t: 0.0, dur: 4.0}, {f: 523.3, t: 2.0, dur: 4.0},
-        {f: 392, t: 4.5, dur: 4.0}, {f: 293.7, t: 6.5, dur: 3.5}
+        { f: 349.2, t: 0.0, dur: 4.0 },
+        { f: 523.3, t: 2.0, dur: 4.0 },
+        { f: 392, t: 4.5, dur: 4.0 },
+        { f: 293.7, t: 6.5, dur: 3.5 }
       ];
       for (var n = 0; n < bowlNotes.length; n++) {
         var note = bowlNotes[n];
         var start = Math.floor(note.t * sr);
         var dur = Math.floor(sr * note.dur);
         for (k = 0; k < dur && start + k < len; k++) {
-          var breath = 0.5 + 0.5 * Math.sin(PI2 * 0.12 * k / sr);
+          var breath = 0.5 + 0.5 * Math.sin((PI2 * 0.12 * k) / sr);
           var env = (1 - Math.exp(-k / (sr * 0.3))) * Math.exp(-k / (sr * 3.5));
-          var s = (Math.sin(PI2 * note.f * k / sr) * 0.15 +
-                   Math.sin(PI2 * note.f * 2.71 * k / sr) * 0.05 * Math.exp(-k / (sr * 1.5)) +
-                   Math.sin(PI2 * note.f * 4.16 * k / sr) * 0.02 * Math.exp(-k / (sr * 0.8))) * env * breath;
-          L[start + k] += s * 0.85; R[start + k] += s * 0.75;
+          var s =
+            (Math.sin((PI2 * note.f * k) / sr) * 0.15 +
+              Math.sin((PI2 * note.f * 2.71 * k) / sr) * 0.05 * Math.exp(-k / (sr * 1.5)) +
+              Math.sin((PI2 * note.f * 4.16 * k) / sr) * 0.02 * Math.exp(-k / (sr * 0.8))) *
+            env *
+            breath;
+          L[start + k] += s * 0.85;
+          R[start + k] += s * 0.75;
         }
       }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'moodSoulful': {
       // Jazzy piano: Cm9 voicings with soulful walk
       var soulNotes = [
-        {f: 130.8, t: 0.0}, {f: 155.6, t: 0.3}, {f: 196, t: 0.6}, {f: 233.1, t: 0.9}, {f: 293.7, t: 1.2},
-        {f: 261.6, t: 2.0}, {f: 196, t: 2.4}, {f: 233.1, t: 2.8},
-        {f: 146.8, t: 3.5}, {f: 174.6, t: 3.8}, {f: 220, t: 4.1}, {f: 261.6, t: 4.5},
-        {f: 233.1, t: 5.3}, {f: 196, t: 5.8}, {f: 174.6, t: 6.3},
-        {f: 130.8, t: 7.0}, {f: 164.8, t: 7.4}, {f: 196, t: 7.8}, {f: 233.1, t: 8.3},
-        {f: 261.6, t: 8.8}, {f: 293.7, t: 9.3}
+        { f: 130.8, t: 0.0 },
+        { f: 155.6, t: 0.3 },
+        { f: 196, t: 0.6 },
+        { f: 233.1, t: 0.9 },
+        { f: 293.7, t: 1.2 },
+        { f: 261.6, t: 2.0 },
+        { f: 196, t: 2.4 },
+        { f: 233.1, t: 2.8 },
+        { f: 146.8, t: 3.5 },
+        { f: 174.6, t: 3.8 },
+        { f: 220, t: 4.1 },
+        { f: 261.6, t: 4.5 },
+        { f: 233.1, t: 5.3 },
+        { f: 196, t: 5.8 },
+        { f: 174.6, t: 6.3 },
+        { f: 130.8, t: 7.0 },
+        { f: 164.8, t: 7.4 },
+        { f: 196, t: 7.8 },
+        { f: 233.1, t: 8.3 },
+        { f: 261.6, t: 8.8 },
+        { f: 293.7, t: 9.3 }
       ];
       for (var n = 0; n < soulNotes.length; n++) {
         var note = soulNotes[n];
         var start = Math.floor(note.t * sr);
         var dur = Math.floor(sr * 2.0);
         for (k = 0; k < dur && start + k < len; k++) {
-          var vib = Math.sin(PI2 * 5.5 * k / sr) * 1.2;
+          var vib = Math.sin((PI2 * 5.5 * k) / sr) * 1.2;
           var env = Math.exp(-k / (sr * 1.5)) * (1 - Math.exp(-k / (sr * 0.005)));
-          var s = (Math.sin(PI2 * (note.f + vib) * k / sr) * 0.2 +
-                   Math.sin(PI2 * (note.f + vib) * 2 * k / sr) * 0.06 * Math.exp(-k / (sr * 0.7)) +
-                   Math.sin(PI2 * (note.f + vib) * 3 * k / sr) * 0.02 * Math.exp(-k / (sr * 0.4))) * env;
-          L[start + k] += s * 0.8; R[start + k] += s * 0.7;
+          var s =
+            (Math.sin((PI2 * (note.f + vib) * k) / sr) * 0.2 +
+              Math.sin((PI2 * (note.f + vib) * 2 * k) / sr) * 0.06 * Math.exp(-k / (sr * 0.7)) +
+              Math.sin((PI2 * (note.f + vib) * 3 * k) / sr) * 0.02 * Math.exp(-k / (sr * 0.4))) *
+            env;
+          L[start + k] += s * 0.8;
+          R[start + k] += s * 0.7;
         }
       }
       var dly = Math.floor(sr * 0.13);
-      for (i = dly; i < len; i++) { L[i] += L[i - dly] * 0.1; R[i] += R[i - dly] * 0.13; }
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = dly; i < len; i++) {
+        L[i] += L[i - dly] * 0.1;
+        R[i] += R[i - dly] * 0.13;
+      }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'moodTropical': {
@@ -1698,12 +2222,26 @@ function generateNoise(type) {
       _brownNoise(R, len, 0.04);
       // Steel drum melody (C major pentatonic)
       var tropMelody = [
-        {f: 523.3, t: 0.0}, {f: 587.3, t: 0.4}, {f: 659.3, t: 0.8}, {f: 784, t: 1.2},
-        {f: 880, t: 1.6}, {f: 784, t: 2.2}, {f: 659.3, t: 2.6},
-        {f: 587.3, t: 3.4}, {f: 523.3, t: 3.8}, {f: 587.3, t: 4.2}, {f: 659.3, t: 4.6},
-        {f: 784, t: 5.2}, {f: 880, t: 5.6}, {f: 1046.5, t: 6.0},
-        {f: 880, t: 6.8}, {f: 784, t: 7.2}, {f: 659.3, t: 7.6},
-        {f: 587.3, t: 8.2}, {f: 523.3, t: 8.6}, {f: 659.3, t: 9.2}
+        { f: 523.3, t: 0.0 },
+        { f: 587.3, t: 0.4 },
+        { f: 659.3, t: 0.8 },
+        { f: 784, t: 1.2 },
+        { f: 880, t: 1.6 },
+        { f: 784, t: 2.2 },
+        { f: 659.3, t: 2.6 },
+        { f: 587.3, t: 3.4 },
+        { f: 523.3, t: 3.8 },
+        { f: 587.3, t: 4.2 },
+        { f: 659.3, t: 4.6 },
+        { f: 784, t: 5.2 },
+        { f: 880, t: 5.6 },
+        { f: 1046.5, t: 6.0 },
+        { f: 880, t: 6.8 },
+        { f: 784, t: 7.2 },
+        { f: 659.3, t: 7.6 },
+        { f: 587.3, t: 8.2 },
+        { f: 523.3, t: 8.6 },
+        { f: 659.3, t: 9.2 }
       ];
       for (var n = 0; n < tropMelody.length; n++) {
         var note = tropMelody[n];
@@ -1711,19 +2249,24 @@ function generateNoise(type) {
         var dur = Math.floor(sr * 0.6);
         for (k = 0; k < dur && start + k < len; k++) {
           var env = Math.exp(-k / (sr * 0.25)) * (1 - Math.exp(-k / (sr * 0.0008)));
-          var s = (Math.sin(PI2 * note.f * k / sr) * 0.16 +
-                   Math.sin(PI2 * note.f * 2.01 * k / sr) * 0.06 * Math.exp(-k / (sr * 0.1)) +
-                   Math.sin(PI2 * note.f * 3.98 * k / sr) * 0.03 * Math.exp(-k / (sr * 0.06))) * env;
+          var s =
+            (Math.sin((PI2 * note.f * k) / sr) * 0.16 +
+              Math.sin((PI2 * note.f * 2.01 * k) / sr) * 0.06 * Math.exp(-k / (sr * 0.1)) +
+              Math.sin((PI2 * note.f * 3.98 * k) / sr) * 0.03 * Math.exp(-k / (sr * 0.06))) *
+            env;
           var pan = 0.3 + Math.sin(n * 0.7) * 0.2;
-          L[start + k] += s * (1 - pan); R[start + k] += s * pan;
+          L[start + k] += s * (1 - pan);
+          R[start + k] += s * pan;
         }
       }
       // Warm pad
       for (i = 0; i < len; i++) {
         t = i / sr;
         var pad = Math.sin(PI2 * 261.6 * t) * 0.025 + Math.sin(PI2 * 392 * t) * 0.02;
-        L[i] += pad; R[i] += pad;
-        L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
+        L[i] += pad;
+        R[i] += pad;
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
       }
       break;
     }
@@ -1743,7 +2286,8 @@ function generateNoise(type) {
         var cLen = Math.floor(sr * (0.008 + Math.random() * 0.02));
         for (k = 0; k < cLen && cPos + k < len; k++) {
           var s = (Math.random() * 2 - 1) * pop * Math.exp(-k / (cLen * 0.15));
-          L[cPos + k] += s; R[cPos + k] += s * 0.8;
+          L[cPos + k] += s;
+          R[cPos + k] += s * 0.8;
         }
       }
       // Distant crickets
@@ -1755,7 +2299,10 @@ function generateNoise(type) {
       // Gentle wind
       _brownNoise(L, len, 0.04);
       _brownNoise(R, len, 0.04);
-      for (i = 0; i < len; i++) { L[i] = _clamp(L[i]); R[i] = _clamp(R[i]); }
+      for (i = 0; i < len; i++) {
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
+      }
       break;
     }
     case 'moodRainyNight': {
@@ -1768,8 +2315,9 @@ function generateNoise(type) {
         var dLen = Math.floor(sr * (0.001 + Math.random() * 0.004));
         var freq = 4000 + Math.random() * 4000;
         for (k = 0; k < dLen && pos + k < len; k++) {
-          var s = Math.sin(PI2 * freq * k / sr) * 0.2 * Math.exp(-k / (dLen * 0.2));
-          L[pos + k] += s; R[pos + k] += s * 0.7;
+          var s = Math.sin((PI2 * freq * k) / sr) * 0.2 * Math.exp(-k / (dLen * 0.2));
+          L[pos + k] += s;
+          R[pos + k] += s * 0.7;
         }
       }
       // Very distant thunder rumble
@@ -1780,14 +2328,17 @@ function generateNoise(type) {
         bx2 = 0.99 * bx2 + 0.01 * (Math.random() * 2 - 1);
         var env = Math.exp(-k / (rLen * 0.6));
         var s = bx2 * 0.4 * env;
-        L[tPos + k] += s; R[tPos + k] += s * 0.9;
+        L[tPos + k] += s;
+        R[tPos + k] += s * 0.9;
       }
       // Warm low-end bed
       for (i = 0; i < len; i++) {
         t = i / sr;
         var warm = Math.sin(PI2 * 80 * t) * 0.02;
-        L[i] += warm; R[i] += warm;
-        L[i] = _clamp(L[i]); R[i] = _clamp(R[i]);
+        L[i] += warm;
+        R[i] += warm;
+        L[i] = _clamp(L[i]);
+        R[i] = _clamp(R[i]);
       }
       break;
     }
@@ -1827,7 +2378,7 @@ function playAmbientSound(type, volume) {
 
   // Resume if suspended or interrupted (iOS)
   if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    ctx.resume().catch(function(){});
+    ctx.resume().catch(function () {});
   }
 
   var vol = volume || 0.0012;
@@ -1835,7 +2386,7 @@ function playAmbientSound(type, volume) {
   var buffer;
   try {
     buffer = generateNoise(type);
-  } catch(e) {
+  } catch (e) {
     console.warn('Buffer gen error (' + type + '): ' + e.message);
     return;
   }
@@ -1857,18 +2408,24 @@ function playAmbientSound(type, volume) {
     audio.volume = Math.min(1.0, vol);
     var playP = audio.play();
     if (playP && playP.then) {
-      playP.then(function() {
-        if (!WEATHER.audioEnabled) { audio.pause(); URL.revokeObjectURL(objUrl); return; }
-        WEATHER.audioNodes[type] = { parts: [], gain: null, audio: audio, objUrl: objUrl };
-      }).catch(function() {
-        URL.revokeObjectURL(objUrl);
-        // Fallback to Web Audio API
-        _playAmbientWebAudio(ctx, type, buffer, vol);
-      });
+      playP
+        .then(function () {
+          if (!WEATHER.audioEnabled) {
+            audio.pause();
+            URL.revokeObjectURL(objUrl);
+            return;
+          }
+          WEATHER.audioNodes[type] = { parts: [], gain: null, audio: audio, objUrl: objUrl };
+        })
+        .catch(function () {
+          URL.revokeObjectURL(objUrl);
+          // Fallback to Web Audio API
+          _playAmbientWebAudio(ctx, type, buffer, vol);
+        });
     } else {
       WEATHER.audioNodes[type] = { parts: [], gain: null, audio: audio, objUrl: objUrl };
     }
-  } catch(e) {
+  } catch (e) {
     _playAmbientWebAudio(ctx, type, buffer, vol);
   }
 }
@@ -1893,19 +2450,29 @@ function stopAmbientSound(type) {
   if (!node) return;
   // HTML5 Audio path
   if (node.audio) {
-    try { node.audio.pause(); node.audio.src = ''; } catch(e) {}
-    if (node.objUrl) try { URL.revokeObjectURL(node.objUrl); } catch(e) {}
+    try {
+      node.audio.pause();
+      node.audio.src = '';
+    } catch (e) {}
+    if (node.objUrl)
+      try {
+        URL.revokeObjectURL(node.objUrl);
+      } catch (e) {}
   }
   // Web Audio path
   if (node.gain && WEATHER.audioCtx) {
     try {
       node.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.8);
       var parts = node.parts;
-      setTimeout(function() {
-        try { for (var i = 0; i < parts.length; i++) parts[i].stop(); } catch(e) {}
+      setTimeout(function () {
+        try {
+          for (var i = 0; i < parts.length; i++) parts[i].stop();
+        } catch (e) {}
       }, 1000);
-    } catch(e) {
-      try { for (var i = 0; i < node.parts.length; i++) node.parts[i].stop(); } catch(e2) {}
+    } catch (e) {
+      try {
+        for (var i = 0; i < node.parts.length; i++) node.parts[i].stop();
+      } catch (e2) {}
     }
   }
   delete WEATHER.audioNodes[type];
@@ -1926,7 +2493,7 @@ function updateAmbientAudio() {
   }
   var ctx = WEATHER.audioCtx;
   if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-    ctx.resume().catch(function(){});
+    ctx.resume().catch(function () {});
   }
 
   var scene = SCENES[WEATHER.scene];
@@ -1943,13 +2510,14 @@ function updateAmbientAudio() {
     var wx = WEATHER_EFFECTS[WEATHER.data.condition];
     if (wx && wx.sound) keep.push(wx.sound);
   }
-  Object.keys(WEATHER.audioNodes).forEach(function(k) {
+  Object.keys(WEATHER.audioNodes).forEach(function (k) {
     if (keep.indexOf(k) === -1) stopAmbientSound(k);
   });
 
   // Clear cached buffers when sound type changes so new sounds are generated
   if (_noiseCache[soundType] && _noiseCache._lastVersion !== 2) {
-    _noiseCache = {}; _noiseCache._lastVersion = 2;
+    _noiseCache = {};
+    _noiseCache._lastVersion = 2;
   }
   // Single environment sound — soft and calm
   playAmbientSound(soundType, 0.0012);
@@ -1965,14 +2533,17 @@ function toggleAmbientAudio(on) {
   if (on) {
     // Always create a FRESH context during this user gesture
     var ctx = _recreateAudioCtx();
-    if (!ctx) { toast('Audio not supported on this device'); return; }
+    if (!ctx) {
+      toast('Audio not supported on this device');
+      return;
+    }
 
     // Resume context — MUST happen during user gesture
     _resumeCtx(ctx);
     WEATHER.audioUnlocked = true;
 
     // Helper: start ambient sounds (no beep)
-    var startSounds = function() {
+    var startSounds = function () {
       updateAmbientAudio();
     };
 
@@ -1981,15 +2552,15 @@ function toggleAmbientAudio(on) {
       try {
         var p = ctx.resume();
         if (p && p.then) {
-          p.then(function() {
+          p.then(function () {
             startSounds();
-          }).catch(function(e) {
+          }).catch(function (e) {
             startSounds(); // try anyway
           });
         } else {
           startSounds();
         }
-      } catch(e) {
+      } catch (e) {
         startSounds();
       }
     } else {
@@ -1998,19 +2569,19 @@ function toggleAmbientAudio(on) {
 
     // Also try starting sounds immediately (don't wait for promise)
     // On some devices the promise never resolves but audio works anyway
-    setTimeout(function() {
+    setTimeout(function () {
       if (!WEATHER.audioEnabled) return;
       var c = WEATHER.audioCtx;
       if (!c) return;
       var nodes = Object.keys(WEATHER.audioNodes).length;
       if (nodes === 0) {
-        if (c.state !== 'running') c.resume().catch(function(){});
+        if (c.state !== 'running') c.resume().catch(function () {});
         updateAmbientAudio();
       }
     }, 1000);
 
     // Final retry — recreate context and try one more time
-    setTimeout(function() {
+    setTimeout(function () {
       if (!WEATHER.audioEnabled) return;
       var c = WEATHER.audioCtx;
       var nodes = Object.keys(WEATHER.audioNodes).length;
@@ -2021,7 +2592,13 @@ function toggleAmbientAudio(on) {
           c = _recreateAudioCtx();
           if (c) {
             _resumeCtx(c);
-            c.resume().then(function() { updateAmbientAudio(); }).catch(function() { updateAmbientAudio(); });
+            c.resume()
+              .then(function () {
+                updateAmbientAudio();
+              })
+              .catch(function () {
+                updateAmbientAudio();
+              });
           }
         } else {
           updateAmbientAudio();
@@ -2035,7 +2612,6 @@ function toggleAmbientAudio(on) {
     db.ref('settings/weather/' + user + '/audio').set(on);
   }
 }
-
 
 // ===== SCENE GROUND LAYER =====
 function renderSceneGround(container) {
@@ -2069,9 +2645,9 @@ function spawnSceneCreatures(container) {
   // Spawn 2-3 creatures with staggered timing
   var count = 2 + Math.floor(Math.random() * 2);
   for (var i = 0; i < count; i++) {
-    (function(idx) {
+    (function (idx) {
       var delay = idx * (1500 + Math.random() * 1500);
-      setTimeout(function() {
+      setTimeout(function () {
         if (container.querySelectorAll('.scene-creature').length >= MAX_SCENE_CREATURES) return;
         var type = creatures[Math.floor(Math.random() * creatures.length)];
         renderSceneCreature(container, type);
@@ -2081,41 +2657,48 @@ function spawnSceneCreatures(container) {
 
   // Continuous creature spawning - keep the scene alive
   if (!WEATHER._creatureInterval) {
-    WEATHER._creatureInterval = setInterval(function() {
-      if (!container.parentNode) { clearInterval(WEATHER._creatureInterval); WEATHER._creatureInterval = null; return; }
-      if (document.hidden) return;
-      if (container.querySelectorAll('.scene-creature').length >= MAX_SCENE_CREATURES) return;
-      var t = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
-      var c = scene.creatures[t] || scene.creatures.morning;
-      var type = c[Math.floor(Math.random() * c.length)];
-      renderSceneCreature(container, type);
-    }, 10000 + Math.random() * 8000);
+    WEATHER._creatureInterval = setInterval(
+      function () {
+        if (!container.parentNode) {
+          clearInterval(WEATHER._creatureInterval);
+          WEATHER._creatureInterval = null;
+          return;
+        }
+        if (document.hidden) return;
+        if (container.querySelectorAll('.scene-creature').length >= MAX_SCENE_CREATURES) return;
+        var t = WEATHER.locationGranted && WEATHER.data ? getTimeOfDayWeather() : getTimeOfDay();
+        var c = scene.creatures[t] || scene.creatures.morning;
+        var type = c[Math.floor(Math.random() * c.length)];
+        renderSceneCreature(container, type);
+      },
+      10000 + Math.random() * 8000
+    );
   }
 }
 
 // ===== OVERRIDE EXISTING SYSTEM =====
-(function() {
+(function () {
   function patchSkySystem() {
     var _origGetTimeOfDay = window.getTimeOfDay;
     var _origGetSunPosition = window.getSunPosition;
     var _origSpawnCreatures = window.spawnCreatures;
     var _origRenderLivingSky = window.renderLivingSky;
 
-    window.getTimeOfDay = function() {
+    window.getTimeOfDay = function () {
       if (WEATHER.locationGranted && WEATHER.data) {
         return getTimeOfDayWeather();
       }
       return _origGetTimeOfDay ? _origGetTimeOfDay() : 'morning';
     };
 
-    window.getSunPosition = function() {
+    window.getSunPosition = function () {
       if (WEATHER.locationGranted && WEATHER.data) {
         return getSunPositionWeather();
       }
       return _origGetSunPosition ? _origGetSunPosition() : { isNight: false, x: 50, y: 15, progress: 0.5 };
     };
 
-    window.spawnCreatures = function(container) {
+    window.spawnCreatures = function (container) {
       if (WEATHER.scene && SCENES[WEATHER.scene]) {
         spawnSceneCreatures(container);
       } else if (_origSpawnCreatures) {
@@ -2123,7 +2706,7 @@ function spawnSceneCreatures(container) {
       }
     };
 
-    window.renderLivingSky = function(container) {
+    window.renderLivingSky = function (container) {
       // Clear ongoing creature spawning before re-render
       if (WEATHER._creatureInterval) {
         clearInterval(WEATHER._creatureInterval);
@@ -2152,10 +2735,10 @@ function showLocationPrompt() {
 
   content.innerHTML =
     '<div class="loc-prompt">' +
-      '<h2 class="loc-prompt-title">Living Weather</h2>' +
-      '<p class="loc-prompt-desc">Real weather, sunrise, and sounds — right in your background.</p>' +
-      '<button class="dq-submit w-full mt-12" onclick="handleLocationAllow()">Allow Location</button>' +
-      '<div class="loc-prompt-skip" onclick="handleLocationDeny()">Not now</div>' +
+    '<h2 class="loc-prompt-title">Living Weather</h2>' +
+    '<p class="loc-prompt-desc">Real weather, sunrise, and sounds — right in your background.</p>' +
+    '<button class="dq-submit w-full mt-12" onclick="handleLocationAllow()">Allow Location</button>' +
+    '<div class="loc-prompt-skip" onclick="handleLocationDeny()">Not now</div>' +
     '</div>';
 
   modal.classList.add('on');
@@ -2166,10 +2749,10 @@ function handleLocationAllow() {
   if (modal) modal.classList.remove('on');
 
   toast('Requesting location...');
-  requestLocationPermission().then(function(granted) {
+  requestLocationPermission().then(function (granted) {
     if (granted) {
       toast('Location enabled - fetching weather...');
-      fetchWeather().then(function(data) {
+      fetchWeather().then(function (data) {
         if (data) {
           if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
           var container = document.getElementById('sky-scene');
@@ -2204,15 +2787,33 @@ function updateWeatherInfoUI() {
   }
   var d = WEATHER.data;
   var condIcon = {
-    clear: '☀️', clouds: '☁️', rain: '🌧️', drizzle: '🌦️',
-    thunderstorm: '⛈️', snow: '❄️', mist: '🌫️', fog: '🌫️',
-    haze: '🌫️', dust: '💨', sand: '💨'
+    clear: '☀️',
+    clouds: '☁️',
+    rain: '🌧️',
+    drizzle: '🌦️',
+    thunderstorm: '⛈️',
+    snow: '❄️',
+    mist: '🌫️',
+    fog: '🌫️',
+    haze: '🌫️',
+    dust: '💨',
+    sand: '💨'
   };
   el.classList.remove('d-none');
-  el.innerHTML = '<span class="weather-icon">' + (condIcon[d.condition] || '🌤') + '</span>' +
-    '<span class="weather-temp">' + Math.round(d.temp) + '°C</span>' +
-    '<span class="weather-cond">' + d.condition.charAt(0).toUpperCase() + d.condition.slice(1) + '</span>' +
-    '<span class="weather-wind">💨 ' + Math.round(d.windSpeed) + ' km/h</span>';
+  el.innerHTML =
+    '<span class="weather-icon">' +
+    (condIcon[d.condition] || '🌤') +
+    '</span>' +
+    '<span class="weather-temp">' +
+    Math.round(d.temp) +
+    '°C</span>' +
+    '<span class="weather-cond">' +
+    d.condition.charAt(0).toUpperCase() +
+    d.condition.slice(1) +
+    '</span>' +
+    '<span class="weather-wind">💨 ' +
+    Math.round(d.windSpeed) +
+    ' km/h</span>';
 }
 
 // ===== SET SCENE =====
@@ -2226,7 +2827,7 @@ function setWeatherScene(sceneName) {
   if (container && livingSkyEnabled) renderLivingSky(container);
   updateAmbientAudio();
 
-  document.querySelectorAll('.scene-option').forEach(function(opt) {
+  document.querySelectorAll('.scene-option').forEach(function (opt) {
     opt.classList.toggle('active', opt.getAttribute('data-scene') === sceneName);
   });
 
@@ -2236,42 +2837,83 @@ function setWeatherScene(sceneName) {
 // ===== MOOD SOUNDS SYSTEM =====
 // Ambient mood sounds for date nights, events, and partner sharing
 var MOOD_SOUNDS = {
-  romantic:   { label: 'Romantic',    icon: '🕯',  type: 'moodRomantic',   desc: 'Warm, intimate tones' },
-  dreamy:     { label: 'Dreamy',      icon: '💫', type: 'moodDreamy',     desc: 'Ethereal, floating' },
-  cozy:       { label: 'Cozy',        icon: '☕', type: 'moodCozy',       desc: 'Crackling fireplace' },
-  soulful:    { label: 'Soulful',     icon: '🎷', type: 'moodSoulful',    desc: 'Deep, warm tones' },
-  serene:     { label: 'Serene',      icon: '🪷', type: 'moodSerene',     desc: 'Meditation bowls' },
-  relaxing:   { label: 'Relaxing',    icon: '🧘', type: 'moodRelaxing',   desc: 'Calm, peaceful ambient' },
+  romantic: { label: 'Romantic', icon: '🕯', type: 'moodRomantic', desc: 'Warm, intimate tones' },
+  dreamy: { label: 'Dreamy', icon: '💫', type: 'moodDreamy', desc: 'Ethereal, floating' },
+  cozy: { label: 'Cozy', icon: '☕', type: 'moodCozy', desc: 'Crackling fireplace' },
+  soulful: { label: 'Soulful', icon: '🎷', type: 'moodSoulful', desc: 'Deep, warm tones' },
+  serene: { label: 'Serene', icon: '🪷', type: 'moodSerene', desc: 'Meditation bowls' },
+  relaxing: { label: 'Relaxing', icon: '🧘', type: 'moodRelaxing', desc: 'Calm, peaceful ambient' },
   rainyNight: { label: 'Rainy Night', icon: '🌃', type: 'moodRainyNight', desc: 'Rain on windows' },
-  campfire:   { label: 'Campfire',    icon: '🔥', type: 'moodCampfire',   desc: 'Outdoor fire + night' },
-  tropical:   { label: 'Tropical',    icon: '🌴', type: 'moodTropical',   desc: 'Island steel drums' },
-  lively:     { label: 'Lively',      icon: '🎉', type: 'moodLively',     desc: 'Upbeat, energetic' },
-  rain:       { label: 'Rain',        icon: '🌧',  type: 'rain',           desc: 'Rainfall ambience' },
-  ocean:      { label: 'Ocean',       icon: '🌊', type: 'waves',          desc: 'Waves and shore' },
-  night:      { label: 'Night',       icon: '🌙', type: 'crickets',       desc: 'Crickets and frogs' },
-  forest:     { label: 'Forest',      icon: '🌲', type: 'forestWind',     desc: 'Wind, birds, leaves' },
-  birds:      { label: 'Birds',       icon: '🐦', type: 'birdsong',       desc: 'Dawn bird chorus' },
-  thunder:    { label: 'Storm',       icon: '⛈',  type: 'thunder',        desc: 'Thunder and rain' },
+  campfire: { label: 'Campfire', icon: '🔥', type: 'moodCampfire', desc: 'Outdoor fire + night' },
+  tropical: { label: 'Tropical', icon: '🌴', type: 'moodTropical', desc: 'Island steel drums' },
+  lively: { label: 'Lively', icon: '🎉', type: 'moodLively', desc: 'Upbeat, energetic' },
+  rain: { label: 'Rain', icon: '🌧', type: 'rain', desc: 'Rainfall ambience' },
+  ocean: { label: 'Ocean', icon: '🌊', type: 'waves', desc: 'Waves and shore' },
+  night: { label: 'Night', icon: '🌙', type: 'crickets', desc: 'Crickets and frogs' },
+  forest: { label: 'Forest', icon: '🌲', type: 'forestWind', desc: 'Wind, birds, leaves' },
+  birds: { label: 'Birds', icon: '🐦', type: 'birdsong', desc: 'Dawn bird chorus' },
+  thunder: { label: 'Storm', icon: '⛈', type: 'thunder', desc: 'Thunder and rain' },
   // Beach environment (her favorites)
-  beachBreeze:  { label: 'Beach Breeze',  icon: '🏖', type: 'beachBreeze',    desc: 'Warm wind, gentle surf', env: 'beach' },
-  seagulls:     { label: 'Seagulls',      icon: '🕊', type: 'seagulls',       desc: 'Shore birds and waves', env: 'beach' },
+  beachBreeze: { label: 'Beach Breeze', icon: '🏖', type: 'beachBreeze', desc: 'Warm wind, gentle surf', env: 'beach' },
+  seagulls: { label: 'Seagulls', icon: '🕊', type: 'seagulls', desc: 'Shore birds and waves', env: 'beach' },
   // Mountain environment (his favorites)
-  mountainCreek: { label: 'Mountain Creek', icon: '🏔', type: 'mountainCreek', desc: 'Babbling water over rocks', env: 'mountain' },
-  mountainWind:  { label: 'Mountain Wind',  icon: '🦅', type: 'mountainWind',  desc: 'Alpine gusts and eagles', env: 'mountain' }
+  mountainCreek: {
+    label: 'Mountain Creek',
+    icon: '🏔',
+    type: 'mountainCreek',
+    desc: 'Babbling water over rocks',
+    env: 'mountain'
+  },
+  mountainWind: {
+    label: 'Mountain Wind',
+    icon: '🦅',
+    type: 'mountainWind',
+    desc: 'Alpine gusts and eagles',
+    env: 'mountain'
+  }
 };
 
 // Nature sound order per user: beach-first for her, mountain-first for him
 var NATURE_ORDER_HER = [
-  'ocean', 'beachBreeze', 'seagulls', 'tropical',
-  'rain', 'night', 'forest', 'birds', 'thunder',
-  'mountainCreek', 'mountainWind', 'campfire'
+  'ocean',
+  'beachBreeze',
+  'seagulls',
+  'tropical',
+  'rain',
+  'night',
+  'forest',
+  'birds',
+  'thunder',
+  'mountainCreek',
+  'mountainWind',
+  'campfire'
 ];
 var NATURE_ORDER_HIM = [
-  'forest', 'mountainCreek', 'mountainWind', 'campfire',
-  'birds', 'rain', 'night', 'thunder',
-  'ocean', 'beachBreeze', 'seagulls', 'tropical'
+  'forest',
+  'mountainCreek',
+  'mountainWind',
+  'campfire',
+  'birds',
+  'rain',
+  'night',
+  'thunder',
+  'ocean',
+  'beachBreeze',
+  'seagulls',
+  'tropical'
 ];
-var MOOD_ORDER = ['romantic', 'dreamy', 'cozy', 'soulful', 'serene', 'relaxing', 'rainyNight', 'campfire', 'tropical', 'lively'];
+var MOOD_ORDER = [
+  'romantic',
+  'dreamy',
+  'cozy',
+  'soulful',
+  'serene',
+  'relaxing',
+  'rainyNight',
+  'campfire',
+  'tropical',
+  'lively'
+];
 
 WEATHER.moodPlaying = null;
 WEATHER.moodNode = null;
@@ -2281,17 +2923,21 @@ function renderMoodSoundsGrid() {
   var role = typeof user !== 'undefined' ? user : null;
   var baseOrder = role === 'her' ? NATURE_ORDER_HER : NATURE_ORDER_HIM;
   // Reorder nature sounds to prioritize current environment
-  var sky = (typeof currentSkyTheme !== 'undefined') ? currentSkyTheme : 'mixed';
+  var sky = typeof currentSkyTheme !== 'undefined' ? currentSkyTheme : 'mixed';
   var natureOrder = baseOrder.slice();
   if (sky === 'beach') {
     // Prioritize beach/ocean sounds
     var beachSounds = ['ocean', 'beachBreeze', 'seagulls', 'tropical'];
-    var rest = natureOrder.filter(function(s) { return beachSounds.indexOf(s) === -1; });
+    var rest = natureOrder.filter(function (s) {
+      return beachSounds.indexOf(s) === -1;
+    });
     natureOrder = beachSounds.concat(rest);
   } else if (sky === 'mountain') {
     // Prioritize mountain/forest sounds
     var mtSounds = ['forest', 'mountainCreek', 'mountainWind', 'campfire', 'birds'];
-    var rest = natureOrder.filter(function(s) { return mtSounds.indexOf(s) === -1; });
+    var rest = natureOrder.filter(function (s) {
+      return mtSounds.indexOf(s) === -1;
+    });
     natureOrder = mtSounds.concat(rest);
   }
 
@@ -2303,13 +2949,33 @@ function renderMoodSoundsGrid() {
     for (var m = 0; m < MOOD_ORDER.length; m++) {
       var k = MOOD_ORDER[m];
       var s = MOOD_SOUNDS[k];
-      if (s) html += '<button class="mood-sound-btn" data-mood="' + k + '" onclick="toggleMoodSound(\'' + k + '\')"><span class="msb-icon">' + s.icon + '</span><span class="msb-label">' + s.label + '</span></button>';
+      if (s)
+        html +=
+          '<button class="mood-sound-btn" data-mood="' +
+          k +
+          '" onclick="toggleMoodSound(\'' +
+          k +
+          '\')"><span class="msb-icon">' +
+          s.icon +
+          '</span><span class="msb-label">' +
+          s.label +
+          '</span></button>';
     }
     // Nature sounds in user-preferred order
     for (var n = 0; n < natureOrder.length; n++) {
       var k = natureOrder[n];
       var s = MOOD_SOUNDS[k];
-      if (s) html += '<button class="mood-sound-btn" data-mood="' + k + '" onclick="toggleMoodSound(\'' + k + '\')"><span class="msb-icon">' + s.icon + '</span><span class="msb-label">' + s.label + '</span></button>';
+      if (s)
+        html +=
+          '<button class="mood-sound-btn" data-mood="' +
+          k +
+          '" onclick="toggleMoodSound(\'' +
+          k +
+          '\')"><span class="msb-icon">' +
+          s.icon +
+          '</span><span class="msb-label">' +
+          s.label +
+          '</span></button>';
     }
     mainGrid.innerHTML = html;
   }
@@ -2321,25 +2987,55 @@ function renderMoodSoundsGrid() {
     for (var m = 0; m < MOOD_ORDER.length; m++) {
       var k = MOOD_ORDER[m];
       var s = MOOD_SOUNDS[k];
-      if (s) html += '<button class="mood-sound-btn" data-mood="' + k + '" onclick="toggleMoodSound(\'' + k + '\')"><span class="msb-icon">' + s.icon + '</span><span class="msb-label">' + s.label + '</span></button>';
+      if (s)
+        html +=
+          '<button class="mood-sound-btn" data-mood="' +
+          k +
+          '" onclick="toggleMoodSound(\'' +
+          k +
+          '\')"><span class="msb-icon">' +
+          s.icon +
+          '</span><span class="msb-label">' +
+          s.label +
+          '</span></button>';
     }
     for (var n = 0; n < natureOrder.length; n++) {
       var k = natureOrder[n];
       var s = MOOD_SOUNDS[k];
-      if (s) html += '<button class="mood-sound-btn" data-mood="' + k + '" onclick="toggleMoodSound(\'' + k + '\')"><span class="msb-icon">' + s.icon + '</span><span class="msb-label">' + s.label + '</span></button>';
+      if (s)
+        html +=
+          '<button class="mood-sound-btn" data-mood="' +
+          k +
+          '" onclick="toggleMoodSound(\'' +
+          k +
+          '\')"><span class="msb-icon">' +
+          s.icon +
+          '</span><span class="msb-label">' +
+          s.label +
+          '</span></button>';
     }
     settingsGrid.innerHTML = html;
   }
 
   // Date night / send-to-partner grid (sendMoodToPartner)
   var sendGrids = document.querySelectorAll('.mood-sounds-grid:not(#mood-sounds-grid):not(#settings-mood-sounds)');
-  sendGrids.forEach(function(grid) {
+  sendGrids.forEach(function (grid) {
     var html = '';
     var allKeys = MOOD_ORDER.concat(natureOrder);
     for (var i = 0; i < allKeys.length; i++) {
       var k = allKeys[i];
       var s = MOOD_SOUNDS[k];
-      if (s) html += '<button class="mood-sound-btn" data-mood="' + k + '" onclick="sendMoodToPartner(\'' + k + '\')"><span class="msb-icon">' + s.icon + '</span><span class="msb-label">' + s.label + '</span></button>';
+      if (s)
+        html +=
+          '<button class="mood-sound-btn" data-mood="' +
+          k +
+          '" onclick="sendMoodToPartner(\'' +
+          k +
+          '\')"><span class="msb-icon">' +
+          s.icon +
+          '</span><span class="msb-label">' +
+          s.label +
+          '</span></button>';
     }
     grid.innerHTML = html;
   });
@@ -2349,12 +3045,18 @@ function playMoodSound(moodKey) {
   stopMoodSound();
 
   var ctx = _ensureAudioCtx();
-  if (!ctx) { toast('Audio not supported on this device'); return; }
+  if (!ctx) {
+    toast('Audio not supported on this device');
+    return;
+  }
 
   // If context is suspended, recreate it during this user gesture (iOS fix)
   if (ctx.state === 'suspended') {
     ctx = _recreateAudioCtx();
-    if (!ctx) { toast('Audio not supported on this device'); return; }
+    if (!ctx) {
+      toast('Audio not supported on this device');
+      return;
+    }
   }
 
   _resumeCtx(ctx);
@@ -2365,22 +3067,24 @@ function playMoodSound(moodKey) {
 
   // Set playing state and UI immediately for responsiveness
   WEATHER.moodPlaying = moodKey;
-  document.querySelectorAll('.mood-sound-btn').forEach(function(btn) {
+  document.querySelectorAll('.mood-sound-btn').forEach(function (btn) {
     btn.classList.toggle('active', btn.getAttribute('data-mood') === moodKey);
   });
 
   // Chain sound creation to resume() Promise so context is running first
-  var resumePromise = (ctx.state !== 'running') ? ctx.resume() : Promise.resolve();
-  (resumePromise || Promise.resolve()).then(function() {
-    // Check if user cancelled while we were waiting
-    if (WEATHER.moodPlaying !== moodKey) return;
+  var resumePromise = ctx.state !== 'running' ? ctx.resume() : Promise.resolve();
+  (resumePromise || Promise.resolve())
+    .then(function () {
+      // Check if user cancelled while we were waiting
+      if (WEATHER.moodPlaying !== moodKey) return;
 
-    _startMoodPlayback(ctx, mood, moodKey);
-  }).catch(function() {
-    // Fallback: try playing anyway
-    if (WEATHER.moodPlaying !== moodKey) return;
-    _startMoodPlayback(ctx, mood, moodKey);
-  });
+      _startMoodPlayback(ctx, mood, moodKey);
+    })
+    .catch(function () {
+      // Fallback: try playing anyway
+      if (WEATHER.moodPlaying !== moodKey) return;
+      _startMoodPlayback(ctx, mood, moodKey);
+    });
 }
 
 function _startMoodPlayback(ctx, mood, moodKey) {
@@ -2391,7 +3095,10 @@ function _startMoodPlayback(ctx, mood, moodKey) {
   }
 
   var buffer = generateNoise(mood.type);
-  if (!buffer) { toast('Could not generate ' + mood.label); return; }
+  if (!buffer) {
+    toast('Could not generate ' + mood.label);
+    return;
+  }
 
   // PRIMARY: HTML5 <audio> with WAV blob — most reliable on mobile
   try {
@@ -2405,24 +3112,30 @@ function _startMoodPlayback(ctx, mood, moodKey) {
     audio.volume = 0.0035;
     var playP = audio.play();
     if (playP && playP.then) {
-      playP.then(function() {
-        if (WEATHER.moodPlaying !== moodKey) { audio.pause(); URL.revokeObjectURL(objUrl); return; }
-        WEATHER.moodNode = { audio: audio, objUrl: objUrl };
-      }).catch(function() {
-        URL.revokeObjectURL(objUrl);
-        // Fallback to Web Audio API
-        _startMoodWebAudio(ctx, buffer, mood, moodKey);
-      });
+      playP
+        .then(function () {
+          if (WEATHER.moodPlaying !== moodKey) {
+            audio.pause();
+            URL.revokeObjectURL(objUrl);
+            return;
+          }
+          WEATHER.moodNode = { audio: audio, objUrl: objUrl };
+        })
+        .catch(function () {
+          URL.revokeObjectURL(objUrl);
+          // Fallback to Web Audio API
+          _startMoodWebAudio(ctx, buffer, mood, moodKey);
+        });
     } else {
       WEATHER.moodNode = { audio: audio, objUrl: objUrl };
       toast(mood.label + ' mood playing');
     }
-  } catch(e) {
+  } catch (e) {
     _startMoodWebAudio(ctx, buffer, mood, moodKey);
   }
 
   // Verify audio is actually running after a delay
-  setTimeout(function() {
+  setTimeout(function () {
     if (!WEATHER.moodNode && WEATHER.moodPlaying === moodKey) {
       // Neither HTML5 nor Web Audio started — try Web Audio as last resort
       _startMoodWebAudio(ctx, buffer, mood, moodKey);
@@ -2461,8 +3174,14 @@ function stopMoodSound() {
     var node = WEATHER.moodNode;
     // HTML5 Audio path
     if (node.audio) {
-      try { node.audio.pause(); node.audio.src = ''; } catch(e) {}
-      if (node.objUrl) try { URL.revokeObjectURL(node.objUrl); } catch(e) {}
+      try {
+        node.audio.pause();
+        node.audio.src = '';
+      } catch (e) {}
+      if (node.objUrl)
+        try {
+          URL.revokeObjectURL(node.objUrl);
+        } catch (e) {}
     }
     // Web Audio path
     if (node.source) {
@@ -2470,13 +3189,21 @@ function stopMoodSound() {
         if (node.gain && WEATHER.audioCtx) {
           node.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.5);
         }
-        setTimeout(function() { try { node.source.stop(); } catch(e) {} }, 600);
-      } catch(e) { try { node.source.stop(); } catch(e2) {} }
+        setTimeout(function () {
+          try {
+            node.source.stop();
+          } catch (e) {}
+        }, 600);
+      } catch (e) {
+        try {
+          node.source.stop();
+        } catch (e2) {}
+      }
     }
     WEATHER.moodNode = null;
   }
   WEATHER.moodPlaying = null;
-  document.querySelectorAll('.mood-sound-btn').forEach(function(btn) {
+  document.querySelectorAll('.mood-sound-btn').forEach(function (btn) {
     btn.classList.remove('active');
   });
   // Hide send/stop buttons
@@ -2545,11 +3272,13 @@ function syncSkyState() {
   }
 }
 // Sync every 60 seconds (skip when tab hidden)
-setInterval(function() { if (!document.hidden) syncSkyState(); }, 60000);
+setInterval(function () {
+  if (!document.hidden) syncSkyState();
+}, 60000);
 
 // Periodic audio retry - if enabled but no sounds playing, try again
 // Does NOT create AudioContext — only works with an existing one
-setInterval(function() {
+setInterval(function () {
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
   if (!WEATHER.audioEnabled && !WEATHER.moodPlaying) return;
   var ctx = WEATHER.audioCtx;
@@ -2557,7 +3286,7 @@ setInterval(function() {
   var nodeCount = Object.keys(WEATHER.audioNodes).length;
   if (nodeCount === 0 || ctx.state !== 'running') {
     if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
-      ctx.resume().catch(function(){});
+      ctx.resume().catch(function () {});
     }
     if (WEATHER.audioEnabled && ctx.state === 'running') {
       updateAmbientAudio();
@@ -2566,16 +3295,16 @@ setInterval(function() {
 }, 15000);
 
 // Resume audio when page returns from background
-document.addEventListener('visibilitychange', function() {
+document.addEventListener('visibilitychange', function () {
   if (document.hidden) return;
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
   if (WEATHER.audioEnabled) {
     var ctx = _ensureAudioCtx();
     if (ctx && (ctx.state === 'suspended' || ctx.state === 'interrupted')) {
-      ctx.resume().catch(function(){});
+      ctx.resume().catch(function () {});
     }
     // On iOS PWA, context may be permanently broken after background — recreate if needed
-    setTimeout(function() {
+    setTimeout(function () {
       if (!WEATHER.audioEnabled) return;
       var c = WEATHER.audioCtx;
       if (c && c.state !== 'running') {
@@ -2592,12 +3321,12 @@ document.addEventListener('visibilitychange', function() {
 
 // iOS fires 'pageshow' when returning to a PWA from the app switcher
 // This is more reliable than visibilitychange for iOS standalone mode
-window.addEventListener('pageshow', function(e) {
+window.addEventListener('pageshow', function (e) {
   if (!WEATHER.audioEnabled) return;
   if (typeof vnRecording !== 'undefined' && vnRecording) return;
   var ctx = WEATHER.audioCtx;
   if (ctx && (ctx.state === 'suspended' || ctx.state === 'interrupted')) {
-    ctx.resume().catch(function(){});
+    ctx.resume().catch(function () {});
   }
 });
 
@@ -2608,7 +3337,7 @@ function initWeatherSystem() {
   if (_weatherInitialized) return; // prevent double-init
   _weatherInitialized = true;
 
-  db.ref('settings/weather/' + user).once('value', function(snap) {
+  db.ref('settings/weather/' + user).once('value', function (snap) {
     var data = snap.val() || {};
 
     // Load scene
@@ -2627,7 +3356,7 @@ function initWeatherSystem() {
       // touch/click will create and unlock it via _tryUnlock.
     } else if (data.audio === undefined) {
       // No weather audio setting yet — check onboarding nature sounds preference
-      db.ref('settings/natureSounds/' + user).once('value', function(nsSnap) {
+      db.ref('settings/natureSounds/' + user).once('value', function (nsSnap) {
         var nsEnabled = nsSnap.val();
         if (nsEnabled) {
           WEATHER.audioEnabled = true;
@@ -2641,7 +3370,7 @@ function initWeatherSystem() {
     }
 
     // Update scene selection UI
-    document.querySelectorAll('.scene-option').forEach(function(opt) {
+    document.querySelectorAll('.scene-option').forEach(function (opt) {
       opt.classList.toggle('active', opt.getAttribute('data-scene') === WEATHER.scene);
     });
 
@@ -2654,7 +3383,7 @@ function initWeatherSystem() {
       var btn = document.getElementById('set-location-btn');
       if (btn) btn.textContent = 'Refresh';
 
-      fetchWeather().then(function() {
+      fetchWeather().then(function () {
         // Update time-of-day with real sunrise/sunset from location data
         if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
         var container = document.getElementById('sky-scene');
@@ -2675,7 +3404,7 @@ function initWeatherSystem() {
       // Location prompt is now shown before onboarding for first-time users.
       // For returning users who haven't been prompted, show it after a delay.
       if (!data.prompted && typeof needsOnboarding === 'function' && !needsOnboarding()) {
-        setTimeout(function() {
+        setTimeout(function () {
           if (livingSkyEnabled) showLocationPrompt();
         }, 4000);
       }
@@ -2684,23 +3413,26 @@ function initWeatherSystem() {
 
   // Refresh weather every 15 minutes
   if (!WEATHER.refreshTimer) {
-    WEATHER.refreshTimer = setInterval(function() {
-      if (document.hidden) return;
-      if (WEATHER.locationGranted) {
-        fetchWeather().then(function() {
-          if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
-          var container = document.getElementById('sky-scene');
-          if (container && livingSkyEnabled) renderLivingSky(container);
-          updateWeatherInfoUI();
-        });
-      }
-    }, 15 * 60 * 1000);
+    WEATHER.refreshTimer = setInterval(
+      function () {
+        if (document.hidden) return;
+        if (WEATHER.locationGranted) {
+          fetchWeather().then(function () {
+            if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+            var container = document.getElementById('sky-scene');
+            if (container && livingSkyEnabled) renderLivingSky(container);
+            updateWeatherInfoUI();
+          });
+        }
+      },
+      15 * 60 * 1000
+    );
   }
 }
 
 // Hook into app init - fallback for non-finishLogin paths
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(function() {
+document.addEventListener('DOMContentLoaded', function () {
+  setTimeout(function () {
     if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
       initWeatherSystem();
     }

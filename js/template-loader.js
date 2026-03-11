@@ -21,16 +21,16 @@ async function loadTemplate(name) {
   if (_templateLoading[name]) return _templateLoading[name];
 
   _templateLoading[name] = fetch('templates/' + name + '.html')
-    .then(function(r) {
+    .then(function (r) {
       if (!r.ok) throw new Error('Template ' + name + ' not found');
       return r.text();
     })
-    .then(function(html) {
+    .then(function (html) {
       _templateCache[name] = html;
       delete _templateLoading[name];
       return html;
     })
-    .catch(function(e) {
+    .catch(function (e) {
       console.warn('Template load failed:', name, e);
       delete _templateLoading[name];
       return '';
@@ -50,7 +50,7 @@ function initTemplateLoader() {
   // Patch the go() function to load templates before showing pages
   if (typeof go === 'function' && !go._templatePatched) {
     var origGo = go;
-    window.go = async function(p) {
+    window.go = async function (p) {
       var pageEl = document.getElementById('pg-' + p);
       if (pageEl && pageEl.dataset.template && !pageEl.dataset.templateLoaded) {
         var html = await loadTemplate(pageEl.dataset.template);
@@ -68,7 +68,7 @@ function initTemplateLoader() {
 // Preload templates for pages the user is likely to visit
 function preloadTemplates() {
   var common = ['mood', 'connect', 'games', 'fitness'];
-  common.forEach(function(name) {
+  common.forEach(function (name) {
     var el = document.getElementById('pg-' + name);
     if (el && el.dataset.template && !el.dataset.templateLoaded) {
       loadTemplate(name); // fire and forget

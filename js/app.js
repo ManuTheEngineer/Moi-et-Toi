@@ -3,21 +3,30 @@
 // Anthropic API key stored in Firebase, set once by admin.
 
 let FIREBASE_CONFIG = null;
-try { FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_fb_config')); } catch(e) {}
+try {
+  FIREBASE_CONFIG = JSON.parse(localStorage.getItem('met_fb_config'));
+} catch (e) {}
 
 // API key loaded from Firebase - set once, works for both
-let CLAUDE_API_KEY = "";
+let CLAUDE_API_KEY = '';
 // Proxy URL for Claude API — set this to your deployed proxy (e.g. Cloudflare Worker)
 // When set, API calls go through the proxy and the key stays server-side.
-let AI_PROXY_URL = localStorage.getItem('met_ai_proxy') || "";
+let AI_PROXY_URL = localStorage.getItem('met_ai_proxy') || '';
 
 // Profile names & nicknames - loaded from Firebase
-let NAMES = { her: "", him: "" };
-let NICKNAMES = { herCallsHim: "", himCallsHer: "" };
+let NAMES = { her: '', him: '' };
+let NICKNAMES = { herCallsHim: '', himCallsHer: '' };
 
 // ==========================================
 
-let db, user, partner, authUser, selectedMood = 0, logExercises = [], logType = '', chatHistory = [];
+let db,
+  user,
+  partner,
+  authUser,
+  selectedMood = 0,
+  logExercises = [],
+  logType = '',
+  chatHistory = [];
 var _authResolved = false; // set true once onAuthStateChanged fires at least once
 
 // Map email to profile role — loaded from Firebase at init
@@ -59,21 +68,27 @@ function initConnectionMonitor() {
     document.body.classList.toggle('app-offline', !_isOnline);
   });
 }
-function isOnline() { return _isOnline; }
+function isOnline() {
+  return _isOnline;
+}
 
 // ===== INIT =====
 async function init() {
   firebase.initializeApp(FIREBASE_CONFIG);
 
   // Explicitly set LOCAL persistence so sessions survive tab/browser close on iOS Safari
-  try { await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch(e) {}
+  try {
+    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+  } catch (e) {}
 
   db = firebase.database();
 
   // Enable offline persistence — caches data locally so app works offline
-  try { db.goOnline(); } catch(e) {}
+  try {
+    db.goOnline();
+  } catch (e) {}
   // Keep key refs synced for offline access
-  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles', 'config/emailMap'].forEach(function(p) {
+  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles', 'config/emailMap'].forEach(function (p) {
     db.ref(p).keepSynced(true);
   });
 
@@ -83,26 +98,33 @@ async function init() {
   // Early weather fetch — update login sky background immediately using
   // previously granted location. Runs in parallel with auth, no user needed.
   if (navigator.geolocation && typeof fetchWeather === 'function') {
-    navigator.geolocation.getCurrentPosition(function(pos) {
-      if (typeof WEATHER !== 'undefined') {
-        WEATHER.lat = pos.coords.latitude;
-        WEATHER.lon = pos.coords.longitude;
-        WEATHER.locationGranted = true;
-        try { localStorage.setItem('met_weather_location', JSON.stringify({ lat: WEATHER.lat, lon: WEATHER.lon })); } catch(e) {}
-      }
-      fetchWeather().then(function() {
-        var loginSky = document.getElementById('login-sky-scene');
-        if (loginSky && typeof renderLivingSky === 'function') renderLivingSky(loginSky);
-      });
-    }, function() { /* location denied or unavailable — login sky stays time-based */ },
-    { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 });
+    navigator.geolocation.getCurrentPosition(
+      function (pos) {
+        if (typeof WEATHER !== 'undefined') {
+          WEATHER.lat = pos.coords.latitude;
+          WEATHER.lon = pos.coords.longitude;
+          WEATHER.locationGranted = true;
+          try {
+            localStorage.setItem('met_weather_location', JSON.stringify({ lat: WEATHER.lat, lon: WEATHER.lon }));
+          } catch (e) {}
+        }
+        fetchWeather().then(function () {
+          var loginSky = document.getElementById('login-sky-scene');
+          if (loginSky && typeof renderLivingSky === 'function') renderLivingSky(loginSky);
+        });
+      },
+      function () {
+        /* location denied or unavailable — login sky stays time-based */
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
+    );
   }
 
   // Load email-to-role mapping from Firebase (keeps emails out of source code)
   await loadEmailMap();
 
   // Check if already signed in
-  firebase.auth().onAuthStateChanged(async (fbUser) => {
+  firebase.auth().onAuthStateChanged(async fbUser => {
     if (fbUser) {
       _authResolved = true;
       authUser = fbUser;
@@ -124,19 +146,21 @@ async function init() {
         if (needsOnboarding()) {
           showFirstLocationPrompt();
         } else {
-          // Returning user — show welcome gate with biometric
-          showWelcomeGate();
+          // Returning user — go straight in
+          finishLogin();
         }
       } else {
         firebase.auth().signOut();
-        showError(Object.keys(EMAIL_MAP).length === 0
-          ? 'Could not verify account. Check your connection and try again.'
-          : 'Account not authorized.');
+        showError(
+          Object.keys(EMAIL_MAP).length === 0
+            ? 'Could not verify account. Check your connection and try again.'
+            : 'Account not authorized.'
+        );
       }
     } else {
       // Firebase may fire null initially while restoring a persisted session.
       // Delay _authResolved so _waitForAuth keeps polling for the real callback.
-      setTimeout(function() {
+      setTimeout(function () {
         if (!user && !authUser) {
           _authResolved = true;
           // Only show login form if still no user after delay
@@ -161,10 +185,12 @@ async function loadEmailMap() {
     const val = snap.val();
     if (val && Object.keys(val).length > 0) {
       EMAIL_MAP = val;
-      try { localStorage.setItem('met_email_map', JSON.stringify(val)); } catch(e) {}
+      try {
+        localStorage.setItem('met_email_map', JSON.stringify(val));
+      } catch (e) {}
       return;
     }
-  } catch(e) {
+  } catch (e) {
     console.warn('Could not load email map from Firebase:', e);
   }
   // Fall back to localStorage cache
@@ -174,12 +200,16 @@ async function loadEmailMap() {
       EMAIL_MAP = cached;
       return;
     }
-  } catch(e) {}
+  } catch (e) {}
   // If still empty, seed default map into Firebase and use it
   if (Object.keys(EMAIL_MAP).length === 0) {
     EMAIL_MAP = DEFAULT_EMAIL_MAP;
-    try { localStorage.setItem('met_email_map', JSON.stringify(EMAIL_MAP)); } catch(e) {}
-    try { await db.ref('config/emailMap').set(DEFAULT_EMAIL_MAP); } catch(e) {
+    try {
+      localStorage.setItem('met_email_map', JSON.stringify(EMAIL_MAP));
+    } catch (e) {}
+    try {
+      await db.ref('config/emailMap').set(DEFAULT_EMAIL_MAP);
+    } catch (e) {
       console.warn('Could not seed email map to Firebase:', e);
     }
   }
@@ -188,9 +218,12 @@ async function loadEmailMap() {
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value;
-  
-  if (!email || !pass) { showError('Enter email and password'); return; }
-  
+
+  if (!email || !pass) {
+    showError('Enter email and password');
+    return;
+  }
+
   try {
     const result = await firebase.auth().signInWithEmailAndPassword(email, pass);
     showError(''); // Clear any previous error message on successful login
@@ -203,12 +236,14 @@ async function doLogin() {
 
     if (!role) {
       firebase.auth().signOut();
-      showError(Object.keys(EMAIL_MAP).length === 0
-        ? 'Could not verify account. Check your connection and try again.'
-        : 'Account not authorized.');
+      showError(
+        Object.keys(EMAIL_MAP).length === 0
+          ? 'Could not verify account. Check your connection and try again.'
+          : 'Account not authorized.'
+      );
       return;
     }
-    
+
     user = role;
     partner = role === 'her' ? 'him' : 'her';
     await loadProfiles();
@@ -221,10 +256,9 @@ async function doLogin() {
     if (needsOnboarding()) {
       showFirstLocationPrompt();
     } else {
-      // First manual login — go straight in but offer biometric setup
-      offerBiometricAfterLogin();
+      finishLogin();
     }
-  } catch(e) {
+  } catch (e) {
     console.error('Login error:', e.code, e.message);
     if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
       showError('Wrong email or password.');
@@ -259,9 +293,9 @@ async function loadProfiles() {
       if (user) {
         const nick = user === 'him' ? NICKNAMES.himCallsHer : NICKNAMES.herCallsHim;
         if (nick) NAMES[partner] = nick;
-        document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
-        document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
-        document.querySelectorAll('.partner-nick').forEach(e => e.textContent = NAMES[partner]);
+        document.querySelectorAll('.uname').forEach(e => (e.textContent = NAMES[user]));
+        document.querySelectorAll('.pname').forEach(e => (e.textContent = NAMES[partner]));
+        document.querySelectorAll('.partner-nick').forEach(e => (e.textContent = NAMES[partner]));
       }
       resolve();
     });
@@ -283,9 +317,7 @@ function applyPhoto() {
   // Welcome gate
   const welcomeEl = document.getElementById('welcome-photo');
   if (welcomeEl) {
-    welcomeEl.innerHTML = myPhoto
-      ? '<img src="' + myPhoto + '" class="welcome-photo-img" alt="">'
-      : '';
+    welcomeEl.innerHTML = myPhoto ? '<img src="' + myPhoto + '" class="welcome-photo-img" alt="">' : '';
   }
   // Dashboard partner avatar (show PARTNER's photo of you - but on your dashboard
   // you see the photo you chose for THEM, so load partner's photo)
@@ -320,11 +352,13 @@ function changePartnerPhoto() {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = 'image/*';
-  input.onchange = function() {
+  input.onchange = function () {
     if (!input.files || !input.files[0]) return;
-    resizePhoto(input.files[0], function(dataUrl) {
+    resizePhoto(input.files[0], function (dataUrl) {
       db.ref('photos/' + partner).set({
-        data: dataUrl, setBy: user, timestamp: Date.now()
+        data: dataUrl,
+        setBy: user,
+        timestamp: Date.now()
       });
       toast('New photo set for ' + NAMES[partner]);
     });
@@ -353,12 +387,12 @@ function showFirstLocationPrompt() {
 function handleFirstLocationAllow() {
   toast('Requesting location...');
   if (typeof requestLocationPermission === 'function') {
-    requestLocationPermission().then(function(granted) {
+    requestLocationPermission().then(function (granted) {
       if (granted) {
         toast('Location enabled!');
         // Fetch weather and immediately update the login sky background
         if (typeof fetchWeather === 'function') {
-          fetchWeather().then(function() {
+          fetchWeather().then(function () {
             // Update the login screen sky with real weather data
             var loginSky = document.getElementById('login-sky-scene');
             if (loginSky && typeof renderLivingSky === 'function') renderLivingSky(loginSky);
@@ -391,28 +425,58 @@ function handleFirstLocationSkip() {
 // injected inputs inside position:fixed containers.
 let onboardStep = 0;
 let onboardData = {
-  name: '', nickname: '', anniversary: '', photo: '', livingSky: true,
-  skyTheme: 'mixed', natureSoundsEnabled: false,
+  name: '',
+  nickname: '',
+  anniversary: '',
+  photo: '',
+  livingSky: true,
+  skyTheme: 'mixed',
+  natureSoundsEnabled: false,
   birthday: '',
-  mood: 0, energy: 0, stress: 0,
-  heightFt: '', heightIn: '', weight: '', activityLevel: '', fitnessGoal: '',
-  commRating: 0, qualityRating: 0, connectedRating: 0,
-  agreementsMine: [], agreementsTogether: [],
-  morningMsgEnabled: true, morningCustomMsg: ''
+  mood: 0,
+  energy: 0,
+  stress: 0,
+  heightFt: '',
+  heightIn: '',
+  weight: '',
+  activityLevel: '',
+  fitnessGoal: '',
+  commRating: 0,
+  qualityRating: 0,
+  connectedRating: 0,
+  agreementsMine: [],
+  agreementsTogether: [],
+  morningMsgEnabled: true,
+  morningCustomMsg: ''
 };
 const OB_TOTAL = 15;
 
 function startOnboarding() {
   onboardStep = 0;
   onboardData = {
-    name: '', nickname: '', anniversary: '', photo: '', livingSky: true,
-    skyTheme: 'mixed', natureSoundsEnabled: false,
+    name: '',
+    nickname: '',
+    anniversary: '',
+    photo: '',
+    livingSky: true,
+    skyTheme: 'mixed',
+    natureSoundsEnabled: false,
     birthday: '',
-    mood: 0, energy: 0, stress: 0,
-    heightFt: '', heightIn: '', weight: '', activityLevel: '', fitnessGoal: '',
-    commRating: 0, qualityRating: 0, connectedRating: 0,
-    agreementsMine: [], agreementsTogether: [],
-    morningMsgEnabled: true, morningCustomMsg: ''
+    mood: 0,
+    energy: 0,
+    stress: 0,
+    heightFt: '',
+    heightIn: '',
+    weight: '',
+    activityLevel: '',
+    fitnessGoal: '',
+    commRating: 0,
+    qualityRating: 0,
+    connectedRating: 0,
+    agreementsMine: [],
+    agreementsTogether: [],
+    morningMsgEnabled: true,
+    morningCustomMsg: ''
   };
   // Hide login chrome, show onboard container
   hideEl('login-form');
@@ -430,7 +494,10 @@ function startOnboarding() {
   if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
   // Set initial content to enter state
   var content = document.getElementById('ob-content');
-  if (content) { content.classList.remove('ob-exit'); content.classList.add('ob-enter'); }
+  if (content) {
+    content.classList.remove('ob-exit');
+    content.classList.add('ob-enter');
+  }
   // Broadcast onboarding status and listen for partner
   obBroadcastStep();
   obListenPartner();
@@ -467,7 +534,7 @@ var obPartnerListener = null;
 function obListenPartner() {
   if (!db || !partner) return;
   obPartnerListener = db.ref('onboarding/' + partner);
-  obPartnerListener.on('value', function(snap) {
+  obPartnerListener.on('value', function (snap) {
     var data = snap.val();
     var el = document.getElementById('ob-partner-status');
 
@@ -483,7 +550,7 @@ function obListenPartner() {
     if (!el) return;
     if (data && data.active) {
       var partnerName = data.name || (user === 'her' ? 'He' : 'She');
-      var isRecent = (Date.now() - (data.timestamp || 0)) < 120000; // 2 min
+      var isRecent = Date.now() - (data.timestamp || 0) < 120000; // 2 min
       if (isRecent) {
         el.style.display = '';
         el.classList.remove('offline');
@@ -520,7 +587,7 @@ function obCleanupStatus() {
 
 // Smooth scroll for input focus - keeps input visible above keyboard
 function obScrollToInput(el) {
-  setTimeout(function() {
+  setTimeout(function () {
     var rect = el.getBoundingClientRect();
     var viewH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     // If input is in the lower third, scroll up
@@ -536,11 +603,17 @@ function obScrollToInput(el) {
 let obTransitioning = false;
 function transitionStep(setupFn) {
   var content = document.getElementById('ob-content');
-  if (!content) { setupFn(); return; }
+  if (!content) {
+    setupFn();
+    return;
+  }
 
   obTransitioning = true;
   // Blur any focused input first (dismisses keyboard smoothly)
-  if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+  if (
+    document.activeElement &&
+    (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')
+  ) {
     document.activeElement.blur();
   }
 
@@ -548,7 +621,7 @@ function transitionStep(setupFn) {
   content.classList.remove('ob-enter');
   content.classList.add('ob-exit');
 
-  setTimeout(function() {
+  setTimeout(function () {
     setupFn();
     content.classList.remove('ob-exit');
     // Force reflow to restart animation
@@ -565,16 +638,32 @@ function transitionStep(setupFn) {
 function obRenderPills(containerId, labels, dataKey) {
   var el = document.getElementById(containerId);
   if (!el) return;
-  el.innerHTML = labels.map(function(l, i) {
-    var val = i + 1;
-    var active = onboardData[dataKey] === val ? ' on' : '';
-    return '<button type="button" class="ob-pill' + active + '" data-val="' + val + '" onclick="obSelectPill(this,\'' + dataKey + '\',' + val + ')">' + l + '</button>';
-  }).join('');
+  el.innerHTML = labels
+    .map(function (l, i) {
+      var val = i + 1;
+      var active = onboardData[dataKey] === val ? ' on' : '';
+      return (
+        '<button type="button" class="ob-pill' +
+        active +
+        '" data-val="' +
+        val +
+        '" onclick="obSelectPill(this,\'' +
+        dataKey +
+        "'," +
+        val +
+        ')">' +
+        l +
+        '</button>'
+      );
+    })
+    .join('');
 }
 function obSelectPill(btn, key, val) {
   onboardData[key] = val;
   var siblings = btn.parentElement.querySelectorAll('.ob-pill');
-  siblings.forEach(function(s) { s.classList.remove('on'); });
+  siblings.forEach(function (s) {
+    s.classList.remove('on');
+  });
   btn.classList.add('on');
 }
 function obAddAgreement(type) {
@@ -603,9 +692,19 @@ function obRenderAgreementList(listId, arrKey) {
   var el = document.getElementById(listId);
   if (!el) return;
   var type = arrKey === 'agreementsMine' ? 'mine' : 'together';
-  el.innerHTML = onboardData[arrKey].map(function(a, i) {
-    return '<div class="ob-agree-item"><span>' + esc(a) + '</span><span class="ob-agree-rm" onclick="obRemoveAgreement(\'' + type + '\',' + i + ')">x</span></div>';
-  }).join('');
+  el.innerHTML = onboardData[arrKey]
+    .map(function (a, i) {
+      return (
+        '<div class="ob-agree-item"><span>' +
+        esc(a) +
+        '</span><span class="ob-agree-rm" onclick="obRemoveAgreement(\'' +
+        type +
+        "'," +
+        i +
+        ')">x</span></div>'
+      );
+    })
+    .join('');
 }
 
 // Render partner's together commitments live on step 9
@@ -620,13 +719,15 @@ function obRenderPartnerCommitments() {
     return;
   }
   container.style.display = '';
-  var partnerName = obPartnerData.nickname ? '' : (obPartnerData.name || (user === 'her' ? 'His' : 'Her'));
+  var partnerName = obPartnerData.nickname ? '' : obPartnerData.name || (user === 'her' ? 'His' : 'Her');
   // Use partner's name if available
-  var label = obPartnerData.name ? esc(obPartnerData.name) + "'s" : (user === 'her' ? 'His' : 'Her');
+  var label = obPartnerData.name ? esc(obPartnerData.name) + "'s" : user === 'her' ? 'His' : 'Her';
   if (heading) heading.textContent = label + ' together commitments';
-  list.innerHTML = items.map(function(a) {
-    return '<div class="ob-agree-item ob-partner-item"><span>' + esc(a) + '</span></div>';
-  }).join('');
+  list.innerHTML = items
+    .map(function (a) {
+      return '<div class="ob-agree-item ob-partner-item"><span>' + esc(a) + '</span></div>';
+    })
+    .join('');
 }
 
 // Update morning message preview with partner's nickname (what they call you)
@@ -642,23 +743,58 @@ function obUpdateMorningPreviewNickname() {
 }
 
 // SVG icon helper for onboarding (inline since nav.js loads after app.js)
-function _obIcon(d,s){s=s||24;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';}
+function _obIcon(d, s) {
+  s = s || 24;
+  return (
+    '<svg width="' +
+    s +
+    '" height="' +
+    s +
+    '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+    d +
+    '</svg>'
+  );
+}
 var OB_ICONS = {
   sparkle: _obIcon('<path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/>'),
-  heart: _obIcon('<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>'),
-  gift: _obIcon('<rect x="3" y="10" width="18" height="12" rx="1"/><line x1="12" y1="22" x2="12" y2="10"/><path d="M12 10H7.5a2.5 2.5 0 010-5C10 5 12 10 12 10z"/><path d="M12 10h4.5a2.5 2.5 0 000-5C14 5 12 10 12 10z"/>'),
-  camera: _obIcon('<path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>'),
-  calendar: _obIcon('<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'),
-  brain: _obIcon('<path d="M9.5 2A4.5 4.5 0 005 6.5a4.49 4.49 0 00.98 2.81A4.5 4.5 0 003 13.5a4.5 4.5 0 004.5 4.5h1V21h7v-3h1a4.5 4.5 0 004.5-4.5 4.49 4.49 0 00-2.98-4.19A4.49 4.49 0 0019 6.5 4.5 4.5 0 0014.5 2h-5z"/>'),
-  dumbbell: _obIcon('<line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/>'),
-  users: _obIcon('<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>'),
+  heart: _obIcon(
+    '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>'
+  ),
+  gift: _obIcon(
+    '<rect x="3" y="10" width="18" height="12" rx="1"/><line x1="12" y1="22" x2="12" y2="10"/><path d="M12 10H7.5a2.5 2.5 0 010-5C10 5 12 10 12 10z"/><path d="M12 10h4.5a2.5 2.5 0 000-5C14 5 12 10 12 10z"/>'
+  ),
+  camera: _obIcon(
+    '<path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>'
+  ),
+  calendar: _obIcon(
+    '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'
+  ),
+  brain: _obIcon(
+    '<path d="M9.5 2A4.5 4.5 0 005 6.5a4.49 4.49 0 00.98 2.81A4.5 4.5 0 003 13.5a4.5 4.5 0 004.5 4.5h1V21h7v-3h1a4.5 4.5 0 004.5-4.5 4.49 4.49 0 00-2.98-4.19A4.49 4.49 0 0019 6.5 4.5 4.5 0 0014.5 2h-5z"/>'
+  ),
+  dumbbell: _obIcon(
+    '<line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><rect x="6" y="7" width="3" height="10" rx="1"/><rect x="15" y="7" width="3" height="10" rx="1"/>'
+  ),
+  users: _obIcon(
+    '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>'
+  ),
   handshake: _obIcon('<path d="M11 17l-5-5 1.41-1.42 2.59 2.6 5.59-5.6L17 8.97z"/><circle cx="12" cy="12" r="10"/>'),
-  sunrise: _obIcon('<path d="M17 18a5 5 0 00-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/>'),
+  sunrise: _obIcon(
+    '<path d="M17 18a5 5 0 00-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/>'
+  ),
   check: _obIcon('<circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/>'),
-  cake: _obIcon('<path d="M20 21v-8a2 2 0 00-2-2H6a2 2 0 00-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/>'),
-  party: _obIcon('<path d="M5.8 11.3L2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="M22 2l-2.24.75a2.9 2.9 0 00-1.96 3.12v0L18.07 8l2.14-.72a2.9 2.9 0 001.96-3.12L22 2z"/><path d="M9 2l-.75 2.24a2.9 2.9 0 003.12 1.96v0L13.5 5.93l-.72-2.14A2.9 2.9 0 009.66 1.83L9 2z"/>'),
-  muscle: _obIcon('<path d="M7 12.5s1.5-2 4.5-2 4.5 2 4.5 2"/><path d="M3 8a1 1 0 011-1h1a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M18 8a1 1 0 011-1h1a1 1 0 011 1v8a1 1 0 01-1 1h-1a1 1 0 01-1-1V8z"/><line x1="6" y1="12" x2="18" y2="12"/>'),
-  couple: _obIcon('<path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>')
+  cake: _obIcon(
+    '<path d="M20 21v-8a2 2 0 00-2-2H6a2 2 0 00-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/>'
+  ),
+  party: _obIcon(
+    '<path d="M5.8 11.3L2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="M22 2l-2.24.75a2.9 2.9 0 00-1.96 3.12v0L18.07 8l2.14-.72a2.9 2.9 0 001.96-3.12L22 2z"/><path d="M9 2l-.75 2.24a2.9 2.9 0 003.12 1.96v0L13.5 5.93l-.72-2.14A2.9 2.9 0 009.66 1.83L9 2z"/>'
+  ),
+  muscle: _obIcon(
+    '<path d="M7 12.5s1.5-2 4.5-2 4.5 2 4.5 2"/><path d="M3 8a1 1 0 011-1h1a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M18 8a1 1 0 011-1h1a1 1 0 011 1v8a1 1 0 01-1 1h-1a1 1 0 01-1-1V8z"/><line x1="6" y1="12" x2="18" y2="12"/>'
+  ),
+  couple: _obIcon(
+    '<path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>'
+  )
 };
 
 function renderOnboardStep() {
@@ -668,7 +804,7 @@ function renderOnboardStep() {
   var partnerPossessive = isHer ? 'his' : 'her';
   // Use nickname if already entered (steps after step 2)
   var pNick = onboardData.nickname || partnerLabel;
-  transitionStep(function() {
+  transitionStep(function () {
     var emoji = document.getElementById('ob-emoji');
     var title = document.getElementById('ob-title');
     var sub = document.getElementById('ob-sub');
@@ -689,8 +825,23 @@ function renderOnboardStep() {
     var skyThemeCard = document.getElementById('ob-sky-theme');
 
     // Hide all optional elements
-    [emoji, nameIn, nickIn, annivIn, photoWrap, skyCard, tour, skip,
-     birthdayIn, moodBL, fitBL, relBL, agreeCard, morningCard, skyThemeCard].forEach(function(el) {
+    [
+      emoji,
+      nameIn,
+      nickIn,
+      annivIn,
+      photoWrap,
+      skyCard,
+      tour,
+      skip,
+      birthdayIn,
+      moodBL,
+      fitBL,
+      relBL,
+      agreeCard,
+      morningCard,
+      skyThemeCard
+    ].forEach(function (el) {
       if (el) el.style.display = 'none';
     });
 
@@ -707,30 +858,36 @@ function renderOnboardStep() {
     // Step 0: Welcome
     if (onboardStep === 0) {
       title.textContent = 'Moi & Toi';
-      sub.innerHTML = "Your private world.";
-      btn.textContent = "Begin";
+      sub.innerHTML = 'Your private world.';
+      btn.textContent = 'Begin';
     }
     // Step 1: Name
     else if (onboardStep === 1) {
-      title.textContent = "Your name";
+      title.textContent = 'Your name';
       sub.textContent = "As they'll see it.";
-      nameIn.style.display = ''; nameIn.value = onboardData.name;
-      setTimeout(function(){ nameIn.focus(); }, 500);
+      nameIn.style.display = '';
+      nameIn.value = onboardData.name;
+      setTimeout(function () {
+        nameIn.focus();
+      }, 500);
       btn.textContent = 'Next';
     }
     // Step 2: Nickname for partner
     else if (onboardStep === 2) {
       title.textContent = 'A name for ' + (isHer ? 'him' : 'her');
-      sub.textContent = "Whatever feels right.";
+      sub.textContent = 'Whatever feels right.';
       nickIn.placeholder = isHer ? 'e.g. Baby, Babe, His name...' : 'e.g. Babe, Love, Her name...';
-      nickIn.style.display = ''; nickIn.value = onboardData.nickname;
-      setTimeout(function(){ nickIn.focus(); }, 500);
+      nickIn.style.display = '';
+      nickIn.value = onboardData.nickname;
+      setTimeout(function () {
+        nickIn.focus();
+      }, 500);
       btn.textContent = 'Next';
     }
     // Step 3: Birthday
     else if (onboardStep === 3) {
       title.textContent = 'Birthday';
-      sub.textContent = "So " + pNick + " never forgets.";
+      sub.textContent = 'So ' + pNick + ' never forgets.';
       birthdayIn.style.display = '';
       if (onboardData.birthday) birthdayIn.value = onboardData.birthday;
       btn.textContent = 'Next';
@@ -738,7 +895,7 @@ function renderOnboardStep() {
     // Step 4: Photo
     else if (onboardStep === 4) {
       title.textContent = pNick;
-      sub.textContent = "Add a photo for " + partnerPossessive + " profile.";
+      sub.textContent = 'Add a photo for ' + partnerPossessive + ' profile.';
       photoWrap.style.display = '';
       skip.style.display = '';
       if (onboardData.photo) {
@@ -750,7 +907,7 @@ function renderOnboardStep() {
     // Step 5: Anniversary
     else if (onboardStep === 5) {
       title.textContent = 'Anniversary';
-      sub.textContent = "When it began.";
+      sub.textContent = 'When it began.';
       annivIn.style.display = '';
       skip.style.display = '';
       btn.textContent = 'Next';
@@ -758,7 +915,7 @@ function renderOnboardStep() {
     // Step 6: Mood & mental baseline
     else if (onboardStep === 6) {
       title.textContent = 'Right now';
-      sub.textContent = "A baseline.";
+      sub.textContent = 'A baseline.';
       moodBL.style.display = '';
       obRenderPills('ob-mood-pills', ['Low', 'Okay', 'Good', 'Great', 'Amazing'], 'mood');
       obRenderPills('ob-energy-pills', ['Drained', 'Tired', 'Normal', 'Energized', 'On Fire'], 'energy');
@@ -768,7 +925,7 @@ function renderOnboardStep() {
     // Step 7: Fitness baseline
     else if (onboardStep === 7) {
       title.textContent = 'Body';
-      sub.textContent = "Optional.";
+      sub.textContent = 'Optional.';
       fitBL.style.display = '';
       skip.style.display = '';
       if (onboardData.heightFt) document.getElementById('ob-fit-height-ft').value = onboardData.heightFt;
@@ -781,7 +938,7 @@ function renderOnboardStep() {
     // Step 8: Relationship baseline
     else if (onboardStep === 8) {
       title.textContent = 'You two';
-      sub.textContent = "Be honest.";
+      sub.textContent = 'Be honest.';
       relBL.style.display = '';
       obRenderPills('ob-comm-pills', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], 'commRating');
       obRenderPills('ob-quality-pills', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], 'qualityRating');
@@ -791,7 +948,7 @@ function renderOnboardStep() {
     // Step 9: Relationship agreement
     else if (onboardStep === 9) {
       title.textContent = 'Promises';
-      sub.innerHTML = "What you commit to.";
+      sub.innerHTML = 'What you commit to.';
       agreeCard.style.display = '';
       obRenderAgreementList('ob-agree-mine', 'agreementsMine');
       obRenderAgreementList('ob-agree-together', 'agreementsTogether');
@@ -802,11 +959,14 @@ function renderOnboardStep() {
     // Step 10: Daily morning message
     else if (onboardStep === 10) {
       title.textContent = 'Good morning';
-      sub.innerHTML = "A daily note for " + esc(pNick) + ".";
+      sub.innerHTML = 'A daily note for ' + esc(pNick) + '.';
       morningCard.style.display = '';
       document.getElementById('ob-morning-toggle').checked = onboardData.morningMsgEnabled;
       var customTA = document.getElementById('ob-morning-custom');
-      if (customTA) { customTA.style.display = ''; customTA.value = onboardData.morningCustomMsg; }
+      if (customTA) {
+        customTA.style.display = '';
+        customTA.value = onboardData.morningCustomMsg;
+      }
       // Show preview: what partner will see, signed with the nickname you gave them
       var preview = document.getElementById('ob-morning-preview');
       if (preview) {
@@ -817,15 +977,20 @@ function renderOnboardStep() {
         ];
         var sample = sampleMsgs[Math.floor(Math.random() * sampleMsgs.length)];
         var yourNick = onboardData.nickname || 'your love';
-        preview.innerHTML = '<div class="ob-morning-quote">\u201C' + sample + '\u201D</div>' +
-          '<div class="ob-morning-from">\u2014 ' + esc(yourNick) + '</div>';
+        preview.innerHTML =
+          '<div class="ob-morning-quote">\u201C' +
+          sample +
+          '\u201D</div>' +
+          '<div class="ob-morning-from">\u2014 ' +
+          esc(yourNick) +
+          '</div>';
       }
       btn.textContent = 'Next';
     }
     // Step 11: Living Sky — actual background is the demo
     else if (onboardStep === 11) {
       title.textContent = 'Living Sky';
-      sub.innerHTML = "Follows the real sun.";
+      sub.innerHTML = 'Follows the real sun.';
       skyCard.style.display = '';
       document.getElementById('ob-sky-toggle').checked = onboardData.livingSky;
       obToggleLiveSky(onboardData.livingSky);
@@ -834,11 +999,11 @@ function renderOnboardStep() {
     // Step 12: Sky environment + nature sounds
     else if (onboardStep === 12) {
       title.textContent = 'Your world';
-      sub.innerHTML = "Tap to explore.";
+      sub.innerHTML = 'Tap to explore.';
       skyThemeCard.style.display = '';
       var defaultTheme = isHer ? 'beach' : 'mountain';
       if (!onboardData.skyTheme || onboardData.skyTheme === 'mixed') onboardData.skyTheme = defaultTheme;
-      document.querySelectorAll('#ob-sky-theme-grid .sky-theme-btn').forEach(function(b) {
+      document.querySelectorAll('#ob-sky-theme-grid .sky-theme-btn').forEach(function (b) {
         b.classList.toggle('active', b.getAttribute('data-theme') === onboardData.skyTheme);
       });
       document.getElementById('ob-nature-toggle').checked = onboardData.natureSoundsEnabled;
@@ -848,7 +1013,7 @@ function renderOnboardStep() {
     // Step 13: All set
     else if (onboardStep === 13) {
       title.textContent = "You're in";
-      sub.innerHTML = "Quick tour?";
+      sub.innerHTML = 'Quick tour?';
       btn.textContent = 'Show me';
     }
     // Step 14: Finish
@@ -863,21 +1028,30 @@ function onboardNext() {
   if (obTransitioning) return;
   if (onboardStep === 1) {
     var name = document.getElementById('ob-name').value.trim();
-    if (!name) { toast('Please enter your name'); return; }
+    if (!name) {
+      toast('Please enter your name');
+      return;
+    }
     onboardData.name = name;
     // Broadcast name immediately so partner sees it in their status
     obBroadcastStep();
   }
   if (onboardStep === 2) {
     var nick = document.getElementById('ob-nickname').value.trim();
-    if (!nick) { toast('Enter what you call them'); return; }
+    if (!nick) {
+      toast('Enter what you call them');
+      return;
+    }
     onboardData.nickname = nick;
     // Broadcast nickname immediately so partner can use it in their morning msg preview
     obBroadcastStep();
   }
   if (onboardStep === 3) {
     var bday = document.getElementById('ob-birthday').value;
-    if (!bday) { toast('Please enter your birthday'); return; }
+    if (!bday) {
+      toast('Please enter your birthday');
+      return;
+    }
     onboardData.birthday = bday;
   }
   // Step 4 is photo - optional
@@ -886,9 +1060,18 @@ function onboardNext() {
     if (anniv) onboardData.anniversary = anniv;
   }
   if (onboardStep === 6) {
-    if (!onboardData.mood) { toast('How are you feeling?'); return; }
-    if (!onboardData.energy) { toast('Select your energy level'); return; }
-    if (!onboardData.stress) { toast('Select your stress level'); return; }
+    if (!onboardData.mood) {
+      toast('How are you feeling?');
+      return;
+    }
+    if (!onboardData.energy) {
+      toast('Select your energy level');
+      return;
+    }
+    if (!onboardData.stress) {
+      toast('Select your stress level');
+      return;
+    }
   }
   if (onboardStep === 7) {
     var ft = document.getElementById('ob-fit-height-ft').value;
@@ -941,9 +1124,10 @@ function obToggleLiveSky(on) {
 function obSelectSkyTheme(theme, btn) {
   onboardData.skyTheme = theme;
   var grid = document.getElementById('ob-sky-theme-grid');
-  if (grid) grid.querySelectorAll('.ob-env-btn,.sky-theme-btn').forEach(function(b) {
-    b.classList.toggle('active', b.getAttribute('data-theme') === theme);
-  });
+  if (grid)
+    grid.querySelectorAll('.ob-env-btn,.sky-theme-btn').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-theme') === theme);
+    });
   // Apply to the REAL background so user sees the change live
   obApplyLiveTheme(theme);
   // If sound preview is playing, switch to new environment's sound
@@ -986,7 +1170,7 @@ function obRenderEnvPreview(theme) {
 
 // Sound preview for onboarding
 window._obSoundPreviewing = false;
-window._obSoundPreviewNode = null;   // { audio, objUrl } for HTML5 path, or { source, gain } for WebAudio path
+window._obSoundPreviewNode = null; // { audio, objUrl } for HTML5 path, or { source, gain } for WebAudio path
 
 function obToggleSoundPreview() {
   if (window._obSoundPreviewing) {
@@ -1005,7 +1189,9 @@ function _audioBufferToWav(audioBuffer) {
   var dataBytes = len * numCh * bytesPerSample;
   var buf = new ArrayBuffer(44 + dataBytes);
   var v = new DataView(buf);
-  var writeStr = function(off, s) { for (var i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); };
+  var writeStr = function (off, s) {
+    for (var i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i));
+  };
   writeStr(0, 'RIFF');
   v.setUint32(4, 36 + dataBytes, true);
   writeStr(8, 'WAVE');
@@ -1045,10 +1231,16 @@ function obStartSoundPreview(theme) {
     ctx = _recreateAudioCtx();
   } else {
     try {
-      if (WEATHER.audioCtx) { try { WEATHER.audioCtx.close(); } catch(e) {} }
+      if (WEATHER.audioCtx) {
+        try {
+          WEATHER.audioCtx.close();
+        } catch (e) {}
+      }
       WEATHER.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       ctx = WEATHER.audioCtx;
-    } catch(e) { return; }
+    } catch (e) {
+      return;
+    }
   }
   if (!ctx) return;
 
@@ -1065,7 +1257,9 @@ function obStartSoundPreview(theme) {
 
   // Generate the audio buffer
   var buffer;
-  try { buffer = generateNoise(soundType); } catch(e) {}
+  try {
+    buffer = generateNoise(soundType);
+  } catch (e) {}
   if (!buffer) {
     obStopSoundPreview();
     return;
@@ -1083,17 +1277,23 @@ function obStartSoundPreview(theme) {
     audio.volume = 0.01;
     var playP = audio.play();
     if (playP && playP.then) {
-      playP.then(function() {
-        if (!window._obSoundPreviewing) { audio.pause(); URL.revokeObjectURL(objUrl); return; }
-        window._obSoundPreviewNode = { audio: audio, objUrl: objUrl };
-      }).catch(function() {
-        URL.revokeObjectURL(objUrl);
-        _obWebAudioFallback(ctx, buffer);
-      });
+      playP
+        .then(function () {
+          if (!window._obSoundPreviewing) {
+            audio.pause();
+            URL.revokeObjectURL(objUrl);
+            return;
+          }
+          window._obSoundPreviewNode = { audio: audio, objUrl: objUrl };
+        })
+        .catch(function () {
+          URL.revokeObjectURL(objUrl);
+          _obWebAudioFallback(ctx, buffer);
+        });
     } else {
       window._obSoundPreviewNode = { audio: audio, objUrl: objUrl };
     }
-  } catch(e) {
+  } catch (e) {
     _obWebAudioFallback(ctx, buffer);
   }
 }
@@ -1124,15 +1324,19 @@ function _obWebAudioFallback(ctx, buffer) {
       var p = ctx.resume();
       if (p && p.then) {
         p.then(_tryPlay).catch(_tryPlay);
-      } else { _tryPlay(); }
-    } catch(e) { _tryPlay(); }
+      } else {
+        _tryPlay();
+      }
+    } catch (e) {
+      _tryPlay();
+    }
   } else {
     _tryPlay();
   }
   // Retry after 800ms
-  setTimeout(function() {
+  setTimeout(function () {
     if (!window._obSoundPreviewing || window._obSoundPreviewNode) return;
-    if (WEATHER.audioCtx && WEATHER.audioCtx.state !== 'running') WEATHER.audioCtx.resume().catch(function(){});
+    if (WEATHER.audioCtx && WEATHER.audioCtx.state !== 'running') WEATHER.audioCtx.resume().catch(function () {});
     _tryPlay();
   }, 800);
 }
@@ -1142,16 +1346,26 @@ function obStopSoundPreview() {
   if (node) {
     // HTML5 Audio path
     if (node.audio) {
-      try { node.audio.pause(); node.audio.src = ''; } catch(e) {}
-      if (node.objUrl) try { URL.revokeObjectURL(node.objUrl); } catch(e) {}
+      try {
+        node.audio.pause();
+        node.audio.src = '';
+      } catch (e) {}
+      if (node.objUrl)
+        try {
+          URL.revokeObjectURL(node.objUrl);
+        } catch (e) {}
     }
     // Web Audio path
     if (node.source && WEATHER.audioCtx) {
       try {
         node.gain.gain.linearRampToValueAtTime(0, WEATHER.audioCtx.currentTime + 0.5);
         var s = node.source;
-        setTimeout(function() { try { s.stop(); } catch(e) {} }, 600);
-      } catch(e) {}
+        setTimeout(function () {
+          try {
+            s.stop();
+          } catch (e) {}
+        }, 600);
+      } catch (e) {}
     }
     window._obSoundPreviewNode = null;
   }
@@ -1165,7 +1379,7 @@ function obStopSoundPreview() {
 
 function onboardPhotoPicked(input) {
   if (!input.files || !input.files[0]) return;
-  resizePhoto(input.files[0], function(dataUrl) {
+  resizePhoto(input.files[0], function (dataUrl) {
     onboardData.photo = dataUrl;
     var prev = document.getElementById('ob-photo-preview');
     prev.innerHTML = '<img src="' + dataUrl + '" alt="photo">';
@@ -1174,15 +1388,18 @@ function onboardPhotoPicked(input) {
 
 function resizePhoto(file, callback) {
   var reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     var img = new Image();
-    img.onload = function() {
+    img.onload = function () {
       var canvas = document.createElement('canvas');
       var size = 300;
-      var w = img.width, h = img.height;
+      var w = img.width,
+        h = img.height;
       var scale = Math.max(size / w, size / h);
-      var sw = w * scale, sh = h * scale;
-      canvas.width = size; canvas.height = size;
+      var sw = w * scale,
+        sh = h * scale;
+      canvas.width = size;
+      canvas.height = size;
       var ctx = canvas.getContext('2d');
       ctx.drawImage(img, (size - sw) / 2, (size - sh) / 2, sw, sh);
       callback(canvas.toDataURL('image/jpeg', 0.7));
@@ -1218,13 +1435,21 @@ async function finishOnboarding(startTour) {
   // Mood baseline
   if (onboardData.mood) {
     await db.ref('baselines/' + user + '/mood').set({
-      mood: onboardData.mood, energy: onboardData.energy, stress: onboardData.stress,
-      timestamp: Date.now(), source: 'onboarding'
+      mood: onboardData.mood,
+      energy: onboardData.energy,
+      stress: onboardData.stress,
+      timestamp: Date.now(),
+      source: 'onboarding'
     });
     // Also log as first mood entry
     await db.ref('moods').push({
-      user: user, mood: onboardData.mood, energy: onboardData.energy,
-      stress: onboardData.stress, date: localDate(), timestamp: Date.now(), source: 'onboarding'
+      user: user,
+      mood: onboardData.mood,
+      energy: onboardData.energy,
+      stress: onboardData.stress,
+      date: localDate(),
+      timestamp: Date.now(),
+      source: 'onboarding'
     });
   }
   // Fitness baseline
@@ -1239,15 +1464,20 @@ async function finishOnboarding(startTour) {
     // Also log as first body entry
     if (onboardData.weight) {
       await db.ref('fitness/' + user + '/body').push({
-        weight: parseFloat(onboardData.weight), timestamp: Date.now(), date: localDate()
+        weight: parseFloat(onboardData.weight),
+        timestamp: Date.now(),
+        date: localDate()
       });
     }
   }
   // Relationship baseline
   if (onboardData.commRating || onboardData.qualityRating || onboardData.connectedRating) {
     await db.ref('baselines/' + user + '/relationship').set({
-      communication: onboardData.commRating, qualityTime: onboardData.qualityRating,
-      connection: onboardData.connectedRating, timestamp: Date.now(), source: 'onboarding'
+      communication: onboardData.commRating,
+      qualityTime: onboardData.qualityRating,
+      connection: onboardData.connectedRating,
+      timestamp: Date.now(),
+      source: 'onboarding'
     });
   }
   // Relationship agreements
@@ -1265,7 +1495,9 @@ async function finishOnboarding(startTour) {
   });
   // Request notification permission for morning messages
   if (onboardData.morningMsgEnabled && 'Notification' in window && Notification.permission === 'default') {
-    try { await Notification.requestPermission(); } catch(e) {}
+    try {
+      await Notification.requestPermission();
+    } catch (e) {}
   }
 
   // Living Sky — sky-scene is outside shell so it can render immediately
@@ -1286,12 +1518,10 @@ async function finishOnboarding(startTour) {
 
   document.getElementById('login').classList.remove('onboard-active');
   finishLogin();
-  // Force biometric setup after onboarding completes
-  var bioAvailable = await checkBiometricAvailable();
-  if (bioAvailable && !hasBiometricCredential()) {
-    setTimeout(function() { showBiometricSetupModal(); }, 800);
-  } else if (startTour) {
-    setTimeout(function() { startAppTour(); }, 600);
+  if (startTour) {
+    setTimeout(function () {
+      startAppTour();
+    }, 600);
   }
 }
 
@@ -1375,7 +1605,10 @@ function startAppTour() {
 
 function showTourStep() {
   var step = TOUR_STEPS[tourStep];
-  if (!step) { endTour(); return; }
+  if (!step) {
+    endTour();
+    return;
+  }
 
   var tooltip = document.getElementById('tour-tooltip');
   var spotlight = document.getElementById('tour-spotlight');
@@ -1399,7 +1632,9 @@ function showTourStep() {
     delay = 250;
   }
 
-  setTimeout(function() { positionTourStep(step); }, delay);
+  setTimeout(function () {
+    positionTourStep(step);
+  }, delay);
 }
 
 function positionTourStep(step) {
@@ -1414,13 +1649,16 @@ function positionTourStep(step) {
   var selectors = step.target.split(',');
   for (var i = 0; i < selectors.length; i++) {
     var el = document.querySelector(selectors[i].trim());
-    if (el && el.offsetParent !== null) { target = el; break; }
+    if (el && el.offsetParent !== null) {
+      target = el;
+      break;
+    }
   }
 
   // Set content
   titleEl.textContent = step.title;
   textEl.textContent = step.text;
-  countEl.textContent = (tourStep + 1) + '/' + TOUR_STEPS.length;
+  countEl.textContent = tourStep + 1 + '/' + TOUR_STEPS.length;
 
   tooltip.classList.remove('tour-tooltip-out');
 
@@ -1429,21 +1667,21 @@ function positionTourStep(step) {
     target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
     // Wait for scroll to settle, then position everything
-    setTimeout(function() {
+    setTimeout(function () {
       var rect = target.getBoundingClientRect();
       var pad = 12;
 
       // Position spotlight smoothly (CSS transition handles animation)
       spotlight.style.display = '';
       spotlight.style.opacity = '1';
-      spotlight.style.top = (rect.top - pad) + 'px';
-      spotlight.style.left = (rect.left - pad) + 'px';
-      spotlight.style.width = (rect.width + pad * 2) + 'px';
-      spotlight.style.height = (rect.height + pad * 2) + 'px';
+      spotlight.style.top = rect.top - pad + 'px';
+      spotlight.style.left = rect.left - pad + 'px';
+      spotlight.style.width = rect.width + pad * 2 + 'px';
+      spotlight.style.height = rect.height + pad * 2 + 'px';
       spotlight.style.borderRadius = getComputedStyle(target).borderRadius || '14px';
 
       // Position tooltip after spotlight arrives
-      setTimeout(function() {
+      setTimeout(function () {
         positionTooltip(tooltip, rect, step.position);
         tooltip.classList.remove('tour-tooltip-in');
         void tooltip.offsetWidth;
@@ -1473,10 +1711,10 @@ function positionTooltip(tooltip, rect, position) {
 
   if (position === 'top') {
     tooltip.style.top = '';
-    tooltip.style.bottom = (window.innerHeight - rect.top + gap) + 'px';
+    tooltip.style.bottom = window.innerHeight - rect.top + gap + 'px';
   } else {
     tooltip.style.bottom = '';
-    tooltip.style.top = (rect.bottom + gap) + 'px';
+    tooltip.style.top = rect.bottom + gap + 'px';
   }
 }
 
@@ -1495,9 +1733,12 @@ function endTour() {
   _tourTransitioning = false;
   var tooltip = document.getElementById('tour-tooltip');
   var spotlight = document.getElementById('tour-spotlight');
-  if (tooltip) { tooltip.classList.remove('tour-tooltip-in'); tooltip.classList.add('tour-tooltip-out'); }
+  if (tooltip) {
+    tooltip.classList.remove('tour-tooltip-in');
+    tooltip.classList.add('tour-tooltip-out');
+  }
   if (spotlight) spotlight.style.opacity = '0';
-  setTimeout(function() {
+  setTimeout(function () {
     var overlay = document.getElementById('tour-overlay');
     if (overlay) overlay.classList.remove('on');
     document.body.classList.remove('touring');
@@ -1522,171 +1763,18 @@ function showWelcomeGate() {
       }
     });
   }
-  // Update biometric button state
-  updateBiometricUI();
-}
-
-// ===== BIOMETRIC / FACE ID AUTH =====
-var _biometricAvailable = false;
-
-function isBiometricSupported() {
-  return window.PublicKeyCredential !== undefined &&
-    typeof window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function';
-}
-
-async function checkBiometricAvailable() {
-  if (!isBiometricSupported()) return false;
-  try {
-    return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-  } catch(e) { return false; }
-}
-
-function hasBiometricCredential() {
-  try { return !!localStorage.getItem('met_bio_cred_' + user); } catch(e) { return false; }
-}
-
-// Register a WebAuthn credential after first successful login
-async function registerBiometric() {
-  if (!isBiometricSupported()) return false;
-  try {
-    var userId = new Uint8Array(16);
-    crypto.getRandomValues(userId);
-    var challenge = new Uint8Array(32);
-    crypto.getRandomValues(challenge);
-
-    var credential = await navigator.credentials.create({
-      publicKey: {
-        rp: { name: 'Moi et Toi', id: location.hostname },
-        user: {
-          id: userId,
-          name: authUser.email,
-          displayName: NAMES[user] || authUser.email
-        },
-        challenge: challenge,
-        pubKeyCredParams: [
-          { type: 'public-key', alg: -7 },
-          { type: 'public-key', alg: -257 }
-        ],
-        authenticatorSelection: {
-          authenticatorAttachment: 'platform',
-          userVerification: 'required'
-        },
-        timeout: 60000,
-        attestation: 'none'
-      }
-    });
-
-    if (credential) {
-      // Store credential ID for future verification
-      var credId = btoa(String.fromCharCode.apply(null, new Uint8Array(credential.rawId)));
-      localStorage.setItem('met_bio_cred_' + user, credId);
-      return true;
-    }
-  } catch(e) {
-    // Biometric registration skipped (user cancelled or unsupported)
-  }
-  return false;
-}
-
-// Verify biometric on returning session — accepts optional credId to avoid needing `user`
-async function verifyBiometric(credIdOverride) {
-  var credId = credIdOverride || localStorage.getItem('met_bio_cred_' + user);
-  if (!credId) return false;
-  try {
-    var rawId = Uint8Array.from(atob(credId), function(c) { return c.charCodeAt(0); });
-    var challenge = new Uint8Array(32);
-    crypto.getRandomValues(challenge);
-
-    var assertion = await navigator.credentials.get({
-      publicKey: {
-        challenge: challenge,
-        rpId: location.hostname,
-        allowCredentials: [{
-          type: 'public-key',
-          id: rawId,
-          transports: ['internal']
-        }],
-        userVerification: 'required',
-        timeout: 60000
-      }
-    });
-    return !!assertion;
-  } catch(e) {
-    // If credential is permanently invalid, clear it so user can re-register
-    if (e.name === 'InvalidStateError' || e.name === 'SecurityError') {
-      console.log('Clearing invalid biometric credential:', e.name);
-      try { localStorage.removeItem('met_bio_cred_her'); } catch(ex) {}
-      try { localStorage.removeItem('met_bio_cred_him'); } catch(ex) {}
-    }
-    // NotAllowedError with no user cancellation can indicate a missing credential
-    // (e.g. device was wiped, Face ID re-enrolled) — log for diagnostics
-    if (e.name === 'NotAllowedError') {
-      console.log('Biometric not allowed — user may have cancelled or credential missing');
-    }
-    return false;
-  }
-}
-
-// Find stored biometric credential ID without needing the `user` variable
-function _findStoredCredId() {
-  try {
-    return localStorage.getItem('met_bio_cred_her') || localStorage.getItem('met_bio_cred_him') || null;
-  } catch(e) { return null; }
 }
 
 // Called when user taps Enter on welcome gate
-var _bioFailCount = 0;
 async function enterApp() {
   var enterBtn = document.getElementById('welcome-enter-btn');
-  if (enterBtn) { enterBtn.textContent = 'Verifying...'; enterBtn.disabled = true; }
-
-  // Check for stored credential SYNCHRONOUSLY (no awaits that kill the gesture)
-  var storedCredId = _findStoredCredId();
-
-  if (storedCredId) {
-    // CRITICAL: call Face ID IMMEDIATELY — no awaits before this point
-    // Any async gap would consume the iOS user-gesture activation
-    var verified = await verifyBiometric(storedCredId);
-
-    if (verified) {
-      _bioFailCount = 0;
-      // Now wait for Firebase auth if needed (gesture no longer matters)
-      if (!user || !authUser) {
-        if (enterBtn) enterBtn.textContent = 'Loading...';
-        var waited = await _waitForAuth(8000);
-        if (!waited || !user || !authUser) {
-          // Auth failed — user session expired, fall back to login form
-          toast('Session expired — please sign in');
-          if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
-          return;
-        }
-      }
-      finishLogin();
-      return;
-    }
-
-    // Verification failed or cancelled
-    _bioFailCount++;
-    if (_bioFailCount >= 2) {
-      // Wait for auth before showing bypass modal
-      if (!user || !authUser) await _waitForAuth(5000);
-      if (user && authUser) {
-        showBiometricBypassModal();
-      } else {
-        // Auth expired — just show login form
-        toast('Session expired — please sign in');
-        if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
-      }
-    } else {
-      if (enterBtn) { enterBtn.textContent = 'Try again'; enterBtn.disabled = false; }
-      toast('Face ID required — tap to retry');
-    }
-    return;
+  if (enterBtn) {
+    enterBtn.textContent = 'Loading...';
+    enterBtn.disabled = true;
   }
 
-  // No stored credential — wait for auth first
+  // Wait for Firebase auth if not ready yet
   if (!user || !authUser) {
-    if (enterBtn) enterBtn.textContent = 'Loading...';
     var waited = await _waitForAuth(8000);
     if (!waited || !user || !authUser) {
       if (_authResolved) {
@@ -1694,175 +1782,41 @@ async function enterApp() {
       } else {
         toast('Could not connect — try again');
       }
-      if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
+      if (enterBtn) {
+        enterBtn.textContent = 'Enter';
+        enterBtn.disabled = false;
+      }
       return;
     }
   }
 
-  // Try to register Face ID directly (prompts biometric immediately, no modal)
-  var bioAvailable = await checkBiometricAvailable();
-  _biometricAvailable = bioAvailable;
-
-  if (bioAvailable) {
-    var registered = await registerBiometric();
-    if (registered) {
-      toast('Face ID enabled!');
-    }
-    // Enter regardless — don't block the user if they cancel Face ID
-    finishLogin();
-  } else {
-    finishLogin();
-  }
+  finishLogin();
 }
 
 // Wait for Firebase auth to resolve (user/authUser to be set)
 function _waitForAuth(timeout) {
-  return new Promise(function(resolve) {
-    if (user && authUser) { resolve(true); return; }
+  return new Promise(function (resolve) {
+    if (user && authUser) {
+      resolve(true);
+      return;
+    }
     // If auth already resolved with null user, don't wait
-    if (_authResolved) { resolve(false); return; }
+    if (_authResolved) {
+      resolve(false);
+      return;
+    }
     var elapsed = 0;
-    var interval = setInterval(function() {
+    var interval = setInterval(function () {
       elapsed += 100;
-      if (user && authUser) { clearInterval(interval); resolve(true); }
-      else if (_authResolved || elapsed >= timeout) { clearInterval(interval); resolve(false); }
+      if (user && authUser) {
+        clearInterval(interval);
+        resolve(true);
+      } else if (_authResolved || elapsed >= timeout) {
+        clearInterval(interval);
+        resolve(false);
+      }
     }, 100);
   });
-}
-
-// Shown after repeated Face ID failures so the user isn't permanently locked out
-function showBiometricBypassModal() {
-  var modal = document.getElementById('generic-modal');
-  var content = document.getElementById('generic-modal-content');
-  if (!modal || !content) { finishLogin(); return; }
-  content.innerHTML =
-    '<div style="text-align:center;padding:8px 0">' +
-      '<div style="font-size:40px;margin-bottom:12px">🔓</div>' +
-      '<h2 style="font-size:18px;font-weight:600;color:var(--t1);margin:0 0 8px">Face ID not working?</h2>' +
-      '<p style="font-size:13px;color:var(--t2);line-height:1.5;margin:0 0 20px">Verification failed. You can retry Face ID, enter without it this time, or reset Face ID to set it up again.</p>' +
-      '<button class="dq-submit w-full" onclick="retryBiometricFromModal()" style="margin-bottom:10px">Retry Face ID</button>' +
-      '<button class="dq-submit w-full" onclick="bypassBiometric()" style="margin-bottom:10px;background:var(--input-bg);color:var(--t1)">Enter without Face ID</button>' +
-      '<div style="font-size:11px;color:var(--t3);cursor:pointer;padding:8px" onclick="resetBiometricAndEnter()">Reset Face ID</div>' +
-    '</div>';
-  modal.classList.add('on');
-  document.body.classList.add('modal-open');
-}
-
-async function retryBiometricFromModal() {
-  var modal = document.getElementById('generic-modal');
-  if (modal) modal.classList.remove('on');
-  document.body.classList.remove('modal-open');
-  // Use stored cred ID so it works even if `user` isn't set yet
-  var credId = _findStoredCredId();
-  var verified = await verifyBiometric(credId);
-  if (verified) {
-    _bioFailCount = 0;
-    if (!user || !authUser) await _waitForAuth(5000);
-    finishLogin();
-  } else {
-    toast('Verification failed');
-    showBiometricBypassModal();
-  }
-}
-
-function bypassBiometric() {
-  var modal = document.getElementById('generic-modal');
-  if (modal) modal.classList.remove('on');
-  document.body.classList.remove('modal-open');
-  _bioFailCount = 0;
-  if (!user || !authUser) {
-    _waitForAuth(5000).then(function() { finishLogin(); });
-  } else {
-    finishLogin();
-  }
-}
-
-function resetBiometricAndEnter() {
-  // Clear both credentials so user can re-register next time
-  try { localStorage.removeItem('met_bio_cred_her'); } catch(e) {}
-  try { localStorage.removeItem('met_bio_cred_him'); } catch(e) {}
-  var modal = document.getElementById('generic-modal');
-  if (modal) modal.classList.remove('on');
-  document.body.classList.remove('modal-open');
-  _bioFailCount = 0;
-  toast('Face ID reset — you can set it up again in Settings');
-  if (!user || !authUser) {
-    _waitForAuth(5000).then(function() { finishLogin(); });
-  } else {
-    finishLogin();
-  }
-}
-
-function updateBiometricUI() {
-  var bioHint = document.getElementById('welcome-bio-hint');
-  var enterBtn = document.getElementById('welcome-enter-btn');
-  checkBiometricAvailable().then(function(available) {
-    _biometricAvailable = available;
-    if (bioHint) {
-      if (available && hasBiometricCredential()) {
-        bioHint.textContent = 'Tap to verify with Face ID';
-        bioHint.style.display = '';
-      } else if (available && !hasBiometricCredential()) {
-        bioHint.textContent = 'Set up Face ID on entry';
-        bioHint.style.display = '';
-      } else {
-        bioHint.style.display = 'none';
-      }
-    }
-    if (enterBtn) {
-      enterBtn.textContent = 'Enter';
-      enterBtn.disabled = false;
-    }
-  });
-}
-
-// After first manual login, prompt Face ID registration directly then enter
-async function offerBiometricAfterLogin() {
-  var available = await checkBiometricAvailable();
-  if (available && !hasBiometricCredential()) {
-    var registered = await registerBiometric();
-    if (registered) {
-      toast('Face ID enabled!');
-    }
-  }
-  // Always enter — don't block the user if they cancel Face ID
-  finishLogin();
-}
-
-function showBiometricSetupModal() {
-  var modal = document.getElementById('generic-modal');
-  var content = document.getElementById('generic-modal-content');
-  if (!modal || !content) { finishLogin(); return; }
-  content.innerHTML =
-    '<div style="text-align:center;padding:8px 0">' +
-      '<div style="font-size:40px;margin-bottom:12px">🔐</div>' +
-      '<h2 style="font-size:18px;font-weight:600;color:var(--t1);margin:0 0 8px">Secure your space</h2>' +
-      '<p style="font-size:13px;color:var(--t2);line-height:1.5;margin:0 0 20px">Set up Face ID so only you can access Moi & Toi. This keeps your private world safe.</p>' +
-      '<button class="dq-submit w-full" onclick="handleBiometricSetup()" style="margin-bottom:8px">Enable Face ID</button>' +
-      '<div style="font-size:11px;color:var(--t3);cursor:pointer;padding:8px" onclick="skipBiometricSetup()">I\'ll do this later</div>' +
-    '</div>';
-  modal.classList.add('on');
-  document.body.classList.add('modal-open');
-}
-
-async function handleBiometricSetup() {
-  var modal = document.getElementById('generic-modal');
-  var registered = await registerBiometric();
-  if (modal) modal.classList.remove('on');
-  document.body.classList.remove('modal-open');
-  if (registered) {
-    toast('Face ID enabled! Your space is secure.');
-  } else {
-    toast('Face ID setup skipped');
-  }
-  finishLogin();
-}
-
-function skipBiometricSetup() {
-  var modal = document.getElementById('generic-modal');
-  if (modal) modal.classList.remove('on');
-  document.body.classList.remove('modal-open');
-  finishLogin();
 }
 
 function finishLogin() {
@@ -1871,9 +1825,15 @@ function finishLogin() {
   // Show the shell FIRST so sky/terrain render into a visible container
   document.getElementById('login').classList.add('h');
   document.getElementById('shell').classList.add('on');
-  document.querySelectorAll('.uname').forEach(e => e.textContent = NAMES[user]);
-  document.querySelectorAll('.pname').forEach(e => e.textContent = NAMES[partner]);
-  if(user==='him'){var ki=document.querySelector('[onclick*="sendTap(event,\'kiss\'"]');if(ki){var ic=ki.querySelector('.pill-ico');if(ic)ic.textContent='😘';}}
+  document.querySelectorAll('.uname').forEach(e => (e.textContent = NAMES[user]));
+  document.querySelectorAll('.pname').forEach(e => (e.textContent = NAMES[partner]));
+  if (user === 'him') {
+    var ki = document.querySelector('[onclick*="sendTap(event,\'kiss\'"]');
+    if (ki) {
+      var ic = ki.querySelector('.pill-ico');
+      if (ic) ic.textContent = '😘';
+    }
+  }
   // Handle PWA shortcut deep links
   const startPage = new URLSearchParams(window.location.search).get('page');
   go(startPage || 'dash');
@@ -1972,7 +1932,7 @@ function finishLogin() {
   initDynamicVisuals();
   if (typeof loadSkyTheme === 'function') loadSkyTheme();
   // Safety net: verify sky rendered, force if empty
-  setTimeout(function() {
+  setTimeout(function () {
     var sc = document.getElementById('sky-scene');
     if (!sc) return;
     if (sc.children.length === 0) {
@@ -1983,36 +1943,60 @@ function finishLogin() {
     }
   }, 1500);
   // AI Background Service — content curator, relationship monitor, etc.
-  setTimeout(() => { if (typeof initAIBackgroundService === 'function') initAIBackgroundService(); }, 5000);
-  setTimeout(() => { if (typeof loadAIDailyContent === 'function') loadAIDailyContent(); }, 3000);
+  setTimeout(() => {
+    if (typeof initAIBackgroundService === 'function') initAIBackgroundService();
+  }, 5000);
+  setTimeout(() => {
+    if (typeof loadAIDailyContent === 'function') loadAIDailyContent();
+  }, 3000);
   // Particles, global mode, presence
   initParticles();
   setGlobalMode(localStorage.getItem('met_global_mode') || 'us');
   initPresence();
   if (typeof ltStartListening === 'function') ltStartListening();
   // Morning message check (runs after a short delay so dashboard renders first)
-  setTimeout(function() { if (typeof checkMorningMessage === 'function') checkMorningMessage(); }, 3000);
+  setTimeout(function () {
+    if (typeof checkMorningMessage === 'function') checkMorningMessage();
+  }, 3000);
   // Nav enhancements: swipe gestures, tab indicator, badges
   initSwipeNav();
   initCollapsingHeader();
   setTimeout(updateNavIndicator, 100);
   // Hub & module statuses
-  setTimeout(() => { updateHubStatuses(); updateModuleStats(); updateDashQuickNav(); checkAchievements(); updateNavBadges(); initHubPages(); }, 1500);
+  setTimeout(() => {
+    updateHubStatuses();
+    updateModuleStats();
+    updateDashQuickNav();
+    checkAchievements();
+    updateNavBadges();
+    initHubPages();
+  }, 1500);
   // Refresh badges periodically (skip when tab is hidden)
-  setInterval(function() { if (!document.hidden) updateNavBadges(); }, 60000);
+  setInterval(function () {
+    if (!document.hidden) updateNavBadges();
+  }, 60000);
   // Voice notes & in-app notifications
   if (typeof initVoiceNotes === 'function') setTimeout(initVoiceNotes, 2000);
   // Update push notification button state
   updateNotifButton();
-  // Initialize biometric settings toggle
-  initBiometricSettings();
 }
 
-function switchUser() { fbOffAll(); firebase.auth().signOut(); location.reload(); }
-function logout() { fbOffAll(); firebase.auth().signOut(); location.reload(); }
+function switchUser() {
+  fbOffAll();
+  firebase.auth().signOut();
+  location.reload();
+}
+function logout() {
+  fbOffAll();
+  firebase.auth().signOut();
+  location.reload();
+}
 
 async function clearAllData() {
-  if (!db) { toast('Not connected'); return; }
+  if (!db) {
+    toast('Not connected');
+    return;
+  }
   try {
     // Preserve API key and email map before wiping
     const apiSnap = await db.ref('profiles/apiKey').once('value');
@@ -2029,7 +2013,9 @@ async function clearAllData() {
     // Clear all app localStorage (preserve Firebase config)
     const fbConfig = localStorage.getItem('met_fb_config');
     const aiProxy = localStorage.getItem('met_ai_proxy');
-    Object.keys(localStorage).filter(k => k.startsWith('met_')).forEach(k => localStorage.removeItem(k));
+    Object.keys(localStorage)
+      .filter(k => k.startsWith('met_'))
+      .forEach(k => localStorage.removeItem(k));
     if (fbConfig) localStorage.setItem('met_fb_config', fbConfig);
     if (aiProxy) localStorage.setItem('met_ai_proxy', aiProxy);
     toast('All data cleared - onboarding will restart');
@@ -2041,7 +2027,10 @@ async function clearAllData() {
 }
 
 async function exportAllData() {
-  if (!db) { toast('Not connected'); return; }
+  if (!db) {
+    toast('Not connected');
+    return;
+  }
   toast('Preparing export...');
   try {
     const snap = await db.ref('/').once('value');
@@ -2069,7 +2058,10 @@ function updateApiKey() {
       <button class="btn-sm" onclick="submitApiKey()" style="flex:1">Save</button>
     </div>
   </div>`);
-  setTimeout(function(){ var el=document.getElementById('api-key-input'); if(el) el.focus(); }, 100);
+  setTimeout(function () {
+    var el = document.getElementById('api-key-input');
+    if (el) el.focus();
+  }, 100);
 }
 function submitApiKey() {
   var key = (document.getElementById('api-key-input') || {}).value || '';
@@ -2077,52 +2069,27 @@ function submitApiKey() {
   if (key && key.startsWith('sk-ant-')) {
     CLAUDE_API_KEY = key;
     db.ref('profiles/apiKey').set(key);
-    closeModal(); toast('API key updated');
-  } else if (key) { toast('Invalid key format'); }
-  else { closeModal(); }
+    closeModal();
+    toast('API key updated');
+  } else if (key) {
+    toast('Invalid key format');
+  } else {
+    closeModal();
+  }
 }
-
 
 // ===== SETTINGS TABS =====
 function switchSettingsTab(tab) {
-  document.querySelectorAll('.stab').forEach(function(b) {
+  document.querySelectorAll('.stab').forEach(function (b) {
     b.classList.toggle('active', b.getAttribute('data-stab') === tab);
   });
-  document.querySelectorAll('.stab-panel').forEach(function(p) {
+  document.querySelectorAll('.stab-panel').forEach(function (p) {
     p.classList.toggle('active', p.id === 'stab-' + tab);
   });
   // Scroll to top of settings page
   var pg = document.getElementById('pg-settings');
   if (pg) pg.scrollTop = 0;
   window.scrollTo({ top: 0 });
-}
-
-// ===== BIOMETRIC SETTINGS =====
-function initBiometricSettings() {
-  checkBiometricAvailable().then(function(available) {
-    var card = document.getElementById('biometric-settings-card');
-    var toggle = document.getElementById('set-biometric');
-    if (card && available) {
-      card.style.display = '';
-      if (toggle) toggle.checked = hasBiometricCredential();
-    }
-  });
-}
-
-async function toggleBiometricSetting(enabled) {
-  if (enabled) {
-    var registered = await registerBiometric();
-    if (registered) {
-      toast('Face ID enabled');
-    } else {
-      var toggle = document.getElementById('set-biometric');
-      if (toggle) toggle.checked = false;
-      toast('Could not enable Face ID');
-    }
-  } else {
-    try { localStorage.removeItem('met_bio_cred_' + user); } catch(e) {}
-    toast('Face ID disabled');
-  }
 }
 
 // ===== PUSH NOTIFICATIONS (#15) =====
@@ -2138,18 +2105,27 @@ function updateNotifButton() {
   if (Notification.permission === 'granted') {
     btn.textContent = 'Enabled';
     btn.classList.add('btn-success');
-    if (status) { status.textContent = 'Notifications are active'; status.classList.remove('d-none'); }
+    if (status) {
+      status.textContent = 'Notifications are active';
+      status.classList.remove('d-none');
+    }
   } else if (Notification.permission === 'denied') {
     btn.textContent = 'Blocked';
     btn.disabled = true;
-    if (status) { status.textContent = 'Blocked by browser — enable in your browser settings'; status.classList.remove('d-none'); }
+    if (status) {
+      status.textContent = 'Blocked by browser — enable in your browser settings';
+      status.classList.remove('d-none');
+    }
   } else {
     btn.textContent = 'Enable';
   }
 }
 
 async function togglePushNotifications() {
-  if (!('Notification' in window)) { toast('Notifications not supported'); return; }
+  if (!('Notification' in window)) {
+    toast('Notifications not supported');
+    return;
+  }
   if (Notification.permission === 'granted') {
     toast('Notifications already enabled');
     return;
@@ -2177,14 +2153,16 @@ async function savePushToken() {
       timestamp: Date.now(),
       userAgent: navigator.userAgent.substring(0, 100)
     });
-  } catch (e) { console.warn('Could not save push token:', e); }
+  } catch (e) {
+    console.warn('Could not save push token:', e);
+  }
 }
 
 // Send a browser notification (called when partner does something)
 function sendPushNotification(title, body, icon) {
   if (Notification.permission !== 'granted') return;
   try {
-    navigator.serviceWorker.ready.then(function(reg) {
+    navigator.serviceWorker.ready.then(function (reg) {
       reg.showNotification(title, {
         body: body,
         icon: icon || 'icons/icon-192x192.png',
@@ -2204,34 +2182,58 @@ function sendPushNotification(title, body, icon) {
 function initPartnerNotifications() {
   if (!db || !user || Notification.permission !== 'granted') return;
   // Letters from partner
-  db.ref('letters').orderByChild('timestamp').limitToLast(1).on('child_added', function(snap) {
-    var l = snap.val();
-    if (l && l.from === partner && Date.now() - l.timestamp < 10000) {
-      sendPushNotification('New Letter', (l.fromName || 'Your partner') + ' sent you a letter', 'icons/icon-192x192.png');
-    }
-  });
+  db.ref('letters')
+    .orderByChild('timestamp')
+    .limitToLast(1)
+    .on('child_added', function (snap) {
+      var l = snap.val();
+      if (l && l.from === partner && Date.now() - l.timestamp < 10000) {
+        sendPushNotification(
+          'New Letter',
+          (l.fromName || 'Your partner') + ' sent you a letter',
+          'icons/icon-192x192.png'
+        );
+      }
+    });
   // Taps from partner
-  db.ref('taps').orderByChild('timestamp').limitToLast(1).on('child_added', function(snap) {
-    var t = snap.val();
-    if (t && t.from === partner && Date.now() - t.timestamp < 10000) {
-      var tapMsgs = { hug:'sent you a hug', kiss:'sent you a kiss', love:'sent you love', miss:'misses you', thinking:'is thinking of you' };
-      sendPushNotification((t.fromName || 'Your partner'), tapMsgs[t.type] || 'sent you a tap', 'icons/icon-192x192.png');
-    }
-  });
+  db.ref('taps')
+    .orderByChild('timestamp')
+    .limitToLast(1)
+    .on('child_added', function (snap) {
+      var t = snap.val();
+      if (t && t.from === partner && Date.now() - t.timestamp < 10000) {
+        var tapMsgs = {
+          hug: 'sent you a hug',
+          kiss: 'sent you a kiss',
+          love: 'sent you love',
+          miss: 'misses you',
+          thinking: 'is thinking of you'
+        };
+        sendPushNotification(
+          t.fromName || 'Your partner',
+          tapMsgs[t.type] || 'sent you a tap',
+          'icons/icon-192x192.png'
+        );
+      }
+    });
 }
 
 // ===== BACKGROUND SYNC (#16) =====
 // Queue offline data writes and sync when back online
 var _offlineQueue = [];
-try { _offlineQueue = JSON.parse(localStorage.getItem('met_offline_queue') || '[]'); } catch(e) { _offlineQueue = []; }
+try {
+  _offlineQueue = JSON.parse(localStorage.getItem('met_offline_queue') || '[]');
+} catch (e) {
+  _offlineQueue = [];
+}
 
 function queueOfflineWrite(path, data) {
   _offlineQueue.push({ path: path, data: data, timestamp: Date.now() });
   localStorage.setItem('met_offline_queue', JSON.stringify(_offlineQueue));
   // Try background sync if available
   if ('serviceWorker' in navigator && 'SyncManager' in window) {
-    navigator.serviceWorker.ready.then(function(reg) {
-      reg.sync.register('met-offline-sync').catch(function() {});
+    navigator.serviceWorker.ready.then(function (reg) {
+      reg.sync.register('met-offline-sync').catch(function () {});
     });
   }
 }
@@ -2242,20 +2244,23 @@ function flushOfflineQueue() {
   _offlineQueue = [];
   localStorage.removeItem('met_offline_queue');
   var count = 0;
-  queue.forEach(function(item) {
-    db.ref(item.path).push(item.data).then(function() {
-      count++;
-      if (count === queue.length) toast('Synced ' + count + ' offline entries');
-    }).catch(function(e) {
-      // Re-queue failed items
-      _offlineQueue.push(item);
-      localStorage.setItem('met_offline_queue', JSON.stringify(_offlineQueue));
-    });
+  queue.forEach(function (item) {
+    db.ref(item.path)
+      .push(item.data)
+      .then(function () {
+        count++;
+        if (count === queue.length) toast('Synced ' + count + ' offline entries');
+      })
+      .catch(function (e) {
+        // Re-queue failed items
+        _offlineQueue.push(item);
+        localStorage.setItem('met_offline_queue', JSON.stringify(_offlineQueue));
+      });
   });
 }
 
 // Flush queue when coming back online
-window.addEventListener('online', function() {
+window.addEventListener('online', function () {
   setTimeout(flushOfflineQueue, 2000);
 });
 
@@ -2264,17 +2269,20 @@ var _origSubmitMood = typeof submitMood === 'function' ? submitMood : null;
 var _origFinishWorkout = typeof finishWorkout === 'function' ? finishWorkout : null;
 
 // Patching is deferred to after all scripts load
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
   // Patch submitMood for offline support
   if (typeof submitMood === 'function' && !submitMood._bgSyncPatched) {
     var origMood = submitMood;
-    window.submitMood = async function() {
+    window.submitMood = async function () {
       if (!navigator.onLine && selectedMood) {
         var entry = {
-          mood: selectedMood, energy: selectedEnergy || 3,
+          mood: selectedMood,
+          energy: selectedEnergy || 3,
           note: (document.getElementById('mood-note') || {}).value || '',
-          user: user, userName: NAMES[user],
-          timestamp: Date.now(), date: localDate()
+          user: user,
+          userName: NAMES[user],
+          timestamp: Date.now(),
+          date: localDate()
         };
         queueOfflineWrite('moods', entry);
         toast('Saved offline — will sync when connected');
@@ -2290,4 +2298,3 @@ window.addEventListener('load', function() {
     setTimeout(initPartnerNotifications, 5000);
   }
 });
-
