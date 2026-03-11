@@ -3902,11 +3902,13 @@ body[data-time="evening"] .login h1 {
 }
 body[data-time="night"] .login .sub,
 body[data-time="evening"] .login .sub {
-  color: rgba(200,210,200,0.60) !important;
+  color: rgba(220,225,220,0.78) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
 }
 body[data-time="night"] .login .lbl,
 body[data-time="evening"] .login .lbl {
-  color: rgba(200,210,200,0.50) !important;
+  color: rgba(220,225,220,0.82) !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
 }
 /* Night/evening/dawn/golden onboarding text legibility */
 body[data-time="night"] .onboard-title,
@@ -4038,9 +4040,9 @@ body[data-time="dawn"] .login-btn {
   background: linear-gradient(135deg, #B86878 0%, #C88090 40%, #D8A0A0 100%) !important;
   box-shadow: 0 4px 20px rgba(184,104,120,0.25) !important;
 }
-body[data-time="dawn"] .login h1 { color: #F4ECE8 !important; }
-body[data-time="dawn"] .login .sub { color: rgba(240,220,220,0.55) !important; }
-body[data-time="dawn"] .login .lbl { color: rgba(240,220,220,0.45) !important; }
+body[data-time="dawn"] .login h1 { color: #F4ECE8 !important; text-shadow: 0 1px 6px rgba(0,0,0,0.18) !important; }
+body[data-time="dawn"] .login .sub { color: rgba(240,220,220,0.78) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.20) !important; }
+body[data-time="dawn"] .login .lbl { color: rgba(240,220,220,0.82) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.20) !important; }
 body[data-time="dawn"] .login-logo {
   background: rgba(200,140,160,0.10) !important;
   border-color: rgba(220,160,180,0.20) !important;
@@ -4063,9 +4065,9 @@ body[data-time="golden"] .login-btn {
   background: linear-gradient(135deg, #B87A20 0%, #C89030 40%, #D8A840 100%) !important;
   box-shadow: 0 4px 20px rgba(184,122,32,0.30) !important;
 }
-body[data-time="golden"] .login h1 { color: #FFF4E4 !important; }
-body[data-time="golden"] .login .sub { color: rgba(255,230,190,0.55) !important; }
-body[data-time="golden"] .login .lbl { color: rgba(255,230,190,0.45) !important; }
+body[data-time="golden"] .login h1 { color: #FFF4E4 !important; text-shadow: 0 1px 6px rgba(0,0,0,0.18) !important; }
+body[data-time="golden"] .login .sub { color: rgba(255,240,210,0.78) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.20) !important; }
+body[data-time="golden"] .login .lbl { color: rgba(255,240,210,0.82) !important; text-shadow: 0 1px 4px rgba(0,0,0,0.20) !important; }
 body[data-time="golden"] .login-logo {
   background: rgba(200,160,60,0.12) !important;
   border-color: rgba(220,180,80,0.22) !important;
