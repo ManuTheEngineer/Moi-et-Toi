@@ -1645,7 +1645,8 @@ function renderMeadowTerrain(container) {
 }
 
 // ===== SKY THEME (beach / mountain / mixed) =====
-var currentSkyTheme = 'mixed';
+// Use cached theme from early application so DOMContentLoaded renders the right terrain
+var currentSkyTheme = window._cachedSkyTheme || 'mixed';
 
 function applySkyTheme(theme) {
   currentSkyTheme = theme || 'mixed';
