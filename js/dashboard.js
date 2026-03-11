@@ -163,12 +163,9 @@ function showConfigSetup() {
   if (loginForm) loginForm.classList.add('d-none');
   if (welcomeGate) welcomeGate.classList.add('d-none');
   if (configForm) configForm.classList.remove('d-none');
-  // Hide sky/terrain overlays — WKWebView (Chrome, PWA) blocks touch events
-  // on inputs behind position:fixed elements even with pointer-events:none
-  var sky = document.getElementById('login-sky-scene');
-  var terr = document.getElementById('login-terrain-scene');
-  if (sky) sky.style.display = 'none';
-  if (terr) terr.style.display = 'none';
+  // Sky/terrain stay visible — the login-inner z-index:1 ensures the
+  // config input sits above the z-index:0 sky/terrain overlays, same
+  // as the sign-in form and welcome gate which work fine with them.
 }
 
 function saveConfig() {
