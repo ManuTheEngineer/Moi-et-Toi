@@ -3389,6 +3389,8 @@ function initWeatherSystem() {
         if (container && livingSkyEnabled) renderLivingSky(container);
         // Re-render terrain to match updated time colors
         if (typeof renderTerrain === 'function') renderTerrain();
+        // Re-render login sky if still visible so it matches dashboard
+        if (typeof renderLoginSky === 'function') renderLoginSky();
         updateWeatherInfoUI();
         // Queue ambient audio - will play once AudioContext is unlocked by user gesture
         if (WEATHER.audioEnabled) {

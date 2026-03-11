@@ -230,6 +230,39 @@ function updateTimeOfDay() {
   if (meta) meta.content = colors[time] || '#F5F0EB';
   // Re-render orbs when time changes to match new palette
   if (prev && prev !== time && typeof spawnOrbs === 'function') spawnOrbs();
+
+  // ===== Weather-aware golden-hour warmth blend =====
+  // Gradually warm the background as golden hour approaches (no hard cut)
+  var blend = 0;
+  if (typeof WEATHER !== 'undefined' && WEATHER.locationGranted && WEATHER.data && typeof getSunTimes === 'function') {
+    var times = getSunTimes();
+    var sunsetH = new Date(times.sunset).getHours() + new Date(times.sunset).getMinutes() / 60;
+    var h = new Date().getHours() + new Date().getMinutes() / 60;
+    var goldenStart = sunsetH - 2;
+    // Ramp 0→1 over the hour before golden hour
+    if (time === 'afternoon' && h >= goldenStart - 1) {
+      blend = Math.min(1, Math.max(0, (h - (goldenStart - 1)) / 1));
+    } else if (time === 'golden') {
+      blend = 1;
+    }
+  }
+  document.body.style.setProperty('--golden-blend', blend);
+
+  // Update weather tint overlay with golden warmth + temperature tint
+  var tintEl = document.getElementById('weather-tint');
+  if (tintEl) {
+    var layers = [];
+    // Golden-hour warmth ramp
+    if (blend > 0) {
+      layers.push('rgba(255, 180, 80, ' + (blend * 0.08).toFixed(4) + ')');
+    }
+    // Temperature-based tint from weather data
+    if (typeof getTempTint === 'function') {
+      var tt = getTempTint();
+      if (tt) layers.push(tt.tint);
+    }
+    tintEl.style.background = layers.length > 0 ? layers.join(', ') : 'transparent';
+  }
 }
 
 // ===== TIME-BASED GREETING SYSTEM =====

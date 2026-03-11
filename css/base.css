@@ -71,7 +71,7 @@ body::before {
   background-size: 200% 200%;
   animation: auroraFlow 60s ease-in-out infinite alternate;
   will-change: background-position;
-  transition: background 5s ease;
+  transition: background 2s ease;
 }
 body::after {
   content: '';

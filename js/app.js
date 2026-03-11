@@ -1834,6 +1834,9 @@ function _waitForAuth(timeout) {
 }
 
 function finishLogin() {
+  // Apply cached sky theme BEFORE time-of-day so CSS variables resolve correctly
+  var cachedTheme = localStorage.getItem('met_sky_theme');
+  if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
   // Set time-of-day colors before showing shell
   if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
   // Show the shell FIRST so sky/terrain render into a visible container
@@ -1940,9 +1943,7 @@ function finishLogin() {
   // Initialize weather system (must run after user/db are set)
   if (typeof initWeatherSystem === 'function') initWeatherSystem();
   // Sky/terrain are outside shell (position:fixed, always in DOM).
-  // Apply cached theme, render sky, then load authoritative theme from Firebase.
-  var cachedTheme = localStorage.getItem('met_sky_theme');
-  if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
+  // Cached theme already applied at top of finishLogin; render sky, then load authoritative theme from Firebase.
   if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
   initDynamicVisuals();
   if (typeof loadSkyTheme === 'function') loadSkyTheme();

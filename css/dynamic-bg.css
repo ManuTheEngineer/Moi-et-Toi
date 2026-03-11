@@ -1,3 +1,17 @@
+/* ===== WEATHER-AWARE TINT OVERLAY ===== */
+/* Controlled by JS: golden-hour blend + temperature tint */
+.weather-tint {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
+  z-index: -1;
+  pointer-events: none;
+  transition: background 3s ease;
+  background: transparent;
+}
+
 /* ===== DYNAMIC TIME-OF-DAY BACKGROUNDS ===== */
 
 /* Time periods set via JS: data-time="dawn|morning|afternoon|golden|evening|night" */
