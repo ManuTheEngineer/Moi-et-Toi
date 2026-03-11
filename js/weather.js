@@ -2615,6 +2615,7 @@ function initWeatherSystem() {
     }
 
     // Load audio preference - properly restore saved state
+    // Check weather audio setting, then fall back to onboarding nature sounds preference
     if (data.audio) {
       WEATHER.audioEnabled = true;
       var audioToggle = document.getElementById('set-ambient-audio');
@@ -2622,6 +2623,19 @@ function initWeatherSystem() {
       // Do NOT create AudioContext eagerly — on iOS/mobile, contexts created
       // outside a user gesture can never be properly resumed. The first user
       // touch/click will create and unlock it via _tryUnlock.
+    } else if (data.audio === undefined) {
+      // No weather audio setting yet — check onboarding nature sounds preference
+      db.ref('settings/natureSounds/' + user).once('value', function(nsSnap) {
+        var nsEnabled = nsSnap.val();
+        if (nsEnabled) {
+          WEATHER.audioEnabled = true;
+          var audioToggle = document.getElementById('set-ambient-audio');
+          if (audioToggle) audioToggle.checked = true;
+          // Persist to weather settings so we don't need to check onboarding again
+          db.ref('settings/weather/' + user + '/audio').set(true);
+          if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
+        }
+      });
     }
 
     // Update scene selection UI
