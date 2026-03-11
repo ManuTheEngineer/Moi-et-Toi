@@ -418,6 +418,7 @@ function showConfetti() {
   document.body.appendChild(container);
 
   const colors = ['#1C2B4A', '#2E4468', '#C4784A', '#B08A50', '#3A2860', '#8C4228', '#D4946A'];
+  const frag = document.createDocumentFragment();
   for (let i = 0; i < 60; i++) {
     const piece = document.createElement('div');
     const color = colors[Math.floor(Math.random() * colors.length)];
@@ -426,8 +427,9 @@ function showConfetti() {
     const size = 4 + Math.random() * 6;
     const rotation = Math.random() * 360;
     piece.style.cssText = `position:absolute;top:-10px;left:${left}%;width:${size}px;height:${size * 0.6}px;background:${color};border-radius:1px;transform:rotate(${rotation}deg);animation:confettiFall ${1.5 + Math.random()}s ease-in ${delay}ms forwards`;
-    container.appendChild(piece);
+    frag.appendChild(piece);
   }
+  container.appendChild(frag);
   setTimeout(() => container.remove(), 3000);
 }
 
@@ -633,56 +635,57 @@ function doConfirm() {
 }
 
 // ===== DELETE HELPERS =====
+var _delFail = function () { toast('Delete failed'); };
 function deleteBucketItem(key) {
   showConfirmDialog('Remove item', 'Delete this from your bucket list?', 'Delete', () => {
-    db.ref('bucketList/' + key).remove();
+    db.ref('bucketList/' + key).remove().catch(_delFail);
     toast('Removed');
   });
 }
 function deleteDream(key) {
   showConfirmDialog('Remove dream', 'Delete this dream?', 'Delete', () => {
-    db.ref('dreams/' + key).remove();
+    db.ref('dreams/' + key).remove().catch(_delFail);
     toast('Removed');
   });
 }
 function deleteChore(key) {
   showConfirmDialog('Remove task', 'Delete this household task?', 'Delete', () => {
-    db.ref('homelife/chores/' + key).remove();
+    db.ref('homelife/chores/' + key).remove().catch(_delFail);
     toast('Removed');
   });
 }
 function deleteMeal(key) {
-  db.ref('homelife/meals/' + key).remove();
+  db.ref('homelife/meals/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deleteSavingsGoal(key) {
   showConfirmDialog('Remove goal', 'Delete this savings goal?', 'Delete', () => {
-    db.ref('homelife/savings/' + key).remove();
+    db.ref('homelife/savings/' + key).remove().catch(_delFail);
     toast('Removed');
   });
 }
 function deleteBabyName(key) {
-  db.ref('family/names/' + key).remove();
+  db.ref('family/names/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deleteFamilyGoal(key) {
-  db.ref('family/goals/' + key).remove();
+  db.ref('family/goals/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deleteWishItem(owner, key) {
-  db.ref('wishlists/' + owner + '/' + key).remove();
+  db.ref('wishlists/' + owner + '/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deleteIntention(key) {
-  db.ref('spiritual/intentions/' + key).remove();
+  db.ref('spiritual/intentions/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deletePersonalGoal(who, key) {
-  db.ref('personalGoals/' + who + '/' + key).remove();
+  db.ref('personalGoals/' + who + '/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deleteDateIdea(key) {
-  db.ref('dateNights/' + key).remove();
+  db.ref('dateNights/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 
@@ -1425,7 +1428,7 @@ function logActivity(module, description) {
     user,
     userName: NAMES[user],
     timestamp: Date.now()
-  });
+  }).catch(function () {});
 }
 
 function renderActivityFeed() {

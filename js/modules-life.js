@@ -37,7 +37,9 @@ function nextAffirmation() { rotatePrompt(AFFIRMATIONS, 'hs-affirm-text', functi
 function logPeriodStart() {
   if (!db || !user) return;
   const today = localDate();
-  db.ref('herWellness/cycle').push({ type: 'start', date: today, timestamp: Date.now() });
+  db.ref('herWellness/cycle')
+    .push({ type: 'start', date: today, timestamp: Date.now() })
+    .catch(function () { toast('Save failed'); });
   toast('Period start logged');
   loadCycleData();
 }
@@ -45,7 +47,9 @@ function logPeriodStart() {
 function logPeriodEnd() {
   if (!db || !user) return;
   const today = localDate();
-  db.ref('herWellness/cycle').push({ type: 'end', date: today, timestamp: Date.now() });
+  db.ref('herWellness/cycle')
+    .push({ type: 'end', date: today, timestamp: Date.now() })
+    .catch(function () { toast('Save failed'); });
   toast('Period end logged');
   loadCycleData();
 }
@@ -106,7 +110,7 @@ function toggleCare(el, type) {
   el.classList.toggle('done');
   const today = localDate();
   const done = el.classList.contains('done');
-  db.ref('herWellness/selfcare/' + today + '/' + type).set(done ? true : null);
+  db.ref('herWellness/selfcare/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
 }
 
 function loadSelfCare() {
@@ -185,10 +189,8 @@ async function logPR() {
 }
 
 function listenPRs() {
-  db.ref('hisWellness/prs')
-    .orderByChild('timestamp')
-    .limitToLast(20)
-    .on('value', snap => {
+  var ref = db.ref('hisWellness/prs').orderByChild('timestamp').limitToLast(20);
+  fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
@@ -201,7 +203,7 @@ function listenPRs() {
       el.innerHTML = items
         .map(i => {
           const ts = timeAgo(new Date(i.timestamp));
-          return `<div class="him-pr-card"><div class="him-pr-name">${i.exercise}</div><div class="him-pr-val">${i.weight}${i.weight !== '--' ? ' lbs' : ''} × ${i.reps}</div><div class="him-pr-date">${ts}</div></div>`;
+          return `<div class="him-pr-card"><div class="him-pr-name">${esc(i.exercise)}</div><div class="him-pr-val">${esc(String(i.weight))}${i.weight !== '--' ? ' lbs' : ''} × ${esc(String(i.reps))}</div><div class="him-pr-date">${ts}</div></div>`;
         })
         .join('');
     });
@@ -212,7 +214,7 @@ function toggleClarity(el, type) {
   el.classList.toggle('done');
   const today = localDate();
   const done = el.classList.contains('done');
-  db.ref('hisWellness/clarity/' + today + '/' + type).set(done ? true : null);
+  db.ref('hisWellness/clarity/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
 }
 
 function loadClarity() {
@@ -282,7 +284,7 @@ function listenPersonalGoals(who) {
         <div class="pg-goal-check" onclick="toggleGoal('${who}','${i._key}',${!i.done})">${i.done ? '✓' : ''}</div>
         <div class="pg-goal-text">${esc(i.title)}</div>
         <div class="pg-goal-date">${ts}</div>
-        <button class="item-delete" onclick="event.stopPropagation();deletePersonalGoal('${who}','${i._key}')">×</button>
+        <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deletePersonalGoal('${who}','${i._key}')">×</button>
       </div>`;
         })
         .join('');
@@ -380,7 +382,7 @@ function renderHabits(habits) {
           <div class="habit-name">${esc(h.name)}</div>
           <div class="habit-meta">${who} · ${streak > 0 ? '🔥 ' + streak + ' day streak' : 'Start today'}</div>
         </div>
-        <button class="item-delete" onclick="event.stopPropagation();db.ref('habits/${h._key}').remove();toast('Removed')">×</button>
+        <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();db.ref('habits/${h._key}').remove();toast('Removed')">×</button>
       </div>
       <div class="habit-dots">${dots}</div>
     </div>`;
@@ -475,9 +477,8 @@ async function addPhrase() {
 }
 
 function listenPhrases() {
-  db.ref('culture/phrases')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  var ref = db.ref('culture/phrases').orderByChild('timestamp');
+  fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
@@ -539,9 +540,8 @@ async function addTradition() {
 }
 
 function listenTraditions() {
-  db.ref('culture/traditions')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  var ref = db.ref('culture/traditions').orderByChild('timestamp');
+  fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
@@ -606,9 +606,8 @@ async function addRecipe() {
 }
 
 function listenRecipes() {
-  db.ref('culture/recipes')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  var ref = db.ref('culture/recipes').orderByChild('timestamp');
+  fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
@@ -742,10 +741,8 @@ async function saveConvoNote() {
 }
 
 function listenConvoNotes() {
-  db.ref('deepTalkJournal')
-    .orderByChild('timestamp')
-    .limitToLast(20)
-    .on('value', snap => {
+  var ref = db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(20);
+  fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
@@ -865,7 +862,7 @@ function listenBabyNames() {
         <div class="fam-name-text">${i.name}</div>
         <div class="fam-name-gender">${genderEmoji[i.gender] || ''} ${i.gender}</div>
         <div class="fam-name-heart ${isLoved ? 'loved' : ''}" onclick="toggleNameLove('${i._key}')">${isLoved ? '♥' : '♡'}</div>
-        <button class="item-delete" onclick="event.stopPropagation();deleteBabyName('${i._key}')">×</button>
+        <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteBabyName('${i._key}')">×</button>
       </div>`;
         })
         .join('');
@@ -925,7 +922,7 @@ function listenFamilyGoals() {
           i => `<div class="pg-goal ${i.done ? 'done' : ''}">
       <div class="pg-goal-check" onclick="toggleFamGoal('${i._key}',${!i.done})">${i.done ? '✓' : ''}</div>
       <div class="pg-goal-text">${esc(i.title)}</div>
-      <button class="item-delete" onclick="event.stopPropagation();deleteFamilyGoal('${i._key}')">×</button>
+      <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteFamilyGoal('${i._key}')">×</button>
     </div>`
         )
         .join('');
@@ -1001,7 +998,7 @@ function listenValues() {
 //   agreements/proposals/{pushId} — pending proposals (new, edit, remove)
 //   agreements/daily/{user}/{date} — daily acknowledgments
 
-var _agreeEditingKey = null; // key of agreement being edited
+let _agreeEditingKey = null; // key of agreement being edited
 
 function listenAgreements() {
   if (!db || !user) return;
@@ -1010,9 +1007,8 @@ function listenAgreements() {
   _migrateOnboardingAgreements();
 
   // Listen to active agreements
-  db.ref('agreements/active')
-    .orderByChild('timestamp')
-    .on('value', function (snap) {
+  var activeRef = db.ref('agreements/active').orderByChild('timestamp');
+  fbOn(activeRef, 'value', function (snap) {
       var el = document.getElementById('agree-active-list');
       if (!el) return;
       var items = [];
@@ -1054,9 +1050,8 @@ function listenAgreements() {
     });
 
   // Listen to proposals
-  db.ref('agreements/proposals')
-    .orderByChild('timestamp')
-    .on('value', function (snap) {
+  var proposalRef = db.ref('agreements/proposals').orderByChild('timestamp');
+  fbOn(proposalRef, 'value', function (snap) {
       var items = [];
       snap.forEach(function (c) {
         items.push({ key: c.key, data: c.val() });
@@ -1238,7 +1233,7 @@ function proposeAgreement() {
     proposedByName: NAMES[user] || user,
     status: 'pending',
     timestamp: Date.now()
-  });
+  }).catch(function () { toast('Save failed'); });
   input.value = '';
   toast('Proposed — waiting for partner');
 }
@@ -1291,7 +1286,7 @@ function submitAgreementEdit() {
       proposedByName: NAMES[user] || user,
       status: 'pending',
       timestamp: Date.now()
-    });
+    }).catch(function () { toast('Save failed'); });
     closeAgreementEdit();
     toast('Change proposed — waiting for partner');
   });
@@ -1309,7 +1304,7 @@ function proposeRemoval(key, text) {
     proposedByName: NAMES[user] || user,
     status: 'pending',
     timestamp: Date.now()
-  });
+  }).catch(function () { toast('Save failed'); });
   toast('Removal proposed — waiting for partner');
 }
 
@@ -1320,6 +1315,7 @@ function approveProposal(proposalKey) {
     var proposal = snap.val();
     if (!proposal) return;
 
+    var _catchFail = function () { toast('Save failed'); };
     if (proposal.type === 'new') {
       // Add to active
       db.ref('agreements/active').push({
@@ -1330,18 +1326,18 @@ function approveProposal(proposalKey) {
         timestamp: Date.now(),
         signedOff: true,
         approvedBy: user
-      });
+      }).catch(_catchFail);
     } else if (proposal.type === 'edit' && proposal.targetKey) {
       // Update existing
-      db.ref('agreements/active/' + proposal.targetKey + '/text').set(proposal.text);
-      db.ref('agreements/active/' + proposal.targetKey + '/lastEditBy').set(proposal.proposedBy);
-      db.ref('agreements/active/' + proposal.targetKey + '/lastEditAt').set(Date.now());
+      db.ref('agreements/active/' + proposal.targetKey + '/text').set(proposal.text).catch(_catchFail);
+      db.ref('agreements/active/' + proposal.targetKey + '/lastEditBy').set(proposal.proposedBy).catch(_catchFail);
+      db.ref('agreements/active/' + proposal.targetKey + '/lastEditAt').set(Date.now()).catch(_catchFail);
     } else if (proposal.type === 'remove' && proposal.targetKey) {
       // Remove from active
-      db.ref('agreements/active/' + proposal.targetKey).remove();
+      db.ref('agreements/active/' + proposal.targetKey).remove().catch(_catchFail);
     }
     // Mark proposal as approved
-    db.ref('agreements/proposals/' + proposalKey + '/status').set('approved');
+    db.ref('agreements/proposals/' + proposalKey + '/status').set('approved').catch(_catchFail);
     toast('Approved!');
   });
 }
@@ -1349,7 +1345,7 @@ function approveProposal(proposalKey) {
 // Reject a proposal
 function rejectProposal(proposalKey) {
   if (!db || !user) return;
-  db.ref('agreements/proposals/' + proposalKey + '/status').set('rejected');
+  db.ref('agreements/proposals/' + proposalKey + '/status').set('rejected').catch(function () { toast('Save failed'); });
   toast('Declined');
 }
 
@@ -1582,7 +1578,7 @@ function listenIntentions() {
       el.innerHTML = items
         .map(i => {
           const who = i.addedBy === user ? 'You' : esc(i.addedByName || '?');
-          return `<div class="sp-intent-card"><div class="sp-intent-text">${esc(i.text)}</div><div class="sp-intent-by">${who}</div><button class="item-delete" onclick="event.stopPropagation();deleteIntention('${i._key}')">×</button></div>`;
+          return `<div class="sp-intent-card"><div class="sp-intent-text">${esc(i.text)}</div><div class="sp-intent-by">${who}</div><button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteIntention('${i._key}')">×</button></div>`;
         })
         .join('');
     });
@@ -1872,7 +1868,7 @@ function listenSavings() {
         .map(i => {
           const pct = Math.min(100, Math.round((i.saved / i.target) * 100));
           return `<div class="hl-savings-card">
-        <div style="display:flex;align-items:center;gap:8px"><div class="hl-savings-name" style="flex:1">${i.name}</div><button class="item-delete" style="opacity:.4" onclick="event.stopPropagation();deleteSavingsGoal('${i._key}')">×</button></div>
+        <div style="display:flex;align-items:center;gap:8px"><div class="hl-savings-name" style="flex:1">${i.name}</div><button class="item-delete" aria-label="Delete" style="opacity:.4" onclick="event.stopPropagation();deleteSavingsGoal('${i._key}')">×</button></div>
         <div class="hl-savings-bar"><div class="hl-savings-fill" style="width:${pct}%"></div></div>
         <div class="hl-savings-meta"><span>$${i.saved.toLocaleString()} saved</span><span>$${i.target.toLocaleString()} goal · ${pct}%</span></div>
         <button class="hl-savings-update" onclick="updateSavings('${i._key}')">Update Amount</button>
@@ -1960,7 +1956,7 @@ function listenMeals() {
       el.innerHTML = items
         .map(i => {
           const who = i.addedBy === user ? 'You' : esc(i.addedByName || '?');
-          return `<div class="hl-meal-card"><div class="hl-meal-day">${i.day === 'anytime' ? '' : esc(i.day)}</div><div class="hl-meal-name">${esc(i.name)}</div><div class="hl-meal-by">${who}</div><button class="item-delete" onclick="event.stopPropagation();deleteMeal('${i._key}')">×</button></div>`;
+          return `<div class="hl-meal-card"><div class="hl-meal-day">${i.day === 'anytime' ? '' : esc(i.day)}</div><div class="hl-meal-name">${esc(i.name)}</div><div class="hl-meal-by">${who}</div><button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteMeal('${i._key}')">×</button></div>`;
         })
         .join('');
     });
@@ -2026,7 +2022,7 @@ function listenChores() {
         <div class="hl-chore-check" onclick="toggleChore('${i._key}',${!i.done})">${i.done ? '✓' : ''}</div>
         <div class="hl-chore-name">${i.name}</div>
         <div class="hl-chore-who">${whoLabels[i.assignedTo] || i.assignedTo}</div>
-        <button class="item-delete" onclick="event.stopPropagation();deleteChore('${i._key}')">×</button>
+        <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteChore('${i._key}')">×</button>
       </div>`
         )
         .join('');

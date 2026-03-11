@@ -491,7 +491,7 @@ function renderSceneCreature(container, type) {
       renderDeer(container);
       break;
     case 'owl':
-      renderOwl(container);
+      renderSceneOwl(container);
       break;
     case 'bat':
       renderBat(container);
@@ -506,7 +506,7 @@ function renderSceneCreature(container, type) {
       renderWoodpecker(container);
       break;
     case 'seagull':
-      renderSeagull(container);
+      renderSceneSeagull(container);
       break;
     case 'pelican':
       renderPelican(container);
@@ -515,7 +515,7 @@ function renderSceneCreature(container, type) {
       renderHeron(container);
       break;
     case 'crab':
-      renderCrab(container);
+      renderSceneCrab(container);
       break;
     case 'dolphin':
       renderDolphin(container);
@@ -636,7 +636,7 @@ function renderDeer(container) {
   );
 }
 
-function renderOwl(container) {
+function renderSceneOwl(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-owl';
   var x = 15 + Math.random() * 60;
@@ -725,7 +725,7 @@ function renderWoodpecker(container) {
   }, 10000);
 }
 
-function renderSeagull(container) {
+function renderSceneSeagull(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-seagull';
   var x = -10 + Math.random() * 20;
@@ -746,7 +746,7 @@ function renderSeagull(container) {
   );
 }
 
-function renderCrab(container) {
+function renderSceneCrab(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-crab';
   var dur = 16 + Math.random() * 10;

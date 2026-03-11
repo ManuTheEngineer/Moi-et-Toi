@@ -144,7 +144,8 @@ function goBack() {
 }
 
 // ===== QUICK ACTION SHEET =====
-let recentPages = JSON.parse(localStorage.getItem('met_recent_pages') || '[]');
+let recentPages = [];
+try { recentPages = JSON.parse(localStorage.getItem('met_recent_pages') || '[]'); } catch (e) {}
 let currentPageId = 'dash';
 
 // Mini SVG icon helper (Feather-style, matches bottom nav)
@@ -452,6 +453,7 @@ function initParticles() {
   const container = document.getElementById('particles');
   if (!container) return;
   container.innerHTML = '';
+  const frag = document.createDocumentFragment();
   for (let i = 0; i < 25; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
@@ -460,8 +462,9 @@ function initParticles() {
     p.style.animationDuration = Math.random() * 15 + 10 + 's';
     p.style.animationDelay = Math.random() * 10 + 's';
     p.style.opacity = Math.random() * 0.3 + 0.1;
-    container.appendChild(p);
+    frag.appendChild(p);
   }
+  container.appendChild(frag);
 }
 
 // ===== REPLACE EMOJIS WITH SVG ICONS =====

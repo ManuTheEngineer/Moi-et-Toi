@@ -354,7 +354,8 @@ function listenMemories() {
 
 let memCurrentAlbum = 'all';
 let memCurrentView = 'grid';
-let memCustomAlbums = JSON.parse(localStorage.getItem('met_custom_albums') || '[]');
+let memCustomAlbums = [];
+try { memCustomAlbums = JSON.parse(localStorage.getItem('met_custom_albums') || '[]'); } catch (e) {}
 
 function getFilteredMemories() {
   let items = Object.entries(memoriesData);

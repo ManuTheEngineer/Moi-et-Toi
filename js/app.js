@@ -27,7 +27,7 @@ let db,
   logExercises = [],
   logType = '',
   chatHistory = [];
-var _authResolved = false; // set true once onAuthStateChanged fires at least once
+let _authResolved = false; // set true once onAuthStateChanged fires at least once
 
 // Map email to profile role — loaded from Firebase at init
 let EMAIL_MAP = {};
@@ -158,25 +158,10 @@ async function init() {
         );
       }
     } else {
-      // Firebase session expired or first load — try auto-login with saved credentials
-      try {
-        var saved = JSON.parse(localStorage.getItem('met_auto_login'));
-        if (saved && saved.e && saved.p) {
-          firebase
-            .auth()
-            .signInWithEmailAndPassword(saved.e, atob(saved.p))
-            .catch(function () {
-              // Saved credentials invalid — clear them and show login form
-              localStorage.removeItem('met_auto_login');
-              _authResolved = true;
-              showEl('login-form');
-              hideEl('welcome-gate');
-            });
-          return; // onAuthStateChanged will fire again with the user
-        }
-      } catch (e) {}
-      // No saved credentials — show login form after a short delay
-      // (Firebase may fire null initially while restoring a persisted session)
+      // Clean up any legacy stored credentials (previously btoa-encoded)
+      localStorage.removeItem('met_auto_login');
+      // Firebase LOCAL persistence should restore the session automatically.
+      // Show login form after a short delay if it doesn't.
       setTimeout(function () {
         if (!user && !authUser) {
           _authResolved = true;
@@ -243,10 +228,12 @@ async function doLogin() {
   try {
     const result = await firebase.auth().signInWithEmailAndPassword(email, pass);
     showError(''); // Clear any previous error message on successful login
-    // Save credentials so we can auto-login on cold start if Firebase session expires
+    // Firebase LOCAL persistence keeps the session across cold starts — no need to store passwords
     try {
-      localStorage.setItem('met_auto_login', JSON.stringify({ e: email, p: btoa(pass) }));
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     } catch (e) {}
+    // Clean up any legacy saved credentials
+    localStorage.removeItem('met_auto_login');
     authUser = result.user;
     // Reload email map now that we're authenticated (rules may require auth)
     if (Object.keys(EMAIL_MAP).length === 0) {
@@ -547,10 +534,10 @@ function obBroadcastStep() {
 }
 
 // Partner's live onboarding data (received in real-time)
-var obPartnerData = { name: '', nickname: '', agreementsTogether: [], morningMsgEnabled: false, morningCustomMsg: '' };
+let obPartnerData = { name: '', nickname: '', agreementsTogether: [], morningMsgEnabled: false, morningCustomMsg: '' };
 
 // Listen for partner's onboarding progress + live data
-var obPartnerListener = null;
+let obPartnerListener = null;
 function obListenPartner() {
   if (!db || !partner) return;
   obPartnerListener = db.ref('onboarding/' + partner);
@@ -775,7 +762,7 @@ function _obIcon(d, s) {
     '</svg>'
   );
 }
-var OB_ICONS = {
+const OB_ICONS = {
   sparkle: _obIcon('<path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/>'),
   heart: _obIcon(
     '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>'
@@ -1611,7 +1598,7 @@ const TOUR_STEPS = [
   }
 ];
 
-var _tourTransitioning = false;
+let _tourTransitioning = false;
 
 function startAppTour() {
   tourStep = 0;
@@ -2247,7 +2234,7 @@ function initPartnerNotifications() {
 
 // ===== BACKGROUND SYNC (#16) =====
 // Queue offline data writes and sync when back online
-var _offlineQueue = [];
+let _offlineQueue = [];
 try {
   _offlineQueue = JSON.parse(localStorage.getItem('met_offline_queue') || '[]');
 } catch (e) {
@@ -2292,8 +2279,8 @@ window.addEventListener('online', function () {
 });
 
 // Override submitMood and finishWorkout to queue when offline
-var _origSubmitMood = typeof submitMood === 'function' ? submitMood : null;
-var _origFinishWorkout = typeof finishWorkout === 'function' ? finishWorkout : null;
+let _origSubmitMood = typeof submitMood === 'function' ? submitMood : null;
+let _origFinishWorkout = typeof finishWorkout === 'function' ? finishWorkout : null;
 
 // Patching is deferred to after all scripts load
 window.addEventListener('load', function () {

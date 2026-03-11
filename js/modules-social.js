@@ -261,10 +261,10 @@ function renderBucketList(items) {
     <div class="bl-check" onclick="toggleBucket('${i._key}',${!i.completed})">${i.completed ? '✓' : ''}</div>
     <span class="bl-emoji">${i.emoji}</span>
     <div class="bl-info">
-      <div class="bl-title">${i.title.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+      <div class="bl-title">${esc(i.title)}</div>
       <div class="bl-meta">${i.addedBy === user ? 'You' : esc(i.addedByName || '?')} · ${esc(i.category)}</div>
     </div>
-    <button class="item-delete" onclick="event.stopPropagation();deleteBucketItem('${i._key}')">×</button>
+    <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteBucketItem('${i._key}')">×</button>
   </div>`
     )
     .join('');
@@ -338,7 +338,7 @@ function listenWishlists() {
         <span class="wl-priority ${i.priority}">${i.priority === 'love' ? '♡ Love it' : i.priority === 'want' ? '★ Want it' : '● Need it'}</span>
         ${i.link && safeHref(i.link) ? `<a class="wl-link" href="${safeHref(i.link)}" target="_blank" rel="noopener">View →</a>` : ''}
       </div>
-      <button class="item-delete" onclick="event.stopPropagation();deleteWishItem('${user}','${i._key}')">×</button>
+      <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteWishItem('${user}','${i._key}')">×</button>
     </div>`
         )
         .join('');
@@ -646,7 +646,7 @@ function listenDateNights() {
         <div class="dn-saved-emoji">${i.emoji}</div>
         <div class="dn-saved-info"><div class="dn-saved-title">${i.title}</div><div class="dn-saved-meta">${i.cat} · saved by ${who}</div></div>
         <button class="dn-done-btn" onclick="markDateDone('${i._key}')">Did it</button>
-        <button class="item-delete" style="opacity:.4" onclick="event.stopPropagation();deleteDateIdea('${i._key}')">×</button>
+        <button class="item-delete" aria-label="Delete" style="opacity:.4" onclick="event.stopPropagation();deleteDateIdea('${i._key}')">×</button>
       </div>`;
             })
             .join('');
@@ -770,7 +770,7 @@ function renderLLQuestion() {
   if (opts) {
     opts.style.opacity = '0';
   }
-  opts.innerHTML = q.a.map((a, i) => `<button class="ll-option" onclick="pickLL(${i})">${a}</button>`).join('');
+  opts.innerHTML = q.a.map((a, i) => `<button class="ll-option" onclick="pickLL(${i})">${esc(a)}</button>`).join('');
   if (opts) {
     setTimeout(function () {
       opts.style.opacity = '1';
@@ -1090,7 +1090,7 @@ function renderDreams(items) {
         ${i.description ? `<div class="dr-desc">${i.description.replace(/</g, '&lt;')}</div>` : ''}
         <div class="dr-meta">${who} · ${ts}</div>
       </div>
-      <button class="item-delete" onclick="event.stopPropagation();deleteDream('${i._key}')">×</button>
+      <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteDream('${i._key}')">×</button>
     </div>`;
     })
     .join('');
