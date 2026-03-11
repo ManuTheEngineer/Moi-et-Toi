@@ -1601,7 +1601,13 @@ async function verifyBiometric() {
   } catch(e) {
     // If credential is permanently invalid, clear it so user can re-register
     if (e.name === 'InvalidStateError' || e.name === 'SecurityError') {
+      console.log('Clearing invalid biometric credential:', e.name);
       try { localStorage.removeItem('met_bio_cred_' + user); } catch(ex) {}
+    }
+    // NotAllowedError with no user cancellation can indicate a missing credential
+    // (e.g. device was wiped, Face ID re-enrolled) — log for diagnostics
+    if (e.name === 'NotAllowedError') {
+      console.log('Biometric not allowed — user may have cancelled or credential missing');
     }
     return false;
   }
@@ -1610,27 +1616,29 @@ async function verifyBiometric() {
 // Called when user taps Enter on welcome gate
 var _bioFailCount = 0;
 async function enterApp() {
-  // Guard: wait for Firebase auth to complete and user to be set
+  var enterBtn = document.getElementById('welcome-enter-btn');
+
+  // Guard: wait for Firebase auth to complete (up to 5s) instead of bailing
   if (!user || !authUser) {
-    toast('Still loading...');
-    var enterBtn = document.getElementById('welcome-enter-btn');
-    if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
-    return;
+    if (enterBtn) { enterBtn.textContent = 'Loading...'; enterBtn.disabled = true; }
+    var waited = await _waitForAuth(5000);
+    if (!waited || !user || !authUser) {
+      toast('Could not connect — try again');
+      if (enterBtn) { enterBtn.textContent = 'Enter'; enterBtn.disabled = false; }
+      return;
+    }
   }
 
-  var enterBtn = document.getElementById('welcome-enter-btn');
   if (enterBtn) {
     enterBtn.textContent = 'Verifying...';
     enterBtn.disabled = true;
   }
 
-  // Always check biometric availability fresh (don't rely on cached flag)
-  var bioAvailable = await checkBiometricAvailable();
-  _biometricAvailable = bioAvailable;
   var hasBio = hasBiometricCredential();
 
   if (hasBio) {
-    // Returning user with biometric — prompt Face ID
+    // Returning user with biometric — prompt Face ID immediately
+    // (skip checkBiometricAvailable() to preserve user-gesture context on iOS)
     var verified = await verifyBiometric();
     if (verified) {
       _bioFailCount = 0;
@@ -1647,13 +1655,32 @@ async function enterApp() {
       toast('Face ID required — tap to retry');
     }
     return;
-  } else if (bioAvailable) {
+  }
+
+  // No stored credential — check if biometric is available for setup
+  var bioAvailable = await checkBiometricAvailable();
+  _biometricAvailable = bioAvailable;
+
+  if (bioAvailable) {
     // Biometric available but not registered — prompt setup
     showBiometricSetupModal();
   } else {
     // No biometric support — just enter
     finishLogin();
   }
+}
+
+// Wait for Firebase auth to resolve (user/authUser to be set)
+function _waitForAuth(timeout) {
+  return new Promise(function(resolve) {
+    if (user && authUser) { resolve(true); return; }
+    var elapsed = 0;
+    var interval = setInterval(function() {
+      elapsed += 100;
+      if (user && authUser) { clearInterval(interval); resolve(true); }
+      else if (elapsed >= timeout) { clearInterval(interval); resolve(false); }
+    }, 100);
+  });
 }
 
 // Shown after repeated Face ID failures so the user isn't permanently locked out
