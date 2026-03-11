@@ -38,8 +38,7 @@
   <!-- Welcome gate (shown when already authenticated) -->
   <div id="welcome-gate" class="login-inner" style="display:none">
     <div class="lbl" id="welcome-greeting"></div>
-    <button id="enter-btn" onclick="enterWithBiometric()" class="login-btn">Enter</button>
-    <div id="bio-hint" class="bio-hint" style="display:none"></div>
+    <button onclick="finishLogin()" class="login-btn">Enter</button>
   </div>
   <div id="login-err" class="login-err"></div>
 </div>

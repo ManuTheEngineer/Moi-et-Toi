@@ -27,8 +27,6 @@
 .login-btn:hover{background:#E0A87E;transform:translateY(-1px);box-shadow:0 6px 28px rgba(212,149,106,.4)}
 .login-btn:active{transform:scale(0.97);box-shadow:0 2px 12px rgba(212,149,106,.2)}
 .login-err{margin-top:16px;font-size:13px;color:#E0A882;text-align:center}
-.bio-hint{margin-top:12px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);text-align:center}
-.login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .login h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;letter-spacing:5px;text-transform:uppercase;color:#fff;margin-bottom:4px;text-align:center;padding-left:5px}
 .login .sub{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:32px;text-align:center;padding-left:4px}
 .login .lbl{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:16px;text-align:center;padding-left:5px}
