@@ -289,7 +289,7 @@ const PAGE_META = {
   calendar: { icon: _IC.cal, label: 'Calendar' },
   story: { icon: _IC.book, label: 'Timeline' },
   values: { icon: _IC.columns, label: 'Values' },
-  lists: { icon: _IC.gift, label: 'Lists' },
+  lists: { icon: _IC.gift, label: 'Gift Ideas' },
   more: { icon: _IC.compass, label: 'More' },
   memories: { icon: _IC.camera, label: 'Memories' },
   ai: { icon: _IC.cpu, label: 'AI Chat' },

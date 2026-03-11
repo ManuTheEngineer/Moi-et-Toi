@@ -2188,28 +2188,7 @@
       <!-- ===== OUR STORY ===== -->
       <div class="pg" id="pg-story">
         <div class="ctn">
-          <!-- Countdowns -->
-          <div class="sec-head">
-            <div class="sec-dot sd-gold"></div>
-            <div class="sec-title">Counting Down</div>
-          </div>
-          <div class="countdown-grid" id="countdown-grid">
-            <div class="cd-add" onclick="toggleCdForm()">
-              <span>+</span>
-              <div>Add Countdown</div>
-            </div>
-          </div>
-          <div class="cd-form" id="cd-form">
-            <input type="text" id="cd-title" placeholder="What are you counting down to?" class="quiz-q" />
-            <div class="ms-row">
-              <input type="date" id="cd-date" />
-              <input type="text" id="cd-emoji" placeholder="Emoji" maxlength="2" class="input-sm" />
-            </div>
-            <button class="ms-save" onclick="saveCountdown()">Save Countdown</button>
-            <div class="ms-cancel" onclick="toggleCdForm()">Cancel</div>
-          </div>
-
-          <!-- Timeline -->
+          <!-- Our Timeline -->
           <div class="sec-head">
             <div class="sec-dot sd-amber"></div>
             <div class="sec-title">Milestones</div>
@@ -2501,31 +2480,6 @@
             <button onclick="nextWYR()">Next →</button>
           </div>
 
-          <!-- How Well Do You Know Me -->
-          <div class="sec-head mt-28">
-            <div class="sec-dot sd-gold"></div>
-            <div class="sec-title">How Well Do You Know Me?</div>
-          </div>
-          <div class="card-game">
-            <div class="card-h">
-              <span class="card-t">Your questions</span><span class="card-s">For <span class="pname"></span></span>
-            </div>
-            <div class="quiz-form">
-              <input class="quiz-q" id="quiz-q" placeholder="Write a question about yourself..." />
-              <input class="quiz-q" id="quiz-a" placeholder="The correct answer..." />
-              <button class="dq-submit" onclick="submitQuizQ()">Add Question</button>
-            </div>
-            <div id="quiz-mine"></div>
-          </div>
-
-          <div class="card-game mt-12">
-            <div class="card-h">
-              <span class="card-t"><span class="pname"></span>'s questions</span
-              ><span class="card-s">Test yourself</span>
-            </div>
-            <div id="quiz-theirs"><div class="empty">Waiting for your partner to write some questions</div></div>
-          </div>
-
           <!-- Truth or Dare -->
           <div class="sec-head">
             <div class="sec-dot sd-rose"></div>
@@ -2714,18 +2668,6 @@
               <div class="ci-label">What do you need from me this week?</div>
               <textarea class="mood-note" id="ci-need" placeholder="What I need from you..."></textarea>
             </div>
-            <div class="ci-section">
-              <div class="ci-icon">⚡</div>
-              <div class="ci-label">Relationship energy this week</div>
-              <div class="energy-row">
-                <label>Level</label
-                ><input type="range" id="ci-energy" min="1" max="5" value="3" oninput="updCIEnergy()" /><span
-                  class="energy-val"
-                  id="ci-energy-val"
-                  >Steady</span
-                >
-              </div>
-            </div>
             <button class="dq-submit" onclick="submitCheckin()">Submit</button>
           </div>
 
@@ -2806,6 +2748,7 @@
                 <option value="career">💼 Career</option>
                 <option value="family">👨‍👩‍👧 Family</option>
                 <option value="experience">🎯 Experiences</option>
+                <option value="bucket">🪣 Bucket List</option>
                 <option value="financial">💰 Financial</option>
                 <option value="shared">🤝 Shared Goal</option>
               </select>
@@ -2837,6 +2780,7 @@
             <span class="bl-cat" onclick="filterDreams('career', this)">💼 Career</span>
             <span class="bl-cat" onclick="filterDreams('family', this)">👨‍👩‍👧 Family</span>
             <span class="bl-cat" onclick="filterDreams('experience', this)">🎯 Experiences</span>
+            <span class="bl-cat" onclick="filterDreams('bucket', this)">🪣 Bucket</span>
             <span class="bl-cat" onclick="filterDreams('financial', this)">💰 Financial</span>
             <span class="bl-cat" onclick="filterDreams('shared', this)">🤝 Goals</span>
             <span class="bl-cat" onclick="filterDreams('achieved', this)">✓ Achieved</span>
@@ -3228,44 +3172,6 @@
             <button class="dq-submit" onclick="addSavingsGoal()">Add Goal</button>
           </div>
           <div id="hl-savings"><div class="empty">Set savings goals together</div></div>
-
-          <!-- Meal Planning -->
-          <div class="sec-head">
-            <div class="sec-dot sd-green"></div>
-            <div class="sec-title">Meal Ideas</div>
-          </div>
-          <div class="bl-form">
-            <input type="text" id="hl-meal-input" placeholder="What should we cook?" class="quiz-q" />
-            <select id="hl-meal-day" class="select-field">
-              <option value="anytime">Anytime</option>
-              <option value="mon">Monday</option>
-              <option value="tue">Tuesday</option>
-              <option value="wed">Wednesday</option>
-              <option value="thu">Thursday</option>
-              <option value="fri">Friday</option>
-              <option value="sat">Saturday</option>
-              <option value="sun">Sunday</option>
-            </select>
-            <button onclick="addMeal()">+</button>
-          </div>
-          <div id="hl-meals"><div class="empty">Plan your meals together</div></div>
-
-          <!-- Chore Rotation -->
-          <div class="sec-head">
-            <div class="sec-dot sd-rose"></div>
-            <div class="sec-title">Household Tasks</div>
-          </div>
-          <div class="bl-form">
-            <input type="text" id="hl-chore-input" placeholder="Add a task..." class="quiz-q" />
-            <select id="hl-chore-who" class="select-field">
-              <option value="shared">Shared</option>
-              <option value="her">Her</option>
-              <option value="him">Him</option>
-              <option value="alternate">Alternate</option>
-            </select>
-            <button onclick="addChore()">+</button>
-          </div>
-          <div id="hl-chores"><div class="empty">Divide and conquer household tasks</div></div>
         </div>
       </div>
 
@@ -3516,6 +3422,21 @@
             <button class="dq-submit" onclick="addCalEvent()">Add Event</button>
           </div>
 
+          <!-- Countdowns -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Countdowns</div>
+          </div>
+          <div class="cd-grid" id="countdown-grid"><div class="empty">No countdowns yet</div></div>
+          <div class="card d-none" id="cd-form">
+            <input type="text" id="cd-title" placeholder="What are you counting down to?" class="mb-8" />
+            <div class="d-flex gap-8 mb-8">
+              <input type="date" id="cd-date" class="form-input-inline flex-2" />
+              <input type="text" id="cd-emoji" placeholder="Emoji" maxlength="2" style="width: 60px; text-align: center;" />
+            </div>
+            <button class="dq-submit" onclick="saveCountdown()">Add countdown</button>
+          </div>
+
           <!-- Upcoming -->
           <div class="sec-head">
             <div class="sec-dot sd-gold"></div>
@@ -3523,26 +3444,10 @@
           </div>
           <div id="cal-upcoming"><div class="empty">No upcoming events</div></div>
 
-          <!-- Shared Grocery List -->
-          <div class="sec-head">
-            <div class="sec-dot sd-green"></div>
-            <div class="sec-title">Grocery List</div>
-          </div>
-          <div class="bl-form">
-            <input
-              type="text"
-              id="cal-grocery-input"
-              placeholder="Add item..."
-              onkeydown="if (event.key === 'Enter') addGroceryItem('cal-grocery-input');"
-            />
-            <button onclick="addGroceryItem('cal-grocery-input')">+</button>
-          </div>
-          <div id="cal-grocery-list"><div class="empty">Your shared shopping list</div></div>
-
-          <!-- Shared To-Do -->
+          <!-- Shared Tasks (To-Do + Chores) -->
           <div class="sec-head">
             <div class="sec-dot sd-lavender"></div>
-            <div class="sec-title">Shared To-Do</div>
+            <div class="sec-title">Shared Tasks</div>
           </div>
           <div class="bl-form">
             <input
@@ -3551,6 +3456,11 @@
               placeholder="Add a task..."
               onkeydown="if (event.key === 'Enter') addSharedTodo();"
             />
+            <select id="todo-who" class="select-field">
+              <option value="shared">Both</option>
+              <option value="her">Her</option>
+              <option value="him">Him</option>
+            </select>
             <button onclick="addSharedTodo()">+</button>
           </div>
           <div id="shared-todo-list"><div class="empty">Tasks for both of you</div></div>
@@ -3693,20 +3603,6 @@
             </div>
           </div>
 
-          <!-- Important Dates -->
-          <div class="sec-head">
-            <div class="sec-dot sd-gold"></div>
-            <div class="sec-title">Important Dates</div>
-          </div>
-          <div class="card">
-            <div class="d-flex gap-8 mb-10">
-              <input type="text" id="kyp-date-label" placeholder="What is this date?" class="flex-2" />
-              <input type="date" id="kyp-date-val" class="form-input-inline" />
-            </div>
-            <button class="dq-submit" onclick="addKYPDate()">Save Date</button>
-          </div>
-          <div id="kyp-dates"><div class="empty">Add birthdays, anniversaries, and special dates</div></div>
-
           <!-- Sizes & Preferences -->
           <div class="sec-head">
             <div class="sec-dot sd-lavender"></div>
@@ -3729,6 +3625,30 @@
               <div class="kyp-fav-label">Ring</div>
               <div class="kyp-fav-val" id="kyp-ring">Tap to add</div>
             </div>
+          </div>
+
+          <!-- How Well Do You Know Me -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">How Well Do You Know Me?</div>
+          </div>
+          <div class="card-game">
+            <div class="card-h">
+              <span class="card-t">Your questions</span><span class="card-s">For <span class="pname"></span></span>
+            </div>
+            <div class="quiz-form">
+              <input class="quiz-q" id="quiz-q" placeholder="Write a question about yourself..." />
+              <input class="quiz-q" id="quiz-a" placeholder="The correct answer..." />
+              <button class="dq-submit" onclick="submitQuizQ()">Add Question</button>
+            </div>
+            <div id="quiz-mine"></div>
+          </div>
+          <div class="card-game mt-12">
+            <div class="card-h">
+              <span class="card-t"><span class="pname"></span>'s questions</span
+              ><span class="card-s">Test yourself</span>
+            </div>
+            <div id="quiz-theirs"><div class="empty">Waiting for your partner to write some questions</div></div>
           </div>
 
           <!-- Remember This -->
@@ -4315,37 +4235,11 @@
         </div>
       </div>
 
-      <!-- ===== LISTS ===== -->
+      <!-- ===== GIFT IDEAS ===== -->
       <div class="pg" id="pg-lists">
         <div class="ctn">
-          <!-- Section tabs -->
-          <div class="bl-cats" id="lists-tabs" style="margin-bottom: 16px">
-            <span class="bl-cat on" onclick="showListSection('bucket', this)">Bucket List</span>
-            <span class="bl-cat" onclick="showListSection('wishlist', this)">Wishlists</span>
-          </div>
-
-          <!-- Bucket List section -->
-          <div class="list-section" id="list-bucket">
-            <div class="mod-status" id="bl-stats"></div>
-            <div class="bl-form">
-              <input type="text" id="bl-input" class="quiz-q" placeholder="Something we want to do..." />
-              <input type="text" id="bl-emoji" placeholder="&#x1F30D;" maxlength="2" class="input-emoji" />
-              <button onclick="addBucketItem()">+</button>
-            </div>
-            <div class="bl-cats" id="bl-cats">
-              <span class="bl-cat on" onclick="filterBucket('all', this)">All</span>
-              <span class="bl-cat" onclick="filterBucket('travel', this)">Travel</span>
-              <span class="bl-cat" onclick="filterBucket('food', this)">Food</span>
-              <span class="bl-cat" onclick="filterBucket('adventure', this)">Adventure</span>
-              <span class="bl-cat" onclick="filterBucket('home', this)">Home</span>
-            </div>
-            <div id="bl-list" class="stagger-in">
-              <div class="empty" onclick="document.getElementById('bl-input').focus()" style="cursor:pointer">What do you two want to do before you're old and gray? <span style="opacity:.5">— tap here</span></div>
-            </div>
-          </div>
-
-          <!-- Wishlist section -->
-          <div class="list-section d-none" id="list-wishlist">
+          <!-- My Wishlist -->
+          <div class="list-section" id="list-wishlist">
             <div class="sec-head">
               <div class="sec-dot sd-gold"></div>
               <div class="sec-title">My Wishlist</div>

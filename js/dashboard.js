@@ -1625,7 +1625,7 @@ function renderSmartNudges() {
           nearest = cd;
         }
       });
-      if (nearest) nudges.push({ text: nearestDays + 'd to ' + esc(nearest.title), page: 'story', countdown: true });
+      if (nearest) nudges.push({ text: nearestDays + 'd to ' + esc(nearest.title), page: 'calendar', countdown: true });
     }
 
     container.innerHTML = nudges

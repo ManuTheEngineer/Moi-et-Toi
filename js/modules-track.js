@@ -3109,8 +3109,8 @@ function listenGrocery() {
         v._key = c.key;
         items.push(v);
       });
-      // Render to both grocery list containers
-      ['grocery-list', 'cal-grocery-list'].forEach(elId => {
+      // Render grocery list
+      ['grocery-list'].forEach(elId => {
         const el = document.getElementById(elId);
         if (!el) return;
         if (!items.length) {
