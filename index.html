@@ -4049,7 +4049,16 @@
 <script src="js/template-loader.js" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(function(e) { console.warn('SW registration failed:', e); });
+  navigator.serviceWorker.register('sw.js?v=165').then(function(reg) {
+    // Force waiting SW to activate immediately
+    if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    reg.addEventListener('updatefound', function() {
+      var nw = reg.installing;
+      if (nw) nw.addEventListener('statechange', function() {
+        if (nw.state === 'activated') location.reload();
+      });
+    });
+  }).catch(function(e) { console.warn('SW registration failed:', e); });
   navigator.serviceWorker.addEventListener('message', function(e) {
     if (e.data && e.data.type === 'flush-offline-queue' && typeof flushOfflineQueue === 'function') {
       flushOfflineQueue();

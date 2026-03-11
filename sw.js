@@ -1,4 +1,4 @@
-const CACHE_NAME = 'moiettoi-v165';
+const CACHE_NAME = 'moiettoi-v166';
 
 const ASSETS = [
   './',
@@ -89,6 +89,11 @@ self.addEventListener('notificationclick', e => {
       return self.clients.openWindow(url);
     })
   );
+});
+
+// Force-activate when page sends SKIP_WAITING message
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 // ===== BACKGROUND SYNC (#16) =====
