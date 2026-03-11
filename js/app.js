@@ -151,6 +151,8 @@ async function init() {
         }
       } else {
         firebase.auth().signOut();
+        hideEl('login-loading');
+        showEl('login-form');
         showError(
           Object.keys(EMAIL_MAP).length === 0
             ? 'Could not verify account. Check your connection and try again.'
@@ -169,21 +171,16 @@ async function init() {
               // Saved credentials invalid — clear them and show login form
               localStorage.removeItem('met_auto_login');
               _authResolved = true;
+              hideEl('login-loading');
               showEl('login-form');
-              hideEl('welcome-gate');
             });
           return; // onAuthStateChanged will fire again with the user
         }
       } catch (e) {}
-      // No saved credentials — show login form after a short delay
-      // (Firebase may fire null initially while restoring a persisted session)
-      setTimeout(function () {
-        if (!user && !authUser) {
-          _authResolved = true;
-          showEl('login-form');
-          hideEl('welcome-gate');
-        }
-      }, 4000);
+      // No saved credentials — show login form
+      _authResolved = true;
+      hideEl('login-loading');
+      showEl('login-form');
     }
   });
 }
@@ -393,6 +390,7 @@ function needsOnboarding() {
 // ===== FIRST-TIME LOCATION PROMPT =====
 // Shown before onboarding as the very first screen after first login
 function showFirstLocationPrompt() {
+  hideEl('login-loading');
   hideEl('login-form');
   hideEl('welcome-gate');
   var logo = document.getElementById('login-logo');
@@ -1840,6 +1838,7 @@ function _waitForAuth(timeout) {
 }
 
 function finishLogin() {
+  hideEl('login-loading');
   // Set time-of-day colors before showing shell
   if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
   // Show the shell FIRST so sky/terrain render into a visible container
