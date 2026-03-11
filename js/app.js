@@ -1814,13 +1814,26 @@ function finishLogin() {
   if (typeof renderMoodSoundsGrid === 'function') renderMoodSoundsGrid();
   // Initialize weather system (must run after user/db are set)
   if (typeof initWeatherSystem === 'function') initWeatherSystem();
-  // Sky/terrain are now outside shell (position:fixed, always in DOM).
+  // Sky/terrain are outside shell (position:fixed, always in DOM).
   // Apply cached theme, render sky, then load authoritative theme from Firebase.
   var cachedTheme = localStorage.getItem('met_sky_theme');
   if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
   if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
   initDynamicVisuals();
   if (typeof loadSkyTheme === 'function') loadSkyTheme();
+  // Safety net: verify sky rendered, force if empty
+  setTimeout(function() {
+    var sc = document.getElementById('sky-scene');
+    if (!sc) { console.error('[Sky] sky-scene element not found!'); return; }
+    console.log('[Sky] sky-scene children:', sc.children.length, 'livingSkyEnabled:', livingSkyEnabled);
+    if (sc.children.length === 0) {
+      console.warn('[Sky] Forced re-render — sky-scene was empty');
+      livingSkyEnabled = true;
+      if (typeof renderLivingSky === 'function') renderLivingSky(sc);
+      if (typeof renderTerrain === 'function') renderTerrain();
+      if (typeof spawnOrbs === 'function') spawnOrbs();
+    }
+  }, 1500);
   // AI Background Service — content curator, relationship monitor, etc.
   setTimeout(() => { if (typeof initAIBackgroundService === 'function') initAIBackgroundService(); }, 5000);
   setTimeout(() => { if (typeof loadAIDailyContent === 'function') loadAIDailyContent(); }, 3000);
