@@ -424,18 +424,32 @@ function startOnboarding() {
   renderOnboardStep();
 }
 
-// Broadcast current onboarding step to Firebase
+// Broadcast current onboarding step + live data to Firebase
 function obBroadcastStep() {
   if (!db || !user) return;
-  db.ref('onboarding/' + user).set({
+  var data = {
     step: onboardStep,
     name: onboardData.name || '',
+    nickname: onboardData.nickname || '',
     timestamp: Date.now(),
     active: true
-  });
+  };
+  // Sync together commitments live so partner sees them
+  if (onboardData.agreementsTogether.length) {
+    data.agreementsTogether = onboardData.agreementsTogether;
+  }
+  // Sync morning message settings so partner can preview
+  if (onboardData.morningMsgEnabled !== undefined) {
+    data.morningMsgEnabled = onboardData.morningMsgEnabled;
+    if (onboardData.morningCustomMsg) data.morningCustomMsg = onboardData.morningCustomMsg;
+  }
+  db.ref('onboarding/' + user).set(data);
 }
 
-// Listen for partner's onboarding progress
+// Partner's live onboarding data (received in real-time)
+var obPartnerData = { name: '', nickname: '', agreementsTogether: [], morningMsgEnabled: false, morningCustomMsg: '' };
+
+// Listen for partner's onboarding progress + live data
 var obPartnerListener = null;
 function obListenPartner() {
   if (!db || !partner) return;
@@ -443,6 +457,16 @@ function obListenPartner() {
   obPartnerListener.on('value', function(snap) {
     var data = snap.val();
     var el = document.getElementById('ob-partner-status');
+
+    // Store partner's live data for use in current step rendering
+    if (data) {
+      obPartnerData.name = data.name || '';
+      obPartnerData.nickname = data.nickname || '';
+      obPartnerData.agreementsTogether = data.agreementsTogether || [];
+      obPartnerData.morningMsgEnabled = !!data.morningMsgEnabled;
+      obPartnerData.morningCustomMsg = data.morningCustomMsg || '';
+    }
+
     if (!el) return;
     if (data && data.active) {
       var partnerName = data.name || (user === 'her' ? 'He' : 'She');
@@ -460,6 +484,15 @@ function obListenPartner() {
       el.style.display = '';
       el.classList.add('offline');
       el.innerHTML = '<span class="ob-ps-dot"></span> Waiting for your partner to start';
+    }
+
+    // Live-update partner's together commitments on step 9
+    if (onboardStep === 9) {
+      obRenderPartnerCommitments();
+    }
+    // Live-update morning message preview on step 10
+    if (onboardStep === 10) {
+      obUpdateMorningPreviewNickname();
     }
   });
 }
@@ -542,12 +575,16 @@ function obAddAgreement(type) {
   onboardData[arrKey].push(val);
   input.value = '';
   obRenderAgreementList(listId, arrKey);
+  // Broadcast together commitments live so partner sees them immediately
+  if (type === 'together') obBroadcastStep();
 }
 function obRemoveAgreement(type, idx) {
   var listId = type === 'mine' ? 'ob-agree-mine' : 'ob-agree-together';
   var arrKey = type === 'mine' ? 'agreementsMine' : 'agreementsTogether';
   onboardData[arrKey].splice(idx, 1);
   obRenderAgreementList(listId, arrKey);
+  // Broadcast together commitments live so partner sees removal immediately
+  if (type === 'together') obBroadcastStep();
 }
 function obRenderAgreementList(listId, arrKey) {
   var el = document.getElementById(listId);
@@ -556,6 +593,39 @@ function obRenderAgreementList(listId, arrKey) {
   el.innerHTML = onboardData[arrKey].map(function(a, i) {
     return '<div class="ob-agree-item"><span>' + esc(a) + '</span><span class="ob-agree-rm" onclick="obRemoveAgreement(\'' + type + '\',' + i + ')">x</span></div>';
   }).join('');
+}
+
+// Render partner's together commitments live on step 9
+function obRenderPartnerCommitments() {
+  var container = document.getElementById('ob-partner-commitments');
+  var list = document.getElementById('ob-partner-commit-list');
+  var heading = document.getElementById('ob-partner-commit-heading');
+  if (!container || !list) return;
+  var items = obPartnerData.agreementsTogether || [];
+  if (!items.length) {
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = '';
+  var partnerName = obPartnerData.nickname ? '' : (obPartnerData.name || (user === 'her' ? 'His' : 'Her'));
+  // Use partner's name if available
+  var label = obPartnerData.name ? esc(obPartnerData.name) + "'s" : (user === 'her' ? 'His' : 'Her');
+  if (heading) heading.textContent = label + ' together commitments';
+  list.innerHTML = items.map(function(a) {
+    return '<div class="ob-agree-item ob-partner-item"><span>' + esc(a) + '</span></div>';
+  }).join('');
+}
+
+// Update morning message preview with partner's nickname (what they call you)
+function obUpdateMorningPreviewNickname() {
+  var preview = document.getElementById('ob-morning-preview');
+  if (!preview) return;
+  // Partner's nickname = what partner calls you (the name they entered for you)
+  var partnerNick = obPartnerData.nickname || '';
+  var fromEl = preview.querySelector('.ob-morning-from');
+  if (fromEl && partnerNick) {
+    fromEl.textContent = '\u2014 ' + partnerNick;
+  }
 }
 
 // SVG icon helper for onboarding (inline since nav.js loads after app.js)
@@ -712,6 +782,7 @@ function renderOnboardStep() {
       agreeCard.style.display = '';
       obRenderAgreementList('ob-agree-mine', 'agreementsMine');
       obRenderAgreementList('ob-agree-together', 'agreementsTogether');
+      obRenderPartnerCommitments();
       skip.style.display = '';
       btn.textContent = 'Next';
     }
@@ -723,7 +794,7 @@ function renderOnboardStep() {
       document.getElementById('ob-morning-toggle').checked = onboardData.morningMsgEnabled;
       var customTA = document.getElementById('ob-morning-custom');
       if (customTA) { customTA.style.display = ''; customTA.value = onboardData.morningCustomMsg; }
-      // Show preview
+      // Show preview: what your partner will see (signed with YOUR nickname for them)
       var preview = document.getElementById('ob-morning-preview');
       if (preview) {
         var sampleMsgs = [
@@ -732,7 +803,19 @@ function renderOnboardStep() {
           "You're the first thing on my mind today, and every day."
         ];
         var sample = sampleMsgs[Math.floor(Math.random() * sampleMsgs.length)];
-        preview.innerHTML = '"' + sample + '"<div class="ob-morning-from">\u2014 ' + esc(onboardData.nickname || 'your love') + '</div>';
+        // "from" = your nickname (what you call your partner) — this is what they'll see
+        var yourNick = onboardData.nickname || 'your love';
+        // Also show what YOU'LL see: signed with partner's nickname for you (live from their onboarding)
+        var theirNick = obPartnerData.nickname || '';
+        var previewHTML = '<div class="ob-morning-preview-label">What ' + esc(pNick) + ' will see:</div>';
+        previewHTML += '<div class="ob-morning-quote">"' + sample + '"</div>';
+        previewHTML += '<div class="ob-morning-from">\u2014 ' + esc(yourNick) + '</div>';
+        if (theirNick) {
+          previewHTML += '<div class="ob-morning-preview-label" style="margin-top:12px">What you\'ll see:</div>';
+          previewHTML += '<div class="ob-morning-quote">"' + sampleMsgs[(Math.floor(Math.random() * sampleMsgs.length) + 1) % sampleMsgs.length] + '"</div>';
+          previewHTML += '<div class="ob-morning-from">\u2014 ' + esc(theirNick) + '</div>';
+        }
+        preview.innerHTML = previewHTML;
       }
       btn.textContent = 'Next';
     }
@@ -779,11 +862,15 @@ function onboardNext() {
     var name = document.getElementById('ob-name').value.trim();
     if (!name) { toast('Please enter your name'); return; }
     onboardData.name = name;
+    // Broadcast name immediately so partner sees it in their status
+    obBroadcastStep();
   }
   if (onboardStep === 2) {
     var nick = document.getElementById('ob-nickname').value.trim();
     if (!nick) { toast('Enter what you call them'); return; }
     onboardData.nickname = nick;
+    // Broadcast nickname immediately so partner can use it in their morning msg preview
+    obBroadcastStep();
   }
   if (onboardStep === 3) {
     var bday = document.getElementById('ob-birthday').value;
@@ -813,6 +900,8 @@ function onboardNext() {
     onboardData.morningMsgEnabled = document.getElementById('ob-morning-toggle').checked;
     var customTA = document.getElementById('ob-morning-custom');
     if (customTA) onboardData.morningCustomMsg = customTA.value.trim();
+    // Broadcast morning msg settings so partner sees preview updates
+    obBroadcastStep();
   }
   if (onboardStep === 12) {
     onboardData.natureSoundsEnabled = document.getElementById('ob-nature-toggle').checked;
