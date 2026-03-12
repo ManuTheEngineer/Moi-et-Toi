@@ -2800,8 +2800,8 @@ function showLocationPrompt() {
   content.innerHTML =
     '<div class="loc-prompt">' +
     '<h2 class="loc-prompt-title">Living Weather</h2>' +
-    '<p class="loc-prompt-desc">Real weather, sunrise, and sounds — right in your background.</p>' +
-    '<button class="dq-submit w-full mt-12" onclick="handleLocationAllow()">Allow Location</button>' +
+    '<p class="loc-prompt-desc">Allow location so the sky, weather, and sounds always match your real world.</p>' +
+    '<button class="dq-submit w-full mt-12" onclick="handleLocationAllow()">Always Allow Location</button>' +
     '<div class="loc-prompt-skip" onclick="handleLocationDeny()">Not now</div>' +
     '</div>';
 
@@ -2819,8 +2819,6 @@ function handleLocationAllow() {
       fetchWeather().then(function (data) {
         if (data) {
           if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
-          var container = document.getElementById('sky-scene');
-          if (container && livingSkyEnabled) renderLivingSky(container);
           if (typeof renderTerrain === 'function') renderTerrain();
           updateAmbientAudio();
           updateWeatherInfoUI();
@@ -3316,12 +3314,8 @@ function syncSkyState() {
   var prevTime = document.body.getAttribute('data-time');
   document.body.setAttribute('data-time', time);
 
-  // If time period changed, refresh the sky
+  // If time period changed, update audio and orbs (sky CSS transitions handle visuals)
   if (prevTime && prevTime !== time) {
-    var container = document.getElementById('sky-scene');
-    if (container && livingSkyEnabled) {
-      renderLivingSky(container);
-    }
     updateAmbientAudio();
     if (typeof spawnOrbs === 'function') spawnOrbs();
   }
@@ -3441,8 +3435,6 @@ function initWeatherSystem() {
       fetchWeather().then(function () {
         // Update time-of-day with real sunrise/sunset from location data
         if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
-        var container = document.getElementById('sky-scene');
-        if (container && livingSkyEnabled) renderLivingSky(container);
         // Re-render terrain to match updated time colors
         if (typeof renderTerrain === 'function') renderTerrain();
         updateWeatherInfoUI();
@@ -3466,7 +3458,7 @@ function initWeatherSystem() {
     }
   });
 
-  // Refresh weather every 15 minutes
+  // Refresh weather data every 15 minutes (updates cache, no sky re-render)
   if (!WEATHER.refreshTimer) {
     WEATHER.refreshTimer = setInterval(
       function () {
@@ -3474,8 +3466,6 @@ function initWeatherSystem() {
         if (WEATHER.locationGranted) {
           fetchWeather().then(function () {
             if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
-            var container = document.getElementById('sky-scene');
-            if (container && livingSkyEnabled) renderLivingSky(container);
             updateWeatherInfoUI();
           });
         }
@@ -3501,13 +3491,10 @@ document.addEventListener('DOMContentLoaded', function () {
   if (WEATHER.lat && WEATHER.lon) {
     fetchWeather().then(function (data) {
       if (!data) return;
-      var skyC = document.getElementById('sky-scene');
-      if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
       if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
     });
   }
   // Request fresh geolocation in parallel (doesn't need auth or Firebase).
-  // On first-ever use this is the prompt that asks for location.
   // On repeat visits it resolves instantly from the browser cache.
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -3522,8 +3509,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (changed) {
           fetchWeather().then(function (data) {
             if (!data) return;
-            var skyC = document.getElementById('sky-scene');
-            if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
             if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
           });
         }

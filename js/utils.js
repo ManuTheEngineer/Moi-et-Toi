@@ -492,13 +492,7 @@ function setLivingSky(on) {
         renderLivingSky(container);
       }
       startCreatureLoop(container);
-      // Restart periodic sky refresh
-      clearInterval(SKY.sceneTimer);
       clearInterval(SKY.creatureTimer);
-      SKY.sceneTimer = setInterval(function () {
-        if (!livingSkyEnabled || document.hidden) return;
-        renderLivingSky(container);
-      }, 120000);
     }
     if (typeof renderTerrain === 'function') renderTerrain();
     spawnOrbs();
@@ -537,11 +531,6 @@ function initSkyScene() {
   }
   startCreatureLoop(container);
   if (typeof renderTerrain === 'function') renderTerrain();
-  // Update sky every 2 minutes — sun position changes slowly (skip when tab hidden)
-  SKY.sceneTimer = setInterval(function () {
-    if (!livingSkyEnabled || document.hidden) return;
-    renderLivingSky(container);
-  }, 120000);
 }
 
 // ===== SUN / MOON POSITION BASED ON REAL TIME =====
@@ -2178,15 +2167,13 @@ document.addEventListener('DOMContentLoaded', function () {
   initSkyScene();
   // Render terrain for current theme
   renderTerrain();
-  // Re-render sky when time period changes (orbs handled by updateTimeOfDay)
+  // Update time-of-day attribute periodically (CSS transitions handle visual changes)
   setInterval(
     function () {
       var current = document.body.getAttribute('data-time');
       var now = getTimeOfDay();
       if (current !== now) {
         updateTimeOfDay();
-        var container = document.getElementById('sky-scene');
-        if (container && livingSkyEnabled) renderLivingSky(container);
       }
     },
     5 * 60 * 1000

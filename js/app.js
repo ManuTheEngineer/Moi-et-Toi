@@ -386,9 +386,6 @@ function handleFirstLocationAllow() {
         // Fetch weather and immediately update the login sky background
         if (typeof fetchWeather === 'function') {
           fetchWeather().then(function () {
-            // Re-render the single master sky with real weather data
-            var skyC = document.getElementById('sky-scene');
-            if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
             if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
             if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
             if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
