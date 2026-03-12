@@ -252,7 +252,8 @@ function updateTimeOfDay() {
   }
   document.body.style.setProperty('--golden-blend', blend);
 
-  // Update weather tint overlay with golden warmth + temperature tint
+  // Update weather tint overlay — combines golden warmth + temperature + weather condition
+  // into one unified layer so the background is consistent across all screens
   var tintEl = document.getElementById('weather-tint');
   if (tintEl) {
     var layers = [];
@@ -264,6 +265,11 @@ function updateTimeOfDay() {
     if (typeof getTempTint === 'function') {
       var tt = getTempTint();
       if (tt) layers.push(tt.tint);
+    }
+    // Weather-condition tint from real API data (uniform across all pages)
+    if (typeof getWeatherConditionTint === 'function') {
+      var wct = getWeatherConditionTint();
+      if (wct) layers.push(wct);
     }
     tintEl.style.background = layers.length > 0 ? layers.join(', ') : 'transparent';
   }

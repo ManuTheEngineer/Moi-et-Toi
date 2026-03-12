@@ -324,6 +324,39 @@ function getTempTint() {
   return { tint: 'rgba(255,100,50,0.09)', label: 'Extreme heat' };
 }
 
+// ===== WEATHER CONDITION TINTING =====
+// Returns a CSS background layer string based on current weather condition.
+// Applied uniformly via the .weather-tint element for consistent backgrounds.
+function getWeatherConditionTint() {
+  if (!WEATHER.data || !WEATHER.data.condition) return null;
+  var c = WEATHER.data.condition;
+  var isDark = false;
+  try {
+    var t = document.body.getAttribute('data-time');
+    isDark = t === 'night' || t === 'evening';
+  } catch (e) {}
+  // Reduce intensity at night/evening
+  var m = isDark ? 0.5 : 1;
+  switch (c) {
+    case 'clouds':
+      return 'rgba(160,170,185,' + (0.10 * m).toFixed(3) + ')';
+    case 'fog':
+      return 'rgba(200,200,210,' + (0.14 * m).toFixed(3) + ')';
+    case 'drizzle':
+      return 'rgba(110,130,160,' + (0.08 * m).toFixed(3) + ')';
+    case 'rain':
+      return 'rgba(70,90,120,' + (0.12 * m).toFixed(3) + ')';
+    case 'thunderstorm':
+      return 'rgba(50,55,80,' + (0.14 * m).toFixed(3) + ')';
+    case 'snow':
+      return 'rgba(210,220,240,' + (0.12 * m).toFixed(3) + ')';
+    case 'hail':
+      return 'rgba(150,170,200,' + (0.10 * m).toFixed(3) + ')';
+    default: // clear
+      return null;
+  }
+}
+
 // ===== WEATHER PARTICLE EFFECTS =====
 function renderWeatherEffects(container) {
   var existing = container.querySelector('.weather-fx-layer');
