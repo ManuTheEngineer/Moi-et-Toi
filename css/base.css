@@ -137,14 +137,14 @@ body.sky-off::before {
   pointer-events: none;
   overflow: hidden;
   transition: opacity 1.5s ease;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 85%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 85%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 95%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 95%);
 }
 /* Night/evening: extend sky visibility for stars, moon, and ground creatures */
 body[data-time='night'] .sky-scene,
 body[data-time='evening'] .sky-scene {
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 65%, transparent 92%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 65%, transparent 92%);
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 /* Atmospheric depth layers */
