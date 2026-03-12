@@ -669,14 +669,6 @@ html {
   background: var(--bg);
   transition: background-color 4s ease;
 }
-/* Mirror --bg on html for each time-of-day so the canvas background stays correct.
-   body[data-time] sets --bg on body, but html uses its own :root --bg by default. */
-html[data-time='evening'] { --bg: #2a2440; }
-html[data-time='night']   { --bg: #1a1828; }
-html[data-sky-theme='beach'][data-time='evening'] { --bg: #26203a; }
-html[data-sky-theme='beach'][data-time='night']   { --bg: #161824; }
-html[data-sky-theme='mountain'][data-time='evening'] { --bg: #202838; }
-html[data-sky-theme='mountain'][data-time='night']   { --bg: #141c24; }
 body {
   min-height: 100%;
   min-height: 100dvh;

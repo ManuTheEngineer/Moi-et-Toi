@@ -135,14 +135,8 @@
     window._cachedSkyTheme = saved;
     if (saved) {
       document.body.setAttribute('data-sky-theme', saved);
-      document.documentElement.setAttribute('data-sky-theme', saved);
     }
   } catch (e) {}
-  // Set time-of-day on both html and body early to avoid flash of wrong --bg
-  var _h = new Date().getHours();
-  var _earlyTime = _h >= 5 && _h < 7 ? 'dawn' : _h >= 7 && _h < 11 ? 'morning' : _h >= 11 && _h < 16 ? 'afternoon' : _h >= 16 && _h < 18 ? 'golden' : _h >= 18 && _h < 21 ? 'evening' : 'night';
-  document.body.setAttribute('data-time', _earlyTime);
-  document.documentElement.setAttribute('data-time', _earlyTime);
 })();
 
 // ===== RENDER MASTER SKY (single background for entire app) =====
@@ -202,8 +196,6 @@ function updateTimeOfDay() {
   var time = getTimeOfDay();
   var prev = document.body.getAttribute('data-time');
   document.body.setAttribute('data-time', time);
-  // Mirror on html so html { background: var(--bg) } picks up time-of-day colors
-  document.documentElement.setAttribute('data-time', time);
   // Update browser chrome color to match theme + sky theme
   var themeColors = {
     mixed: {
@@ -1979,7 +1971,6 @@ function applySkyTheme(theme) {
   if (theme === currentSkyTheme && document.body.getAttribute('data-sky-theme') === theme) return;
   currentSkyTheme = theme;
   document.body.setAttribute('data-sky-theme', currentSkyTheme);
-  document.documentElement.setAttribute('data-sky-theme', currentSkyTheme);
   // Cache for instant apply on next load (login page, before Firebase)
   try {
     localStorage.setItem('met_sky_theme', currentSkyTheme);
