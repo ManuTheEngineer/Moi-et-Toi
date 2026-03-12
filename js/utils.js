@@ -148,37 +148,32 @@
   document.documentElement.setAttribute('data-time', _t);
 })();
 
+// ===== WEATHER DATA — defined early so the sky renders with cached weather =====
+// weather.js adds methods to this object; we own the definition so cached
+// location + weather are available BEFORE renderLoginSky runs.
+var WEATHER = {
+  lat: null, lon: null, data: null, scene: 'meadow',
+  locationGranted: false, audioCtx: null, audioNodes: {},
+  audioEnabled: false, audioUnlocked: false, refreshTimer: null
+};
+(function () {
+  try {
+    var l = JSON.parse(localStorage.getItem('met_weather_location'));
+    if (l && l.lat) { WEATHER.lat = l.lat; WEATHER.lon = l.lon; WEATHER.locationGranted = true; }
+  } catch (e) {}
+  try {
+    var w = JSON.parse(localStorage.getItem('met_weather_cache'));
+    if (w) WEATHER.data = w;
+  } catch (e) {}
+})();
+
 // ===== RENDER MASTER SKY (single background for entire app) =====
 // Renders into the GLOBAL sky-scene + terrain-scene so the exact same background
 // is visible on login, onboarding, and every dashboard page.
 function renderLoginSky() {
-  // Use the global sky/terrain containers (position:fixed, visible everywhere)
   var skyC = document.getElementById('sky-scene');
   var terrC = document.getElementById('terrain-scene');
   if (!skyC) return;
-
-  // Restore cached weather data for instant weather-aware rendering
-  if (typeof WEATHER !== 'undefined' && !WEATHER.data) {
-    try {
-      var cached = localStorage.getItem('met_weather_cache');
-      if (cached) {
-        WEATHER.data = JSON.parse(cached);
-      }
-    } catch (e) {}
-  }
-  // Restore cached location for weather-aware rendering
-  if (typeof WEATHER !== 'undefined' && !WEATHER.lat) {
-    try {
-      var cachedLoc = localStorage.getItem('met_weather_location');
-      if (cachedLoc) {
-        var loc = JSON.parse(cachedLoc);
-        WEATHER.lat = loc.lat;
-        WEATHER.lon = loc.lon;
-        WEATHER.locationGranted = true;
-      }
-    } catch (e) {}
-  }
-
   if (typeof renderLivingSky === 'function') {
     renderLivingSky(skyC);
     window._skyRenderedAt = Date.now();
@@ -536,9 +531,11 @@ function initSkyScene() {
   // Clear any existing timers to prevent duplicates
   clearInterval(SKY.sceneTimer);
   clearInterval(SKY.creatureTimer);
-  renderLivingSky(container);
+  // Skip re-render if renderLoginSky() or weather.js already rendered recently
+  if (!window._skyRenderedAt || Date.now() - window._skyRenderedAt > 2000) {
+    renderLivingSky(container);
+  }
   startCreatureLoop(container);
-  // Also ensure terrain is rendered (may have been cleared or not yet rendered)
   if (typeof renderTerrain === 'function') renderTerrain();
   // Update sky every 2 minutes — sun position changes slowly (skip when tab hidden)
   SKY.sceneTimer = setInterval(function () {

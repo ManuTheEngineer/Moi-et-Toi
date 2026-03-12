@@ -1,18 +1,14 @@
 // ===== LIVING WEATHER & SCENE SYSTEM =====
 // Real-time weather from user's location, 3 scene themes, ambient audio
-
-var WEATHER = {
-  lat: null,
-  lon: null,
-  data: null,
-  scene: 'meadow',
-  locationGranted: false,
-  audioCtx: null,
-  audioNodes: {},
-  audioEnabled: false,
-  audioUnlocked: false,
-  refreshTimer: null
-};
+// WEATHER object is defined in utils.js (loads first) with cached data restored.
+// We just ensure it exists as a safety net.
+if (typeof WEATHER === 'undefined') {
+  var WEATHER = {
+    lat: null, lon: null, data: null, scene: 'meadow',
+    locationGranted: false, audioCtx: null, audioNodes: {},
+    audioEnabled: false, audioUnlocked: false, refreshTimer: null
+  };
+}
 
 // ===== SCENE DEFINITIONS =====
 // Warm, intimate tones matching the app's cream/gold/rose palette
@@ -3491,9 +3487,49 @@ function initWeatherSystem() {
 
 // Hook into app init - fallback for non-finishLogin paths
 document.addEventListener('DOMContentLoaded', function () {
-  setTimeout(function () {
-    if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
-      initWeatherSystem();
-    }
-  }, 3500);
+  // No delay — check as soon as DOM is ready; initWeatherSystem is idempotent
+  if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
+    initWeatherSystem();
+  }
 });
+
+// ===== IMMEDIATE WEATHER FETCH ON SCRIPT LOAD =====
+// If we have cached lat/lon (restored in utils.js), fetch fresh weather NOW —
+// before Firebase, before auth, before DOMContentLoaded. This ensures the
+// single background renders with real weather from the very first frame.
+(function () {
+  if (WEATHER.lat && WEATHER.lon) {
+    fetchWeather().then(function (data) {
+      if (!data) return;
+      var skyC = document.getElementById('sky-scene');
+      if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
+      if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+    });
+  }
+  // Request fresh geolocation in parallel (doesn't need auth or Firebase).
+  // On first-ever use this is the prompt that asks for location.
+  // On repeat visits it resolves instantly from the browser cache.
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function (pos) {
+        var lat = pos.coords.latitude, lon = pos.coords.longitude;
+        var changed = lat !== WEATHER.lat || lon !== WEATHER.lon;
+        WEATHER.lat = lat;
+        WEATHER.lon = lon;
+        WEATHER.locationGranted = true;
+        try { localStorage.setItem('met_weather_location', JSON.stringify({ lat: lat, lon: lon })); } catch (e) {}
+        // Only re-fetch if location actually changed
+        if (changed) {
+          fetchWeather().then(function (data) {
+            if (!data) return;
+            var skyC = document.getElementById('sky-scene');
+            if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
+            if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+          });
+        }
+      },
+      function () { /* location denied — sky renders with cached or time-only data */ },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
+    );
+  }
+})();
