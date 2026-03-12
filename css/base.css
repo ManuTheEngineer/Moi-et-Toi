@@ -69,7 +69,8 @@ body::before {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: var(--screen-h, 100vh);
+  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
   z-index: -2;
   pointer-events: none;
   background:
@@ -88,7 +89,8 @@ body::after {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: var(--screen-h, 100vh);
+  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
   z-index: -1;
   pointer-events: none;
   opacity: 0.025;
@@ -144,7 +146,8 @@ body.sky-off::before {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: var(--screen-h, 100vh);
+  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
   z-index: 1;
   pointer-events: none;
   overflow: hidden;
@@ -572,7 +575,11 @@ body[data-time='evening'] .sky-scene {
 /* Floating particle layer */
 .particles {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--screen-h, 100vh);
+  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
   z-index: 1;
   pointer-events: none;
   overflow: hidden;
@@ -1150,19 +1157,6 @@ body[data-sky-theme='mountain'] .sky-bf-wing {
     min-height: 100%;
     overflow-y: auto;
     overscroll-behavior-y: none;
-  }
-  /* Push all fixed background layers past the safe area so they reach the
-     physical screen bottom (home indicator region) on iPhones.
-     With viewport-fit=cover the viewport includes safe areas, but iOS may
-     still clip fixed elements at the safe-area boundary — a negative bottom
-     forces them past it. */
-  body::before,
-  body::after,
-  .sky-scene,
-  .weather-tint,
-  .terrain-scene,
-  .login::before {
-    bottom: calc(-1 * env(safe-area-inset-bottom, 34px));
   }
 }
 

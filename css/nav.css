@@ -81,7 +81,8 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: var(--screen-h, 100vh);
+  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
   background: transparent;
   z-index: -1;
   pointer-events: none;

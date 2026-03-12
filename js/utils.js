@@ -9,6 +9,9 @@
     if (h > fullH) fullH = h;
     // Always use the largest known height so the page never shrinks for the keyboard
     document.documentElement.style.setProperty('--real-h', fullH + 'px');
+    // Physical screen height — tells background layers exactly where the
+    // bottom edge of the phone is, including the safe area / home indicator
+    document.documentElement.style.setProperty('--screen-h', window.screen.height + 'px');
   }
   fillScreen();
   var _resizeTimer;
