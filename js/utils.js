@@ -233,7 +233,10 @@ function updateTimeOfDay() {
   var sky = (typeof currentSkyTheme !== 'undefined' && currentSkyTheme) || 'mixed';
   var colors = themeColors[sky] || themeColors.mixed;
   var meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = colors[time] || '#F5F0EB';
+  var _bgColor = colors[time] || '#F5F0EB';
+  if (meta) meta.content = _bgColor;
+  // Force html background to match — iOS PWA paints this behind the home indicator
+  document.documentElement.style.backgroundColor = _bgColor;
   // Re-render orbs when time changes to match new palette
   if (prev && prev !== time && typeof spawnOrbs === 'function') spawnOrbs();
 
