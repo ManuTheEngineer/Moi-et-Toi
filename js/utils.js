@@ -9,6 +9,8 @@
     if (h > fullH) fullH = h;
     // Always use the largest known height so the page never shrinks for the keyboard
     document.documentElement.style.setProperty('--real-h', fullH + 'px');
+    // Physical screen height — includes the safe area that CSS viewport units may miss
+    document.documentElement.style.setProperty('--screen-h', window.screen.height + 'px');
   }
   fillScreen();
   var _resizeTimer;
@@ -233,10 +235,7 @@ function updateTimeOfDay() {
   var sky = (typeof currentSkyTheme !== 'undefined' && currentSkyTheme) || 'mixed';
   var colors = themeColors[sky] || themeColors.mixed;
   var meta = document.querySelector('meta[name="theme-color"]');
-  var _bgColor = colors[time] || '#F5F0EB';
-  if (meta) meta.content = _bgColor;
-  // Force html background to match — iOS PWA paints this behind the home indicator
-  document.documentElement.style.backgroundColor = _bgColor;
+  if (meta) meta.content = colors[time] || '#F5F0EB';
   // Re-render orbs when time changes to match new palette
   if (prev && prev !== time && typeof spawnOrbs === 'function') spawnOrbs();
 
