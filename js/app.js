@@ -387,6 +387,9 @@ function handleFirstLocationAllow() {
         if (typeof fetchWeather === 'function') {
           fetchWeather().then(function () {
             if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+            var skyC = document.getElementById('sky-scene');
+            if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
+            if (typeof renderTerrain === 'function') renderTerrain();
             if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
             if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
           });
