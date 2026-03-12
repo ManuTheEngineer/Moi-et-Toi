@@ -4038,36 +4038,62 @@
             </div>
             <div id="rel-health-card"></div>
 
+            <!-- Commitments Section -->
             <div class="sec-head">
               <div class="sec-dot sd-green"></div>
-              <div class="sec-title">Our Agreements</div>
+              <div class="sec-title">Commitments</div>
             </div>
 
-            <!-- Pending proposals banner -->
-            <div id="agree-pending-banner" class="agree-pending-banner d-none" onclick="scrollToProposals()">
-              <span class="agree-pending-dot"></span>
-              <span id="agree-pending-text">You have proposals to review</span>
+            <!-- Tab switcher -->
+            <div class="agree-tabs" id="agree-tabs">
+              <button class="agree-tab active" data-tab="ours" onclick="switchCommitTab('ours')">Our Commitments</button>
+              <button class="agree-tab" data-tab="mine" onclick="switchCommitTab('mine')">My Commitments</button>
             </div>
 
-            <!-- Active agreements list -->
-            <div id="agree-active-list" class="agree-list"></div>
-
-            <!-- Add new agreement -->
-            <div class="bl-form mt-12">
-              <input type="text" id="agree-new-input" class="quiz-q" placeholder="Propose a new agreement..." />
-              <button onclick="proposeAgreement()">Propose</button>
-            </div>
-
-            <!-- Pending proposals section -->
-            <div id="agree-proposals-section" class="d-none">
-              <div class="sec-head mt-12">
-                <div class="sec-dot sd-amber"></div>
-                <div class="sec-title">Pending Proposals</div>
+            <!-- TAB: Our Commitments (shared, proposal-based) -->
+            <div class="agree-tab-panel active" id="agree-panel-ours">
+              <!-- Pending proposals banner -->
+              <div id="agree-pending-banner" class="agree-pending-banner d-none" onclick="scrollToProposals()">
+                <span class="agree-pending-dot"></span>
+                <span id="agree-pending-text">You have proposals to review</span>
               </div>
-              <div id="agree-proposals-list" class="agree-list"></div>
+
+              <div class="agree-tab-hint">Changes require both partners to agree</div>
+
+              <!-- Active shared agreements list -->
+              <div id="agree-active-list" class="agree-list"></div>
+
+              <!-- Add new shared agreement -->
+              <div class="bl-form mt-12">
+                <input type="text" id="agree-new-input" class="quiz-q" placeholder="Propose a new commitment..." />
+                <button onclick="proposeAgreement()">Propose</button>
+              </div>
+
+              <!-- Pending proposals section -->
+              <div id="agree-proposals-section" class="d-none">
+                <div class="sec-head mt-12">
+                  <div class="sec-dot sd-amber"></div>
+                  <div class="sec-title">Pending Proposals</div>
+                </div>
+                <div id="agree-proposals-list" class="agree-list"></div>
+              </div>
             </div>
 
-            <!-- Edit modal -->
+            <!-- TAB: My Commitments (private, only visible to me) -->
+            <div class="agree-tab-panel" id="agree-panel-mine">
+              <div class="agree-tab-hint">Private — only you can see these</div>
+
+              <!-- Private commitments list -->
+              <div id="agree-private-list" class="agree-list"></div>
+
+              <!-- Add new private commitment -->
+              <div class="bl-form mt-12">
+                <input type="text" id="agree-private-input" class="quiz-q" placeholder="Add a commitment to yourself..." />
+                <button onclick="addPrivateCommitment()">Add</button>
+              </div>
+            </div>
+
+            <!-- Edit modal (shared) -->
             <div
               id="agree-edit-overlay"
               class="agree-edit-overlay"
@@ -4084,6 +4110,26 @@
                 <div class="agree-edit-actions">
                   <button class="agree-edit-cancel" onclick="closeAgreementEdit()">Cancel</button>
                   <button class="agree-edit-submit" onclick="submitAgreementEdit()">Propose Change</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit modal (private) -->
+            <div
+              id="agree-private-edit-overlay"
+              class="agree-edit-overlay"
+              onclick="if (event.target === this) closePrivateEdit();"
+            >
+              <div class="agree-edit-card">
+                <div class="agree-edit-title">Edit Commitment</div>
+                <textarea
+                  id="agree-private-edit-text"
+                  class="agree-edit-textarea"
+                  placeholder="Update your commitment..."
+                ></textarea>
+                <div class="agree-edit-actions">
+                  <button class="agree-edit-cancel" onclick="closePrivateEdit()">Cancel</button>
+                  <button class="agree-edit-submit" onclick="savePrivateEdit()">Save</button>
                 </div>
               </div>
             </div>

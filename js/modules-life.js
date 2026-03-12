@@ -992,173 +992,262 @@ function listenValues() {
     });
 }
 
-// ===== AGREEMENT SYSTEM =====
+// ===== AGREEMENT / COMMITMENT SYSTEM =====
 // Firebase paths:
-//   agreements/active/{pushId} — signed-off agreements
-//   agreements/proposals/{pushId} — pending proposals (new, edit, remove)
-//   agreements/daily/{user}/{date} — daily acknowledgments
+//   agreements/active/{pushId}          — shared "Our Commitments" (both see, proposal-based changes)
+//   agreements/personal/{user}/{pushId} — private "My Commitments" (only owner sees, direct CRUD)
+//   agreements/proposals/{pushId}       — pending proposals for shared commitments
+//   agreements/daily/{user}/{date}      — daily acknowledgments
 
-let _agreeEditingKey = null; // key of agreement being edited
+let _agreeEditingKey = null;  // key of shared agreement being edited
+let _privateEditingKey = null; // key of private commitment being edited
+
+/* ---------- tab switching ---------- */
+
+function switchCommitTab(tab) {
+  var tabs = document.querySelectorAll('#agree-tabs .agree-tab');
+  var panels = document.querySelectorAll('.agree-tab-panel');
+  tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.tab === tab); });
+  panels.forEach(function (p) {
+    p.classList.toggle('active', p.id === 'agree-panel-' + (tab === 'ours' ? 'ours' : 'mine'));
+  });
+}
+
+/* ---------- main listener ---------- */
 
 function listenAgreements() {
   if (!db || !user) return;
 
-  // Migrate onboarding agreements to active on first load
+  // Migrate onboarding agreements on first load
   _migrateOnboardingAgreements();
+  // Migrate any personal items already in active to the new private path
+  _migratePersonalToPrivate();
 
-  // Listen to active agreements
+  // --- Shared "Our Commitments" ---
   var activeRef = db.ref('agreements/active').orderByChild('timestamp');
   fbOn(activeRef, 'value', function (snap) {
-      var el = document.getElementById('agree-active-list');
-      if (!el) return;
-      var items = [];
-      snap.forEach(function (c) {
-        items.push({ key: c.key, data: c.val() });
-      });
-      items.reverse();
-      if (!items.length) {
-        el.innerHTML = '<div class="empty">No agreements yet — propose one below</div>';
-        return;
-      }
-      el.innerHTML = items
-        .map(function (item) {
-          var d = item.data;
-          var byName = d.addedBy === user ? 'You' : esc(d.addedByName || '');
-          var source = d.source === 'personal' ? ' <span class="agree-item-by">' + byName + "'s commitment</span>" : '';
-          return (
-            '<div class="agree-item">' +
-            '<div class="agree-item-check">✓</div>' +
-            '<div class="agree-item-text">' +
-            esc(d.text) +
-            source +
-            '</div>' +
-            '<div class="agree-item-actions">' +
-            '<button class="agree-item-btn" onclick="openAgreementEdit(\'' +
-            item.key +
-            "','" +
-            esc(d.text).replace(/'/g, "\\'") +
-            '\')" title="Propose change">✎</button>' +
-            '<button class="agree-item-btn" onclick="proposeRemoval(\'' +
-            item.key +
-            "','" +
-            esc(d.text).replace(/'/g, "\\'") +
-            '\')" title="Propose removal">×</button>' +
-            '</div></div>'
-          );
-        })
-        .join('');
+    var el = document.getElementById('agree-active-list');
+    if (!el) return;
+    var items = [];
+    snap.forEach(function (c) {
+      var d = c.val();
+      // Exclude personal items from shared view (they belong in private tab)
+      if (d.source === 'personal') return;
+      items.push({ key: c.key, data: d });
     });
+    items.reverse();
+    if (!items.length) {
+      el.innerHTML = '<div class="empty">No shared commitments yet — propose one below</div>';
+      return;
+    }
+    el.innerHTML = items
+      .map(function (item) {
+        var d = item.data;
+        return (
+          '<div class="agree-item">' +
+          '<div class="agree-item-check">✓</div>' +
+          '<div class="agree-item-text">' + esc(d.text) + '</div>' +
+          '<div class="agree-item-actions">' +
+          '<button class="agree-item-btn" onclick="openAgreementEdit(\'' +
+          item.key + "','" + esc(d.text).replace(/'/g, "\\'") +
+          '\')" title="Propose change">✎</button>' +
+          '<button class="agree-item-btn" onclick="proposeRemoval(\'' +
+          item.key + "','" + esc(d.text).replace(/'/g, "\\'") +
+          '\')" title="Propose removal">×</button>' +
+          '</div></div>'
+        );
+      })
+      .join('');
+  });
 
-  // Listen to proposals
+  // --- Proposals listener ---
   var proposalRef = db.ref('agreements/proposals').orderByChild('timestamp');
   fbOn(proposalRef, 'value', function (snap) {
-      var items = [];
-      snap.forEach(function (c) {
-        items.push({ key: c.key, data: c.val() });
-      });
-      items.reverse();
-
-      var section = document.getElementById('agree-proposals-section');
-      var list = document.getElementById('agree-proposals-list');
-      var banner = document.getElementById('agree-pending-banner');
-      var bannerText = document.getElementById('agree-pending-text');
-      if (!section || !list) return;
-
-      // Filter to pending only
-      var pending = items.filter(function (i) {
-        return i.data.status === 'pending';
-      });
-      var forMe = pending.filter(function (i) {
-        return i.data.proposedBy !== user;
-      });
-
-      if (pending.length === 0) {
-        section.classList.add('d-none');
-        if (banner) banner.classList.add('d-none');
-        return;
-      }
-      section.classList.remove('d-none');
-      if (forMe.length > 0 && banner) {
-        banner.classList.remove('d-none');
-        bannerText.textContent = forMe.length + ' proposal' + (forMe.length > 1 ? 's' : '') + ' to review';
-      } else if (banner) {
-        banner.classList.add('d-none');
-      }
-
-      list.innerHTML = pending
-        .map(function (item) {
-          var d = item.data;
-          var isAuthor = d.proposedBy === user;
-          var byName = isAuthor ? 'You' : d.proposedByName || 'Partner';
-          var typeLabel =
-            d.type === 'new' ? 'New agreement' : d.type === 'edit' ? 'Change proposed' : 'Removal proposed';
-          var changeHtml = '';
-          if (d.type === 'edit' && d.originalText) {
-            changeHtml = '<div class="agree-item-change">Was: "' + esc(d.originalText) + '"</div>';
-          }
-          if (d.type === 'remove') {
-            changeHtml = '<div class="agree-item-change">Proposes removing this agreement</div>';
-          }
-          var actionsHtml = '';
-          if (!isAuthor) {
-            actionsHtml =
-              '<div class="agree-proposal-actions">' +
-              '<button class="agree-proposal-btn approve" onclick="approveProposal(\'' +
-              item.key +
-              '\')">Approve</button>' +
-              '<button class="agree-proposal-btn reject" onclick="rejectProposal(\'' +
-              item.key +
-              '\')">Decline</button>' +
-              '</div>';
-          } else {
-            actionsHtml =
-              '<div style="font-size:10px;color:var(--t3);margin-top:6px">Waiting for partner\'s approval</div>';
-          }
-          return (
-            '<div class="agree-item agree-proposal">' +
-            '<div style="flex:1">' +
-            '<div style="font-size:10px;color:var(--gold);font-weight:500;margin-bottom:2px">' +
-            typeLabel +
-            ' · ' +
-            byName +
-            '</div>' +
-            '<div class="agree-item-text">' +
-            esc(d.text) +
-            '</div>' +
-            changeHtml +
-            actionsHtml +
-            '</div></div>'
-          );
-        })
-        .join('');
+    var items = [];
+    snap.forEach(function (c) {
+      items.push({ key: c.key, data: c.val() });
     });
+    items.reverse();
+
+    var section = document.getElementById('agree-proposals-section');
+    var list = document.getElementById('agree-proposals-list');
+    var banner = document.getElementById('agree-pending-banner');
+    var bannerText = document.getElementById('agree-pending-text');
+    if (!section || !list) return;
+
+    var pending = items.filter(function (i) { return i.data.status === 'pending'; });
+    var forMe = pending.filter(function (i) { return i.data.proposedBy !== user; });
+
+    if (pending.length === 0) {
+      section.classList.add('d-none');
+      if (banner) banner.classList.add('d-none');
+      return;
+    }
+    section.classList.remove('d-none');
+    if (forMe.length > 0 && banner) {
+      banner.classList.remove('d-none');
+      bannerText.textContent = forMe.length + ' proposal' + (forMe.length > 1 ? 's' : '') + ' to review';
+    } else if (banner) {
+      banner.classList.add('d-none');
+    }
+
+    list.innerHTML = pending
+      .map(function (item) {
+        var d = item.data;
+        var isAuthor = d.proposedBy === user;
+        var byName = isAuthor ? 'You' : d.proposedByName || 'Partner';
+        var typeLabel =
+          d.type === 'new' ? 'New commitment' : d.type === 'edit' ? 'Change proposed' : 'Removal proposed';
+        var changeHtml = '';
+        if (d.type === 'edit' && d.originalText) {
+          changeHtml = '<div class="agree-item-change">Was: "' + esc(d.originalText) + '"</div>';
+        }
+        if (d.type === 'remove') {
+          changeHtml = '<div class="agree-item-change">Proposes removing this commitment</div>';
+        }
+        var actionsHtml = '';
+        if (!isAuthor) {
+          actionsHtml =
+            '<div class="agree-proposal-actions">' +
+            '<button class="agree-proposal-btn approve" onclick="approveProposal(\'' +
+            item.key + '\')">Approve</button>' +
+            '<button class="agree-proposal-btn reject" onclick="rejectProposal(\'' +
+            item.key + '\')">Decline</button>' +
+            '</div>';
+        } else {
+          actionsHtml =
+            '<div style="font-size:10px;color:var(--t3);margin-top:6px">Waiting for partner\'s approval</div>';
+        }
+        return (
+          '<div class="agree-item agree-proposal">' +
+          '<div style="flex:1">' +
+          '<div style="font-size:10px;color:var(--gold);font-weight:500;margin-bottom:2px">' +
+          typeLabel + ' · ' + byName + '</div>' +
+          '<div class="agree-item-text">' + esc(d.text) + '</div>' +
+          changeHtml + actionsHtml +
+          '</div></div>'
+        );
+      })
+      .join('');
+  });
+
+  // --- Private "My Commitments" ---
+  listenPrivateCommitments();
 }
 
-// Migrate onboarding + old custom agreements to the new active system (one-time)
+/* ---------- private commitments (My Commitments) ---------- */
+
+function listenPrivateCommitments() {
+  if (!db || !user) return;
+  var ref = db.ref('agreements/personal/' + user).orderByChild('timestamp');
+  fbOn(ref, 'value', function (snap) {
+    var el = document.getElementById('agree-private-list');
+    if (!el) return;
+    var items = [];
+    snap.forEach(function (c) {
+      items.push({ key: c.key, data: c.val() });
+    });
+    items.reverse();
+    if (!items.length) {
+      el.innerHTML = '<div class="empty">Commitments you make to yourself for your relationship</div>';
+      return;
+    }
+    el.innerHTML = items
+      .map(function (item) {
+        var d = item.data;
+        return (
+          '<div class="agree-item agree-private">' +
+          '<div class="agree-item-check agree-check-private">♡</div>' +
+          '<div class="agree-item-text">' + esc(d.text) + '</div>' +
+          '<div class="agree-item-actions">' +
+          '<button class="agree-item-btn" onclick="openPrivateEdit(\'' +
+          item.key + "','" + esc(d.text).replace(/'/g, "\\'") +
+          '\')" title="Edit">✎</button>' +
+          '<button class="agree-item-btn" onclick="deletePrivateCommitment(\'' +
+          item.key + '\')" title="Delete">×</button>' +
+          '</div></div>'
+        );
+      })
+      .join('');
+  });
+}
+
+function addPrivateCommitment() {
+  if (!db || !user) return;
+  var input = document.getElementById('agree-private-input');
+  var text = input.value.trim();
+  if (!text) {
+    toast('Write a commitment first');
+    return;
+  }
+  db.ref('agreements/personal/' + user).push({
+    text: text,
+    timestamp: Date.now()
+  }).catch(function () { toast('Save failed'); });
+  input.value = '';
+  toast('Commitment added');
+}
+
+function openPrivateEdit(key, currentText) {
+  _privateEditingKey = key;
+  var textarea = document.getElementById('agree-private-edit-text');
+  var overlay = document.getElementById('agree-private-edit-overlay');
+  if (textarea) {
+    textarea.value = currentText;
+    textarea.focus();
+  }
+  if (overlay) overlay.classList.add('on');
+}
+
+function closePrivateEdit() {
+  var overlay = document.getElementById('agree-private-edit-overlay');
+  if (overlay) overlay.classList.remove('on');
+  _privateEditingKey = null;
+}
+
+function savePrivateEdit() {
+  if (!db || !user || !_privateEditingKey) return;
+  var textarea = document.getElementById('agree-private-edit-text');
+  var newText = textarea.value.trim();
+  if (!newText) return;
+  db.ref('agreements/personal/' + user + '/' + _privateEditingKey + '/text')
+    .set(newText)
+    .then(function () { toast('Updated'); })
+    .catch(function () { toast('Save failed'); });
+  closePrivateEdit();
+}
+
+function deletePrivateCommitment(key) {
+  if (!db || !user) return;
+  if (!confirm('Delete this commitment?')) return;
+  db.ref('agreements/personal/' + user + '/' + key).remove()
+    .then(function () { toast('Removed'); })
+    .catch(function () { toast('Delete failed'); });
+}
+
+/* ---------- migration: onboarding + defaults → active ---------- */
+
 function _migrateOnboardingAgreements() {
   db.ref('agreements/_migrated').once('value', function (snap) {
-    if (snap.val()) return; // already migrated
+    if (snap.val()) return;
 
     var batch = {};
     var count = 0;
 
-    // Migrate onboarding agreements
     db.ref('agreements/onboarding').once('value', function (obSnap) {
       var obData = obSnap.val() || {};
       Object.keys(obData).forEach(function (role) {
         var d = obData[role];
+        // Personal commitments → private path (only owner sees)
         if (d.personal)
           d.personal.forEach(function (t) {
-            var key = db.ref('agreements/active').push().key;
-            batch['agreements/active/' + key] = {
+            var key = db.ref('agreements/personal/' + role).push().key;
+            batch['agreements/personal/' + role + '/' + key] = {
               text: t,
-              addedBy: role,
-              addedByName: NAMES[role] || role,
-              source: 'personal',
-              timestamp: Date.now() - 1000 * count++,
-              signedOff: true
+              timestamp: Date.now() - 1000 * count++
             };
           });
+        // Together commitments → shared active path
         if (d.together)
           d.together.forEach(function (t) {
             var key = db.ref('agreements/active').push().key;
@@ -1173,7 +1262,7 @@ function _migrateOnboardingAgreements() {
           });
       });
 
-      // Also migrate old custom agreements
+      // Migrate old custom agreements
       db.ref('foundation/customAgreements').once('value', function (custSnap) {
         custSnap.forEach(function (c) {
           var d = c.val();
@@ -1189,7 +1278,7 @@ function _migrateOnboardingAgreements() {
           count++;
         });
 
-        // Also migrate the 6 default communication agreements
+        // Default communication agreements
         var defaults = [
           "We don't go to bed angry",
           'We use "I feel" not "you always"',
@@ -1217,13 +1306,45 @@ function _migrateOnboardingAgreements() {
   });
 }
 
-// Propose a new agreement
+// Migrate personal items already in agreements/active to agreements/personal/{user} (one-time)
+function _migratePersonalToPrivate() {
+  db.ref('agreements/_personalMigrated').once('value', function (snap) {
+    if (snap.val()) return;
+    db.ref('agreements/active').once('value', function (activeSnap) {
+      var batch = {};
+      var found = false;
+      activeSnap.forEach(function (c) {
+        var d = c.val();
+        if (d.source === 'personal' && d.addedBy) {
+          found = true;
+          var owner = d.addedBy;
+          var newKey = db.ref('agreements/personal/' + owner).push().key;
+          batch['agreements/personal/' + owner + '/' + newKey] = {
+            text: d.text,
+            timestamp: d.timestamp || Date.now()
+          };
+          // Remove from shared active
+          batch['agreements/active/' + c.key] = null;
+        }
+      });
+      batch['agreements/_personalMigrated'] = true;
+      if (found) {
+        db.ref().update(batch);
+      } else {
+        db.ref('agreements/_personalMigrated').set(true);
+      }
+    });
+  });
+}
+
+/* ---------- shared commitment proposal workflow ---------- */
+
 function proposeAgreement() {
   if (!db || !user) return;
   var input = document.getElementById('agree-new-input');
   var text = input.value.trim();
   if (!text) {
-    toast('Write an agreement first');
+    toast('Write a commitment first');
     return;
   }
   db.ref('agreements/proposals').push({
@@ -1238,7 +1359,6 @@ function proposeAgreement() {
   toast('Proposed — waiting for partner');
 }
 
-// Open edit overlay for an existing agreement
 function openAgreementEdit(key, currentText) {
   _agreeEditingKey = key;
   var orig = document.getElementById('agree-edit-original');
@@ -1258,17 +1378,15 @@ function closeAgreementEdit() {
   _agreeEditingKey = null;
 }
 
-// Submit an edit proposal
 function submitAgreementEdit() {
   if (!db || !user || !_agreeEditingKey) return;
   var textarea = document.getElementById('agree-edit-text');
   var newText = textarea.value.trim();
   if (!newText) return;
-  // Get original text for comparison
   db.ref('agreements/active/' + _agreeEditingKey).once('value', function (snap) {
     var orig = snap.val();
     if (!orig) {
-      toast('Agreement not found');
+      toast('Commitment not found');
       closeAgreementEdit();
       return;
     }
@@ -1292,7 +1410,6 @@ function submitAgreementEdit() {
   });
 }
 
-// Propose removal of an agreement
 function proposeRemoval(key, text) {
   if (!db || !user) return;
   if (!confirm('Propose removing "' + text + '"?')) return;
@@ -1308,7 +1425,6 @@ function proposeRemoval(key, text) {
   toast('Removal proposed — waiting for partner');
 }
 
-// Approve a proposal
 function approveProposal(proposalKey) {
   if (!db || !user) return;
   db.ref('agreements/proposals/' + proposalKey).once('value', function (snap) {
@@ -1317,7 +1433,6 @@ function approveProposal(proposalKey) {
 
     var _catchFail = function () { toast('Save failed'); };
     if (proposal.type === 'new') {
-      // Add to active
       db.ref('agreements/active').push({
         text: proposal.text,
         addedBy: proposal.proposedBy,
@@ -1328,21 +1443,17 @@ function approveProposal(proposalKey) {
         approvedBy: user
       }).catch(_catchFail);
     } else if (proposal.type === 'edit' && proposal.targetKey) {
-      // Update existing
       db.ref('agreements/active/' + proposal.targetKey + '/text').set(proposal.text).catch(_catchFail);
       db.ref('agreements/active/' + proposal.targetKey + '/lastEditBy').set(proposal.proposedBy).catch(_catchFail);
       db.ref('agreements/active/' + proposal.targetKey + '/lastEditAt').set(Date.now()).catch(_catchFail);
     } else if (proposal.type === 'remove' && proposal.targetKey) {
-      // Remove from active
       db.ref('agreements/active/' + proposal.targetKey).remove().catch(_catchFail);
     }
-    // Mark proposal as approved
     db.ref('agreements/proposals/' + proposalKey + '/status').set('approved').catch(_catchFail);
     toast('Approved!');
   });
 }
 
-// Reject a proposal
 function rejectProposal(proposalKey) {
   if (!db || !user) return;
   db.ref('agreements/proposals/' + proposalKey + '/status').set('rejected').catch(function () { toast('Save failed'); });
@@ -1354,7 +1465,7 @@ function scrollToProposals() {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// Keep old function name for backward compatibility
+// Backward compatibility
 function loadAgreements() {
   listenAgreements();
 }

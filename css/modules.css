@@ -2688,7 +2688,62 @@
   flex-shrink: 0;
   transition: all 0.2s;
 }
-/* ===== Agreement System ===== */
+/* ===== Agreement / Commitment System ===== */
+
+/* Tab switcher */
+.agree-tabs {
+  display: flex;
+  background: var(--bg3, rgba(0, 0, 0, 0.08));
+  border-radius: 14px;
+  padding: 3px;
+  margin-bottom: 14px;
+  gap: 3px;
+}
+.agree-tab {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--t3);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.agree-tab.active {
+  background: var(--card-bg, rgba(255, 255, 255, 0.12));
+  color: var(--gold);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.agree-tab:active {
+  transform: scale(0.97);
+}
+.agree-tab-panel {
+  display: none;
+}
+.agree-tab-panel.active {
+  display: block;
+}
+.agree-tab-hint {
+  font-size: 11px;
+  color: var(--t3);
+  margin-bottom: 12px;
+  padding-left: 2px;
+  font-style: italic;
+}
+
+/* Private commitment styling */
+.agree-private {
+  border-left: 3px solid var(--rose, #e8547a);
+}
+.agree-check-private {
+  background: linear-gradient(135deg, var(--rose, #e8547a), var(--lavender, #7b68ae)) !important;
+  font-size: 11px !important;
+}
+
 .agree-list {
   display: flex;
   flex-direction: column;
