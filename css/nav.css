@@ -61,10 +61,8 @@
 
 /* ===== LOGIN ===== */
 .login {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
+  position: fixed;
+  inset: 0;
   z-index: 100;
   display: flex;
   align-items: center;
@@ -74,13 +72,9 @@
   background: transparent;
   padding: env(safe-area-inset-top, 0px) 32px calc(env(safe-area-inset-bottom, 0px) + 8px);
   box-sizing: border-box;
-  overflow: visible;
+  overflow: hidden;
 }
-@media (display-mode: standalone) {
-  .login {
-    min-height: calc(100vh + env(safe-area-inset-bottom, 50px));
-  }
-}
+/* standalone PWA: inset:0 already covers full screen including safe areas */
 .login::before {
   content: '';
   position: fixed;
