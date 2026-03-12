@@ -95,6 +95,14 @@ async function init() {
   // Start connection state monitoring
   initConnectionMonitor();
 
+  // Render sky scene immediately so it's visible on the login screen
+  // (weather fetch below will re-render with real data when available)
+  var _skyC = document.getElementById('sky-scene');
+  if (_skyC && _skyC.children.length === 0 && typeof renderLivingSky === 'function') {
+    renderLivingSky(_skyC);
+  }
+  if (typeof renderTerrain === 'function') renderTerrain();
+
   // Early weather fetch — update login sky background immediately using
   // previously granted location. Runs in parallel with auth, no user needed.
   if (navigator.geolocation && typeof fetchWeather === 'function') {

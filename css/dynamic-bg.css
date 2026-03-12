@@ -13,7 +13,7 @@
 /* Time periods set via JS: data-time="dawn|morning|afternoon|golden|evening|night" */
 
 /* Dawn (5-7am) - soft pinks and purples */
-body[data-time='dawn']::before {
+body[data-time='dawn'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 30% 80%, rgba(255, 120, 150, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 70% 30%, rgba(180, 140, 255, 0.1) 0%, transparent 60%),
@@ -22,7 +22,7 @@ body[data-time='dawn']::before {
 }
 
 /* Morning (7-11am) - warm gold and peach */
-body[data-time='morning']::before {
+body[data-time='morning'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 70% 20%, rgba(255, 200, 100, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 30% 70%, rgba(255, 160, 80, 0.08) 0%, transparent 60%),
@@ -31,7 +31,7 @@ body[data-time='morning']::before {
 }
 
 /* Afternoon (11am-4pm) - bright sky blue and warm */
-body[data-time='afternoon']::before {
+body[data-time='afternoon'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 50% 20%, rgba(100, 180, 255, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 60%, rgba(255, 200, 130, 0.08) 0%, transparent 60%),
@@ -40,7 +40,7 @@ body[data-time='afternoon']::before {
 }
 
 /* Golden hour (4-6pm) - rich amber and deep orange */
-body[data-time='golden']::before {
+body[data-time='golden'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 70% 70%, rgba(255, 140, 50, 0.16) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 30% 30%, rgba(255, 100, 80, 0.1) 0%, transparent 60%),
@@ -49,7 +49,7 @@ body[data-time='golden']::before {
 }
 
 /* Evening (6-9pm) - deep indigo and warm amber */
-body[data-time='evening']::before {
+body[data-time='evening'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 30% 20%, rgba(80, 60, 160, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 70% 70%, rgba(212, 149, 106, 0.1) 0%, transparent 60%),
@@ -58,7 +58,7 @@ body[data-time='evening']::before {
 }
 
 /* Night (9pm-5am) - deep dark sky with subtle aurora */
-body[data-time='night']::before {
+body[data-time='night'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 20% 30%, rgba(15, 25, 60, 0.3) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 70%, rgba(40, 25, 80, 0.2) 0%, transparent 60%),
@@ -67,42 +67,42 @@ body[data-time='night']::before {
 }
 
 /* ===== BEACH ENVIRONMENT - sandy, turquoise, coral warmth ===== */
-body[data-sky-theme='beach'][data-time='dawn']::before {
+body[data-sky-theme='beach'][data-time='dawn'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 30% 80%, rgba(255, 160, 120, 0.16) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 70% 30%, rgba(255, 200, 140, 0.12) 0%, transparent 60%),
     radial-gradient(ellipse 60% 70% at 50% 50%, rgba(210, 140, 100, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 90% 40% at 20% 10%, rgba(255, 180, 160, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='beach'][data-time='morning']::before {
+body[data-sky-theme='beach'][data-time='morning'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 70% 20%, rgba(255, 220, 140, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 30% 70%, rgba(100, 210, 230, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 60% 50%, rgba(255, 240, 200, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 50% 40% at 20% 30%, rgba(200, 160, 80, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='beach'][data-time='afternoon']::before {
+body[data-sky-theme='beach'][data-time='afternoon'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 50% 20%, rgba(40, 200, 220, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 60%, rgba(60, 220, 240, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 20% 80%, rgba(255, 220, 180, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 50% 50% at 40% 40%, rgba(120, 230, 240, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='beach'][data-time='golden']::before {
+body[data-sky-theme='beach'][data-time='golden'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 70% 70%, rgba(255, 140, 40, 0.2) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 30% 30%, rgba(255, 100, 50, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 60% 70% at 60% 20%, rgba(255, 180, 80, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 50% 40% at 80% 50%, rgba(255, 120, 60, 0.08) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='beach'][data-time='evening']::before {
+body[data-sky-theme='beach'][data-time='evening'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 30% 20%, rgba(60, 40, 120, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 70% 70%, rgba(200, 130, 90, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 50% 50%, rgba(100, 60, 140, 0.06) 0%, transparent 60%),
     radial-gradient(ellipse 50% 50% at 80% 30%, rgba(60, 80, 140, 0.05) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='beach'][data-time='night']::before {
+body[data-sky-theme='beach'][data-time='night'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 20% 30%, rgba(10, 20, 50, 0.3) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 70%, rgba(20, 30, 70, 0.2) 0%, transparent 60%),
@@ -111,42 +111,42 @@ body[data-sky-theme='beach'][data-time='night']::before {
 }
 
 /* ===== MOUNTAIN ENVIRONMENT - forest greens, alpine blues, earthy ===== */
-body[data-sky-theme='mountain'][data-time='dawn']::before {
+body[data-sky-theme='mountain'][data-time='dawn'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 30% 80%, rgba(120, 160, 100, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 70% 30%, rgba(160, 180, 140, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 70% at 50% 50%, rgba(180, 200, 160, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 90% 40% at 20% 10%, rgba(100, 140, 80, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='mountain'][data-time='morning']::before {
+body[data-sky-theme='mountain'][data-time='morning'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 70% 20%, rgba(140, 200, 100, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 30% 70%, rgba(100, 180, 80, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 60% 50%, rgba(180, 220, 140, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 50% 40% at 20% 30%, rgba(80, 160, 60, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='mountain'][data-time='afternoon']::before {
+body[data-sky-theme='mountain'][data-time='afternoon'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 50% 20%, rgba(80, 140, 200, 0.12) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 60%, rgba(100, 180, 140, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 20% 80%, rgba(60, 160, 120, 0.07) 0%, transparent 60%),
     radial-gradient(ellipse 50% 50% at 40% 40%, rgba(120, 180, 220, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='mountain'][data-time='golden']::before {
+body[data-sky-theme='mountain'][data-time='golden'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 70% 70%, rgba(200, 140, 60, 0.16) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 30% 30%, rgba(180, 120, 40, 0.12) 0%, transparent 60%),
     radial-gradient(ellipse 60% 70% at 60% 20%, rgba(160, 180, 80, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 50% 40% at 80% 50%, rgba(140, 100, 40, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='mountain'][data-time='evening']::before {
+body[data-sky-theme='mountain'][data-time='evening'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 30% 20%, rgba(40, 60, 100, 0.16) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 70% 70%, rgba(60, 100, 80, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 50% 50%, rgba(30, 50, 80, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 50% 50% at 80% 30%, rgba(80, 100, 140, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='mountain'][data-time='night']::before {
+body[data-sky-theme='mountain'][data-time='night'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 20% 30%, rgba(10, 18, 30, 0.32) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 70%, rgba(20, 30, 50, 0.22) 0%, transparent 60%),
@@ -3003,41 +3003,41 @@ body[data-time='golden'] .weather-sun-rays {
 /* ===== SKY THEME VARIANTS ===== */
 
 /* Beach theme - warmer, tropical sky tints for every time of day */
-body[data-sky-theme='beach'][data-time='dawn']::before {
+body[data-sky-theme='beach'][data-time='dawn'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 30% 80%, rgba(255, 140, 120, 0.16) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 70% 30%, rgba(255, 180, 100, 0.12) 0%, transparent 60%),
     radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255, 200, 140, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 90% 40% at 20% 10%, rgba(200, 120, 80, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='beach'][data-time='morning']::before {
+body[data-sky-theme='beach'][data-time='morning'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 70% 20%, rgba(255, 210, 120, 0.16) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 30% 70%, rgba(100, 200, 230, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 60% 50%, rgba(255, 230, 190, 0.08) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='beach'][data-time='afternoon']::before {
+body[data-sky-theme='beach'][data-time='afternoon'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 50% 20%, rgba(60, 180, 240, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 60%, rgba(255, 220, 150, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 20% 80%, rgba(40, 200, 220, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 50% 40% at 50% 90%, rgba(200, 230, 240, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='beach'][data-time='golden']::before {
+body[data-sky-theme='beach'][data-time='golden'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 70% 70%, rgba(255, 120, 40, 0.22) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 30% 30%, rgba(255, 80, 60, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 90% 40% at 50% 90%, rgba(255, 160, 80, 0.12) 0%, transparent 60%),
     radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255, 100, 50, 0.08) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='beach'][data-time='evening']::before {
+body[data-sky-theme='beach'][data-time='evening'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 30% 20%, rgba(60, 50, 140, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 70% 70%, rgba(200, 120, 80, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 50% 90%, rgba(100, 60, 120, 0.06) 0%, transparent 60%),
     radial-gradient(ellipse 80% 30% at 50% 100%, rgba(40, 80, 120, 0.08) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='beach'][data-time='night']::before {
+body[data-sky-theme='beach'][data-time='night'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 20% 30%, rgba(30, 50, 120, 0.12) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 70%, rgba(60, 40, 140, 0.08) 0%, transparent 60%),
@@ -3057,42 +3057,42 @@ body[data-sky-theme='beach'][data-time='golden'] .particle {
 }
 
 /* Mountain theme - cooler, alpine sky tints for every time of day */
-body[data-sky-theme='mountain'][data-time='dawn']::before {
+body[data-sky-theme='mountain'][data-time='dawn'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 30% 80%, rgba(180, 160, 220, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 70% 30%, rgba(160, 180, 220, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 70% at 50% 50%, rgba(200, 180, 240, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 90% 40% at 20% 10%, rgba(100, 120, 180, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='mountain'][data-time='morning']::before {
+body[data-sky-theme='mountain'][data-time='morning'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 70% 20%, rgba(200, 220, 255, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 30% 70%, rgba(180, 200, 140, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 60% 50%, rgba(220, 235, 250, 0.06) 0%, transparent 60%),
     radial-gradient(ellipse 50% 40% at 40% 80%, rgba(140, 180, 120, 0.05) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='mountain'][data-time='afternoon']::before {
+body[data-sky-theme='mountain'][data-time='afternoon'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 50% 20%, rgba(80, 140, 220, 0.12) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 60%, rgba(160, 200, 180, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 20% 80%, rgba(100, 160, 120, 0.06) 0%, transparent 60%),
     radial-gradient(ellipse 50% 40% at 60% 90%, rgba(120, 160, 100, 0.04) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='mountain'][data-time='golden']::before {
+body[data-sky-theme='mountain'][data-time='golden'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 70% 70%, rgba(220, 140, 60, 0.16) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 30% 30%, rgba(200, 100, 80, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 70% at 60% 20%, rgba(220, 160, 80, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 50% 40% at 80% 50%, rgba(160, 80, 100, 0.05) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='mountain'][data-time='evening']::before {
+body[data-sky-theme='mountain'][data-time='evening'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 30% 20%, rgba(60, 40, 140, 0.16) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 70% 70%, rgba(140, 80, 160, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 60% 60% at 50% 50%, rgba(80, 60, 120, 0.08) 0%, transparent 60%),
     radial-gradient(ellipse 50% 30% at 40% 90%, rgba(40, 60, 100, 0.06) 0%, transparent 60%), var(--bg) !important;
 }
-body[data-sky-theme='mountain'][data-time='night']::before {
+body[data-sky-theme='mountain'][data-time='night'] #bg-aurora {
   background:
     radial-gradient(ellipse 80% 60% at 20% 30%, rgba(30, 40, 120, 0.14) 0%, transparent 60%),
     radial-gradient(ellipse 70% 50% at 80% 70%, rgba(80, 50, 160, 0.1) 0%, transparent 60%),
@@ -5736,10 +5736,10 @@ body[data-time='night'] .ob-env-preview {
 }
 
 /* ===== ONBOARDING TIME-OF-DAY BACKGROUND ===== */
-/* Login + onboarding: transparent background to show live aurora from body::before */
+/* Login + onboarding: transparent background to show live aurora from #bg-aurora */
 
 /* ===== NIGHT/EVENING LOGIN COMPREHENSIVE STYLING ===== */
-/* Login background: transparent - inherits live aurora from body::before */
+/* Login background: transparent - inherits live aurora from #bg-aurora */
 
 /* Night/evening login inputs: frosted glass with muted tones */
 body[data-time='night'] .login-input,
@@ -6026,7 +6026,7 @@ body[data-time='evening'] #welcome-greeting {
 /* Login sky scene rules removed — single master sky-scene handles all screens */
 
 /* ===== BEACH + NIGHT/EVENING LOGIN ===== */
-/* Login background: transparent - inherits live aurora from body::before */
+/* Login background: transparent - inherits live aurora from #bg-aurora */
 body[data-sky-theme='beach'][data-time='night'] .login-btn,
 body[data-sky-theme='beach'][data-time='evening'] .login-btn {
   background: linear-gradient(135deg, #3a7888 0%, #4a9098 40%, #58a8a0 100%) !important;
@@ -6037,7 +6037,7 @@ body[data-sky-theme='beach'][data-time='evening'] .login-btn {
 }
 
 /* ===== MOUNTAIN + NIGHT/EVENING LOGIN ===== */
-/* Login background: transparent - inherits live aurora from body::before */
+/* Login background: transparent - inherits live aurora from #bg-aurora */
 body[data-sky-theme='mountain'][data-time='night'] .login-btn,
 body[data-sky-theme='mountain'][data-time='evening'] .login-btn {
   background: linear-gradient(135deg, #3a6a40 0%, #4a8050 40%, #5a9260 100%) !important;
@@ -6048,7 +6048,7 @@ body[data-sky-theme='mountain'][data-time='evening'] .login-btn {
 }
 
 /* ===== DAWN/GOLDEN HOUR LOGIN ENHANCEMENTS ===== */
-/* Login background: transparent - inherits live aurora from body::before */
+/* Login background: transparent - inherits live aurora from #bg-aurora */
 body[data-time='dawn'] .login-input {
   background: rgba(160, 120, 140, 0.35) !important;
   backdrop-filter: blur(16px) !important;
