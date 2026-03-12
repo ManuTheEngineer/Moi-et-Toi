@@ -5,7 +5,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: var(--screen-h, 100vh);
+  bottom: 0;
   z-index: -1;
   pointer-events: none;
   transition: background 3s ease;
@@ -3210,7 +3210,7 @@ body[data-sky-theme='mountain'][data-time='evening'] .particle {
   top: 0;
   left: 0;
   right: 0;
-  height: var(--screen-h, 100vh);
+  bottom: 0;
   z-index: 1;
   pointer-events: none;
   overflow: hidden;

@@ -9,8 +9,6 @@
     if (h > fullH) fullH = h;
     // Always use the largest known height so the page never shrinks for the keyboard
     document.documentElement.style.setProperty('--real-h', fullH + 'px');
-    // Physical screen height — includes the safe area that CSS viewport units may miss
-    document.documentElement.style.setProperty('--screen-h', window.screen.height + 'px');
   }
   fillScreen();
   var _resizeTimer;
