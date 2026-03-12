@@ -382,6 +382,9 @@
     <div class="particles" id="particles"></div>
     <div class="weather-tint" id="weather-tint"></div>
 
+    <!-- AI Nudges — outside shell so position:fixed isn't broken by .pg transform animations -->
+    <div id="ai-nudges"></div>
+
     <!-- ===== APP SHELL ===== -->
     <div class="shell" id="shell">
       <!-- Page Header Bar -->
@@ -500,9 +503,6 @@
       <div class="pg on" id="pg-dash">
         <div class="ctn">
           <div class="ptr" id="ptr"><span class="ptr-spinner"></span><span class="ptr-text">Pull to refresh</span></div>
-
-          <!-- AI Nudges (background service messages) -->
-          <div id="ai-nudges"></div>
 
           <!-- Greeting + Partner Row -->
           <div class="dash-greeting-row">
