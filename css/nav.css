@@ -72,7 +72,7 @@
   justify-content: center;
   flex-direction: column;
   text-align: center;
-  background: var(--bg);
+  background: transparent;
   padding: env(safe-area-inset-top, 0px) 32px calc(env(safe-area-inset-bottom, 0px) + 8px);
   box-sizing: border-box;
   overflow: visible;
@@ -94,27 +94,12 @@
   z-index: -1;
   pointer-events: none;
 }
-.login-sky-scene {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 35%, transparent 70%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 35%, transparent 70%);
-}
+/* Login sky/terrain scenes hidden — the global sky-scene + terrain-scene
+   (position:fixed, outside .login) now serve as the single master background
+   for the entire app, ensuring consistency between login and dashboard. */
+.login-sky-scene,
 .login-terrain-scene {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
-  z-index: 0;
-  pointer-events: none;
-  overflow: visible;
+  display: none;
 }
 .login > *:not(.login-sky-scene):not(.login-terrain-scene) {
   position: relative;
@@ -769,13 +754,14 @@
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
-/* Sky-visible mode: expand sky scene to fill screen during sky onboarding steps */
-.login.ob-sky-visible .login-sky-scene {
+/* Sky-visible mode: expand sky scene to fill screen during sky onboarding steps.
+   Targets the global sky-scene/terrain-scene (single master background). */
+.login.ob-sky-visible ~ .sky-scene {
   -webkit-mask-image: none !important;
   mask-image: none !important;
   opacity: 1 !important;
 }
-.login.ob-sky-visible .login-terrain-scene {
+.login.ob-sky-visible ~ .terrain-scene {
   opacity: 1 !important;
 }
 .login.ob-sky-visible .onboard-title {

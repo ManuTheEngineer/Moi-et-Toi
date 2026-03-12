@@ -109,8 +109,10 @@ async function init() {
           } catch (e) {}
         }
         fetchWeather().then(function () {
-          var loginSky = document.getElementById('login-sky-scene');
-          if (loginSky && typeof renderLivingSky === 'function') renderLivingSky(loginSky);
+          // Re-render the single master sky with real weather data
+          var skyC = document.getElementById('sky-scene');
+          if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
+          if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
         });
       },
       function () {
@@ -407,9 +409,10 @@ function handleFirstLocationAllow() {
         // Fetch weather and immediately update the login sky background
         if (typeof fetchWeather === 'function') {
           fetchWeather().then(function () {
-            // Update the login screen sky with real weather data
-            var loginSky = document.getElementById('login-sky-scene');
-            if (loginSky && typeof renderLivingSky === 'function') renderLivingSky(loginSky);
+            // Re-render the single master sky with real weather data
+            var skyC = document.getElementById('sky-scene');
+            if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
+            if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
             if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
             if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
           });
@@ -1117,20 +1120,19 @@ function onboardNext() {
 function obToggleLiveSky(on) {
   onboardData.livingSky = on;
   var loginEl = document.querySelector('.login');
-  var skyC = document.getElementById('login-sky-scene');
-  var terrC = document.getElementById('login-terrain-scene');
+  // Use global sky/terrain containers (the single master background)
+  var skyC = document.getElementById('sky-scene');
+  var terrC = document.getElementById('terrain-scene');
   if (loginEl) {
     if (on) {
       loginEl.classList.add('ob-sky-visible');
-      // Show background animations and render sky/terrain
-      if (skyC) skyC.style.display = '';
-      if (terrC) terrC.style.display = '';
+      if (skyC) skyC.style.opacity = '';
+      if (terrC) terrC.style.opacity = '';
       obApplyLiveTheme(onboardData.skyTheme);
     } else {
       loginEl.classList.remove('ob-sky-visible');
-      // Hide background animations
-      if (skyC) skyC.style.display = 'none';
-      if (terrC) terrC.style.display = 'none';
+      if (skyC) skyC.style.opacity = '0';
+      if (terrC) terrC.style.opacity = '0';
     }
   }
 }
@@ -1157,20 +1159,12 @@ function obApplyLiveTheme(theme) {
   theme = theme || onboardData.skyTheme || 'mixed';
   // Set the body attribute so CSS variables change
   document.body.setAttribute('data-sky-theme', theme);
-  // Update the login page sky scene
-  var skyC = document.getElementById('login-sky-scene');
+  // Update the global master sky scene (single background for entire app)
+  var skyC = document.getElementById('sky-scene');
   if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
-  // Update login terrain
-  var terrC = document.getElementById('login-terrain-scene');
-  if (terrC) {
-    terrC.innerHTML = '';
-    if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
-      renderBeachTerrain(terrC);
-    } else if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
-      renderMountainTerrain(terrC);
-    } else if (typeof renderMeadowTerrain === 'function') {
-      renderMeadowTerrain(terrC);
-    }
+  // Update global terrain
+  if (typeof renderTerrain === 'function') {
+    renderTerrain(theme);
   }
   // Update orbs and time-of-day colors
   if (typeof spawnOrbs === 'function') spawnOrbs();

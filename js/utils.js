@@ -139,14 +139,16 @@
   } catch (e) {}
 })();
 
-// ===== RENDER LIVING SKY ON LOGIN PAGE =====
-// Uses saved theme preference if available, otherwise defaults to meadow (Both)
+// ===== RENDER MASTER SKY (single background for entire app) =====
+// Renders into the GLOBAL sky-scene + terrain-scene so the exact same background
+// is visible on login, onboarding, and every dashboard page.
 function renderLoginSky() {
-  var skyC = document.getElementById('login-sky-scene');
-  var terrC = document.getElementById('login-terrain-scene');
-  if (!skyC || !terrC) return;
+  // Use the global sky/terrain containers (position:fixed, visible everywhere)
+  var skyC = document.getElementById('sky-scene');
+  var terrC = document.getElementById('terrain-scene');
+  if (!skyC) return;
 
-  // Restore cached weather data for instant weather effects on login page
+  // Restore cached weather data for instant weather-aware rendering
   if (typeof WEATHER !== 'undefined' && !WEATHER.data) {
     try {
       var cached = localStorage.getItem('met_weather_cache');
@@ -159,7 +161,7 @@ function renderLoginSky() {
       }
     } catch (e) {}
   }
-  // Restore cached location for weather-aware login rendering
+  // Restore cached location for weather-aware rendering
   if (typeof WEATHER !== 'undefined' && !WEATHER.lat) {
     try {
       var cachedLoc = localStorage.getItem('met_weather_location');
@@ -173,17 +175,23 @@ function renderLoginSky() {
   }
 
   if (typeof renderLivingSky === 'function') renderLivingSky(skyC);
-  terrC.innerHTML = '';
-  var theme = window._cachedSkyTheme || 'mixed';
-  if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
-    renderBeachTerrain(terrC);
-  } else if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
-    renderMountainTerrain(terrC);
-  } else if (typeof renderMeadowTerrain === 'function') {
-    renderMeadowTerrain(terrC);
+  if (terrC) {
+    var theme = window._cachedSkyTheme || 'mixed';
+    if (typeof renderTerrain === 'function') {
+      renderTerrain(theme);
+    } else {
+      terrC.innerHTML = '';
+      if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
+        renderBeachTerrain(terrC);
+      } else if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
+        renderMountainTerrain(terrC);
+      } else if (typeof renderMeadowTerrain === 'function') {
+        renderMeadowTerrain(terrC);
+      }
+    }
   }
 }
-// Render login sky immediately (scripts are at bottom of body, DOM is ready)
+// Render master sky immediately (scripts are at bottom of body, DOM is ready)
 renderLoginSky();
 
 // ===== DYNAMIC TIME-OF-DAY SYSTEM =====
@@ -1975,13 +1983,11 @@ function applySkyTheme(theme) {
   try {
     localStorage.setItem('met_sky_theme', currentSkyTheme);
   } catch (e) {}
-  // Re-render the living sky with the new theme
+  // Re-render the single master sky with the new theme
   var container = document.getElementById('sky-scene');
   if (container && livingSkyEnabled) renderLivingSky(container);
   // Render immersive terrain silhouettes
   renderTerrain(currentSkyTheme);
-  // Also update login page sky/terrain if visible
-  renderLoginSky();
   // Refresh orbs and meta color to match new theme
   spawnOrbs();
   updateTimeOfDay();

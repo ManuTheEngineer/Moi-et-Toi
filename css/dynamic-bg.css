@@ -6037,12 +6037,7 @@ body[data-time='evening'] #welcome-greeting {
   color: rgba(200, 210, 200, 0.65) !important;
 }
 
-/* Night/evening sky scene: extend visibility */
-body[data-time='night'] .login-sky-scene,
-body[data-time='evening'] .login-sky-scene {
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 80%) !important;
-  mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 80%) !important;
-}
+/* Login sky scene rules removed — single master sky-scene handles all screens */
 
 /* ===== BEACH + NIGHT/EVENING LOGIN ===== */
 /* Login background: transparent - inherits live aurora from body::before */
