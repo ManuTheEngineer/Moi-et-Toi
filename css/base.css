@@ -56,16 +56,12 @@ body.keyboard-open .generic-modal-box {
   max-height: calc(var(--vv-h, 50vh) - 40px);
 }
 /* ===== UNIVERSAL BACKGROUND CONTAINER =====
-   Single fixed container sized to the physical screen. Every visual
-   background layer lives inside it and fills via position:absolute.
-   This guarantees consistent edge-to-edge coverage on every page. */
+   Single fixed container that fills the entire viewport including safe
+   areas. Uses inset:0 so it always matches the browser chrome exactly —
+   no JS sizing, no viewport-unit mismatches, no iOS gaps. */
 #bg {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: var(--screen-h, 100vh);
-  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
+  inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;

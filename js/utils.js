@@ -779,6 +779,21 @@ function renderLivingSky(container) {
   }
 }
 
+// Wrap renderLivingSky so it NEVER causes a visible flash.
+// Builds all elements into an offscreen div, then swaps them in atomically
+// within a single JS frame — the browser never paints the cleared state.
+(function () {
+  var _baseSky = renderLivingSky;
+  renderLivingSky = function (container) {
+    var offscreen = document.createElement('div');
+    _baseSky(offscreen);
+    // Atomic swap — clear + append in one synchronous block
+    container.textContent = '';
+    while (offscreen.firstChild) container.appendChild(offscreen.firstChild);
+    window._skyRenderedAt = Date.now();
+  };
+})();
+
 function renderSun(container, pos, color, isGolden) {
   var size = color.size;
   var sun = document.createElement('div');
@@ -1154,17 +1169,20 @@ function renderCloud(container, isDarkMode, isGolden) {
 function renderTerrain(theme) {
   var container = document.getElementById('terrain-scene');
   if (!container) return;
-  container.innerHTML = '';
 
   theme = theme || (typeof currentSkyTheme !== 'undefined' ? currentSkyTheme : 'mixed');
 
+  // Build into offscreen div, then swap atomically (no flash)
+  var offscreen = document.createElement('div');
   if (theme === 'mountain') {
-    renderMountainTerrain(container);
+    renderMountainTerrain(offscreen);
   } else if (theme === 'beach') {
-    renderBeachTerrain(container);
+    renderBeachTerrain(offscreen);
   } else {
-    renderMeadowTerrain(container);
+    renderMeadowTerrain(offscreen);
   }
+  container.textContent = '';
+  while (offscreen.firstChild) container.appendChild(offscreen.firstChild);
 }
 
 function renderMountainTerrain(container) {
