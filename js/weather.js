@@ -3462,7 +3462,7 @@ function initWeatherSystem() {
     }
   });
 
-  // Refresh weather data every 15 minutes (updates cache, no sky re-render)
+  // Refresh weather + sky every 15 minutes once user has granted location
   if (!WEATHER.refreshTimer) {
     WEATHER.refreshTimer = setInterval(
       function () {
@@ -3470,6 +3470,9 @@ function initWeatherSystem() {
         if (WEATHER.locationGranted) {
           fetchWeather().then(function () {
             if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+            var container = document.getElementById('sky-scene');
+            if (container && livingSkyEnabled) renderLivingSky(container);
+            if (typeof renderTerrain === 'function') renderTerrain();
             updateWeatherInfoUI();
           });
         }
