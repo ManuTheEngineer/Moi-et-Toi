@@ -132,7 +132,10 @@ body.sky-off::before {
    .shell gets z-index:2 to stack above sky, login stays at z-index:100. */
 .sky-scene {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
   z-index: 1;
   pointer-events: none;
   overflow: hidden;
