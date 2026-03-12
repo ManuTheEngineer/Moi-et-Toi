@@ -1,13 +1,8 @@
 /* ===== WEATHER-AWARE TINT OVERLAY ===== */
 /* Controlled by JS: golden-hour blend + temperature tint */
 .weather-tint {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--screen-h, 100vh);
-  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
-  z-index: -1;
+  position: absolute;
+  inset: 0;
   pointer-events: none;
   transition: background 3s ease;
   background: transparent;
@@ -3207,13 +3202,8 @@ body[data-sky-theme='mountain'][data-time='evening'] .particle {
 /* Terrain lives outside sky-scene mask so silhouettes are fully visible */
 
 .terrain-scene {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--screen-h, 100vh);
-  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
-  z-index: 1;
+  position: absolute;
+  inset: 0;
   pointer-events: none;
   overflow: hidden;
   transition: opacity 2s ease;

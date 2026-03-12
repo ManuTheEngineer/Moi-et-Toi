@@ -375,12 +375,17 @@
       <div id="login-err" class="login-err"></div>
     </div>
 
-    <!-- Sky/terrain/particles are OUTSIDE the shell so they render regardless of shell display state -->
-    <!-- They use position:fixed so DOM position doesn't affect layout -->
-    <div class="sky-scene" id="sky-scene"></div>
-    <div class="terrain-scene" id="terrain-scene"></div>
-    <div class="particles" id="particles"></div>
-    <div class="weather-tint" id="weather-tint"></div>
+    <!-- ===== UNIVERSAL BACKGROUND — single container for ALL visual background layers.
+         Sized once (by JS + CSS), everything inside fills it via position:absolute.
+         This ensures consistent edge-to-edge coverage on every page. ===== -->
+    <div id="bg">
+      <div id="bg-aurora"></div>
+      <div id="bg-noise"></div>
+      <div class="sky-scene" id="sky-scene"></div>
+      <div class="terrain-scene" id="terrain-scene"></div>
+      <div class="particles" id="particles"></div>
+      <div class="weather-tint" id="weather-tint"></div>
+    </div>
 
     <!-- AI Nudges — outside shell so position:fixed isn't broken by .pg transform animations -->
     <div id="ai-nudges"></div>

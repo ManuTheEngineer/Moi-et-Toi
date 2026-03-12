@@ -74,22 +74,8 @@
   box-sizing: border-box;
   overflow: hidden;
 }
-/* standalone PWA: inset:0 already covers full screen including safe areas */
-.login::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--screen-h, 100vh);
-  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
-  background: transparent;
-  z-index: -1;
-  pointer-events: none;
-}
-/* Login sky/terrain scenes hidden — the global sky-scene + terrain-scene
-   (position:fixed, outside .login) now serve as the single master background
-   for the entire app, ensuring consistency between login and dashboard. */
+/* Login sky/terrain scenes hidden — the universal #bg container provides
+   the single background for the entire app including login. */
 .login-sky-scene,
 .login-terrain-scene {
   display: none;
