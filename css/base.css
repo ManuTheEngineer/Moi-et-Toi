@@ -60,7 +60,8 @@ body::before {
   top: 0;
   left: 0;
   right: 0;
-  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
+  bottom: -60px;
+  height: calc(100vh + 60px);
   z-index: -2;
   pointer-events: none;
   background:
@@ -79,7 +80,8 @@ body::after {
   top: 0;
   left: 0;
   right: 0;
-  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
+  bottom: -60px;
+  height: calc(100vh + 60px);
   z-index: -1;
   pointer-events: none;
   opacity: 0.025;
@@ -135,7 +137,8 @@ body.sky-off::before {
   top: 0;
   left: 0;
   right: 0;
-  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
+  bottom: -60px;
+  height: calc(100vh + 60px);
   z-index: 1;
   pointer-events: none;
   overflow: hidden;
