@@ -2735,6 +2735,52 @@
   font-style: italic;
 }
 
+/* Pending approval highlight */
+.agree-pending-approval {
+  border-left: 3px solid var(--gold, #c9a96e);
+  background: rgba(201, 169, 110, 0.06);
+  animation: agreeGlow 2.5s ease-in-out infinite;
+}
+@keyframes agreeGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 110, 0); }
+  50% { box-shadow: 0 0 8px 0 rgba(201, 169, 110, 0.12); }
+}
+.agree-check-pending {
+  background: var(--tint, rgba(201, 169, 110, 0.15)) !important;
+  color: var(--gold) !important;
+}
+.agree-item-body {
+  flex: 1;
+  min-width: 0;
+}
+.agree-approve-btn {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 5px 14px;
+  border-radius: 16px;
+  border: none;
+  background: var(--gold, #c9a96e);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.agree-approve-btn:active {
+  transform: scale(0.94);
+}
+.agree-waiting-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--tint, rgba(201, 169, 110, 0.08));
+  color: var(--t3);
+  font-size: 10px;
+  font-style: italic;
+}
+
 /* Private commitment styling */
 .agree-private {
   border-left: 3px solid var(--rose, #e8547a);

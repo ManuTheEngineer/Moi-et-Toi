@@ -1031,7 +1031,6 @@ function listenAgreements() {
     var items = [];
     snap.forEach(function (c) {
       var d = c.val();
-      // Exclude personal items from shared view (they belong in private tab)
       if (d.source === 'personal') return;
       items.push({ key: c.key, data: d });
     });
@@ -1043,10 +1042,32 @@ function listenAgreements() {
     el.innerHTML = items
       .map(function (item) {
         var d = item.data;
+        var approvals = d.approvals || {};
+        var iApproved = approvals[user] === true;
+        var partnerApproved = approvals[partner] === true;
+        var bothApproved = iApproved && partnerApproved;
+        var pendingClass = bothApproved ? '' : ' agree-pending-approval';
+        var checkIcon = bothApproved ? '✓' : '◯';
+        var checkClass = bothApproved ? 'agree-item-check' : 'agree-item-check agree-check-pending';
+
+        // Approval toggle: show if I haven't approved yet
+        var approveToggle = '';
+        if (!iApproved) {
+          approveToggle =
+            '<button class="agree-approve-btn" onclick="toggleCommitmentApproval(\'' +
+            item.key + '\')" title="Approve this commitment">Approve</button>';
+        } else if (!partnerApproved) {
+          approveToggle =
+            '<span class="agree-waiting-badge">Awaiting partner</span>';
+        }
+
         return (
-          '<div class="agree-item">' +
-          '<div class="agree-item-check">✓</div>' +
+          '<div class="agree-item' + pendingClass + '">' +
+          '<div class="' + checkClass + '">' + checkIcon + '</div>' +
+          '<div class="agree-item-body">' +
           '<div class="agree-item-text">' + esc(d.text) + '</div>' +
+          approveToggle +
+          '</div>' +
           '<div class="agree-item-actions">' +
           '<button class="agree-item-btn" onclick="openAgreementEdit(\'' +
           item.key + "','" + esc(d.text).replace(/'/g, "\\'") +
@@ -1247,17 +1268,20 @@ function _migrateOnboardingAgreements() {
               timestamp: Date.now() - 1000 * count++
             };
           });
-        // Together commitments → shared active path
+        // Together commitments → shared active path (adder approved, partner pending)
         if (d.together)
           d.together.forEach(function (t) {
             var key = db.ref('agreements/active').push().key;
+            var approvals = {};
+            approvals[role] = true;
             batch['agreements/active/' + key] = {
               text: t,
               addedBy: role,
               addedByName: NAMES[role] || role,
               source: 'together',
               timestamp: Date.now() - 1000 * count++,
-              signedOff: true
+              signedOff: true,
+              approvals: approvals
             };
           });
       });
@@ -1267,18 +1291,21 @@ function _migrateOnboardingAgreements() {
         custSnap.forEach(function (c) {
           var d = c.val();
           var key = db.ref('agreements/active').push().key;
+          var custApprovals = {};
+          if (d.addedBy) custApprovals[d.addedBy] = true;
           batch['agreements/active/' + key] = {
             text: d.text,
             addedBy: d.addedBy,
             addedByName: d.addedByName,
             source: 'custom',
             timestamp: d.timestamp || Date.now(),
-            signedOff: true
+            signedOff: true,
+            approvals: custApprovals
           };
           count++;
         });
 
-        // Default communication agreements
+        // Default communication agreements (both approved)
         var defaults = [
           "We don't go to bed angry",
           'We use "I feel" not "you always"',
@@ -1293,7 +1320,8 @@ function _migrateOnboardingAgreements() {
             text: text,
             source: 'default',
             timestamp: Date.now() - 1000 * count++,
-            signedOff: true
+            signedOff: true,
+            approvals: { her: true, him: true }
           };
         });
 
@@ -1335,6 +1363,15 @@ function _migratePersonalToPrivate() {
       }
     });
   });
+}
+
+/* ---------- commitment approval toggle ---------- */
+
+function toggleCommitmentApproval(key) {
+  if (!db || !user) return;
+  db.ref('agreements/active/' + key + '/approvals/' + user).set(true)
+    .then(function () { toast('Approved'); })
+    .catch(function () { toast('Save failed'); });
 }
 
 /* ---------- shared commitment proposal workflow ---------- */
@@ -1433,6 +1470,9 @@ function approveProposal(proposalKey) {
 
     var _catchFail = function () { toast('Save failed'); };
     if (proposal.type === 'new') {
+      var newApprovals = {};
+      newApprovals[proposal.proposedBy] = true;
+      newApprovals[user] = true;
       db.ref('agreements/active').push({
         text: proposal.text,
         addedBy: proposal.proposedBy,
@@ -1440,7 +1480,7 @@ function approveProposal(proposalKey) {
         source: 'proposed',
         timestamp: Date.now(),
         signedOff: true,
-        approvedBy: user
+        approvals: newApprovals
       }).catch(_catchFail);
     } else if (proposal.type === 'edit' && proposal.targetKey) {
       db.ref('agreements/active/' + proposal.targetKey + '/text').set(proposal.text).catch(_catchFail);
