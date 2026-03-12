@@ -158,12 +158,6 @@ body[data-sky-theme='mountain'][data-time='night']::before {
     radial-gradient(ellipse 100% 100% at 50% 50%, rgba(6, 10, 20, 0.28) 0%, transparent 80%), var(--bg) !important;
 }
 
-/* ===== WEATHER-CONDITION OVERLAYS ===== */
-/* Weather condition tinting is applied via JS to the .weather-tint element,
-   combining golden-hour warmth + temperature tint + weather condition into
-   one unified overlay. The data-weather attribute on <body> is set from real
-   weather API data and kept in sync for consistent theming across all screens. */
-
 /* ===== ANIMATED FLOATING ORBS ===== */
 .bg-orb {
   position: fixed;

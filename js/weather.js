@@ -270,8 +270,6 @@ function fetchWeather() {
       try {
         localStorage.setItem('met_weather_cache', JSON.stringify(WEATHER.data));
       } catch (e) {}
-      // Apply weather condition to body for CSS-driven background tinting
-      applyWeatherCondition(condition);
       // Update location button
       var btn = document.getElementById('set-location-btn');
       if (btn) btn.textContent = 'Refresh';
@@ -300,17 +298,6 @@ function mapWMOCode(code) {
   return 'clear';
 }
 
-// ===== WEATHER CONDITION → BODY ATTRIBUTE =====
-// Sets data-weather on <body> so CSS can apply condition-aware background overlays.
-// 'clear' removes the attribute entirely (no overlay needed).
-function applyWeatherCondition(condition) {
-  if (!condition || condition === 'clear') {
-    document.body.removeAttribute('data-weather');
-  } else {
-    document.body.setAttribute('data-weather', condition);
-  }
-}
-
 // ===== TEMPERATURE COLOR TINTING =====
 function getTempTint() {
   if (!WEATHER.data) return null;
@@ -330,28 +317,33 @@ function getTempTint() {
 function getWeatherConditionTint() {
   if (!WEATHER.data || !WEATHER.data.condition) return null;
   var c = WEATHER.data.condition;
-  var isDark = false;
-  try {
-    var t = document.body.getAttribute('data-time');
-    isDark = t === 'night' || t === 'evening';
-  } catch (e) {}
+  var t = document.body.getAttribute('data-time');
+  var isDark = t === 'night' || t === 'evening';
   // Reduce intensity at night/evening
   var m = isDark ? 0.5 : 1;
   switch (c) {
     case 'clouds':
+    case 'smoke':
       return 'rgba(160,170,185,' + (0.10 * m).toFixed(3) + ')';
     case 'fog':
+    case 'mist':
+    case 'haze':
       return 'rgba(200,200,210,' + (0.14 * m).toFixed(3) + ')';
     case 'drizzle':
       return 'rgba(110,130,160,' + (0.08 * m).toFixed(3) + ')';
     case 'rain':
       return 'rgba(70,90,120,' + (0.12 * m).toFixed(3) + ')';
     case 'thunderstorm':
+    case 'tornado':
+    case 'squall':
       return 'rgba(50,55,80,' + (0.14 * m).toFixed(3) + ')';
     case 'snow':
       return 'rgba(210,220,240,' + (0.12 * m).toFixed(3) + ')';
     case 'hail':
       return 'rgba(150,170,200,' + (0.10 * m).toFixed(3) + ')';
+    case 'dust':
+    case 'sand':
+      return 'rgba(180,160,120,' + (0.10 * m).toFixed(3) + ')';
     default: // clear
       return null;
   }
@@ -3327,11 +3319,6 @@ function syncSkyState() {
   var time = getTimeOfDay();
   var prevTime = document.body.getAttribute('data-time');
   document.body.setAttribute('data-time', time);
-
-  // Keep weather condition attribute in sync (ensures consistency across all screens)
-  if (WEATHER.data && WEATHER.data.condition) {
-    applyWeatherCondition(WEATHER.data.condition);
-  }
 
   // If time period changed, refresh the sky
   if (prevTime && prevTime !== time) {

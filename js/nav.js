@@ -67,7 +67,12 @@ function go(p) {
   document.body.dataset.page = p;
 
   // Ensure time-of-day and weather condition are current so background stays consistent
-  if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+  // Skip if time period hasn't changed — avoids redundant DOM/style updates
+  if (typeof updateTimeOfDay === 'function') {
+    var _curTime = document.body.getAttribute('data-time');
+    var _newTime = typeof getTimeOfDay === 'function' ? getTimeOfDay() : null;
+    if (_newTime && _newTime !== _curTime) updateTimeOfDay();
+  }
 
   // Track for recent pages in quick action sheet
   trackRecentPage(p);

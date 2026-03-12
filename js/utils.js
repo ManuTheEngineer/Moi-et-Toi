@@ -154,10 +154,6 @@ function renderLoginSky() {
       var cached = localStorage.getItem('met_weather_cache');
       if (cached) {
         WEATHER.data = JSON.parse(cached);
-        // Apply cached weather condition to body for consistent background tinting
-        if (WEATHER.data.condition && typeof applyWeatherCondition === 'function') {
-          applyWeatherCondition(WEATHER.data.condition);
-        }
       }
     } catch (e) {}
   }
@@ -174,21 +170,12 @@ function renderLoginSky() {
     } catch (e) {}
   }
 
-  if (typeof renderLivingSky === 'function') renderLivingSky(skyC);
-  if (terrC) {
-    var theme = window._cachedSkyTheme || 'mixed';
-    if (typeof renderTerrain === 'function') {
-      renderTerrain(theme);
-    } else {
-      terrC.innerHTML = '';
-      if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
-        renderBeachTerrain(terrC);
-      } else if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
-        renderMountainTerrain(terrC);
-      } else if (typeof renderMeadowTerrain === 'function') {
-        renderMeadowTerrain(terrC);
-      }
-    }
+  if (typeof renderLivingSky === 'function') {
+    renderLivingSky(skyC);
+    window._skyRenderedAt = Date.now();
+  }
+  if (terrC && typeof renderTerrain === 'function') {
+    renderTerrain(window._cachedSkyTheme || 'mixed');
   }
 }
 // Render master sky immediately (scripts are at bottom of body, DOM is ready)
@@ -494,9 +481,11 @@ function setLivingSky(on) {
     if (terrain) terrain.style.opacity = '';
     var particles = document.getElementById('particles');
     if (particles) particles.style.display = '';
-    // Render sky and terrain
+    // Render sky and terrain — skip if renderLoginSky() already rendered recently
     if (container) {
-      renderLivingSky(container);
+      if (!window._skyRenderedAt || Date.now() - window._skyRenderedAt > 2000) {
+        renderLivingSky(container);
+      }
       startCreatureLoop(container);
       // Restart periodic sky refresh
       clearInterval(SKY.sceneTimer);
@@ -1977,7 +1966,10 @@ function renderMeadowTerrain(container) {
 var currentSkyTheme = window._cachedSkyTheme || 'mixed';
 
 function applySkyTheme(theme) {
-  currentSkyTheme = theme || 'mixed';
+  theme = theme || 'mixed';
+  // Early-exit if theme is already applied — avoids expensive re-render
+  if (theme === currentSkyTheme && document.body.getAttribute('data-sky-theme') === theme) return;
+  currentSkyTheme = theme;
   document.body.setAttribute('data-sky-theme', currentSkyTheme);
   // Cache for instant apply on next load (login page, before Firebase)
   try {
