@@ -4,29 +4,16 @@ let selectedSleep = 0;
 let selectedStress = 0;
 let selectedTags = [];
 
-function selMood(val, el) {
-  selectedMood = val;
-  document.querySelectorAll('#mood-grid .pill-btn').forEach(b => b.classList.remove('sel'));
+function selGrid(gridId, val, el) {
+  var setters = { 'mood-grid': function(v) { selectedMood = v; }, 'energy-grid': function(v) { selectedEnergy = v; }, 'sleep-grid': function(v) { selectedSleep = v; }, 'stress-grid': function(v) { selectedStress = v; } };
+  if (setters[gridId]) setters[gridId](val);
+  document.querySelectorAll('#' + gridId + ' .pill-btn').forEach(b => b.classList.remove('sel'));
   el.classList.add('sel');
 }
-
-function selEnergy(val, el) {
-  selectedEnergy = val;
-  document.querySelectorAll('#energy-grid .pill-btn').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
-function selSleep(val, el) {
-  selectedSleep = val;
-  document.querySelectorAll('#sleep-grid .pill-btn').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
-function selStress(val, el) {
-  selectedStress = val;
-  document.querySelectorAll('#stress-grid .pill-btn').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
-}
+function selMood(val, el) { selGrid('mood-grid', val, el); }
+function selEnergy(val, el) { selGrid('energy-grid', val, el); }
+function selSleep(val, el) { selGrid('sleep-grid', val, el); }
+function selStress(val, el) { selGrid('stress-grid', val, el); }
 
 function toggleTag(el) {
   const tag = el.dataset.tag;
@@ -1479,14 +1466,28 @@ async function updateStreak() {
   const yesterday = localDate(new Date(Date.now() - 86400000));
   const herToday = data.lastCheckIn.her === today;
   const himToday = data.lastCheckIn.him === today;
-  const herYesterday = data.lastCheckIn.her === yesterday || data.lastCheckIn.her === today;
-  const himYesterday = data.lastCheckIn.him === yesterday || data.lastCheckIn.him === today;
 
   if (herToday && himToday) {
-    if (!herYesterday || !himYesterday) data.current = 1;
-    else data.current = (data.current || 0) + 1;
-    if (data.current > (data.longest || 0)) data.longest = data.current;
+    // Guard: only bump once per day
+    if (data.lastBump === today) {
+      // Already counted today — just save the lastCheckIn update
+    } else {
+      // Check if BOTH had checked in yesterday (continuity for streak)
+      const herHadYesterday = data.prevCheckIn && data.prevCheckIn.her === yesterday;
+      const himHadYesterday = data.prevCheckIn && data.prevCheckIn.him === yesterday;
+      if (herHadYesterday && himHadYesterday) {
+        data.current = (data.current || 0) + 1;
+      } else {
+        data.current = 1;
+      }
+      if (data.current > (data.longest || 0)) data.longest = data.current;
+      data.lastBump = today;
+    }
   }
+  // Store previous check-in dates before overwriting (for next day's continuity check)
+  if (!data.prevCheckIn) data.prevCheckIn = {};
+  if (data.lastCheckIn.her && data.lastCheckIn.her !== today) data.prevCheckIn.her = data.lastCheckIn.her;
+  if (data.lastCheckIn.him && data.lastCheckIn.him !== today) data.prevCheckIn.him = data.lastCheckIn.him;
 
   await db.ref('streaks').set(data);
 }
@@ -1954,6 +1955,13 @@ function renderAINudges() {
 
 async function dismissAINudge(key) {
   if (!db) return;
+  // Animate out the card before removing
+  var btn = event && event.currentTarget;
+  var card = btn ? btn.closest('.ai-nudge-card') : null;
+  if (card) {
+    card.classList.add('nudge-dismiss');
+    card.addEventListener('animationend', function () { card.remove(); });
+  }
   await db.ref('ai/nudges/' + user + '/' + key + '/dismissed').set(true);
 }
 

@@ -9,6 +9,9 @@
     if (h > fullH) fullH = h;
     // Always use the largest known height so the page never shrinks for the keyboard
     document.documentElement.style.setProperty('--real-h', fullH + 'px');
+    // Physical screen height — tells background layers exactly where the
+    // bottom edge of the phone is, including the safe area / home indicator
+    document.documentElement.style.setProperty('--screen-h', window.screen.height + 'px');
   }
   fillScreen();
   var _resizeTimer;
@@ -135,18 +138,26 @@
     window._cachedSkyTheme = saved;
     if (saved) {
       document.body.setAttribute('data-sky-theme', saved);
+      document.documentElement.setAttribute('data-sky-theme', saved);
     }
   } catch (e) {}
+  // Set time-of-day on both html and body early so html canvas --bg is correct immediately
+  var _h = new Date().getHours();
+  var _t = _h >= 5 && _h < 7 ? 'dawn' : _h >= 7 && _h < 11 ? 'morning' : _h >= 11 && _h < 16 ? 'afternoon' : _h >= 16 && _h < 18 ? 'golden' : _h >= 18 && _h < 21 ? 'evening' : 'night';
+  document.body.setAttribute('data-time', _t);
+  document.documentElement.setAttribute('data-time', _t);
 })();
 
-// ===== RENDER LIVING SKY ON LOGIN PAGE =====
-// Uses saved theme preference if available, otherwise defaults to meadow (Both)
+// ===== RENDER MASTER SKY (single background for entire app) =====
+// Renders into the GLOBAL sky-scene + terrain-scene so the exact same background
+// is visible on login, onboarding, and every dashboard page.
 function renderLoginSky() {
-  var skyC = document.getElementById('login-sky-scene');
-  var terrC = document.getElementById('login-terrain-scene');
-  if (!skyC || !terrC) return;
+  // Use the global sky/terrain containers (position:fixed, visible everywhere)
+  var skyC = document.getElementById('sky-scene');
+  var terrC = document.getElementById('terrain-scene');
+  if (!skyC) return;
 
-  // Restore cached weather data for instant weather effects on login page
+  // Restore cached weather data for instant weather-aware rendering
   if (typeof WEATHER !== 'undefined' && !WEATHER.data) {
     try {
       var cached = localStorage.getItem('met_weather_cache');
@@ -155,7 +166,7 @@ function renderLoginSky() {
       }
     } catch (e) {}
   }
-  // Restore cached location for weather-aware login rendering
+  // Restore cached location for weather-aware rendering
   if (typeof WEATHER !== 'undefined' && !WEATHER.lat) {
     try {
       var cachedLoc = localStorage.getItem('met_weather_location');
@@ -168,18 +179,15 @@ function renderLoginSky() {
     } catch (e) {}
   }
 
-  if (typeof renderLivingSky === 'function') renderLivingSky(skyC);
-  terrC.innerHTML = '';
-  var theme = window._cachedSkyTheme || 'mixed';
-  if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
-    renderBeachTerrain(terrC);
-  } else if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
-    renderMountainTerrain(terrC);
-  } else if (typeof renderMeadowTerrain === 'function') {
-    renderMeadowTerrain(terrC);
+  if (typeof renderLivingSky === 'function') {
+    renderLivingSky(skyC);
+    window._skyRenderedAt = Date.now();
+  }
+  if (terrC && typeof renderTerrain === 'function') {
+    renderTerrain(window._cachedSkyTheme || 'mixed');
   }
 }
-// Render login sky immediately (scripts are at bottom of body, DOM is ready)
+// Render master sky immediately (scripts are at bottom of body, DOM is ready)
 renderLoginSky();
 
 // ===== DYNAMIC TIME-OF-DAY SYSTEM =====
@@ -197,6 +205,7 @@ function updateTimeOfDay() {
   var time = getTimeOfDay();
   var prev = document.body.getAttribute('data-time');
   document.body.setAttribute('data-time', time);
+  document.documentElement.setAttribute('data-time', time);
   // Update browser chrome color to match theme + sky theme
   var themeColors = {
     mixed: {
@@ -230,6 +239,45 @@ function updateTimeOfDay() {
   if (meta) meta.content = colors[time] || '#F5F0EB';
   // Re-render orbs when time changes to match new palette
   if (prev && prev !== time && typeof spawnOrbs === 'function') spawnOrbs();
+
+  // ===== Weather-aware golden-hour warmth blend =====
+  // Gradually warm the background as golden hour approaches (no hard cut)
+  var blend = 0;
+  if (typeof WEATHER !== 'undefined' && WEATHER.locationGranted && WEATHER.data && typeof getSunTimes === 'function') {
+    var times = getSunTimes();
+    var sunsetH = new Date(times.sunset).getHours() + new Date(times.sunset).getMinutes() / 60;
+    var h = new Date().getHours() + new Date().getMinutes() / 60;
+    var goldenStart = sunsetH - 2;
+    // Ramp 0→1 over the hour before golden hour
+    if (time === 'afternoon' && h >= goldenStart - 1) {
+      blend = Math.min(1, Math.max(0, (h - (goldenStart - 1)) / 1));
+    } else if (time === 'golden') {
+      blend = 1;
+    }
+  }
+  document.body.style.setProperty('--golden-blend', blend);
+
+  // Update weather tint overlay — combines golden warmth + temperature + weather condition
+  // into one unified layer so the background is consistent across all screens
+  var tintEl = document.getElementById('weather-tint');
+  if (tintEl) {
+    var layers = [];
+    // Golden-hour warmth ramp
+    if (blend > 0) {
+      layers.push('rgba(255, 180, 80, ' + (blend * 0.08).toFixed(4) + ')');
+    }
+    // Temperature-based tint from weather data
+    if (typeof getTempTint === 'function') {
+      var tt = getTempTint();
+      if (tt) layers.push(tt.tint);
+    }
+    // Weather-condition tint from real API data (uniform across all pages)
+    if (typeof getWeatherConditionTint === 'function') {
+      var wct = getWeatherConditionTint();
+      if (wct) layers.push(wct);
+    }
+    tintEl.style.background = layers.length > 0 ? layers.join(', ') : 'transparent';
+  }
 }
 
 // ===== TIME-BASED GREETING SYSTEM =====
@@ -443,9 +491,11 @@ function setLivingSky(on) {
     if (terrain) terrain.style.opacity = '';
     var particles = document.getElementById('particles');
     if (particles) particles.style.display = '';
-    // Render sky and terrain
+    // Render sky and terrain — skip if renderLoginSky() already rendered recently
     if (container) {
-      renderLivingSky(container);
+      if (!window._skyRenderedAt || Date.now() - window._skyRenderedAt > 2000) {
+        renderLivingSky(container);
+      }
       startCreatureLoop(container);
       // Restart periodic sky refresh
       clearInterval(SKY.sceneTimer);
@@ -1926,19 +1976,21 @@ function renderMeadowTerrain(container) {
 var currentSkyTheme = window._cachedSkyTheme || 'mixed';
 
 function applySkyTheme(theme) {
-  currentSkyTheme = theme || 'mixed';
+  theme = theme || 'mixed';
+  // Early-exit if theme is already applied — avoids expensive re-render
+  if (theme === currentSkyTheme && document.body.getAttribute('data-sky-theme') === theme) return;
+  currentSkyTheme = theme;
   document.body.setAttribute('data-sky-theme', currentSkyTheme);
+  document.documentElement.setAttribute('data-sky-theme', currentSkyTheme);
   // Cache for instant apply on next load (login page, before Firebase)
   try {
     localStorage.setItem('met_sky_theme', currentSkyTheme);
   } catch (e) {}
-  // Re-render the living sky with the new theme
+  // Re-render the single master sky with the new theme
   var container = document.getElementById('sky-scene');
   if (container && livingSkyEnabled) renderLivingSky(container);
   // Render immersive terrain silhouettes
   renderTerrain(currentSkyTheme);
-  // Also update login page sky/terrain if visible
-  renderLoginSky();
   // Refresh orbs and meta color to match new theme
   spawnOrbs();
   updateTimeOfDay();

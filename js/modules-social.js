@@ -261,10 +261,10 @@ function renderBucketList(items) {
     <div class="bl-check" onclick="toggleBucket('${i._key}',${!i.completed})">${i.completed ? '✓' : ''}</div>
     <span class="bl-emoji">${i.emoji}</span>
     <div class="bl-info">
-      <div class="bl-title">${i.title.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+      <div class="bl-title">${esc(i.title)}</div>
       <div class="bl-meta">${i.addedBy === user ? 'You' : esc(i.addedByName || '?')} · ${esc(i.category)}</div>
     </div>
-    <button class="item-delete" onclick="event.stopPropagation();deleteBucketItem('${i._key}')">×</button>
+    <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteBucketItem('${i._key}')">×</button>
   </div>`
     )
     .join('');
@@ -338,7 +338,7 @@ function listenWishlists() {
         <span class="wl-priority ${i.priority}">${i.priority === 'love' ? '♡ Love it' : i.priority === 'want' ? '★ Want it' : '● Need it'}</span>
         ${i.link && safeHref(i.link) ? `<a class="wl-link" href="${safeHref(i.link)}" target="_blank" rel="noopener">View →</a>` : ''}
       </div>
-      <button class="item-delete" onclick="event.stopPropagation();deleteWishItem('${user}','${i._key}')">×</button>
+      <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteWishItem('${user}','${i._key}')">×</button>
     </div>`
         )
         .join('');
@@ -646,7 +646,7 @@ function listenDateNights() {
         <div class="dn-saved-emoji">${i.emoji}</div>
         <div class="dn-saved-info"><div class="dn-saved-title">${i.title}</div><div class="dn-saved-meta">${i.cat} · saved by ${who}</div></div>
         <button class="dn-done-btn" onclick="markDateDone('${i._key}')">Did it</button>
-        <button class="item-delete" style="opacity:.4" onclick="event.stopPropagation();deleteDateIdea('${i._key}')">×</button>
+        <button class="item-delete" aria-label="Delete" style="opacity:.4" onclick="event.stopPropagation();deleteDateIdea('${i._key}')">×</button>
       </div>`;
             })
             .join('');
@@ -770,7 +770,7 @@ function renderLLQuestion() {
   if (opts) {
     opts.style.opacity = '0';
   }
-  opts.innerHTML = q.a.map((a, i) => `<button class="ll-option" onclick="pickLL(${i})">${a}</button>`).join('');
+  opts.innerHTML = q.a.map((a, i) => `<button class="ll-option" onclick="pickLL(${i})">${esc(a)}</button>`).join('');
   if (opts) {
     setTimeout(function () {
       opts.style.opacity = '1';
@@ -870,18 +870,11 @@ function getWeekId() {
   return d.getFullYear() + '-W' + String(weekNum).padStart(2, '0');
 }
 
-function updCIEnergy() {
-  const v = document.getElementById('ci-energy').value;
-  const labels = ['', 'Distant', 'Low', 'Steady', 'Strong', 'Thriving'];
-  document.getElementById('ci-energy-val').textContent = labels[v];
-}
-
 async function submitCheckin() {
   if (!db || !user) return;
   const well = document.getElementById('ci-well').value.trim();
   const better = document.getElementById('ci-better').value.trim();
   const need = document.getElementById('ci-need').value.trim();
-  const energy = parseInt(document.getElementById('ci-energy').value);
   if (!well && !better && !need) {
     toast('Share at least one thought');
     return;
@@ -896,7 +889,6 @@ async function submitCheckin() {
     well,
     better,
     need,
-    energy,
     userName: NAMES[user],
     timestamp: Date.now()
   });
@@ -1098,7 +1090,7 @@ function renderDreams(items) {
         ${i.description ? `<div class="dr-desc">${i.description.replace(/</g, '&lt;')}</div>` : ''}
         <div class="dr-meta">${who} · ${ts}</div>
       </div>
-      <button class="item-delete" onclick="event.stopPropagation();deleteDream('${i._key}')">×</button>
+      <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteDream('${i._key}')">×</button>
     </div>`;
     })
     .join('');
@@ -4602,3 +4594,346 @@ function buildWakeUpHistory(data) {
 
   container.innerHTML = html;
 }
+
+/* ========================================================================
+   ALARM ENGINE — timer, sound, overlay, snooze, partner notifications
+   ======================================================================== */
+
+var wuAlarmTimer = null;       // setTimeout id
+var wuAlarmAudioCtx = null;    // Web Audio context
+var wuAlarmOscillators = [];   // active oscillator nodes
+var wuAlarmPlaying = false;    // is alarm currently sounding
+var wuSnoozeCount = 0;         // how many times snoozed today
+var WU_SNOOZE_MINUTES = 5;
+
+/* ---------- schedule / cancel ---------- */
+
+function scheduleAlarm() {
+  clearAlarm();
+  if (!db || !user) return;
+  var today = localDate();
+  db.ref('wakeup/alarms/' + today + '/' + user).once('value', function (snap) {
+    var alarm = snap.val();
+    if (!alarm || !alarm.time || alarm.wokenUp) return;
+    var ms = msUntilAlarm(alarm.time, alarm.timezone || getMyTimezone());
+    if (ms <= 0 || ms > 24 * 3600 * 1000) return; // past or >24h away
+    wuAlarmTimer = setTimeout(function () { fireAlarm(alarm); }, ms);
+    localStorage.setItem('met_wu_scheduled', JSON.stringify({
+      time: alarm.time, tz: alarm.timezone, date: today
+    }));
+  });
+}
+
+function msUntilAlarm(timeStr, tz) {
+  var now = new Date();
+  var parts = timeStr.split(':').map(Number);
+  // Build a date in the alarm's timezone
+  var todayStr = now.toLocaleDateString('en-CA', { timeZone: tz }); // YYYY-MM-DD
+  var alarmDate = new Date(todayStr + 'T' + timeStr + ':00');
+  // Convert to UTC by subtracting timezone offset
+  var tzOffsetMs = getTimezoneOffset(tz) * 60000;
+  var alarmUTC = alarmDate.getTime() - tzOffsetMs;
+  return alarmUTC - now.getTime();
+}
+
+function clearAlarm() {
+  if (wuAlarmTimer) { clearTimeout(wuAlarmTimer); wuAlarmTimer = null; }
+  stopAlarmSound();
+}
+
+/* ---------- fire alarm ---------- */
+
+function fireAlarm(alarm) {
+  wuAlarmPlaying = true;
+  // Play sound
+  startAlarmSound();
+  // Vibrate
+  if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 300, 200, 300]);
+  // Fetch partner's goodnight message, then show overlay
+  var today = localDate();
+  db.ref('wakeup/goodnight/' + today + '/' + partner).once('value', function (snap) {
+    var gn = snap.val();
+    showWakeUpOverlay(alarm, gn);
+  });
+  // Notify partner that our alarm fired
+  notifyPartnerAlarmFired();
+  // Mark alarm as wokenUp (fired)
+  db.ref('wakeup/alarms/' + today + '/' + user + '/firedAt').set(Date.now());
+}
+
+/* ---------- Web Audio alarm tone ---------- */
+
+function startAlarmSound() {
+  try {
+    if (!wuAlarmAudioCtx) {
+      wuAlarmAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (wuAlarmAudioCtx.state === 'suspended') wuAlarmAudioCtx.resume();
+    playAlarmLoop();
+  } catch (e) { /* audio not available */ }
+}
+
+function playAlarmLoop() {
+  if (!wuAlarmPlaying || !wuAlarmAudioCtx) return;
+  // Gentle ascending chime pattern (C5 E5 G5 C6)
+  var notes = [523.25, 659.25, 783.99, 1046.50];
+  var ctx = wuAlarmAudioCtx;
+  var t = ctx.currentTime;
+
+  notes.forEach(function (freq, i) {
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, t + i * 0.35);
+    gain.gain.linearRampToValueAtTime(0.15, t + i * 0.35 + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.35 + 0.6);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t + i * 0.35);
+    osc.stop(t + i * 0.35 + 0.7);
+    wuAlarmOscillators.push(osc);
+  });
+  // Repeat pattern every 3 seconds
+  setTimeout(function () { playAlarmLoop(); }, 3000);
+}
+
+function stopAlarmSound() {
+  wuAlarmPlaying = false;
+  wuAlarmOscillators.forEach(function (o) {
+    try { o.stop(); } catch (e) { /* already stopped */ }
+  });
+  wuAlarmOscillators = [];
+}
+
+/* ---------- wake-up overlay ---------- */
+
+function showWakeUpOverlay(alarm, goodnightData) {
+  // Remove existing overlay if any
+  var existing = document.getElementById('wu-alarm-overlay');
+  if (existing) existing.remove();
+
+  var partnerName = (typeof NAMES !== 'undefined' ? NAMES[partner] : 'Your love');
+  var userName = (typeof NAMES !== 'undefined' ? NAMES[user] : 'you');
+  var gnMessage = goodnightData ? goodnightData.message : '';
+  var hour = new Date().getHours();
+  var greeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
+
+  var overlay = document.createElement('div');
+  overlay.id = 'wu-alarm-overlay';
+  overlay.className = 'wu-overlay';
+  overlay.innerHTML =
+    '<div class="wu-overlay-bg"></div>' +
+    '<div class="wu-overlay-content">' +
+      '<div class="wu-ov-sun">' +
+        '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">' +
+          '<circle cx="12" cy="12" r="5"/>' +
+          '<line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>' +
+          '<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>' +
+          '<line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>' +
+          '<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>' +
+        '</svg>' +
+      '</div>' +
+      '<div class="wu-ov-greeting">' + greeting + '</div>' +
+      '<div class="wu-ov-name">' + (typeof esc === 'function' ? esc(userName) : userName) + '</div>' +
+      '<div class="wu-ov-time">' + formatTime12(alarm.time) + '</div>' +
+      (gnMessage
+        ? '<div class="wu-ov-gn-card">' +
+            '<div class="wu-ov-gn-from">' + (typeof esc === 'function' ? esc(partnerName) : partnerName) + ' said last night:</div>' +
+            '<div class="wu-ov-gn-msg">"' + (typeof esc === 'function' ? esc(gnMessage) : gnMessage) + '"</div>' +
+          '</div>'
+        : '') +
+      '<button class="wu-ov-dismiss" onclick="dismissAlarm()">' +
+        'I\'m Awake!' +
+      '</button>' +
+      '<button class="wu-ov-snooze" onclick="snoozeAlarm()">' +
+        '5 more minutes...' +
+      '</button>' +
+      '<div class="wu-ov-snooze-count" id="wu-snooze-count">' +
+        (wuSnoozeCount > 0 ? 'Snoozed ' + wuSnoozeCount + ' time' + (wuSnoozeCount > 1 ? 's' : '') : '') +
+      '</div>' +
+    '</div>';
+
+  document.body.appendChild(overlay);
+  // Trigger entrance animation
+  requestAnimationFrame(function () {
+    overlay.classList.add('wu-overlay-in');
+  });
+}
+
+function hideWakeUpOverlay() {
+  var overlay = document.getElementById('wu-alarm-overlay');
+  if (!overlay) return;
+  overlay.classList.add('wu-overlay-out');
+  setTimeout(function () { overlay.remove(); }, 500);
+}
+
+/* ---------- dismiss (I'm awake!) ---------- */
+
+function dismissAlarm() {
+  stopAlarmSound();
+  if (navigator.vibrate) navigator.vibrate(0); // cancel vibration
+
+  var today = localDate();
+  if (db && user) {
+    // Mark alarm as confirmed awake
+    db.ref('wakeup/alarms/' + today + '/' + user + '/wokenUp').set(true);
+    db.ref('wakeup/alarms/' + today + '/' + user + '/wokeAt').set(Date.now());
+    // Record confirmation so partner sees it
+    db.ref('wakeup/confirmations/' + today + '/' + user).set({
+      timestamp: Date.now(),
+      userName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
+      snoozeCount: wuSnoozeCount
+    });
+  }
+  // Notify partner
+  notifyPartnerAwake();
+  hideWakeUpOverlay();
+  wuSnoozeCount = 0;
+  toast('Rise and shine!');
+}
+
+/* ---------- snooze ---------- */
+
+function snoozeAlarm() {
+  stopAlarmSound();
+  if (navigator.vibrate) navigator.vibrate(0);
+  wuSnoozeCount++;
+  hideWakeUpOverlay();
+
+  // Notify partner about snooze
+  if (db && user) {
+    var today = localDate();
+    db.ref('wakeup/snoozes/' + today).push({
+      from: user,
+      fromName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
+      timestamp: Date.now(),
+      count: wuSnoozeCount
+    });
+  }
+  notifyPartnerSnoozed();
+  toast('Snoozing for ' + WU_SNOOZE_MINUTES + ' minutes...');
+
+  // Re-fire after snooze duration
+  wuAlarmTimer = setTimeout(function () {
+    wuAlarmPlaying = true;
+    startAlarmSound();
+    if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 300, 200, 300]);
+    // Re-show overlay with updated snooze count
+    var today = localDate();
+    db.ref('wakeup/alarms/' + today + '/' + user).once('value', function (snap) {
+      var alarm = snap.val();
+      if (!alarm) return;
+      db.ref('wakeup/goodnight/' + today + '/' + partner).once('value', function (gnSnap) {
+        showWakeUpOverlay(alarm, gnSnap.val());
+      });
+    });
+  }, WU_SNOOZE_MINUTES * 60 * 1000);
+}
+
+/* ---------- partner notifications ---------- */
+
+function notifyPartnerAlarmFired() {
+  var name = typeof NAMES !== 'undefined' ? NAMES[user] : 'Your partner';
+  if (typeof sendPushNotification === 'function') {
+    sendPushNotification(
+      'Alarm Ringing!',
+      name + '\'s alarm is going off right now',
+      'icons/icon-192x192.png'
+    );
+  }
+  if (typeof sendInAppNotif === 'function') {
+    sendInAppNotif('wakeup', name + '\'s alarm is ringing!', '');
+  }
+}
+
+function notifyPartnerAwake() {
+  var name = typeof NAMES !== 'undefined' ? NAMES[user] : 'Your partner';
+  var msg = wuSnoozeCount > 0
+    ? name + ' is finally awake! (snoozed ' + wuSnoozeCount + ' time' + (wuSnoozeCount > 1 ? 's' : '') + ')'
+    : name + ' is awake! Good morning!';
+  if (typeof sendPushNotification === 'function') {
+    sendPushNotification('Good Morning!', msg, 'icons/icon-192x192.png');
+  }
+  if (typeof sendInAppNotif === 'function') {
+    sendInAppNotif('wakeup', msg, '');
+  }
+}
+
+function notifyPartnerSnoozed() {
+  var name = typeof NAMES !== 'undefined' ? NAMES[user] : 'Your partner';
+  if (typeof sendPushNotification === 'function') {
+    sendPushNotification(
+      '5 more minutes...',
+      name + ' hit snooze (' + wuSnoozeCount + ' time' + (wuSnoozeCount > 1 ? 's' : '') + ')',
+      'icons/icon-192x192.png'
+    );
+  }
+}
+
+/* ---------- listen for partner wake events ---------- */
+
+function listenPartnerWakeEvents() {
+  if (!db || !user) return;
+  var today = localDate();
+
+  // Partner confirmed awake
+  db.ref('wakeup/confirmations/' + today + '/' + partner).on('value', function (snap) {
+    var conf = snap.val();
+    if (!conf) return;
+    var partnerName = typeof NAMES !== 'undefined' ? NAMES[partner] : 'Your partner';
+    var snoozeTxt = conf.snoozeCount > 0
+      ? ' (after ' + conf.snoozeCount + ' snooze' + (conf.snoozeCount > 1 ? 's' : '') + ')'
+      : '';
+    // Update the morning section
+    var greetingEl = document.getElementById('wu-morning-greeting');
+    if (greetingEl) {
+      greetingEl.innerHTML = partnerName + ' is awake!' + snoozeTxt +
+        ' <span style="font-size:12px;color:var(--t3)">' +
+        new Date(conf.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
+        '</span>';
+    }
+  });
+
+  // Partner snoozed
+  db.ref('wakeup/snoozes/' + today).orderByChild('from').equalTo(partner)
+    .on('child_added', function (snap) {
+      var s = snap.val();
+      if (!s || Date.now() - s.timestamp > 10000) return; // only show fresh snoozes
+      var partnerName = typeof NAMES !== 'undefined' ? NAMES[partner] : 'Your love';
+      toast(partnerName + ' hit snooze... ' + WU_SNOOZE_MINUTES + ' more minutes');
+    });
+}
+
+/* ---------- hook into setWakeUpTime to auto-schedule ---------- */
+
+var _origSetWakeUpTime = setWakeUpTime;
+setWakeUpTime = function () {
+  _origSetWakeUpTime();
+  // Schedule alarm after a short delay so Firebase write completes
+  setTimeout(scheduleAlarm, 1500);
+};
+
+/* ---------- restore alarm on page load ---------- */
+
+function restoreAlarmOnLoad() {
+  var stored = localStorage.getItem('met_wu_scheduled');
+  if (!stored) return;
+  try {
+    var data = JSON.parse(stored);
+    if (data.date !== localDate()) {
+      localStorage.removeItem('met_wu_scheduled');
+      return;
+    }
+    scheduleAlarm();
+  } catch (e) { /* ignore */ }
+}
+
+/* ---------- patch initWakeUp to include alarm engine ---------- */
+
+var _origInitWakeUp = initWakeUp;
+initWakeUp = function () {
+  _origInitWakeUp();
+  restoreAlarmOnLoad();
+  listenPartnerWakeEvents();
+};

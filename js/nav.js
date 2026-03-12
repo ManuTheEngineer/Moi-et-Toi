@@ -60,8 +60,19 @@ function go(p) {
   if (current) current.classList.remove('on');
   if (next) next.classList.add('on');
 
-  // Set page-specific background accent
+  // Render workout pages on demand (template system)
+  if ((p === 'w1' || p === 'w2' || p === 'w3') && typeof renderWorkoutPage === 'function') renderWorkoutPage(p);
+
+  // Set page identifier (used by CSS selectors — no page-specific backgrounds)
   document.body.dataset.page = p;
+
+  // Ensure time-of-day and weather condition are current so background stays consistent
+  // Skip if time period hasn't changed — avoids redundant DOM/style updates
+  if (typeof updateTimeOfDay === 'function') {
+    var _curTime = document.body.getAttribute('data-time');
+    var _newTime = typeof getTimeOfDay === 'function' ? getTimeOfDay() : null;
+    if (_newTime && _newTime !== _curTime) updateTimeOfDay();
+  }
 
   // Track for recent pages in quick action sheet
   trackRecentPage(p);
@@ -141,7 +152,8 @@ function goBack() {
 }
 
 // ===== QUICK ACTION SHEET =====
-let recentPages = JSON.parse(localStorage.getItem('met_recent_pages') || '[]');
+let recentPages = [];
+try { recentPages = JSON.parse(localStorage.getItem('met_recent_pages') || '[]'); } catch (e) {}
 let currentPageId = 'dash';
 
 // Mini SVG icon helper (Feather-style, matches bottom nav)
@@ -286,7 +298,7 @@ const PAGE_META = {
   calendar: { icon: _IC.cal, label: 'Calendar' },
   story: { icon: _IC.book, label: 'Timeline' },
   values: { icon: _IC.columns, label: 'Values' },
-  lists: { icon: _IC.gift, label: 'Lists' },
+  lists: { icon: _IC.gift, label: 'Gift Ideas' },
   more: { icon: _IC.compass, label: 'More' },
   memories: { icon: _IC.camera, label: 'Memories' },
   ai: { icon: _IC.cpu, label: 'AI Chat' },
@@ -449,6 +461,7 @@ function initParticles() {
   const container = document.getElementById('particles');
   if (!container) return;
   container.innerHTML = '';
+  const frag = document.createDocumentFragment();
   for (let i = 0; i < 25; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
@@ -457,8 +470,9 @@ function initParticles() {
     p.style.animationDuration = Math.random() * 15 + 10 + 's';
     p.style.animationDelay = Math.random() * 10 + 's';
     p.style.opacity = Math.random() * 0.3 + 0.1;
-    container.appendChild(p);
+    frag.appendChild(p);
   }
+  container.appendChild(frag);
 }
 
 // ===== REPLACE EMOJIS WITH SVG ICONS =====
@@ -515,3 +529,8 @@ function replaceEmojisWithIcons() {
 }
 
 document.addEventListener('DOMContentLoaded', replaceEmojisWithIcons);
+
+// Prevent pinch-to-zoom on iOS Safari (ignores viewport meta in some versions)
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
+document.addEventListener('gestureend', function (e) { e.preventDefault(); });

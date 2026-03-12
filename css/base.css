@@ -1,6 +1,17 @@
 html {
   overscroll-behavior: none;
-  background: var(--bg);
+  /* The root element's background paints the entire canvas — including the
+     iOS safe-area home-indicator region that position:fixed layers can't reach.
+     Using the same aurora gradient as body::before ensures the safe-area gap
+     shows the real themed background, not a flat solid color. */
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196, 120, 74, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(28, 43, 74, 0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(176, 138, 80, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(212, 98, 122, 0.03) 0%, transparent 70%), var(--bg);
+  background-size: 200% 200%;
+  touch-action: pan-x pan-y;
+  -ms-touch-action: pan-x pan-y;
 }
 body {
   margin: 0;
@@ -51,16 +62,25 @@ body.keyboard-open .generic-modal-overlay {
 body.keyboard-open .generic-modal-box {
   max-height: calc(var(--vv-h, 50vh) - 40px);
 }
-/* ===== IMMERSIVE BACKGROUND - aurora + particles + noise ===== */
-body::before {
-  content: '';
+/* ===== UNIVERSAL BACKGROUND CONTAINER =====
+   Single fixed container sized to the physical screen. Every visual
+   background layer lives inside it and fills via position:absolute.
+   This guarantees consistent edge-to-edge coverage on every page. */
+#bg {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
-  z-index: -2;
+  width: 100%;
+  height: var(--screen-h, 100vh);
+  min-height: calc(100vh + env(safe-area-inset-bottom, 0px));
+  z-index: 0;
   pointer-events: none;
+  overflow: hidden;
+}
+/* Aurora gradient layer (replaces body::before) */
+#bg-aurora {
+  position: absolute;
+  inset: 0;
   background:
     radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196, 120, 74, 0.08) 0%, transparent 70%),
     radial-gradient(ellipse 60% 60% at 80% 15%, rgba(28, 43, 74, 0.07) 0%, transparent 70%),
@@ -69,22 +89,18 @@ body::before {
   background-size: 200% 200%;
   animation: auroraFlow 60s ease-in-out infinite alternate;
   will-change: background-position;
-  transition: background 5s ease;
+  transition: background 2s ease;
 }
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: calc(-1 * env(safe-area-inset-bottom, 50px));
-  z-index: -1;
+/* Noise texture layer (replaces body::after) */
+#bg-noise {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
   opacity: 0.025;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 180px 180px;
 }
-body.sky-off::before {
+body.sky-off #bg-aurora {
   animation-play-state: paused !important;
 }
 @keyframes auroraFlow {
@@ -126,12 +142,10 @@ body.sky-off::before {
 }
 
 /* ===== SKY SCENE - living textured background ===== */
-/* z-index:1 (positive) so sky renders above body::before/::after backgrounds.
-   .shell gets z-index:2 to stack above sky, login stays at z-index:100. */
+/* Lives inside #bg — absolute-fills the container */
 .sky-scene {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 1;
   pointer-events: none;
   overflow: hidden;
   transition: opacity 1.5s ease;
@@ -557,9 +571,8 @@ body[data-time='evening'] .sky-scene {
 
 /* Floating particle layer */
 .particles {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 1;
   pointer-events: none;
   overflow: hidden;
 }
@@ -587,106 +600,8 @@ body[data-time='evening'] .sky-scene {
   }
 }
 
-/* Page-specific ambient moods - richer aurora colors */
-body[data-page='mood']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196, 120, 74, 0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(212, 148, 106, 0.09) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(176, 138, 80, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(224, 168, 130, 0.04) 0%, transparent 70%), var(--bg);
-}
-body[data-page='games']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(58, 40, 96, 0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(92, 72, 136, 0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(212, 98, 122, 0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(123, 111, 166, 0.05) 0%, transparent 70%), var(--bg);
-}
-body[data-page='connect']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(212, 98, 122, 0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(196, 120, 74, 0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(176, 138, 80, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(140, 66, 40, 0.04) 0%, transparent 70%), var(--bg);
-}
-body[data-page='story']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(176, 138, 80, 0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(200, 164, 104, 0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(28, 43, 74, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(212, 149, 106, 0.04) 0%, transparent 70%), var(--bg);
-}
-body[data-page='ai']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(28, 43, 74, 0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(46, 68, 104, 0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(212, 149, 106, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(42, 143, 143, 0.03) 0%, transparent 70%), var(--bg);
-}
-body[data-page='spiritual']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(123, 111, 166, 0.09) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(176, 138, 80, 0.07) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(28, 43, 74, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(168, 152, 208, 0.04) 0%, transparent 70%), var(--bg);
-}
-body[data-page='homelife']::before,
-body[data-page='finance']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(42, 143, 143, 0.07) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(28, 43, 74, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(61, 139, 110, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(42, 143, 143, 0.03) 0%, transparent 70%), var(--bg);
-}
-body[data-page='fitness']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(61, 139, 110, 0.09) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(91, 184, 152, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(42, 143, 143, 0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(28, 43, 74, 0.03) 0%, transparent 70%), var(--bg);
-}
-body[data-page='nutrition']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(212, 98, 122, 0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(240, 136, 154, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(61, 139, 110, 0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(196, 120, 74, 0.03) 0%, transparent 70%), var(--bg);
-}
-body[data-page='calendar']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(42, 143, 143, 0.09) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(72, 204, 204, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(28, 43, 74, 0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(42, 143, 143, 0.03) 0%, transparent 70%), var(--bg);
-}
-body[data-page='together']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(139, 26, 74, 0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(196, 75, 108, 0.07) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(212, 98, 122, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(176, 138, 80, 0.03) 0%, transparent 70%), var(--bg);
-}
-body[data-page='track']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196, 120, 74, 0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(184, 134, 11, 0.07) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(61, 139, 110, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(212, 149, 106, 0.04) 0%, transparent 70%), var(--bg);
-}
-body[data-page='build']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(26, 58, 92, 0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(42, 143, 143, 0.07) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(123, 111, 166, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(28, 43, 74, 0.04) 0%, transparent 70%), var(--bg);
-}
-body[data-page='dreamhome']::before {
-  background:
-    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(123, 111, 166, 0.09) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(168, 152, 208, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(176, 138, 80, 0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(212, 98, 122, 0.03) 0%, transparent 70%), var(--bg);
-}
+/* Page-specific aurora overlays removed — backgrounds are driven uniformly
+   by time-of-day + sky-theme + weather condition for consistency across all screens */
 
 ::selection {
   background: var(--gold);
@@ -1227,12 +1142,11 @@ body[data-sky-theme='mountain'] .sky-bf-wing {
    extend into the safe-area-inset-bottom region, leaving a white gap on iPhones. */
 @media (display-mode: standalone) {
   html {
-    height: 100%;
+    min-height: 100%;
     overscroll-behavior: none;
   }
   body {
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
     overflow-y: auto;
     overscroll-behavior-y: none;
   }

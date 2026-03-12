@@ -7,6 +7,147 @@ let fitnessData = {},
   wsTimer = null,
   restInterval = null;
 
+// ===== WORKOUT PAGE TEMPLATE SYSTEM =====
+var WORKOUT_PAGES = {
+  w1: {
+    name: 'Foundation', icon: '\u2726', color: 'g', title: 'Your Sculpt Guide',
+    subtitle: 'Strength \u00b7 Shape \u00b7 Confidence', logType: 'Foundation',
+    intro: 'This plan is designed for <strong class="sg">beginners</strong>. Every move has clear timing and built-in rest. Go at your own pace. <strong class="sg">Showing up is what matters.</strong>',
+    sections: [
+      { label: 'Phase 1', title: 'Core Strengthening', exercises: [
+        { n: '01', name: 'Lying Leg Raises', desc: 'Lie flat. Raise straight legs to ceiling, lower without touching floor. Go slow. The slower, the better.', timing: ['10 reps', '3 sets', '45s rest'] },
+        { n: '02', name: 'Flutter Kicks', desc: 'Hands under hips, legs a few inches off ground. Small alternating kicks. Lower back pressed down.', timing: ['20 sec', '3 sets', '40s rest'] },
+        { n: '03', name: 'Reverse Crunches', desc: 'Knees bent, curl hips off floor bringing knees to chest. Hold 2 sec at top, lower gently.', timing: ['12 reps', '3 sets', '45s rest'] },
+        { n: '04', name: 'Mountain Climbers', desc: 'Push-up position. Drive knees to chest alternating. Like running on the floor. Keep hips level.', timing: ['25 sec', '3 sets', '50s rest'] },
+        { n: '05', name: 'Dead Bugs', desc: 'On back, arms up, knees 90 degrees. Extend opposite arm and leg slowly. Return, switch sides.', timing: ['8 each side', '3 sets', '40s rest'] }
+      ]},
+      { label: 'Phase 2', title: 'Waist Sculpting', exercises: [
+        { n: '06', name: 'Russian Twists', desc: 'Seated, lean back, feet off ground. Rotate torso side to side. Controlled. No rushing.', timing: ['16 reps (8/side)', '3 sets', '40s rest'] },
+        { n: '07', name: 'Side Plank Hip Dips', desc: 'Side plank on forearm. Dip hips down and back up. Feel it along the waistline.', timing: ['10 each side', '3 sets', '45s rest'] },
+        { n: '08', name: 'Standing Side Crunches', desc: 'Hand behind head. Lift knee to meet same-side elbow. Squeeze at top. No equipment needed.', timing: ['12 each side', '3 sets', '40s rest'] },
+        { n: '09', name: 'Woodchoppers', desc: 'Feet apart. Diagonal chopping motion from shoulder to opposite hip. Tightens the waist beautifully.', timing: ['10 each side', '3 sets', '45s rest'] }
+      ]},
+      { label: 'Every Day', title: 'Your Daily Practice', daily: {
+        tag: '\u2726 Do This Every Day', name: 'Stomach Vacuums',
+        desc: 'Breathe out completely. Pull belly button toward spine. Hold 15 to 20 seconds. Repeat. Trains your deepest core muscle. Like an internal corset.',
+        timing: ['15-20s hold', '5 rounds', '15s rest']
+      }},
+      { label: 'Phase 3', title: 'Shape & Silhouette', exercises: [
+        { n: '10', name: 'Hip Thrusts', desc: 'Back against couch. Feet flat, knees bent. Drive hips up, squeeze 2 seconds at top.', timing: ['15 reps', '3 sets', '50s rest'] },
+        { n: '11', name: 'Sumo Squats', desc: 'Wide stance, toes out. Squat deep, chest up. Press through heels to stand.', timing: ['15 reps', '3 sets', '50s rest'] },
+        { n: '12', name: 'Lateral Shoulder Raises', desc: 'Light weights at sides. Raise arms to shoulder height. Lower with control. Shapes the silhouette.', timing: ['12 reps', '3 sets', '40s rest'] }
+      ]}
+    ],
+    next: { id: 'w2', label: 'The Elevated Program', desc: 'Harder moves. Shorter rest. Deeper definition.', colorCls: 'nxr', colorVar: 'c-red' },
+    footer: { quote: "You're already becoming who you want to be.", caption: 'One day at a time', color: 'var(--gold-l)' }
+  },
+  w2: {
+    name: 'Elevated', icon: '\u25c6', color: 'r', title: 'Elevated Sculpt',
+    subtitle: 'Power \u00b7 Definition \u00b7 Shape', logType: 'Elevated',
+    intro: 'You made it here because you put in the work. <strong class="sr">Higher reps, shorter rest, more intense combinations.</strong> Trust the process. You\u2019ve already proven you can do this.',
+    sections: [
+      { label: 'Phase 1', title: 'Deep Core Sculpt', exercises: [
+        { n: '01', name: 'Hanging Leg Raises', desc: 'Hang from bar. Raise straight legs to 90 degrees. Lower with full control.', timing: ['12 reps', '4 sets', '30s rest'] },
+        { n: '02', name: 'Scissor Kicks', desc: 'Legs hovering, cross over each other in X pattern. Core tight. Lower legs = harder.', timing: ['40 sec', '4 sets', '25s rest'] },
+        { n: '03', name: 'Plank to Pike', desc: 'Plank position. Walk feet to hands, hips into inverted V. Walk back out. One fluid motion.', timing: ['12 reps', '4 sets', '30s rest'] },
+        { n: '04', name: 'V-Ups', desc: 'Lie flat. Lift legs and upper body simultaneously, reach for toes. Lower with control.', timing: ['15 reps', '4 sets', '30s rest'] },
+        { n: '05', name: 'Mountain Climber Sprints', desc: 'As fast as you can. Explosive knee drives. Full intensity cardio + core.', timing: ['45 sec', '4 sets', '25s rest'] }
+      ]},
+      { label: 'Phase 2', title: 'Waist Definition', exercises: [
+        { n: '06', name: 'Weighted Russian Twists', desc: 'Hold a dumbbell or heavy water bottle. Added resistance sculpts deeper waist definition.', timing: ['24 reps (12/side)', '4 sets', '25s rest'] },
+        { n: '07', name: 'Side Plank Reach Through', desc: 'Side plank. Thread top arm underneath body, rotating torso. Return. Sharpens the waistline.', timing: ['12 each side', '4 sets', '25s rest'] },
+        { n: '08', name: 'Band Woodchoppers', desc: 'Resistance band at head height. Pull diagonally across body. Controlled rotation.', timing: ['14 each side', '4 sets', '30s rest'] },
+        { n: '09', name: 'Slow Bicycle Crunches', desc: 'Elbow to opposite knee. Hold each twist 1 second. Slow is where results live.', timing: ['20 reps (10/side)', '4 sets', '25s rest'] }
+      ]},
+      { label: 'Phase 3', title: 'Power Sculpt', exercises: [
+        { n: '10', name: 'Weighted Hip Thrusts', desc: 'Weight across hips. Press up, squeeze 3 seconds at top. Number one curve builder.', timing: ['15 reps', '4 sets', '35s rest'] },
+        { n: '11', name: 'Bulgarian Split Squats', desc: 'One foot on couch behind you. Lower until front thigh is parallel. Press back up.', timing: ['12 each leg', '4 sets', '35s rest'] },
+        { n: '12', name: 'Arnold Press', desc: 'Dumbbells at chest, palms facing you. Press up rotating palms outward. Full shoulder sculpt.', timing: ['12 reps', '4 sets', '30s rest'] }
+      ]}
+    ],
+    next: { id: 'w3', label: 'Full Body Sculpt', desc: 'Every muscle group. One session. Total transformation.', colorCls: 'nxv', colorVar: 'c-vio' },
+    footer: { quote: "You didn't just dream it. You built it.", caption: 'Every rep counts', color: 'var(--red-tag)' }
+  },
+  w3: {
+    name: 'Full Body', icon: '\u2b21', color: 'v', title: 'Full Body Sculpt',
+    subtitle: 'Head to Toe \u00b7 One Session', logType: 'Full Body',
+    intro: '<strong class="sv">Every major muscle group in one workout.</strong> Upper body, core, waist, glutes, legs. Allow 60 to 75 minutes. Warm up 5 minutes first. You\u2019ve got this.',
+    sections: [
+      { label: 'Block A', title: 'Upper Body', exercises: [
+        { n: '01', name: 'Push-Ups', desc: 'Shoulder-width hands. Lower chest to floor, push back up. Drop to knees if needed.', timing: ['10 reps', '3 sets', '40s rest'] },
+        { n: '02', name: 'Lateral Raises', desc: 'Light weights. Raise arms to shoulder height. Lower slowly. Builds shoulder caps.', timing: ['15 reps', '3 sets', '35s rest'] },
+        { n: '03', name: 'Bent Over Rows', desc: 'Hinge forward. Pull weights to ribs, squeeze shoulder blades. Strengthens the back.', timing: ['12 reps', '3 sets', '40s rest'] },
+        { n: '04', name: 'Tricep Dips', desc: 'Edge of chair. Lower by bending elbows. Push back up. Tones back of arms.', timing: ['12 reps', '3 sets', '40s rest'] }
+      ]},
+      { label: 'Block B', title: 'Core + Waist', exercises: [
+        { n: '05', name: 'Leg Raises', desc: 'Raise straight legs, lower without touching floor. Lower back pressed down.', timing: ['12 reps', '3 sets', '35s rest'] },
+        { n: '06', name: 'Bicycle Crunches', desc: 'Elbow to opposite knee. Go slow. Hold each twist 1 second.', timing: ['20 reps', '3 sets', '35s rest'] },
+        { n: '07', name: 'Russian Twists', desc: 'Seated, lean back, feet off ground. Rotate side to side. Controlled and steady.', timing: ['20 reps', '3 sets', '35s rest'] },
+        { n: '08', name: 'Plank Hold', desc: "Forearms on ground, body straight. Hold. Breathe. Don't let hips sag.", timing: ['30-45 sec', '3 sets', '30s rest'] }
+      ]},
+      { label: 'Block C', title: 'Lower Body + Glutes', exercises: [
+        { n: '09', name: 'Sumo Squats', desc: 'Wide stance, toes out. Squat deep. Hold weight at center for extra challenge.', timing: ['15 reps', '3 sets', '40s rest'] },
+        { n: '10', name: 'Hip Thrusts', desc: 'Back against couch. Drive hips up, squeeze at top 2 to 3 seconds.', timing: ['15 reps', '3 sets', '40s rest'] },
+        { n: '11', name: 'Reverse Lunges', desc: 'Step back, lower knee toward ground. Push through front heel. Alternate legs.', timing: ['12 each leg', '3 sets', '40s rest'] },
+        { n: '12', name: 'Glute Bridges', desc: 'On back, knees bent. Lift hips, squeeze glutes at top. Hold 2 seconds.', timing: ['15 reps', '3 sets', '35s rest'] },
+        { n: '13', name: 'Calf Raises', desc: 'Rise onto toes, hold 1 second, lower slowly. Completes the leg sculpt.', timing: ['20 reps', '3 sets', '30s rest'] }
+      ]}
+    ],
+    next: null,
+    footer: { quote: 'The whole body. The whole vision. The whole her.', caption: 'Complete', color: 'var(--vio-tag)' }
+  }
+};
+
+function renderWorkoutPage(id) {
+  var w = WORKOUT_PAGES[id];
+  if (!w) return;
+  var ctn = document.getElementById(id + '-content');
+  if (!ctn) return;
+  if (ctn.dataset.rendered === id) return; // already rendered
+  var c = w.color;
+  var html = '<div class="who"><div class="wic w' + c + '">' + w.icon + '</div>' +
+    '<span class="wbdg wb' + c + '">' + w.name + '</span>' +
+    '<h1>' + w.title + '</h1><p>' + w.subtitle + '</p></div>' +
+    '<div class="wnt wn' + c + '">' + w.intro + '</div>';
+  w.sections.forEach(function(sec) {
+    html += '<div class="wsc"><div class="wsl l' + c + '">' + sec.label + '</div>' +
+      '<div class="wst">' + sec.title + '</div>';
+    if (sec.daily) {
+      var d = sec.daily;
+      html += '<div class="dc d' + c + '"><div class="dtg dg' + c + '">' + d.tag + '</div>' +
+        '<h3>' + d.name + '</h3><p>' + d.desc + '</p>' +
+        '<div class="tr" style="margin-top:9px;padding-top:9px;border-top:1px solid var(--bdr-s)">' +
+        '<span class="tb t' + c + '">\u23f1 ' + d.timing[0] + '</span>' +
+        '<span class="tb t' + c + '">\u21bb ' + d.timing[1] + '</span>' +
+        '<span class="tb t' + c + 'r">\u2601 ' + d.timing[2] + '</span></div></div>';
+    }
+    if (sec.exercises) {
+      sec.exercises.forEach(function(ex) {
+        html += '<div class="ec ec' + c + '"><div class="et">' +
+          '<div class="en n' + c + '">' + ex.n + '</div>' +
+          '<div class="ei"><h3>' + ex.name + '</h3><p>' + ex.desc + '</p></div></div>' +
+          '<div class="tr"><span class="tb t' + c + '">\u23f1 ' + ex.timing[0] + '</span>' +
+          '<span class="tb t' + c + '">\u21bb ' + ex.timing[1] + '</span>' +
+          '<span class="tb t' + c + 'r">\u2601 ' + ex.timing[2] + '</span></div></div>';
+      });
+    }
+    html += '</div>';
+  });
+  var btnCls = c !== 'g' ? ' lb' + c : '';
+  html += '<button class="lbtn' + btnCls + '" onclick="openLog(\'' + w.logType + '\')">Log workout</button>';
+  if (w.next) {
+    html += '<div class="nxt ' + w.next.colorCls + '" onclick="go(\'' + w.next.id + '\')">' +
+      '<div class="nxe ' + w.next.colorVar + '">When You\u2019re Ready</div>' +
+      '<div class="nxt-t">' + w.next.label + '</div>' +
+      '<div class="nxd">' + w.next.desc + '</div>' +
+      '<div class="nxa ' + w.next.colorVar + '">Enter \u279e</div></div>';
+  }
+  html += '<div class="wft"><div class="wfq" style="color:' + w.footer.color + '">' + w.footer.quote + '</div>' +
+    '<div class="wfs">' + w.footer.caption + '</div></div>';
+  ctn.innerHTML = html;
+  ctn.dataset.rendered = id;
+}
+
 // ===== EXERCISE DATABASE (60+ exercises) =====
 const MUSCLE_ICONS = { chest: '🫁', back: '🔙', shoulders: '🏔', legs: '🦵', arms: '💪', core: '🎯' };
 const MUSCLE_COLORS = {
@@ -427,15 +568,15 @@ function renderFitnessCharts(workouts) {
 
 // ===== WORKOUT BUILDER =====
 function openWorkoutBuilder() {
-  const builder = document.getElementById('fit-builder');
-  showEl(builder);
+  var builder = document.getElementById('fit-builder');
+  if (builder) builder.classList.add('on');
   builderExercises = [];
   renderExerciseList('all');
   renderBuilderSelected();
 }
 function closeWorkoutBuilder() {
-  const builder = document.getElementById('fit-builder');
-  hideEl(builder);
+  var builder = document.getElementById('fit-builder');
+  if (builder) builder.classList.remove('on');
   builderExercises = [];
 }
 function filterExercises(group) {
@@ -1947,12 +2088,17 @@ async function saveGrowReflection() {
 // ===== NUTRITION MODULE =====
 // ========================================
 let nutritionData = {},
-  recipeData = {},
-  mealPlanData = {};
+  recipeData = {};
 
+var _nutrListenDate = null;
 function listenNutritionData() {
   if (!db) return;
-  const today = localDate();
+  var today = localDate();
+  // If date changed (e.g., past midnight), detach old listener and re-attach
+  if (_nutrListenDate && _nutrListenDate !== today) {
+    db.ref('nutrition/' + user + '/meals/' + _nutrListenDate).off();
+  }
+  _nutrListenDate = today;
   db.ref('nutrition/' + user + '/meals/' + today).on('value', snap => {
     nutritionData = snap.val() || {};
     renderNutritionDay();
@@ -1961,10 +2107,7 @@ function listenNutritionData() {
     recipeData = snap.val() || {};
     renderRecipeList();
   });
-  db.ref('nutrition/mealPlans').on('value', snap => {
-    mealPlanData = snap.val() || {};
-    renderMealPlan();
-  });
+  // Meal planning consolidated into pg-homelife
 }
 
 function renderNutritionDay() {
@@ -2004,8 +2147,18 @@ function renderNutritionDay() {
   const el = id => document.getElementById(id);
   if (el('nutr-meals')) el('nutr-meals').textContent = mealCount;
   if (el('nutr-cals')) el('nutr-cals').textContent = totalCals;
-  // Macros - update ring SVGs
-  const calTarget = 2000;
+  // Macros - update ring SVGs (use baseline if available, else default 2000)
+  let calTarget = 2000;
+  if (fitBaseline) {
+    const weight = parseFloat(fitBaseline.weight) || 150;
+    const actMult = [0, 1.2, 1.375, 1.55, 1.725, 1.9][fitBaseline.activityLevel || 2];
+    const bmr = weight * 10 + 800; // simplified estimate
+    let tdee = Math.round(bmr * actMult);
+    const goal = fitBaseline.fitnessGoal;
+    if (goal === 1) tdee -= 400;       // Lose Weight
+    else if (goal === 2) tdee += 300;  // Build Muscle
+    calTarget = Math.max(1200, Math.min(4000, tdee));
+  }
   if (el('nutr-protein')) el('nutr-protein').textContent = totalP + 'g';
   if (el('nutr-carbs')) el('nutr-carbs').textContent = totalC + 'g';
   if (el('nutr-fats')) el('nutr-fats').textContent = totalF + 'g';
@@ -2094,51 +2247,7 @@ async function logWater(count) {
   await db.ref('nutrition/' + user + '/meals/' + today + '/water').set(count);
 }
 
-async function addMealPlan() {
-  const name = document.getElementById('mealplan-name').value.trim();
-  const day = document.getElementById('mealplan-day').value;
-  if (!name) {
-    toast('Enter meal name');
-    return;
-  }
-  const weekKey = getWeekKey();
-  await db.ref('nutrition/mealPlans/' + weekKey).push({ name, day, user, timestamp: Date.now() });
-  document.getElementById('mealplan-name').value = '';
-  toast('Added to meal plan');
-}
-
-function getWeekKey() {
-  const now = new Date();
-  const start = new Date(now);
-  start.setDate(start.getDate() - start.getDay());
-  return localDate(start);
-}
-
-function renderMealPlan() {
-  const container = document.getElementById('mealplan-list');
-  if (!container) return;
-  const plans = Object.entries(mealPlanData);
-  if (!plans.length) {
-    container.innerHTML = '<div class="empty">Plan meals for the week</div>';
-    return;
-  }
-  const dayOrder = { mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6, sun: 7 };
-  const items = [];
-  plans.forEach(([wk, meals]) => {
-    Object.entries(meals).forEach(([k, m]) => items.push({ ...m, key: wk + '/' + k }));
-  });
-  items.sort((a, b) => (dayOrder[a.day] || 0) - (dayOrder[b.day] || 0));
-  container.innerHTML = items
-    .map(
-      m => `
-    <div class="card-data" style="margin-bottom:6px">
-      <div class="cd-accent" style="background:var(--rose)"></div>
-      <div class="cd-number" style="font-size:10px;text-transform:uppercase;color:var(--t3);min-width:30px">${m.day}</div>
-      <div class="cd-info"><div class="cd-label">${esc(m.name)}</div></div>
-    </div>`
-    )
-    .join('');
-}
+// Meal planning functions consolidated into pg-homelife (modules-life.js)
 
 async function saveRecipe() {
   const name = document.getElementById('recipe-name').value.trim();
@@ -2357,6 +2466,7 @@ async function addCalEvent() {
 
 async function deleteCalEvent(key) {
   await db.ref('calendar/' + key).remove();
+  toast('Event removed');
 }
 
 // ========================================
@@ -2649,6 +2759,7 @@ async function dhDelNote(key) {
   if (!db) return;
   await db.ref('dreamHome/notes/' + key).remove();
   dhRenderNotes();
+  toast('Note removed');
 }
 
 // Budget breakdown save
@@ -2874,6 +2985,7 @@ async function addHomeWish() {
 
 async function deleteHomeWish(key) {
   await db.ref('dreamHome/wishlist/' + key).remove();
+  toast('Removed from wishlist');
 }
 
 // Summary card renderer
@@ -3013,8 +3125,8 @@ function listenGrocery() {
         v._key = c.key;
         items.push(v);
       });
-      // Render to both grocery list containers
-      ['grocery-list', 'cal-grocery-list'].forEach(elId => {
+      // Render grocery list
+      ['grocery-list'].forEach(elId => {
         const el = document.getElementById(elId);
         if (!el) return;
         if (!items.length) {
@@ -3028,7 +3140,7 @@ function listenGrocery() {
             return `<div class="grocery-item ${i.checked ? 'done' : ''}">
           <div class="grocery-check" onclick="toggleGrocery('${i._key}',${!i.checked})">${i.checked ? '✓' : ''}</div>
           <span class="grocery-name">${esc(i.name)}</span>
-          <button class="item-delete" onclick="db.ref('grocery/${i._key}').remove()">×</button>
+          <button class="item-delete" aria-label="Delete" onclick="db.ref('grocery/${i._key}').remove();toast('Removed')">×</button>
         </div>`;
           })
           .join('');
@@ -3095,7 +3207,7 @@ function listenSharedTodos() {
           <span class="todo-title">${esc(i.title)}</span>
           <span class="todo-by">${who}</span>
         </div>
-        <button class="item-delete" onclick="db.ref('sharedTodos/${i._key}').remove()">×</button>
+        <button class="item-delete" aria-label="Delete" onclick="db.ref('sharedTodos/${i._key}').remove();toast('Removed')">×</button>
       </div>`;
         })
         .join('');
@@ -3232,4 +3344,128 @@ function renderDHVisionCompare(data) {
     html += '</div>';
   });
   el.innerHTML = html;
+}
+
+// ========================================
+// ===== SIMPLIFIED FITNESS - COUPLE CHALLENGES & QUICK LOG =====
+// ========================================
+var FIT_CHALLENGES = [
+  'Do 20 squats together today',
+  'Take a 15-minute walk together',
+  'Hold a plank for 30 seconds — both of you',
+  'Do 10 push-ups and send a selfie after',
+  'Stretch together for 10 minutes',
+  'Dance to one full song together',
+  'Race each other: 20 jumping jacks, who finishes first?',
+  'Do wall sits for 45 seconds together',
+  'Go for a run (even a short one)',
+  'Try 10 burpees — cheer each other on',
+  'Yoga together for 15 minutes (YouTube a flow)',
+  'Take the stairs all day today',
+  'Do 30 crunches — partner holds your feet',
+  'Challenge: no sitting for 1 hour straight',
+  'Workout in the morning before checking your phone'
+];
+
+function completeFitChallenge() {
+  if (typeof db === 'undefined' || !db) return;
+  var today = localDate();
+  db.ref('fitness/' + user + '/challenges/' + today).set({
+    challenge: document.getElementById('fit-challenge-text').textContent,
+    completed: true,
+    timestamp: Date.now()
+  });
+  toast('Challenge done!');
+  if (typeof awardXP === 'function') awardXP(5);
+  var el = document.getElementById('fit-challenge-status');
+  if (el) el.textContent = 'Completed today!';
+}
+
+function skipFitChallenge() {
+  var idx = Math.floor(Math.random() * FIT_CHALLENGES.length);
+  var el = document.getElementById('fit-challenge-text');
+  if (el) el.textContent = FIT_CHALLENGES[idx];
+}
+
+function quickLogWorkout() {
+  if (typeof db === 'undefined' || !db) return;
+  var type = document.getElementById('fit-log-type').value;
+  var duration = parseInt(document.getElementById('fit-log-duration').value) || 0;
+  var note = (document.getElementById('fit-log-note').value || '').trim();
+  if (!duration) { toast('How many minutes?'); return; }
+  var today = localDate();
+  db.ref('fitness/' + user + '/workouts').push({
+    type: type,
+    duration: duration,
+    note: note,
+    date: today,
+    user: user,
+    timestamp: Date.now()
+  });
+  toast('Workout logged!');
+  if (typeof awardXP === 'function') awardXP(10);
+  document.getElementById('fit-log-duration').value = '';
+  document.getElementById('fit-log-note').value = '';
+}
+
+// ========================================
+// ===== SIMPLIFIED NUTRITION - MEAL PLANNING =====
+// ========================================
+function addMealPlan() {
+  if (typeof db === 'undefined' || !db) return;
+  var meal = (document.getElementById('meal-plan-input').value || '').trim();
+  var slot = document.getElementById('meal-plan-slot').value;
+  if (!meal) { toast('What are you eating?'); return; }
+  var today = localDate();
+  db.ref('nutrition/mealPlans/' + today).push({
+    meal: meal,
+    slot: slot,
+    user: user,
+    timestamp: Date.now()
+  });
+  toast('Meal planned!');
+  document.getElementById('meal-plan-input').value = '';
+}
+
+// ========================================
+// ===== GRATITUDE PARTNER PROMPTS =====
+// ========================================
+var GRAT_PARTNER_PROMPTS = [
+  'What did <span class="pname"></span> do recently that made you smile?',
+  'What quality in <span class="pname"></span> are you most grateful for?',
+  'When did <span class="pname"></span> last make you feel truly loved?',
+  'What sacrifice has <span class="pname"></span> made for you that you appreciate?',
+  'What is something <span class="pname"></span> does that you never want them to stop?',
+  'What is your favorite memory with <span class="pname"></span> this month?',
+  'How has <span class="pname"></span> helped you grow as a person?',
+  'What makes <span class="pname"></span> different from everyone else?',
+  'When was the last time <span class="pname"></span> surprised you with kindness?',
+  'What about <span class="pname"></span> makes you feel safe?'
+];
+
+function rotateGratPrompt() {
+  var el = document.getElementById('grat-prompt-text');
+  if (!el) return;
+  var day = new Date().getDay();
+  el.innerHTML = GRAT_PARTNER_PROMPTS[day % GRAT_PARTNER_PROMPTS.length];
+  if (typeof fillPartnerNames === 'function') fillPartnerNames();
+}
+
+// ========================================
+// ===== DATE NIGHT MEMORY =====
+// ========================================
+function saveDateMemory() {
+  if (typeof db === 'undefined' || !db) return;
+  var text = (document.getElementById('dn-memory-text').value || '').trim();
+  if (!text) { toast('Write a quick memory first'); return; }
+  db.ref('memories').push({
+    caption: text,
+    album: 'dates',
+    date: localDate(),
+    user: user,
+    timestamp: Date.now()
+  });
+  toast('Memory saved!');
+  document.getElementById('dn-memory-text').value = '';
+  document.getElementById('dn-memory-prompt').classList.add('d-none');
 }

@@ -94,28 +94,6 @@ function submitKYPEdit(field) {
   toast('Saved');
 }
 
-async function addKYPDate() {
-  const label = document.getElementById('kyp-date-label').value.trim();
-  const date = document.getElementById('kyp-date-val').value;
-  if (!label || !date) {
-    toast('Enter label and date');
-    return;
-  }
-  await db.ref('knowYou/dates').push({ label, date, user, timestamp: Date.now() });
-  document.getElementById('kyp-date-label').value = '';
-  toast('Date saved');
-  // Auto-add to calendar
-  await db.ref('calendar').push({
-    title: label,
-    date,
-    type: 'recurring',
-    notes: 'From Know Your Person',
-    createdBy: user,
-    timestamp: Date.now()
-  });
-  awardXP(5);
-}
-
 function renderKYPDates() {
   const container = document.getElementById('kyp-dates');
   if (!container) return;
@@ -161,7 +139,7 @@ function renderKYPNotes() {
     <div class="kyp-note" style="padding:10px 0;border-bottom:1px solid var(--tint);display:flex;align-items:center;gap:10px">
       <span style="flex:1;font-size:13px;color:var(--cream)">${esc(n.text)}</span>
       <span style="font-size:10px;color:var(--t3)">${timeAgo(n.timestamp)}</span>
-      <button onclick="db.ref('knowYou/${user}/notes/${k}').remove()" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
+      <button onclick="db.ref('knowYou/${user}/notes/${k}').remove();toast('Removed')" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
     </div>`
     )
     .join('');
@@ -334,7 +312,7 @@ function renderKYPCategories() {
       <div style="padding:8px 0;border-bottom:1px solid var(--tint);display:flex;align-items:center;gap:8px">
         <span style="flex:1;font-size:13px;color:var(--cream)">${esc(n.text)}</span>
         <span style="font-size:10px;color:var(--t3)">${timeAgo(n.timestamp)}</span>
-        <button onclick="db.ref('knowYou/${user}/categories/${cat}/${k}').remove()" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
+        <button onclick="db.ref('knowYou/${user}/categories/${cat}/${k}').remove();toast('Removed')" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
       </div>`
       )
       .join('');
@@ -376,7 +354,8 @@ function listenMemories() {
 
 let memCurrentAlbum = 'all';
 let memCurrentView = 'grid';
-let memCustomAlbums = JSON.parse(localStorage.getItem('met_custom_albums') || '[]');
+let memCustomAlbums = [];
+try { memCustomAlbums = JSON.parse(localStorage.getItem('met_custom_albums') || '[]'); } catch (e) {}
 
 function getFilteredMemories() {
   let items = Object.entries(memoriesData);
@@ -667,6 +646,7 @@ function toggleMemFavorite(key) {
   if (!db || !key) return;
   const current = memoriesData[key] && memoriesData[key].favorite;
   db.ref('memories/' + key + '/favorite').set(!current);
+  toast(current ? 'Unfavorited' : 'Favorited');
 }
 
 // ===== MEMORY PROMPTS =====
@@ -901,9 +881,17 @@ async function checkAchievements() {
   if (chCount >= 3) unlockBadge('challenge-three', 'Challenge Royalty');
   renderAchProgress('ach-prog-challenges', chCount, 3);
 
-  // Check streak for week, month, and century badges
-  const streakEl = document.getElementById('fit-streak');
-  const currentStreak = streakEl ? parseInt(streakEl.textContent) : 0;
+  // Check streak for week, month, and century badges (compute from data, not DOM)
+  let currentStreak = 0;
+  if (typeof fitnessData !== 'undefined' && fitnessData) {
+    const wDates = Object.values(fitnessData).map(w => w.date).sort().reverse();
+    let ck = localDate();
+    for (let si = 0; si < 60; si++) {
+      if (wDates.includes(ck)) { currentStreak++; }
+      else if (si > 0) break;
+      const sd = new Date(ck); sd.setDate(sd.getDate() - 1); ck = localDate(sd);
+    }
+  }
   if (currentStreak >= 7) unlockBadge('week-streak', 'Week Streak');
   if (currentStreak >= 30) unlockBadge('month-strong', 'Month Strong');
   if (currentStreak >= 100) unlockBadge('century', 'Century Club');

@@ -27,7 +27,7 @@ let db,
   logExercises = [],
   logType = '',
   chatHistory = [];
-var _authResolved = false; // set true once onAuthStateChanged fires at least once
+let _authResolved = false; // set true once onAuthStateChanged fires at least once
 
 // Map email to profile role — loaded from Firebase at init
 let EMAIL_MAP = {};
@@ -109,8 +109,10 @@ async function init() {
           } catch (e) {}
         }
         fetchWeather().then(function () {
-          var loginSky = document.getElementById('login-sky-scene');
-          if (loginSky && typeof renderLivingSky === 'function') renderLivingSky(loginSky);
+          // Re-render the single master sky with real weather data
+          var skyC = document.getElementById('sky-scene');
+          if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
+          if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
         });
       },
       function () {
@@ -158,25 +160,10 @@ async function init() {
         );
       }
     } else {
-      // Firebase session expired or first load — try auto-login with saved credentials
-      try {
-        var saved = JSON.parse(localStorage.getItem('met_auto_login'));
-        if (saved && saved.e && saved.p) {
-          firebase
-            .auth()
-            .signInWithEmailAndPassword(saved.e, atob(saved.p))
-            .catch(function () {
-              // Saved credentials invalid — clear them and show login form
-              localStorage.removeItem('met_auto_login');
-              _authResolved = true;
-              showEl('login-form');
-              hideEl('welcome-gate');
-            });
-          return; // onAuthStateChanged will fire again with the user
-        }
-      } catch (e) {}
-      // No saved credentials — show login form after a short delay
-      // (Firebase may fire null initially while restoring a persisted session)
+      // Clean up any legacy stored credentials (previously btoa-encoded)
+      localStorage.removeItem('met_auto_login');
+      // Firebase LOCAL persistence should restore the session automatically.
+      // Show login form after a short delay if it doesn't.
       setTimeout(function () {
         if (!user && !authUser) {
           _authResolved = true;
@@ -243,10 +230,12 @@ async function doLogin() {
   try {
     const result = await firebase.auth().signInWithEmailAndPassword(email, pass);
     showError(''); // Clear any previous error message on successful login
-    // Save credentials so we can auto-login on cold start if Firebase session expires
+    // Firebase LOCAL persistence keeps the session across cold starts — no need to store passwords
     try {
-      localStorage.setItem('met_auto_login', JSON.stringify({ e: email, p: btoa(pass) }));
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     } catch (e) {}
+    // Clean up any legacy saved credentials
+    localStorage.removeItem('met_auto_login');
     authUser = result.user;
     // Reload email map now that we're authenticated (rules may require auth)
     if (Object.keys(EMAIL_MAP).length === 0) {
@@ -355,16 +344,23 @@ function listenPartnerPhoto() {
 }
 
 function applyPartnerPhoto() {
-  const avatarEl = document.getElementById('dash-partner-avatar');
-  if (avatarEl) {
+  var els = [
+    document.getElementById('dash-partner-avatar'),
+    document.getElementById('set-partner-photo')
+  ];
+  els.forEach(function (el) {
+    if (!el) return;
     if (partnerPhoto) {
-      avatarEl.style.backgroundImage = 'url(' + partnerPhoto + ')';
-      avatarEl.classList.add('has-photo');
+      el.style.backgroundImage = 'url(' + partnerPhoto + ')';
+      el.classList.add('has-photo');
     } else {
-      avatarEl.style.backgroundImage = '';
-      avatarEl.classList.remove('has-photo');
+      el.style.backgroundImage = '';
+      el.classList.remove('has-photo');
     }
-  }
+  });
+  // Hide placeholder when photo is set
+  var placeholder = document.getElementById('set-photo-placeholder');
+  if (placeholder) placeholder.style.display = partnerPhoto ? 'none' : '';
 }
 
 // Change partner photo (daily update from dashboard)
@@ -413,9 +409,10 @@ function handleFirstLocationAllow() {
         // Fetch weather and immediately update the login sky background
         if (typeof fetchWeather === 'function') {
           fetchWeather().then(function () {
-            // Update the login screen sky with real weather data
-            var loginSky = document.getElementById('login-sky-scene');
-            if (loginSky && typeof renderLivingSky === 'function') renderLivingSky(loginSky);
+            // Re-render the single master sky with real weather data
+            var skyC = document.getElementById('sky-scene');
+            if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
+            if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
             if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
             if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
           });
@@ -547,10 +544,10 @@ function obBroadcastStep() {
 }
 
 // Partner's live onboarding data (received in real-time)
-var obPartnerData = { name: '', nickname: '', agreementsTogether: [], morningMsgEnabled: false, morningCustomMsg: '' };
+let obPartnerData = { name: '', nickname: '', agreementsTogether: [], morningMsgEnabled: false, morningCustomMsg: '' };
 
 // Listen for partner's onboarding progress + live data
-var obPartnerListener = null;
+let obPartnerListener = null;
 function obListenPartner() {
   if (!db || !partner) return;
   obPartnerListener = db.ref('onboarding/' + partner);
@@ -775,7 +772,7 @@ function _obIcon(d, s) {
     '</svg>'
   );
 }
-var OB_ICONS = {
+const OB_ICONS = {
   sparkle: _obIcon('<path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/>'),
   heart: _obIcon(
     '<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>'
@@ -1123,20 +1120,19 @@ function onboardNext() {
 function obToggleLiveSky(on) {
   onboardData.livingSky = on;
   var loginEl = document.querySelector('.login');
-  var skyC = document.getElementById('login-sky-scene');
-  var terrC = document.getElementById('login-terrain-scene');
+  // Use global sky/terrain containers (the single master background)
+  var skyC = document.getElementById('sky-scene');
+  var terrC = document.getElementById('terrain-scene');
   if (loginEl) {
     if (on) {
       loginEl.classList.add('ob-sky-visible');
-      // Show background animations and render sky/terrain
-      if (skyC) skyC.style.display = '';
-      if (terrC) terrC.style.display = '';
+      if (skyC) skyC.style.opacity = '';
+      if (terrC) terrC.style.opacity = '';
       obApplyLiveTheme(onboardData.skyTheme);
     } else {
       loginEl.classList.remove('ob-sky-visible');
-      // Hide background animations
-      if (skyC) skyC.style.display = 'none';
-      if (terrC) terrC.style.display = 'none';
+      if (skyC) skyC.style.opacity = '0';
+      if (terrC) terrC.style.opacity = '0';
     }
   }
 }
@@ -1163,20 +1159,12 @@ function obApplyLiveTheme(theme) {
   theme = theme || onboardData.skyTheme || 'mixed';
   // Set the body attribute so CSS variables change
   document.body.setAttribute('data-sky-theme', theme);
-  // Update the login page sky scene
-  var skyC = document.getElementById('login-sky-scene');
+  // Update the global master sky scene (single background for entire app)
+  var skyC = document.getElementById('sky-scene');
   if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
-  // Update login terrain
-  var terrC = document.getElementById('login-terrain-scene');
-  if (terrC) {
-    terrC.innerHTML = '';
-    if (theme === 'beach' && typeof renderBeachTerrain === 'function') {
-      renderBeachTerrain(terrC);
-    } else if (theme === 'mountain' && typeof renderMountainTerrain === 'function') {
-      renderMountainTerrain(terrC);
-    } else if (typeof renderMeadowTerrain === 'function') {
-      renderMeadowTerrain(terrC);
-    }
+  // Update global terrain
+  if (typeof renderTerrain === 'function') {
+    renderTerrain(theme);
   }
   // Update orbs and time-of-day colors
   if (typeof spawnOrbs === 'function') spawnOrbs();
@@ -1611,7 +1599,7 @@ const TOUR_STEPS = [
   }
 ];
 
-var _tourTransitioning = false;
+let _tourTransitioning = false;
 
 function startAppTour() {
   tourStep = 0;
@@ -1840,6 +1828,9 @@ function _waitForAuth(timeout) {
 }
 
 function finishLogin() {
+  // Apply cached sky theme BEFORE time-of-day so CSS variables resolve correctly
+  var cachedTheme = localStorage.getItem('met_sky_theme');
+  if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
   // Set time-of-day colors before showing shell
   if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
   // Show the shell FIRST so sky/terrain render into a visible container
@@ -1868,6 +1859,7 @@ function finishLogin() {
   listenDailyAnswers();
   listenStreak();
   listenGratitude();
+  if (typeof rotateGratPrompt === 'function') rotateGratPrompt();
   loadDailyQuestion();
   loadWYR();
   listenQuiz();
@@ -1913,7 +1905,7 @@ function finishLogin() {
   listenMeals();
   listenChores();
   listenExpenses();
-  listenSharedGoals();
+  // listenSharedGoals(); — consolidated into Dreams page
   listenHabits();
   listenGrocery();
   listenSharedTodos();
@@ -1945,9 +1937,7 @@ function finishLogin() {
   // Initialize weather system (must run after user/db are set)
   if (typeof initWeatherSystem === 'function') initWeatherSystem();
   // Sky/terrain are outside shell (position:fixed, always in DOM).
-  // Apply cached theme, render sky, then load authoritative theme from Firebase.
-  var cachedTheme = localStorage.getItem('met_sky_theme');
-  if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
+  // Cached theme already applied at top of finishLogin; render sky, then load authoritative theme from Firebase.
   if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
   initDynamicVisuals();
   if (typeof loadSkyTheme === 'function') loadSkyTheme();
@@ -2246,7 +2236,7 @@ function initPartnerNotifications() {
 
 // ===== BACKGROUND SYNC (#16) =====
 // Queue offline data writes and sync when back online
-var _offlineQueue = [];
+let _offlineQueue = [];
 try {
   _offlineQueue = JSON.parse(localStorage.getItem('met_offline_queue') || '[]');
 } catch (e) {
@@ -2291,8 +2281,8 @@ window.addEventListener('online', function () {
 });
 
 // Override submitMood and finishWorkout to queue when offline
-var _origSubmitMood = typeof submitMood === 'function' ? submitMood : null;
-var _origFinishWorkout = typeof finishWorkout === 'function' ? finishWorkout : null;
+let _origSubmitMood = typeof submitMood === 'function' ? submitMood : null;
+let _origFinishWorkout = typeof finishWorkout === 'function' ? finishWorkout : null;
 
 // Patching is deferred to after all scripts load
 window.addEventListener('load', function () {

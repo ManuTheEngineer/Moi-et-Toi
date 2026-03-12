@@ -311,6 +311,44 @@ function getTempTint() {
   return { tint: 'rgba(255,100,50,0.09)', label: 'Extreme heat' };
 }
 
+// ===== WEATHER CONDITION TINTING =====
+// Returns a CSS background layer string based on current weather condition.
+// Applied uniformly via the .weather-tint element for consistent backgrounds.
+function getWeatherConditionTint() {
+  if (!WEATHER.data || !WEATHER.data.condition) return null;
+  var c = WEATHER.data.condition;
+  var t = document.body.getAttribute('data-time');
+  var isDark = t === 'night' || t === 'evening';
+  // Reduce intensity at night/evening
+  var m = isDark ? 0.5 : 1;
+  switch (c) {
+    case 'clouds':
+    case 'smoke':
+      return 'rgba(160,170,185,' + (0.10 * m).toFixed(3) + ')';
+    case 'fog':
+    case 'mist':
+    case 'haze':
+      return 'rgba(200,200,210,' + (0.14 * m).toFixed(3) + ')';
+    case 'drizzle':
+      return 'rgba(110,130,160,' + (0.08 * m).toFixed(3) + ')';
+    case 'rain':
+      return 'rgba(70,90,120,' + (0.12 * m).toFixed(3) + ')';
+    case 'thunderstorm':
+    case 'tornado':
+    case 'squall':
+      return 'rgba(50,55,80,' + (0.14 * m).toFixed(3) + ')';
+    case 'snow':
+      return 'rgba(210,220,240,' + (0.12 * m).toFixed(3) + ')';
+    case 'hail':
+      return 'rgba(150,170,200,' + (0.10 * m).toFixed(3) + ')';
+    case 'dust':
+    case 'sand':
+      return 'rgba(180,160,120,' + (0.10 * m).toFixed(3) + ')';
+    default: // clear
+      return null;
+  }
+}
+
 // ===== WEATHER PARTICLE EFFECTS =====
 function renderWeatherEffects(container) {
   var existing = container.querySelector('.weather-fx-layer');
@@ -491,7 +529,7 @@ function renderSceneCreature(container, type) {
       renderDeer(container);
       break;
     case 'owl':
-      renderOwl(container);
+      renderSceneOwl(container);
       break;
     case 'bat':
       renderBat(container);
@@ -506,7 +544,7 @@ function renderSceneCreature(container, type) {
       renderWoodpecker(container);
       break;
     case 'seagull':
-      renderSeagull(container);
+      renderSceneSeagull(container);
       break;
     case 'pelican':
       renderPelican(container);
@@ -515,7 +553,7 @@ function renderSceneCreature(container, type) {
       renderHeron(container);
       break;
     case 'crab':
-      renderCrab(container);
+      renderSceneCrab(container);
       break;
     case 'dolphin':
       renderDolphin(container);
@@ -636,7 +674,7 @@ function renderDeer(container) {
   );
 }
 
-function renderOwl(container) {
+function renderSceneOwl(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-owl';
   var x = 15 + Math.random() * 60;
@@ -725,7 +763,7 @@ function renderWoodpecker(container) {
   }, 10000);
 }
 
-function renderSeagull(container) {
+function renderSceneSeagull(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-seagull';
   var x = -10 + Math.random() * 20;
@@ -746,7 +784,7 @@ function renderSeagull(container) {
   );
 }
 
-function renderCrab(container) {
+function renderSceneCrab(container) {
   var el = document.createElement('div');
   el.className = 'scene-creature creature-crab';
   var dur = 16 + Math.random() * 10;
@@ -1191,6 +1229,196 @@ function _pinkNoise(d, len, gain) {
     b5 = -0.7616 * b5 - w * 0.016898;
     d[i] += (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11 * (gain || 1);
     b6 = w * 0.115926;
+  }
+}
+
+// ===== PIANO / RECORD SYNTHESIS HELPERS =====
+
+// Realistic piano note synthesis with 8 harmonics, inharmonicity, hammer noise, two-stage decay
+function _pianoNote(L, R, sr, freq, startSample, velocity, opts) {
+  opts = opts || {};
+  var PI2 = 2 * Math.PI;
+  var len = L.length;
+  var dur = opts.dur || 3.0;
+  var durSamples = Math.floor(sr * dur);
+  var B = 0.0004; // inharmonicity coefficient
+  var harmonicAmps = opts.harmonics || [1.0, 0.7, 0.45, 0.25, 0.15, 0.10, 0.06, 0.04];
+  var numH = harmonicAmps.length;
+
+  // Register-dependent decay: bass=2.5s, treble=1.0s
+  var register = Math.max(0, Math.min(1, (freq - 80) / 800));
+  var baseDecay = (opts.sustain || 1.0) * (2.5 - register * 1.5);
+
+  // Stereo pan: low notes left, high notes right
+  var pan = opts.pan !== undefined ? opts.pan : 0.3 + register * 0.4;
+  pan = Math.max(0.15, Math.min(0.85, pan));
+  var panL = 1 - pan * 0.6;
+  var panR = 0.4 + pan * 0.6;
+
+  // Hammer noise parameters
+  var noiseLen = Math.floor(sr * 0.008);
+  var noiseSeed = Math.random() * 100;
+
+  // Precompute harmonic frequencies (with inharmonicity)
+  var hFreqs = [];
+  var hDecays = [];
+  for (var h = 1; h <= numH; h++) {
+    hFreqs.push(freq * h * (1 + B * h * h));
+    hDecays.push(baseDecay / (1 + (h - 1) * 0.35));
+  }
+  // Detuned string frequency (only first 4 harmonics)
+  var detuneRatio = 1.001;
+
+  var amp = 0.18 * velocity;
+
+  for (var k = 0; k < durSamples && startSample + k < len; k++) {
+    var idx = startSample + k;
+    var sample = 0;
+
+    // Attack envelope: 3ms
+    var att = 1 - Math.exp(-k / (sr * 0.003));
+
+    for (var h = 0; h < numH; h++) {
+      var hd1 = hDecays[h] * 0.3;
+      var hd2 = hDecays[h] * 2.0;
+      var hEnv = att * (0.65 * Math.exp(-k / (sr * hd1)) + 0.35 * Math.exp(-k / (sr * hd2)));
+      var phase = PI2 * hFreqs[h] * k / sr;
+      sample += Math.sin(phase) * harmonicAmps[h] * hEnv;
+      // Detuned second string for first 4 harmonics
+      if (h < 4) {
+        sample += Math.sin(phase * detuneRatio) * harmonicAmps[h] * 0.4 * hEnv;
+      }
+    }
+    sample *= amp;
+
+    // Hammer noise burst
+    if (k < noiseLen) {
+      var noiseEnv = Math.exp(-k / (sr * 0.002));
+      // Simple pseudo-noise from seed
+      var nx = Math.sin(noiseSeed + k * 12.9898) * 43758.5453;
+      var noise = (nx - Math.floor(nx)) * 2 - 1;
+      sample += noise * 0.15 * velocity * noiseEnv;
+    }
+
+    L[idx] += sample * panL;
+    R[idx] += sample * panR;
+  }
+}
+
+// Multi-tap lush reverb with early reflections, late diffusion, and damping
+function _lushReverb(L, R, sr, len, opts) {
+  opts = opts || {};
+  var decay = opts.decay || 0.25;
+  var width = opts.width || 0.3;
+
+  // Early reflections: 4 taps at prime-ratio delays
+  var earlyTaps = [
+    { delay: Math.floor(sr * 0.013), gain: 0.15, pL: 0.9, pR: 0.5 },
+    { delay: Math.floor(sr * 0.029), gain: 0.12, pL: 0.4, pR: 0.95 },
+    { delay: Math.floor(sr * 0.043), gain: 0.09, pL: 0.85, pR: 0.3 },
+    { delay: Math.floor(sr * 0.059), gain: 0.07, pL: 0.35, pR: 0.8 }
+  ];
+
+  // Apply early reflections
+  for (var t = 0; t < earlyTaps.length; t++) {
+    var tap = earlyTaps[t];
+    for (var i = tap.delay; i < len; i++) {
+      L[i] += L[i - tap.delay] * tap.gain * tap.pL;
+      R[i] += R[i - tap.delay] * tap.gain * tap.pR;
+    }
+  }
+
+  // Late diffusion: 2 feedback delay lines with cross-channel mixing and damping
+  var late1 = Math.floor(sr * 0.127);
+  var late2 = Math.floor(sr * 0.193);
+  var maxLate = Math.max(late1, late2);
+  var dampL = 0, dampR = 0;
+  var dampCoeff = 0.7; // high-freq damping in reverb tail
+
+  for (var i = maxLate; i < len; i++) {
+    var lateL = L[i - late1] * 0.18 + L[i - late2] * 0.14;
+    var lateR = R[i - late1] * 0.14 + R[i - late2] * 0.18;
+    // Cross-feed for diffusion
+    var mixL = (lateL + lateR * width) * decay;
+    var mixR = (lateR + lateL * width) * decay;
+    // Damping: one-pole low-pass
+    dampL = dampL + dampCoeff * (mixL - dampL);
+    dampR = dampR + dampCoeff * (mixR - dampR);
+    L[i] += dampL;
+    R[i] += dampR;
+  }
+}
+
+// Vinyl/record character post-processing: crackle, warmth, wow, bass boost
+function _recordWarmth(L, R, sr, len, opts) {
+  opts = opts || {};
+  var PI2 = 2 * Math.PI;
+
+  // 1. Vinyl crackle: realistic micro-pop clusters
+  var numPops = opts.crackle !== undefined ? opts.crackle : 300;
+  for (var p = 0; p < numPops; p++) {
+    var pos = Math.floor(Math.random() * (len - 100));
+    var intensity = Math.random() * 0.04 + 0.005;
+    var popLen = Math.floor(2 + Math.random() * 6);
+    var panR = Math.random();
+    for (var j = 0; j < popLen && pos + j < len; j++) {
+      var nx = Math.sin(pos + j * 12.9898 + p * 78.233) * 43758.5453;
+      var pSample = ((nx - Math.floor(nx)) * 2 - 1) * intensity * Math.exp(-j / 2);
+      L[pos + j] += pSample * (1 - panR * 0.3);
+      R[pos + j] += pSample * (0.7 + panR * 0.3);
+    }
+  }
+
+  // 2. Background hiss: very low-level pink noise
+  var hissLevel = opts.hissLevel || 0.005;
+  var b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+  for (var i = 0; i < len; i++) {
+    var w = Math.random() * 2 - 1;
+    b0 = 0.99886 * b0 + w * 0.0555179;
+    b1 = 0.99332 * b1 + w * 0.0750759;
+    b2 = 0.969 * b2 + w * 0.153852;
+    b3 = 0.8665 * b3 + w * 0.3104856;
+    b4 = 0.55 * b4 + w * 0.5329522;
+    b5 = -0.7616 * b5 - w * 0.016898;
+    var pink = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11 * hissLevel;
+    b6 = w * 0.115926;
+    L[i] += pink;
+    R[i] += pink * 0.9;
+  }
+
+  // 3. High-frequency rolloff: one-pole low-pass for warmth
+  var warmth = opts.warmth || 0.85;
+  var prevL = 0, prevR = 0;
+  for (var i = 0; i < len; i++) {
+    L[i] = prevL = prevL + warmth * (L[i] - prevL);
+    R[i] = prevR = prevR + warmth * (R[i] - prevR);
+  }
+
+  // 4. Wow: slow ~0.3Hz amplitude modulation with organic irregularity
+  var wowDepth = opts.wow !== undefined ? opts.wow : 0.06;
+  if (wowDepth > 0) {
+    for (var i = 0; i < len; i++) {
+      var t = i / sr;
+      var wowMod = 1.0 + wowDepth * Math.sin(PI2 * 0.3 * t + Math.sin(PI2 * 0.1 * t) * 0.5);
+      L[i] *= wowMod;
+      R[i] *= wowMod;
+    }
+  }
+
+  // 5. Bass warmth boost
+  var bassL = 0, bassR = 0;
+  var bassCoeff = 0.995;
+  for (var i = 0; i < len; i++) {
+    bassL = bassL * bassCoeff + L[i] * (1 - bassCoeff);
+    bassR = bassR * bassCoeff + R[i] * (1 - bassCoeff);
+    L[i] += bassL * 0.3;
+    R[i] += bassR * 0.3;
+  }
+
+  // 6. Final clamp
+  for (var i = 0; i < len; i++) {
+    L[i] = _clamp(L[i]);
+    R[i] = _clamp(R[i]);
   }
 }
 
@@ -1806,89 +2034,31 @@ function generateNoise(type) {
       break;
     }
 
-    // ===== MOOD SOUNDS =====
+    // ===== MOOD SOUNDS (Piano / Record Sample Style) =====
     case 'moodRelaxing': {
-      // Soft piano: slow arpeggiated Dmaj7 with sustain pedal feel
+      // Relaxing piano: slow arpeggiated Dmaj7 with sustain pedal feel
       var relaxNotes = [
-        { f: 146.8, t: 0.0 },
-        { f: 185.0, t: 0.5 },
-        { f: 220.0, t: 1.0 },
-        { f: 277.2, t: 1.5 },
-        { f: 293.7, t: 2.5 },
-        { f: 220.0, t: 3.0 },
-        { f: 185.0, t: 3.5 },
-        { f: 146.8, t: 4.0 },
-        { f: 130.8, t: 5.0 },
-        { f: 164.8, t: 5.5 },
-        { f: 220.0, t: 6.0 },
-        { f: 261.6, t: 6.5 },
-        { f: 293.7, t: 7.5 },
-        { f: 261.6, t: 8.0 },
-        { f: 220.0, t: 8.5 },
-        { f: 164.8, t: 9.0 }
+        { f: 146.8, t: 0.0 }, { f: 185.0, t: 0.5 }, { f: 220.0, t: 1.0 }, { f: 277.2, t: 1.5 },
+        { f: 293.7, t: 2.5 }, { f: 220.0, t: 3.0 }, { f: 185.0, t: 3.5 }, { f: 146.8, t: 4.0 },
+        { f: 130.8, t: 5.0 }, { f: 164.8, t: 5.5 }, { f: 220.0, t: 6.0 }, { f: 261.6, t: 6.5 },
+        { f: 293.7, t: 7.5 }, { f: 261.6, t: 8.0 }, { f: 220.0, t: 8.5 }, { f: 164.8, t: 9.0 }
       ];
-      for (var n = 0; n < relaxNotes.length; n++) {
-        var note = relaxNotes[n];
-        var start = Math.floor(note.t * sr);
-        var dur = Math.floor(sr * 2.5);
-        for (k = 0; k < dur && start + k < len; k++) {
-          var env = Math.exp(-k / (sr * 1.8)) * (1 - Math.exp(-k / (sr * 0.005)));
-          var s =
-            (Math.sin((PI2 * note.f * k) / sr) * 0.22 +
-              Math.sin((PI2 * note.f * 2 * k) / sr) * 0.06 * Math.exp(-k / (sr * 0.8)) +
-              Math.sin((PI2 * note.f * 3 * k) / sr) * 0.02 * Math.exp(-k / (sr * 0.4))) *
-            env;
-          L[start + k] += s * 0.9;
-          R[start + k] += s * 0.75;
-        }
-      }
-      // Soft reverb tail
-      var dly = Math.floor(sr * 0.12);
-      for (i = dly; i < len; i++) {
-        L[i] += L[i - dly] * 0.15;
-        R[i] += R[i - dly] * 0.18;
-      }
-      for (i = 0; i < len; i++) {
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      for (var n = 0; n < relaxNotes.length; n++)
+        _pianoNote(L, R, sr, relaxNotes[n].f, Math.floor(relaxNotes[n].t * sr), 0.5, { dur: 3.5, sustain: 1.2 });
+      _lushReverb(L, R, sr, len, { decay: 0.3, width: 0.35 });
+      _recordWarmth(L, R, sr, len, { crackle: 200, warmth: 0.82, wow: 0.04 });
       break;
     }
     case 'moodRomantic': {
-      // Romantic piano: slow, tender melody in Am with warm harmonics
+      // Romantic piano: tender Am melody with warm pad
       var romNotes = [
-        { f: 220, t: 0.0 },
-        { f: 261.6, t: 0.6 },
-        { f: 329.6, t: 1.2 },
-        { f: 392, t: 1.8 },
-        { f: 329.6, t: 2.8 },
-        { f: 293.7, t: 3.3 },
-        { f: 261.6, t: 3.8 },
-        { f: 220, t: 4.8 },
-        { f: 196, t: 5.4 },
-        { f: 220, t: 6.0 },
-        { f: 261.6, t: 6.6 },
-        { f: 246.9, t: 7.6 },
-        { f: 220, t: 8.2 },
-        { f: 196, t: 8.8 },
-        { f: 174.6, t: 9.4 }
+        { f: 220, t: 0.0 }, { f: 261.6, t: 0.6 }, { f: 329.6, t: 1.2 }, { f: 392, t: 1.8 },
+        { f: 329.6, t: 2.8 }, { f: 293.7, t: 3.3 }, { f: 261.6, t: 3.8 }, { f: 220, t: 4.8 },
+        { f: 196, t: 5.4 }, { f: 220, t: 6.0 }, { f: 261.6, t: 6.6 }, { f: 246.9, t: 7.6 },
+        { f: 220, t: 8.2 }, { f: 196, t: 8.8 }, { f: 174.6, t: 9.4 }
       ];
-      for (var n = 0; n < romNotes.length; n++) {
-        var note = romNotes[n];
-        var start = Math.floor(note.t * sr);
-        var dur = Math.floor(sr * 2.8);
-        for (k = 0; k < dur && start + k < len; k++) {
-          var env = Math.exp(-k / (sr * 2.2)) * (1 - Math.exp(-k / (sr * 0.004)));
-          var vib = Math.sin((PI2 * 5 * k) / sr) * 0.8;
-          var s =
-            (Math.sin((PI2 * (note.f + vib) * k) / sr) * 0.25 +
-              Math.sin((PI2 * (note.f + vib) * 2 * k) / sr) * 0.07 * Math.exp(-k / (sr * 1.0)) +
-              Math.sin((PI2 * (note.f + vib) * 3 * k) / sr) * 0.03 * Math.exp(-k / (sr * 0.5))) *
-            env;
-          L[start + k] += s * 0.85;
-          R[start + k] += s * 0.8;
-        }
-      }
+      for (var n = 0; n < romNotes.length; n++)
+        _pianoNote(L, R, sr, romNotes[n].f, Math.floor(romNotes[n].t * sr), 0.5, { dur: 3.5, sustain: 1.3 });
       // Warm pad underneath
       for (i = 0; i < len; i++) {
         t = i / sr;
@@ -1897,451 +2067,349 @@ function generateNoise(type) {
         L[i] += pad * swell;
         R[i] += pad * swell;
       }
-      var dly = Math.floor(sr * 0.15);
-      for (i = dly; i < len; i++) {
-        L[i] += L[i - dly] * 0.12;
-        R[i] += R[i - dly] * 0.15;
-      }
-      for (i = 0; i < len; i++) {
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      _lushReverb(L, R, sr, len, { decay: 0.28, width: 0.3 });
+      _recordWarmth(L, R, sr, len, { crackle: 250, warmth: 0.8, wow: 0.06 });
       break;
     }
     case 'moodLively': {
-      // Upbeat acoustic guitar strum: major key arpeggios with rhythm
+      // Lively piano: bright chords with strum-like timing
       var livelyChords = [
-        { notes: [329.6, 415.3, 523.3], t: 0.0 }, // E major
-        { notes: [349.2, 440, 523.3], t: 0.8 }, // F major
-        { notes: [392, 493.9, 587.3], t: 1.6 }, // G major
-        { notes: [261.6, 329.6, 392], t: 2.4 }, // C major
-        { notes: [329.6, 415.3, 523.3], t: 3.6 },
-        { notes: [293.7, 370, 440], t: 4.4 }, // D major
-        { notes: [392, 493.9, 587.3], t: 5.2 },
-        { notes: [261.6, 329.6, 392], t: 6.0 },
-        { notes: [349.2, 440, 523.3], t: 7.2 },
-        { notes: [329.6, 415.3, 523.3], t: 8.0 },
+        { notes: [329.6, 415.3, 523.3], t: 0.0 }, { notes: [349.2, 440, 523.3], t: 0.8 },
+        { notes: [392, 493.9, 587.3], t: 1.6 }, { notes: [261.6, 329.6, 392], t: 2.4 },
+        { notes: [329.6, 415.3, 523.3], t: 3.6 }, { notes: [293.7, 370, 440], t: 4.4 },
+        { notes: [392, 493.9, 587.3], t: 5.2 }, { notes: [261.6, 329.6, 392], t: 6.0 },
+        { notes: [349.2, 440, 523.3], t: 7.2 }, { notes: [329.6, 415.3, 523.3], t: 8.0 },
         { notes: [293.7, 370, 440], t: 8.8 }
       ];
       for (var c = 0; c < livelyChords.length; c++) {
         var chord = livelyChords[c];
-        for (var ni = 0; ni < chord.notes.length; ni++) {
-          var strumDelay = ni * 0.03;
-          var start = Math.floor((chord.t + strumDelay) * sr);
-          var dur = Math.floor(sr * 0.7);
-          var freq = chord.notes[ni];
-          for (k = 0; k < dur && start + k < len; k++) {
-            var env = Math.exp(-k / (sr * 0.35)) * (1 - Math.exp(-k / (sr * 0.001)));
-            var s =
-              (Math.sin((PI2 * freq * k) / sr) * 0.14 +
-                Math.sin((PI2 * freq * 2 * k) / sr) * 0.08 * Math.exp(-k / (sr * 0.15)) +
-                Math.sin((PI2 * freq * 3 * k) / sr) * 0.04 * Math.exp(-k / (sr * 0.1)) +
-                Math.sin((PI2 * freq * 4 * k) / sr) * 0.02 * Math.exp(-k / (sr * 0.08))) *
-              env;
-            var pan = 0.4 + ni * 0.15;
-            L[start + k] += s * (1 - pan);
-            R[start + k] += s * pan;
-          }
-        }
+        for (var ni = 0; ni < chord.notes.length; ni++)
+          _pianoNote(L, R, sr, chord.notes[ni], Math.floor((chord.t + ni * 0.03) * sr), 0.7, { dur: 1.2 });
       }
-      for (i = 0; i < len; i++) {
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      _lushReverb(L, R, sr, len, { decay: 0.18, width: 0.25 });
+      _recordWarmth(L, R, sr, len, { crackle: 150, warmth: 0.88, wow: 0.03 });
       break;
     }
     case 'moodCozy': {
-      // Fireplace: realistic crackling with pops, hiss, and warm low rumble
-      var fb = 0;
-      for (i = 0; i < len; i++) {
-        t = i / sr;
-        fb = 0.99 * fb + 0.01 * (Math.random() * 2 - 1);
-        var warmth = Math.sin(PI2 * 80 * t) * 0.03 + Math.sin(PI2 * 120 * t) * 0.02;
-        L[i] = fb * 0.5 + warmth + (Math.random() * 2 - 1) * 0.08;
-        R[i] = fb * 0.4 + warmth + (Math.random() * 2 - 1) * 0.08;
-      }
-      // Crackle events - sharp pops with sizzle tail
-      for (var c = 0; c < 80; c++) {
-        var cPos = Math.floor(Math.random() * (len - sr * 0.1));
-        var pop = Math.random() * 0.6 + 0.2;
-        var cLen = Math.floor(sr * (0.01 + Math.random() * 0.04));
-        var pan = Math.random();
-        for (k = 0; k < cLen && cPos + k < len; k++) {
-          var s = (Math.random() * 2 - 1) * pop * Math.exp(-k / (cLen * 0.2));
-          L[cPos + k] += s * (1 - pan * 0.4);
-          R[cPos + k] += s * (0.6 + pan * 0.4);
-        }
-        // Sizzle tail
-        var sLen = Math.floor(sr * (0.05 + Math.random() * 0.1));
-        for (k = 0; k < sLen && cPos + cLen + k < len; k++) {
-          var s = (Math.random() * 2 - 1) * pop * 0.2 * Math.exp(-k / (sLen * 0.4));
-          L[cPos + cLen + k] += s;
-          R[cPos + cLen + k] += s * 0.8;
-        }
-      }
-      for (i = 0; i < len; i++) {
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      // Cozy nocturne: gentle broken chords in Eb major, warm and intimate
+      var cozyNotes = [
+        { f: 155.6, t: 0.0 }, { f: 196, t: 0.4 }, { f: 233.1, t: 0.8 }, { f: 311.1, t: 1.2 },
+        { f: 233.1, t: 2.0 }, { f: 196, t: 2.5 }, { f: 155.6, t: 3.0 }, { f: 130.8, t: 3.8 },
+        { f: 164.8, t: 4.2 }, { f: 196, t: 4.6 }, { f: 261.6, t: 5.0 }, { f: 311.1, t: 5.8 },
+        { f: 261.6, t: 6.4 }, { f: 196, t: 7.0 }, { f: 164.8, t: 7.6 }, { f: 130.8, t: 8.2 },
+        { f: 155.6, t: 8.8 }, { f: 196, t: 9.3 }
+      ];
+      for (var n = 0; n < cozyNotes.length; n++)
+        _pianoNote(L, R, sr, cozyNotes[n].f, Math.floor(cozyNotes[n].t * sr), 0.4, { dur: 3.5, sustain: 1.4 });
+      _lushReverb(L, R, sr, len, { decay: 0.32, width: 0.35 });
+      _recordWarmth(L, R, sr, len, { crackle: 350, warmth: 0.75, wow: 0.07 });
       break;
     }
     case 'moodFocused': {
-      // Lo-fi focus: gentle piano chords + binaural undertone + vinyl crackle
+      // Lo-fi piano: gentle chords with binaural undertone
       var focChords = [
-        { notes: [261.6, 329.6, 392], t: 0 }, // Cmaj
-        { notes: [220, 293.7, 349.2], t: 2.5 }, // Dm
-        { notes: [196, 246.9, 329.6], t: 5.0 }, // Em
-        { notes: [174.6, 220, 293.7], t: 7.5 } // Dm low
+        { notes: [261.6, 329.6, 392], t: 0 }, { notes: [220, 293.7, 349.2], t: 2.5 },
+        { notes: [196, 246.9, 329.6], t: 5.0 }, { notes: [174.6, 220, 293.7], t: 7.5 }
       ];
       for (var c = 0; c < focChords.length; c++) {
         var chord = focChords[c];
-        for (var ni = 0; ni < chord.notes.length; ni++) {
-          var start = Math.floor((chord.t + ni * 0.08) * sr);
-          var dur = Math.floor(sr * 3.0);
-          var freq = chord.notes[ni];
-          for (k = 0; k < dur && start + k < len; k++) {
-            var env = Math.exp(-k / (sr * 2.0)) * (1 - Math.exp(-k / (sr * 0.006)));
-            var s =
-              (Math.sin((PI2 * freq * k) / sr) * 0.16 +
-                Math.sin((PI2 * freq * 2 * k) / sr) * 0.04 * Math.exp(-k / (sr * 0.6))) *
-              env;
-            L[start + k] += s * 0.8;
-            R[start + k] += s * 0.7;
-          }
-        }
+        for (var ni = 0; ni < chord.notes.length; ni++)
+          _pianoNote(L, R, sr, chord.notes[ni], Math.floor((chord.t + ni * 0.08) * sr), 0.45, { dur: 3.5, sustain: 1.1 });
       }
       // Binaural undertone for focus (10Hz alpha beat)
       for (i = 0; i < len; i++) {
         t = i / sr;
-        L[i] += Math.sin(PI2 * 200 * t) * 0.03;
-        R[i] += Math.sin(PI2 * 210 * t) * 0.03;
+        L[i] += Math.sin(PI2 * 200 * t) * 0.025;
+        R[i] += Math.sin(PI2 * 210 * t) * 0.025;
       }
-      // Subtle vinyl crackle
-      for (var cr = 0; cr < 40; cr++) {
-        var pos = Math.floor(Math.random() * len);
-        L[pos] += (Math.random() - 0.5) * 0.06;
-        R[pos] += (Math.random() - 0.5) * 0.06;
-      }
-      var dly = Math.floor(sr * 0.1);
-      for (i = dly; i < len; i++) {
-        L[i] += L[i - dly] * 0.12;
-        R[i] += R[i - dly] * 0.14;
-      }
-      for (i = 0; i < len; i++) {
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      _lushReverb(L, R, sr, len, { decay: 0.22, width: 0.25 });
+      _recordWarmth(L, R, sr, len, { crackle: 300, warmth: 0.78, wow: 0.05 });
       break;
     }
     case 'moodPlayful': {
-      // Playful xylophone/music box melody in G major
+      // Music-box piano: bright staccato melody in G major
       var playNotes = [
-        { f: 784, t: 0.0 },
-        { f: 880, t: 0.25 },
-        { f: 784, t: 0.5 },
-        { f: 659.3, t: 0.75 },
-        { f: 587.3, t: 1.25 },
-        { f: 659.3, t: 1.5 },
-        { f: 784, t: 1.75 },
-        { f: 523.3, t: 2.5 },
-        { f: 587.3, t: 2.75 },
-        { f: 659.3, t: 3.0 },
-        { f: 784, t: 3.5 },
-        { f: 880, t: 4.0 },
-        { f: 784, t: 4.5 },
-        { f: 659.3, t: 5.0 },
-        { f: 587.3, t: 5.5 },
-        { f: 523.3, t: 6.0 },
-        { f: 587.3, t: 6.5 },
-        { f: 392, t: 7.0 },
-        { f: 440, t: 7.5 },
-        { f: 523.3, t: 8.0 },
-        { f: 587.3, t: 8.5 },
-        { f: 659.3, t: 9.0 },
-        { f: 784, t: 9.5 }
+        { f: 784, t: 0.0 }, { f: 880, t: 0.25 }, { f: 784, t: 0.5 }, { f: 659.3, t: 0.75 },
+        { f: 587.3, t: 1.25 }, { f: 659.3, t: 1.5 }, { f: 784, t: 1.75 }, { f: 523.3, t: 2.5 },
+        { f: 587.3, t: 2.75 }, { f: 659.3, t: 3.0 }, { f: 784, t: 3.5 }, { f: 880, t: 4.0 },
+        { f: 784, t: 4.5 }, { f: 659.3, t: 5.0 }, { f: 587.3, t: 5.5 }, { f: 523.3, t: 6.0 },
+        { f: 587.3, t: 6.5 }, { f: 392, t: 7.0 }, { f: 440, t: 7.5 }, { f: 523.3, t: 8.0 },
+        { f: 587.3, t: 8.5 }, { f: 659.3, t: 9.0 }, { f: 784, t: 9.5 }
       ];
-      for (var n = 0; n < playNotes.length; n++) {
-        var note = playNotes[n];
-        var start = Math.floor(note.t * sr);
-        var dur = Math.floor(sr * 0.5);
-        for (k = 0; k < dur && start + k < len; k++) {
-          var env = Math.exp(-k / (sr * 0.18)) * (1 - Math.exp(-k / (sr * 0.0005)));
-          var s =
-            (Math.sin((PI2 * note.f * k) / sr) * 0.18 +
-              Math.sin((PI2 * note.f * 3 * k) / sr) * 0.06 * Math.exp(-k / (sr * 0.08)) +
-              Math.sin((PI2 * note.f * 5 * k) / sr) * 0.02 * Math.exp(-k / (sr * 0.04))) *
-            env;
-          var pan = 0.3 + (note.f / 1000) * 0.4;
-          L[start + k] += s * (1 - pan);
-          R[start + k] += s * pan;
-        }
-      }
-      for (i = 0; i < len; i++) {
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      // Music-box harmonics: emphasize odd partials, fast decay
+      var boxHarmonics = [1.0, 0.3, 0.6, 0.15, 0.35, 0.08, 0.15, 0.04];
+      for (var n = 0; n < playNotes.length; n++)
+        _pianoNote(L, R, sr, playNotes[n].f, Math.floor(playNotes[n].t * sr), 0.6, { dur: 0.8, harmonics: boxHarmonics });
+      _lushReverb(L, R, sr, len, { decay: 0.2, width: 0.3 });
+      _recordWarmth(L, R, sr, len, { crackle: 150, warmth: 0.88, wow: 0.03 });
       break;
     }
     case 'moodDreamy': {
-      // Ethereal harp arpeggios with long reverb
+      // Ethereal piano: floating arpeggios with sub-octave and long reverb
       var dreamNotes = [
-        { f: 261.6, t: 0.0 },
-        { f: 392, t: 0.4 },
-        { f: 523.3, t: 0.8 },
-        { f: 659.3, t: 1.2 },
-        { f: 784, t: 1.6 },
-        { f: 659.3, t: 2.4 },
-        { f: 523.3, t: 2.8 },
-        { f: 293.7, t: 3.6 },
-        { f: 440, t: 4.0 },
-        { f: 587.3, t: 4.4 },
-        { f: 784, t: 4.8 },
-        { f: 880, t: 5.2 },
-        { f: 784, t: 6.0 },
-        { f: 587.3, t: 6.4 },
-        { f: 246.9, t: 7.2 },
-        { f: 370, t: 7.6 },
-        { f: 493.9, t: 8.0 },
-        { f: 659.3, t: 8.4 },
-        { f: 784, t: 8.8 },
-        { f: 659.3, t: 9.4 }
+        { f: 261.6, t: 0.0 }, { f: 392, t: 0.4 }, { f: 523.3, t: 0.8 }, { f: 659.3, t: 1.2 },
+        { f: 784, t: 1.6 }, { f: 659.3, t: 2.4 }, { f: 523.3, t: 2.8 }, { f: 293.7, t: 3.6 },
+        { f: 440, t: 4.0 }, { f: 587.3, t: 4.4 }, { f: 784, t: 4.8 }, { f: 880, t: 5.2 },
+        { f: 784, t: 6.0 }, { f: 587.3, t: 6.4 }, { f: 246.9, t: 7.2 }, { f: 370, t: 7.6 },
+        { f: 493.9, t: 8.0 }, { f: 659.3, t: 8.4 }, { f: 784, t: 8.8 }, { f: 659.3, t: 9.4 }
       ];
-      for (var n = 0; n < dreamNotes.length; n++) {
-        var note = dreamNotes[n];
-        var start = Math.floor(note.t * sr);
-        var dur = Math.floor(sr * 3.0);
-        for (k = 0; k < dur && start + k < len; k++) {
-          var env = Math.exp(-k / (sr * 2.5)) * (1 - Math.exp(-k / (sr * 0.002)));
-          var s =
-            (Math.sin((PI2 * note.f * k) / sr) * 0.15 +
-              Math.sin((PI2 * note.f * 2 * k) / sr) * 0.05 * Math.exp(-k / (sr * 1.0)) +
-              Math.sin((PI2 * note.f * 0.5 * k) / sr) * 0.03) *
-            env;
-          L[start + k] += s * (0.6 + 0.3 * Math.sin((PI2 * 0.2 * k) / sr));
-          R[start + k] += s * (0.7 + 0.2 * Math.sin((PI2 * 0.15 * k) / sr));
-        }
-      }
-      // Long reverb
-      var dly1 = Math.floor(sr * 0.17),
-        dly2 = Math.floor(sr * 0.37);
-      for (i = dly2; i < len; i++) {
-        L[i] += L[i - dly1] * 0.2 + L[i - dly2] * 0.12;
-        R[i] += R[i - dly1] * 0.15 + R[i - dly2] * 0.18;
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      // Ethereal harmonics with sub-octave presence
+      var dreamH = [1.0, 0.5, 0.35, 0.2, 0.12, 0.08, 0.05, 0.03];
+      for (var n = 0; n < dreamNotes.length; n++)
+        _pianoNote(L, R, sr, dreamNotes[n].f, Math.floor(dreamNotes[n].t * sr), 0.45, { dur: 4.0, sustain: 1.5, harmonics: dreamH });
+      _lushReverb(L, R, sr, len, { decay: 0.35, width: 0.4 });
+      _recordWarmth(L, R, sr, len, { crackle: 100, warmth: 0.75, wow: 0.05 });
       break;
     }
     case 'moodSerene': {
-      // Singing bowls with gentle melodic progression
-      var bowlNotes = [
-        { f: 349.2, t: 0.0, dur: 4.0 },
-        { f: 523.3, t: 2.0, dur: 4.0 },
-        { f: 392, t: 4.5, dur: 4.0 },
-        { f: 293.7, t: 6.5, dur: 3.5 }
+      // Meditative piano: sustained whole notes with resonant overtones
+      var sereneNotes = [
+        { f: 349.2, t: 0.0 }, { f: 523.3, t: 2.0 }, { f: 392, t: 4.5 }, { f: 293.7, t: 6.5 },
+        { f: 349.2, t: 8.5 }
       ];
-      for (var n = 0; n < bowlNotes.length; n++) {
-        var note = bowlNotes[n];
-        var start = Math.floor(note.t * sr);
-        var dur = Math.floor(sr * note.dur);
-        for (k = 0; k < dur && start + k < len; k++) {
-          var breath = 0.5 + 0.5 * Math.sin((PI2 * 0.12 * k) / sr);
-          var env = (1 - Math.exp(-k / (sr * 0.3))) * Math.exp(-k / (sr * 3.5));
-          var s =
-            (Math.sin((PI2 * note.f * k) / sr) * 0.15 +
-              Math.sin((PI2 * note.f * 2.71 * k) / sr) * 0.05 * Math.exp(-k / (sr * 1.5)) +
-              Math.sin((PI2 * note.f * 4.16 * k) / sr) * 0.02 * Math.exp(-k / (sr * 0.8))) *
-            env *
-            breath;
-          L[start + k] += s * 0.85;
-          R[start + k] += s * 0.75;
-        }
-      }
-      for (i = 0; i < len; i++) {
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      // Bowl-like harmonics with inharmonic partials
+      var sereneH = [1.0, 0.6, 0.35, 0.4, 0.2, 0.25, 0.1, 0.08];
+      for (var n = 0; n < sereneNotes.length; n++)
+        _pianoNote(L, R, sr, sereneNotes[n].f, Math.floor(sereneNotes[n].t * sr), 0.4, { dur: 5.0, sustain: 1.8, harmonics: sereneH });
+      _lushReverb(L, R, sr, len, { decay: 0.35, width: 0.4 });
+      _recordWarmth(L, R, sr, len, { crackle: 120, warmth: 0.78, wow: 0.04 });
       break;
     }
     case 'moodSoulful': {
-      // Jazzy piano: Cm9 voicings with soulful walk
+      // Jazz piano: Cm9 voicings with soulful walk, vinyl character
       var soulNotes = [
-        { f: 130.8, t: 0.0 },
-        { f: 155.6, t: 0.3 },
-        { f: 196, t: 0.6 },
-        { f: 233.1, t: 0.9 },
-        { f: 293.7, t: 1.2 },
-        { f: 261.6, t: 2.0 },
-        { f: 196, t: 2.4 },
-        { f: 233.1, t: 2.8 },
-        { f: 146.8, t: 3.5 },
-        { f: 174.6, t: 3.8 },
-        { f: 220, t: 4.1 },
-        { f: 261.6, t: 4.5 },
-        { f: 233.1, t: 5.3 },
-        { f: 196, t: 5.8 },
-        { f: 174.6, t: 6.3 },
-        { f: 130.8, t: 7.0 },
-        { f: 164.8, t: 7.4 },
-        { f: 196, t: 7.8 },
-        { f: 233.1, t: 8.3 },
-        { f: 261.6, t: 8.8 },
+        { f: 130.8, t: 0.0 }, { f: 155.6, t: 0.3 }, { f: 196, t: 0.6 }, { f: 233.1, t: 0.9 },
+        { f: 293.7, t: 1.2 }, { f: 261.6, t: 2.0 }, { f: 196, t: 2.4 }, { f: 233.1, t: 2.8 },
+        { f: 146.8, t: 3.5 }, { f: 174.6, t: 3.8 }, { f: 220, t: 4.1 }, { f: 261.6, t: 4.5 },
+        { f: 233.1, t: 5.3 }, { f: 196, t: 5.8 }, { f: 174.6, t: 6.3 }, { f: 130.8, t: 7.0 },
+        { f: 164.8, t: 7.4 }, { f: 196, t: 7.8 }, { f: 233.1, t: 8.3 }, { f: 261.6, t: 8.8 },
         { f: 293.7, t: 9.3 }
       ];
-      for (var n = 0; n < soulNotes.length; n++) {
-        var note = soulNotes[n];
-        var start = Math.floor(note.t * sr);
-        var dur = Math.floor(sr * 2.0);
-        for (k = 0; k < dur && start + k < len; k++) {
-          var vib = Math.sin((PI2 * 5.5 * k) / sr) * 1.2;
-          var env = Math.exp(-k / (sr * 1.5)) * (1 - Math.exp(-k / (sr * 0.005)));
-          var s =
-            (Math.sin((PI2 * (note.f + vib) * k) / sr) * 0.2 +
-              Math.sin((PI2 * (note.f + vib) * 2 * k) / sr) * 0.06 * Math.exp(-k / (sr * 0.7)) +
-              Math.sin((PI2 * (note.f + vib) * 3 * k) / sr) * 0.02 * Math.exp(-k / (sr * 0.4))) *
-            env;
-          L[start + k] += s * 0.8;
-          R[start + k] += s * 0.7;
-        }
-      }
-      var dly = Math.floor(sr * 0.13);
-      for (i = dly; i < len; i++) {
-        L[i] += L[i - dly] * 0.1;
-        R[i] += R[i - dly] * 0.13;
-      }
-      for (i = 0; i < len; i++) {
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      for (var n = 0; n < soulNotes.length; n++)
+        _pianoNote(L, R, sr, soulNotes[n].f, Math.floor(soulNotes[n].t * sr), 0.7, { dur: 2.5 });
+      _lushReverb(L, R, sr, len, { decay: 0.2, width: 0.25 });
+      _recordWarmth(L, R, sr, len, { crackle: 400, warmth: 0.76, wow: 0.08 });
       break;
     }
     case 'moodTropical': {
-      // Steel drum melody over ocean waves + ukulele rhythm
-      // Gentle wave base
-      _brownNoise(L, len, 0.04);
-      _brownNoise(R, len, 0.04);
-      // Steel drum melody (C major pentatonic)
-      var tropMelody = [
-        { f: 523.3, t: 0.0 },
-        { f: 587.3, t: 0.4 },
-        { f: 659.3, t: 0.8 },
-        { f: 784, t: 1.2 },
-        { f: 880, t: 1.6 },
-        { f: 784, t: 2.2 },
-        { f: 659.3, t: 2.6 },
-        { f: 587.3, t: 3.4 },
-        { f: 523.3, t: 3.8 },
-        { f: 587.3, t: 4.2 },
-        { f: 659.3, t: 4.6 },
-        { f: 784, t: 5.2 },
-        { f: 880, t: 5.6 },
-        { f: 1046.5, t: 6.0 },
-        { f: 880, t: 6.8 },
-        { f: 784, t: 7.2 },
-        { f: 659.3, t: 7.6 },
-        { f: 587.3, t: 8.2 },
-        { f: 523.3, t: 8.6 },
-        { f: 659.3, t: 9.2 }
+      // Caribbean piano: bright upper register pentatonic melody
+      var tropNotes = [
+        { f: 523.3, t: 0.0 }, { f: 587.3, t: 0.4 }, { f: 659.3, t: 0.8 }, { f: 784, t: 1.2 },
+        { f: 880, t: 1.6 }, { f: 784, t: 2.2 }, { f: 659.3, t: 2.6 }, { f: 587.3, t: 3.4 },
+        { f: 523.3, t: 3.8 }, { f: 587.3, t: 4.2 }, { f: 659.3, t: 4.6 }, { f: 784, t: 5.2 },
+        { f: 880, t: 5.6 }, { f: 1046.5, t: 6.0 }, { f: 880, t: 6.8 }, { f: 784, t: 7.2 },
+        { f: 659.3, t: 7.6 }, { f: 587.3, t: 8.2 }, { f: 523.3, t: 8.6 }, { f: 659.3, t: 9.2 }
       ];
-      for (var n = 0; n < tropMelody.length; n++) {
-        var note = tropMelody[n];
-        var start = Math.floor(note.t * sr);
-        var dur = Math.floor(sr * 0.6);
-        for (k = 0; k < dur && start + k < len; k++) {
-          var env = Math.exp(-k / (sr * 0.25)) * (1 - Math.exp(-k / (sr * 0.0008)));
-          var s =
-            (Math.sin((PI2 * note.f * k) / sr) * 0.16 +
-              Math.sin((PI2 * note.f * 2.01 * k) / sr) * 0.06 * Math.exp(-k / (sr * 0.1)) +
-              Math.sin((PI2 * note.f * 3.98 * k) / sr) * 0.03 * Math.exp(-k / (sr * 0.06))) *
-            env;
-          var pan = 0.3 + Math.sin(n * 0.7) * 0.2;
-          L[start + k] += s * (1 - pan);
-          R[start + k] += s * pan;
-        }
-      }
-      // Warm pad
-      for (i = 0; i < len; i++) {
-        t = i / sr;
-        var pad = Math.sin(PI2 * 261.6 * t) * 0.025 + Math.sin(PI2 * 392 * t) * 0.02;
-        L[i] += pad;
-        R[i] += pad;
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      for (var n = 0; n < tropNotes.length; n++)
+        _pianoNote(L, R, sr, tropNotes[n].f, Math.floor(tropNotes[n].t * sr), 0.6, { dur: 1.0 });
+      _lushReverb(L, R, sr, len, { decay: 0.2, width: 0.3 });
+      _recordWarmth(L, R, sr, len, { crackle: 180, warmth: 0.85, wow: 0.04 });
       break;
     }
     case 'moodCampfire': {
-      // Outdoor campfire: fire crackle + night insects + gentle wind
-      // Fire base
-      var fb2 = 0;
-      for (i = 0; i < len; i++) {
-        fb2 = 0.99 * fb2 + 0.01 * (Math.random() * 2 - 1);
-        L[i] = fb2 * 0.4 + (Math.random() * 2 - 1) * 0.06;
-        R[i] = fb2 * 0.35 + (Math.random() * 2 - 1) * 0.06;
-      }
-      // Fire crackles
-      for (var c = 0; c < 50; c++) {
-        var cPos = Math.floor(Math.random() * (len - sr * 0.05));
-        var pop = Math.random() * 0.5 + 0.15;
-        var cLen = Math.floor(sr * (0.008 + Math.random() * 0.02));
-        for (k = 0; k < cLen && cPos + k < len; k++) {
-          var s = (Math.random() * 2 - 1) * pop * Math.exp(-k / (cLen * 0.15));
-          L[cPos + k] += s;
-          R[cPos + k] += s * 0.8;
-        }
-      }
-      // Distant crickets
-      for (i = 0; i < len; i++) {
-        t = i / sr;
-        var chirp = Math.sin(PI2 * 4000 * t) * Math.max(0, Math.sin(PI2 * 3 * t)) * 0.02;
-        R[i] += chirp;
-      }
-      // Gentle wind
-      _brownNoise(L, len, 0.04);
-      _brownNoise(R, len, 0.04);
-      for (i = 0; i < len; i++) {
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      // Intimate piano ballad: soft D major chords, warm and close
+      var campNotes = [
+        { f: 146.8, t: 0.0 }, { f: 185.0, t: 0.3 }, { f: 220.0, t: 0.6 },
+        { f: 293.7, t: 1.2 }, { f: 220.0, t: 1.8 }, { f: 185.0, t: 2.4 },
+        { f: 164.8, t: 3.2 }, { f: 196, t: 3.5 }, { f: 246.9, t: 3.8 },
+        { f: 293.7, t: 4.5 }, { f: 261.6, t: 5.2 }, { f: 220.0, t: 5.8 },
+        { f: 174.6, t: 6.5 }, { f: 220.0, t: 7.0 }, { f: 261.6, t: 7.5 },
+        { f: 293.7, t: 8.2 }, { f: 261.6, t: 8.8 }, { f: 220.0, t: 9.3 }
+      ];
+      for (var n = 0; n < campNotes.length; n++)
+        _pianoNote(L, R, sr, campNotes[n].f, Math.floor(campNotes[n].t * sr), 0.4, { dur: 3.0, sustain: 1.3 });
+      _lushReverb(L, R, sr, len, { decay: 0.28, width: 0.3 });
+      _recordWarmth(L, R, sr, len, { crackle: 280, warmth: 0.77, wow: 0.06 });
       break;
     }
     case 'moodRainyNight': {
-      // Cozy rain on window: gentle rain + distant thunder + warm interior feel
-      _pinkNoise(L, len, 0.12);
-      _pinkNoise(R, len, 0.12);
-      // Rain drops on glass (higher pitched, more regular)
-      for (var drop = 0; drop < 120; drop++) {
-        var pos = Math.floor(Math.random() * (len - sr * 0.02));
-        var dLen = Math.floor(sr * (0.001 + Math.random() * 0.004));
-        var freq = 4000 + Math.random() * 4000;
-        for (k = 0; k < dLen && pos + k < len; k++) {
-          var s = Math.sin((PI2 * freq * k) / sr) * 0.2 * Math.exp(-k / (dLen * 0.2));
-          L[pos + k] += s;
-          R[pos + k] += s * 0.7;
-        }
-      }
-      // Very distant thunder rumble
-      var tPos = Math.floor(sr * (3 + Math.random() * 4));
-      var bx2 = 0;
-      var rLen = Math.floor(sr * 3);
-      for (k = 0; k < rLen && tPos + k < len; k++) {
-        bx2 = 0.99 * bx2 + 0.01 * (Math.random() * 2 - 1);
-        var env = Math.exp(-k / (rLen * 0.6));
-        var s = bx2 * 0.4 * env;
-        L[tPos + k] += s;
-        R[tPos + k] += s * 0.9;
-      }
-      // Warm low-end bed
-      for (i = 0; i < len; i++) {
-        t = i / sr;
-        var warm = Math.sin(PI2 * 80 * t) * 0.02;
-        L[i] += warm;
-        R[i] += warm;
-        L[i] = _clamp(L[i]);
-        R[i] = _clamp(R[i]);
-      }
+      // Melancholic piano: sparse minor key, heavy vinyl warmth
+      var rainyNotes = [
+        { f: 174.6, t: 0.0 }, { f: 220, t: 0.8 }, { f: 261.6, t: 1.6 },
+        { f: 233.1, t: 2.8 }, { f: 196, t: 3.6 }, { f: 174.6, t: 4.4 },
+        { f: 155.6, t: 5.5 }, { f: 196, t: 6.3 }, { f: 233.1, t: 7.1 },
+        { f: 220, t: 8.0 }, { f: 174.6, t: 9.0 }
+      ];
+      for (var n = 0; n < rainyNotes.length; n++)
+        _pianoNote(L, R, sr, rainyNotes[n].f, Math.floor(rainyNotes[n].t * sr), 0.4, { dur: 4.0, sustain: 1.5 });
+      _lushReverb(L, R, sr, len, { decay: 0.35, width: 0.38 });
+      _recordWarmth(L, R, sr, len, { crackle: 380, warmth: 0.72, wow: 0.07 });
       break;
     }
+    // ===== PIANO VERSIONS OF NATURE SOUNDS (for vibe grid) =====
+    case 'pianoRain': {
+      // Rainy-day piano: gentle descending patterns in Dm
+      var rainNotes = [
+        { f: 293.7, t: 0.0 }, { f: 261.6, t: 0.5 }, { f: 220, t: 1.0 }, { f: 196, t: 1.6 },
+        { f: 174.6, t: 2.2 }, { f: 196, t: 3.0 }, { f: 220, t: 3.6 }, { f: 261.6, t: 4.2 },
+        { f: 293.7, t: 5.0 }, { f: 349.2, t: 5.5 }, { f: 293.7, t: 6.2 }, { f: 261.6, t: 6.8 },
+        { f: 220, t: 7.5 }, { f: 174.6, t: 8.2 }, { f: 196, t: 9.0 }
+      ];
+      for (var n = 0; n < rainNotes.length; n++)
+        _pianoNote(L, R, sr, rainNotes[n].f, Math.floor(rainNotes[n].t * sr), 0.45, { dur: 3.0, sustain: 1.2 });
+      _lushReverb(L, R, sr, len, { decay: 0.3, width: 0.35 });
+      _recordWarmth(L, R, sr, len, { crackle: 250, warmth: 0.78, wow: 0.05 });
+      break;
+    }
+    case 'pianoWaves': {
+      // Flowing piano: C major arpeggios with wave-like swell dynamics
+      var waveNotes = [
+        { f: 130.8, t: 0.0 }, { f: 164.8, t: 0.3 }, { f: 196, t: 0.6 }, { f: 261.6, t: 0.9 },
+        { f: 329.6, t: 1.2 }, { f: 392, t: 1.5 }, { f: 329.6, t: 2.2 }, { f: 261.6, t: 2.6 },
+        { f: 196, t: 3.0 }, { f: 146.8, t: 3.8 }, { f: 174.6, t: 4.1 }, { f: 220, t: 4.4 },
+        { f: 293.7, t: 4.7 }, { f: 349.2, t: 5.0 }, { f: 440, t: 5.3 }, { f: 349.2, t: 6.0 },
+        { f: 293.7, t: 6.4 }, { f: 220, t: 6.8 }, { f: 164.8, t: 7.4 }, { f: 130.8, t: 8.0 },
+        { f: 196, t: 8.6 }, { f: 261.6, t: 9.2 }
+      ];
+      for (var n = 0; n < waveNotes.length; n++) {
+        // Swell dynamics: crescendo then decrescendo
+        var pos = n / waveNotes.length;
+        var vel = 0.35 + 0.3 * Math.sin(Math.PI * pos);
+        _pianoNote(L, R, sr, waveNotes[n].f, Math.floor(waveNotes[n].t * sr), vel, { dur: 3.0, sustain: 1.3 });
+      }
+      _lushReverb(L, R, sr, len, { decay: 0.32, width: 0.4 });
+      _recordWarmth(L, R, sr, len, { crackle: 200, warmth: 0.8, wow: 0.05 });
+      break;
+    }
+    case 'pianoCrickets': {
+      // Night-time nocturne: very soft, slow Bb minor
+      var nightNotes = [
+        { f: 233.1, t: 0.0 }, { f: 277.2, t: 1.0 }, { f: 311.1, t: 2.0 },
+        { f: 277.2, t: 3.2 }, { f: 233.1, t: 4.2 }, { f: 207.7, t: 5.4 },
+        { f: 233.1, t: 6.6 }, { f: 311.1, t: 7.6 }, { f: 277.2, t: 8.8 }
+      ];
+      for (var n = 0; n < nightNotes.length; n++)
+        _pianoNote(L, R, sr, nightNotes[n].f, Math.floor(nightNotes[n].t * sr), 0.35, { dur: 4.5, sustain: 1.6 });
+      _lushReverb(L, R, sr, len, { decay: 0.35, width: 0.4 });
+      _recordWarmth(L, R, sr, len, { crackle: 180, warmth: 0.74, wow: 0.06 });
+      break;
+    }
+    case 'pianoForest': {
+      // Forest morning piano: bright, airy arpeggios in G major
+      var forestNotes = [
+        { f: 392, t: 0.0 }, { f: 493.9, t: 0.3 }, { f: 587.3, t: 0.6 }, { f: 784, t: 0.9 },
+        { f: 587.3, t: 1.5 }, { f: 493.9, t: 1.8 }, { f: 392, t: 2.2 },
+        { f: 440, t: 3.0 }, { f: 523.3, t: 3.3 }, { f: 659.3, t: 3.6 }, { f: 784, t: 3.9 },
+        { f: 659.3, t: 4.5 }, { f: 523.3, t: 4.9 }, { f: 440, t: 5.3 },
+        { f: 329.6, t: 6.0 }, { f: 493.9, t: 6.4 }, { f: 587.3, t: 6.8 }, { f: 784, t: 7.2 },
+        { f: 587.3, t: 7.8 }, { f: 493.9, t: 8.3 }, { f: 392, t: 8.8 }, { f: 493.9, t: 9.3 }
+      ];
+      for (var n = 0; n < forestNotes.length; n++)
+        _pianoNote(L, R, sr, forestNotes[n].f, Math.floor(forestNotes[n].t * sr), 0.55, { dur: 2.5 });
+      _lushReverb(L, R, sr, len, { decay: 0.25, width: 0.35 });
+      _recordWarmth(L, R, sr, len, { crackle: 160, warmth: 0.85, wow: 0.03 });
+      break;
+    }
+    case 'pianoBirds': {
+      // Dawn piano: high-register trills and grace notes
+      var birdNotes = [
+        { f: 784, t: 0.0 }, { f: 880, t: 0.15 }, { f: 784, t: 0.3 },
+        { f: 659.3, t: 0.7 }, { f: 784, t: 0.85 }, { f: 880, t: 1.0 }, { f: 1046.5, t: 1.15 },
+        { f: 880, t: 1.6 }, { f: 784, t: 2.0 }, { f: 659.3, t: 2.4 },
+        { f: 587.3, t: 3.0 }, { f: 659.3, t: 3.15 }, { f: 784, t: 3.3 },
+        { f: 880, t: 3.8 }, { f: 1046.5, t: 4.0 }, { f: 880, t: 4.3 },
+        { f: 784, t: 4.8 }, { f: 659.3, t: 5.2 }, { f: 587.3, t: 5.6 },
+        { f: 523.3, t: 6.2 }, { f: 659.3, t: 6.5 }, { f: 784, t: 6.8 },
+        { f: 880, t: 7.2 }, { f: 1046.5, t: 7.5 }, { f: 880, t: 8.0 },
+        { f: 784, t: 8.4 }, { f: 659.3, t: 8.8 }, { f: 784, t: 9.3 }
+      ];
+      for (var n = 0; n < birdNotes.length; n++)
+        _pianoNote(L, R, sr, birdNotes[n].f, Math.floor(birdNotes[n].t * sr), 0.55, { dur: 1.2 });
+      _lushReverb(L, R, sr, len, { decay: 0.22, width: 0.3 });
+      _recordWarmth(L, R, sr, len, { crackle: 140, warmth: 0.87, wow: 0.03 });
+      break;
+    }
+    case 'pianoThunder': {
+      // Storm piano: dramatic chords with rumbling bass octaves
+      var stormNotes = [
+        { f: 65.4, t: 0.0 }, { f: 130.8, t: 0.05 }, // bass octave hit
+        { f: 196, t: 0.4 }, { f: 233.1, t: 0.45 }, { f: 293.7, t: 0.5 }, // chord
+        { f: 87.3, t: 1.5 }, { f: 174.6, t: 1.55 }, // bass octave
+        { f: 220, t: 2.0 }, { f: 261.6, t: 2.05 }, { f: 329.6, t: 2.1 },
+        { f: 73.4, t: 3.5 }, { f: 146.8, t: 3.55 },
+        { f: 174.6, t: 4.0 }, { f: 220, t: 4.05 }, { f: 277.2, t: 4.1 },
+        { f: 82.4, t: 5.5 }, { f: 164.8, t: 5.55 },
+        { f: 196, t: 6.0 }, { f: 246.9, t: 6.05 }, { f: 329.6, t: 6.1 },
+        { f: 65.4, t: 7.5 }, { f: 130.8, t: 7.55 },
+        { f: 196, t: 8.0 }, { f: 261.6, t: 8.05 }, { f: 293.7, t: 8.1 },
+        { f: 87.3, t: 9.0 }, { f: 174.6, t: 9.05 }
+      ];
+      for (var n = 0; n < stormNotes.length; n++)
+        _pianoNote(L, R, sr, stormNotes[n].f, Math.floor(stormNotes[n].t * sr), 0.8, { dur: 3.0, sustain: 1.2 });
+      _lushReverb(L, R, sr, len, { decay: 0.35, width: 0.4 });
+      _recordWarmth(L, R, sr, len, { crackle: 200, warmth: 0.76, wow: 0.05 });
+      break;
+    }
+    case 'pianoBeachBreeze': {
+      // Beach sunset piano: warm major key, gentle rolling patterns
+      var beachNotes = [
+        { f: 261.6, t: 0.0 }, { f: 329.6, t: 0.4 }, { f: 392, t: 0.8 }, { f: 523.3, t: 1.2 },
+        { f: 392, t: 1.8 }, { f: 329.6, t: 2.2 }, { f: 261.6, t: 2.6 },
+        { f: 220, t: 3.4 }, { f: 293.7, t: 3.8 }, { f: 349.2, t: 4.2 }, { f: 440, t: 4.6 },
+        { f: 349.2, t: 5.2 }, { f: 293.7, t: 5.6 }, { f: 220, t: 6.0 },
+        { f: 246.9, t: 6.8 }, { f: 329.6, t: 7.2 }, { f: 392, t: 7.6 }, { f: 493.9, t: 8.0 },
+        { f: 392, t: 8.6 }, { f: 329.6, t: 9.0 }, { f: 261.6, t: 9.4 }
+      ];
+      for (var n = 0; n < beachNotes.length; n++)
+        _pianoNote(L, R, sr, beachNotes[n].f, Math.floor(beachNotes[n].t * sr), 0.5, { dur: 3.0, sustain: 1.3 });
+      _lushReverb(L, R, sr, len, { decay: 0.3, width: 0.38 });
+      _recordWarmth(L, R, sr, len, { crackle: 220, warmth: 0.8, wow: 0.05 });
+      break;
+    }
+    case 'pianoSeagulls': {
+      // Seaside serenade: bright piano, wide stereo, playful high notes
+      var seaNotes = [
+        { f: 523.3, t: 0.0 }, { f: 659.3, t: 0.3 }, { f: 784, t: 0.6 },
+        { f: 880, t: 1.0 }, { f: 784, t: 1.5 }, { f: 659.3, t: 1.9 },
+        { f: 587.3, t: 2.5 }, { f: 659.3, t: 2.8 }, { f: 784, t: 3.1 },
+        { f: 880, t: 3.6 }, { f: 1046.5, t: 4.0 }, { f: 880, t: 4.5 },
+        { f: 784, t: 5.0 }, { f: 659.3, t: 5.4 }, { f: 523.3, t: 5.8 },
+        { f: 587.3, t: 6.5 }, { f: 784, t: 6.9 }, { f: 880, t: 7.3 },
+        { f: 1046.5, t: 7.7 }, { f: 880, t: 8.2 }, { f: 784, t: 8.6 }, { f: 659.3, t: 9.1 }
+      ];
+      for (var n = 0; n < seaNotes.length; n++)
+        _pianoNote(L, R, sr, seaNotes[n].f, Math.floor(seaNotes[n].t * sr), 0.55, { dur: 2.0 });
+      _lushReverb(L, R, sr, len, { decay: 0.25, width: 0.4 });
+      _recordWarmth(L, R, sr, len, { crackle: 180, warmth: 0.84, wow: 0.04 });
+      break;
+    }
+    case 'pianoCreek': {
+      // Mountain stream piano: crystal-clear sparkling arpeggios
+      var creekNotes = [
+        { f: 523.3, t: 0.0 }, { f: 659.3, t: 0.2 }, { f: 784, t: 0.4 }, { f: 1046.5, t: 0.6 },
+        { f: 784, t: 1.0 }, { f: 659.3, t: 1.3 }, { f: 523.3, t: 1.6 },
+        { f: 587.3, t: 2.2 }, { f: 784, t: 2.4 }, { f: 880, t: 2.6 }, { f: 1174.7, t: 2.8 },
+        { f: 880, t: 3.2 }, { f: 784, t: 3.5 }, { f: 587.3, t: 3.8 },
+        { f: 493.9, t: 4.4 }, { f: 659.3, t: 4.6 }, { f: 784, t: 4.8 }, { f: 987.8, t: 5.0 },
+        { f: 784, t: 5.4 }, { f: 659.3, t: 5.7 }, { f: 523.3, t: 6.0 },
+        { f: 659.3, t: 6.6 }, { f: 784, t: 6.8 }, { f: 1046.5, t: 7.0 },
+        { f: 784, t: 7.4 }, { f: 659.3, t: 7.7 }, { f: 523.3, t: 8.0 },
+        { f: 659.3, t: 8.5 }, { f: 784, t: 8.8 }, { f: 880, t: 9.2 }
+      ];
+      for (var n = 0; n < creekNotes.length; n++)
+        _pianoNote(L, R, sr, creekNotes[n].f, Math.floor(creekNotes[n].t * sr), 0.5, { dur: 1.8 });
+      _lushReverb(L, R, sr, len, { decay: 0.22, width: 0.35 });
+      _recordWarmth(L, R, sr, len, { crackle: 150, warmth: 0.86, wow: 0.03 });
+      break;
+    }
+    case 'pianoAlpine': {
+      // Alpine piano: majestic open 5ths and octaves, spacious
+      var alpNotes = [
+        { f: 130.8, t: 0.0 }, { f: 196, t: 0.05 }, // open 5th
+        { f: 174.6, t: 1.5 }, { f: 261.6, t: 1.55 },
+        { f: 196, t: 3.0 }, { f: 293.7, t: 3.05 },
+        { f: 164.8, t: 4.5 }, { f: 246.9, t: 4.55 },
+        { f: 146.8, t: 6.0 }, { f: 220, t: 6.05 },
+        { f: 130.8, t: 7.5 }, { f: 196, t: 7.55 },
+        { f: 174.6, t: 9.0 }, { f: 261.6, t: 9.05 }
+      ];
+      for (var n = 0; n < alpNotes.length; n++)
+        _pianoNote(L, R, sr, alpNotes[n].f, Math.floor(alpNotes[n].t * sr), 0.55, { dur: 4.0, sustain: 1.4 });
+      _lushReverb(L, R, sr, len, { decay: 0.35, width: 0.45 });
+      _recordWarmth(L, R, sr, len, { crackle: 160, warmth: 0.8, wow: 0.04 });
+      break;
+    }
+
     default: {
       _brownNoise(L, len, 0.3);
       _brownNoise(R, len, 0.3);
@@ -2837,40 +2905,30 @@ function setWeatherScene(sceneName) {
 // ===== MOOD SOUNDS SYSTEM =====
 // Ambient mood sounds for date nights, events, and partner sharing
 var MOOD_SOUNDS = {
-  romantic: { label: 'Romantic', icon: '🕯', type: 'moodRomantic', desc: 'Warm, intimate tones' },
-  dreamy: { label: 'Dreamy', icon: '💫', type: 'moodDreamy', desc: 'Ethereal, floating' },
-  cozy: { label: 'Cozy', icon: '☕', type: 'moodCozy', desc: 'Crackling fireplace' },
-  soulful: { label: 'Soulful', icon: '🎷', type: 'moodSoulful', desc: 'Deep, warm tones' },
-  serene: { label: 'Serene', icon: '🪷', type: 'moodSerene', desc: 'Meditation bowls' },
-  relaxing: { label: 'Relaxing', icon: '🧘', type: 'moodRelaxing', desc: 'Calm, peaceful ambient' },
-  rainyNight: { label: 'Rainy Night', icon: '🌃', type: 'moodRainyNight', desc: 'Rain on windows' },
-  campfire: { label: 'Campfire', icon: '🔥', type: 'moodCampfire', desc: 'Outdoor fire + night' },
-  tropical: { label: 'Tropical', icon: '🌴', type: 'moodTropical', desc: 'Island steel drums' },
-  lively: { label: 'Lively', icon: '🎉', type: 'moodLively', desc: 'Upbeat, energetic' },
-  rain: { label: 'Rain', icon: '🌧', type: 'rain', desc: 'Rainfall ambience' },
-  ocean: { label: 'Ocean', icon: '🌊', type: 'waves', desc: 'Waves and shore' },
-  night: { label: 'Night', icon: '🌙', type: 'crickets', desc: 'Crickets and frogs' },
-  forest: { label: 'Forest', icon: '🌲', type: 'forestWind', desc: 'Wind, birds, leaves' },
-  birds: { label: 'Birds', icon: '🐦', type: 'birdsong', desc: 'Dawn bird chorus' },
-  thunder: { label: 'Storm', icon: '⛈', type: 'thunder', desc: 'Thunder and rain' },
+  romantic: { label: 'Romantic', icon: '🕯', type: 'moodRomantic', desc: 'Tender piano melody' },
+  dreamy: { label: 'Dreamy', icon: '💫', type: 'moodDreamy', desc: 'Ethereal piano arpeggios' },
+  cozy: { label: 'Cozy', icon: '☕', type: 'moodCozy', desc: 'Warm nocturne piano' },
+  soulful: { label: 'Soulful', icon: '🎷', type: 'moodSoulful', desc: 'Jazz piano walk' },
+  serene: { label: 'Serene', icon: '🪷', type: 'moodSerene', desc: 'Meditative piano' },
+  relaxing: { label: 'Relaxing', icon: '🧘', type: 'moodRelaxing', desc: 'Soft piano arpeggio' },
+  focused: { label: 'Focused', icon: '🎧', type: 'moodFocused', desc: 'Lo-fi piano + binaural' },
+  playful: { label: 'Playful', icon: '🎵', type: 'moodPlayful', desc: 'Music-box piano' },
+  rainyNight: { label: 'Rainy Night', icon: '🌃', type: 'moodRainyNight', desc: 'Melancholic piano' },
+  campfire: { label: 'Campfire', icon: '🔥', type: 'moodCampfire', desc: 'Intimate piano ballad' },
+  tropical: { label: 'Tropical', icon: '🌴', type: 'moodTropical', desc: 'Bright island piano' },
+  lively: { label: 'Lively', icon: '🎉', type: 'moodLively', desc: 'Upbeat piano chords' },
+  rain: { label: 'Rain', icon: '🌧', type: 'pianoRain', desc: 'Rainy-day piano' },
+  ocean: { label: 'Ocean', icon: '🌊', type: 'pianoWaves', desc: 'Flowing piano waves' },
+  night: { label: 'Night', icon: '🌙', type: 'pianoCrickets', desc: 'Night-time nocturne' },
+  forest: { label: 'Forest', icon: '🌲', type: 'pianoForest', desc: 'Morning piano arpeggios' },
+  birds: { label: 'Birds', icon: '🐦', type: 'pianoBirds', desc: 'Dawn piano trills' },
+  thunder: { label: 'Storm', icon: '⛈', type: 'pianoThunder', desc: 'Dramatic piano chords' },
   // Beach environment (her favorites)
-  beachBreeze: { label: 'Beach Breeze', icon: '🏖', type: 'beachBreeze', desc: 'Warm wind, gentle surf', env: 'beach' },
-  seagulls: { label: 'Seagulls', icon: '🕊', type: 'seagulls', desc: 'Shore birds and waves', env: 'beach' },
+  beachBreeze: { label: 'Beach Breeze', icon: '🏖', type: 'pianoBeachBreeze', desc: 'Sunset piano', env: 'beach' },
+  seagulls: { label: 'Seagulls', icon: '🕊', type: 'pianoSeagulls', desc: 'Seaside serenade', env: 'beach' },
   // Mountain environment (his favorites)
-  mountainCreek: {
-    label: 'Mountain Creek',
-    icon: '🏔',
-    type: 'mountainCreek',
-    desc: 'Babbling water over rocks',
-    env: 'mountain'
-  },
-  mountainWind: {
-    label: 'Mountain Wind',
-    icon: '🦅',
-    type: 'mountainWind',
-    desc: 'Alpine gusts and eagles',
-    env: 'mountain'
-  }
+  mountainCreek: { label: 'Mountain Creek', icon: '🏔', type: 'pianoCreek', desc: 'Sparkling piano', env: 'mountain' },
+  mountainWind: { label: 'Mountain Wind', icon: '🦅', type: 'pianoAlpine', desc: 'Majestic alpine piano', env: 'mountain' }
 };
 
 // Nature sound order per user: beach-first for her, mountain-first for him
@@ -2909,6 +2967,8 @@ var MOOD_ORDER = [
   'soulful',
   'serene',
   'relaxing',
+  'focused',
+  'playful',
   'rainyNight',
   'campfire',
   'tropical',
@@ -3243,14 +3303,13 @@ function sendMoodToPartner(moodKey) {
     type: 'mood-sound',
     from: user,
     fromName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
+    message: 'Set the mood to ' + mood.label,
     mood: moodKey,
     label: mood.label,
     icon: mood.icon,
-    ts: Date.now()
+    timestamp: Date.now(),
+    read: false
   });
-  if (typeof sendInAppNotif === 'function') {
-    sendInAppNotif('mood', 'Set the mood to ' + mood.label, mood.icon);
-  }
   toast('Sent ' + mood.label + ' mood to partner');
 }
 
