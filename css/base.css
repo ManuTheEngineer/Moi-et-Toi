@@ -1134,12 +1134,11 @@ body[data-sky-theme='mountain'] .sky-bf-wing {
    extend into the safe-area-inset-bottom region, leaving a white gap on iPhones. */
 @media (display-mode: standalone) {
   html {
-    height: 100%;
+    min-height: 100%;
     overscroll-behavior: none;
   }
   body {
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
     overflow-y: auto;
     overscroll-behavior-y: none;
   }

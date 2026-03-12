@@ -669,28 +669,6 @@ html {
   background: var(--bg);
   transition: background-color 4s ease;
 }
-/* html uses var(--bg) as the canvas background but time-of-day overrides live
-   on body[data-time]. Mirror --bg onto html so the canvas always matches. */
-html[data-time='dawn']      { --bg: #f0e6e8; }
-html[data-time='morning']   { --bg: #f5f0e6; }
-html[data-time='afternoon'] { --bg: #eff3f5; }
-html[data-time='golden']    { --bg: #f2e8d8; }
-html[data-time='evening']   { --bg: #2a2440; }
-html[data-time='night']     { --bg: #1a1828; }
-/* Beach */
-html[data-sky-theme='beach'][data-time='dawn']      { --bg: #f4e0d8; }
-html[data-sky-theme='beach'][data-time='morning']   { --bg: #f8eee0; }
-html[data-sky-theme='beach'][data-time='afternoon'] { --bg: #e4f2f4; }
-html[data-sky-theme='beach'][data-time='golden']    { --bg: #f6e2c8; }
-html[data-sky-theme='beach'][data-time='evening']   { --bg: #26203a; }
-html[data-sky-theme='beach'][data-time='night']     { --bg: #161824; }
-/* Mountain */
-html[data-sky-theme='mountain'][data-time='dawn']      { --bg: #e6e8e4; }
-html[data-sky-theme='mountain'][data-time='morning']   { --bg: #e8eee2; }
-html[data-sky-theme='mountain'][data-time='afternoon'] { --bg: #e2ecf0; }
-html[data-sky-theme='mountain'][data-time='golden']    { --bg: #ece2d4; }
-html[data-sky-theme='mountain'][data-time='evening']   { --bg: #202838; }
-html[data-sky-theme='mountain'][data-time='night']     { --bg: #141c24; }
 body {
   min-height: 100%;
   min-height: 100dvh;
