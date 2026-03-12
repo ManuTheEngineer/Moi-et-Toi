@@ -1,6 +1,16 @@
 html {
   overscroll-behavior: none;
-  background: var(--bg);
+  /* The root element's background paints the entire canvas — including the
+     iOS safe-area home-indicator region that position:fixed layers can't reach.
+     Using the same aurora gradient as body::before ensures the safe-area gap
+     shows the real themed background, not a flat solid color. */
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196, 120, 74, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(28, 43, 74, 0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(176, 138, 80, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(212, 98, 122, 0.03) 0%, transparent 70%), var(--bg);
+  background-size: 200% 200%;
+  transition: background 2s ease;
   touch-action: pan-x pan-y;
   -ms-touch-action: pan-x pan-y;
 }

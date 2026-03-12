@@ -666,8 +666,13 @@ html {
   min-height: 100dvh;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  background: var(--bg);
-  transition: background-color 4s ease;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(196, 120, 74, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 60% at 80% 15%, rgba(28, 43, 74, 0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 90%, rgba(176, 138, 80, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 60% 50%, rgba(212, 98, 122, 0.03) 0%, transparent 70%), var(--bg);
+  background-size: 200% 200%;
+  transition: background 2s ease;
 }
 body {
   min-height: 100%;
