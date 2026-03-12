@@ -601,6 +601,29 @@ body[data-sky-theme='mountain'][data-time='night'] {
   --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.28);
 }
 
+/* ===== HTML ELEMENT --bg OVERRIDES =====
+   The html element's background paints the full canvas (including iOS safe area).
+   CSS custom properties inherit DOWN, so body[data-time] --bg doesn't reach html.
+   These rules ensure html gets the correct --bg for each time/sky-theme combo. */
+html[data-time='dawn'] { --bg: #f0e6e8; }
+html[data-time='morning'] { --bg: #f5f0e6; }
+html[data-time='afternoon'] { --bg: #eff3f5; }
+html[data-time='golden'] { --bg: #f2e8d8; }
+html[data-time='evening'] { --bg: #2a2440; }
+html[data-time='night'] { --bg: #1a1828; }
+html[data-sky-theme='beach'][data-time='dawn'] { --bg: #f4e0d8; }
+html[data-sky-theme='beach'][data-time='morning'] { --bg: #f8eee0; }
+html[data-sky-theme='beach'][data-time='afternoon'] { --bg: #e4f2f4; }
+html[data-sky-theme='beach'][data-time='golden'] { --bg: #f6e2c8; }
+html[data-sky-theme='beach'][data-time='evening'] { --bg: #26203a; }
+html[data-sky-theme='beach'][data-time='night'] { --bg: #161824; }
+html[data-sky-theme='mountain'][data-time='dawn'] { --bg: #e6e8e4; }
+html[data-sky-theme='mountain'][data-time='morning'] { --bg: #e8eee2; }
+html[data-sky-theme='mountain'][data-time='afternoon'] { --bg: #e2ecf0; }
+html[data-sky-theme='mountain'][data-time='golden'] { --bg: #ece2d4; }
+html[data-sky-theme='mountain'][data-time='evening'] { --bg: #202838; }
+html[data-sky-theme='mountain'][data-time='night'] { --bg: #141c24; }
+
 * {
   margin: 0;
   padding: 0;
@@ -672,7 +695,6 @@ html {
     radial-gradient(ellipse 80% 40% at 50% 90%, rgba(176, 138, 80, 0.06) 0%, transparent 70%),
     radial-gradient(ellipse 50% 50% at 60% 50%, rgba(212, 98, 122, 0.03) 0%, transparent 70%), var(--bg);
   background-size: 200% 200%;
-  transition: background 2s ease;
 }
 body {
   min-height: 100%;
