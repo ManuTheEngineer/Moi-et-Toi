@@ -152,6 +152,10 @@ function renderLoginSky() {
       var cached = localStorage.getItem('met_weather_cache');
       if (cached) {
         WEATHER.data = JSON.parse(cached);
+        // Apply cached weather condition to body for consistent background tinting
+        if (WEATHER.data.condition && typeof applyWeatherCondition === 'function') {
+          applyWeatherCondition(WEATHER.data.condition);
+        }
       }
     } catch (e) {}
   }

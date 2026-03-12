@@ -63,8 +63,11 @@ function go(p) {
   // Render workout pages on demand (template system)
   if ((p === 'w1' || p === 'w2' || p === 'w3') && typeof renderWorkoutPage === 'function') renderWorkoutPage(p);
 
-  // Set page-specific background accent
+  // Set page identifier (used by CSS selectors — no page-specific backgrounds)
   document.body.dataset.page = p;
+
+  // Ensure time-of-day and weather condition are current so background stays consistent
+  if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
 
   // Track for recent pages in quick action sheet
   trackRecentPage(p);

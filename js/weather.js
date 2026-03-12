@@ -270,6 +270,8 @@ function fetchWeather() {
       try {
         localStorage.setItem('met_weather_cache', JSON.stringify(WEATHER.data));
       } catch (e) {}
+      // Apply weather condition to body for CSS-driven background tinting
+      applyWeatherCondition(condition);
       // Update location button
       var btn = document.getElementById('set-location-btn');
       if (btn) btn.textContent = 'Refresh';
@@ -296,6 +298,17 @@ function mapWMOCode(code) {
   if (code === 96 || code === 99) return 'hail'; // hail with thunderstorm
   if (code >= 95 && code <= 99) return 'thunderstorm';
   return 'clear';
+}
+
+// ===== WEATHER CONDITION → BODY ATTRIBUTE =====
+// Sets data-weather on <body> so CSS can apply condition-aware background overlays.
+// 'clear' removes the attribute entirely (no overlay needed).
+function applyWeatherCondition(condition) {
+  if (!condition || condition === 'clear') {
+    document.body.removeAttribute('data-weather');
+  } else {
+    document.body.setAttribute('data-weather', condition);
+  }
 }
 
 // ===== TEMPERATURE COLOR TINTING =====
@@ -3281,6 +3294,11 @@ function syncSkyState() {
   var time = getTimeOfDay();
   var prevTime = document.body.getAttribute('data-time');
   document.body.setAttribute('data-time', time);
+
+  // Keep weather condition attribute in sync (ensures consistency across all screens)
+  if (WEATHER.data && WEATHER.data.condition) {
+    applyWeatherCondition(WEATHER.data.condition);
+  }
 
   // If time period changed, refresh the sky
   if (prevTime && prevTime !== time) {
