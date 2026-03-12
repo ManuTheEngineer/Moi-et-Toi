@@ -10951,6 +10951,151 @@ body[data-page='build'] {
   border-radius: 50px;
 }
 
+/* ===== WAKE-UP ALARM OVERLAY ===== */
+.wu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.wu-overlay.wu-overlay-in {
+  opacity: 1;
+}
+.wu-overlay.wu-overlay-out {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.wu-overlay-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 12, 30, 0.97) 0%,
+    rgba(45, 25, 60, 0.95) 30%,
+    rgba(80, 50, 30, 0.9) 60%,
+    rgba(184, 134, 11, 0.85) 100%
+  );
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+}
+.wu-overlay-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 40px 32px;
+  max-width: 360px;
+  width: 100%;
+}
+.wu-ov-sun {
+  color: var(--gold, #b8860b);
+  margin-bottom: 20px;
+  animation: wuSunPulse 3s ease-in-out infinite;
+}
+@keyframes wuSunPulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+.wu-ov-greeting {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+}
+.wu-ov-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.wu-ov-time {
+  font-family: 'Outfit', sans-serif;
+  font-size: 48px;
+  font-weight: 200;
+  color: var(--gold, #b8860b);
+  letter-spacing: 2px;
+  margin-bottom: 28px;
+}
+.wu-ov-gn-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 32px;
+  animation: wuGnReveal 0.8s ease 0.5s both;
+}
+@keyframes wuGnReveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.wu-ov-gn-from {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 8px;
+  font-family: 'Outfit', sans-serif;
+}
+.wu-ov-gn-msg {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-style: italic;
+  color: var(--rose, #e8547a);
+  line-height: 1.5;
+}
+.wu-ov-dismiss {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg, var(--gold, #b8860b), #e8a000);
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 24px rgba(184, 134, 11, 0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.wu-ov-dismiss:active {
+  transform: scale(0.96);
+  box-shadow: 0 3px 12px rgba(184, 134, 11, 0.3);
+}
+.wu-ov-snooze {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.wu-ov-snooze:active {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+.wu-ov-snooze-count {
+  margin-top: 12px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Outfit', sans-serif;
+  min-height: 16px;
+}
+
 /* ===== UTILITY: mb-20 ===== */
 .mb-20 {
   margin-bottom: 20px;
