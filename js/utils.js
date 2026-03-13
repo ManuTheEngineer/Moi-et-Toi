@@ -148,37 +148,32 @@
   document.documentElement.setAttribute('data-time', _t);
 })();
 
+// ===== WEATHER DATA — defined early so the sky renders with cached weather =====
+// weather.js adds methods to this object; we own the definition so cached
+// location + weather are available BEFORE renderLoginSky runs.
+var WEATHER = {
+  lat: null, lon: null, data: null, scene: 'meadow',
+  locationGranted: false, audioCtx: null, audioNodes: {},
+  audioEnabled: false, audioUnlocked: false, refreshTimer: null
+};
+(function () {
+  try {
+    var l = JSON.parse(localStorage.getItem('met_weather_location'));
+    if (l && l.lat) { WEATHER.lat = l.lat; WEATHER.lon = l.lon; WEATHER.locationGranted = true; }
+  } catch (e) {}
+  try {
+    var w = JSON.parse(localStorage.getItem('met_weather_cache'));
+    if (w) WEATHER.data = w;
+  } catch (e) {}
+})();
+
 // ===== RENDER MASTER SKY (single background for entire app) =====
 // Renders into the GLOBAL sky-scene + terrain-scene so the exact same background
 // is visible on login, onboarding, and every dashboard page.
 function renderLoginSky() {
-  // Use the global sky/terrain containers (position:fixed, visible everywhere)
   var skyC = document.getElementById('sky-scene');
   var terrC = document.getElementById('terrain-scene');
   if (!skyC) return;
-
-  // Restore cached weather data for instant weather-aware rendering
-  if (typeof WEATHER !== 'undefined' && !WEATHER.data) {
-    try {
-      var cached = localStorage.getItem('met_weather_cache');
-      if (cached) {
-        WEATHER.data = JSON.parse(cached);
-      }
-    } catch (e) {}
-  }
-  // Restore cached location for weather-aware rendering
-  if (typeof WEATHER !== 'undefined' && !WEATHER.lat) {
-    try {
-      var cachedLoc = localStorage.getItem('met_weather_location');
-      if (cachedLoc) {
-        var loc = JSON.parse(cachedLoc);
-        WEATHER.lat = loc.lat;
-        WEATHER.lon = loc.lon;
-        WEATHER.locationGranted = true;
-      }
-    } catch (e) {}
-  }
-
   if (typeof renderLivingSky === 'function') {
     renderLivingSky(skyC);
     window._skyRenderedAt = Date.now();
@@ -187,8 +182,9 @@ function renderLoginSky() {
     renderTerrain(window._cachedSkyTheme || 'mixed');
   }
 }
-// Render master sky immediately (scripts are at bottom of body, DOM is ready)
-renderLoginSky();
+// DO NOT render here — weather.js patches getTimeOfDay() with real sunrise/sunset.
+// Rendering here would use the basic hour-only time, then flash when weather patches apply.
+// weather.js calls renderLoginSky() after patching, using cached weather for a single correct render.
 
 // ===== DYNAMIC TIME-OF-DAY SYSTEM =====
 function getTimeOfDay() {
@@ -497,13 +493,7 @@ function setLivingSky(on) {
         renderLivingSky(container);
       }
       startCreatureLoop(container);
-      // Restart periodic sky refresh
-      clearInterval(SKY.sceneTimer);
       clearInterval(SKY.creatureTimer);
-      SKY.sceneTimer = setInterval(function () {
-        if (!livingSkyEnabled || document.hidden) return;
-        renderLivingSky(container);
-      }, 120000);
     }
     if (typeof renderTerrain === 'function') renderTerrain();
     spawnOrbs();
@@ -536,15 +526,12 @@ function initSkyScene() {
   // Clear any existing timers to prevent duplicates
   clearInterval(SKY.sceneTimer);
   clearInterval(SKY.creatureTimer);
-  renderLivingSky(container);
-  startCreatureLoop(container);
-  // Also ensure terrain is rendered (may have been cleared or not yet rendered)
-  if (typeof renderTerrain === 'function') renderTerrain();
-  // Update sky every 2 minutes — sun position changes slowly (skip when tab hidden)
-  SKY.sceneTimer = setInterval(function () {
-    if (!livingSkyEnabled || document.hidden) return;
+  // Skip re-render if renderLoginSky() or weather.js already rendered recently
+  if (!window._skyRenderedAt || Date.now() - window._skyRenderedAt > 2000) {
     renderLivingSky(container);
-  }, 120000);
+  }
+  startCreatureLoop(container);
+  if (typeof renderTerrain === 'function') renderTerrain();
 }
 
 // ===== SUN / MOON POSITION BASED ON REAL TIME =====
@@ -781,6 +768,21 @@ function renderLivingSky(container) {
     container.appendChild(flare);
   }
 }
+
+// Wrap renderLivingSky so it NEVER causes a visible flash.
+// Builds all elements into an offscreen div, then swaps them in atomically
+// within a single JS frame — the browser never paints the cleared state.
+(function () {
+  var _baseSky = renderLivingSky;
+  renderLivingSky = function (container) {
+    var offscreen = document.createElement('div');
+    _baseSky(offscreen);
+    // Atomic swap — clear + append in one synchronous block
+    container.textContent = '';
+    while (offscreen.firstChild) container.appendChild(offscreen.firstChild);
+    window._skyRenderedAt = Date.now();
+  };
+})();
 
 function renderSun(container, pos, color, isGolden) {
   var size = color.size;
@@ -1157,17 +1159,20 @@ function renderCloud(container, isDarkMode, isGolden) {
 function renderTerrain(theme) {
   var container = document.getElementById('terrain-scene');
   if (!container) return;
-  container.innerHTML = '';
 
   theme = theme || (typeof currentSkyTheme !== 'undefined' ? currentSkyTheme : 'mixed');
 
+  // Build into offscreen div, then swap atomically (no flash)
+  var offscreen = document.createElement('div');
   if (theme === 'mountain') {
-    renderMountainTerrain(container);
+    renderMountainTerrain(offscreen);
   } else if (theme === 'beach') {
-    renderBeachTerrain(container);
+    renderBeachTerrain(offscreen);
   } else {
-    renderMeadowTerrain(container);
+    renderMeadowTerrain(offscreen);
   }
+  container.textContent = '';
+  while (offscreen.firstChild) container.appendChild(offscreen.firstChild);
 }
 
 function renderMountainTerrain(container) {
@@ -2163,15 +2168,13 @@ document.addEventListener('DOMContentLoaded', function () {
   initSkyScene();
   // Render terrain for current theme
   renderTerrain();
-  // Re-render sky when time period changes (orbs handled by updateTimeOfDay)
+  // Update time-of-day attribute periodically (CSS transitions handle visual changes)
   setInterval(
     function () {
       var current = document.body.getAttribute('data-time');
       var now = getTimeOfDay();
       if (current !== now) {
         updateTimeOfDay();
-        var container = document.getElementById('sky-scene');
-        if (container && livingSkyEnabled) renderLivingSky(container);
       }
     },
     5 * 60 * 1000

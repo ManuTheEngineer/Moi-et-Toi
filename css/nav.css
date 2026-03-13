@@ -1385,6 +1385,8 @@ body.touring .bn {
 }
 
 /* ===== BOTTOM NAV (full-width docked tab bar) ===== */
+/* Lives OUTSIDE .shell so no parent can interfere with position:fixed.
+   Hidden by default; shown when shell is active via adjacent-sibling selector. */
 .bnav {
   position: fixed;
   bottom: 0;
@@ -1395,7 +1397,7 @@ body.touring .bn {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--bdr-s);
-  display: flex;
+  display: none;
   justify-content: space-around;
   padding: 8px 0 0;
   padding-bottom: env(safe-area-inset-bottom, 8px);
@@ -1403,6 +1405,9 @@ body.touring .bn {
     background 4s ease,
     border-color 4s ease,
     transform 0.25s ease;
+}
+.shell.on ~ .bnav {
+  display: flex;
 }
 .bn {
   display: flex;

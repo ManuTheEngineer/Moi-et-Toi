@@ -95,32 +95,9 @@ async function init() {
   // Start connection state monitoring
   initConnectionMonitor();
 
-  // Early weather fetch — update login sky background immediately using
-  // previously granted location. Runs in parallel with auth, no user needed.
-  if (navigator.geolocation && typeof fetchWeather === 'function') {
-    navigator.geolocation.getCurrentPosition(
-      function (pos) {
-        if (typeof WEATHER !== 'undefined') {
-          WEATHER.lat = pos.coords.latitude;
-          WEATHER.lon = pos.coords.longitude;
-          WEATHER.locationGranted = true;
-          try {
-            localStorage.setItem('met_weather_location', JSON.stringify({ lat: WEATHER.lat, lon: WEATHER.lon }));
-          } catch (e) {}
-        }
-        fetchWeather().then(function () {
-          // Re-render the single master sky with real weather data
-          var skyC = document.getElementById('sky-scene');
-          if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
-          if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
-        });
-      },
-      function () {
-        /* location denied or unavailable — login sky stays time-based */
-      },
-      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
-    );
-  }
+  // Sky rendering + weather fetch + geolocation are all handled by
+  // utils.js (renderLoginSky on script load) and weather.js (immediate
+  // fetch + geolocation on script load). No duplicate work needed here.
 
   // Load email-to-role mapping from Firebase (keeps emails out of source code)
   await loadEmailMap();
@@ -409,10 +386,10 @@ function handleFirstLocationAllow() {
         // Fetch weather and immediately update the login sky background
         if (typeof fetchWeather === 'function') {
           fetchWeather().then(function () {
-            // Re-render the single master sky with real weather data
+            if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
             var skyC = document.getElementById('sky-scene');
             if (skyC && typeof renderLivingSky === 'function') renderLivingSky(skyC);
-            if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
+            if (typeof renderTerrain === 'function') renderTerrain();
             if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
             if (typeof updateWeatherInfoUI === 'function') updateWeatherInfoUI();
           });
