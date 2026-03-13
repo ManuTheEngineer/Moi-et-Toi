@@ -107,6 +107,23 @@
     { passive: true }
   );
 
+  // Clamp scroll so users can't scroll into the invisible 200px overshoot
+  // zone added to trick iOS into rendering to the physical screen edge.
+  // The real content ends 200px before the document bottom.
+  var clampTick = false;
+  window.addEventListener('scroll', function () {
+    if (clampTick) return;
+    clampTick = true;
+    requestAnimationFrame(function () {
+      clampTick = false;
+      var maxScroll = document.documentElement.scrollHeight - window.innerHeight - 200;
+      if (maxScroll < 0) maxScroll = 0;
+      if (window.scrollY > maxScroll) {
+        window.scrollTo(0, maxScroll);
+      }
+    });
+  }, { passive: true });
+
   // Reset iOS zoom after input blur - iOS sometimes stays zoomed in after
   // the keyboard dismisses, especially on inputs that had small font-sizes.
   document.addEventListener(
