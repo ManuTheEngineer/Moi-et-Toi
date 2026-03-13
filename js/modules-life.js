@@ -168,7 +168,7 @@ async function logPR() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('hisWellness/prs').push({
+  await db.ref('wellness/partner2/prs').push({
     exercise,
     weight: weight || '--',
     reps: reps || '--',
@@ -189,7 +189,7 @@ async function logPR() {
 }
 
 function listenPRs() {
-  var ref = db.ref('hisWellness/prs').orderByChild('timestamp').limitToLast(20);
+  var ref = db.ref('wellness/partner2/prs').orderByChild('timestamp').limitToLast(20);
   fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
@@ -214,13 +214,13 @@ function toggleClarity(el, type) {
   el.classList.toggle('done');
   const today = localDate();
   const done = el.classList.contains('done');
-  db.ref('hisWellness/clarity/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
+  db.ref('wellness/partner2/clarity/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
 }
 
 function loadClarity() {
   if (!db) return;
   const today = localDate();
-  db.ref('hisWellness/clarity/' + today).once('value', snap => {
+  db.ref('wellness/partner2/clarity/' + today).once('value', snap => {
     const data = snap.val() || {};
     document.querySelectorAll('#p1-clarity-grid .hs-care-item').forEach(el => {
       const type = el.onclick.toString().match(/'(\w+)'/)?.[1];
