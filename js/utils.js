@@ -10,18 +10,11 @@
     // Always use the largest known height so the page never shrinks for the keyboard
     document.documentElement.style.setProperty('--real-h', fullH + 'px');
 
-    // Force #bg to cover the ENTIRE physical screen.
-    // On iOS PWAs, CSS position:fixed + bottom:-50px and viewport units all fail
-    // to reach past the safe-area home-indicator zone.  The only reliable method
-    // is to set an explicit pixel height via JS that overshoots the physical screen.
+    // Set --screen-h to the real viewport height (NOT oversized).
+    // #bg uses this to fill exactly the visible screen — terrain
+    // anchors to bottom:0 and must sit at the visible screen edge.
     var screenH = Math.max(window.screen.height, h, document.documentElement.clientHeight);
     document.documentElement.style.setProperty('--screen-h', screenH + 'px');
-    var bg = document.getElementById('bg');
-    if (bg) {
-      bg.style.height = (screenH + 200) + 'px';
-      bg.style.top = '0';
-      bg.style.bottom = 'auto';
-    }
   }
   fillScreen();
   var _resizeTimer;
@@ -107,16 +100,15 @@
     { passive: true }
   );
 
-  // Clamp scroll so users can't scroll into the invisible 200px overshoot
-  // zone added to trick iOS into rendering to the physical screen edge.
-  // The real content ends 200px before the document bottom.
+  // Clamp scroll so users can't scroll past the actual content area.
+  // body::after adds a small safe-area spacer; this prevents scrolling into it.
   var clampTick = false;
   window.addEventListener('scroll', function () {
     if (clampTick) return;
     clampTick = true;
     requestAnimationFrame(function () {
       clampTick = false;
-      var maxScroll = document.documentElement.scrollHeight - window.innerHeight - 200;
+      var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       if (maxScroll < 0) maxScroll = 0;
       if (window.scrollY > maxScroll) {
         window.scrollTo(0, maxScroll);

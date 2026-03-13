@@ -684,16 +684,16 @@ input[type='range'] {
   background: transparent;
 }
 html {
-  min-height: calc(100% + 200px);
-  min-height: calc(100dvh + 200px);
+  min-height: 100%;
+  min-height: 100dvh;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   background: var(--bg);
 }
 body {
-  min-height: calc(100vh + 200px);
-  min-height: calc(100dvh + 200px);
-  min-height: calc(var(--real-h, 100dvh) + 200px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: var(--real-h, 100dvh);
   background: transparent;
   color: var(--t1);
   font-family: 'Outfit', sans-serif;
@@ -705,21 +705,14 @@ body {
   position: relative;
   transition: color 4s ease;
 }
-/* Invisible block-level spacer that creates REAL document flow height.
-   On iOS PWA, the browser stops rendering at the safe-area boundary
-   when page content is shorter than the screen.  This spacer forces
-   the document to always be taller than the viewport, pushing iOS
-   to render to the physical bottom edge on EVERY page: login,
-   onboarding, config, dashboard, all 29 tabs, modals — everything.
-   MUST be display:block (not position:absolute) so it generates
-   actual document height — position:absolute doesn't work because
-   on login/onboarding all visible content is position:fixed and
-   contributes zero to document flow. */
+/* Invisible spacer that pushes the document past the iOS safe-area boundary
+   so the browser paints to the physical bottom edge in PWA standalone mode.
+   Only needs to exceed the viewport by the safe-area-inset, not 200px. */
 body::after {
   content: '';
   display: block;
   width: 1px;
-  height: calc(100vh + 200px);
-  height: calc(100dvh + 200px);
+  height: calc(100vh + env(safe-area-inset-bottom, 0px));
+  height: calc(100dvh + env(safe-area-inset-bottom, 0px));
   pointer-events: none;
 }

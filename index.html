@@ -389,7 +389,7 @@
     <!-- ===== UNIVERSAL BACKGROUND — single container for ALL visual background layers.
          Sized once (by JS + CSS), everything inside fills it via position:absolute.
          This ensures consistent edge-to-edge coverage on every page. ===== -->
-    <div id="bg" style="position:fixed;top:0;left:0;right:0;height:120vh;overflow:hidden;pointer-events:none">
+    <div id="bg" style="position:fixed;top:0;left:0;right:0;height:var(--screen-h,100vh);overflow:hidden;pointer-events:none">
       <div id="bg-aurora"></div>
       <div id="bg-noise"></div>
       <div class="sky-scene" id="sky-scene"></div>

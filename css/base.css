@@ -63,7 +63,9 @@ body.keyboard-open .generic-modal-box {
   top: 0;
   left: 0;
   right: 0;
-  height: 120vh;
+  /* Use --screen-h (set by JS fillScreen) so terrain at bottom:0 sits at
+     the visible screen edge.  CSS fallback 100vh for pre-JS paint. */
+  height: var(--screen-h, 100vh);
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
@@ -1137,11 +1139,11 @@ body[data-sky-theme='mountain'] .sky-bf-wing {
    extends into the safe-area-inset-bottom region, leaving a white gap on iPhones. */
 @media (display-mode: standalone) {
   html {
-    min-height: calc(100% + 200px);
+    min-height: 100%;
     overscroll-behavior: none;
   }
   body {
-    min-height: calc(100% + 200px);
+    min-height: 100%;
     overflow-y: auto;
     overscroll-behavior-y: none;
   }

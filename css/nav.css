@@ -1293,9 +1293,9 @@ body.touring .bn {
 .shell {
   display: none;
   padding-bottom: calc(72px + max(env(safe-area-inset-bottom, 20px), 20px));
-  min-height: calc(100vh + 200px);
-  min-height: calc(100dvh + 200px);
-  min-height: calc(var(--real-h, 100dvh) + 200px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: var(--real-h, 100dvh);
   transition: padding-bottom 0.25s ease;
   position: relative;
   z-index: 2;
