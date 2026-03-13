@@ -20,6 +20,14 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
+    <!-- Critical inline styles: force iOS to render to the physical screen
+         bottom BEFORE any external CSS loads.  Without this the user sees
+         a brief gap-to-no-gap flash on app launch. -->
+    <style>
+      body::after{content:'';display:block;width:1px;height:calc(100dvh + 200px);pointer-events:none}
+      html,body{min-height:calc(100dvh + 200px)}
+      #bg{position:fixed;top:0;left:0;right:0;height:120vh;overflow:hidden;pointer-events:none}
+    </style>
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/dynamic-bg.css" />
