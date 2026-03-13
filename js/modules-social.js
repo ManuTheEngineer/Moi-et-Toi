@@ -969,14 +969,16 @@ function renderCheckinFeed(weeks) {
 // ===== DREAM BOARD =====
 let dreamFilter = 'all';
 let _lastDreamItems = [];
-const DR_CAT_ICONS = { home: '🏠', travel: '✈️', career: '💼', family: '👨‍👩‍👧', experience: '🎯', financial: '💰' };
+const DR_CAT_ICONS = { home: '🏠', travel: '✈️', career: '💼', family: '👨‍👩‍👧', experience: '🎯', financial: '💰', shared: '🤝', bucket: '🪣' };
 const DR_CAT_COLORS = {
   home: 'var(--lavender)',
   travel: 'var(--teal)',
   career: 'var(--gold)',
   family: 'var(--rose)',
   experience: 'var(--emerald)',
-  financial: 'var(--amber)'
+  financial: 'var(--amber)',
+  shared: 'var(--teal)',
+  bucket: 'var(--lavender)'
 };
 const DR_PRIORITY_LABELS = {
   someday: 'Someday',
