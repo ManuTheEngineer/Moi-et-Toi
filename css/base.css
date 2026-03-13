@@ -57,17 +57,17 @@ body.keyboard-open .generic-modal-box {
 }
 /* ===== UNIVERSAL BACKGROUND CONTAINER =====
    Single fixed layer covering the entire physical screen.
-   On iOS PWAs viewport units (100vh/100dvh) and position:fixed bottom:0
-   don't reliably include the safe-area home-indicator zone at the
-   screen's physical edge.  We overshoot by 50px in every direction
-   so the sky/terrain/aurora ALWAYS bleeds past whatever the OS
-   considers the viewport boundary. */
+   Height is set explicitly by JS (fillScreen in utils.js) to
+   screen.height + 100px — the only reliable way to reach past the
+   iOS PWA safe-area zone where CSS viewport units and position:fixed
+   bottom values all fall short. */
 #bg {
   position: fixed;
-  top: -1px;
-  left: -1px;
-  right: -1px;
-  bottom: -50px;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* height set by JS — fallback to 110vh for pre-JS paint */
+  height: 110vh;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;

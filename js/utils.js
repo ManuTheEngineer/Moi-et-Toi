@@ -9,9 +9,19 @@
     if (h > fullH) fullH = h;
     // Always use the largest known height so the page never shrinks for the keyboard
     document.documentElement.style.setProperty('--real-h', fullH + 'px');
-    // Physical screen height — tells background layers exactly where the
-    // bottom edge of the phone is, including the safe area / home indicator
-    document.documentElement.style.setProperty('--screen-h', window.screen.height + 'px');
+
+    // Force #bg to cover the ENTIRE physical screen.
+    // On iOS PWAs, CSS position:fixed + bottom:-50px and viewport units all fail
+    // to reach past the safe-area home-indicator zone.  The only reliable method
+    // is to set an explicit pixel height via JS that overshoots the physical screen.
+    var screenH = Math.max(window.screen.height, h, document.documentElement.clientHeight);
+    document.documentElement.style.setProperty('--screen-h', screenH + 'px');
+    var bg = document.getElementById('bg');
+    if (bg) {
+      bg.style.height = (screenH + 100) + 'px';
+      bg.style.top = '0';
+      bg.style.bottom = 'auto';
+    }
   }
   fillScreen();
   var _resizeTimer;
