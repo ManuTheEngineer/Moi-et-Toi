@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="min-height:calc(100dvh + 200px)">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
@@ -20,13 +20,12 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
-    <!-- Critical inline styles: force iOS to render to the physical screen
-         bottom BEFORE any external CSS loads.  Without this the user sees
-         a brief gap-to-no-gap flash on app launch. -->
+    <!-- Critical inline styles applied via <style> as backup for the
+         inline style= attributes on html, body, #bg, and #ios-stretch.
+         The style= attributes are parsed during DOM construction (before
+         first paint); this <style> block is a safety net. -->
     <style>
       body::after{content:'';display:block;width:1px;height:calc(100dvh + 200px);pointer-events:none}
-      html,body{min-height:calc(100dvh + 200px)}
-      #bg{position:fixed;top:0;left:0;right:0;height:120vh;overflow:hidden;pointer-events:none}
     </style>
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
@@ -35,7 +34,11 @@
     <link rel="stylesheet" href="css/nav.css" />
     <link rel="stylesheet" href="css/modules.css" />
   </head>
-  <body>
+  <body style="min-height:calc(100dvh + 200px)">
+    <!-- iOS stretch: real DOM element that forces document height past the
+         viewport DURING initial DOM construction — before any CSS or JS runs.
+         This is what makes the safe-area gap disappear before the first frame. -->
+    <div id="ios-stretch" style="width:1px;height:calc(100dvh + 200px);position:absolute;top:0;left:0;pointer-events:none" aria-hidden="true"></div>
     <!-- ===== OFFLINE BANNER ===== -->
     <div id="offline-banner" class="offline-banner">You're offline — changes will sync when reconnected</div>
 
@@ -386,7 +389,7 @@
     <!-- ===== UNIVERSAL BACKGROUND — single container for ALL visual background layers.
          Sized once (by JS + CSS), everything inside fills it via position:absolute.
          This ensures consistent edge-to-edge coverage on every page. ===== -->
-    <div id="bg">
+    <div id="bg" style="position:fixed;top:0;left:0;right:0;height:120vh;overflow:hidden;pointer-events:none">
       <div id="bg-aurora"></div>
       <div id="bg-noise"></div>
       <div class="sky-scene" id="sky-scene"></div>
