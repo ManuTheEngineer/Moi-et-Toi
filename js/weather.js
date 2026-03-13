@@ -2928,13 +2928,13 @@ var MOOD_SOUNDS = {
   // Beach environment (her favorites)
   beachBreeze: { label: 'Beach Breeze', icon: '🏖', type: 'pianoBeachBreeze', desc: 'Sunset piano', env: 'beach' },
   seagulls: { label: 'Seagulls', icon: '🕊', type: 'pianoSeagulls', desc: 'Seaside serenade', env: 'beach' },
-  // Mountain environment (his favorites)
+  // Mountain environment (partner2 favorites)
   mountainCreek: { label: 'Mountain Creek', icon: '🏔', type: 'pianoCreek', desc: 'Sparkling piano', env: 'mountain' },
   mountainWind: { label: 'Mountain Wind', icon: '🦅', type: 'pianoAlpine', desc: 'Majestic alpine piano', env: 'mountain' }
 };
 
-// Nature sound order per user: beach-first for her, mountain-first for him
-var NATURE_ORDER_HER = [
+// Nature sound order per user: beach-first for partner1, mountain-first for partner2
+var NATURE_ORDER_PARTNER1 = [
   'ocean',
   'beachBreeze',
   'seagulls',
@@ -2948,7 +2948,7 @@ var NATURE_ORDER_HER = [
   'mountainWind',
   'campfire'
 ];
-var NATURE_ORDER_HIM = [
+var NATURE_ORDER_PARTNER2 = [
   'forest',
   'mountainCreek',
   'mountainWind',
@@ -2983,7 +2983,7 @@ WEATHER.moodNode = null;
 // Dynamically render sound grids based on user role + environment
 function renderMoodSoundsGrid() {
   var role = typeof user !== 'undefined' ? user : null;
-  var baseOrder = role === 'her' ? NATURE_ORDER_HER : NATURE_ORDER_HIM;
+  var baseOrder = role === 'partner1' ? NATURE_ORDER_PARTNER1 : NATURE_ORDER_PARTNER2;
   // Reorder nature sounds to prioritize current environment
   var sky = typeof currentSkyTheme !== 'undefined' ? currentSkyTheme : 'mixed';
   var natureOrder = baseOrder.slice();
@@ -3300,7 +3300,7 @@ function sendMoodToPartner(moodKey) {
   }
   var mood = MOOD_SOUNDS[moodKey];
   if (!mood) return;
-  var partnerRole = user === 'her' ? 'him' : 'her';
+  var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
   db.ref('notifications/' + partnerRole).push({
     type: 'mood-sound',
     from: user,

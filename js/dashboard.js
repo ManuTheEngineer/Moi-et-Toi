@@ -1882,7 +1882,7 @@ function loadSettings() {
   }
   // Nickname
   if (nickEl) {
-    var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
+    var nickKey = user === 'partner1' ? 'partner1CallsPartner2' : 'partner2CallsPartner1';
     nickEl.value = NICKNAMES[nickKey] || '';
   }
   if (annivEl && db) {
@@ -2029,7 +2029,7 @@ function connectSpotify() {
         showSpotifyEmbed(s.val());
       }
     });
-    var partnerRole = user === 'her' ? 'him' : 'her';
+    var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
     db.ref('settings/music/' + partnerRole + '/spotify').once('value', function (s) {
       var el = document.getElementById('spotify-partner-section');
       if (el && s.val()) {
@@ -2093,7 +2093,7 @@ function connectYouTubeMusic() {
         showYTMEmbed(s.val());
       }
     });
-    var partnerRole = user === 'her' ? 'him' : 'her';
+    var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
     db.ref('settings/music/' + partnerRole + '/youtube').once('value', function (s) {
       var el = document.getElementById('ytm-partner-section');
       if (el && s.val()) {
@@ -2147,7 +2147,7 @@ function shareSongWithPartner(platform) {
     return;
   }
 
-  var partnerRole = user === 'her' ? 'him' : 'her';
+  var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
   var senderName = typeof NAMES !== 'undefined' ? NAMES[user] : user;
   var icon = platform === 'spotify' ? '🎵' : '🎶';
 
@@ -2255,7 +2255,7 @@ async function saveSettings() {
     await db.ref('settings/birthday/' + user).set(newBday);
   }
   if (newNick) {
-    var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
+    var nickKey = user === 'partner1' ? 'partner1CallsPartner2' : 'partner2CallsPartner1';
     NICKNAMES[nickKey] = newNick;
     NAMES[partner] = newNick;
     await db.ref('profiles/' + nickKey).set(newNick);
@@ -2754,7 +2754,7 @@ function playVoiceAudioBackground(dataUrl, onEnded) {
 // ===== IN-APP NOTIFICATION SYSTEM =====
 function sendInAppNotif(type, message, icon) {
   if (!db || !user) return;
-  var partnerRole = user === 'her' ? 'him' : 'her';
+  var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
   var notifData = {
     type: type,
     from: user,
@@ -2939,7 +2939,7 @@ function checkMorningMessage() {
   if (localStorage.getItem(KEY) === today) return;
 
   // Read partner's morning message settings (see what they wrote for you)
-  var partnerRole = user === 'her' ? 'him' : 'her';
+  var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
   db.ref('settings/morningMsg/' + partnerRole).once('value', function (snap) {
     var settings = snap.val();
     if (!settings || !settings.enabled) return;
