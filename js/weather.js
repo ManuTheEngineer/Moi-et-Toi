@@ -2785,9 +2785,15 @@ function spawnSceneCreatures(container) {
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', patchSkySystem);
+    document.addEventListener('DOMContentLoaded', function () {
+      patchSkySystem();
+      // First sky render — now uses weather-aware getTimeOfDay with cached data
+      if (typeof renderLoginSky === 'function') renderLoginSky();
+    });
   } else {
     patchSkySystem();
+    // First sky render — now uses weather-aware getTimeOfDay with cached data
+    if (typeof renderLoginSky === 'function') renderLoginSky();
   }
 })();
 
@@ -3437,10 +3443,14 @@ function initWeatherSystem() {
       fetchWeather().then(function () {
         // Update time-of-day with real sunrise/sunset from location data
         if (typeof updateTimeOfDay === 'function') updateTimeOfDay();
-        // Re-render sky and terrain with real weather data
+        // Re-render sky ONLY if it wasn't already rendered with weather data
+        // (renderLoginSky in patchSkySystem already used cached weather)
         var container = document.getElementById('sky-scene');
-        if (container && livingSkyEnabled) renderLivingSky(container);
-        if (typeof renderTerrain === 'function') renderTerrain();
+        var alreadyRendered = window._skyRenderedAt && (Date.now() - window._skyRenderedAt < 10000);
+        if (container && livingSkyEnabled && !alreadyRendered) {
+          renderLivingSky(container);
+          if (typeof renderTerrain === 'function') renderTerrain();
+        }
         updateWeatherInfoUI();
         // Queue ambient audio - will play once AudioContext is unlocked by user gesture
         if (WEATHER.audioEnabled) {

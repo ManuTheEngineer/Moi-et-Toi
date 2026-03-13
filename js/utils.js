@@ -182,8 +182,9 @@ function renderLoginSky() {
     renderTerrain(window._cachedSkyTheme || 'mixed');
   }
 }
-// Render master sky immediately (scripts are at bottom of body, DOM is ready)
-renderLoginSky();
+// DO NOT render here — weather.js patches getTimeOfDay() with real sunrise/sunset.
+// Rendering here would use the basic hour-only time, then flash when weather patches apply.
+// weather.js calls renderLoginSky() after patching, using cached weather for a single correct render.
 
 // ===== DYNAMIC TIME-OF-DAY SYSTEM =====
 function getTimeOfDay() {
