@@ -6120,12 +6120,14 @@ body[data-time='golden'] .login-logo {
 /* ===== NIGHT/EVENING APP-WIDE ENHANCEMENTS ===== */
 /* Bottom nav: deeper glass with subtle sage tint at night */
 body[data-time='night'] .bnav {
-  background: rgba(14, 12, 26, 0.92) !important;
+  background-color: rgb(14, 12, 26) !important;
+  background-image: none !important;
   border-top-color: rgba(140, 170, 130, 0.08) !important;
   box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.25) !important;
 }
 body[data-time='evening'] .bnav {
-  background: rgba(26, 22, 48, 0.9) !important;
+  background-color: rgb(26, 22, 48) !important;
+  background-image: none !important;
   border-top-color: rgba(160, 150, 200, 0.08) !important;
   box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.2) !important;
 }
