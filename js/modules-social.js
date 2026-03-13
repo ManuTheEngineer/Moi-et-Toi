@@ -4875,8 +4875,11 @@ function notifyPartnerSnoozed() {
 
 /* ---------- listen for partner wake events ---------- */
 
+var _wakeEventsListening = false;
 function listenPartnerWakeEvents() {
   if (!db || !user) return;
+  if (_wakeEventsListening) return;
+  _wakeEventsListening = true;
   var today = localDate();
 
   // Partner confirmed awake

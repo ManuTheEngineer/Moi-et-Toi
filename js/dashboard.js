@@ -1428,8 +1428,11 @@ function logActivity(module, description) {
   }).catch(function () {});
 }
 
+var _activityListening = false;
 function renderActivityFeed() {
   if (!db) return;
+  if (_activityListening) return;
+  _activityListening = true;
   db.ref('activity')
     .orderByChild('timestamp')
     .limitToLast(12)

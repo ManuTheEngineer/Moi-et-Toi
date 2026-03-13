@@ -2091,6 +2091,7 @@ let nutritionData = {},
   recipeData = {};
 
 var _nutrListenDate = null;
+var _nutrRecipeListening = false;
 function listenNutritionData() {
   if (!db) return;
   var today = localDate();
@@ -2103,11 +2104,14 @@ function listenNutritionData() {
     nutritionData = snap.val() || {};
     renderNutritionDay();
   });
-  db.ref('nutrition/recipes').on('value', snap => {
-    recipeData = snap.val() || {};
-    renderRecipeList();
-  });
-  // Meal planning consolidated into pg-homelife
+  // Only attach recipes listener once (it doesn't change per-page-visit)
+  if (!_nutrRecipeListening) {
+    _nutrRecipeListening = true;
+    db.ref('nutrition/recipes').on('value', snap => {
+      recipeData = snap.val() || {};
+      renderRecipeList();
+    });
+  }
 }
 
 function renderNutritionDay() {
