@@ -62,7 +62,13 @@
 /* ===== LOGIN ===== */
 .login {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Use --real-h (largest known viewport height) so the login page
+     never shrinks when the iOS keyboard opens.  The keyboard overlays
+     the page instead of pushing it up. */
+  height: var(--real-h, 100vh);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -1286,7 +1292,7 @@ body.touring .bn {
 /* ===== SHELL ===== */
 .shell {
   display: none;
-  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(72px + max(env(safe-area-inset-bottom, 20px), 20px));
   min-height: 100vh;
   min-height: 100dvh;
   min-height: var(--real-h, 100dvh);
@@ -1393,14 +1399,18 @@ body.touring .bn {
   left: 0;
   right: 0;
   z-index: 800;
-  background: var(--nav-bg);
+  /* Solid base so nothing bleeds through in the safe-area region */
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--nav-bg), var(--nav-bg));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--bdr-s);
   display: none;
   justify-content: space-around;
   padding: 8px 0 0;
-  padding-bottom: env(safe-area-inset-bottom, 8px);
+  /* env() can return 0 on some iOS PWA builds — use max() to guarantee at
+     least 20px so the nav always covers the home-indicator safe-area zone. */
+  padding-bottom: max(env(safe-area-inset-bottom, 20px), 20px);
   transition:
     background 4s ease,
     border-color 4s ease,
@@ -1480,7 +1490,7 @@ body.touring .bn {
     width 0.35s cubic-bezier(0.4, 0, 0.15, 1);
   z-index: 0;
   pointer-events: none;
-  bottom: env(safe-area-inset-bottom, 8px);
+  bottom: max(env(safe-area-inset-bottom, 20px), 20px);
 }
 
 /* Notification badges on nav tabs */

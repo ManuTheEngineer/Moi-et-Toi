@@ -12,6 +12,8 @@ function initPullToRefresh() {
   document.addEventListener(
     'touchstart',
     function (e) {
+      // Only allow pull-to-refresh on the dashboard page
+      if (currentPageId !== 'dash') return;
       if (window.scrollY === 0) {
         startY = e.touches[0].clientY;
         pulling = true;
@@ -62,13 +64,12 @@ function softRefresh() {
   // Re-render current page data without a full page reload
   var page = currentPageId || 'dash';
   try {
-    // Re-render dashboard if on it
+    // Re-render dashboard data in place — do NOT call go() as it
+    // triggers page transitions and can cause unintended navigation
     if (page === 'dash') {
       if (typeof renderDashHero === 'function') renderDashHero();
       if (typeof renderDailyTasks === 'function') renderDailyTasks();
     }
-    // Re-trigger page-specific data load via go()
-    if (typeof go === 'function') go(page);
 
     // Refresh sky scene
     if (typeof livingSkyEnabled !== 'undefined' && livingSkyEnabled) {

@@ -56,12 +56,16 @@ body.keyboard-open .generic-modal-box {
   max-height: calc(var(--vv-h, 50vh) - 40px);
 }
 /* ===== UNIVERSAL BACKGROUND CONTAINER =====
-   Single fixed container that fills the entire viewport including safe
-   areas. Uses inset:0 so it always matches the browser chrome exactly —
-   no JS sizing, no viewport-unit mismatches, no iOS gaps. */
+   Height set by JS (fillScreen) to screen.height + 200px.
+   CSS fallback 120vh for pre-JS paint. */
 #bg {
   position: fixed;
-  inset: -1px;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Use --screen-h (set by JS fillScreen) so terrain at bottom:0 sits at
+     the visible screen edge.  CSS fallback 100vh for pre-JS paint. */
+  height: var(--screen-h, 100vh);
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
@@ -281,18 +285,18 @@ body[data-time='evening'] .sky-scene {
 }
 .sky-bird-wing {
   position: absolute;
-  width: 8px;
-  height: 3px;
-  border-top: 2px solid rgba(60, 50, 40, 0.4);
+  width: 18px;
+  height: 7px;
+  border-top: 3px solid rgba(60, 50, 40, 0.45);
   border-radius: 50% 50% 0 0;
 }
 .sky-bird-wing-l {
-  left: -9px;
+  left: -18px;
   transform-origin: right center;
   animation: wingFlap 0.6s ease-in-out infinite alternate;
 }
 .sky-bird-wing-r {
-  right: -9px;
+  right: -18px;
   transform: scaleX(-1);
   transform-origin: left center;
   animation: wingFlap 0.6s ease-in-out infinite alternate-reverse;

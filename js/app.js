@@ -1813,6 +1813,8 @@ function finishLogin() {
   // Show the shell FIRST so sky/terrain render into a visible container
   document.getElementById('login').classList.add('h');
   document.getElementById('shell').classList.add('on');
+  // Reset scroll — keyboard during login may have shifted the page
+  window.scrollTo(0, 0);
   document.querySelectorAll('.uname').forEach(e => (e.textContent = NAMES[user]));
   document.querySelectorAll('.pname').forEach(e => (e.textContent = NAMES[partner]));
   if (user === 'him') {

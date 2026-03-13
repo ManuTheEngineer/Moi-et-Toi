@@ -9,9 +9,12 @@
     if (h > fullH) fullH = h;
     // Always use the largest known height so the page never shrinks for the keyboard
     document.documentElement.style.setProperty('--real-h', fullH + 'px');
-    // Physical screen height — tells background layers exactly where the
-    // bottom edge of the phone is, including the safe area / home indicator
-    document.documentElement.style.setProperty('--screen-h', window.screen.height + 'px');
+
+    // Set --screen-h to the real viewport height (NOT oversized).
+    // #bg uses this to fill exactly the visible screen — terrain
+    // anchors to bottom:0 and must sit at the visible screen edge.
+    var screenH = Math.max(window.screen.height, h, document.documentElement.clientHeight);
+    document.documentElement.style.setProperty('--screen-h', screenH + 'px');
   }
   fillScreen();
   var _resizeTimer;
@@ -96,6 +99,22 @@
     },
     { passive: true }
   );
+
+  // Clamp scroll so users can't scroll past the actual content area.
+  // body::after adds a small safe-area spacer; this prevents scrolling into it.
+  var clampTick = false;
+  window.addEventListener('scroll', function () {
+    if (clampTick) return;
+    clampTick = true;
+    requestAnimationFrame(function () {
+      clampTick = false;
+      var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll < 0) maxScroll = 0;
+      if (window.scrollY > maxScroll) {
+        window.scrollTo(0, maxScroll);
+      }
+    });
+  }, { passive: true });
 
   // Reset iOS zoom after input blur - iOS sometimes stays zoomed in after
   // the keyboard dismisses, especially on inputs that had small font-sizes.
@@ -960,30 +979,46 @@ function startCreatureLoop(container) {
 }
 
 var _prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-var MAX_SKY_CREATURES = 12;
+var MAX_SKY_CREATURES = 16;
 function spawnCreatures(container) {
   if (_prefersReducedMotion) return;
   // Cap total animated creatures in the DOM to prevent lag
-  var existing = container.querySelectorAll('.sky-bird,.sky-butterfly,.sky-firefly,.scene-creature');
+  var existing = container.querySelectorAll('.sky-bird,.sky-butterfly,.sky-firefly,.sky-owl,.sky-bat,.scene-creature');
   if (existing.length >= MAX_SKY_CREATURES) return;
 
   var time = getTimeOfDay();
   var pos = getSunPosition();
 
   if (pos.isNight) {
-    // Fireflies at night
-    for (var i = 0; i < 2; i++) {
+    // Night: fireflies, owls, occasional bat
+    for (var i = 0; i < 3; i++) {
       renderFirefly(container);
     }
+    if (Math.random() < 0.5) renderOwl(container);
+    if (Math.random() < 0.3) renderBat(container);
+  } else if (time === 'evening') {
+    // Evening: bats emerging, last birds, owls
+    renderBird(container);
+    if (Math.random() < 0.5) renderBat(container);
+    if (Math.random() < 0.4) renderBat(container);
+    if (Math.random() < 0.3) renderOwl(container);
+    if (Math.random() < 0.3) renderFirefly(container);
   } else if (time === 'dawn') {
+    // Dawn: butterflies, early birds, lingering firefly
     renderButterfly(container);
+    if (Math.random() < 0.5) renderBird(container);
+    if (Math.random() < 0.3) renderButterfly(container);
+    if (Math.random() < 0.15) renderFirefly(container);
+  } else if (time === 'golden') {
+    // Golden hour: birds returning, butterflies
+    renderBird(container);
     if (Math.random() < 0.4) renderBird(container);
-  } else if (time === 'evening' || time === 'golden') {
-    renderBird(container);
+    if (Math.random() < 0.3) renderButterfly(container);
   } else {
-    // Day - one bird at a time
+    // Day: birds, butterflies, active sky
     renderBird(container);
-    if (Math.random() < 0.2) renderButterfly(container);
+    if (Math.random() < 0.4) renderBird(container);
+    if (Math.random() < 0.25) renderButterfly(container);
   }
 }
 
@@ -1066,6 +1101,71 @@ function renderFirefly(container) {
     },
     (dur + 1) * 1000
   );
+}
+
+function renderOwl(container) {
+  var owl = document.createElement('div');
+  owl.className = 'sky-owl scene-creature';
+  var startX = 5 + Math.random() * 30;
+  var startY = 10 + Math.random() * 20;
+  var dx = 200 + Math.random() * 250;
+  var dy = -(10 + Math.random() * 25);
+  var dur = 12 + Math.random() * 8;
+
+  owl.style.cssText =
+    'left:' + startX + '%;top:' + startY + '%;--owl-dx:' + dx + 'px;--owl-dy:' + dy + 'px;--owl-dur:' + dur + 's';
+
+  var body = document.createElement('div');
+  body.className = 'sky-owl-body';
+
+  var wl = document.createElement('div');
+  wl.className = 'sky-owl-wing sky-owl-wing-l';
+  var wr = document.createElement('div');
+  wr.className = 'sky-owl-wing sky-owl-wing-r';
+
+  var eyes = document.createElement('div');
+  eyes.className = 'sky-owl-eyes';
+  var eye1 = document.createElement('div');
+  eye1.className = 'sky-owl-eye';
+  var eye2 = document.createElement('div');
+  eye2.className = 'sky-owl-eye';
+  eyes.appendChild(eye1);
+  eyes.appendChild(eye2);
+
+  body.appendChild(wl);
+  body.appendChild(wr);
+  body.appendChild(eyes);
+  owl.appendChild(body);
+  container.appendChild(owl);
+
+  setTimeout(function () {
+    if (owl.parentNode) owl.remove();
+  }, (dur + 2) * 1000);
+}
+
+function renderBat(container) {
+  var bat = document.createElement('div');
+  bat.className = 'sky-bat scene-creature';
+  var startX = 60 + Math.random() * 35;
+  var startY = 5 + Math.random() * 25;
+  var dx = -(150 + Math.random() * 200);
+  var dy = 20 + Math.random() * 30;
+  var dur = 6 + Math.random() * 5;
+
+  bat.style.cssText =
+    'left:' + startX + '%;top:' + startY + '%;--bat-dx:' + dx + 'px;--bat-dy:' + dy + 'px;--bat-dur:' + dur + 's';
+
+  var wl = document.createElement('div');
+  wl.className = 'sky-bat-wing sky-bat-wing-l';
+  var wr = document.createElement('div');
+  wr.className = 'sky-bat-wing sky-bat-wing-r';
+  bat.appendChild(wl);
+  bat.appendChild(wr);
+
+  container.appendChild(bat);
+  setTimeout(function () {
+    if (bat.parentNode) bat.remove();
+  }, (dur + 2) * 1000);
 }
 
 function renderCloud(container, isDarkMode, isGolden) {
@@ -1266,9 +1366,9 @@ function renderMountainTerrain(container) {
 
   // Eagles soaring above the peaks
   var eaglePositions = [
-    { left: 25, bottom: 55, size: 12, delay: 0 },
-    { left: 65, bottom: 60, size: 10, delay: 4 },
-    { left: 45, bottom: 65, size: 8, delay: 8 }
+    { left: 25, bottom: 55, size: 28, delay: 0 },
+    { left: 65, bottom: 60, size: 24, delay: 4 },
+    { left: 45, bottom: 65, size: 20, delay: 8 }
   ];
   for (var e = 0; e < eaglePositions.length; e++) {
     var ep = eaglePositions[e];
@@ -1317,9 +1417,9 @@ function renderMountainTerrain(container) {
 
   // Deer silhouettes grazing near the foothills
   var deerPositions = [
-    { left: 20, bottom: 12, size: 10, flip: false },
-    { left: 24, bottom: 11, size: 8, flip: true },
-    { left: 75, bottom: 10, size: 9, flip: false }
+    { left: 20, bottom: 12, size: 26, flip: false },
+    { left: 24, bottom: 11, size: 22, flip: true },
+    { left: 75, bottom: 10, size: 24, flip: false }
   ];
   for (var d = 0; d < deerPositions.length; d++) {
     var dp = deerPositions[d];
@@ -1391,8 +1491,8 @@ function renderMountainTerrain(container) {
 
   // Mountain goats on distant ridgeline
   var goatPositions = [
-    { left: 30, bottom: 30, size: 5 },
-    { left: 74, bottom: 28, size: 4 }
+    { left: 30, bottom: 30, size: 14 },
+    { left: 74, bottom: 28, size: 12 }
   ];
   for (var mg = 0; mg < goatPositions.length; mg++) {
     var gp = goatPositions[mg];
@@ -1400,6 +1500,68 @@ function renderMountainTerrain(container) {
     goat.className = 'terrain-mtn-goat';
     goat.style.cssText = 'left:' + gp.left + '%;bottom:' + gp.bottom + '%;--goat-size:' + gp.size + 'px';
     container.appendChild(goat);
+  }
+
+  // Wolf silhouettes on ridgeline (more visible at dusk/night)
+  var wolfPos = [
+    { left: 18, bottom: 26, size: 30, flip: false },
+    { left: 82, bottom: 24, size: 26, flip: true }
+  ];
+  for (var wf = 0; wf < wolfPos.length; wf++) {
+    var wp = wolfPos[wf];
+    var wolf = document.createElement('div');
+    wolf.className = 'terrain-wolf';
+    wolf.style.cssText = 'left:' + wp.left + '%;bottom:' + wp.bottom + '%;--wolf-size:' + wp.size + 'px' +
+      (wp.flip ? ';transform:scaleX(-1)' : '');
+    container.appendChild(wolf);
+  }
+
+  // Hawks circling above peaks
+  var hawkPos = [
+    { left: 25, bottom: 42, dur: 18, tilt: 5 },
+    { left: 65, bottom: 48, dur: 22, tilt: -3 }
+  ];
+  for (var hk = 0; hk < hawkPos.length; hk++) {
+    var hp = hawkPos[hk];
+    var hawk = document.createElement('div');
+    hawk.className = 'terrain-hawk';
+    hawk.style.cssText = 'left:' + hp.left + '%;bottom:' + hp.bottom + '%;--hawk-dur:' + hp.dur + 's;--hawk-tilt:' + hp.tilt + 'deg';
+    container.appendChild(hawk);
+  }
+
+  // Bear silhouette in forest clearing
+  var bear = document.createElement('div');
+  bear.className = 'terrain-bear';
+  bear.style.cssText = 'left:45%;bottom:14%;--bear-size:40px';
+  container.appendChild(bear);
+
+  // Fox near the cabin
+  var fox = document.createElement('div');
+  fox.className = 'terrain-fox';
+  fox.style.cssText = 'left:58%;bottom:17%;--fox-size:22px';
+  container.appendChild(fox);
+
+  // Northern lights (visible at night/evening only via CSS)
+  var aurora = document.createElement('div');
+  aurora.className = 'terrain-aurora';
+  container.appendChild(aurora);
+
+  // Additional spruce trees for denser forest
+  var sprucePos = [
+    { left: 8, bottom: 10, w: 12, h: 42 },
+    { left: 22, bottom: 12, w: 16, h: 55 },
+    { left: 53, bottom: 11, w: 14, h: 46 },
+    { left: 71, bottom: 13, w: 12, h: 38 },
+    { left: 88, bottom: 10, w: 16, h: 50 },
+    { left: 35, bottom: 14, w: 10, h: 32 },
+    { left: 95, bottom: 9, w: 12, h: 42 }
+  ];
+  for (var sp = 0; sp < sprucePos.length; sp++) {
+    var spp = sprucePos[sp];
+    var spruce = document.createElement('div');
+    spruce.className = 'terrain-spruce';
+    spruce.style.cssText = 'left:' + spp.left + '%;bottom:' + spp.bottom + '%;--spruce-w:' + spp.w + 'px;--spruce-h:' + spp.h + 'px';
+    container.appendChild(spruce);
   }
 }
 
@@ -1483,10 +1645,10 @@ function renderBeachTerrain(container) {
 
   // Seagulls gliding over the ocean
   var gullPositions = [
-    { left: 20, bottom: 52, size: 10, delay: 0 },
-    { left: 40, bottom: 58, size: 8, delay: 3 },
-    { left: 70, bottom: 55, size: 11, delay: 6 },
-    { left: 55, bottom: 62, size: 7, delay: 9 }
+    { left: 20, bottom: 52, size: 24, delay: 0 },
+    { left: 40, bottom: 58, size: 20, delay: 3 },
+    { left: 70, bottom: 55, size: 26, delay: 6 },
+    { left: 55, bottom: 62, size: 18, delay: 9 }
   ];
   for (var g = 0; g < gullPositions.length; g++) {
     var gp = gullPositions[g];
@@ -1630,6 +1792,80 @@ function renderBeachTerrain(container) {
   var pelican = document.createElement('div');
   pelican.className = 'terrain-pelican';
   container.appendChild(pelican);
+
+  // Dolphins jumping from water
+  var dolphinPos = [
+    { left: 30, bottom: 22, dur: 5, delay: 0 },
+    { left: 55, bottom: 24, dur: 4.5, delay: 2.5 },
+    { left: 75, bottom: 21, dur: 5.5, delay: 5 }
+  ];
+  for (var dp = 0; dp < dolphinPos.length; dp++) {
+    var dpp = dolphinPos[dp];
+    var dolphin = document.createElement('div');
+    dolphin.className = 'terrain-dolphin';
+    dolphin.style.cssText = 'left:' + dpp.left + '%;bottom:' + dpp.bottom + '%;--dolphin-dur:' + dpp.dur + 's;animation-delay:' + dpp.delay + 's';
+    container.appendChild(dolphin);
+  }
+
+  // Crabs scuttling on shore
+  var crabPos = [
+    { left: 25, bottom: 4, dur: 7 },
+    { left: 60, bottom: 3.5, dur: 9 },
+    { left: 80, bottom: 5, dur: 6 }
+  ];
+  for (var cr = 0; cr < crabPos.length; cr++) {
+    var cpp = crabPos[cr];
+    var crab = document.createElement('div');
+    crab.className = 'terrain-crab';
+    crab.style.cssText = 'left:' + cpp.left + '%;bottom:' + cpp.bottom + '%;--crab-dur:' + cpp.dur + 's';
+    container.appendChild(crab);
+  }
+
+  // Sea turtle gliding through water
+  var turtle = document.createElement('div');
+  turtle.className = 'terrain-sea-turtle';
+  turtle.style.cssText = 'left:0;bottom:18%;--turtle-dur:22s';
+  container.appendChild(turtle);
+
+  // Whale spout on distant horizon
+  var whaleSpout = document.createElement('div');
+  whaleSpout.className = 'terrain-whale-spout';
+  whaleSpout.style.cssText = 'left:85%;bottom:30%';
+  container.appendChild(whaleSpout);
+
+  // Jellyfish drifting in water
+  var jellyPos = [
+    { left: 20, bottom: 16, dur: 14 },
+    { left: 48, bottom: 19, dur: 16 },
+    { left: 70, bottom: 15, dur: 12 }
+  ];
+  for (var jf = 0; jf < jellyPos.length; jf++) {
+    var jp = jellyPos[jf];
+    var jelly = document.createElement('div');
+    jelly.className = 'terrain-jellyfish';
+    jelly.style.cssText = 'left:' + jp.left + '%;bottom:' + jp.bottom + '%;--jelly-dur:' + jp.dur + 's';
+    container.appendChild(jelly);
+  }
+
+  // Beach dune grass clusters
+  var dunePositions = [3, 5, 7, 92, 94, 96, 42, 44];
+  for (var dg = 0; dg < dunePositions.length; dg++) {
+    for (var blade = 0; blade < 3; blade++) {
+      var grass = document.createElement('div');
+      grass.className = 'terrain-dune-grass';
+      grass.style.cssText = 'left:' + (dunePositions[dg] + blade * 0.6) + '%;bottom:7%;--grass-h:' + (18 + Math.random() * 16) + 'px;--grass-delay:' + (blade * 0.4) + 's';
+      container.appendChild(grass);
+    }
+  }
+
+  // Tropical fish school swimming through water
+  var fishColors = ['rgba(255,120,60,0.4)', 'rgba(60,180,220,0.35)', 'rgba(255,200,50,0.35)', 'rgba(100,220,140,0.3)'];
+  for (var fi = 0; fi < 5; fi++) {
+    var fish = document.createElement('div');
+    fish.className = 'terrain-fish';
+    fish.style.cssText = 'left:' + (-5 - fi * 3) + '%;bottom:' + (14 + Math.random() * 8) + '%;--fish-dur:' + (8 + Math.random() * 6) + 's;animation-delay:' + (fi * 2) + 's;background:' + fishColors[fi % fishColors.length];
+    container.appendChild(fish);
+  }
 }
 
 function renderPalmTree(container, leftPct, heightPct, tiltDeg) {
@@ -1842,8 +2078,8 @@ function renderMeadowTerrain(container) {
 
   // Rabbits near the fence
   var rabbitPositions = [
-    { left: 12, bottom: 7, size: 6, flip: false },
-    { left: 28, bottom: 6, size: 5, flip: true }
+    { left: 12, bottom: 7, size: 16, flip: false },
+    { left: 28, bottom: 6, size: 14, flip: true }
   ];
   for (var rb = 0; rb < rabbitPositions.length; rb++) {
     var rbp = rabbitPositions[rb];
@@ -1973,6 +2209,101 @@ function renderMeadowTerrain(container) {
     bug.className = 'terrain-ladybug';
     bug.style.cssText = 'left:' + lbPos[lb].left + '%;bottom:' + lbPos[lb].bottom + '%';
     container.appendChild(bug);
+  }
+
+  // Deer grazing in meadow
+  var deerPos = [
+    { left: 28, bottom: 8, size: 32, flip: false },
+    { left: 62, bottom: 10, size: 28, flip: true },
+    { left: 85, bottom: 7, size: 24, flip: false }
+  ];
+  for (var dr = 0; dr < deerPos.length; dr++) {
+    var dp = deerPos[dr];
+    var deer = document.createElement('div');
+    deer.className = 'terrain-deer';
+    deer.style.cssText = 'left:' + dp.left + '%;bottom:' + dp.bottom + '%;--deer-size:' + dp.size + 'px' +
+      (dp.flip ? ';transform:scaleX(-1)' : '');
+    container.appendChild(deer);
+  }
+
+  // Fox skulking through grass
+  var meadowFox = document.createElement('div');
+  meadowFox.className = 'terrain-meadow-fox';
+  meadowFox.style.cssText = 'left:42%;bottom:5%;--mfox-size:24px';
+  container.appendChild(meadowFox);
+
+  // Hedgehog near flower bushes
+  var hedgehogPos = [
+    { left: 18, bottom: 3.5, size: 16 },
+    { left: 70, bottom: 4, size: 14 }
+  ];
+  for (var hg = 0; hg < hedgehogPos.length; hg++) {
+    var hgp = hedgehogPos[hg];
+    var hog = document.createElement('div');
+    hog.className = 'terrain-hedgehog';
+    hog.style.cssText = 'left:' + hgp.left + '%;bottom:' + hgp.bottom + '%;--hog-size:' + hgp.size + 'px';
+    container.appendChild(hog);
+  }
+
+  // Frog on lily pad in pond
+  var frog = document.createElement('div');
+  frog.className = 'terrain-frog';
+  frog.style.cssText = 'left:78%;bottom:6%';
+  container.appendChild(frog);
+
+  // Lily pads on the pond
+  var lilyPos = [
+    { left: 74, bottom: 5, size: 18 },
+    { left: 80, bottom: 4.5, size: 14 },
+    { left: 77, bottom: 6, size: 16 }
+  ];
+  for (var lp = 0; lp < lilyPos.length; lp++) {
+    var lpp = lilyPos[lp];
+    var pad = document.createElement('div');
+    pad.className = 'terrain-lilypad';
+    pad.style.cssText = 'left:' + lpp.left + '%;bottom:' + lpp.bottom + '%;--pad-size:' + lpp.size + 'px';
+    container.appendChild(pad);
+  }
+
+  // Squirrel on a tree
+  var squirrel = document.createElement('div');
+  squirrel.className = 'terrain-squirrel';
+  squirrel.style.cssText = 'left:35%;bottom:14%';
+  container.appendChild(squirrel);
+
+  // Owl perched on tree (night/evening only via CSS)
+  var owl = document.createElement('div');
+  owl.className = 'terrain-owl-perched';
+  owl.style.cssText = 'left:56%;bottom:18%';
+  container.appendChild(owl);
+
+  // Songbirds on the fence
+  var songbirdPos = [
+    { left: 22, bottom: 11 },
+    { left: 38, bottom: 11.5 },
+    { left: 50, bottom: 11 }
+  ];
+  for (var sb = 0; sb < songbirdPos.length; sb++) {
+    var sbp = songbirdPos[sb];
+    var songbird = document.createElement('div');
+    songbird.className = 'terrain-songbird';
+    songbird.style.cssText = 'left:' + sbp.left + '%;bottom:' + sbp.bottom + '%';
+    container.appendChild(songbird);
+  }
+
+  // Bees buzzing around flowers
+  var beePos = [
+    { left: 10, bottom: 8, dur: 5 },
+    { left: 48, bottom: 7, dur: 7 },
+    { left: 54, bottom: 9, dur: 6 },
+    { left: 88, bottom: 8, dur: 5.5 }
+  ];
+  for (var be = 0; be < beePos.length; be++) {
+    var bp = beePos[be];
+    var bee = document.createElement('div');
+    bee.className = 'terrain-bee';
+    bee.style.cssText = 'left:' + bp.left + '%;bottom:' + bp.bottom + '%;--bee-dur:' + bp.dur + 's;animation-delay:' + (be * 1.5) + 's';
+    container.appendChild(bee);
   }
 }
 
