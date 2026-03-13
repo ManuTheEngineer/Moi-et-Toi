@@ -691,12 +691,6 @@ html {
   background: var(--bg);
 }
 body {
-  /* Overshoot the viewport by 200px so iOS ALWAYS renders to the
-     physical screen bottom.  This is the single fix that covers
-     EVERY page: login, onboarding, config, dashboard, all 29 pg
-     tabs, modals — everything.  iOS stops rendering at the safe-area
-     boundary when content is shorter than the screen; making the
-     body itself taller than the viewport forces it past that limit. */
   min-height: calc(100vh + 200px);
   min-height: calc(100dvh + 200px);
   min-height: calc(var(--real-h, 100dvh) + 200px);
@@ -710,4 +704,22 @@ body {
   -webkit-font-smoothing: antialiased;
   position: relative;
   transition: color 4s ease;
+}
+/* Invisible block-level spacer that creates REAL document flow height.
+   On iOS PWA, the browser stops rendering at the safe-area boundary
+   when page content is shorter than the screen.  This spacer forces
+   the document to always be taller than the viewport, pushing iOS
+   to render to the physical bottom edge on EVERY page: login,
+   onboarding, config, dashboard, all 29 tabs, modals — everything.
+   MUST be display:block (not position:absolute) so it generates
+   actual document height — position:absolute doesn't work because
+   on login/onboarding all visible content is position:fixed and
+   contributes zero to document flow. */
+body::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: calc(100vh + 200px);
+  height: calc(100dvh + 200px);
+  pointer-events: none;
 }
