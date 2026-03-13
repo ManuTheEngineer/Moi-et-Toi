@@ -706,3 +706,19 @@ body {
   position: relative;
   transition: color 4s ease;
 }
+/* Invisible spacer that guarantees the document is taller than
+   the viewport.  On iOS PWA, when content is shorter than the
+   screen the browser stops rendering before the safe-area zone —
+   this forces it to always render to the physical bottom edge.
+   Works on login, short dashboard tabs, and every other page. */
+body::after {
+  content: '';
+  display: block;
+  height: calc(100vh + 50px);
+  height: calc(100dvh + 50px);
+  pointer-events: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+}
