@@ -425,7 +425,7 @@ const AI_TOOLS = [
     input_schema: {
       type: 'object',
       properties: {
-        user: { type: 'string', enum: ['her', 'him', 'both'], description: 'Whose mood stats to get' },
+        user: { type: 'string', enum: ['partner1', 'partner2', 'both'], description: 'Whose mood stats to get' },
         period: { type: 'string', enum: ['7d', '30d', '90d', 'all'], description: 'Time period' }
       },
       required: ['user', 'period']
@@ -520,11 +520,11 @@ function setAIContext(ctx) {
 }
 
 function buildAISystemPrompt() {
-  let prompt = `You are the AI inside "Moi et Toi," a private relationship app for ${NAMES.him} and ${NAMES.her}. The current user is ${NAMES[user]} (${user}).
+  let prompt = `You are the AI inside "Moi et Toi," a private relationship app for ${NAMES.partner1} and ${NAMES.partner2}. The current user is ${NAMES[user]} (${user}).
 
 WHO THEY ARE:
-- ${NAMES.him} (him) is from Togo, West Africa. Ewe, Mina, French. Togolese traditions, values, and food.
-- ${NAMES.her} (her) is from Texas. Southern roots, Texan culture, American traditions.
+- ${NAMES.partner1} (partner1) is from Togo, West Africa. Ewe, Mina, French. Togolese traditions, values, and food.
+- ${NAMES.partner2} (partner2) is from Texas. Southern roots, Texan culture, American traditions.
 - They're an intercultural couple - young, ambitious, building toward marriage and family.
 
 YOUR ROLE:
@@ -539,8 +539,8 @@ YOUR ROLE:
     prompt += `\n\nRELATIONSHIP CONTEXT:
 - Relationship health score: ${MET.relationship.score || 'not yet computed'}
 - Breakdown: ${JSON.stringify(MET.relationship.breakdown || {})}
-- ${NAMES.her}'s 7-day mood avg: ${moodStats.her?.avg7d?.toFixed(1) || 'no data'}
-- ${NAMES.him}'s 7-day mood avg: ${moodStats.him?.avg7d?.toFixed(1) || 'no data'}
+- ${NAMES.partner2}'s 7-day mood avg: ${moodStats.partner2?.avg7d?.toFixed(1) || 'no data'}
+- ${NAMES.partner1}'s 7-day mood avg: ${moodStats.partner1?.avg7d?.toFixed(1) || 'no data'}
 - Mood sync score: ${moodStats.joint?.syncScore ? Math.round(moodStats.joint.syncScore * 100) + '%' : 'no data'}
 - Check-in streak: ${moodStats.joint?.streak || 0} days
 Use this data to provide specific, personalized relationship insights.`;
@@ -598,17 +598,17 @@ async function executeAITool(toolName, toolInput) {
       const stats = MET.mood.stats;
       if (target === 'both') {
         return {
-          him: {
-            avg7d: stats.him?.avg7d,
-            avg30d: stats.him?.avg30d,
-            streak: stats.him?.streak,
-            total: stats.him?.total
+          partner1: {
+            avg7d: stats.partner1?.avg7d,
+            avg30d: stats.partner1?.avg30d,
+            streak: stats.partner1?.streak,
+            total: stats.partner1?.total
           },
-          her: {
-            avg7d: stats.her?.avg7d,
-            avg30d: stats.her?.avg30d,
-            streak: stats.her?.streak,
-            total: stats.her?.total
+          partner2: {
+            avg7d: stats.partner2?.avg7d,
+            avg30d: stats.partner2?.avg30d,
+            streak: stats.partner2?.streak,
+            total: stats.partner2?.total
           },
           joint: { syncScore: stats.joint?.syncScore, bestDay: stats.joint?.bestDay, streak: stats.joint?.streak }
         };
@@ -1464,18 +1464,18 @@ async function updateStreak() {
 
   // Check if both checked in today
   const yesterday = localDate(new Date(Date.now() - 86400000));
-  const herToday = data.lastCheckIn.her === today;
-  const himToday = data.lastCheckIn.him === today;
+  const partner2Today = data.lastCheckIn.partner2 === today;
+  const partner1Today = data.lastCheckIn.partner1 === today;
 
-  if (herToday && himToday) {
+  if (partner2Today && partner1Today) {
     // Guard: only bump once per day
     if (data.lastBump === today) {
       // Already counted today — just save the lastCheckIn update
     } else {
       // Check if BOTH had checked in yesterday (continuity for streak)
-      const herHadYesterday = data.prevCheckIn && data.prevCheckIn.her === yesterday;
-      const himHadYesterday = data.prevCheckIn && data.prevCheckIn.him === yesterday;
-      if (herHadYesterday && himHadYesterday) {
+      const partner2HadYesterday = data.prevCheckIn && data.prevCheckIn.partner2 === yesterday;
+      const partner1HadYesterday = data.prevCheckIn && data.prevCheckIn.partner1 === yesterday;
+      if (partner2HadYesterday && partner1HadYesterday) {
         data.current = (data.current || 0) + 1;
       } else {
         data.current = 1;
@@ -1486,8 +1486,8 @@ async function updateStreak() {
   }
   // Store previous check-in dates before overwriting (for next day's continuity check)
   if (!data.prevCheckIn) data.prevCheckIn = {};
-  if (data.lastCheckIn.her && data.lastCheckIn.her !== today) data.prevCheckIn.her = data.lastCheckIn.her;
-  if (data.lastCheckIn.him && data.lastCheckIn.him !== today) data.prevCheckIn.him = data.lastCheckIn.him;
+  if (data.lastCheckIn.partner2 && data.lastCheckIn.partner2 !== today) data.prevCheckIn.partner2 = data.lastCheckIn.partner2;
+  if (data.lastCheckIn.partner1 && data.lastCheckIn.partner1 !== today) data.prevCheckIn.partner1 = data.lastCheckIn.partner1;
 
   await db.ref('streaks').set(data);
 }
@@ -1688,7 +1688,7 @@ async function runAIRole(roleKey, role) {
 
 function buildContentCuratorPrompt() {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-  return `You are the AI content curator for Moi et Toi, a couples app for ${NAMES.him} and ${NAMES.her}.
+  return `You are the AI content curator for Moi et Toi, a couples app for ${NAMES.partner1} and ${NAMES.partner2}.
 
 Today is ${today}. Generate fresh content for the app. Return a JSON object with these keys:
 - "dailyQuestion": A thoughtful relationship question for them to answer together
@@ -1701,7 +1701,7 @@ Keep each value to 1-2 sentences. Be warm, specific, and culturally aware. Retur
 }
 
 function buildRelMonitorPrompt(data) {
-  return `You are the relationship wellness monitor for ${NAMES.him} and ${NAMES.her}'s app.
+  return `You are the relationship wellness monitor for ${NAMES.partner1} and ${NAMES.partner2}'s app.
 
 Here is their recent mood data:
 ${JSON.stringify(data)}
@@ -1709,15 +1709,15 @@ ${JSON.stringify(data)}
 Analyze their mood patterns. Return a JSON object:
 - "status": "good" | "attention" | "concern"
 - "insight": A brief insight about their emotional patterns (1 sentence)
-- "nudgeHim": A gentle, supportive message for ${NAMES.him} (or null if not needed)
-- "nudgeHer": A gentle, supportive message for ${NAMES.her} (or null if not needed)
+- "nudgePartner1": A gentle, supportive message for ${NAMES.partner1} (or null if not needed)
+- "nudgePartner2": A gentle, supportive message for ${NAMES.partner2} (or null if not needed)
 - "suggestion": One actionable suggestion to strengthen their connection
 
 Be warm and empathetic, never judgmental. Return ONLY valid JSON.`;
 }
 
 function buildMilestonePrompt(data) {
-  return `You are the milestone tracker for ${NAMES.him} and ${NAMES.her}'s relationship app.
+  return `You are the milestone tracker for ${NAMES.partner1} and ${NAMES.partner2}'s relationship app.
 
 Here are their upcoming dates and milestones:
 ${JSON.stringify(data)}
@@ -1732,14 +1732,14 @@ Return ONLY valid JSON.`;
 }
 
 function buildGoalCoachPrompt(data) {
-  return `You are the goal coach for ${NAMES.him} and ${NAMES.her}'s couples app.
+  return `You are the goal coach for ${NAMES.partner1} and ${NAMES.partner2}'s couples app.
 
 Their current goals and progress:
 ${JSON.stringify(data)}
 
 Return a JSON object:
-- "nudgeHim": Motivational message about ${NAMES.him}'s goals (or null)
-- "nudgeHer": Motivational message about ${NAMES.her}'s goals (or null)
+- "nudgePartner1": Motivational message about ${NAMES.partner1}'s goals (or null)
+- "nudgePartner2": Motivational message about ${NAMES.partner2}'s goals (or null)
 - "sharedInsight": Comment on their shared goals progress (or null)
 - "tip": One productivity or goal-setting tip
 
@@ -1747,7 +1747,7 @@ Keep it concise and encouraging. Return ONLY valid JSON.`;
 }
 
 function buildWellnessPrompt(data) {
-  return `You are the wellness advisor for ${NAMES.him} and ${NAMES.her}'s app.
+  return `You are the wellness advisor for ${NAMES.partner1} and ${NAMES.partner2}'s app.
 
 Recent wellness data:
 ${JSON.stringify(data)}
@@ -1762,7 +1762,7 @@ Be supportive and specific. Return ONLY valid JSON.`;
 }
 
 function buildFinancePrompt(data) {
-  return `You are the finance guardian for ${NAMES.him} and ${NAMES.her}'s shared finances.
+  return `You are the finance guardian for ${NAMES.partner1} and ${NAMES.partner2}'s shared finances.
 
 Recent spending data:
 ${JSON.stringify(data)}
@@ -1800,14 +1800,14 @@ async function gatherMilestoneData() {
 
 async function gatherGoalData() {
   if (!db) return {};
-  const [herGoals, himGoals, shared] = await Promise.all([
-    db.ref('personalGoals/her').once('value'),
-    db.ref('personalGoals/him').once('value'),
+  const [partner2Goals, partner1Goals, shared] = await Promise.all([
+    db.ref('personalGoals/partner2').once('value'),
+    db.ref('personalGoals/partner1').once('value'),
     db.ref('personalGoals/shared').once('value')
   ]);
   return {
-    her: herGoals.val() || {},
-    him: himGoals.val() || {},
+    partner2: partner2Goals.val() || {},
+    partner1: partner1Goals.val() || {},
     shared: shared.val() || {}
   };
 }
@@ -1883,10 +1883,10 @@ async function processAIRoleResult(roleKey, result) {
       break;
     }
     case 'relationshipMonitor': {
-      if (result.nudgeHim)
-        await db.ref('ai/nudges/him').push({ message: result.nudgeHim, type: 'relationship', timestamp: now });
-      if (result.nudgeHer)
-        await db.ref('ai/nudges/her').push({ message: result.nudgeHer, type: 'relationship', timestamp: now });
+      if (result.nudgePartner1)
+        await db.ref('ai/nudges/partner1').push({ message: result.nudgePartner1, type: 'relationship', timestamp: now });
+      if (result.nudgePartner2)
+        await db.ref('ai/nudges/partner2').push({ message: result.nudgePartner2, type: 'relationship', timestamp: now });
       if (result.insight)
         await db
           .ref('ai/insights/relationship')
@@ -1897,35 +1897,35 @@ async function processAIRoleResult(roleKey, result) {
       if (result.upcoming && result.upcoming.length > 0) {
         result.upcoming.forEach(async item => {
           if (item.daysAway <= 3) {
-            await db.ref('ai/nudges/him').push({ message: item.reminder, type: 'milestone', timestamp: now });
-            await db.ref('ai/nudges/her').push({ message: item.reminder, type: 'milestone', timestamp: now });
+            await db.ref('ai/nudges/partner1').push({ message: item.reminder, type: 'milestone', timestamp: now });
+            await db.ref('ai/nudges/partner2').push({ message: item.reminder, type: 'milestone', timestamp: now });
           }
         });
       }
       break;
     }
     case 'goalCoach': {
-      if (result.nudgeHim)
-        await db.ref('ai/nudges/him').push({ message: result.nudgeHim, type: 'goals', timestamp: now });
-      if (result.nudgeHer)
-        await db.ref('ai/nudges/her').push({ message: result.nudgeHer, type: 'goals', timestamp: now });
+      if (result.nudgePartner1)
+        await db.ref('ai/nudges/partner1').push({ message: result.nudgePartner1, type: 'goals', timestamp: now });
+      if (result.nudgePartner2)
+        await db.ref('ai/nudges/partner2').push({ message: result.nudgePartner2, type: 'goals', timestamp: now });
       break;
     }
     case 'wellnessAdvisor': {
       const nudge = result.celebration || result.nudge;
       if (nudge) {
-        await db.ref('ai/nudges/him').push({ message: nudge, type: 'wellness', timestamp: now });
-        await db.ref('ai/nudges/her').push({ message: nudge, type: 'wellness', timestamp: now });
+        await db.ref('ai/nudges/partner1').push({ message: nudge, type: 'wellness', timestamp: now });
+        await db.ref('ai/nudges/partner2').push({ message: nudge, type: 'wellness', timestamp: now });
       }
       break;
     }
     case 'financeGuardian': {
       if (result.alert) {
-        await db.ref('ai/nudges/him').push({ message: result.alert, type: 'finance', timestamp: now });
-        await db.ref('ai/nudges/her').push({ message: result.alert, type: 'finance', timestamp: now });
+        await db.ref('ai/nudges/partner1').push({ message: result.alert, type: 'finance', timestamp: now });
+        await db.ref('ai/nudges/partner2').push({ message: result.alert, type: 'finance', timestamp: now });
       } else if (result.tip) {
-        await db.ref('ai/nudges/him').push({ message: result.tip, type: 'finance', timestamp: now });
-        await db.ref('ai/nudges/her').push({ message: result.tip, type: 'finance', timestamp: now });
+        await db.ref('ai/nudges/partner1').push({ message: result.tip, type: 'finance', timestamp: now });
+        await db.ref('ai/nudges/partner2').push({ message: result.tip, type: 'finance', timestamp: now });
       }
       break;
     }

@@ -4501,10 +4501,10 @@
   box-shadow: var(--card-shadow);
   border-left: 3px solid var(--gold);
 }
-.cal-event.type-her {
+.cal-event.type-partner1 {
   border-left-color: var(--rose);
 }
-.cal-event.type-his {
+.cal-event.type-partner2 {
   border-left-color: var(--teal);
 }
 .cal-event.type-joint {
@@ -10702,10 +10702,10 @@ body[data-page='build'] {
   margin: 0 auto 8px;
   color: var(--t2);
 }
-.wu-avatar-her {
+.wu-avatar-p1 {
   background: linear-gradient(135deg, rgba(232, 84, 122, 0.15), rgba(232, 84, 122, 0.08));
 }
-.wu-avatar-him {
+.wu-avatar-p2 {
   background: linear-gradient(135deg, rgba(26, 168, 168, 0.15), rgba(26, 168, 168, 0.08));
 }
 .wu-partner-name {
@@ -12052,4 +12052,27 @@ body[data-page='build'] {
   font-size: 13px;
   color: var(--cream);
   line-height: 1.5;
+}
+
+/* ===== WAITING FOR PARTNER SCREEN ===== */
+.wfp-invite-box {
+  background: var(--card-bg, rgba(255,255,255,0.06));
+  border: 1px solid var(--bdr-s, rgba(255,255,255,0.08));
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-top: 20px;
+  max-width: 320px;
+  text-align: left;
+}
+#waiting-for-partner .onboard-emoji {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+#waiting-for-partner .ob-partner-status {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--t2);
 }

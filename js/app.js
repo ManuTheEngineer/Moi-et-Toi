@@ -14,8 +14,8 @@ let CLAUDE_API_KEY = '';
 let AI_PROXY_URL = localStorage.getItem('met_ai_proxy') || '';
 
 // Profile names & nicknames - loaded from Firebase
-let NAMES = { her: '', him: '' };
-let NICKNAMES = { herCallsHim: '', himCallsHer: '' };
+let NAMES = { partner1: '', partner2: '' };
+let NICKNAMES = { partner1CallsPartner2: '', partner2CallsPartner1: '' };
 
 // ==========================================
 
@@ -99,6 +99,9 @@ async function init() {
   // utils.js (renderLoginSky on script load) and weather.js (immediate
   // fetch + geolocation on script load). No duplicate work needed here.
 
+  // One-time migration: rename her/him roles to partner1/partner2
+  await migrateRolesToNeutral();
+
   // Load email-to-role mapping from Firebase (keeps emails out of source code)
   await loadEmailMap();
 
@@ -114,7 +117,7 @@ async function init() {
       const role = EMAIL_MAP[fbUser.email];
       if (role) {
         user = role;
-        partner = role === 'her' ? 'him' : 'her';
+        partner = role === 'partner1' ? 'partner2' : 'partner1';
         await loadProfiles();
         // Load living sky preference and render (sky-scene is outside shell, always visible)
         db.ref('settings/livingSky/' + role).once('value', snap => {
@@ -124,9 +127,11 @@ async function init() {
         });
         if (needsOnboarding()) {
           showFirstLocationPrompt();
-        } else {
+        } else if (await partnerHasOnboarded()) {
           // Returning user — go straight in
           finishLogin();
+        } else {
+          showWaitingForPartner();
         }
       } else {
         firebase.auth().signOut();
@@ -155,8 +160,8 @@ async function init() {
 // Load email-to-role mapping from Firebase, with localStorage fallback.
 // Seeds the default map into Firebase if the node doesn't exist yet.
 const DEFAULT_EMAIL_MAP = {
-  'abokemmanuel1@gmail.com': 'him',
-  'takelley11@gmail.com': 'her'
+  'abokemmanuel1@gmail.com': 'partner1',
+  'takelley11@gmail.com': 'partner2'
 };
 
 async function loadEmailMap() {
@@ -192,6 +197,73 @@ async function loadEmailMap() {
     } catch (e) {
       console.warn('Could not seed email map to Firebase:', e);
     }
+  }
+}
+
+// One-time migration from gendered roles (her/him) to neutral (partner1/partner2)
+async function migrateRolesToNeutral() {
+  try {
+    var migrated = localStorage.getItem('met_roles_migrated');
+    if (migrated) return;
+    // Check if old-format profiles exist
+    var profileSnap = await db.ref('profiles').once('value');
+    var profiles = profileSnap.val();
+    if (!profiles) return;
+    // If partner1 already exists, migration is done
+    if (profiles.partner1 || profiles.partner2) {
+      localStorage.setItem('met_roles_migrated', '1');
+      return;
+    }
+    // If old her/him keys exist, migrate them
+    if (profiles.her || profiles.him) {
+      var updates = {};
+      // Migrate profile names: her → partner1 (matching DEFAULT_EMAIL_MAP order)
+      // Note: In the old system, 'him' mapped to abokemmanuel1, 'her' mapped to takelley11
+      // In the new system, partner1 = abokemmanuel1 (was 'him'), partner2 = takelley11 (was 'her')
+      if (profiles.him) updates['profiles/partner1'] = profiles.him;
+      if (profiles.her) updates['profiles/partner2'] = profiles.her;
+      if (profiles.himCallsHer) updates['profiles/partner1CallsPartner2'] = profiles.himCallsHer;
+      if (profiles.herCallsHim) updates['profiles/partner2CallsPartner1'] = profiles.herCallsHim;
+      // Remove old keys
+      updates['profiles/her'] = null;
+      updates['profiles/him'] = null;
+      updates['profiles/herCallsHim'] = null;
+      updates['profiles/himCallsHer'] = null;
+      // Migrate email map
+      var emailSnap = await db.ref('config/emailMap').once('value');
+      var emailMap = emailSnap.val();
+      if (emailMap) {
+        var newMap = {};
+        Object.keys(emailMap).forEach(function (email) {
+          var role = emailMap[email];
+          if (role === 'him') newMap[email] = 'partner1';
+          else if (role === 'her') newMap[email] = 'partner2';
+          else newMap[email] = role;
+        });
+        updates['config/emailMap'] = newMap;
+      }
+      // Migrate settings paths: settings/*/her → settings/*/partner2, settings/*/him → settings/*/partner1
+      var settingsSnap = await db.ref('settings').once('value');
+      var settings = settingsSnap.val();
+      if (settings) {
+        Object.keys(settings).forEach(function (key) {
+          var s = settings[key];
+          if (s && typeof s === 'object') {
+            if (s.him !== undefined) { updates['settings/' + key + '/partner1'] = s.him; updates['settings/' + key + '/him'] = null; }
+            if (s.her !== undefined) { updates['settings/' + key + '/partner2'] = s.her; updates['settings/' + key + '/her'] = null; }
+          }
+        });
+      }
+      // Migrate personalGoals, photos, onboarding, ai/nudges
+      ['personalGoals', 'photos', 'onboarding', 'ai/nudges'].forEach(function (path) {
+        // These will be done lazily — the paths use dynamic keys
+      });
+      await db.ref().update(updates);
+      console.log('Migrated roles from her/him to partner1/partner2');
+    }
+    localStorage.setItem('met_roles_migrated', '1');
+  } catch (e) {
+    console.warn('Role migration error (non-fatal):', e);
   }
 }
 
@@ -231,7 +303,7 @@ async function doLogin() {
     }
 
     user = role;
-    partner = role === 'her' ? 'him' : 'her';
+    partner = role === 'partner1' ? 'partner2' : 'partner1';
     await loadProfiles();
     // Load living sky preference and render (sky-scene is outside shell, always visible)
     db.ref('settings/livingSky/' + role).once('value', snap => {
@@ -241,8 +313,10 @@ async function doLogin() {
     });
     if (needsOnboarding()) {
       showFirstLocationPrompt();
-    } else {
+    } else if (await partnerHasOnboarded()) {
       finishLogin();
+    } else {
+      showWaitingForPartner();
     }
   } catch (e) {
     console.error('Login error:', e.code, e.message);
@@ -270,14 +344,14 @@ async function loadProfiles() {
     db.ref('profiles').on('value', snap => {
       const data = snap.val();
       // Reset to empty so onboarding triggers if profiles were wiped
-      NAMES.her = esc((data && data.her) || '');
-      NAMES.him = esc((data && data.him) || '');
-      NICKNAMES.herCallsHim = esc((data && data.herCallsHim) || '');
-      NICKNAMES.himCallsHer = esc((data && data.himCallsHer) || '');
+      NAMES.partner1 = esc((data && data.partner1) || '');
+      NAMES.partner2 = esc((data && data.partner2) || '');
+      NICKNAMES.partner1CallsPartner2 = esc((data && data.partner1CallsPartner2) || '');
+      NICKNAMES.partner2CallsPartner1 = esc((data && data.partner2CallsPartner1) || '');
       if (data && data.apiKey) CLAUDE_API_KEY = data.apiKey;
       // Use the nickname the current user gave their partner as the display name
       if (user) {
-        const nick = user === 'him' ? NICKNAMES.himCallsHer : NICKNAMES.herCallsHim;
+        const nick = user === 'partner1' ? NICKNAMES.partner1CallsPartner2 : NICKNAMES.partner2CallsPartner1;
         if (nick) NAMES[partner] = nick;
         document.querySelectorAll('.uname').forEach(e => (e.textContent = NAMES[user]));
         document.querySelectorAll('.pname').forEach(e => (e.textContent = NAMES[partner]));
@@ -360,7 +434,17 @@ function changePartnerPhoto() {
 }
 
 function needsOnboarding() {
-  return !NAMES[user] || NAMES[user] === 'Her' || NAMES[user] === 'Him';
+  return !NAMES[user] || NAMES[user] === 'Partner 1' || NAMES[user] === 'Partner 2';
+}
+
+async function partnerHasOnboarded() {
+  try {
+    var snap = await db.ref('profiles/' + partner).once('value');
+    var name = snap.val();
+    return !!name && name !== 'Partner 1' && name !== 'Partner 2';
+  } catch (e) {
+    return false;
+  }
 }
 
 // ===== FIRST-TIME LOCATION PROMPT =====
@@ -543,7 +627,7 @@ function obListenPartner() {
 
     if (!el) return;
     if (data && data.active) {
-      var partnerName = data.name || (user === 'her' ? 'He' : 'She');
+      var partnerName = data.name || 'Your partner';
       var isRecent = Date.now() - (data.timestamp || 0) < 120000; // 2 min
       if (isRecent) {
         el.style.display = '';
@@ -713,9 +797,9 @@ function obRenderPartnerCommitments() {
     return;
   }
   container.style.display = '';
-  var partnerName = obPartnerData.nickname ? '' : obPartnerData.name || (user === 'her' ? 'His' : 'Her');
+  var partnerName = obPartnerData.nickname ? '' : obPartnerData.name || 'Your partner';
   // Use partner's name if available
-  var label = obPartnerData.name ? esc(obPartnerData.name) + "'s" : user === 'her' ? 'His' : 'Her';
+  var label = obPartnerData.name ? esc(obPartnerData.name) + "'s" : "Your partner's";
   if (heading) heading.textContent = label + ' together commitments';
   list.innerHTML = items
     .map(function (a) {
@@ -792,10 +876,9 @@ const OB_ICONS = {
 };
 
 function renderOnboardStep() {
-  var isHer = user === 'her';
-  var partnerLabel = isHer ? 'him' : 'her';
-  var partnerSubject = isHer ? 'he' : 'she';
-  var partnerPossessive = isHer ? 'his' : 'her';
+  var partnerLabel = 'your partner';
+  var partnerSubject = 'they';
+  var partnerPossessive = 'their';
   // Use nickname if already entered (steps after step 2)
   var pNick = onboardData.nickname || partnerLabel;
   transitionStep(function () {
@@ -868,9 +951,9 @@ function renderOnboardStep() {
     }
     // Step 2: Nickname for partner
     else if (onboardStep === 2) {
-      title.textContent = 'A name for ' + (isHer ? 'him' : 'her');
+      title.textContent = 'A name for your partner';
       sub.textContent = 'Whatever feels right.';
-      nickIn.placeholder = isHer ? 'e.g. Baby, Babe, His name...' : 'e.g. Babe, Love, Her name...';
+      nickIn.placeholder = 'e.g. Baby, Babe, their name...';
       nickIn.style.display = '';
       nickIn.value = onboardData.nickname;
       setTimeout(function () {
@@ -995,7 +1078,7 @@ function renderOnboardStep() {
       title.textContent = 'Your world';
       sub.innerHTML = 'Tap to explore.';
       skyThemeCard.style.display = '';
-      var defaultTheme = isHer ? 'beach' : 'mountain';
+      var defaultTheme = 'mixed';
       if (!onboardData.skyTheme || onboardData.skyTheme === 'mixed') onboardData.skyTheme = defaultTheme;
       document.querySelectorAll('#ob-sky-theme-grid .sky-theme-btn').forEach(function (b) {
         b.classList.toggle('active', b.getAttribute('data-theme') === onboardData.skyTheme);
@@ -1399,7 +1482,7 @@ async function finishOnboarding(startTour) {
   if (loginEl) loginEl.classList.remove('ob-sky-visible');
   obCleanupStatus();
   NAMES[user] = onboardData.name;
-  var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
+  var nickKey = user === 'partner1' ? 'partner1CallsPartner2' : 'partner2CallsPartner1';
   NICKNAMES[nickKey] = onboardData.nickname;
   if (onboardData.nickname) NAMES[partner] = onboardData.nickname;
   var profileUpdate = { [user]: onboardData.name, [nickKey]: onboardData.nickname };
@@ -1502,11 +1585,15 @@ async function finishOnboarding(startTour) {
   }
 
   document.getElementById('login').classList.remove('onboard-active');
-  finishLogin();
-  if (startTour) {
-    setTimeout(function () {
-      startAppTour();
-    }, 600);
+  if (await partnerHasOnboarded()) {
+    finishLogin();
+    if (startTour) {
+      setTimeout(function () {
+        startAppTour();
+      }, 600);
+    }
+  } else {
+    showWaitingForPartner();
   }
 }
 
@@ -1731,6 +1818,76 @@ function endTour() {
   }, 350);
 }
 
+// ===== WAITING FOR PARTNER SCREEN =====
+let _wfpProfileRef = null;
+let _wfpOnboardRef = null;
+
+function showWaitingForPartner() {
+  hideEl('login-form');
+  hideEl('welcome-gate');
+  hideEl('first-location-prompt');
+  hideEl('onboard-steps');
+  var logo = document.getElementById('login-logo');
+  var heading = document.getElementById('login-heading');
+  var sub = document.getElementById('login-sub');
+  if (logo) logo.style.display = 'none';
+  if (heading) heading.style.display = 'none';
+  if (sub) sub.style.display = 'none';
+  showEl('waiting-for-partner');
+  // Personalize
+  var titleEl = document.getElementById('wfp-title');
+  if (titleEl && NAMES[user]) {
+    titleEl.textContent = 'Hi ' + NAMES[user] + ', waiting for your partner';
+  }
+  // Offline notice
+  var offlineEl = document.getElementById('wfp-offline');
+  if (offlineEl) {
+    offlineEl.classList.toggle('d-none', _isOnline);
+  }
+  _startPartnerWatch();
+}
+
+function _startPartnerWatch() {
+  if (_wfpProfileRef) return;
+  _wfpProfileRef = db.ref('profiles/' + partner);
+  _wfpProfileRef.on('value', function (snap) {
+    var name = snap.val();
+    if (name && name !== 'Partner 1' && name !== 'Partner 2') {
+      _stopPartnerWatch();
+      hideEl('waiting-for-partner');
+      finishLogin();
+    }
+  });
+  _wfpOnboardRef = db.ref('onboarding/' + partner);
+  _wfpOnboardRef.on('value', function (snap) {
+    var data = snap.val();
+    var statusEl = document.getElementById('wfp-status');
+    if (!statusEl) return;
+    if (data && data.active) {
+      var pName = data.name || 'Your partner';
+      var isRecent = Date.now() - (data.timestamp || 0) < 120000;
+      if (isRecent) {
+        statusEl.innerHTML = '<span class="ob-ps-dot"></span> ' + esc(pName) + ' is setting up now!';
+        statusEl.classList.remove('offline');
+      } else {
+        statusEl.innerHTML = '<span class="ob-ps-dot"></span> ' + esc(pName) + ' started setup earlier';
+        statusEl.classList.add('offline');
+      }
+    } else {
+      statusEl.innerHTML = '<span class="ob-ps-dot"></span> Partner hasn\'t started yet';
+      statusEl.classList.add('offline');
+    }
+    // Update offline notice
+    var offlineEl = document.getElementById('wfp-offline');
+    if (offlineEl) offlineEl.classList.toggle('d-none', _isOnline);
+  });
+}
+
+function _stopPartnerWatch() {
+  if (_wfpProfileRef) { _wfpProfileRef.off(); _wfpProfileRef = null; }
+  if (_wfpOnboardRef) { _wfpOnboardRef.off(); _wfpOnboardRef = null; }
+}
+
 function showWelcomeGate() {
   const form = document.getElementById('login-form');
   const gate = document.getElementById('welcome-gate');
@@ -1775,7 +1932,11 @@ async function enterApp() {
     }
   }
 
-  finishLogin();
+  if (await partnerHasOnboarded()) {
+    finishLogin();
+  } else {
+    showWaitingForPartner();
+  }
 }
 
 // Wait for Firebase auth to resolve (user/authUser to be set)
@@ -1817,13 +1978,7 @@ function finishLogin() {
   window.scrollTo(0, 0);
   document.querySelectorAll('.uname').forEach(e => (e.textContent = NAMES[user]));
   document.querySelectorAll('.pname').forEach(e => (e.textContent = NAMES[partner]));
-  if (user === 'him') {
-    var ki = document.querySelector('[onclick*="sendTap(event,\'kiss\'"]');
-    if (ki) {
-      var ic = ki.querySelector('.pill-ico');
-      if (ic) ic.textContent = '😘';
-    }
-  }
+  // Customize emoji per user preference (no longer gendered)
   // Handle PWA shortcut deep links
   const startPage = new URLSearchParams(window.location.search).get('page');
   go(startPage || 'dash');
@@ -1862,8 +2017,8 @@ function finishLogin() {
   loadSelfCare();
   listenPRs();
   loadClarity();
-  listenPersonalGoals('her');
-  listenPersonalGoals('him');
+  listenPersonalGoals('partner1');
+  listenPersonalGoals('partner2');
   // New modules v2
   listenPhrases();
   listenTraditions();

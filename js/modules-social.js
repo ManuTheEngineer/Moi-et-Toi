@@ -1456,8 +1456,8 @@ function renderASRadar(myData, theirData) {
   const total2 = theirData.scores.reduce((s, v) => s + v, 0) || 1;
   const dimensions = AS_NAMES.map((name, i) => ({
     label: name.substring(0, 7),
-    her: user === 'her' ? (myData.scores[i] / total1) * 5 : (theirData.scores[i] / total2) * 5,
-    him: user === 'him' ? (myData.scores[i] / total1) * 5 : (theirData.scores[i] / total2) * 5
+    partner1: user === 'partner1' ? (myData.scores[i] / total1) * 5 : (theirData.scores[i] / total2) * 5,
+    partner2: user === 'partner2' ? (myData.scores[i] / total1) * 5 : (theirData.scores[i] / total2) * 5
   }));
   if (typeof renderRadarChart === 'function') renderRadarChart('as-radar', dimensions);
 }
@@ -1487,18 +1487,18 @@ function updateEnhancedCompat() {
     if (wyrSnap.exists())
       wyrSnap.forEach(c => {
         const d = c.val();
-        if (d && d.her && d.him) {
+        if (d && d.partner1 && d.partner2) {
           gameTotal++;
-          if (d.her === d.him) gameMatches++;
+          if (d.partner1 === d.partner2) gameMatches++;
         }
       });
     // TOT matches
     if (totSnap.exists())
       totSnap.forEach(c => {
         const d = c.val();
-        if (d && d.her && d.him) {
+        if (d && d.partner1 && d.partner2) {
           gameTotal++;
-          if (d.her === d.him) gameMatches++;
+          if (d.partner1 === d.partner2) gameMatches++;
         }
       });
     const gamePct = gameTotal ? gameMatches / gameTotal : 0;
@@ -1506,9 +1506,9 @@ function updateEnhancedCompat() {
     // Love Language alignment (cosine similarity)
     let llPct = 0;
     const llData = llSnap.val() || {};
-    if (llData.her?.scores && llData.him?.scores) {
-      const a = llData.her.scores,
-        b = llData.him.scores;
+    if (llData.partner1?.scores && llData.partner2?.scores) {
+      const a = llData.partner1.scores,
+        b = llData.partner2.scores;
       let dot = 0,
         magA = 0,
         magB = 0;
@@ -1523,9 +1523,9 @@ function updateEnhancedCompat() {
     // Attachment compatibility score
     let asPct = 0;
     const asData = asSnap.val() || {};
-    if (asData.her?.scores && asData.him?.scores) {
-      const herPrimary = asData.her.scores.indexOf(Math.max(...asData.her.scores));
-      const himPrimary = asData.him.scores.indexOf(Math.max(...asData.him.scores));
+    if (asData.partner1?.scores && asData.partner2?.scores) {
+      const herPrimary = asData.partner1.scores.indexOf(Math.max(...asData.partner1.scores));
+      const himPrimary = asData.partner2.scores.indexOf(Math.max(...asData.partner2.scores));
       // Secure-Secure = best, Anxious-Avoidant = challenging, etc.
       const compatMatrix = [
         [1.0, 0.8, 0.7, 0.65], // Secure with...
@@ -1544,11 +1544,11 @@ function updateEnhancedCompat() {
       totalW += weights.game;
       totalS += gamePct * weights.game;
     }
-    if (llData.her?.scores && llData.him?.scores) {
+    if (llData.partner1?.scores && llData.partner2?.scores) {
       totalW += weights.ll;
       totalS += llPct * weights.ll;
     }
-    if (asData.her?.scores && asData.him?.scores) {
+    if (asData.partner1?.scores && asData.partner2?.scores) {
       totalW += weights.as;
       totalS += asPct * weights.as;
     }
@@ -1569,8 +1569,8 @@ function updateEnhancedCompat() {
     if (bd) {
       const items = [];
       if (gameTotal > 0) items.push(`Games: ${Math.round(gamePct * 100)}%`);
-      if (llData.her?.scores && llData.him?.scores) items.push(`Love Lang: ${Math.round(llPct * 100)}%`);
-      if (asData.her?.scores && asData.him?.scores) items.push(`Attachment: ${Math.round(asPct * 100)}%`);
+      if (llData.partner1?.scores && llData.partner2?.scores) items.push(`Love Lang: ${Math.round(llPct * 100)}%`);
+      if (asData.partner1?.scores && asData.partner2?.scores) items.push(`Attachment: ${Math.round(asPct * 100)}%`);
       bd.innerHTML = items
         .map(
           t =>
@@ -1641,7 +1641,7 @@ async function endGame(key, type, winner) {
   // Win streak for winner
   if (winner !== 'draw' && winner) {
     db.ref('games/stats/' + winner + '/streak').transaction(v => (v || 0) + 1);
-    const loser = winner === 'him' ? 'her' : 'him';
+    const loser = winner === 'partner2' ? 'partner1' : 'partner2';
     db.ref('games/stats/' + loser + '/streak').set(0);
   }
   // Celebrate
@@ -2115,7 +2115,7 @@ async function flipMemCard(idx) {
         if (allMatched) {
           updates.status = 'finished';
           updates.endedAt = Date.now();
-          const winner = fg.scores.him > fg.scores.her ? 'him' : fg.scores.her > fg.scores.him ? 'her' : 'draw';
+          const winner = fg.scores.partner2 > fg.scores.partner1 ? 'partner2' : fg.scores.partner1 > fg.scores.partner2 ? 'partner1' : 'draw';
           updates.winner = winner;
           await db.ref('games/sessions/' + activeGameKey).update(updates);
           endGame(activeGameKey, 'memory', winner);
@@ -2146,8 +2146,8 @@ function renderMemory(data, key) {
   const isMyTurn = data.turn === user && data.status === 'active';
 
   let html = `<div class="mem-scores">
-    <span class="${user === 'him' ? 'me' : ''}">${NAMES.him}: ${data.scores?.him || 0}</span>
-    <span class="${user === 'her' ? 'me' : ''}">${NAMES.her}: ${data.scores?.her || 0}</span>
+    <span class="${user === 'partner2' ? 'me' : ''}">${NAMES.partner2}: ${data.scores?.partner2 || 0}</span>
+    <span class="${user === 'partner1' ? 'me' : ''}">${NAMES.partner1}: ${data.scores?.partner1 || 0}</span>
   </div>`;
   html += '<div class="mm-grid">';
   for (let i = 0; i < 16; i++) {
@@ -2177,9 +2177,9 @@ function renderMemory(data, key) {
 // ===== ROCK PAPER SCISSORS =====
 async function newRPS() {
   const key = await startGame('rps', {
-    choices: { him: null, her: null },
+    choices: { partner2: null, partner1: null },
     round: 1,
-    totalScores: { him: 0, her: 0 },
+    totalScores: { partner2: 0, partner1: 0 },
     bestOf: 5,
     roundHistory: []
   });
@@ -2198,23 +2198,23 @@ async function pickRPS(choice) {
 
   // Check if both have chosen
   const fresh = (await db.ref('games/sessions/' + activeGameKey).once('value')).val();
-  if (fresh.choices.him && fresh.choices.her) {
+  if (fresh.choices.partner2 && fresh.choices.partner1) {
     // Resolve round
-    const result = resolveRPS(fresh.choices.him, fresh.choices.her);
-    const roundResult = { him: fresh.choices.him, her: fresh.choices.her, winner: result };
+    const result = resolveRPS(fresh.choices.partner2, fresh.choices.partner1);
+    const roundResult = { partner2: fresh.choices.partner2, partner1: fresh.choices.partner1, winner: result };
     const history = fresh.roundHistory || [];
     history.push(roundResult);
-    const scores = fresh.totalScores || { him: 0, her: 0 };
+    const scores = fresh.totalScores || { partner2: 0, partner1: 0 };
     if (result !== 'draw') scores[result]++;
     const bestOf = fresh.bestOf || 5;
     const winsNeeded = Math.ceil(bestOf / 2);
 
-    if (scores.him >= winsNeeded || scores.her >= winsNeeded) {
-      const winner = scores.him >= winsNeeded ? 'him' : 'her';
+    if (scores.partner2 >= winsNeeded || scores.partner1 >= winsNeeded) {
+      const winner = scores.partner2 >= winsNeeded ? 'partner2' : 'partner1';
       await db.ref('games/sessions/' + activeGameKey).update({
         roundHistory: history,
         totalScores: scores,
-        choices: { him: null, her: null },
+        choices: { partner2: null, partner1: null },
         winner,
         status: 'finished',
         endedAt: Date.now(),
@@ -2225,7 +2225,7 @@ async function pickRPS(choice) {
       await db.ref('games/sessions/' + activeGameKey).update({
         roundHistory: history,
         totalScores: scores,
-        choices: { him: null, her: null },
+        choices: { partner2: null, partner1: null },
         round: (fresh.round || 1) + 1,
         lastResult: roundResult
       });
@@ -2236,7 +2236,7 @@ async function pickRPS(choice) {
 function resolveRPS(a, b) {
   if (a === b) return 'draw';
   const wins = { rock: 'scissors', scissors: 'paper', paper: 'rock' };
-  return wins[a] === b ? 'him' : 'her';
+  return wins[a] === b ? 'partner2' : 'partner1';
 }
 
 const RPS_ICONS = { rock: '✊', paper: '✋', scissors: '✌️' };
@@ -2249,9 +2249,9 @@ function renderRPS(data, key) {
   const winsNeeded = Math.ceil(bestOf / 2);
 
   let html = `<div class="rps-scorebar">
-    <span class="${user === 'him' ? 'me' : ''}">${NAMES.him}: ${data.totalScores?.him || 0}</span>
+    <span class="${user === 'partner2' ? 'me' : ''}">${NAMES.partner2}: ${data.totalScores?.partner2 || 0}</span>
     <span class="rps-round">Round ${data.round || 1} · Best of ${bestOf}</span>
-    <span class="${user === 'her' ? 'me' : ''}">${NAMES.her}: ${data.totalScores?.her || 0}</span>
+    <span class="${user === 'partner1' ? 'me' : ''}">${NAMES.partner1}: ${data.totalScores?.partner1 || 0}</span>
   </div>`;
 
   // Show last result
@@ -2259,7 +2259,7 @@ function renderRPS(data, key) {
     const lr = data.lastResult;
     const msg = lr.winner === 'draw' ? 'Draw!' : lr.winner === user ? 'You won!' : NAMES[partner] + ' won!';
     html += `<div class="rps-last">
-      <span>${RPS_ICONS[lr.him]}</span> vs <span>${RPS_ICONS[lr.her]}</span> - ${msg}
+      <span>${RPS_ICONS[lr.partner2]}</span> vs <span>${RPS_ICONS[lr.partner1]}</span> - ${msg}
     </div>`;
   }
 
@@ -3005,7 +3005,7 @@ async function resolveWar() {
   const updated = (await db.ref('games/sessions/' + activeGameKey).once('value')).val();
   if (updated && updated.status === 'active') {
     if (!(updated.deck1 || []).length && !updated.played?.p1) {
-      await endGame(activeGameKey, 'war', updated.startedBy === 'him' ? 'her' : 'him');
+      await endGame(activeGameKey, 'war', updated.startedBy === 'partner2' ? 'partner1' : 'partner2');
     } else if (!(updated.deck2 || []).length && !updated.played?.p2) {
       await endGame(activeGameKey, 'war', updated.startedBy);
     }
@@ -3285,8 +3285,8 @@ async function newGoFish() {
   const hand2 = deck.splice(0, 7);
   const key = await startGame('gofish', {
     deck,
-    hands: { him: user === 'him' ? hand1 : hand2, her: user === 'him' ? hand2 : hand1 },
-    books: { him: 0, her: 0 },
+    hands: { partner2: user === 'partner2' ? hand1 : hand2, partner1: user === 'partner2' ? hand2 : hand1 },
+    books: { partner2: 0, partner1: 0 },
     turn: user,
     lastAction: '',
     phase: 'ask'
@@ -3333,11 +3333,11 @@ async function askGoFish(rank) {
     hands[partner] = notFound;
     action = `${NAMES[user]} asked for ${rank}s - got ${found.length}!`;
     const result = checkBooks(hands[user]);
-    const bks = data.books || { him: 0, her: 0 };
+    const bks = data.books || { partner2: 0, partner1: 0 };
     bks[user] += result.books;
     hands[user] = result.remaining;
     const updates = { hands, books: bks, lastAction: action, turn: user };
-    if (bks.him + bks.her >= 13 || (!hands.him.length && !hands.her.length && !deck.length)) {
+    if (bks.partner2 + bks.partner1 >= 13 || (!hands.partner2.length && !hands.partner1.length && !deck.length)) {
       await db.ref('games/sessions/' + activeGameKey).update(updates);
       const w = bks[user] > bks[partner] ? user : bks[partner] > bks[user] ? partner : 'draw';
       await endGame(activeGameKey, 'gofish', w);
@@ -3353,11 +3353,11 @@ async function askGoFish(rank) {
     }
     hands[user] = myHand;
     const result = checkBooks(hands[user]);
-    const bks = data.books || { him: 0, her: 0 };
+    const bks = data.books || { partner2: 0, partner1: 0 };
     bks[user] += result.books;
     hands[user] = result.remaining;
     const updates = { hands, books: bks, deck, lastAction: action, turn: partner };
-    if (bks.him + bks.her >= 13 || (!hands.him.length && !hands.her.length && !deck.length)) {
+    if (bks.partner2 + bks.partner1 >= 13 || (!hands.partner2.length && !hands.partner1.length && !deck.length)) {
       await db.ref('games/sessions/' + activeGameKey).update(updates);
       const w = bks[user] > bks[partner] ? user : bks[partner] > bks[user] ? partner : 'draw';
       await endGame(activeGameKey, 'gofish', w);
@@ -4072,7 +4072,7 @@ function ltStartListening() {
     ltShowSession(data);
   });
   // Also listen to partner presence changes to update "listening together" status
-  var partnerRole = user === 'her' ? 'him' : 'her';
+  var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
   db.ref('presence/' + partnerRole).on('value', function (snap) {
     if (!LT.active) return;
     db.ref('listenTogether').once('value', function (s) {
@@ -4088,7 +4088,7 @@ function ltStartListening() {
 function ltShowSession(data) {
   LT.active = true;
   // Check if partner is online
-  var partnerRole = user === 'her' ? 'him' : 'her';
+  var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
   db.ref('presence/' + partnerRole).once('value', function (snap) {
     var p = snap.val() || {};
     var bothOnline = !!p.online;
@@ -4103,7 +4103,7 @@ function ltUpdateStatus(data, bothOnline) {
   var text = document.getElementById('lt-status-text');
   if (!dot || !text) return;
   var sharedByMe = data.sharedBy === user;
-  var partnerName = typeof NAMES !== 'undefined' ? NAMES[user === 'her' ? 'him' : 'her'] : 'Partner';
+  var partnerName = typeof NAMES !== 'undefined' ? NAMES[user === 'partner1' ? 'partner2' : 'partner1'] : 'Partner';
   if (bothOnline) {
     dot.className = 'lt-status-dot lt-live';
     text.textContent = 'Listening together with ' + partnerName;
@@ -4257,10 +4257,10 @@ function initWakeUp() {
 
   // Set names
   if (typeof NAMES !== 'undefined') {
-    const herName = document.getElementById('wu-name-her');
-    const himName = document.getElementById('wu-name-him');
-    if (herName) herName.textContent = NAMES.her || 'Her';
-    if (himName) himName.textContent = NAMES.him || 'Him';
+    const herName = document.getElementById('wu-name-partner1');
+    const himName = document.getElementById('wu-name-partner2');
+    if (herName) herName.textContent = NAMES.partner1 || 'Partner 1';
+    if (himName) himName.textContent = NAMES.partner2 || 'Partner 2';
   }
 
   // Update partner time preview on input change
@@ -4446,7 +4446,7 @@ function listenWakeUp() {
     const wakeups = (data.wakeups && data.wakeups[today]) || {};
 
     // Update partner statuses
-    ['her', 'him'].forEach(function (who) {
+    ['partner1', 'partner2'].forEach(function (who) {
       const alarm = alarms[who];
       const statusEl = document.getElementById('wu-status-' + who);
       const tzEl = document.getElementById('wu-tz-' + who);
@@ -4571,13 +4571,13 @@ function buildWakeUpHistory(data) {
   dates.forEach(function (date) {
     const alarms = allAlarms[date] || {};
     const gn = allGoodnights[date] || {};
-    const herAlarm = alarms.her;
-    const himAlarm = alarms.him;
-    const herGN = gn.her;
-    const himGN = gn.him;
+    const herAlarm = alarms.partner1;
+    const himAlarm = alarms.partner2;
+    const herGN = gn.partner1;
+    const himGN = gn.partner2;
 
-    const herName = typeof NAMES !== 'undefined' ? NAMES.her : 'Her';
-    const himName = typeof NAMES !== 'undefined' ? NAMES.him : 'Him';
+    const herName = typeof NAMES !== 'undefined' ? NAMES.partner1 : 'Partner 1';
+    const himName = typeof NAMES !== 'undefined' ? NAMES.partner2 : 'Partner 2';
 
     // Format date nicely
     const d = new Date(date + 'T12:00:00');

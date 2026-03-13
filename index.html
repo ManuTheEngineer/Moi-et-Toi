@@ -99,6 +99,26 @@
         <div class="lbl" id="welcome-greeting"></div>
         <button onclick="enterApp()" class="login-btn" id="welcome-enter-btn">Enter</button>
       </div>
+      <!-- Waiting for partner (shown when current user onboarded but partner hasn't) -->
+      <div id="waiting-for-partner" class="login-inner d-none">
+        <div class="onboard-emoji">💑</div>
+        <h1 class="onboard-title" id="wfp-title">Waiting for your partner</h1>
+        <p class="onboard-sub" id="wfp-sub">Share this app with your partner and ask them to sign in and complete setup.</p>
+        <div id="wfp-status" class="ob-partner-status offline">
+          <span class="ob-ps-dot"></span> Partner hasn't started yet
+        </div>
+        <div class="wfp-invite-box" id="wfp-invite-box">
+          <p style="font-size:13px;color:var(--t2);margin-bottom:12px">Your partner needs to:</p>
+          <ol style="font-size:13px;color:var(--t2);text-align:left;padding-left:20px;line-height:1.8">
+            <li>Install Moi et Toi (or open the link)</li>
+            <li>Enter the connection key</li>
+            <li>Sign in with their email</li>
+            <li>Complete the setup steps</li>
+          </ol>
+        </div>
+        <div id="wfp-offline" class="d-none" style="font-size:12px;color:var(--t3);margin-top:12px">You're offline — we'll check when reconnected.</div>
+        <button onclick="firebase.auth().signOut();location.reload()" class="login-btn" style="margin-top:24px;background:var(--t3);font-size:13px">Sign out</button>
+      </div>
       <!-- First-time location prompt (shown before onboarding) -->
       <div id="first-location-prompt" class="login-inner d-none">
         <h1 class="onboard-title">Your Living World</h1>
@@ -133,7 +153,7 @@
             type="text"
             id="ob-nickname"
             class="login-input ob-input mb16"
-            placeholder="Babe, Love, Her name..."
+            placeholder="Babe, Love, their name..."
             style="display: none"
             onkeydown="
               if (event.key === 'Enter') {
@@ -3333,8 +3353,8 @@
             <div class="d-flex gap-8 mb-8">
               <select id="cal-event-type" class="form-input-inline">
                 <option value="joint">Joint</option>
-                <option value="her">Her</option>
-                <option value="him">Him</option>
+                <option value="partner1">Partner 1</option>
+                <option value="partner2">Partner 2</option>
                 <option value="recurring">Recurring</option>
                 <option value="countdown">Countdown</option>
               </select>
@@ -3384,8 +3404,8 @@
             />
             <select id="todo-who" class="select-field">
               <option value="shared">Both</option>
-              <option value="her">Her</option>
-              <option value="him">Him</option>
+              <option value="partner1">Partner 1</option>
+              <option value="partner2">Partner 2</option>
             </select>
             <button onclick="addSharedTodo()">+</button>
           </div>
@@ -4272,16 +4292,16 @@
           </div>
           <div class="wu-status-card" id="wu-status-card">
             <div class="wu-partner-row">
-              <div class="wu-partner" id="wu-partner-her">
-                <div class="wu-partner-avatar wu-avatar-her">
+              <div class="wu-partner" id="wu-partner-p1">
+                <div class="wu-partner-avatar wu-avatar-p1">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
                 </div>
-                <div class="wu-partner-name" id="wu-name-her">Her</div>
-                <div class="wu-partner-status" id="wu-status-her">Not set</div>
-                <div class="wu-partner-tz" id="wu-tz-her"></div>
+                <div class="wu-partner-name" id="wu-name-p1">Partner 1</div>
+                <div class="wu-partner-status" id="wu-status-p1">Not set</div>
+                <div class="wu-partner-tz" id="wu-tz-p1"></div>
               </div>
               <div class="wu-bridge">
                 <div class="wu-bridge-line"></div>
@@ -4303,16 +4323,16 @@
                 </div>
                 <div class="wu-bridge-line"></div>
               </div>
-              <div class="wu-partner" id="wu-partner-him">
-                <div class="wu-partner-avatar wu-avatar-him">
+              <div class="wu-partner" id="wu-partner-p2">
+                <div class="wu-partner-avatar wu-avatar-p2">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
                 </div>
-                <div class="wu-partner-name" id="wu-name-him">Him</div>
-                <div class="wu-partner-status" id="wu-status-him">Not set</div>
-                <div class="wu-partner-tz" id="wu-tz-him"></div>
+                <div class="wu-partner-name" id="wu-name-p2">Partner 2</div>
+                <div class="wu-partner-status" id="wu-status-p2">Not set</div>
+                <div class="wu-partner-tz" id="wu-tz-p2"></div>
               </div>
             </div>
             <div class="wu-time-diff" id="wu-time-diff"></div>

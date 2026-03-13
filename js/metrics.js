@@ -33,7 +33,7 @@ function dayOfWeek(dateStr) {
 
 // ===== MOOD INDEX =====
 function buildMoodIndex(moods) {
-  const idx = { byUser: { her: [], him: [] }, byDate: {}, byWeek: {}, byMonth: {}, all: [], stats: {} };
+  const idx = { byUser: { partner1: [], partner2: [] }, byDate: {}, byWeek: {}, byMonth: {}, all: [], stats: {} };
   moods.sort((a, b) => a.timestamp - b.timestamp);
   idx.all = moods;
 
@@ -61,7 +61,7 @@ function buildMoodIndex(moods) {
   });
 
   // Compute stats per user
-  ['her', 'him'].forEach(u => {
+  ['partner1', 'partner2'].forEach(u => {
     const um = idx.byUser[u] || [];
     idx.stats[u] = computeMoodStats(um);
   });
@@ -175,34 +175,34 @@ function computeJointMoodStats(idx) {
   for (let i = 0; i < 30; i++) {
     const ds = localDate(daysAgo(i));
     const dayMoods = idx.byDate[ds] || [];
-    const herM = dayMoods.find(m => m.user === 'her');
-    const himM = dayMoods.find(m => m.user === 'him');
-    if (herM && himM) {
+    const p1M = dayMoods.find(m => m.user === 'partner1');
+    const p2M = dayMoods.find(m => m.user === 'partner2');
+    if (p1M && p2M) {
       bothDays++;
-      if (Math.abs(herM.mood - himM.mood) <= 1) syncDays++;
+      if (Math.abs(p1M.mood - p2M.mood) <= 1) syncDays++;
     }
   }
   const syncScore = bothDays ? +(syncDays / bothDays).toFixed(2) : 0;
 
-  // His mood vs her mood correlation (last 30d, on days both checked in)
+  // Cross-partner mood correlation (last 30d, on days both checked in)
   const pairs = [];
   for (let i = 0; i < 30; i++) {
     const ds = localDate(daysAgo(i));
     const dayMoods = idx.byDate[ds] || [];
-    const herM = dayMoods.find(m => m.user === 'her');
-    const himM = dayMoods.find(m => m.user === 'him');
-    if (herM && himM) pairs.push({ her: herM.mood, him: himM.mood });
+    const p1M = dayMoods.find(m => m.user === 'partner1');
+    const p2M = dayMoods.find(m => m.user === 'partner2');
+    if (p1M && p2M) pairs.push({ partner1: p1M.mood, partner2: p2M.mood });
   }
   let crossCorrelation = 0;
   if (pairs.length >= 5) {
-    const hA = pairs.reduce((s, p) => s + p.her, 0) / pairs.length;
-    const mA = pairs.reduce((s, p) => s + p.him, 0) / pairs.length;
+    const hA = pairs.reduce((s, p) => s + p.partner1, 0) / pairs.length;
+    const mA = pairs.reduce((s, p) => s + p.partner2, 0) / pairs.length;
     let num = 0,
       dH = 0,
       dM = 0;
     pairs.forEach(p => {
-      const dh = p.her - hA,
-        dm = p.him - mA;
+      const dh = p.partner1 - hA,
+        dm = p.partner2 - mA;
       num += dh * dm;
       dH += dh * dh;
       dM += dm * dm;
@@ -215,10 +215,10 @@ function computeJointMoodStats(idx) {
     bestScore = 0;
   Object.keys(idx.byDate).forEach(ds => {
     const dayMoods = idx.byDate[ds];
-    const herM = dayMoods.find(m => m.user === 'her');
-    const himM = dayMoods.find(m => m.user === 'him');
-    if (herM && himM && herM.mood + himM.mood > bestScore) {
-      bestScore = herM.mood + himM.mood;
+    const p1M = dayMoods.find(m => m.user === 'partner1');
+    const p2M = dayMoods.find(m => m.user === 'partner2');
+    if (p1M && p2M && p1M.mood + p2M.mood > bestScore) {
+      bestScore = p1M.mood + p2M.mood;
       bestDay = ds;
     }
   });
@@ -230,7 +230,7 @@ function computeJointMoodStats(idx) {
   for (let i = 0; i < 365; i++) {
     const ds = localDate(cd);
     const dayMoods = idx.byDate[ds] || [];
-    const both = dayMoods.some(m => m.user === 'her') && dayMoods.some(m => m.user === 'him');
+    const both = dayMoods.some(m => m.user === 'partner1') && dayMoods.some(m => m.user === 'partner2');
     if (both) {
       jointStreak++;
       cd.setDate(cd.getDate() - 1);
@@ -267,7 +267,7 @@ function buildFitnessIndex(workouts) {
 
   // Per-user stats
   const userStats = {};
-  ['her', 'him'].forEach(u => {
+  ['partner1', 'partner2'].forEach(u => {
     const uw = workouts.filter(w => w.user === u);
     const uw7 = uw.filter(w => (w.timestamp || new Date(w.date).getTime()) > d7);
     const uw30 = uw.filter(w => (w.timestamp || new Date(w.date).getTime()) > d30);
@@ -278,9 +278,9 @@ function buildFitnessIndex(workouts) {
   let syncDays = 0;
   for (let i = 0; i < 30; i++) {
     const ds = localDate(daysAgo(i));
-    const her = w30.some(w => w.user === 'her' && w.date === ds);
-    const him = w30.some(w => w.user === 'him' && w.date === ds);
-    if (her && him) syncDays++;
+    const p1 = w30.some(w => w.user === 'partner1' && w.date === ds);
+    const p2 = w30.some(w => w.user === 'partner2' && w.date === ds);
+    if (p1 && p2) syncDays++;
   }
 
   // Muscle group distribution (last 30d)
@@ -325,7 +325,7 @@ function buildFinanceIndex(expenses, budgets, savingsGoals) {
   // Monthly totals
   const monthlyTotals = {};
   const categoryTotals = {};
-  const userTotals = { her: 0, him: 0 };
+  const userTotals = { partner1: 0, partner2: 0 };
   let total30d = 0;
 
   expenses.forEach(e => {
@@ -372,7 +372,7 @@ function buildFinanceIndex(expenses, budgets, savingsGoals) {
     totalSpent > lastMonthSameDay * 1.1 ? 'increasing' : totalSpent < lastMonthSameDay * 0.9 ? 'decreasing' : 'stable';
 
   // Partner balance
-  const balance = userTotals.him - userTotals.her; // positive = him paid more
+  const balance = userTotals.partner2 - userTotals.partner1; // positive = partner2 paid more
 
   // Savings goal progress
   const goals = (savingsGoals || []).map(g => ({
@@ -443,7 +443,7 @@ function computeRelationshipHealth() {
     // Count days both checked in this week
     for (let i = 0; i < 7; i++) {
       const ds = localDate(daysAgo(i));
-      if (moodDates.has('her:' + ds) && moodDates.has('him:' + ds)) moodDays++;
+      if (moodDates.has('partner1:' + ds) && moodDates.has('partner2:' + ds)) moodDays++;
     }
     const moodScore = Math.min(1, moodDays / 5); // 5 out of 7 is perfect
     breakdown.moodFrequency = { score: moodScore, weight: weight1, detail: moodDays + '/7 days both' };
@@ -506,12 +506,12 @@ function computeRelationshipHealth() {
     if (wyrSnap.exists())
       wyrSnap.forEach(c => {
         const d = c.val();
-        if (d && d.her && d.him) gamesPlayed++;
+        if (d && d.partner1 && d.partner2) gamesPlayed++;
       });
     if (totSnap.exists())
       totSnap.forEach(c => {
         const d = c.val();
-        if (d && d.her && d.him) gamesPlayed++;
+        if (d && d.partner1 && d.partner2) gamesPlayed++;
       });
     const gameScore = Math.min(1, gamesPlayed * 0.1);
     breakdown.games = { score: gameScore, weight: weight5, detail: gamesPlayed + ' played together' };
@@ -541,8 +541,8 @@ function computeRelationshipHealth() {
     let ciDone = 0;
     if (ciSnap.exists()) {
       const ci = ciSnap.val();
-      if (ci && ci.her) ciDone++;
-      if (ci && ci.him) ciDone++;
+      if (ci && ci.partner1) ciDone++;
+      if (ci && ci.partner2) ciDone++;
     }
     const ciScore = ciDone / 2;
     breakdown.weeklyCheckin = { score: ciScore, weight: weight8, detail: ciDone + '/2 completed' };
@@ -594,7 +594,7 @@ function renderBaselineProgress(currentPct) {
   if (!bl) return;
   // Average both partners' baseline ratings (1-10 scale)
   var ratings = [];
-  ['her', 'him'].forEach(function (r) {
+  ['partner1', 'partner2'].forEach(function (r) {
     if (bl[r] && bl[r].relationship) {
       var rel = bl[r].relationship;
       var avg = 0,
@@ -637,10 +637,10 @@ function storeWeeklyAnalytics(healthScore) {
   if (!db) return;
   const wk = weekId();
   const stats = {
-    moodAvg: { her: MET.mood.stats.her?.avg7d || 0, him: MET.mood.stats.him?.avg7d || 0 },
+    moodAvg: { partner1: MET.mood.stats.partner1?.avg7d || 0, partner2: MET.mood.stats.partner2?.avg7d || 0 },
     workoutCount: {
-      her: MET.fitness.stats.userStats?.her?.freq7d || 0,
-      him: MET.fitness.stats.userStats?.him?.freq7d || 0
+      partner1: MET.fitness.stats.userStats?.partner1?.freq7d || 0,
+      partner2: MET.fitness.stats.userStats?.partner2?.freq7d || 0
     },
     expenseTotal: MET.finance.stats.total30d || 0,
     relationshipHealthScore: healthScore || 0,
@@ -655,7 +655,7 @@ function storeWeeklyAnalytics(healthScore) {
 function renderMoodHeatmap(containerId, userFilter) {
   const el = document.getElementById(containerId);
   if (!el) return;
-  const stats = userFilter ? MET.mood.stats[userFilter] : MET.mood.stats.her; // default to current user
+  const stats = userFilter ? MET.mood.stats[userFilter] : MET.mood.stats.partner1; // default to current user
   if (!stats || !stats.dayOfWeek) {
     el.innerHTML = '<div class="empty" style="padding:8px;font-size:11px">Not enough data</div>';
     return;
@@ -735,13 +735,13 @@ function renderRadarChart(containerId, dimensions) {
     return `<polygon points="${pts}" fill="${color}" fill-opacity="${opacity}" stroke="${color}" stroke-width="1.5"/>`;
   }
 
-  const herPoly = dataPolygon(
-    dimensions.map(d => d.her || 0),
+  const p1Poly = dataPolygon(
+    dimensions.map(d => d.partner1 || 0),
     'var(--rose)',
     0.15
   );
-  const himPoly = dataPolygon(
-    dimensions.map(d => d.him || 0),
+  const p2Poly = dataPolygon(
+    dimensions.map(d => d.partner2 || 0),
     'var(--teal)',
     0.15
   );
@@ -755,10 +755,10 @@ function renderRadarChart(containerId, dimensions) {
     labels += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="var(--t3)" font-size="8" font-family="Outfit">${d.label}</text>`;
   });
 
-  el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">${gridLines}${axes}${herPoly}${himPoly}${labels}</svg>
+  el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">${gridLines}${axes}${p1Poly}${p2Poly}${labels}</svg>
     <div style="display:flex;gap:12px;justify-content:center;margin-top:6px;font-size:9px">
-      <span style="color:var(--rose)">● ${typeof NAMES !== 'undefined' ? NAMES.her : 'Her'}</span>
-      <span style="color:var(--teal)">● ${typeof NAMES !== 'undefined' ? NAMES.him : 'Him'}</span>
+      <span style="color:var(--rose)">● ${typeof NAMES !== 'undefined' ? NAMES.partner1 : 'Partner 1'}</span>
+      <span style="color:var(--teal)">● ${typeof NAMES !== 'undefined' ? NAMES.partner2 : 'Partner 2'}</span>
     </div>`;
 }
 
@@ -1059,7 +1059,7 @@ onMetricsUpdate(function (type) {
 });
 
 function updateMoodPageAnalytics() {
-  const u = typeof user !== 'undefined' ? user : 'him';
+  const u = typeof user !== 'undefined' ? user : 'partner2';
   const stats = MET.mood.stats[u];
   if (!stats) return;
 

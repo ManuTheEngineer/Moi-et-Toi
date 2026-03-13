@@ -1281,7 +1281,7 @@ function compareProgressPhotos() {
 // ========================================
 // ===== GROW TOGETHER MODULE =====
 // ========================================
-let growPath = 'her';
+let growPath = 'partner1';
 let growCompleted = {};
 let growReflections = {};
 let growOpenModule = null;
@@ -1922,7 +1922,7 @@ function setGrowPath(path) {
   const opts = document.querySelectorAll('#grow-toggle .vt-option');
   const slider = document.getElementById('grow-slider');
   if (slider && opts.length) {
-    const idx = path === 'her' ? 0 : path === 'his' ? 1 : 2;
+    const idx = path === 'partner1' ? 0 : path === 'partner2' ? 1 : 2;
     slider.style.transform = 'translateX(' + idx * 100 + '%)';
     slider.style.width = 100 / opts.length + '%';
   }
@@ -2603,21 +2603,21 @@ function dhPersonalize() {
   if (locInput && !locInput.value) {
     if (typeof user !== 'undefined') {
       locInput.placeholder =
-        user === 'her' ? 'e.g. Coastal town, beachside community...' : 'e.g. Mountain town, cabin community...';
+        user === 'partner1' ? 'e.g. Coastal town, beachside community...' : 'e.g. Mountain town, cabin community...';
     }
   }
   // Add "suggested" hint to preferred tags based on user's taste
   if (typeof user !== 'undefined') {
-    var isHer = user === 'her';
-    // Location: Coastal for her, Mountain for him
-    var locPref = isHer ? 'Coastal' : 'Mountain';
+    var isPartner1 = user === 'partner1';
+    // Location: Coastal for partner1, Mountain for partner2
+    var locPref = isPartner1 ? 'Coastal' : 'Mountain';
     document.querySelectorAll('#dh-location-prefs .dh-tag').forEach(function (t) {
       if (t.textContent.trim() === locPref && !t.classList.contains('sel')) {
         t.setAttribute('data-hint', 'suggested');
       }
     });
-    // Terrain: Waterfront for her, Wooded for him
-    var terrainPref = isHer ? 'Waterfront' : 'Wooded';
+    // Terrain: Waterfront for partner1, Wooded for partner2
+    var terrainPref = isPartner1 ? 'Waterfront' : 'Wooded';
     document.querySelectorAll('.dh-tag').forEach(function (t) {
       if (
         t.onclick &&

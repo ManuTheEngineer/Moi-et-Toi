@@ -37,7 +37,7 @@ function nextAffirmation() { rotatePrompt(AFFIRMATIONS, 'hs-affirm-text', functi
 function logPeriodStart() {
   if (!db || !user) return;
   const today = localDate();
-  db.ref('herWellness/cycle')
+  db.ref('wellness/partner1/cycle')
     .push({ type: 'start', date: today, timestamp: Date.now() })
     .catch(function () { toast('Save failed'); });
   toast('Period start logged');
@@ -47,7 +47,7 @@ function logPeriodStart() {
 function logPeriodEnd() {
   if (!db || !user) return;
   const today = localDate();
-  db.ref('herWellness/cycle')
+  db.ref('wellness/partner1/cycle')
     .push({ type: 'end', date: today, timestamp: Date.now() })
     .catch(function () { toast('Save failed'); });
   toast('Period end logged');
@@ -56,7 +56,7 @@ function logPeriodEnd() {
 
 function loadCycleData() {
   if (!db) return;
-  db.ref('herWellness/cycle')
+  db.ref('wellness/partner1/cycle')
     .orderByChild('timestamp')
     .limitToLast(10)
     .once('value', snap => {
@@ -110,13 +110,13 @@ function toggleCare(el, type) {
   el.classList.toggle('done');
   const today = localDate();
   const done = el.classList.contains('done');
-  db.ref('herWellness/selfcare/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
+  db.ref('wellness/partner1/selfcare/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
 }
 
 function loadSelfCare() {
   if (!db) return;
   const today = localDate();
-  db.ref('herWellness/selfcare/' + today).once('value', snap => {
+  db.ref('wellness/partner1/selfcare/' + today).once('value', snap => {
     const data = snap.val() || {};
     document.querySelectorAll('#hs-care-grid .hs-care-item').forEach(el => {
       const type = el.onclick.toString().match(/'(\w+)'/)?.[1];
@@ -151,14 +151,14 @@ const MOTIVATIONS = [
 
 let motivIdx = Math.floor(Math.random() * MOTIVATIONS.length);
 
-function loadMotivation() { rotatePrompt(MOTIVATIONS, 'him-affirm-text', function() { return motivIdx; }); }
-function nextMotivation() { rotatePrompt(MOTIVATIONS, 'him-affirm-text', function() { return motivIdx; }, true); }
+function loadMotivation() { rotatePrompt(MOTIVATIONS, 'p1-affirm-text', function() { return motivIdx; }); }
+function nextMotivation() { rotatePrompt(MOTIVATIONS, 'p1-affirm-text', function() { return motivIdx; }, true); }
 
 async function logPR() {
   if (!db || !user) return;
-  const exercise = document.getElementById('him-pr-exercise').value.trim();
-  const weight = document.getElementById('him-pr-weight').value.trim();
-  const reps = document.getElementById('him-pr-reps').value.trim();
+  const exercise = document.getElementById('p1-pr-exercise').value.trim();
+  const weight = document.getElementById('p1-pr-weight').value.trim();
+  const reps = document.getElementById('p1-pr-reps').value.trim();
   if (!exercise) {
     toast('Enter an exercise');
     return;
@@ -175,9 +175,9 @@ async function logPR() {
     timestamp: Date.now(),
     date: localDate()
   });
-  document.getElementById('him-pr-exercise').value = '';
-  document.getElementById('him-pr-weight').value = '';
-  document.getElementById('him-pr-reps').value = '';
+  document.getElementById('p1-pr-exercise').value = '';
+  document.getElementById('p1-pr-weight').value = '';
+  document.getElementById('p1-pr-reps').value = '';
   if (btn) {
     btn.textContent = 'Logged';
     setTimeout(() => {
@@ -194,7 +194,7 @@ function listenPRs() {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
-      const el = document.getElementById('him-pr-list');
+      const el = document.getElementById('p1-pr-list');
       if (!el) return;
       if (!items.length) {
         el.innerHTML = '<div class="empty">Log your first PR</div>';
@@ -203,7 +203,7 @@ function listenPRs() {
       el.innerHTML = items
         .map(i => {
           const ts = timeAgo(new Date(i.timestamp));
-          return `<div class="him-pr-card"><div class="him-pr-name">${esc(i.exercise)}</div><div class="him-pr-val">${esc(String(i.weight))}${i.weight !== '--' ? ' lbs' : ''} × ${esc(String(i.reps))}</div><div class="him-pr-date">${ts}</div></div>`;
+          return `<div class="p1-pr-card"><div class="p1-pr-name">${esc(i.exercise)}</div><div class="p1-pr-val">${esc(String(i.weight))}${i.weight !== '--' ? ' lbs' : ''} × ${esc(String(i.reps))}</div><div class="p1-pr-date">${ts}</div></div>`;
         })
         .join('');
     });
@@ -222,17 +222,17 @@ function loadClarity() {
   const today = localDate();
   db.ref('hisWellness/clarity/' + today).once('value', snap => {
     const data = snap.val() || {};
-    document.querySelectorAll('#him-clarity-grid .hs-care-item').forEach(el => {
+    document.querySelectorAll('#p1-clarity-grid .hs-care-item').forEach(el => {
       const type = el.onclick.toString().match(/'(\w+)'/)?.[1];
       if (type && data[type]) el.classList.add('done');
     });
   });
 }
 
-// ===== PERSONAL GOALS (shared between her/him spaces) =====
+// ===== PERSONAL GOALS (shared between partner spaces) =====
 async function addPersonalGoal(who) {
   if (!db || !user) return;
-  const inputId = who === 'her' ? 'hs-goal-input' : 'him-goal-input';
+  const inputId = who === 'partner1' ? 'p1-goal-input' : 'p2-goal-input';
   const title = document.getElementById(inputId).value.trim();
   if (!title) {
     toast('Enter a goal');
@@ -260,7 +260,7 @@ async function addPersonalGoal(who) {
 }
 
 function listenPersonalGoals(who) {
-  const listId = who === 'her' ? 'hs-goals' : 'him-goals';
+  const listId = who === 'partner1' ? 'p1-goals' : 'p2-goals';
   db.ref('personalGoals/' + who)
     .orderByChild('timestamp')
     .on('value', snap => {
@@ -2162,8 +2162,8 @@ function listenChores() {
       }
       const whoLabels = {
         shared: 'Shared',
-        her: user === 'her' ? 'You' : NAMES.her,
-        him: user === 'him' ? 'You' : NAMES.him,
+        partner1: user === 'partner1' ? 'You' : NAMES.partner1,
+        partner2: user === 'partner2' ? 'You' : NAMES.partner2,
         alternate: 'Alternate'
       };
       el.innerHTML = items
