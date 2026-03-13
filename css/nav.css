@@ -1375,15 +1375,13 @@ body.touring .bn {
 .pg .ctn {
   padding-top: 0;
 }
-/* Landing pages have inline titles - need their own safe-area top padding.
-   Use 0px fallback (matching page-header) since viewport-fit=cover ensures
-   env() is supported on all target devices. */
+/* Landing pages have inline titles - need their own safe-area top padding */
 #pg-dash .ctn,
 #pg-together .ctn,
 #pg-wellness .ctn,
 #pg-plan .ctn,
 #pg-more .ctn {
-  padding-top: calc(12px + env(safe-area-inset-top, 0px));
+  padding-top: calc(12px + env(safe-area-inset-top, 20px));
 }
 
 /* ===== BOTTOM NAV (full-width docked tab bar) ===== */

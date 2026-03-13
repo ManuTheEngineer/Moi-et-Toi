@@ -61,7 +61,7 @@ body.keyboard-open .generic-modal-box {
    no JS sizing, no viewport-unit mismatches, no iOS gaps. */
 #bg {
   position: fixed;
-  inset: 0;
+  inset: -1px;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
