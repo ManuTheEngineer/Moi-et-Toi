@@ -3119,16 +3119,16 @@ body[data-sky-theme='mountain'][data-time='evening'] .particle {
 
 /* Eagle - larger wingspan, darker color */
 .sky-eagle-wing {
-  width: 12px !important;
-  height: 4px !important;
+  width: 26px !important;
+  height: 9px !important;
   border-top-color: rgba(80, 60, 40, 0.5) !important;
-  border-top-width: 3px !important;
+  border-top-width: 4px !important;
 }
 .sky-eagle .sky-bird-wing-l {
-  left: -13px !important;
+  left: -26px !important;
 }
 .sky-eagle .sky-bird-wing-r {
-  right: -13px !important;
+  right: -26px !important;
 }
 
 /* Crab */
@@ -4527,8 +4527,8 @@ body[data-time='evening'] .terrain-lake {
 /* ===== MOUNTAIN: Eagles soaring ===== */
 .terrain-eagle {
   position: absolute;
-  width: var(--eagle-size, 10px);
-  height: calc(var(--eagle-size, 10px) * 0.35);
+  width: var(--eagle-size, 26px);
+  height: calc(var(--eagle-size, 26px) * 0.35);
   opacity: 0.65;
   animation: eagleSoar 18s ease-in-out infinite;
 }
@@ -4538,7 +4538,7 @@ body[data-time='evening'] .terrain-lake {
   position: absolute;
   top: 50%;
   width: 50%;
-  height: 2px;
+  height: 4px;
   background: rgba(30, 20, 10, 0.8);
   transform-origin: center;
   animation: eagleWingFlap 3s ease-in-out infinite;
@@ -4646,8 +4646,8 @@ body[data-time='golden'] .terrain-rock {
 /* ===== BEACH: Seagulls ===== */
 .terrain-seagull {
   position: absolute;
-  width: var(--gull-size, 10px);
-  height: calc(var(--gull-size, 10px) * 0.3);
+  width: var(--gull-size, 24px);
+  height: calc(var(--gull-size, 24px) * 0.3);
   opacity: 0.7;
   animation: gullGlide 14s ease-in-out infinite;
 }
@@ -4657,7 +4657,7 @@ body[data-time='golden'] .terrain-rock {
   position: absolute;
   top: 50%;
   width: 48%;
-  height: 1.5px;
+  height: 3px;
   background: rgba(240, 240, 240, 0.9);
   animation: gullWing 2s ease-in-out infinite;
 }
@@ -4711,31 +4711,31 @@ body[data-time='evening'] .terrain-seagull {
   position: absolute;
   bottom: 22%;
   left: 70%;
-  width: 16px;
-  height: 20px;
-  opacity: 0.45;
+  width: 32px;
+  height: 40px;
+  opacity: 0.5;
   animation: sailboatDrift 20s ease-in-out infinite alternate;
 }
 .terrain-sailboat::before {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 2px;
-  width: 12px;
-  height: 4px;
+  left: 4px;
+  width: 24px;
+  height: 8px;
   background: rgba(60, 40, 20, 0.6);
   border-radius: 0 0 40% 40%;
 }
 .terrain-sailboat::after {
   content: '';
   position: absolute;
-  bottom: 3px;
-  left: 6px;
+  bottom: 6px;
+  left: 12px;
   width: 0;
   height: 0;
-  border-left: 1px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 16px solid rgba(255, 255, 255, 0.6);
+  border-left: 2px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 32px solid rgba(255, 255, 255, 0.6);
 }
 @keyframes sailboatDrift {
   0% {
@@ -5392,8 +5392,8 @@ body[data-time='night'] .terrain-cargo-ship {
 /* ===== MEADOW: Rabbits ===== */
 .terrain-rabbit {
   position: absolute;
-  width: var(--rabbit-size, 6px);
-  height: calc(var(--rabbit-size, 6px) * 0.8);
+  width: var(--rabbit-size, 15px);
+  height: calc(var(--rabbit-size, 15px) * 0.8);
   opacity: 0.55;
 }
 .terrain-rabbit::before {
@@ -6431,8 +6431,8 @@ body[data-time='night'] .terrain-smoke::after {
 /* Mountain: Goats on ridgeline */
 .terrain-mtn-goat {
   position: absolute;
-  width: var(--goat-size, 5px);
-  height: calc(var(--goat-size, 5px) * 0.8);
+  width: var(--goat-size, 14px);
+  height: calc(var(--goat-size, 14px) * 0.8);
   opacity: 0.3;
 }
 .terrain-mtn-goat::before {
@@ -6551,9 +6551,9 @@ body[data-time='golden'] .terrain-water-sparkle {
   position: absolute;
   bottom: 15%;
   left: 52%;
-  width: 8px;
-  height: 7px;
-  opacity: 0.35;
+  width: 20px;
+  height: 17px;
+  opacity: 0.45;
 }
 .terrain-pelican::before {
   content: '';
@@ -6887,46 +6887,46 @@ body[data-sky-theme='mountain'][data-time='night'] .act-item {
   animation: owlGlide var(--owl-dur, 14s) ease-in-out 1 forwards;
 }
 .sky-owl-body {
-  width: 10px;
-  height: 8px;
-  background: rgba(80, 60, 40, 0.5);
+  width: 22px;
+  height: 18px;
+  background: rgba(80, 60, 40, 0.55);
   border-radius: 50% 50% 40% 40%;
   position: relative;
 }
 .sky-owl-wing {
   position: absolute;
-  width: 14px;
-  height: 5px;
-  background: rgba(90, 70, 50, 0.4);
+  width: 30px;
+  height: 11px;
+  background: rgba(90, 70, 50, 0.45);
   border-radius: 60% 60% 20% 20%;
-  top: 1px;
+  top: 3px;
 }
 .sky-owl-wing-l {
-  left: -12px;
+  left: -26px;
   transform-origin: right center;
   animation: owlFlap 1.2s ease-in-out infinite alternate;
 }
 .sky-owl-wing-r {
-  right: -12px;
+  right: -26px;
   transform: scaleX(-1);
   transform-origin: left center;
   animation: owlFlap 1.2s ease-in-out infinite alternate-reverse;
 }
 .sky-owl-eyes {
   position: absolute;
-  top: 1px;
-  left: 2px;
-  width: 6px;
-  height: 3px;
+  top: 3px;
+  left: 5px;
+  width: 12px;
+  height: 6px;
   display: flex;
-  gap: 2px;
+  gap: 4px;
 }
 .sky-owl-eye {
-  width: 2px;
-  height: 2px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: rgba(255, 220, 100, 0.7);
-  box-shadow: 0 0 3px rgba(255, 220, 100, 0.4);
+  background: rgba(255, 220, 100, 0.8);
+  box-shadow: 0 0 5px rgba(255, 220, 100, 0.5);
 }
 @keyframes owlGlide {
   0% { transform: translate(0, 0); opacity: 0; }
@@ -6950,19 +6950,19 @@ body[data-sky-theme='mountain'][data-time='night'] .act-item {
 }
 .sky-bat-wing {
   position: absolute;
-  width: 7px;
-  height: 4px;
-  border-top: 1.5px solid rgba(40, 30, 50, 0.5);
+  width: 16px;
+  height: 9px;
+  border-top: 2.5px solid rgba(40, 30, 50, 0.55);
   border-radius: 0 80% 0 0;
   top: 0;
 }
 .sky-bat-wing-l {
-  left: -8px;
+  left: -16px;
   transform-origin: right center;
   animation: batFlap 0.25s ease-in-out infinite alternate;
 }
 .sky-bat-wing-r {
-  right: -8px;
+  right: -16px;
   transform: scaleX(-1);
   transform-origin: left center;
   animation: batFlap 0.25s ease-in-out infinite alternate-reverse;
@@ -6985,8 +6985,8 @@ body[data-sky-theme='mountain'][data-time='night'] .act-item {
 /* --- MOUNTAIN: Wolf silhouette --- */
 .terrain-wolf {
   position: absolute;
-  width: var(--wolf-size, 12px);
-  height: calc(var(--wolf-size, 12px) * 0.7);
+  width: var(--wolf-size, 30px);
+  height: calc(var(--wolf-size, 30px) * 0.7);
   clip-path: polygon(
     0% 100%, 5% 60%, 10% 40%, 15% 30%, 20% 25%, 25% 22%,
     30% 15%, 32% 8%, 28% 12%, 35% 18%, 40% 20%,
@@ -7006,25 +7006,25 @@ body[data-sky-theme='mountain'][data-time='night'] .act-item {
 .terrain-hawk::before {
   content: '';
   display: block;
-  width: 16px;
-  height: 2px;
+  width: 34px;
+  height: 4px;
   background: rgba(40, 30, 20, 0.4);
   border-radius: 50%;
   transform: rotate(var(--hawk-tilt, 5deg));
 }
 @keyframes hawkCircle {
   0% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(15px, -8px) rotate(3deg); }
-  50% { transform: translate(30px, 0) rotate(0deg); }
-  75% { transform: translate(15px, 8px) rotate(-3deg); }
+  25% { transform: translate(30px, -16px) rotate(3deg); }
+  50% { transform: translate(60px, 0) rotate(0deg); }
+  75% { transform: translate(30px, 16px) rotate(-3deg); }
   100% { transform: translate(0, 0) rotate(0deg); }
 }
 
 /* --- MOUNTAIN: Bear silhouette --- */
 .terrain-bear {
   position: absolute;
-  width: var(--bear-size, 18px);
-  height: calc(var(--bear-size, 18px) * 0.6);
+  width: var(--bear-size, 42px);
+  height: calc(var(--bear-size, 42px) * 0.6);
   clip-path: polygon(
     0% 100%, 5% 55%, 8% 42%, 12% 30%, 15% 22%,
     18% 18%, 22% 15%, 25% 12%, 28% 15%, 32% 20%,
@@ -7038,8 +7038,8 @@ body[data-sky-theme='mountain'][data-time='night'] .act-item {
 /* --- MOUNTAIN: Fox silhouette --- */
 .terrain-fox {
   position: absolute;
-  width: var(--fox-size, 9px);
-  height: calc(var(--fox-size, 9px) * 0.65);
+  width: var(--fox-size, 22px);
+  height: calc(var(--fox-size, 22px) * 0.65);
   clip-path: polygon(
     0% 100%, 5% 50%, 10% 35%, 15% 20%, 18% 8%, 22% 15%,
     30% 22%, 45% 25%, 55% 22%, 65% 20%,
@@ -7081,8 +7081,8 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 .terrain-spruce {
   position: absolute;
   bottom: 0;
-  width: var(--spruce-w, 6px);
-  height: var(--spruce-h, 22px);
+  width: var(--spruce-w, 14px);
+  height: var(--spruce-h, 50px);
 }
 .terrain-spruce::before {
   content: '';
@@ -7109,8 +7109,8 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 /* --- BEACH: Dolphin jumping --- */
 .terrain-dolphin {
   position: absolute;
-  width: 18px;
-  height: 10px;
+  width: 40px;
+  height: 22px;
   clip-path: polygon(
     0% 60%, 5% 40%, 15% 20%, 30% 8%, 50% 0%,
     65% 5%, 75% 15%, 85% 30%, 90% 45%,
@@ -7125,18 +7125,18 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 @keyframes dolphinJump {
   0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; }
   10% { opacity: 0.7; }
-  30% { transform: translateY(-18px) rotate(-20deg); opacity: 0.7; }
-  50% { transform: translateY(-25px) rotate(-40deg); opacity: 0.7; }
-  70% { transform: translateY(-15px) rotate(-20deg); opacity: 0.5; }
+  30% { transform: translateY(-35px) rotate(-20deg); opacity: 0.7; }
+  50% { transform: translateY(-50px) rotate(-40deg); opacity: 0.7; }
+  70% { transform: translateY(-30px) rotate(-20deg); opacity: 0.5; }
   85% { transform: translateY(0) rotate(0deg); opacity: 0; }
 }
 
 /* --- BEACH: Crab --- */
 .terrain-crab {
   position: absolute;
-  width: 6px;
-  height: 4px;
-  background: rgba(180, 80, 50, 0.5);
+  width: 14px;
+  height: 10px;
+  background: rgba(180, 80, 50, 0.55);
   border-radius: 50% 50% 30% 30%;
   animation: crabWalk var(--crab-dur, 8s) ease-in-out infinite alternate;
 }
@@ -7144,47 +7144,47 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 .terrain-crab::after {
   content: '';
   position: absolute;
-  width: 3px;
-  height: 1px;
-  background: rgba(180, 80, 50, 0.4);
+  width: 7px;
+  height: 2px;
+  background: rgba(180, 80, 50, 0.45);
   top: 50%;
   border-radius: 2px;
 }
-.terrain-crab::before { left: -3px; transform: rotate(-20deg); }
-.terrain-crab::after { right: -3px; transform: rotate(20deg); }
+.terrain-crab::before { left: -7px; transform: rotate(-20deg); }
+.terrain-crab::after { right: -7px; transform: rotate(20deg); }
 @keyframes crabWalk {
   0% { transform: translateX(0); }
-  50% { transform: translateX(20px) scaleX(-1); }
+  50% { transform: translateX(40px) scaleX(-1); }
   100% { transform: translateX(0); }
 }
 
 /* --- BEACH: Sea turtle --- */
 .terrain-sea-turtle {
   position: absolute;
-  width: 12px;
-  height: 8px;
+  width: 28px;
+  height: 18px;
   animation: turtleSwim var(--turtle-dur, 18s) linear infinite;
   opacity: 0.4;
 }
 .terrain-sea-turtle::before {
   content: '';
   position: absolute;
-  width: 10px;
-  height: 7px;
+  width: 22px;
+  height: 15px;
   background: rgba(60, 100, 60, 0.5);
   border-radius: 50%;
-  left: 1px;
+  left: 3px;
   top: 0;
 }
 .terrain-sea-turtle::after {
   content: '';
   position: absolute;
-  width: 4px;
-  height: 3px;
+  width: 9px;
+  height: 7px;
   background: rgba(60, 100, 60, 0.4);
   border-radius: 50%;
-  left: -2px;
-  top: 2px;
+  left: -4px;
+  top: 5px;
 }
 @keyframes turtleSwim {
   0% { transform: translateX(-20px); }
@@ -7194,7 +7194,7 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 /* --- BEACH: Whale spout --- */
 .terrain-whale-spout {
   position: absolute;
-  width: 3px;
+  width: 6px;
   height: 0;
   opacity: 0;
   animation: whaleSpout 12s ease-in-out infinite;
@@ -7205,18 +7205,18 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 8px;
-  height: 6px;
+  width: 18px;
+  height: 14px;
   background: rgba(40, 60, 80, 0.35);
   border-radius: 50%;
 }
 .terrain-whale-spout::after {
   content: '';
   position: absolute;
-  bottom: 6px;
+  bottom: 14px;
   left: 50%;
   transform: translateX(-50%);
-  width: 2px;
+  width: 4px;
   background: rgba(200, 220, 240, 0.4);
   border-radius: 2px;
   height: inherit;
@@ -7224,17 +7224,17 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 @keyframes whaleSpout {
   0%, 70%, 100% { height: 0; opacity: 0; }
   75% { height: 0; opacity: 0.7; }
-  82% { height: 14px; opacity: 0.7; }
-  90% { height: 10px; opacity: 0.3; }
+  82% { height: 30px; opacity: 0.7; }
+  90% { height: 22px; opacity: 0.3; }
   95% { height: 0; opacity: 0; }
 }
 
 /* --- BEACH: Jellyfish --- */
 .terrain-jellyfish {
   position: absolute;
-  width: 6px;
-  height: 8px;
-  opacity: 0.3;
+  width: 14px;
+  height: 18px;
+  opacity: 0.4;
   animation: jellyfishDrift var(--jelly-dur, 15s) ease-in-out infinite alternate;
 }
 .terrain-jellyfish::before {
@@ -7242,8 +7242,8 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
   position: absolute;
   top: 0;
   left: 0;
-  width: 6px;
-  height: 4px;
+  width: 14px;
+  height: 9px;
   background: rgba(180, 130, 200, 0.4);
   border-radius: 50% 50% 30% 30%;
   animation: jellyPulse 2s ease-in-out infinite;
@@ -7251,12 +7251,12 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 .terrain-jellyfish::after {
   content: '';
   position: absolute;
-  top: 4px;
-  left: 1px;
-  width: 4px;
-  height: 4px;
-  border-left: 1px solid rgba(180, 130, 200, 0.25);
-  border-right: 1px solid rgba(180, 130, 200, 0.25);
+  top: 9px;
+  left: 2px;
+  width: 10px;
+  height: 9px;
+  border-left: 2px solid rgba(180, 130, 200, 0.25);
+  border-right: 2px solid rgba(180, 130, 200, 0.25);
   border-bottom: none;
 }
 @keyframes jellyfishDrift {
@@ -7273,9 +7273,9 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 .terrain-dune-grass {
   position: absolute;
   bottom: 0;
-  width: 2px;
-  height: var(--grass-h, 12px);
-  background: rgba(140, 160, 80, 0.35);
+  width: 3px;
+  height: var(--grass-h, 24px);
+  background: rgba(140, 160, 80, 0.4);
   border-radius: 2px 2px 0 0;
   transform-origin: bottom center;
   animation: duneGrassSway 3s ease-in-out infinite alternate;
@@ -7289,8 +7289,8 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 /* --- BEACH: Tropical fish school --- */
 .terrain-fish {
   position: absolute;
-  width: 5px;
-  height: 3px;
+  width: 12px;
+  height: 7px;
   clip-path: polygon(0% 50%, 30% 10%, 70% 10%, 100% 50%, 70% 90%, 30% 90%);
   animation: fishSwim var(--fish-dur, 10s) linear infinite;
   opacity: 0.35;
@@ -7303,8 +7303,8 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 /* --- MEADOW: Deer grazing --- */
 .terrain-deer {
   position: absolute;
-  width: var(--deer-size, 14px);
-  height: calc(var(--deer-size, 14px) * 0.9);
+  width: var(--deer-size, 32px);
+  height: calc(var(--deer-size, 32px) * 0.9);
   clip-path: polygon(
     0% 100%, 5% 85%, 8% 60%, 10% 45%, 15% 30%,
     18% 22%, 20% 15%, 22% 8%, 24% 12%, 26% 18%,
@@ -7321,8 +7321,8 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 /* --- MEADOW: Fox skulking --- */
 .terrain-meadow-fox {
   position: absolute;
-  width: var(--mfox-size, 10px);
-  height: calc(var(--mfox-size, 10px) * 0.55);
+  width: var(--mfox-size, 24px);
+  height: calc(var(--mfox-size, 24px) * 0.55);
   clip-path: polygon(
     0% 100%, 3% 50%, 8% 30%, 12% 15%, 15% 5%, 18% 12%,
     25% 20%, 40% 25%, 55% 22%, 68% 18%,
@@ -7336,8 +7336,8 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 /* --- MEADOW: Hedgehog --- */
 .terrain-hedgehog {
   position: absolute;
-  width: var(--hog-size, 7px);
-  height: calc(var(--hog-size, 7px) * 0.6);
+  width: var(--hog-size, 16px);
+  height: calc(var(--hog-size, 16px) * 0.6);
   background: rgba(90, 65, 40, 0.45);
   border-radius: 45% 55% 40% 40%;
   overflow: hidden;
@@ -7362,26 +7362,26 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 /* --- MEADOW: Frog on lily pad --- */
 .terrain-frog {
   position: absolute;
-  width: 10px;
-  height: 7px;
+  width: 22px;
+  height: 15px;
 }
 .terrain-frog::before {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 1px;
-  width: 8px;
-  height: 4px;
+  left: 2px;
+  width: 18px;
+  height: 9px;
   background: rgba(60, 130, 60, 0.25);
   border-radius: 50%;
 }
 .terrain-frog::after {
   content: '';
   position: absolute;
-  bottom: 3px;
-  left: 2px;
-  width: 5px;
-  height: 4px;
+  bottom: 7px;
+  left: 5px;
+  width: 11px;
+  height: 9px;
   background: rgba(60, 140, 50, 0.4);
   border-radius: 50% 50% 40% 40%;
 }
@@ -7389,8 +7389,8 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 /* --- MEADOW: Lily pad --- */
 .terrain-lilypad {
   position: absolute;
-  width: var(--pad-size, 8px);
-  height: calc(var(--pad-size, 8px) * 0.45);
+  width: var(--pad-size, 18px);
+  height: calc(var(--pad-size, 18px) * 0.45);
   background: rgba(50, 120, 50, 0.3);
   border-radius: 50%;
 }
@@ -7398,8 +7398,8 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 /* --- MEADOW: Squirrel in tree --- */
 .terrain-squirrel {
   position: absolute;
-  width: 5px;
-  height: 7px;
+  width: 12px;
+  height: 16px;
   clip-path: polygon(
     30% 100%, 25% 60%, 20% 40%, 30% 20%, 45% 8%,
     55% 0%, 60% 10%, 55% 20%, 50% 35%,
@@ -7413,8 +7413,8 @@ body[data-time='evening'] .terrain-aurora { opacity: 0.4; }
 /* --- MEADOW: Owl perched (night only, visible on tree) --- */
 .terrain-owl-perched {
   position: absolute;
-  width: 7px;
-  height: 9px;
+  width: 16px;
+  height: 20px;
   opacity: 0;
   transition: opacity 2s ease;
 }
@@ -7425,8 +7425,8 @@ body[data-time='evening'] .terrain-owl-perched { opacity: 1; }
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 7px;
-  height: 8px;
+  width: 16px;
+  height: 18px;
   background: rgba(80, 60, 40, 0.5);
   border-radius: 40% 40% 35% 35%;
 }
@@ -7434,19 +7434,19 @@ body[data-time='evening'] .terrain-owl-perched { opacity: 1; }
   content: '';
   position: absolute;
   top: 0;
-  left: 1.5px;
-  width: 4px;
-  height: 2px;
-  background: rgba(255, 220, 80, 0.5);
+  left: 3px;
+  width: 10px;
+  height: 5px;
+  background: rgba(255, 220, 80, 0.6);
   border-radius: 50%;
-  box-shadow: 0 0 3px rgba(255, 220, 80, 0.3);
+  box-shadow: 0 0 5px rgba(255, 220, 80, 0.4);
 }
 
 /* --- MEADOW: Songbird on fence --- */
 .terrain-songbird {
   position: absolute;
-  width: 6px;
-  height: 5px;
+  width: 14px;
+  height: 12px;
   clip-path: polygon(
     0% 50%, 10% 30%, 25% 15%, 40% 8%, 55% 5%,
     70% 10%, 80% 20%, 85% 35%, 90% 50%,
@@ -7460,9 +7460,9 @@ body[data-time='evening'] .terrain-owl-perched { opacity: 1; }
 /* --- MEADOW: Bee buzzing --- */
 .terrain-bee {
   position: absolute;
-  width: 4px;
-  height: 3px;
-  background: rgba(200, 170, 40, 0.5);
+  width: 9px;
+  height: 7px;
+  background: rgba(200, 170, 40, 0.55);
   border-radius: 50%;
   animation: beeBuzz var(--bee-dur, 6s) ease-in-out infinite;
 }
@@ -7485,20 +7485,20 @@ body[data-time='evening'] .terrain-owl-perched { opacity: 1; }
 .terrain-bee::after {
   content: '';
   position: absolute;
-  top: -1px;
-  left: 1px;
-  width: 3px;
-  height: 2px;
+  top: -2px;
+  left: 2px;
+  width: 7px;
+  height: 4px;
   background: rgba(200, 200, 200, 0.3);
   border-radius: 50%;
   animation: beeWing 0.15s linear infinite alternate;
 }
 @keyframes beeBuzz {
   0% { transform: translate(0, 0); }
-  20% { transform: translate(6px, -4px); }
-  40% { transform: translate(2px, -8px); }
-  60% { transform: translate(8px, -2px); }
-  80% { transform: translate(-2px, -6px); }
+  20% { transform: translate(14px, -8px); }
+  40% { transform: translate(5px, -16px); }
+  60% { transform: translate(18px, -4px); }
+  80% { transform: translate(-4px, -12px); }
   100% { transform: translate(0, 0); }
 }
 @keyframes beeWing { 0% { opacity: 0.3; } 100% { opacity: 0.6; } }

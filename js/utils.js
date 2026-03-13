@@ -1366,9 +1366,9 @@ function renderMountainTerrain(container) {
 
   // Eagles soaring above the peaks
   var eaglePositions = [
-    { left: 25, bottom: 55, size: 12, delay: 0 },
-    { left: 65, bottom: 60, size: 10, delay: 4 },
-    { left: 45, bottom: 65, size: 8, delay: 8 }
+    { left: 25, bottom: 55, size: 28, delay: 0 },
+    { left: 65, bottom: 60, size: 24, delay: 4 },
+    { left: 45, bottom: 65, size: 20, delay: 8 }
   ];
   for (var e = 0; e < eaglePositions.length; e++) {
     var ep = eaglePositions[e];
@@ -1417,9 +1417,9 @@ function renderMountainTerrain(container) {
 
   // Deer silhouettes grazing near the foothills
   var deerPositions = [
-    { left: 20, bottom: 12, size: 10, flip: false },
-    { left: 24, bottom: 11, size: 8, flip: true },
-    { left: 75, bottom: 10, size: 9, flip: false }
+    { left: 20, bottom: 12, size: 26, flip: false },
+    { left: 24, bottom: 11, size: 22, flip: true },
+    { left: 75, bottom: 10, size: 24, flip: false }
   ];
   for (var d = 0; d < deerPositions.length; d++) {
     var dp = deerPositions[d];
@@ -1491,8 +1491,8 @@ function renderMountainTerrain(container) {
 
   // Mountain goats on distant ridgeline
   var goatPositions = [
-    { left: 30, bottom: 30, size: 5 },
-    { left: 74, bottom: 28, size: 4 }
+    { left: 30, bottom: 30, size: 14 },
+    { left: 74, bottom: 28, size: 12 }
   ];
   for (var mg = 0; mg < goatPositions.length; mg++) {
     var gp = goatPositions[mg];
@@ -1504,8 +1504,8 @@ function renderMountainTerrain(container) {
 
   // Wolf silhouettes on ridgeline (more visible at dusk/night)
   var wolfPos = [
-    { left: 18, bottom: 26, size: 12, flip: false },
-    { left: 82, bottom: 24, size: 10, flip: true }
+    { left: 18, bottom: 26, size: 30, flip: false },
+    { left: 82, bottom: 24, size: 26, flip: true }
   ];
   for (var wf = 0; wf < wolfPos.length; wf++) {
     var wp = wolfPos[wf];
@@ -1532,13 +1532,13 @@ function renderMountainTerrain(container) {
   // Bear silhouette in forest clearing
   var bear = document.createElement('div');
   bear.className = 'terrain-bear';
-  bear.style.cssText = 'left:45%;bottom:14%;--bear-size:16px';
+  bear.style.cssText = 'left:45%;bottom:14%;--bear-size:40px';
   container.appendChild(bear);
 
   // Fox near the cabin
   var fox = document.createElement('div');
   fox.className = 'terrain-fox';
-  fox.style.cssText = 'left:58%;bottom:17%;--fox-size:8px';
+  fox.style.cssText = 'left:58%;bottom:17%;--fox-size:22px';
   container.appendChild(fox);
 
   // Northern lights (visible at night/evening only via CSS)
@@ -1548,13 +1548,13 @@ function renderMountainTerrain(container) {
 
   // Additional spruce trees for denser forest
   var sprucePos = [
-    { left: 8, bottom: 10, w: 5, h: 18 },
-    { left: 22, bottom: 12, w: 7, h: 24 },
-    { left: 53, bottom: 11, w: 6, h: 20 },
-    { left: 71, bottom: 13, w: 5, h: 16 },
-    { left: 88, bottom: 10, w: 7, h: 22 },
-    { left: 35, bottom: 14, w: 4, h: 14 },
-    { left: 95, bottom: 9, w: 5, h: 18 }
+    { left: 8, bottom: 10, w: 12, h: 42 },
+    { left: 22, bottom: 12, w: 16, h: 55 },
+    { left: 53, bottom: 11, w: 14, h: 46 },
+    { left: 71, bottom: 13, w: 12, h: 38 },
+    { left: 88, bottom: 10, w: 16, h: 50 },
+    { left: 35, bottom: 14, w: 10, h: 32 },
+    { left: 95, bottom: 9, w: 12, h: 42 }
   ];
   for (var sp = 0; sp < sprucePos.length; sp++) {
     var spp = sprucePos[sp];
@@ -1645,10 +1645,10 @@ function renderBeachTerrain(container) {
 
   // Seagulls gliding over the ocean
   var gullPositions = [
-    { left: 20, bottom: 52, size: 10, delay: 0 },
-    { left: 40, bottom: 58, size: 8, delay: 3 },
-    { left: 70, bottom: 55, size: 11, delay: 6 },
-    { left: 55, bottom: 62, size: 7, delay: 9 }
+    { left: 20, bottom: 52, size: 24, delay: 0 },
+    { left: 40, bottom: 58, size: 20, delay: 3 },
+    { left: 70, bottom: 55, size: 26, delay: 6 },
+    { left: 55, bottom: 62, size: 18, delay: 9 }
   ];
   for (var g = 0; g < gullPositions.length; g++) {
     var gp = gullPositions[g];
@@ -1853,7 +1853,7 @@ function renderBeachTerrain(container) {
     for (var blade = 0; blade < 3; blade++) {
       var grass = document.createElement('div');
       grass.className = 'terrain-dune-grass';
-      grass.style.cssText = 'left:' + (dunePositions[dg] + blade * 0.6) + '%;bottom:7%;--grass-h:' + (8 + Math.random() * 8) + 'px;--grass-delay:' + (blade * 0.4) + 's';
+      grass.style.cssText = 'left:' + (dunePositions[dg] + blade * 0.6) + '%;bottom:7%;--grass-h:' + (18 + Math.random() * 16) + 'px;--grass-delay:' + (blade * 0.4) + 's';
       container.appendChild(grass);
     }
   }
@@ -2078,8 +2078,8 @@ function renderMeadowTerrain(container) {
 
   // Rabbits near the fence
   var rabbitPositions = [
-    { left: 12, bottom: 7, size: 6, flip: false },
-    { left: 28, bottom: 6, size: 5, flip: true }
+    { left: 12, bottom: 7, size: 16, flip: false },
+    { left: 28, bottom: 6, size: 14, flip: true }
   ];
   for (var rb = 0; rb < rabbitPositions.length; rb++) {
     var rbp = rabbitPositions[rb];
@@ -2213,9 +2213,9 @@ function renderMeadowTerrain(container) {
 
   // Deer grazing in meadow
   var deerPos = [
-    { left: 28, bottom: 8, size: 14, flip: false },
-    { left: 62, bottom: 10, size: 12, flip: true },
-    { left: 85, bottom: 7, size: 10, flip: false }
+    { left: 28, bottom: 8, size: 32, flip: false },
+    { left: 62, bottom: 10, size: 28, flip: true },
+    { left: 85, bottom: 7, size: 24, flip: false }
   ];
   for (var dr = 0; dr < deerPos.length; dr++) {
     var dp = deerPos[dr];
@@ -2229,13 +2229,13 @@ function renderMeadowTerrain(container) {
   // Fox skulking through grass
   var meadowFox = document.createElement('div');
   meadowFox.className = 'terrain-meadow-fox';
-  meadowFox.style.cssText = 'left:42%;bottom:5%;--mfox-size:10px';
+  meadowFox.style.cssText = 'left:42%;bottom:5%;--mfox-size:24px';
   container.appendChild(meadowFox);
 
   // Hedgehog near flower bushes
   var hedgehogPos = [
-    { left: 18, bottom: 3.5, size: 7 },
-    { left: 70, bottom: 4, size: 6 }
+    { left: 18, bottom: 3.5, size: 16 },
+    { left: 70, bottom: 4, size: 14 }
   ];
   for (var hg = 0; hg < hedgehogPos.length; hg++) {
     var hgp = hedgehogPos[hg];
@@ -2253,9 +2253,9 @@ function renderMeadowTerrain(container) {
 
   // Lily pads on the pond
   var lilyPos = [
-    { left: 74, bottom: 5, size: 8 },
-    { left: 80, bottom: 4.5, size: 6 },
-    { left: 77, bottom: 6, size: 7 }
+    { left: 74, bottom: 5, size: 18 },
+    { left: 80, bottom: 4.5, size: 14 },
+    { left: 77, bottom: 6, size: 16 }
   ];
   for (var lp = 0; lp < lilyPos.length; lp++) {
     var lpp = lilyPos[lp];
