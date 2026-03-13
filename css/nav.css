@@ -1286,7 +1286,7 @@ body.touring .bn {
 /* ===== SHELL ===== */
 .shell {
   display: none;
-  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(72px + max(env(safe-area-inset-bottom, 20px), 20px));
   min-height: 100vh;
   min-height: 100dvh;
   min-height: var(--real-h, 100dvh);
@@ -1402,7 +1402,9 @@ body.touring .bn {
   display: none;
   justify-content: space-around;
   padding: 8px 0 0;
-  padding-bottom: env(safe-area-inset-bottom, 8px);
+  /* env() can return 0 on some iOS PWA builds — use max() to guarantee at
+     least 20px so the nav always covers the home-indicator safe-area zone. */
+  padding-bottom: max(env(safe-area-inset-bottom, 20px), 20px);
   transition:
     background 4s ease,
     border-color 4s ease,
@@ -1482,7 +1484,7 @@ body.touring .bn {
     width 0.35s cubic-bezier(0.4, 0, 0.15, 1);
   z-index: 0;
   pointer-events: none;
-  bottom: env(safe-area-inset-bottom, 8px);
+  bottom: max(env(safe-area-inset-bottom, 20px), 20px);
 }
 
 /* Notification badges on nav tabs */
