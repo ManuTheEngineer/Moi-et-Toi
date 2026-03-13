@@ -417,7 +417,7 @@ function computeRelationshipHealth() {
   Promise.all([
     db.ref('moods').orderByChild('timestamp').limitToLast(60).once('value'),
     db.ref('letters').orderByChild('timestamp').limitToLast(20).once('value'),
-    db.ref('goals').once('value'),
+    db.ref('dreams').once('value'),
     db.ref('games/wyr').once('value'),
     db.ref('games/tot').once('value'),
     db.ref('workoutLogs').orderByChild('timestamp').limitToLast(30).once('value'),
@@ -490,9 +490,9 @@ function computeRelationshipHealth() {
     if (goalSnap.exists())
       goalSnap.forEach(c => {
         const g = c.val();
-        if (g.type === 'shared') {
+        if (g.category === 'shared') {
           sharedTotal++;
-          if (g.completedAt) sharedDone++;
+          if (g.achieved) sharedDone++;
         }
       });
     const goalScore = sharedTotal ? Math.min(1, sharedDone / sharedTotal + 0.3) : 0.3;
