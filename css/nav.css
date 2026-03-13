@@ -1404,6 +1404,18 @@ body.touring .bn {
     border-color 4s ease,
     transform 0.25s ease;
 }
+/* Solid backing in the safe-area-inset-bottom region so the bottom
+   looks consistent regardless of what content is behind the nav */
+.bnav::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-bottom, 8px);
+  background: var(--bg);
+  z-index: -1;
+}
 .bn {
   display: flex;
   flex-direction: column;
