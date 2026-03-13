@@ -1,0 +1,1246 @@
+        <div class="ctn">
+          <!-- Hydration -->
+          <div class="nh-section-label">Hydration</div>
+          <div class="nh-hydration-card">
+            <div class="nh-water-drops" id="hydration-track">
+              <button class="nh-water-drop" onclick="logWater(1)">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" /></svg>
+              </button>
+              <button class="nh-water-drop" onclick="logWater(2)">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" /></svg>
+              </button>
+              <button class="nh-water-drop" onclick="logWater(3)">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" /></svg>
+              </button>
+              <button class="nh-water-drop" onclick="logWater(4)">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" /></svg>
+              </button>
+              <button class="nh-water-drop" onclick="logWater(5)">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" /></svg>
+              </button>
+              <button class="nh-water-drop" onclick="logWater(6)">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" /></svg>
+              </button>
+              <button class="nh-water-drop" onclick="logWater(7)">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" /></svg>
+              </button>
+              <button class="nh-water-drop" onclick="logWater(8)">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" /></svg>
+              </button>
+            </div>
+            <div class="nh-water-label"><span id="water-count">0</span> / 8 glasses</div>
+            <div class="t-xs c-t3 mt-8" id="nutr-partner-water"></div>
+          </div>
+
+          <!-- Meal Planning -->
+          <div class="nh-section-label">What should we eat?</div>
+          <div class="card mb-12">
+            <div class="t-body c-cream mb-8">Plan meals together so you both eat well</div>
+            <div class="d-flex gap-8 mb-10">
+              <input type="text" id="meal-plan-input" placeholder="Meal idea for today..." class="flex-1" />
+              <select id="meal-plan-slot" class="select-field" style="width: auto">
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner" selected>Dinner</option>
+              </select>
+            </div>
+            <button class="dq-submit" onclick="addMealPlan()">Add</button>
+            <div id="meal-plan-list" class="mt-12"></div>
+          </div>
+
+          <!-- Shared Grocery List -->
+          <div class="nh-section-label">Grocery List</div>
+          <div class="nh-grocery-form">
+            <input
+              type="text"
+              id="grocery-input"
+              class="nh-meal-input"
+              placeholder="Add item..."
+              onkeydown="if (event.key === 'Enter') addGroceryItem();"
+              style="flex: 1"
+            />
+            <button class="nh-meal-add-btn" onclick="addGroceryItem()">+</button>
+          </div>
+          <div id="grocery-list"><div class="empty">Build your shared grocery list</div></div>
+
+          <!-- Recipes -->
+          <div class="nh-section-label">Our Recipes</div>
+          <div class="nh-plan-card">
+            <input type="text" id="recipe-name" placeholder="Recipe name" class="nh-meal-input mb-8" />
+            <textarea
+              id="recipe-desc"
+              placeholder="Ingredients &amp; instructions..."
+              class="nh-recipe-textarea mb-8"
+            ></textarea>
+            <button class="nh-action-btn" onclick="saveRecipe()">Save Recipe</button>
+          </div>
+          <div id="recipe-list"><div class="empty">Save your favorite recipes</div></div>
+        </div>
+      </div>
+
+      <!-- ===== CALENDAR ===== -->
+      <div class="pg" id="pg-calendar">
+        <div class="ctn">
+          <!-- Month Navigation -->
+          <div class="cal-header">
+            <button class="cal-nav" onclick="calNav(-1)">&#x2190;</button>
+            <div class="cal-month" id="cal-month-label">March 2026</div>
+            <button class="cal-nav" onclick="calNav(1)">&#x2192;</button>
+          </div>
+
+          <!-- Day Labels -->
+          <div class="cal-grid mb-4">
+            <div class="cal-day-label">S</div>
+            <div class="cal-day-label">M</div>
+            <div class="cal-day-label">T</div>
+            <div class="cal-day-label">W</div>
+            <div class="cal-day-label">T</div>
+            <div class="cal-day-label">F</div>
+            <div class="cal-day-label">S</div>
+          </div>
+
+          <!-- Calendar Grid -->
+          <div class="cal-grid" id="cal-grid"></div>
+
+          <!-- Selected Day Events -->
+          <div class="sec-head mt-20">
+            <div class="sec-dot sd-teal"></div>
+            <div class="sec-title" id="cal-day-label">Today</div>
+          </div>
+          <div id="cal-events"><div class="empty">No events for this day</div></div>
+
+          <!-- Add Event -->
+          <div class="sec-head">
+            <div class="sec-dot sd-teal"></div>
+            <div class="sec-title">Add Event</div>
+          </div>
+          <div class="card">
+            <input type="text" id="cal-event-title" placeholder="Event title" class="quiz-q mb-8" />
+            <div class="d-flex gap-8 mb-8">
+              <input type="date" id="cal-event-date" class="form-input-inline" />
+              <input type="time" id="cal-event-time" class="form-input-inline" />
+            </div>
+            <div class="d-flex gap-8 mb-8">
+              <select id="cal-event-type" class="form-input-inline">
+                <option value="joint">Joint</option>
+                <option value="partner1">Partner 1</option>
+                <option value="partner2">Partner 2</option>
+                <option value="recurring">Recurring</option>
+                <option value="countdown">Countdown</option>
+              </select>
+            </div>
+            <textarea
+              id="cal-event-notes"
+              placeholder="Notes..."
+              class="form-textarea mb-8"
+              style="min-height: 40px"
+            ></textarea>
+            <button class="dq-submit" onclick="addCalEvent()">Add Event</button>
+          </div>
+
+          <!-- Countdowns -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Countdowns</div>
+          </div>
+          <div class="countdown-grid" id="countdown-grid"><div class="empty">No countdowns yet</div></div>
+          <div class="card d-none" id="cd-form">
+            <input type="text" id="cd-title" placeholder="What are you counting down to?" class="mb-8" />
+            <div class="d-flex gap-8 mb-8">
+              <input type="date" id="cd-date" class="form-input-inline flex-2" />
+              <input type="text" id="cd-emoji" placeholder="Emoji" maxlength="2" style="width: 60px; text-align: center;" />
+            </div>
+            <button class="dq-submit" onclick="saveCountdown()">Add countdown</button>
+          </div>
+
+          <!-- Upcoming -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Upcoming</div>
+          </div>
+          <div id="cal-upcoming"><div class="empty">No upcoming events</div></div>
+
+          <!-- Shared Tasks (To-Do + Chores) -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Shared Tasks</div>
+          </div>
+          <div class="bl-form">
+            <input
+              type="text"
+              id="todo-input"
+              placeholder="Add a task..."
+              onkeydown="if (event.key === 'Enter') addSharedTodo();"
+            />
+            <select id="todo-who" class="select-field">
+              <option value="shared">Both</option>
+              <option value="partner1">Partner 1</option>
+              <option value="partner2">Partner 2</option>
+            </select>
+            <button onclick="addSharedTodo()">+</button>
+          </div>
+          <div id="shared-todo-list"><div class="empty">Tasks for both of you</div></div>
+        </div>
+      </div>
+      <!-- ===== KNOW YOUR PERSON ===== -->
+      <div class="pg" id="pg-knowyou">
+        <div class="ctn">
+          <!-- Love Map Score -->
+          <div class="card-hero kyp-hero">
+            <div class="d-flex items-center justify-between">
+              <div>
+                <div class="grow-progress-label">Love Map Score</div>
+                <div class="grow-progress-val" id="kyp-score">0%</div>
+              </div>
+              <button class="dq-submit btn-rose" onclick="startKYPQuiz()" style="padding: 8px 16px; font-size: 11px">
+                Quiz Me!
+              </button>
+            </div>
+          </div>
+
+          <!-- Identity Profile -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Identity Profile</div>
+          </div>
+          <div id="id-quiz-start">
+            <div class="card text-center p-20" style="padding: 24px">
+              <div class="id-quiz-emoji">🪞</div>
+              <div class="id-quiz-title">Discover Your Identity</div>
+              <div class="id-quiz-desc">
+                Take a quick quiz about your personality, values, and preferences. Your partner will see your results!
+              </div>
+              <button class="dq-submit btn-lavender" onclick="startIdentityQuiz()">Start Quiz</button>
+            </div>
+          </div>
+          <div id="id-quiz-active" class="d-none"></div>
+          <div id="id-quiz-results"></div>
+
+          <!-- "Do You Know?" Quiz -->
+          <button class="nh-action-btn" id="kyp-quiz-btn" onclick="startKYPQuiz();showEl('kyp-quiz');hideEl('kyp-quiz-btn')" style="width:100%;margin-bottom:12px">Quiz Me! How well do you know your partner?</button>
+          <div id="kyp-quiz" class="d-none">
+            <div class="card mb-16" style="border-color: var(--rose)">
+              <div class="kyp-quiz-label">Do You Know?</div>
+              <div class="kyp-quiz-q" id="kyp-quiz-q"></div>
+              <input type="text" id="kyp-quiz-answer" placeholder="Your answer..." class="mb-8" />
+              <div class="d-flex gap-8">
+                <button class="dq-submit flex-1 btn-rose" onclick="checkKYPQuiz()">Check</button>
+                <button class="btn-sm" onclick="skipKYPQuiz()">Skip</button>
+              </div>
+              <div id="kyp-quiz-result" class="kyp-quiz-result"></div>
+              <div id="kyp-quiz-stats" class="kyp-quiz-stats"></div>
+            </div>
+          </div>
+
+          <!-- Favorites (expanded to 20) -->
+          <div class="sec-head">
+            <div class="sec-dot sd-rose"></div>
+            <div class="sec-title">Favorites</div>
+          </div>
+          <div class="kyp-grid" id="kyp-favorites">
+            <div class="kyp-item card" onclick="editKYP('food')">
+              <div class="kyp-fav-label">Food</div>
+              <div class="kyp-fav-val" id="kyp-food">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('color')">
+              <div class="kyp-fav-label">Color</div>
+              <div class="kyp-fav-val" id="kyp-color">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('movie')">
+              <div class="kyp-fav-label">Movie</div>
+              <div class="kyp-fav-val" id="kyp-movie">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('song')">
+              <div class="kyp-fav-label">Song</div>
+              <div class="kyp-fav-val" id="kyp-song">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('book')">
+              <div class="kyp-fav-label">Book</div>
+              <div class="kyp-fav-val" id="kyp-book">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('place')">
+              <div class="kyp-fav-label">Place</div>
+              <div class="kyp-fav-val" id="kyp-place">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('season')">
+              <div class="kyp-fav-label">Season</div>
+              <div class="kyp-fav-val" id="kyp-season">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('coffee')">
+              <div class="kyp-fav-label">Coffee Order</div>
+              <div class="kyp-fav-val" id="kyp-coffee">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('drink')">
+              <div class="kyp-fav-label">Drink</div>
+              <div class="kyp-fav-val" id="kyp-drink">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('flower')">
+              <div class="kyp-fav-label">Flower</div>
+              <div class="kyp-fav-val" id="kyp-flower">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('hobby')">
+              <div class="kyp-fav-label">Hobby</div>
+              <div class="kyp-fav-val" id="kyp-hobby">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('sport')">
+              <div class="kyp-fav-label">Sport</div>
+              <div class="kyp-fav-val" id="kyp-sport">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('restaurant')">
+              <div class="kyp-fav-label">Restaurant</div>
+              <div class="kyp-fav-val" id="kyp-restaurant">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('vacationspot')">
+              <div class="kyp-fav-label">Vacation Spot</div>
+              <div class="kyp-fav-val" id="kyp-vacationspot">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('scent')">
+              <div class="kyp-fav-label">Scent</div>
+              <div class="kyp-fav-val" id="kyp-scent">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('tvshow')">
+              <div class="kyp-fav-label">TV Show</div>
+              <div class="kyp-fav-val" id="kyp-tvshow">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('dessert')">
+              <div class="kyp-fav-label">Dessert</div>
+              <div class="kyp-fav-val" id="kyp-dessert">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('comfortfood')">
+              <div class="kyp-fav-label">Comfort Food</div>
+              <div class="kyp-fav-val" id="kyp-comfortfood">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('quote')">
+              <div class="kyp-fav-label">Fav Quote</div>
+              <div class="kyp-fav-val" id="kyp-quote">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('fear')">
+              <div class="kyp-fav-label">Biggest Fear</div>
+              <div class="kyp-fav-val" id="kyp-fear">Tap to add</div>
+            </div>
+          </div>
+
+          <!-- Sizes & Preferences -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Sizes &amp; Preferences</div>
+          </div>
+          <div class="kyp-grid" id="kyp-sizes">
+            <div class="kyp-item card" onclick="editKYP('shirt')">
+              <div class="kyp-fav-label">Shirt</div>
+              <div class="kyp-fav-val" id="kyp-shirt">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('pants')">
+              <div class="kyp-fav-label">Pants</div>
+              <div class="kyp-fav-val" id="kyp-pants">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('shoe')">
+              <div class="kyp-fav-label">Shoe</div>
+              <div class="kyp-fav-val" id="kyp-shoe">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('ring')">
+              <div class="kyp-fav-label">Ring</div>
+              <div class="kyp-fav-val" id="kyp-ring">Tap to add</div>
+            </div>
+          </div>
+
+          <!-- How Well Do You Know Me -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">How Well Do You Know Me?</div>
+          </div>
+          <div class="card-game">
+            <div class="card-h">
+              <span class="card-t">Your questions</span><span class="card-s">For <span class="pname"></span></span>
+            </div>
+            <div class="quiz-form">
+              <input class="quiz-q" id="quiz-q" placeholder="Write a question about yourself..." />
+              <input class="quiz-q" id="quiz-a" placeholder="The correct answer..." />
+              <button class="dq-submit" onclick="submitQuizQ()">Add Question</button>
+            </div>
+            <div id="quiz-mine"></div>
+          </div>
+          <div class="card-game mt-12">
+            <div class="card-h">
+              <span class="card-t"><span class="pname"></span>'s questions</span
+              ><span class="card-s">Test yourself</span>
+            </div>
+            <div id="quiz-theirs"><div class="empty">Waiting for your partner to write some questions</div></div>
+          </div>
+
+          <!-- Remember This -->
+          <div class="sec-head">
+            <div class="sec-dot sd-amber"></div>
+            <div class="sec-title">Remember This</div>
+          </div>
+          <div class="bl-form">
+            <input type="text" id="kyp-note-input" placeholder="Something to remember about them..." class="quiz-q" />
+            <button onclick="addKYPNote()">+</button>
+          </div>
+          <div id="kyp-notes"><div class="empty">Jot down things to remember</div></div>
+
+          <!-- Love Notes (private) -->
+          <div class="sec-head">
+            <div class="sec-dot sd-rose"></div>
+            <div class="sec-title">Private Love Notes</div>
+          </div>
+          <div class="card">
+            <textarea
+              id="kyp-love-note"
+              placeholder="Things that make them light up..."
+              class="form-textarea form-textarea-min mb-8"
+            ></textarea>
+            <button class="dq-submit" onclick="addLoveNote()">Save Note</button>
+          </div>
+          <div id="kyp-love-notes"><div class="empty">Your private notes about what they love</div></div>
+
+          <!-- Note Categories -->
+          <div class="sec-head">
+            <div class="sec-dot sd-emerald"></div>
+            <div class="sec-title">Things That Make Them Happy</div>
+          </div>
+          <div class="card mb-4">
+            <div class="d-flex gap-8">
+              <input
+                type="text"
+                id="kyp-cat-happy"
+                placeholder="Something that makes them light up..."
+                class="flex-1"
+              />
+              <button class="dq-submit p-8-14" onclick="saveKYPCategory('happy')">+</button>
+            </div>
+          </div>
+          <div id="kyp-cat-list-happy"><div class="empty t-sm">Nothing added yet</div></div>
+
+          <div class="sec-head">
+            <div class="sec-dot sd-amber"></div>
+            <div class="sec-title">Pet Peeves</div>
+          </div>
+          <div class="card mb-4">
+            <div class="d-flex gap-8">
+              <input type="text" id="kyp-cat-petpeeves" placeholder="Things they can't stand..." class="flex-1" />
+              <button class="dq-submit p-8-14" onclick="saveKYPCategory('petpeeves')">+</button>
+            </div>
+          </div>
+          <div id="kyp-cat-list-petpeeves"><div class="empty t-sm">Nothing added yet</div></div>
+
+          <div class="sec-head">
+            <div class="sec-dot sd-teal"></div>
+            <div class="sec-title">Their Dreams</div>
+          </div>
+          <div class="card mb-4">
+            <div class="d-flex gap-8">
+              <input type="text" id="kyp-cat-dreams" placeholder="Big dreams and aspirations..." class="flex-1" />
+              <button class="dq-submit p-8-14" onclick="saveKYPCategory('dreams')">+</button>
+            </div>
+          </div>
+          <div id="kyp-cat-list-dreams"><div class="empty t-sm">Nothing added yet</div></div>
+
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Their Fears</div>
+          </div>
+          <div class="card mb-4">
+            <div class="d-flex gap-8">
+              <input type="text" id="kyp-cat-fears" placeholder="Things that worry or scare them..." class="flex-1" />
+              <button class="dq-submit p-8-14" onclick="saveKYPCategory('fears')">+</button>
+            </div>
+          </div>
+          <div id="kyp-cat-list-fears"><div class="empty t-sm">Nothing added yet</div></div>
+        </div>
+      </div>
+
+      <!-- ===== PHOTO MEMORIES ===== -->
+      <div class="pg" id="pg-memories">
+        <div class="ctn">
+          <!-- On This Day -->
+          <div id="mem-onthisday" class="d-none">
+            <div class="card-story">
+              <div class="otd-label">On This Day</div>
+              <div id="mem-otd-content"></div>
+            </div>
+          </div>
+
+          <!-- Memory Prompt -->
+          <div class="mem-prompt-card" id="mem-prompt">
+            <div class="mem-prompt-label">Memory Prompt</div>
+            <div class="mem-prompt-text" id="mem-prompt-text"></div>
+            <button class="btn-sm" onclick="useMemoryPrompt()" class="btn-rose btn-sm">Add Memory</button>
+          </div>
+
+          <!-- View Toggle -->
+          <div class="mem-view-toggle">
+            <button class="mem-view-btn active" id="mem-view-grid-btn" onclick="toggleMemoryView('grid')">Grid</button>
+            <button class="mem-view-btn" id="mem-view-tl-btn" onclick="toggleMemoryView('timeline')">Timeline</button>
+          </div>
+
+          <!-- Album Filter Bar -->
+          <div class="mem-album-bar" id="mem-album-bar">
+            <button class="mem-album-pill active" onclick="filterMemAlbum('all')">All</button>
+            <button class="mem-album-pill" onclick="filterMemAlbum('favorites')">Favorites</button>
+            <button class="mem-album-pill" onclick="filterMemAlbum('Dates')">Dates</button>
+            <button class="mem-album-pill" onclick="filterMemAlbum('Trips')">Trips</button>
+            <button class="mem-album-pill" onclick="filterMemAlbum('Home')">Home</button>
+            <button class="mem-album-pill" onclick="filterMemAlbum('Milestones')">Milestones</button>
+            <button class="mem-album-pill" onclick="addCustomAlbum()" class="mem-album-dashed">+ New</button>
+          </div>
+
+          <!-- Upload -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Add Memory</div>
+          </div>
+          <div class="card">
+            <div class="mem-upload" onclick="document.getElementById('mem-file').click()">
+              <div class="mem-upload-icon">&#x1F4F7;</div>
+              <div class="mem-upload-text">Tap to upload a photo</div>
+            </div>
+            <input type="file" id="mem-file" accept="image/*" class="d-none" onchange="previewMemory(this)" />
+            <div id="mem-preview" class="d-none" style="margin: 10px 0">
+              <img
+                id="mem-preview-img"
+                alt="Memory preview"
+                style="width: 100%; border-radius: 14px; max-height: 200px; object-fit: cover"
+              />
+            </div>
+            <input type="text" id="mem-caption" placeholder="Caption this moment..." class="mb-8" />
+            <input type="date" id="mem-date" class="form-input-inline w-full mb-8" />
+            <select id="mem-album" class="form-input-inline w-full mb-8">
+              <option value="">No album</option>
+              <option value="Dates">Dates</option>
+              <option value="Trips">Trips</option>
+              <option value="Home">Home</option>
+              <option value="Milestones">Milestones</option>
+            </select>
+            <button class="dq-submit" onclick="saveMemory()">Save Memory</button>
+          </div>
+
+          <!-- Memory Grid -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title" id="mem-section-title">All Memories</div>
+          </div>
+          <div class="mem-grid" id="mem-grid"><div class="empty" onclick="document.getElementById('mem-file').click()" style="cursor:pointer">Upload your first photo together <span style="opacity:.5">— tap here</span></div></div>
+
+          <!-- Memory Timeline (hidden by default) -->
+          <div class="mem-timeline" id="mem-timeline" class="d-none"></div>
+        </div>
+      </div>
+
+      <!-- Memory Detail Modal -->
+      <div class="mem-detail-modal" id="mem-detail-modal">
+        <button class="mem-detail-close" onclick="closeMemoryDetail()" aria-label="Close">&times;</button>
+        <img id="mem-detail-img" src="" alt="Memory photo" />
+        <div class="text-center" style="max-width: 90%">
+          <div class="mem-detail-caption" id="mem-detail-caption"></div>
+          <div class="mem-detail-meta" id="mem-detail-meta"></div>
+        </div>
+        <div class="mem-detail-actions">
+          <button id="mem-detail-fav-btn" onclick="toggleMemDetailFav()" class="mem-fav-btn">Favorite</button>
+          <select
+            id="mem-detail-album"
+            onchange="setMemDetailAlbum(this.value)"
+            class="form-input-inline cursor-pointer"
+          >
+            <option value="">No album</option>
+            <option value="Dates">Dates</option>
+            <option value="Trips">Trips</option>
+            <option value="Home">Home</option>
+            <option value="Milestones">Milestones</option>
+          </select>
+          <button onclick="deleteMemory()" class="btn-sm" style="background: var(--red); color: #fff">Delete</button>
+        </div>
+      </div>
+
+      <!-- ===== ACHIEVEMENTS ===== -->
+      <div class="pg" id="pg-achievements">
+        <div class="ctn">
+          <!-- Level & XP -->
+          <div class="card text-center mb-20">
+            <div class="level-badge" id="ach-level">1</div>
+            <div class="t-sm c-t3" style="margin: 8px 0 4px">Couple Level</div>
+            <div class="xp-bar"><div class="xp-fill" id="ach-xp-bar" class="ws-bar-init"></div></div>
+            <div class="t-sm c-t3 mt-4"><span id="ach-xp">0</span> / <span id="ach-xp-next">100</span> XP</div>
+          </div>
+
+          <!-- Badge Grid -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Badges</div>
+          </div>
+          <div class="achievement-grid" id="ach-grid">
+            <div class="achievement locked" id="ach-first-letter">
+              <div class="ach-emoji">&#x1F48C;</div>
+              <div class="ach-name">First Letter</div>
+              <div class="ach-desc">Send your first love letter</div>
+            </div>
+            <div class="achievement locked" id="ach-week-streak">
+              <div class="ach-emoji">&#x1F525;</div>
+              <div class="ach-name">Week Streak</div>
+              <div class="ach-desc">7-day check-in streak</div>
+            </div>
+            <div class="achievement locked" id="ach-game-champs">
+              <div class="ach-emoji">&#x1F3AE;</div>
+              <div class="ach-name">Game Night</div>
+              <div class="ach-desc">Play 10 games together</div>
+            </div>
+            <div class="achievement locked" id="ach-money-smart">
+              <div class="ach-emoji">&#x1F4B0;</div>
+              <div class="ach-name">Money Smart</div>
+              <div class="ach-desc">Hit your first savings goal</div>
+            </div>
+            <div class="achievement locked" id="ach-deep-divers">
+              <div class="ach-emoji">&#x1F30A;</div>
+              <div class="ach-name">Deep Divers</div>
+              <div class="ach-desc">Complete all soul-level talks</div>
+            </div>
+            <div class="achievement locked" id="ach-culture-bridge">
+              <div class="ach-emoji">&#x1F30D;</div>
+              <div class="ach-name">Culture Bridge</div>
+              <div class="ach-desc">Share 10 cultural exchanges</div>
+            </div>
+            <div class="achievement locked" id="ach-dream-big">
+              <div class="ach-emoji">&#x2B50;</div>
+              <div class="ach-name">Dream Big</div>
+              <div class="ach-desc">Add 20 dreams together</div>
+            </div>
+            <div class="achievement locked" id="ach-fit-couple">
+              <div class="ach-emoji">&#x1F4AA;</div>
+              <div class="ach-name">Fit Couple</div>
+              <div class="ach-desc">Both workout in same week</div>
+            </div>
+            <div class="achievement locked" id="ach-home-dreamers">
+              <div class="ach-emoji">&#x1F3E0;</div>
+              <div class="ach-name">Home Dreamers</div>
+              <div class="ach-desc">Plan 3 rooms together</div>
+            </div>
+            <div class="achievement locked" id="ach-memory-makers">
+              <div class="ach-emoji">&#x1F4F8;</div>
+              <div class="ach-name">Memory Makers</div>
+              <div class="ach-desc">Upload 10 photos</div>
+            </div>
+            <div class="achievement locked" id="ach-know-it-all">
+              <div class="ach-emoji">&#x1F9E0;</div>
+              <div class="ach-name">Know It All</div>
+              <div class="ach-desc">Fill all partner favorites</div>
+            </div>
+            <div class="achievement locked" id="ach-month-strong">
+              <div class="ach-emoji">&#x1F48E;</div>
+              <div class="ach-name">Month Strong</div>
+              <div class="ach-desc">30-day check-in streak</div>
+            </div>
+            <div class="achievement locked" id="ach-love-letters5">
+              <div class="ach-emoji">&#x1F48C;</div>
+              <div class="ach-name">Pen Pals</div>
+              <div class="ach-desc">Send 5 love letters</div>
+              <div class="ach-progress" id="ach-prog-letters5"></div>
+            </div>
+            <div class="achievement locked" id="ach-love-letters25">
+              <div class="ach-emoji">&#x1F4DD;</div>
+              <div class="ach-name">Love Novelist</div>
+              <div class="ach-desc">Send 25 love letters</div>
+              <div class="ach-progress" id="ach-prog-letters25"></div>
+            </div>
+            <div class="achievement locked" id="ach-challenge-first">
+              <div class="ach-emoji">&#x1F3C6;</div>
+              <div class="ach-name">Challenger</div>
+              <div class="ach-desc">Complete your first challenge</div>
+            </div>
+            <div class="achievement locked" id="ach-challenge-three">
+              <div class="ach-emoji">&#x1F451;</div>
+              <div class="ach-name">Challenge Royalty</div>
+              <div class="ach-desc">Complete 3 challenge packs</div>
+              <div class="ach-progress" id="ach-prog-challenges"></div>
+            </div>
+            <div class="achievement locked" id="ach-game-master">
+              <div class="ach-emoji">&#x1F3B2;</div>
+              <div class="ach-name">Game Master</div>
+              <div class="ach-desc">Play 50 games together</div>
+              <div class="ach-progress" id="ach-prog-games50"></div>
+            </div>
+            <div class="achievement locked" id="ach-gratitude-guru">
+              <div class="ach-emoji">&#x1F64F;</div>
+              <div class="ach-name">Gratitude Guru</div>
+              <div class="ach-desc">Log 30 gratitude entries</div>
+              <div class="ach-progress" id="ach-prog-gratitude"></div>
+            </div>
+            <div class="achievement locked" id="ach-century">
+              <div class="ach-emoji">&#x1F4AF;</div>
+              <div class="ach-name">Century Club</div>
+              <div class="ach-desc">100-day check-in streak</div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Journey Stats</div>
+          </div>
+          <div class="card" id="ach-stats">
+            <div class="ach-stat-grid">
+              <div>
+                <span class="ach-stat-label">Letters sent</span>
+                <div class="ach-stat-val" id="ach-stat-letters">0</div>
+              </div>
+              <div>
+                <span class="ach-stat-label">Games played</span>
+                <div class="ach-stat-val" id="ach-stat-games">0</div>
+              </div>
+              <div>
+                <span class="ach-stat-label">Moods logged</span>
+                <div class="ach-stat-val" id="ach-stat-moods">0</div>
+              </div>
+              <div>
+                <span class="ach-stat-label">Dreams shared</span>
+                <div class="ach-stat-val" id="ach-stat-dreams">0</div>
+              </div>
+              <div>
+                <span class="ach-stat-label">Workouts done</span>
+                <div class="ach-stat-val" id="ach-stat-workouts">0</div>
+              </div>
+              <div>
+                <span class="ach-stat-label">Memories saved</span>
+                <div class="ach-stat-val" id="ach-stat-memories">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ===== VALUES ===== -->
+      <div class="pg" id="pg-values">
+        <div class="ctn">
+          <!-- Section tabs -->
+          <div class="bl-cats" id="val-tabs" style="margin-bottom: 16px">
+            <span class="bl-cat on" onclick="showValSection('foundation', this)">Foundation</span>
+            <span class="bl-cat" onclick="showValSection('culture', this)">Culture</span>
+            <span class="bl-cat" onclick="showValSection('spiritual', this)">Spiritual</span>
+          </div>
+
+          <!-- Foundation section -->
+          <div class="val-section" id="val-foundation">
+            <div class="mod-status" id="fdn-stats"></div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-amber"></div>
+              <div class="sec-title">Our Values</div>
+            </div>
+            <div class="fdn-values" id="fdn-values"></div>
+            <div class="bl-form">
+              <input type="text" id="fdn-value-input" placeholder="A value we share..." class="quiz-q" />
+              <button onclick="addValue()">+</button>
+            </div>
+            <div id="fdn-value-list" class="stagger-in"><div class="empty">What do you both stand for?</div></div>
+
+            <!-- Shared Goals consolidated into Dreams page -->
+            <div class="sec-head">
+              <div class="sec-dot sd-teal"></div>
+              <div class="sec-title">Shared Goals</div>
+            </div>
+            <button class="nh-action-btn" onclick="go('dreams')" style="width:100%">Open Dream Board →</button>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-lavender"></div>
+              <div class="sec-title">Daily Habits</div>
+            </div>
+            <div class="bl-form">
+              <input type="text" id="habit-input" class="quiz-q" placeholder="A daily habit to track..." />
+              <button onclick="addHabit()">+</button>
+            </div>
+            <div id="habits-list" class="stagger-in"><div class="empty">Build consistency together</div></div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-rose"></div>
+              <div class="sec-title">Relationship Health</div>
+            </div>
+            <div id="rel-health-card"></div>
+
+            <!-- Commitments Section -->
+            <div class="sec-head">
+              <div class="sec-dot sd-green"></div>
+              <div class="sec-title">Commitments</div>
+            </div>
+
+            <!-- Tab switcher -->
+            <div class="agree-tabs" id="agree-tabs">
+              <button class="agree-tab active" data-tab="ours" onclick="switchCommitTab('ours')">Our Commitments</button>
+              <button class="agree-tab" data-tab="mine" onclick="switchCommitTab('mine')">My Commitments</button>
+            </div>
+
+            <!-- TAB: Our Commitments (shared, proposal-based) -->
+            <div class="agree-tab-panel active" id="agree-panel-ours">
+              <!-- Pending proposals banner -->
+              <div id="agree-pending-banner" class="agree-pending-banner d-none" onclick="scrollToProposals()">
+                <span class="agree-pending-dot"></span>
+                <span id="agree-pending-text">You have proposals to review</span>
+              </div>
+
+              <div class="agree-tab-hint">Changes require both partners to agree</div>
+
+              <!-- Active shared agreements list -->
+              <div id="agree-active-list" class="agree-list"></div>
+
+              <!-- Add new shared agreement -->
+              <div class="bl-form mt-12">
+                <input type="text" id="agree-new-input" class="quiz-q" placeholder="Propose a new commitment..." />
+                <button onclick="proposeAgreement()">Propose</button>
+              </div>
+
+              <!-- Pending proposals section -->
+              <div id="agree-proposals-section" class="d-none">
+                <div class="sec-head mt-12">
+                  <div class="sec-dot sd-amber"></div>
+                  <div class="sec-title">Pending Proposals</div>
+                </div>
+                <div id="agree-proposals-list" class="agree-list"></div>
+              </div>
+            </div>
+
+            <!-- TAB: My Commitments (private, only visible to me) -->
+            <div class="agree-tab-panel" id="agree-panel-mine">
+              <div class="agree-tab-hint">Private — only you can see these</div>
+
+              <!-- Private commitments list -->
+              <div id="agree-private-list" class="agree-list"></div>
+
+              <!-- Add new private commitment -->
+              <div class="bl-form mt-12">
+                <input type="text" id="agree-private-input" class="quiz-q" placeholder="Add a commitment to yourself..." />
+                <button onclick="addPrivateCommitment()">Add</button>
+              </div>
+            </div>
+
+            <!-- Edit modal (shared) -->
+            <div
+              id="agree-edit-overlay"
+              class="agree-edit-overlay"
+              onclick="if (event.target === this) closeAgreementEdit();"
+            >
+              <div class="agree-edit-card">
+                <div class="agree-edit-title">Propose Change</div>
+                <div class="agree-edit-original" id="agree-edit-original"></div>
+                <textarea
+                  id="agree-edit-text"
+                  class="agree-edit-textarea"
+                  placeholder="Suggest updated wording..."
+                ></textarea>
+                <div class="agree-edit-actions">
+                  <button class="agree-edit-cancel" onclick="closeAgreementEdit()">Cancel</button>
+                  <button class="agree-edit-submit" onclick="submitAgreementEdit()">Propose Change</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit modal (private) -->
+            <div
+              id="agree-private-edit-overlay"
+              class="agree-edit-overlay"
+              onclick="if (event.target === this) closePrivateEdit();"
+            >
+              <div class="agree-edit-card">
+                <div class="agree-edit-title">Edit Commitment</div>
+                <textarea
+                  id="agree-private-edit-text"
+                  class="agree-edit-textarea"
+                  placeholder="Update your commitment..."
+                ></textarea>
+                <div class="agree-edit-actions">
+                  <button class="agree-edit-cancel" onclick="closePrivateEdit()">Cancel</button>
+                  <button class="agree-edit-submit" onclick="savePrivateEdit()">Save</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-rose"></div>
+              <div class="sec-title">When We Disagree</div>
+            </div>
+            <div class="fdn-conflict-card">
+              <div class="fdn-conflict-step">
+                <span class="fdn-num">1</span><strong>Pause.</strong> Take 20 minutes apart to cool down. No texting in
+                anger.
+              </div>
+              <div class="fdn-conflict-step">
+                <span class="fdn-num">2</span><strong>Own your part.</strong> Start with "I feel ___ when ___." No
+                blame.
+              </div>
+              <div class="fdn-conflict-step">
+                <span class="fdn-num">3</span><strong>Listen to understand</strong>, not to respond. Repeat back what
+                you heard.
+              </div>
+              <div class="fdn-conflict-step">
+                <span class="fdn-num">4</span><strong>Find the need.</strong> Behind every complaint is an unmet need.
+                Find it.
+              </div>
+              <div class="fdn-conflict-step">
+                <span class="fdn-num">5</span><strong>Repair.</strong> Say what you'll do differently. Mean it. Follow
+                through.
+              </div>
+            </div>
+          </div>
+
+          <!-- Culture section -->
+          <div class="val-section d-none" id="val-culture">
+            <div class="mod-status" id="cx-stats"></div>
+
+            <div class="cx-hero">
+              <div class="cx-flag">&#x1F1F9;&#x1F1EC;<span>Togo</span></div>
+              <div class="cx-bridge">&#9825;</div>
+              <div class="cx-flag">&#x1F1FA;&#x1F1F8;<span>Texas</span></div>
+            </div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-amber"></div>
+              <div class="sec-title">Teach Me</div>
+            </div>
+            <div class="card">
+              <div class="card-h">
+                <span class="card-t">Language Exchange</span><span class="card-s">Learn each other's words</span>
+              </div>
+              <div class="cx-phrase-form">
+                <input type="text" id="cx-word" placeholder="Word or phrase..." class="quiz-q" />
+                <input type="text" id="cx-meaning" placeholder="What it means..." class="quiz-q" />
+                <select id="cx-lang" class="select-field">
+                  <option value="ewe">Ewe (Togo)</option>
+                  <option value="french">French</option>
+                  <option value="mina">Mina</option>
+                  <option value="english">Southern English</option>
+                  <option value="slang">Texas Slang</option>
+                </select>
+                <button class="dq-submit mt-8" onclick="addPhrase()">Add Phrase</button>
+              </div>
+              <div id="cx-phrases" class="stagger-in"><div class="empty">Teach each other your languages</div></div>
+            </div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-green"></div>
+              <div class="sec-title">Our Traditions</div>
+            </div>
+            <div class="cx-trad-form">
+              <input type="text" id="cx-trad-title" class="quiz-q" placeholder="A tradition, food, or custom..." />
+              <div class="ms-row">
+                <input type="text" id="cx-trad-emoji" placeholder="&#x1F389;" maxlength="2" class="input-emoji" />
+                <select id="cx-trad-origin" class="select-field flex-1">
+                  <option value="togo">From Togo</option>
+                  <option value="texas">From Texas</option>
+                  <option value="ours">Ours (new)</option>
+                </select>
+              </div>
+              <textarea id="cx-trad-desc" class="mood-note" placeholder="Tell the story behind it..."></textarea>
+              <button class="dq-submit" onclick="addTradition()">Save Tradition</button>
+            </div>
+            <div id="cx-traditions" class="stagger-in"><div class="empty">Share your cultural traditions</div></div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-rose"></div>
+              <div class="sec-title">Recipes From Home</div>
+            </div>
+            <div class="cx-recipe-form">
+              <input type="text" id="cx-recipe-name" class="quiz-q" placeholder="Dish name..." />
+              <div class="ms-row">
+                <input type="text" id="cx-recipe-emoji" placeholder="&#x1F372;" maxlength="2" class="input-emoji" />
+                <select id="cx-recipe-origin" class="select-field flex-1">
+                  <option value="togo">Togolese</option>
+                  <option value="texas">Texan</option>
+                  <option value="fusion">Our Fusion</option>
+                </select>
+              </div>
+              <textarea id="cx-recipe-how" class="mood-note" placeholder="Ingredients & how to make it..."></textarea>
+              <button class="dq-submit" onclick="addRecipe()">Save Recipe</button>
+            </div>
+            <div id="cx-recipes" class="stagger-in"><div class="empty">Share recipes from your cultures</div></div>
+          </div>
+
+          <!-- Spiritual section -->
+          <div class="val-section d-none" id="val-spiritual">
+            <div class="mod-status" id="sp-stats"></div>
+
+            <div class="sp-devo" id="sp-devo" onclick="nextDevotional()">
+              <div class="sp-devo-label">Daily Reflection</div>
+              <div class="sp-devo-verse" id="sp-devo-verse"></div>
+              <div class="sp-devo-ref" id="sp-devo-ref"></div>
+              <div class="hs-affirm-tap">Tap for another</div>
+            </div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-amber"></div>
+              <div class="sec-title">Prayer Requests</div>
+            </div>
+            <div class="sp-prayer-form">
+              <textarea class="mood-note" id="sp-prayer-input" placeholder="What's on your heart..."></textarea>
+              <button class="dq-submit" onclick="addPrayer()">Share Prayer Request</button>
+            </div>
+            <div id="sp-prayers" class="stagger-in"><div class="empty">Share what you need prayer for</div></div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-green"></div>
+              <div class="sec-title">Blessings Journal</div>
+            </div>
+            <div class="sp-bless-form">
+              <textarea
+                class="mood-note"
+                id="sp-bless-input"
+                placeholder="Count a blessing you've received..."
+              ></textarea>
+              <button class="dq-submit" onclick="addBlessing()">Give Thanks</button>
+            </div>
+            <div id="sp-blessings" class="stagger-in"><div class="empty">Count a blessing you've received</div></div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-rose"></div>
+              <div class="sec-title">Our Intentions</div>
+            </div>
+            <div class="bl-form">
+              <input type="text" id="sp-intent-input" class="quiz-q" placeholder="An intention for this season..." />
+              <button onclick="addIntention()">+</button>
+            </div>
+            <div id="sp-intentions" class="stagger-in"><div class="empty">Set spiritual intentions together</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== GIFT IDEAS ===== -->
+      <div class="pg" id="pg-lists">
+        <div class="ctn">
+          <!-- My Wishlist -->
+          <div class="list-section" id="list-wishlist">
+            <div class="sec-head">
+              <div class="sec-dot sd-gold"></div>
+              <div class="sec-title">My Wishlist</div>
+            </div>
+            <div class="bl-form">
+              <input type="text" id="wl-input" class="quiz-q" placeholder="Add something you want..." />
+              <button onclick="addWishItem()">+</button>
+            </div>
+            <div class="bl-form mt-neg8">
+              <input type="url" id="wl-link" placeholder="Link (optional)" class="flex-2" />
+              <select id="wl-priority" class="select-field">
+                <option value="love">Love it</option>
+                <option value="want">Want it</option>
+                <option value="need">Need it</option>
+              </select>
+            </div>
+            <div id="wl-mine" class="stagger-in"><div class="empty">Drop hints here</div></div>
+
+            <div class="sec-head mt-24">
+              <div class="sec-dot sd-gold"></div>
+              <div class="sec-title"><span class="pname"></span>'s Wishlist</div>
+            </div>
+            <div id="wl-theirs" class="stagger-in">
+              <div class="empty">Nothing here yet. They're being mysterious</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SETTINGS ===== -->
+      <!-- ===== WAKE UP TOGETHER ===== -->
+      <div class="pg" id="pg-wakeup">
+        <div class="ctn">
+          <!-- Goodnight Card -->
+          <div class="wu-hero-card" id="wu-hero">
+            <div class="wu-hero-icon" id="wu-hero-icon">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+              </svg>
+            </div>
+            <div class="wu-hero-title" id="wu-hero-title">Goodnight Ritual</div>
+            <div class="wu-hero-sub" id="wu-hero-sub">Set your alarms together, even miles apart</div>
+          </div>
+
+          <!-- Partner Status -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Tonight</div>
+          </div>
+          <div class="wu-status-card" id="wu-status-card">
+            <div class="wu-partner-row">
+              <div class="wu-partner" id="wu-partner-p1">
+                <div class="wu-partner-avatar wu-avatar-p1">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+                <div class="wu-partner-name" id="wu-name-p1">Partner 1</div>
+                <div class="wu-partner-status" id="wu-status-p1">Not set</div>
+                <div class="wu-partner-tz" id="wu-tz-p1"></div>
+              </div>
+              <div class="wu-bridge">
+                <div class="wu-bridge-line"></div>
+                <div class="wu-bridge-icon">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"
+                    />
+                  </svg>
+                </div>
+                <div class="wu-bridge-line"></div>
+              </div>
+              <div class="wu-partner" id="wu-partner-p2">
+                <div class="wu-partner-avatar wu-avatar-p2">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+                <div class="wu-partner-name" id="wu-name-p2">Partner 2</div>
+                <div class="wu-partner-status" id="wu-status-p2">Not set</div>
+                <div class="wu-partner-tz" id="wu-tz-p2"></div>
+              </div>
+            </div>
+            <div class="wu-time-diff" id="wu-time-diff"></div>
+          </div>
+
+          <!-- Set Your Wake Up Time -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Set Your Alarm</div>
+          </div>
+          <div class="wu-alarm-card">
+            <div class="wu-alarm-row">
+              <label class="wu-alarm-label">I want to wake up at</label>
+              <input type="time" id="wu-time-input" class="wu-time-input" value="07:00" />
+            </div>
+            <div class="wu-alarm-row">
+              <label class="wu-alarm-label">Your timezone</label>
+              <div class="wu-tz-display" id="wu-my-tz">Detecting...</div>
+            </div>
+            <div class="wu-alarm-row">
+              <label class="wu-alarm-label"
+                >That's <span id="wu-partner-local-time" class="c-gold fw-600">--:--</span> for them</label
+              >
+            </div>
+            <button class="wu-set-btn" id="wu-set-btn" onclick="setWakeUpTime()">Set Alarm</button>
+          </div>
+
+          <!-- Goodnight Message -->
+          <div class="sec-head">
+            <div class="sec-dot sd-rose"></div>
+            <div class="sec-title">Goodnight Message</div>
+          </div>
+          <div class="wu-message-card">
+            <textarea class="wu-message-input" id="wu-goodnight-msg" placeholder="Sweet dreams, my love..."></textarea>
+            <div class="wu-quick-msgs">
+              <button class="wu-quick-btn" onclick="wuQuickMsg('Goodnight, I love you')">Goodnight, I love you</button>
+              <button class="wu-quick-btn" onclick="wuQuickMsg('Sleep tight, dream of us')">
+                Sleep tight, dream of us
+              </button>
+              <button class="wu-quick-btn" onclick="wuQuickMsg('Can\'t wait to wake up to you')">
+                Can't wait to wake up to you
+              </button>
+              <button class="wu-quick-btn" onclick="wuQuickMsg('Wish you were here beside me')">
+                Wish you were here beside me
+              </button>
+            </div>
+            <button class="wu-send-gn" onclick="sendGoodnightMsg()">Send Goodnight</button>
+          </div>
+
+          <!-- Wake Up Mode / Morning Message -->
+          <div class="sec-head">
+            <div class="sec-dot sd-teal"></div>
+            <div class="sec-title">Morning Wake Up</div>
+          </div>
+          <div class="wu-morning-card" id="wu-morning-card">
+            <div class="wu-morning-empty" id="wu-morning-empty">
+              <div class="wu-morning-icon">
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                </svg>
+              </div>
+              <div class="wu-morning-text">
+                When your partner's alarm goes off, you'll see their wake-up moment here
+              </div>
+            </div>
+            <div class="wu-morning-active d-none" id="wu-morning-active">
+              <div class="wu-morning-greeting" id="wu-morning-greeting"></div>
+              <div class="wu-morning-gn-msg" id="wu-morning-gn-msg"></div>
+              <button class="wu-wake-btn" id="wu-wake-btn" onclick="sendWakeUp()">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                </svg>
+                Wake Them Up
+              </button>
+              <div class="wu-wake-response d-none" id="wu-wake-response"></div>
+            </div>
+          </div>
+
+          <!-- Bedtime Ritual Checklist -->
+          <div class="sec-head">
+            <div class="sec-dot sd-emerald"></div>
+            <div class="sec-title">Bedtime Ritual</div>
+          </div>
+          <div class="wu-ritual-card">
+            <div class="wu-ritual-item" onclick="toggleRitual(this, 'said-love')">
+              <div class="wu-ritual-check" id="ritual-said-love"></div>
+              <span>Said "I love you"</span>
+            </div>
+            <div class="wu-ritual-item" onclick="toggleRitual(this, 'shared-day')">
+              <div class="wu-ritual-check" id="ritual-shared-day"></div>
+              <span>Shared how our day went</span>
+            </div>
+            <div class="wu-ritual-item" onclick="toggleRitual(this, 'gratitude')">
+              <div class="wu-ritual-check" id="ritual-gratitude"></div>
+              <span>Said one thing we're grateful for</span>
+            </div>
+            <div class="wu-ritual-item" onclick="toggleRitual(this, 'tomorrow')">
+              <div class="wu-ritual-check" id="ritual-tomorrow"></div>
+              <span>Talked about tomorrow</span>
+            </div>
+            <div class="wu-ritual-item" onclick="toggleRitual(this, 'prayer')">
+              <div class="wu-ritual-check" id="ritual-prayer"></div>
+              <span>Prayed or reflected together</span>
+            </div>
+          </div>
+
+          <!-- Wake Up History -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Recent Nights</div>
+          </div>
+          <div id="wu-history" class="wu-history"><div class="empty">Your shared nights will appear here</div></div>
+        </div>
+      </div>

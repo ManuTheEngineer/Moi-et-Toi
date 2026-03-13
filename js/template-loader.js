@@ -67,7 +67,7 @@ function initTemplateLoader() {
 
 // Preload templates for pages the user is likely to visit
 function preloadTemplates() {
-  var common = ['mood', 'connect', 'games', 'fitness'];
+  var common = ['mood', 'connect', 'games', 'fitness', 'settings'];
   common.forEach(function (name) {
     var el = document.getElementById('pg-' + name);
     if (el && el.dataset.template && !el.dataset.templateLoaded) {
@@ -78,7 +78,11 @@ function preloadTemplates() {
 
 // Initialize after DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initTemplateLoader);
+  document.addEventListener('DOMContentLoaded', function () {
+    initTemplateLoader();
+    preloadTemplates();
+  });
 } else {
   initTemplateLoader();
+  preloadTemplates();
 }
