@@ -18,7 +18,7 @@
     document.documentElement.style.setProperty('--screen-h', screenH + 'px');
     var bg = document.getElementById('bg');
     if (bg) {
-      bg.style.height = (screenH + 100) + 'px';
+      bg.style.height = (screenH + 200) + 'px';
       bg.style.top = '0';
       bg.style.bottom = 'auto';
     }

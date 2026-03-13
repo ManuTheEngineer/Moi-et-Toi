@@ -684,17 +684,22 @@ input[type='range'] {
   background: transparent;
 }
 html {
-  min-height: 100%;
-  min-height: -webkit-fill-available;
-  min-height: 100dvh;
+  min-height: calc(100% + 200px);
+  min-height: calc(100dvh + 200px);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   background: var(--bg);
 }
 body {
-  min-height: 100%;
-  min-height: 100dvh;
-  min-height: var(--real-h, 100dvh);
+  /* Overshoot the viewport by 200px so iOS ALWAYS renders to the
+     physical screen bottom.  This is the single fix that covers
+     EVERY page: login, onboarding, config, dashboard, all 29 pg
+     tabs, modals — everything.  iOS stops rendering at the safe-area
+     boundary when content is shorter than the screen; making the
+     body itself taller than the viewport forces it past that limit. */
+  min-height: calc(100vh + 200px);
+  min-height: calc(100dvh + 200px);
+  min-height: calc(var(--real-h, 100dvh) + 200px);
   background: transparent;
   color: var(--t1);
   font-family: 'Outfit', sans-serif;
@@ -705,20 +710,4 @@ body {
   -webkit-font-smoothing: antialiased;
   position: relative;
   transition: color 4s ease;
-}
-/* Invisible spacer that guarantees the document is taller than
-   the viewport.  On iOS PWA, when content is shorter than the
-   screen the browser stops rendering before the safe-area zone —
-   this forces it to always render to the physical bottom edge.
-   Works on login, short dashboard tabs, and every other page. */
-body::after {
-  content: '';
-  display: block;
-  height: calc(100vh + 50px);
-  height: calc(100dvh + 50px);
-  pointer-events: none;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 1px;
 }

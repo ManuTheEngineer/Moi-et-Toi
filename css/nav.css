@@ -1287,12 +1287,9 @@ body.touring .bn {
 .shell {
   display: none;
   padding-bottom: calc(72px + max(env(safe-area-inset-bottom, 20px), 20px));
-  /* Overshoot the viewport so iOS always renders to the physical screen edge.
-     Short-content pages (Home US tab, More) caused iOS to stop rendering
-     before the safe-area zone — adding extra height forces it past. */
-  min-height: calc(100vh + 50px);
-  min-height: calc(100dvh + 50px);
-  min-height: calc(var(--real-h, 100dvh) + 50px);
+  min-height: calc(100vh + 200px);
+  min-height: calc(100dvh + 200px);
+  min-height: calc(var(--real-h, 100dvh) + 200px);
   transition: padding-bottom 0.25s ease;
   position: relative;
   z-index: 2;
