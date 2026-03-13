@@ -2068,7 +2068,7 @@ async function newMemory() {
     revealed: Array(16).fill(false),
     matched: Array(16).fill(false),
     turn: user,
-    scores: { him: 0, her: 0 },
+    scores: { partner1: 0, partner2: 0 },
     flipped: []
   });
   if (key) {
@@ -2677,7 +2677,7 @@ async function newWordChain() {
     turn: user,
     category: cat,
     words: [{ word: starters[cat], by: 'system' }],
-    scores: { her: 0, him: 0 },
+    scores: { partner1: 0, partner2: 0 },
     timer: 15,
     lastTime: Date.now()
   });
@@ -2711,7 +2711,7 @@ async function submitWord() {
   }
 
   words.push({ word, by: user });
-  const scores = data.scores || { her: 0, him: 0 };
+  const scores = data.scores || { partner1: 0, partner2: 0 };
   scores[user] = (scores[user] || 0) + 1;
   await db.ref('games/sessions/' + activeGameKey).update({
     words,
@@ -2738,7 +2738,7 @@ function renderWordChain(data, key) {
   const words = data.words || [];
   const lastWord = words.length ? words[words.length - 1].word : '';
   const nextLetter = lastWord.charAt(lastWord.length - 1).toUpperCase();
-  const scores = data.scores || { her: 0, him: 0 };
+  const scores = data.scores || { partner1: 0, partner2: 0 };
 
   let html = `<div class="wc-scorebar">
     <span class="me">${NAMES[user]}: ${scores[user] || 0}</span>
@@ -2819,8 +2819,8 @@ async function newTrivia() {
   const key = await startGame('trivia', {
     questions: shuffled.map(q => ({ ...q, opts: q.opts.sort(() => Math.random() - 0.5) })),
     current: 0,
-    scores: { her: 0, him: 0 },
-    answers: { her: [], him: [] },
+    scores: { partner1: 0, partner2: 0 },
+    answers: { partner1: [], partner2: [] },
     turn: user
   });
   if (!key) return;
@@ -2835,8 +2835,8 @@ async function answerTrivia(answer) {
   if (!data || data.status !== 'active' || data.turn !== user) return;
   const q = data.questions[data.current];
   const correct = answer === q.a;
-  const scores = data.scores || { her: 0, him: 0 };
-  const answers = data.answers || { her: [], him: [] };
+  const scores = data.scores || { partner1: 0, partner2: 0 };
+  const answers = data.answers || { partner1: [], partner2: [] };
   if (correct) scores[user] = (scores[user] || 0) + 1;
   answers[user] = answers[user] || [];
   answers[user].push({ q: data.current, picked: answer, correct });
@@ -2868,7 +2868,7 @@ async function answerTrivia(answer) {
 function renderTrivia(data, key) {
   const el = document.getElementById('trivia-board');
   if (!el) return;
-  const scores = data.scores || { her: 0, him: 0 };
+  const scores = data.scores || { partner1: 0, partner2: 0 };
   const myAnswers = (data.answers && data.answers[user]) || [];
   const current = data.current || 0;
 
@@ -3374,7 +3374,7 @@ function renderGoFish(data, key) {
   const myHand = (data.hands && data.hands[user]) || [];
   const theirCount = ((data.hands && data.hands[partner]) || []).length;
   const deckCount = (data.deck || []).length;
-  const books = data.books || { him: 0, her: 0 };
+  const books = data.books || { partner1: 0, partner2: 0 };
   const isMyTurn = data.turn === user;
 
   let html = `<div class="gf-scorebar">

@@ -1321,7 +1321,7 @@ function _migrateOnboardingAgreements() {
             source: 'default',
             timestamp: Date.now() - 1000 * count++,
             signedOff: true,
-            approvals: { her: true, him: true }
+            approvals: { partner1: true, partner2: true }
           };
         });
 

@@ -1288,7 +1288,7 @@ let growOpenModule = null;
 let growCurrentLesson = null; // {path, moduleId, lessonIdx}
 
 const GROW_MODULES = {
-  her: [
+  partner1: [
     {
       id: 'respect',
       title: 'The Art of Respect',
@@ -1534,7 +1534,7 @@ const GROW_MODULES = {
       ]
     }
   ],
-  him: [
+  partner2: [
     {
       id: 'leading',
       title: 'Leading with Love',
@@ -2334,6 +2334,8 @@ function renderCalendar() {
       .map(e => {
         const colors = {
           joint: 'var(--lavender)',
+          partner1: 'var(--rose)',
+          partner2: 'var(--teal)',
           her: 'var(--rose)',
           him: 'var(--teal)',
           recurring: 'var(--gold)',
@@ -2405,6 +2407,8 @@ function renderCalDayEvents() {
   }
   const colors = {
     joint: 'var(--lavender)',
+    partner1: 'var(--rose)',
+    partner2: 'var(--teal)',
     her: 'var(--rose)',
     him: 'var(--teal)',
     recurring: 'var(--gold)',
