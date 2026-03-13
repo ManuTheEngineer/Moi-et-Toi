@@ -705,14 +705,14 @@ body {
   position: relative;
   transition: color 4s ease;
 }
-/* Invisible spacer that pushes the document past the iOS safe-area boundary
-   so the browser paints to the physical bottom edge in PWA standalone mode.
-   Only needs to exceed the viewport by the safe-area-inset, not 200px. */
+/* Invisible spacer that pushes the document just past the iOS safe-area
+   boundary so the browser paints to the physical bottom edge in PWA mode.
+   body min-height already provides a full viewport of height — this only
+   needs to add the safe-area overshoot, not another full viewport. */
 body::after {
   content: '';
   display: block;
   width: 1px;
-  height: calc(100vh + env(safe-area-inset-bottom, 0px));
-  height: calc(100dvh + env(safe-area-inset-bottom, 0px));
+  height: env(safe-area-inset-bottom, 0px);
   pointer-events: none;
 }
