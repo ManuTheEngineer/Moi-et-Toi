@@ -655,10 +655,6 @@ function deleteChore(key) {
     toast('Removed');
   });
 }
-function deleteMeal(key) {
-  db.ref('homelife/meals/' + key).remove().catch(_delFail);
-  toast('Removed');
-}
 function deleteSavingsGoal(key) {
   showConfirmDialog('Remove goal', 'Delete this savings goal?', 'Delete', () => {
     db.ref('homelife/savings/' + key).remove().catch(_delFail);
@@ -916,7 +912,7 @@ function updateHLStats() {
           });
       }),
     db
-      .ref('homelife/meals')
+      .ref('nutrition/mealPlans/' + localDate())
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => meals++);

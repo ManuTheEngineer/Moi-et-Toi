@@ -2036,12 +2036,12 @@ function finishLogin() {
   listenBlessings();
   listenIntentions();
   listenSavings();
-  listenMeals();
   listenChores();
   listenExpenses();
   // listenSharedGoals(); — consolidated into Dreams page
   listenHabits();
   listenGrocery();
+  if (typeof loadMealPlans === 'function') loadMealPlans();
   listenSharedTodos();
   enforcePrivacy();
   // Dashboard UX

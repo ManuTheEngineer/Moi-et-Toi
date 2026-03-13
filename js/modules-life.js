@@ -2056,63 +2056,6 @@ async function submitSavingsUpdate(key) {
   }
 }
 
-async function addMeal() {
-  if (!db || !user) return;
-  const name = document.getElementById('hl-meal-input').value.trim();
-  const day = document.getElementById('hl-meal-day').value;
-  if (!name) {
-    toast('Name a meal');
-    return;
-  }
-  const btn = event?.target;
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = 'Saving...';
-  }
-  await db.ref('homelife/meals').push({
-    name,
-    day,
-    addedBy: user,
-    addedByName: NAMES[user],
-    timestamp: Date.now()
-  });
-  document.getElementById('hl-meal-input').value = '';
-  if (btn) {
-    btn.textContent = 'Added';
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.textContent = 'Add meal';
-    }, 1500);
-  }
-  toast('Meal added');
-}
-
-function listenMeals() {
-  db.ref('homelife/meals')
-    .orderByChild('timestamp')
-    .on('value', snap => {
-      const items = [];
-      snap.forEach(c => {
-        const v = c.val();
-        v._key = c.key;
-        items.push(v);
-      });
-      items.reverse();
-      const el = document.getElementById('hl-meals');
-      if (!el) return;
-      if (!items.length) {
-        el.innerHTML = '<div class="empty">Plan your meals together</div>';
-        return;
-      }
-      el.innerHTML = items
-        .map(i => {
-          const who = i.addedBy === user ? 'You' : esc(i.addedByName || '?');
-          return `<div class="hl-meal-card"><div class="hl-meal-day">${i.day === 'anytime' ? '' : esc(i.day)}</div><div class="hl-meal-name">${esc(i.name)}</div><div class="hl-meal-by">${who}</div><button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteMeal('${i._key}')">×</button></div>`;
-        })
-        .join('');
-    });
-}
-
 async function addChore() {
   if (!db || !user) return;
   const name = document.getElementById('hl-chore-input').value.trim();

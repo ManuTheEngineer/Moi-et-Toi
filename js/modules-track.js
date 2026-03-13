@@ -3429,6 +3429,37 @@ function addMealPlan() {
   });
   toast('Meal planned!');
   document.getElementById('meal-plan-input').value = '';
+  loadMealPlans();
+}
+
+function loadMealPlans() {
+  if (typeof db === 'undefined' || !db) return;
+  var el = document.getElementById('meal-plan-list');
+  if (!el) return;
+  var today = localDate();
+  db.ref('nutrition/mealPlans/' + today).orderByChild('timestamp').once('value', function (snap) {
+    if (!snap.exists()) { el.innerHTML = ''; return; }
+    var items = [];
+    snap.forEach(function (c) { var v = c.val(); v._key = c.key; items.push(v); });
+    var NAMES = window.NAMES || {};
+    el.innerHTML = items.map(function (i) {
+      var who = i.user === user ? 'You' : (NAMES[i.user] || '');
+      var slotLabel = i.slot ? i.slot.charAt(0).toUpperCase() + i.slot.slice(1) : '';
+      return '<div class="d-flex ai-center gap-8 mb-6" style="padding:8px 12px;background:var(--card-bg);border-radius:12px">' +
+        '<span class="t-xs c-t3" style="min-width:60px">' + esc(slotLabel) + '</span>' +
+        '<span class="flex-1 t-body c-cream">' + esc(i.meal) + '</span>' +
+        '<span class="t-xs c-t3">' + who + '</span>' +
+        '<button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteMealPlan(\'' + i._key + '\')">×</button>' +
+        '</div>';
+    }).join('');
+  });
+}
+
+function deleteMealPlan(key) {
+  if (typeof db === 'undefined' || !db) return;
+  db.ref('nutrition/mealPlans/' + localDate() + '/' + key).remove();
+  toast('Removed');
+  loadMealPlans();
 }
 
 // ========================================
