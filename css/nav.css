@@ -62,7 +62,13 @@
 /* ===== LOGIN ===== */
 .login {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Use --real-h (largest known viewport height) so the login page
+     never shrinks when the iOS keyboard opens.  The keyboard overlays
+     the page instead of pushing it up. */
+  height: var(--real-h, 100vh);
   z-index: 100;
   display: flex;
   align-items: center;
