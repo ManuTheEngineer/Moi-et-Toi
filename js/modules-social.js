@@ -252,7 +252,7 @@ function renderBucketList(items) {
   if (!el) return;
   const filtered = bucketFilter === 'all' ? items : items.filter(i => i.category === bucketFilter);
   if (!filtered.length) {
-    el.innerHTML = '<div class="empty">No items in this category yet.</div>';
+    el.innerHTML = '<div class="empty" onclick="document.getElementById(\'bl-input\').focus()" style="cursor:pointer">Add your first bucket list item <span style="opacity:.5">— tap here</span></div>';
     return;
   }
   el.innerHTML = filtered
@@ -943,7 +943,7 @@ function renderCheckinFeed(weeks) {
   if (!el) return;
   const completed = weeks.filter(w => w.data[user] || w.data[partner]);
   if (!completed.length) {
-    el.innerHTML = '<div class="empty">No check-ins yet.</div>';
+    el.innerHTML = '<div class="empty" onclick="document.getElementById(\'ci-well\').focus()" style="cursor:pointer">Start your first weekly check-in <span style="opacity:.5">— tap here</span></div>';
     return;
   }
   el.innerHTML = completed

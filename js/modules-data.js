@@ -372,13 +372,13 @@ function renderMemories() {
   if (!container) return;
   const items = getFilteredMemories();
   if (!items.length) {
-    const msg =
-      memCurrentAlbum === 'all'
-        ? 'Upload your first photo together'
-        : memCurrentAlbum === 'favorites'
-          ? 'No favorites yet. Tap a photo to favorite it.'
-          : 'No memories in this album yet';
-    container.innerHTML = '<div class="empty">' + msg + '</div>';
+    if (memCurrentAlbum === 'all') {
+      container.innerHTML = '<div class="empty" onclick="document.getElementById(\'mem-file\').click()" style="cursor:pointer">Upload your first photo together <span style="opacity:.5">— tap here</span></div>';
+    } else if (memCurrentAlbum === 'favorites') {
+      container.innerHTML = '<div class="empty">No favorites yet. Tap a photo to favorite it.</div>';
+    } else {
+      container.innerHTML = '<div class="empty">No memories in this album yet</div>';
+    }
     return;
   }
   container.innerHTML = items

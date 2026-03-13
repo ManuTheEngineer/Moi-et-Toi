@@ -1233,7 +1233,7 @@ function renderTimeline(milestones) {
   const el = document.getElementById('timeline');
   if (!el) return;
   if (!milestones.length) {
-    el.innerHTML = '<div class="empty">Add your first milestone together</div>';
+    el.innerHTML = '<div class="empty" onclick="toggleMsForm()" style="cursor:pointer">Add your first milestone together <span style="opacity:.5">— tap here</span></div>';
     return;
   }
   el.innerHTML = milestones
