@@ -281,31 +281,28 @@ function listenFitnessData() {
     fitBaseline = snap.val();
     renderFitnessBaseline();
   });
-  coupleRef('fitness/' + user + '/workouts')
+  fbOn(coupleRef('fitness/' + user + '/workouts')
     .orderByChild('date')
-    .limitToLast(60)
-    .on('value', snap => {
+    .limitToLast(60), 'value', snap => {
       fitnessData = snap.val() || {};
       renderFitnessHub();
-    });
-  coupleRef('fitness/' + user + '/prs').on('value', snap => {
+    }, 'fitness');
+  fbOn(coupleRef('fitness/' + user + '/prs'), 'value', snap => {
     fitPRs = snap.val() || {};
-  });
-  coupleRef('fitness/' + user + '/body')
+  }, 'fitness');
+  fbOn(coupleRef('fitness/' + user + '/body')
     .orderByChild('timestamp')
-    .limitToLast(10)
-    .on('value', snap => {
+    .limitToLast(10), 'value', snap => {
       fitBodyData = snap.val() || {};
-    });
-  coupleRef('fitness/' + user + '/programs').on('value', snap => {
+    }, 'fitness');
+  fbOn(coupleRef('fitness/' + user + '/programs'), 'value', snap => {
     renderSavedPrograms(snap.val() || {});
-  });
-  coupleRef('fitness/' + user + '/photos')
+  }, 'fitness');
+  fbOn(coupleRef('fitness/' + user + '/photos')
     .orderByChild('timestamp')
-    .limitToLast(12)
-    .on('value', snap => {
+    .limitToLast(12), 'value', snap => {
       renderProgressPhotos(snap.val() || {});
-    });
+    }, 'fitness');
   // Populate exercise datalist for quick log
   const dl = document.getElementById('fit-ex-datalist');
   if (dl) dl.innerHTML = EXERCISE_DB.map(e => '<option value="' + esc(e.name) + '">').join('');
@@ -1931,13 +1928,13 @@ function setGrowPath(path) {
 
 function listenGrowData() {
   if (!db) return;
-  coupleRef('grow/' + user + '/completed').on('value', snap => {
+  fbOn(coupleRef('grow/' + user + '/completed'), 'value', snap => {
     growCompleted = snap.val() || {};
     renderGrowModules();
-  });
-  coupleRef('grow/' + user + '/reflections').on('value', snap => {
+  }, 'grow');
+  fbOn(coupleRef('grow/' + user + '/reflections'), 'value', snap => {
     growReflections = snap.val() || {};
-  });
+  }, 'grow');
 }
 
 function renderGrowModules() {
@@ -2100,17 +2097,17 @@ function listenNutritionData() {
     coupleRef('nutrition/' + user + '/meals/' + _nutrListenDate).off();
   }
   _nutrListenDate = today;
-  coupleRef('nutrition/' + user + '/meals/' + today).on('value', snap => {
+  fbOn(coupleRef('nutrition/' + user + '/meals/' + today), 'value', snap => {
     nutritionData = snap.val() || {};
     renderNutritionDay();
-  });
+  }, 'nutrition');
   // Only attach recipes listener once (it doesn't change per-page-visit)
   if (!_nutrRecipeListening) {
     _nutrRecipeListening = true;
-    coupleRef('nutrition/recipes').on('value', snap => {
+    fbOn(coupleRef('nutrition/recipes'), 'value', snap => {
       recipeData = snap.val() || {};
       renderRecipeList();
-    });
+    }, 'nutrition');
   }
 }
 
@@ -2296,10 +2293,10 @@ let calendarEvents = {},
 
 function listenCalendarEvents() {
   if (!db) return;
-  coupleRef('calendar').on('value', snap => {
+  fbOn(coupleRef('calendar'), 'value', snap => {
     calendarEvents = snap.val() || {};
     renderCalendar();
-  });
+  }, 'calendar');
 }
 
 function renderCalendar() {
@@ -2487,14 +2484,14 @@ let dreamHomeData = {},
 
 function listenDreamHome() {
   if (!db) return;
-  coupleRef('dreamHome').on('value', snap => {
+  fbOn(coupleRef('dreamHome'), 'value', snap => {
     const data = snap.val() || {};
     dreamHomeData = data.rooms || {};
     dhWishlist = data.wishlist || {};
     dhConfig = data.config || {};
     renderDreamHome();
     dhRenderFinance();
-  });
+  }, 'dreamHome');
 }
 
 // Phase tabs
@@ -3124,9 +3121,8 @@ async function addGroceryItem(inputId) {
 
 function listenGrocery() {
   if (!db) return;
-  coupleRef('grocery')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('grocery')
+    .orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -3153,7 +3149,7 @@ function listenGrocery() {
           })
           .join('');
       });
-    });
+    }, 'grocery');
 }
 
 async function toggleGrocery(key, checked) {
@@ -3190,9 +3186,8 @@ async function addSharedTodo() {
 
 function listenSharedTodos() {
   if (!db) return;
-  coupleRef('sharedTodos')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('sharedTodos')
+    .orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -3219,7 +3214,7 @@ function listenSharedTodos() {
       </div>`;
         })
         .join('');
-    });
+    }, 'sharedTodos');
 }
 
 async function toggleSharedTodo(key, done) {
@@ -3269,7 +3264,7 @@ async function saveDHVision() {
 
 function loadDHVisions() {
   if (!db) return;
-  coupleRef('dreamHome/vision').on('value', snap => {
+  fbOn(coupleRef('dreamHome/vision'), 'value', snap => {
     const data = snap.val() || {};
     renderDHVisionCompare(data);
     // Restore selections
@@ -3289,7 +3284,7 @@ function loadDHVisions() {
         if (item) el.classList.toggle('selected', dhSelectedMusts.includes(item));
       });
     }
-  });
+  }, 'dreamHome');
 }
 
 function renderDHVisionCompare(data) {

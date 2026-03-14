@@ -2457,6 +2457,7 @@ async function computeEngagementMetrics() {
   if (!db) return null;
   var now = Date.now();
   if (_engCache.data && now - _engCache.ts < 300000) return _engCache.data;
+  try {
 
   var thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
   var startDate = localDate(new Date(thirtyDaysAgo));
@@ -2548,6 +2549,7 @@ async function computeEngagementMetrics() {
   };
   _engCache = { data: result, ts: Date.now() };
   return result;
+  } catch (e) { console.warn('computeEngagementMetrics failed:', e); return null; }
 }
 
 // Render engagement dashboard on the insights page

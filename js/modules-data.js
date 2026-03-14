@@ -9,22 +9,22 @@ let kypData = {},
 function listenKnowYou() {
   if (!db) return;
   // Listen to partner's data (what they share about themselves)
-  coupleRef('knowYou/' + partner + '/favorites').on('value', snap => {
+  fbOn(coupleRef('knowYou/' + partner + '/favorites'), 'value', snap => {
     kypData = snap.val() || {};
     renderKnowYou();
-  });
-  coupleRef('knowYou/' + user + '/notes').on('value', snap => {
+  }, 'knowyou');
+  fbOn(coupleRef('knowYou/' + user + '/notes'), 'value', snap => {
     kypNotes = snap.val() || {};
     renderKYPNotes();
-  });
-  coupleRef('knowYou/dates').on('value', snap => {
+  }, 'knowyou');
+  fbOn(coupleRef('knowYou/dates'), 'value', snap => {
     kypDates = snap.val() || {};
     renderKYPDates();
-  });
-  coupleRef('knowYou/' + user + '/loveNotes').on('value', snap => {
+  }, 'knowyou');
+  fbOn(coupleRef('knowYou/' + user + '/loveNotes'), 'value', snap => {
     kypLoveNotes = snap.val() || {};
     renderKYPLoveNotes();
-  });
+  }, 'knowyou');
   listenKYPCategories();
 }
 
@@ -275,10 +275,10 @@ let kypCategories = {};
 
 function listenKYPCategories() {
   if (!db) return;
-  coupleRef('knowYou/' + user + '/categories').on('value', snap => {
+  fbOn(coupleRef('knowYou/' + user + '/categories'), 'value', snap => {
     kypCategories = snap.val() || {};
     renderKYPCategories();
-  });
+  }, 'knowyou');
 }
 
 function saveKYPCategory(cat) {
@@ -343,13 +343,11 @@ function listenMemories() {
   const savedView = localStorage.getItem('met_mem_view');
   if (savedView === 'timeline') toggleMemoryView('timeline');
   // Listen for data changes
-  coupleRef('memories')
-    .orderByChild('timestamp')
-    .on('value', snap => {
-      memoriesData = snap.val() || {};
-      renderMemories();
-      checkOnThisDay();
-    });
+  fbOn(coupleRef('memories').orderByChild('timestamp'), 'value', snap => {
+    memoriesData = snap.val() || {};
+    renderMemories();
+    checkOnThisDay();
+  }, 'memories');
 }
 
 let memCurrentAlbum = 'all';
@@ -749,10 +747,10 @@ let achievementsData = { badges: {}, xp: 0, level: 1 };
 
 function listenAchievements() {
   if (!db) return;
-  coupleRef('achievements').on('value', snap => {
+  fbOn(coupleRef('achievements'), 'value', snap => {
     achievementsData = snap.val() || { badges: {}, xp: 0, level: 1 };
     renderAchievements();
-  });
+  }, 'achievements');
 }
 
 function renderAchievements() {
@@ -926,7 +924,7 @@ function initPresence() {
   if (!db || !user) return;
   const presRef = coupleRef('presence/' + user);
   const connRef = db.ref('.info/connected');
-  connRef.on('value', snap => {
+  fbOn(connRef, 'value', snap => {
     if (snap.val() === true) {
       presRef.onDisconnect().set({ online: false, lastSeen: firebase.database.ServerValue.TIMESTAMP });
       presRef.set({
@@ -935,9 +933,9 @@ function initPresence() {
         lastSeen: firebase.database.ServerValue.TIMESTAMP
       });
     }
-  });
+  }, 'dash');
   // Listen to partner presence (green dot only when online, hidden when offline)
-  coupleRef('presence/' + partner).on('value', snap => {
+  fbOn(coupleRef('presence/' + partner), 'value', snap => {
     const p = snap.val() || {};
     // Dashboard dot - green when online, hidden when offline
     const dashDot = document.getElementById('dash-presence-dot');
@@ -949,7 +947,7 @@ function initPresence() {
     const lastEl = document.getElementById('fit-partner-last');
     if (lastEl)
       lastEl.textContent = p.online ? 'Online now' : p.lastSeen ? 'Last seen ' + timeAgo(p.lastSeen) : 'Offline';
-  });
+  }, 'dash');
 }
 
 // ===== IDENTITY QUIZ =====
@@ -1154,7 +1152,7 @@ async function saveIdentityQuiz() {
 
 function loadIdentityProfiles() {
   if (!db) return;
-  coupleRef('identityQuiz').on('value', snap => {
+  fbOn(coupleRef('identityQuiz'), 'value', snap => {
     const data = snap.val() || {};
     renderIdentityProfiles(data);
     const startEl = document.getElementById('id-quiz-start');
@@ -1162,7 +1160,7 @@ function loadIdentityProfiles() {
       if (data[user]) hideEl(startEl);
       else showEl(startEl);
     }
-  });
+  }, 'knowyou');
 }
 
 function renderIdentityProfiles(data) {

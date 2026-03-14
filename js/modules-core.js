@@ -66,16 +66,13 @@ async function submitMood() {
 }
 
 function listenMoods() {
-  coupleRef('moods')
-    .orderByChild('timestamp')
-    .limitToLast(50)
-    .on('value', snap => {
+  fbOn(coupleRef('moods').orderByChild('timestamp').limitToLast(50), 'value', snap => {
       const moods = [];
       snap.forEach(c => moods.push(c.val()));
       moods.reverse();
       renderMoodFeed(moods);
       renderDashMoods(moods);
-    });
+    }, 'mood');
 }
 
 function renderMoodFeed(moods) {
@@ -910,10 +907,7 @@ async function sendTap(e, type, emoji) {
 }
 
 function listenTaps() {
-  coupleRef('taps')
-    .orderByChild('timestamp')
-    .limitToLast(20)
-    .on('value', snap => {
+  fbOn(coupleRef('taps').orderByChild('timestamp').limitToLast(20), 'value', snap => {
       const taps = [];
       snap.forEach(c => taps.push(c.val()));
       taps.reverse();
@@ -925,7 +919,7 @@ function listenTaps() {
           showTapOverlay(latest.type);
         }
       }
-    });
+    }, 'connect');
 }
 
 function renderTapFeed(taps) {
@@ -1059,9 +1053,7 @@ async function sendLetter() {
 
 function listenOpenWhenLetters() {
   if (!db) return;
-  coupleRef('openWhenLetters')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('openWhenLetters').orderByChild('timestamp'), 'value', snap => {
       const letters = [];
       snap.forEach(c => {
         const v = c.val();
@@ -1070,7 +1062,7 @@ function listenOpenWhenLetters() {
       });
       letters.reverse();
       renderOpenWhenLetters(letters);
-    });
+    }, 'connect');
 }
 
 function renderOpenWhenLetters(letters) {
@@ -1126,10 +1118,7 @@ async function openSealedLetter(key) {
 }
 
 function listenLetters() {
-  coupleRef('letters')
-    .orderByChild('timestamp')
-    .limitToLast(30)
-    .on('value', snap => {
+  fbOn(coupleRef('letters').orderByChild('timestamp').limitToLast(30), 'value', snap => {
       const letters = [];
       snap.forEach(c => {
         const v = c.val();
@@ -1144,7 +1133,7 @@ function listenLetters() {
           coupleRef('letters/' + l._key + '/read').set(true);
         }
       });
-    });
+    }, 'connect');
 }
 
 function renderLetterFeed(letters) {
@@ -1213,14 +1202,12 @@ async function saveMilestone() {
 }
 
 function listenMilestones() {
-  coupleRef('milestones')
-    .orderByChild('date')
-    .on('value', snap => {
+  fbOn(coupleRef('milestones').orderByChild('date'), 'value', snap => {
       const milestones = [];
       snap.forEach(c => milestones.push(c.val()));
       milestones.reverse();
       renderTimeline(milestones);
-    });
+    }, 'together');
 }
 
 function renderTimeline(milestones) {
@@ -1282,11 +1269,11 @@ async function saveCountdown() {
 }
 
 function listenCountdowns() {
-  coupleRef('countdowns').on('value', snap => {
+  fbOn(coupleRef('countdowns'), 'value', snap => {
     const countdowns = [];
     snap.forEach(c => countdowns.push(c.val()));
     renderCountdowns(countdowns);
-  });
+  }, 'together');
 }
 
 function renderCountdowns(countdowns) {
@@ -1406,10 +1393,10 @@ async function submitDailyAnswer() {
 
 function listenDailyAnswers() {
   const today = localDate();
-  coupleRef('dailyAnswers/' + today).on('value', snap => {
+  fbOn(coupleRef('dailyAnswers/' + today), 'value', snap => {
     const data = snap.val() || {};
     renderDailyAnswers(data);
-  });
+  }, 'together');
 }
 
 function renderDailyAnswers(data) {
@@ -1440,12 +1427,12 @@ function renderDailyAnswers(data) {
 
 // ===== STREAKS =====
 function listenStreak() {
-  coupleRef('streaks').on('value', snap => {
+  fbOn(coupleRef('streaks'), 'value', snap => {
     const data = snap.val() || { current: 0, longest: 0 };
     const countEl = document.getElementById('streak-count');
     if (countEl) countEl.textContent = data.current || 0;
     updateDashStreak(data);
-  });
+  }, 'mood');
 }
 
 async function updateStreak() {
@@ -1521,15 +1508,12 @@ async function submitGratitude() {
 }
 
 function listenGratitude() {
-  coupleRef('gratitude')
-    .orderByChild('timestamp')
-    .limitToLast(20)
-    .on('value', snap => {
+  fbOn(coupleRef('gratitude').orderByChild('timestamp').limitToLast(20), 'value', snap => {
       const entries = [];
       snap.forEach(c => entries.push(c.val()));
       entries.reverse();
       renderGratitude(entries);
-    });
+    }, 'together');
 }
 
 function renderGratitude(entries) {
@@ -1621,10 +1605,7 @@ function initAIBackgroundService() {
     });
   });
   // Listen for nudges
-  coupleRef('ai/nudges/' + user)
-    .orderByChild('timestamp')
-    .limitToLast(5)
-    .on('value', snap => {
+  fbOn(coupleRef('ai/nudges/' + user).orderByChild('timestamp').limitToLast(5), 'value', snap => {
       aiNudges = [];
       snap.forEach(c => {
         const n = c.val();
@@ -1632,7 +1613,7 @@ function initAIBackgroundService() {
       });
       if (typeof renderAINudgesEnhanced === 'function') renderAINudgesEnhanced();
       else renderAINudges();
-    });
+    }, '_global');
 }
 
 async function runAIRole(roleKey, role) {

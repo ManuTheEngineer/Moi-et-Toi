@@ -37,10 +37,10 @@
             <div class="sec-title">Add Memory</div>
           </div>
           <div class="card">
-            <div class="mem-upload" onclick="document.getElementById('mem-file').click()">
+            <button class="mem-upload btn-reset" onclick="document.getElementById('mem-file').click()">
               <div class="mem-upload-icon">&#x1F4F7;</div>
               <div class="mem-upload-text">Tap to upload a photo</div>
-            </div>
+            </button>
             <input type="file" id="mem-file" accept="image/*" class="d-none" onchange="previewMemory(this)" />
             <div id="mem-preview" class="d-none" style="margin: 10px 0">
               <img
@@ -66,7 +66,7 @@
             <div class="sec-dot sd-gold"></div>
             <div class="sec-title" id="mem-section-title">All Memories</div>
           </div>
-          <div class="mem-grid" id="mem-grid"><div class="empty" onclick="document.getElementById('mem-file').click()" style="cursor:pointer">Upload your first photo together <span style="opacity:.5">— tap here</span></div></div>
+          <div class="mem-grid" id="mem-grid"><button class="empty btn-reset" onclick="document.getElementById('mem-file').click()" style="cursor:pointer">Upload your first photo together <span style="opacity:.5">— tap here</span></button></div>
 
           <!-- Memory Timeline (hidden by default) -->
           <div class="mem-timeline" id="mem-timeline" class="d-none"></div>

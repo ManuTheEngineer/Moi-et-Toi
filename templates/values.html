@@ -1,9 +1,9 @@
         <div class="ctn">
           <!-- Section tabs -->
           <div class="bl-cats" id="val-tabs" style="margin-bottom: 16px">
-            <span class="bl-cat on" onclick="showValSection('foundation', this)">Foundation</span>
-            <span class="bl-cat" onclick="showValSection('culture', this)">Culture</span>
-            <span class="bl-cat" onclick="showValSection('spiritual', this)">Spiritual</span>
+            <button class="bl-cat on btn-reset" onclick="showValSection('foundation', this)">Foundation</button>
+            <button class="bl-cat btn-reset" onclick="showValSection('culture', this)">Culture</button>
+            <button class="bl-cat btn-reset" onclick="showValSection('spiritual', this)">Spiritual</button>
           </div>
 
           <!-- Foundation section -->
@@ -52,10 +52,10 @@
             <!-- TAB: Our Commitments (shared, proposal-based) -->
             <div class="agree-tab-panel active" id="agree-panel-ours">
               <!-- Pending proposals banner -->
-              <div id="agree-pending-banner" class="agree-pending-banner d-none" onclick="scrollToProposals()">
+              <button id="agree-pending-banner" class="agree-pending-banner d-none btn-reset" onclick="scrollToProposals()">
                 <span class="agree-pending-dot"></span>
                 <span id="agree-pending-text">You have proposals to review</span>
-              </div>
+              </button>
 
               <div class="agree-tab-hint">Changes require both partners to agree</div>
 
@@ -219,12 +219,12 @@
           <div class="val-section d-none" id="val-spiritual">
             <div class="mod-status" id="sp-stats"></div>
 
-            <div class="sp-devo" id="sp-devo" onclick="nextDevotional()">
+            <button class="sp-devo btn-reset" id="sp-devo" onclick="nextDevotional()">
               <div class="sp-devo-label">Daily Reflection</div>
               <div class="sp-devo-verse" id="sp-devo-verse"></div>
               <div class="sp-devo-ref" id="sp-devo-ref"></div>
               <div class="hs-affirm-tap">Tap for another</div>
-            </div>
+            </button>
 
             <div class="sec-head">
               <div class="sec-dot sd-amber"></div>

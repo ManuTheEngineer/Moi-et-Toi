@@ -261,9 +261,7 @@ async function addPersonalGoal(who) {
 
 function listenPersonalGoals(who) {
   const listId = who === 'partner1' ? 'p1-goals' : 'p2-goals';
-  coupleRef('personalGoals/' + who)
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('personalGoals/' + who).orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -288,7 +286,7 @@ function listenPersonalGoals(who) {
       </div>`;
         })
         .join('');
-    });
+    }, 'homelife');
 }
 
 async function toggleGoal(who, key, done) {
@@ -331,9 +329,7 @@ async function addHabit() {
 
 function listenHabits() {
   if (!db) return;
-  coupleRef('habits')
-    .orderByChild('createdAt')
-    .on('value', snap => {
+  fbOn(coupleRef('habits').orderByChild('createdAt'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -341,7 +337,7 @@ function listenHabits() {
         items.push(v);
       });
       renderHabits(items);
-    });
+    }, 'homelife');
 }
 
 function renderHabits(habits) {
@@ -864,9 +860,7 @@ async function addBabyName() {
 }
 
 function listenBabyNames() {
-  coupleRef('family/names')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('family/names').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -892,7 +886,7 @@ function listenBabyNames() {
       </div>`;
         })
         .join('');
-    });
+    }, 'homelife');
 }
 
 async function toggleNameLove(key) {
@@ -927,9 +921,7 @@ async function addFamilyGoal() {
 }
 
 function listenFamilyGoals() {
-  coupleRef('family/goals')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('family/goals').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -952,7 +944,7 @@ function listenFamilyGoals() {
     </div>`
         )
         .join('');
-    });
+    }, 'homelife');
 }
 
 async function toggleFamGoal(key, done) {
@@ -992,9 +984,7 @@ async function addValue() {
 }
 
 function listenValues() {
-  coupleRef('foundation/values')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('foundation/values').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
@@ -1015,7 +1005,7 @@ function listenValues() {
     </div>`;
         })
         .join('');
-    });
+    }, 'values');
 }
 
 // ===== AGREEMENT / COMMITMENT SYSTEM =====
@@ -1616,10 +1606,7 @@ async function addPrayer() {
 }
 
 function listenPrayers() {
-  coupleRef('spiritual/prayers')
-    .orderByChild('timestamp')
-    .limitToLast(20)
-    .on('value', snap => {
+  fbOn(coupleRef('spiritual/prayers').orderByChild('timestamp').limitToLast(20), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -1645,7 +1632,7 @@ function listenPrayers() {
       </div>`;
         })
         .join('');
-    });
+    }, 'values');
 }
 
 async function prayFor(key) {
@@ -1685,10 +1672,7 @@ async function addBlessing() {
 }
 
 function listenBlessings() {
-  coupleRef('spiritual/blessings')
-    .orderByChild('timestamp')
-    .limitToLast(20)
-    .on('value', snap => {
+  fbOn(coupleRef('spiritual/blessings').orderByChild('timestamp').limitToLast(20), 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
@@ -1705,7 +1689,7 @@ function listenBlessings() {
           return `<div class="sp-bless-card"><div class="sp-prayer-from">${who} · ${ts}</div><div class="sp-prayer-text">${i.text.replace(/</g, '&lt;')}</div></div>`;
         })
         .join('');
-    });
+    }, 'values');
 }
 
 async function addIntention() {
@@ -1736,9 +1720,7 @@ async function addIntention() {
 }
 
 function listenIntentions() {
-  coupleRef('spiritual/intentions')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('spiritual/intentions').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -1758,7 +1740,7 @@ function listenIntentions() {
           return `<div class="sp-intent-card"><div class="sp-intent-text">${esc(i.text)}</div><div class="sp-intent-by">${who}</div><button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteIntention('${i._key}')">×</button></div>`;
         })
         .join('');
-    });
+    }, 'values');
 }
 
 // ===== HOME BUILDING =====
@@ -1844,9 +1826,7 @@ async function addExpense() {
 
 function listenExpenses() {
   if (!db) return;
-  coupleRef('finances/expenses')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('finances/expenses').orderByChild('timestamp'), 'value', snap => {
       const all = [];
       snap.forEach(c => {
         const v = c.val();
@@ -1857,7 +1837,7 @@ function listenExpenses() {
       renderFinOverview(all);
       renderFinRecent(all);
       renderFinCatChart(all);
-    });
+    }, 'homelife');
 }
 
 function renderFinOverview(expenses) {
@@ -2025,9 +2005,7 @@ async function addSavingsGoal() {
 }
 
 function listenSavings() {
-  coupleRef('homelife/savings')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('homelife/savings').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -2052,7 +2030,7 @@ function listenSavings() {
       </div>`;
         })
         .join('');
-    });
+    }, 'homelife');
 }
 
 function updateSavings(key) {
@@ -2113,9 +2091,7 @@ async function addChore() {
 }
 
 function listenChores() {
-  coupleRef('homelife/chores')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('homelife/chores').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -2146,7 +2122,7 @@ function listenChores() {
       </div>`
         )
         .join('');
-    });
+    }, 'homelife');
 }
 
 async function toggleChore(key, done) {
