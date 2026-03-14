@@ -543,6 +543,34 @@ async function doLogin() {
     if (role) {
       user = role;
       partner = role === 'partner1' ? 'partner2' : 'partner1';
+
+      // Auto-migrate legacy user into multi-tenant structure
+      if (!_coupleId) {
+        var mapKeys = Object.keys(EMAIL_MAP).sort();
+        var stableCoupleKey = 'legacy_' + mapKeys.join('_').replace(/[.@]/g, '_');
+        var membersRef = db.ref('couples/' + stableCoupleKey + '/members');
+        var membersSnap = await membersRef.once('value').catch(function () { return { val: function () { return null; } }; });
+        var existingMembers = membersSnap.val();
+        if (!existingMembers || !existingMembers[role]) {
+          if (role === 'partner1') {
+            await db.ref('couples/' + stableCoupleKey).set({
+              members: { partner1: authUser.uid },
+              status: 'pending',
+              migratedFromLegacy: true,
+              createdAt: Date.now()
+            });
+          } else {
+            await db.ref('couples/' + stableCoupleKey + '/members/partner2').set(authUser.uid);
+            await db.ref('couples/' + stableCoupleKey + '/status').set('active');
+          }
+        }
+        await db.ref('users/' + authUser.uid + '/coupleId').set(stableCoupleKey);
+        _coupleId = stableCoupleKey;
+        console.log('Legacy user migrated to couple:', stableCoupleKey);
+      }
+
+      await migrateRolesToNeutral();
+      await migrateRootSettings();
       await loadProfiles();
       loadLivingSkyPref();
       if (needsOnboarding()) {
