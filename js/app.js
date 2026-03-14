@@ -107,14 +107,25 @@ async function joinWithCode(code) {
 }
 
 // Resolve couple context from authenticated user
+// Race a Firebase .once('value') against a timeout (default 8s)
+function onceWithTimeout(ref, ms) {
+  ms = ms || 8000;
+  return Promise.race([
+    ref.once('value'),
+    new Promise(function (_, reject) {
+      setTimeout(function () { reject(new Error('Database read timed out')); }, ms);
+    })
+  ]);
+}
+
 async function resolveCoupleContext() {
   if (!authUser) return false;
   // Check if user has a couple
-  var snap = await db.ref('users/' + authUser.uid + '/coupleId').once('value');
+  var snap = await onceWithTimeout(db.ref('users/' + authUser.uid + '/coupleId'));
   var coupleId = snap.val();
   if (!coupleId) return false;
   // Load couple data
-  var coupleSnap = await db.ref('couples/' + coupleId).once('value');
+  var coupleSnap = await onceWithTimeout(db.ref('couples/' + coupleId));
   var couple = coupleSnap.val();
   if (!couple || !couple.members) return false;
   _coupleId = coupleId;
@@ -134,7 +145,7 @@ async function resolveCoupleContext() {
 // Check if couple has both partners
 async function coupleIsComplete() {
   if (!_coupleId) return false;
-  var snap = await db.ref('couples/' + _coupleId + '/members').once('value');
+  var snap = await onceWithTimeout(db.ref('couples/' + _coupleId + '/members'));
   var members = snap.val();
   return !!(members && members.partner1 && members.partner2);
 }
@@ -194,8 +205,8 @@ async function init() {
   try {
     db.goOnline();
   } catch (e) {}
-  // Keep key refs synced for offline access (set up after couple context is resolved)
-  db.ref('config/emailMap').keepSynced(true);
+  // Firebase Web SDK enables local caching automatically via goOnline/enablePersistence.
+  // keepSynced() is only available in native mobile SDKs, not the web SDK.
 
   // Start connection state monitoring
   initConnectionMonitor();
@@ -256,7 +267,7 @@ async function init() {
             var stableCoupleKey = 'legacy_' + mapKeys.join('_').replace(/[.@]/g, '_');
 
             var membersRef = db.ref('couples/' + stableCoupleKey + '/members');
-            var membersSnap = await membersRef.once('value').catch(function () { return { val: function () { return null; } }; });
+            var membersSnap = await onceWithTimeout(membersRef).catch(function () { return { val: function () { return null; } }; });
             var existingMembers = membersSnap.val();
             if (!existingMembers || !existingMembers[role]) {
               if (role === 'partner1') {
@@ -308,8 +319,15 @@ async function init() {
       }
     } catch (err) {
       console.error('Auth handler error:', err);
+      // Reset login button so user can retry
+      var submitBtn = document.getElementById('login-submit-btn');
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Come in'; }
       // Surface the error to the user instead of silently failing
-      showError(err.message || 'Something went wrong. Please try again.');
+      var msg = err.message || 'Something went wrong. Please try again.';
+      if (msg === 'Database read timed out') {
+        msg = 'Connection is slow. Please check your internet and try again.';
+      }
+      showError(msg);
       showEl('login-form');
     }
   });
@@ -607,6 +625,7 @@ async function doLogin() {
   const pass = document.getElementById('login-pass').value;
   const nameField = document.getElementById('login-name');
   const displayName = nameField ? nameField.value.trim() : '';
+  const submitBtn = document.getElementById('login-submit-btn');
 
   if (_isSignUp && !displayName) {
     showError('Enter your name');
@@ -621,9 +640,17 @@ async function doLogin() {
     return;
   }
 
+  // Show loading state
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Signing in...';
+  }
+  showError('');
+
   try {
     var result;
     if (_isSignUp) {
+      if (submitBtn) submitBtn.textContent = 'Creating account...';
       result = await firebase.auth().createUserWithEmailAndPassword(email, pass);
       authUser = result.user;
       // Create user profile node
@@ -632,6 +659,7 @@ async function doLogin() {
         createdAt: Date.now()
       });
       showError('');
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = _isSignUp ? 'Create Account' : 'Come in'; }
       // Show couple setup (create or join)
       showCoupleSetup();
       return;
@@ -641,8 +669,10 @@ async function doLogin() {
     showError('');
     // signInWithEmailAndPassword triggers onAuthStateChanged which handles
     // couple context, migration, and routing. No duplicate logic needed here.
+    // Button stays in loading state until onAuthStateChanged completes.
   } catch (e) {
     console.error('Login error:', e.code, e.message);
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = _isSignUp ? 'Create Account' : 'Come in'; }
     if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
       showError('Wrong email or password.');
     } else if (e.code === 'auth/user-not-found') {
@@ -870,7 +900,7 @@ function needsOnboarding() {
 
 async function partnerHasOnboarded() {
   try {
-    var snap = await coupleRef('profiles/' + partner).once('value');
+    var snap = await onceWithTimeout(coupleRef('profiles/' + partner));
     var name = snap.val();
     return !!name && name !== 'Partner 1' && name !== 'Partner 2';
   } catch (e) {
@@ -2583,10 +2613,7 @@ function finishLogin() {
   // Ensure display names are never blank (legacy migration may leave them empty)
   if (!NAMES[user]) NAMES[user] = authUser && authUser.displayName ? authUser.displayName : 'Me';
   if (!NAMES[partner]) NAMES[partner] = 'Partner';
-  // Keep key couple refs synced for offline access
-  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles'].forEach(function (p) {
-    coupleRef(p).keepSynced(true);
-  });
+  // Firebase Web SDK caches data automatically; keepSynced() is native-only.
   // Apply cached sky theme BEFORE time-of-day so CSS variables resolve correctly
   var cachedTheme = localStorage.getItem('met_sky_theme');
   if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
