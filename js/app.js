@@ -223,7 +223,13 @@ async function init() {
         await migrateRootSettings();
         await loadProfiles();
         loadLivingSkyPref();
-        if (needsOnboarding()) {
+        var isLegacyCouple = _coupleId && _coupleId.startsWith('legacy_');
+        if (isLegacyCouple) {
+          // Legacy couples bypass partner gates — these users already had
+          // a working app. Profile data at the root is unreachable so names
+          // may be empty; finishLogin handles empty names gracefully.
+          finishLogin();
+        } else if (needsOnboarding()) {
           showFirstLocationPrompt();
         } else if (await coupleIsComplete() && await partnerHasOnboarded()) {
           finishLogin();
@@ -284,13 +290,10 @@ async function init() {
         await migrateRootSettings();
         await loadProfiles();
         loadLivingSkyPref();
-        if (needsOnboarding()) {
-          showFirstLocationPrompt();
-        } else if (await partnerHasOnboarded()) {
-          finishLogin();
-        } else {
-          showWaitingForPartner();
-        }
+        // Legacy users already had a working app — go straight to dashboard.
+        // Profile data at the root level is unreachable from couple-scoped
+        // paths, so names may be empty; finishLogin handles this gracefully.
+        finishLogin();
       } else {
         // Authenticated but no couple — show couple setup
         showCoupleSetup();
@@ -2452,6 +2455,9 @@ async function renderEngagementDashboard() {
 }
 
 function finishLogin() {
+  // Ensure display names are never blank (legacy migration may leave them empty)
+  if (!NAMES[user]) NAMES[user] = authUser && authUser.displayName ? authUser.displayName : 'Me';
+  if (!NAMES[partner]) NAMES[partner] = 'Partner';
   // Keep key couple refs synced for offline access
   ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles'].forEach(function (p) {
     coupleRef(p).keepSynced(true);
