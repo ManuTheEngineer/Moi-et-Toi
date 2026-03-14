@@ -16,6 +16,12 @@
           "partner2": {
             ".write": "auth != null && (data.val() === null || data.val() === auth.uid)"
           }
+        },
+        "moods": { ".indexOn": ["timestamp", "date", "user"] },
+        "letters": { ".indexOn": ["timestamp", "from"] },
+        "taps": { ".indexOn": ["timestamp"] },
+        "analytics": {
+          "usage": { ".indexOn": ["timestamp"] }
         }
       }
     },
@@ -28,6 +34,14 @@
     "config": {
       ".read": "auth != null",
       ".write": "auth != null"
+    },
+    "settings": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "notifications": {
+      ".read": "auth != null",
+      ".write": false
     }
   }
 }

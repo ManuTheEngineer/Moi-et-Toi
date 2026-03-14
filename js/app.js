@@ -206,6 +206,7 @@ async function init() {
 
   // One-time migration: rename her/him roles to partner1/partner2
   await migrateRolesToNeutral();
+  await migrateRootSettings();
 
   // Load email-to-role mapping from Firebase (keeps emails out of source code)
   await loadEmailMap();
@@ -382,6 +383,40 @@ async function migrateRolesToNeutral() {
     localStorage.setItem('met_roles_migrated', '1');
   } catch (e) {
     console.warn('Role migration error (non-fatal):', e);
+  }
+}
+
+// One-time migration: copy root-level settings to couple-scoped paths
+async function migrateRootSettings() {
+  try {
+    if (localStorage.getItem('met_settings_scoped')) return;
+    if (!_coupleId || !user) return;
+    var updates = {};
+    var paths = [
+      'settings/weather/' + user,
+      'settings/skyTheme/' + user,
+      'settings/natureSounds/' + user
+    ];
+    if (partner) paths.push('notifications/' + partner);
+    for (var i = 0; i < paths.length; i++) {
+      var p = paths[i];
+      var snap = await db.ref(p).once('value');
+      var val = snap.val();
+      if (val !== null) {
+        // Check if couple-scoped path already has data — don't overwrite
+        var existingSnap = await coupleRef(p).once('value');
+        if (existingSnap.val() === null) {
+          updates['couples/' + _coupleId + '/' + p] = val;
+        }
+      }
+    }
+    if (Object.keys(updates).length > 0) {
+      await db.ref().update(updates);
+      console.log('Migrated root settings to couple scope:', Object.keys(updates));
+    }
+    localStorage.setItem('met_settings_scoped', '1');
+  } catch (e) {
+    console.warn('Settings migration error (non-fatal):', e);
   }
 }
 
