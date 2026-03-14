@@ -2337,8 +2337,8 @@ function applySkyTheme(theme) {
     var targetScene = sceneMap[currentSkyTheme] || 'meadow';
     if (WEATHER.scene !== targetScene && SCENES[targetScene]) {
       WEATHER.scene = targetScene;
-      if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
-        db.ref('settings/weather/' + user + '/scene').set(targetScene);
+      if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user && _coupleId) {
+        coupleRef('settings/weather/' + user + '/scene').set(targetScene);
       }
       // Re-render scene ground and creatures
       if (container && livingSkyEnabled) {
@@ -2361,8 +2361,8 @@ function applySkyTheme(theme) {
 
 // Load sky theme from Firebase on login
 function loadSkyTheme() {
-  if (!db || !user) return;
-  db.ref('settings/skyTheme/' + user).once('value', function (snap) {
+  if (!db || !user || !_coupleId) return;
+  coupleRef('settings/skyTheme/' + user).once('value', function (snap) {
     var theme = snap.val() || 'mixed';
     applySkyTheme(theme);
   });

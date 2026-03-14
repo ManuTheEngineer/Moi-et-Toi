@@ -34,17 +34,19 @@ let _authResolved = false; // set true once onAuthStateChanged fires at least on
 let _coupleId = null;
 
 // coupleRef('moods/abc') → db.ref('couples/{coupleId}/moods/abc')
-// Falls back to db.ref(path) for legacy single-tenant mode
+// Throws if called before couple context is resolved — never writes to root
 function coupleRef(path) {
   if (_coupleId) return db.ref('couples/' + _coupleId + '/' + path);
-  return db.ref(path); // legacy fallback
+  console.error('coupleRef() called before _coupleId resolved. Path: ' + path);
+  throw new Error('coupleRef requires _coupleId');
 }
 
 // userRef('settings') → db.ref('users/{uid}/settings')
-// Falls back to db.ref(path) for legacy mode
+// Throws if called before auth is resolved — never writes to root
 function userRef(path) {
   if (authUser && _coupleId) return db.ref('users/' + authUser.uid + '/' + path);
-  return db.ref(path); // legacy fallback
+  console.error('userRef() called before auth resolved. Path: ' + path);
+  throw new Error('userRef requires auth');
 }
 
 // Map email to profile role — loaded from Firebase at init

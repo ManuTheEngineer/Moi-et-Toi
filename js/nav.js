@@ -406,8 +406,8 @@ function updateNavBadges() {
   var p = typeof partner !== 'undefined' ? partner : null;
 
   // Together tab: count unread letters from partner (last 24h)
-  if (p) {
-    db.ref('letters')
+  if (p && _coupleId) {
+    coupleRef('letters')
       .orderByChild('timestamp')
       .limitToLast(5)
       .once('value', function (snap) {
@@ -431,8 +431,8 @@ function updateNavBadges() {
 
   // Wellness tab: gentle nudge if mood not logged today
   var today = localDate();
-  if (u) {
-    db.ref('moods')
+  if (u && _coupleId) {
+    coupleRef('moods')
       .orderByChild('date')
       .equalTo(today)
       .once('value', function (snap) {
