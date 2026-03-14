@@ -2378,6 +2378,8 @@ function finishLogin() {
   // AI Background Service — content curator, relationship monitor, etc.
   setTimeout(() => {
     if (typeof initAIBackgroundService === 'function') initAIBackgroundService();
+    if (typeof initProactiveCoach === 'function') initProactiveCoach();
+    if (typeof checkAutoInsights === 'function') checkAutoInsights();
   }, 5000);
   setTimeout(() => {
     if (typeof loadAIDailyContent === 'function') loadAIDailyContent();

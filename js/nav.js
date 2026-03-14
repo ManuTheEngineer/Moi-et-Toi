@@ -26,6 +26,7 @@ const TAB_MAP = {
   values: 'plan',
   lists: 'plan',
   more: 'more',
+  insights: 'more',
   ai: 'more',
   memories: 'more',
   achievements: 'more',
@@ -62,6 +63,9 @@ function go(p) {
 
   // Render workout pages on demand (template system)
   if ((p === 'w1' || p === 'w2' || p === 'w3') && typeof renderWorkoutPage === 'function') renderWorkoutPage(p);
+
+  // Initialize insights page on visit
+  if (p === 'insights' && typeof initInsightsPage === 'function') initInsightsPage();
 
   // Set page identifier (used by CSS selectors — no page-specific backgrounds)
   document.body.dataset.page = p;
@@ -303,6 +307,7 @@ const PAGE_META = {
   values: { icon: _IC.columns, label: 'Values' },
   lists: { icon: _IC.gift, label: 'Gift Ideas' },
   more: { icon: _IC.compass, label: 'More' },
+  insights: { icon: _IC.trend, label: 'Insights' },
   memories: { icon: _IC.camera, label: 'Memories' },
   ai: { icon: _IC.cpu, label: 'AI Chat' },
   achievements: { icon: _IC.award, label: 'Achievements' },

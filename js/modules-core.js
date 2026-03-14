@@ -1636,7 +1636,8 @@ function initAIBackgroundService() {
         const n = c.val();
         if (n && !n.dismissed) aiNudges.push({ ...n, key: c.key });
       });
-      renderAINudges();
+      if (typeof renderAINudgesEnhanced === 'function') renderAINudgesEnhanced();
+      else renderAINudges();
     });
 }
 
@@ -1982,4 +1983,634 @@ async function loadAIDailyContent() {
   if (aiChallenge && content.challenge) aiChallenge.textContent = content.challenge;
   const aiConvo = document.getElementById('ai-convo-starter');
   if (aiConvo && content.conversationStarter) aiConvo.textContent = content.conversationStarter;
+}
+
+// ========================================
+// ===== C1: WEEKLY INSIGHTS REPORT =====
+// ========================================
+
+let insightsWeekOffset = 0;
+
+function getWeekKey(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() - d.getDay() + (offset * 7)); // Sunday of target week
+  return d.toISOString().split('T')[0];
+}
+
+function getWeekLabel(offset) {
+  if (offset === 0) return 'This Week';
+  if (offset === -1) return 'Last Week';
+  const d = new Date();
+  d.setDate(d.getDate() - d.getDay() + (offset * 7));
+  const end = new Date(d);
+  end.setDate(end.getDate() + 6);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' – ' +
+    end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+async function loadWeeklyReport(weekKey) {
+  if (!db) return;
+  const snap = await coupleRef('ai/weeklyReports/' + weekKey).once('value');
+  const report = snap.val();
+  if (report) {
+    renderInsightsReport(report);
+    return true;
+  }
+  return false;
+}
+
+async function gatherWeeklyData() {
+  if (!db) return {};
+  const now = Date.now();
+  const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+  const [moodsSnap, lettersSnap, gratSnap, gamesSnap, goalsSnap, checkinSnap, tapsSnap, fitSnap, finSnap] =
+    await Promise.all([
+      coupleRef('moods').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('letters').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('gratitude').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('games/tot').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('personalGoals/shared').once('value'),
+      coupleRef('checkins').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('taps').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('fitness/workouts').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('finances/expenses').orderByChild('timestamp').startAt(weekAgo).once('value')
+    ]);
+
+  const collect = snap => { const arr = []; snap.forEach(c => arr.push(c.val())); return arr; };
+
+  return {
+    moods: collect(moodsSnap),
+    letters: collect(lettersSnap),
+    gratitude: collect(gratSnap),
+    games: collect(gamesSnap),
+    goals: goalsSnap.val() || {},
+    checkins: collect(checkinSnap),
+    taps: collect(tapsSnap),
+    workouts: collect(fitSnap),
+    expenses: collect(finSnap),
+    partner1Name: NAMES.partner1,
+    partner2Name: NAMES.partner2,
+    currentUser: NAMES[user]
+  };
+}
+
+async function generateWeeklyReport() {
+  if (!CLAUDE_API_KEY) { toast('Set up AI in settings first'); return; }
+  const btn = document.getElementById('insights-gen-btn');
+  const loading = document.getElementById('insights-loading');
+  const empty = document.getElementById('insights-empty');
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Generating...'; }
+  if (loading) loading.classList.remove('d-none');
+  if (empty) empty.classList.add('d-none');
+
+  try {
+    const data = await gatherWeeklyData();
+    const weekKey = getWeekKey(insightsWeekOffset);
+
+    const prompt = `You are the weekly insights engine for Moi et Toi, a couples app for ${NAMES.partner1} and ${NAMES.partner2}.
+
+Analyze their week and generate a comprehensive relationship report. Here is their data:
+${JSON.stringify(data)}
+
+Return a JSON object with these keys:
+- "score": Number 0-100, overall relationship engagement score for the week
+- "scoreLabel": "Thriving" | "Strong" | "Growing" | "Warming Up" | "Getting Started"
+- "scoreTrend": "up" | "stable" | "down" (compared to typical engagement)
+- "pulseDetail": 1-2 sentences about their emotional connection this week
+- "highlights": Array of 3-5 strings — positive things that happened (be specific with names and data)
+- "growthAreas": Array of 1-3 strings — areas where engagement could improve (gentle, not judgmental)
+- "recommendations": Array of 3 objects with { "action": string, "reason": string } — actionable suggestions
+- "appreciation1": A sentence about how ${NAMES.partner1} showed love this week (based on data, or encouraging if sparse)
+- "appreciation2": A sentence about how ${NAMES.partner2} showed love this week
+
+Be warm, specific, and use their names. Reference actual data points. Return ONLY valid JSON.`;
+
+    const result = await callAIBackground(prompt);
+    if (result) {
+      await coupleRef('ai/weeklyReports/' + weekKey).set({ ...result, generatedAt: Date.now() });
+      renderInsightsReport(result);
+    } else {
+      if (empty) empty.classList.remove('d-none');
+      toast('Could not generate report — try again');
+    }
+  } catch (e) {
+    console.warn('Weekly report generation failed:', e);
+    if (empty) empty.classList.remove('d-none');
+    toast('Report generation failed');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Generate Report'; }
+    if (loading) loading.classList.add('d-none');
+  }
+}
+
+function renderInsightsReport(report) {
+  const container = document.getElementById('insights-report');
+  const empty = document.getElementById('insights-empty');
+  if (!container) return;
+
+  if (empty) empty.classList.add('d-none');
+  container.classList.remove('d-none');
+
+  // Score
+  const scoreEl = document.getElementById('ir-score');
+  const labelEl = document.getElementById('ir-score-label');
+  const detailEl = document.getElementById('ir-pulse-detail');
+  if (scoreEl) scoreEl.textContent = report.score || '--';
+  if (labelEl) {
+    labelEl.textContent = report.scoreLabel || '';
+    const trendIcon = report.scoreTrend === 'up' ? ' ↑' : report.scoreTrend === 'down' ? ' ↓' : '';
+    labelEl.textContent += trendIcon;
+  }
+  if (detailEl) detailEl.textContent = report.pulseDetail || '';
+
+  // Highlights
+  const hlEl = document.getElementById('ir-highlights');
+  if (hlEl && report.highlights) {
+    hlEl.innerHTML = report.highlights.map(h => '<div class="ir-item ir-hl">✨ ' + esc(h) + '</div>').join('');
+  }
+
+  // Growth areas
+  const grEl = document.getElementById('ir-growth');
+  if (grEl && report.growthAreas) {
+    grEl.innerHTML = report.growthAreas.map(g => '<div class="ir-item ir-gr">🌱 ' + esc(g) + '</div>').join('');
+  }
+
+  // Recommendations
+  const recEl = document.getElementById('ir-recs');
+  if (recEl && report.recommendations) {
+    recEl.innerHTML = report.recommendations
+      .map(r => '<div class="ir-rec"><div class="ir-rec-action">💡 ' + esc(r.action) + '</div><div class="ir-rec-reason">' + esc(r.reason) + '</div></div>')
+      .join('');
+  }
+
+  // Appreciation
+  const appEl = document.getElementById('ir-appreciation');
+  if (appEl) {
+    let html = '';
+    if (report.appreciation1) html += '<div class="ir-item ir-app">💝 ' + esc(report.appreciation1) + '</div>';
+    if (report.appreciation2) html += '<div class="ir-item ir-app">💝 ' + esc(report.appreciation2) + '</div>';
+    appEl.innerHTML = html;
+  }
+
+  // Week label
+  const weekEl = document.getElementById('insights-week');
+  if (weekEl) weekEl.textContent = getWeekLabel(insightsWeekOffset);
+
+  // Nav buttons
+  const nextBtn = document.getElementById('ir-next');
+  if (nextBtn) nextBtn.disabled = insightsWeekOffset >= 0;
+}
+
+async function prevWeekReport() {
+  insightsWeekOffset--;
+  const weekKey = getWeekKey(insightsWeekOffset);
+  document.getElementById('insights-week').textContent = getWeekLabel(insightsWeekOffset);
+  document.getElementById('ir-next').disabled = false;
+  const found = await loadWeeklyReport(weekKey);
+  if (!found) {
+    document.getElementById('insights-report').classList.add('d-none');
+    document.getElementById('insights-empty').classList.remove('d-none');
+  }
+}
+
+async function nextWeekReport() {
+  if (insightsWeekOffset >= 0) return;
+  insightsWeekOffset++;
+  const weekKey = getWeekKey(insightsWeekOffset);
+  document.getElementById('insights-week').textContent = getWeekLabel(insightsWeekOffset);
+  document.getElementById('ir-next').disabled = insightsWeekOffset >= 0;
+  const found = await loadWeeklyReport(weekKey);
+  if (!found) {
+    document.getElementById('insights-report').classList.add('d-none');
+    document.getElementById('insights-empty').classList.remove('d-none');
+  }
+}
+
+// Auto-generate on Sunday
+function checkAutoInsights() {
+  if (!db || !CLAUDE_API_KEY) return;
+  const now = new Date();
+  if (now.getDay() !== 0) return; // Sunday only
+  const weekKey = getWeekKey(0);
+  coupleRef('ai/weeklyReports/' + weekKey).once('value', snap => {
+    if (!snap.val()) generateWeeklyReport();
+  });
+}
+
+// Load current week's report on page visit
+function initInsightsPage() {
+  insightsWeekOffset = 0;
+  const weekKey = getWeekKey(0);
+  loadWeeklyReport(weekKey);
+}
+
+// ========================================
+// ===== C2: PROACTIVE COACH =====
+// ========================================
+
+async function runProactiveCoach() {
+  if (!CLAUDE_API_KEY || !db) return;
+
+  try {
+    const data = await gatherCoachData();
+    if (!data || !data.hasEnoughData) return;
+
+    const prompt = buildProactiveCoachPrompt(data);
+    const result = await callAIBackground(prompt);
+    if (result && result.nudges) {
+      const now = Date.now();
+      for (const nudge of result.nudges) {
+        if (!nudge.message) continue;
+        const nudgeData = {
+          message: nudge.message,
+          type: 'coach',
+          timestamp: now,
+          action: nudge.action || null,
+          actionLabel: nudge.actionLabel || null
+        };
+        const target = nudge.target || 'both';
+        if (target === 'both' || target === 'partner1') {
+          await coupleRef('ai/nudges/partner1').push(nudgeData);
+        }
+        if (target === 'both' || target === 'partner2') {
+          await coupleRef('ai/nudges/partner2').push(nudgeData);
+        }
+      }
+      await coupleRef('ai/roles/ai_role_coach').set(Date.now());
+    }
+  } catch (e) {
+    console.warn('Proactive coach failed:', e);
+  }
+}
+
+async function gatherCoachData() {
+  if (!db) return null;
+  const now = Date.now();
+  const threeDaysAgo = now - 3 * 24 * 60 * 60 * 1000;
+  const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+  const [moodsSnap, lettersSnap, tapsSnap, gamesSnap, goalsSnap] = await Promise.all([
+    coupleRef('moods').orderByChild('timestamp').startAt(weekAgo).once('value'),
+    coupleRef('letters').orderByChild('timestamp').startAt(threeDaysAgo).once('value'),
+    coupleRef('taps').orderByChild('timestamp').startAt(threeDaysAgo).once('value'),
+    coupleRef('games/tot').orderByChild('timestamp').startAt(threeDaysAgo).once('value'),
+    coupleRef('personalGoals/shared').once('value')
+  ]);
+
+  const moods = [];
+  moodsSnap.forEach(c => moods.push(c.val()));
+
+  const recentLetters = [];
+  lettersSnap.forEach(c => recentLetters.push(c.val()));
+
+  const recentTaps = [];
+  tapsSnap.forEach(c => recentTaps.push(c.val()));
+
+  const recentGames = [];
+  gamesSnap.forEach(c => recentGames.push(c.val()));
+
+  // Detect patterns
+  const p1Moods = moods.filter(m => m.user === 'partner1').sort((a, b) => a.timestamp - b.timestamp);
+  const p2Moods = moods.filter(m => m.user === 'partner2').sort((a, b) => a.timestamp - b.timestamp);
+
+  const lastP1Mood = p1Moods[p1Moods.length - 1];
+  const lastP2Mood = p2Moods[p2Moods.length - 1];
+
+  // Check for declining moods (3+ days trending down)
+  function detectDecline(userMoods) {
+    if (userMoods.length < 3) return false;
+    const last3 = userMoods.slice(-3);
+    return last3[0].mood > last3[1].mood && last3[1].mood > last3[2].mood;
+  }
+
+  // Check for big mood swing
+  function detectSwing(userMoods) {
+    if (userMoods.length < 2) return false;
+    const last2 = userMoods.slice(-2);
+    return Math.abs(last2[1].mood - last2[0].mood) >= 3;
+  }
+
+  // Check for mood divergence between partners
+  function detectDivergence() {
+    if (!lastP1Mood || !lastP2Mood) return false;
+    return Math.abs(lastP1Mood.mood - lastP2Mood.mood) >= 2;
+  }
+
+  // Days since last check-in
+  function daysSince(userMoods) {
+    if (!userMoods.length) return 99;
+    return Math.floor((now - userMoods[userMoods.length - 1].timestamp) / (24 * 60 * 60 * 1000));
+  }
+
+  // Goals stalled check
+  const goals = goalsSnap.val() || {};
+  const stalledGoals = Object.values(goals).filter(g => {
+    if (g.completed) return false;
+    const updated = g.updatedAt || g.createdAt || 0;
+    return (now - updated) > 7 * 24 * 60 * 60 * 1000;
+  });
+
+  const patterns = {
+    p1Declining: detectDecline(p1Moods),
+    p2Declining: detectDecline(p2Moods),
+    p1Swing: detectSwing(p1Moods),
+    p2Swing: detectSwing(p2Moods),
+    diverging: detectDivergence(),
+    p1DaysSinceCheckin: daysSince(p1Moods),
+    p2DaysSinceCheckin: daysSince(p2Moods),
+    recentlyConnected: recentLetters.length > 0 || recentTaps.length > 0 || recentGames.length > 0,
+    stalledGoalCount: stalledGoals.length,
+    stalledGoalNames: stalledGoals.slice(0, 3).map(g => g.title || 'Untitled')
+  };
+
+  // Only send to AI if there's something worth addressing
+  const hasEnoughData = moods.length >= 2;
+  const hasPatterns = patterns.p1Declining || patterns.p2Declining || patterns.p1Swing || patterns.p2Swing ||
+    patterns.diverging || patterns.p1DaysSinceCheckin >= 3 || patterns.p2DaysSinceCheckin >= 3 ||
+    patterns.stalledGoalCount > 0;
+
+  return {
+    hasEnoughData: hasEnoughData && hasPatterns,
+    patterns,
+    moods: moods.slice(-10),
+    partner1Name: NAMES.partner1,
+    partner2Name: NAMES.partner2
+  };
+}
+
+function buildProactiveCoachPrompt(data) {
+  return `You are the proactive relationship coach for ${data.partner1Name} and ${data.partner2Name}'s app.
+
+DETECTED PATTERNS:
+${JSON.stringify(data.patterns)}
+
+RECENT MOODS (last 10):
+${JSON.stringify(data.moods)}
+
+Based on these patterns, generate targeted, empathetic nudges. Rules:
+- Only generate nudges for patterns that actually need attention
+- If they've recently connected (letters/taps/games), don't push connection nudges
+- Reference actual data (e.g., "Your mood has been lower the past few days")
+- Be warm, never nagging. Max 3 nudges.
+
+Return a JSON object:
+{
+  "nudges": [
+    {
+      "message": "The nudge text (1-2 sentences, warm and specific)",
+      "target": "partner1" | "partner2" | "both",
+      "action": "mood" | "connect" | "deeptalk" | "games" | null,
+      "actionLabel": "Log mood" | "Send a note" | "Start a deep talk" | "Play a game" | null
+    }
+  ]
+}
+
+Return ONLY valid JSON. If no nudges are needed, return { "nudges": [] }.`;
+}
+
+// Replace relationship monitor with proactive coach
+function initProactiveCoach() {
+  if (!db || !CLAUDE_API_KEY) return;
+  coupleRef('ai/roles/ai_role_coach').once('value', snap => {
+    const lastRun = snap.val() || 0;
+    const sixHours = 6 * 60 * 60 * 1000;
+    if (Date.now() - lastRun > sixHours) {
+      const delay = 10000 + Math.random() * 20000;
+      setTimeout(() => runProactiveCoach(), delay);
+    }
+  });
+}
+
+// Enhanced nudge renderer with action buttons
+function renderAINudgesEnhanced() {
+  const container = document.getElementById('ai-nudges');
+  if (!container) return;
+  if (!aiNudges.length) { container.innerHTML = ''; return; }
+
+  const typeIcons = { relationship: '💕', milestone: '📅', goals: '🎯', wellness: '💪', finance: '💰', coach: '🤝' };
+  const actionPages = { mood: 'mood', connect: 'connect', deeptalk: 'together', games: 'games' };
+
+  container.innerHTML = aiNudges.map(n => {
+    let actionBtn = '';
+    if (n.action && n.actionLabel) {
+      const page = actionPages[n.action] || n.action;
+      actionBtn = '<button class="nudge-action-btn" onclick="go(\'' + page + '\'); dismissAINudge(\'' + n.key + '\')">' + esc(n.actionLabel) + '</button>';
+    }
+    return '<div class="ai-nudge-card">' +
+      '<span class="ai-nudge-icon">' + (typeIcons[n.type] || '✨') + '</span>' +
+      '<div class="ai-nudge-body">' +
+        '<div class="ai-nudge-text">' + esc(n.message) + '</div>' +
+        actionBtn +
+      '</div>' +
+      '<button class="ai-nudge-dismiss" onclick="dismissAINudge(\'' + n.key + '\')" aria-label="Dismiss">&times;</button>' +
+    '</div>';
+  }).join('');
+}
+
+// ========================================
+// ===== C3: AI CONVERSATION FACILITATOR =====
+// ========================================
+
+let aiDTCat = 'thisweek';
+let aiDTSession = null; // { intro, question, followUps, history }
+
+function toggleAIFacilitator(enabled) {
+  const standard = document.getElementById('dt-standard');
+  const aiPanel = document.getElementById('dt-ai-mode-panel');
+  if (standard) standard.classList.toggle('d-none', enabled);
+  if (aiPanel) aiPanel.classList.toggle('d-none', !enabled);
+  if (enabled) startAIDeepTalk();
+}
+
+function setAIDTCat(cat, el) {
+  aiDTCat = cat;
+  document.querySelectorAll('.dt-ai-cat').forEach(e => e.classList.remove('on'));
+  if (el) el.classList.add('on');
+  startAIDeepTalk();
+}
+
+async function startAIDeepTalk() {
+  if (!CLAUDE_API_KEY) { toast('Set up AI in settings first'); return; }
+
+  const loading = document.getElementById('dt-ai-loading');
+  const session = document.getElementById('dt-ai-session');
+  const controls = document.getElementById('dt-ai-controls');
+  const summary = document.getElementById('dt-ai-summary');
+
+  if (loading) loading.classList.remove('d-none');
+  if (session) session.style.display = 'none';
+  if (controls) controls.style.display = 'none';
+  if (summary) { summary.classList.add('d-none'); summary.innerHTML = ''; }
+
+  try {
+    const context = await gatherFacilitatorContext();
+    const prompt = buildFacilitatorPrompt(context);
+    const result = await callAIBackground(prompt);
+
+    if (result) {
+      aiDTSession = {
+        intro: result.intro || '',
+        question: result.question || '',
+        followUps: result.followUps || [],
+        history: [result.question],
+        context
+      };
+      renderAIDTSession();
+    } else {
+      toast('Could not generate conversation — try again');
+    }
+  } catch (e) {
+    console.warn('AI facilitator failed:', e);
+    toast('Failed to create conversation');
+  } finally {
+    if (loading) loading.classList.add('d-none');
+  }
+}
+
+async function gatherFacilitatorContext() {
+  if (!db) return {};
+  const now = Date.now();
+  const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+  const [moodsSnap, healthScore] = await Promise.all([
+    coupleRef('moods').orderByChild('timestamp').startAt(weekAgo).once('value'),
+    typeof MET !== 'undefined' && MET._ready ? Promise.resolve(MET.relationship) : Promise.resolve({})
+  ]);
+
+  const moods = [];
+  moodsSnap.forEach(c => moods.push(c.val()));
+
+  return {
+    category: aiDTCat,
+    recentMoods: moods.slice(-6),
+    healthScore: healthScore.score || null,
+    healthBreakdown: healthScore.breakdown || {},
+    partner1Name: NAMES.partner1,
+    partner2Name: NAMES.partner2
+  };
+}
+
+function buildFacilitatorPrompt(ctx) {
+  const catInstructions = {
+    thisweek: `Generate a conversation topic based on their recent moods and events this week. Reference actual emotions or patterns you see in the data.`,
+    growth: `Look at their relationship health breakdown and find the weakest area. Create a conversation topic that gently addresses it. Areas: mood sync, communication, shared goals, games/fun, fitness sync, financial alignment.`,
+    celebrate: `Find something positive in their data — a streak, consistent check-ins, high moods, good sync — and create a conversation topic that celebrates it and deepens appreciation.`
+  };
+
+  return `You are an AI conversation facilitator for ${ctx.partner1Name} and ${ctx.partner2Name}'s deep talk session.
+
+THEIR DATA:
+- Recent moods: ${JSON.stringify(ctx.recentMoods)}
+- Relationship health score: ${ctx.healthScore || 'not computed'}
+- Health breakdown: ${JSON.stringify(ctx.healthBreakdown)}
+
+CATEGORY: ${ctx.category}
+${catInstructions[ctx.category] || catInstructions.thisweek}
+
+Return a JSON object:
+{
+  "intro": "A warm 1-sentence introduction setting the tone (e.g., 'This week has been a mix of highs and lows for you both...')",
+  "question": "The main conversation question (thoughtful, specific to their data, not generic)",
+  "whoFirst": "${ctx.partner1Name}" or "${ctx.partner2Name}" (suggest who should answer first based on context),
+  "followUps": ["Follow-up question 1", "Follow-up question 2", "Follow-up question 3"]
+}
+
+Be warm, specific, culturally aware (Togolese + Texan couple). Make the question feel tailored, not generic. Return ONLY valid JSON.`;
+}
+
+function renderAIDTSession() {
+  const session = document.getElementById('dt-ai-session');
+  const controls = document.getElementById('dt-ai-controls');
+  if (!session || !aiDTSession) return;
+
+  session.style.display = 'block';
+  if (controls) controls.style.display = 'flex';
+
+  const introEl = document.getElementById('dt-ai-intro');
+  const questionEl = document.getElementById('dt-ai-question');
+  const followEl = document.getElementById('dt-ai-followups');
+
+  if (introEl) introEl.textContent = aiDTSession.intro;
+  if (questionEl) questionEl.textContent = aiDTSession.question;
+  if (followEl && aiDTSession.followUps.length) {
+    followEl.innerHTML = '<div class="dt-ai-fu-label">When you\'re ready, explore deeper:</div>' +
+      aiDTSession.followUps.map((f, i) =>
+        '<button class="dt-ai-fu-btn" onclick="useFollowUp(' + i + ')">' + esc(f) + '</button>'
+      ).join('');
+  }
+}
+
+function useFollowUp(idx) {
+  if (!aiDTSession || !aiDTSession.followUps[idx]) return;
+  const q = aiDTSession.followUps[idx];
+  aiDTSession.history.push(q);
+  aiDTSession.question = q;
+  aiDTSession.followUps.splice(idx, 1);
+  renderAIDTSession();
+}
+
+async function getAIFollowUp() {
+  if (!CLAUDE_API_KEY || !aiDTSession) return;
+
+  const prompt = `You are facilitating a deep talk for ${NAMES.partner1} and ${NAMES.partner2}.
+
+Questions discussed so far: ${JSON.stringify(aiDTSession.history)}
+
+Generate ONE new follow-up question that goes deeper based on their conversation journey. Make it specific and emotionally rich.
+
+Return a JSON object: { "question": "The follow-up question" }
+Return ONLY valid JSON.`;
+
+  const result = await callAIBackground(prompt);
+  if (result && result.question) {
+    aiDTSession.history.push(result.question);
+    aiDTSession.question = result.question;
+    renderAIDTSession();
+  }
+}
+
+async function endAISession() {
+  if (!aiDTSession) return;
+
+  const controls = document.getElementById('dt-ai-controls');
+  if (controls) controls.style.display = 'none';
+
+  const summary = document.getElementById('dt-ai-summary');
+  if (!summary) return;
+  summary.classList.remove('d-none');
+  summary.innerHTML = '<div class="insights-loading-text">Reflecting on your conversation...</div>';
+
+  if (CLAUDE_API_KEY) {
+    const prompt = `You facilitated a deep talk for ${NAMES.partner1} and ${NAMES.partner2}.
+
+Questions they discussed: ${JSON.stringify(aiDTSession.history)}
+
+Write a brief, warm summary (3-4 sentences) reflecting on what they explored. End with one small action item they could do this week to keep the conversation going.
+
+Return a JSON object: { "summary": "...", "actionItem": "..." }
+Return ONLY valid JSON.`;
+
+    const result = await callAIBackground(prompt);
+    if (result) {
+      summary.innerHTML =
+        '<div class="dt-ai-summary-title">Conversation Reflection</div>' +
+        '<div class="dt-ai-summary-text">' + esc(result.summary || '') + '</div>' +
+        (result.actionItem ? '<div class="dt-ai-action-item">This week: ' + esc(result.actionItem) + '</div>' : '');
+
+      // Save to journal
+      if (db) {
+        await coupleRef('ai/conversations').push({
+          questions: aiDTSession.history,
+          summary: result.summary,
+          actionItem: result.actionItem,
+          category: aiDTCat,
+          timestamp: Date.now(),
+          user
+        });
+      }
+    }
+  }
+  aiDTSession = null;
 }
