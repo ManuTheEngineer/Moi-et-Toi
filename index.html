@@ -2046,7 +2046,7 @@
             <div class="sec-dot sd-lavender"></div>
             <div class="sec-title">Open When...</div>
           </div>
-          <div id="ow-letters"><div class="empty">No sealed letters yet</div></div>
+          <div id="ow-letters"><div class="empty">No sealed letters yet — write one for your partner to open later</div></div>
 
           <!-- Voice Notes -->
           <div class="sec-head">
@@ -3157,7 +3157,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('sw.js?v=177')
+          .register('sw.js?v=178')
           .then(function (reg) {
             // Force waiting SW to activate immediately
             if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });

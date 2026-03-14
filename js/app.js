@@ -284,7 +284,6 @@ async function init() {
             }
             await db.ref('users/' + authUser.uid + '/coupleId').set(stableCoupleKey);
             _coupleId = stableCoupleKey;
-            console.log('Legacy user migrated to couple:', stableCoupleKey);
           }
 
           // Copy ALL root-level data into the couple node (moods, letters,
@@ -338,10 +337,9 @@ async function init() {
 
 // Load email-to-role mapping from Firebase, with localStorage fallback.
 // Seeds the default map into Firebase if the node doesn't exist yet.
-const DEFAULT_EMAIL_MAP = {
-  'abokemmanuel1@gmail.com': 'partner1',
-  'takelley11@gmail.com': 'partner2'
-};
+// Default email map is empty — actual mapping is loaded from Firebase config/emailMap.
+// New couples use invite codes instead; this fallback only seeds when Firebase has no data.
+const DEFAULT_EMAIL_MAP = {};
 
 async function loadEmailMap() {
   try {
@@ -398,9 +396,8 @@ async function migrateRootDataToCouple() {
   // Use a versioned flag so we can re-run when the migration logic improves
   var MIGRATION_VERSION = 'v3';
   if (localStorage.getItem('met_root_migrated') === MIGRATION_VERSION) return;
-  console.log('Starting root → couple data migration (' + MIGRATION_VERSION + ') for', _coupleId);
 
-  // him → partner1 (abokemmanuel1), her → partner2 (takelley11)
+  // Legacy role migration: him → partner1, her → partner2
   var ROLE = { him: 'partner1', her: 'partner2' };
   function renameRole(v) { return ROLE[v] || v; }
 
@@ -468,7 +465,6 @@ async function migrateRootDataToCouple() {
         // Check if the couple node already has data for this path
         var existSnap = await db.ref(coupleBase + nodeName).once('value');
         if (existSnap.val()) {
-          console.log('Skipping ' + nodeName + ' — couple already has data');
           continue;
         }
 
@@ -476,7 +472,6 @@ async function migrateRootDataToCouple() {
         var renamed = deepRename(nodeData);
         updates[coupleBase + nodeName] = renamed;
         migratedCount++;
-        console.log('Queued root/' + nodeName + ' → ' + coupleBase + nodeName);
       } catch (e) {
         console.warn('Migration of ' + nodeName + ' skipped:', e.message);
       }
@@ -485,7 +480,6 @@ async function migrateRootDataToCouple() {
     // Write all at once
     if (migratedCount > 0) {
       await db.ref().update(updates);
-      console.log('Migrated ' + migratedCount + ' root-level nodes into couple scope');
     }
 
     // Clean up: delete all legacy root-level nodes (whether just migrated or
@@ -496,13 +490,11 @@ async function migrateRootDataToCouple() {
       deletes[ROOT_NODES[j]] = null;
     }
     await db.ref().update(deletes);
-    console.log('Deleted legacy root-level nodes');
   } catch (e) {
     console.warn('Root migration error (non-fatal):', e);
   }
 
   localStorage.setItem('met_root_migrated', MIGRATION_VERSION);
-  console.log('Root → couple migration complete (' + MIGRATION_VERSION + ')');
 }
 
 // One-time migration from gendered roles (her/him) to neutral (partner1/partner2)
@@ -561,7 +553,6 @@ async function migrateRolesToNeutral() {
         });
         await db.ref('config/emailMap').set(newMap);
       }
-      console.log('Migrated roles from her/him to partner1/partner2');
     }
     localStorage.setItem('met_roles_migrated', '1');
   } catch (e) {
@@ -595,7 +586,6 @@ async function migrateRootSettings() {
     }
     if (Object.keys(updates).length > 0) {
       await db.ref().update(updates);
-      console.log('Migrated root settings to couple scope:', Object.keys(updates));
     }
     localStorage.setItem('met_settings_scoped', '1');
   } catch (e) {
