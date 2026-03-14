@@ -204,119 +204,114 @@ async function init() {
   // utils.js (renderLoginSky on script load) and weather.js (immediate
   // fetch + geolocation on script load). No duplicate work needed here.
 
-  // Load email-to-role mapping from Firebase (keeps emails out of source code)
-  await loadEmailMap();
-
   // Check URL for invite code
   var urlInvite = new URLSearchParams(window.location.search).get('invite');
 
-  // Check if already signed in
+  // Register auth listener FIRST — before any awaits — so sign-ins are
+  // never missed even if loadEmailMap is slow or hangs.
   firebase.auth().onAuthStateChanged(async fbUser => {
-    if (fbUser) {
-      _authResolved = true;
-      authUser = fbUser;
+    try {
+      if (fbUser) {
+        _authResolved = true;
+        authUser = fbUser;
 
-      // Try new multi-tenant couple context first
-      if (await resolveCoupleContext()) {
-        // Run one-time migrations now that _coupleId and user are set
-        await migrateRolesToNeutral();
-        await migrateRootSettings();
-        await loadProfiles();
-        loadLivingSkyPref();
-        var isLegacyCouple = _coupleId && _coupleId.startsWith('legacy_');
-        if (isLegacyCouple) {
-          // Legacy couples bypass partner gates — these users already had
-          // a working app. Profile data at the root is unreachable so names
-          // may be empty; finishLogin handles empty names gracefully.
-          finishLogin();
-        } else if (needsOnboarding()) {
-          showFirstLocationPrompt();
-        } else if (await coupleIsComplete() && await partnerHasOnboarded()) {
+        // Ensure email map is loaded (may still be loading from init)
+        if (Object.keys(EMAIL_MAP).length === 0) {
+          await loadEmailMap();
+        }
+
+        // Try new multi-tenant couple context first
+        if (await resolveCoupleContext()) {
+          // Run one-time migrations now that _coupleId and user are set
+          await migrateRolesToNeutral();
+          await migrateRootSettings();
+          await loadProfiles();
+          loadLivingSkyPref();
+          var isLegacyCouple = _coupleId && _coupleId.startsWith('legacy_');
+          if (isLegacyCouple) {
+            // Legacy couples bypass partner gates — these users already had
+            // a working app. Profile data at the root is unreachable so names
+            // may be empty; finishLogin handles empty names gracefully.
+            finishLogin();
+          } else if (needsOnboarding()) {
+            showFirstLocationPrompt();
+          } else if (await coupleIsComplete() && await partnerHasOnboarded()) {
+            finishLogin();
+          } else {
+            showWaitingForPartner();
+          }
+          return;
+        }
+
+        // Legacy flow: email-map based role assignment
+        const role = EMAIL_MAP[fbUser.email];
+        if (role) {
+          user = role;
+          partner = role === 'partner1' ? 'partner2' : 'partner1';
+
+          // Auto-migrate legacy user into multi-tenant structure
+          if (!_coupleId) {
+            var mapKeys = Object.keys(EMAIL_MAP).sort();
+            var stableCoupleKey = 'legacy_' + mapKeys.join('_').replace(/[.@]/g, '_');
+
+            var membersRef = db.ref('couples/' + stableCoupleKey + '/members');
+            var membersSnap = await membersRef.once('value').catch(function () { return { val: function () { return null; } }; });
+            var existingMembers = membersSnap.val();
+            if (!existingMembers || !existingMembers[role]) {
+              if (role === 'partner1') {
+                await db.ref('couples/' + stableCoupleKey).set({
+                  members: { partner1: authUser.uid },
+                  status: 'pending',
+                  migratedFromLegacy: true,
+                  createdAt: Date.now()
+                });
+              } else {
+                await db.ref('couples/' + stableCoupleKey + '/members/partner2').set(authUser.uid);
+                await db.ref('couples/' + stableCoupleKey + '/status').set('active');
+              }
+            }
+            await db.ref('users/' + authUser.uid + '/coupleId').set(stableCoupleKey);
+            _coupleId = stableCoupleKey;
+            console.log('Legacy user migrated to couple:', stableCoupleKey);
+          }
+
+          await migrateRolesToNeutral();
+          await migrateRootSettings();
+          await loadProfiles();
+          loadLivingSkyPref();
+          // Legacy users already had a working app — go straight to dashboard.
           finishLogin();
         } else {
-          showWaitingForPartner();
+          // Authenticated but no couple — show couple setup
+          showCoupleSetup();
         }
-        return;
-      }
-
-      // Legacy flow: email-map based role assignment
-      // These users authenticated via EMAIL_MAP but never went through
-      // createCouple(), so they have no users/{uid}/coupleId entry.
-      // Auto-create the couple context so coupleRef() works.
-      if (Object.keys(EMAIL_MAP).length === 0) {
-        await loadEmailMap();
-      }
-      const role = EMAIL_MAP[fbUser.email];
-      if (role) {
-        user = role;
-        partner = role === 'partner1' ? 'partner2' : 'partner1';
-
-        // Auto-migrate legacy user into multi-tenant structure
-        if (!_coupleId) {
-          // Derive a stable couple ID from the email map so both partners
-          // end up in the same couple node regardless of who logs in first
-          var mapKeys = Object.keys(EMAIL_MAP).sort();
-          var stableCoupleKey = 'legacy_' + mapKeys.join('_').replace(/[.@]/g, '_');
-
-          // Write our member entry first (partner2 slot has a special rule
-          // allowing writes when empty; partner1 uses the couple-level rule)
-          // For first partner: couple node doesn't exist yet, so create it
-          // For second partner: use the partner2 .write rule which allows
-          // writing when the slot is null
-          var membersRef = db.ref('couples/' + stableCoupleKey + '/members');
-          var membersSnap = await membersRef.once('value').catch(function () { return { val: function () { return null; } }; });
-          var existingMembers = membersSnap.val();
-          if (!existingMembers || !existingMembers[role]) {
-            if (role === 'partner1') {
-              // First partner creates the couple node
-              await db.ref('couples/' + stableCoupleKey).set({
-                members: { partner1: authUser.uid },
-                status: 'pending',
-                migratedFromLegacy: true,
-                createdAt: Date.now()
-              });
-            } else {
-              // partner2 joins — the special partner2 write rule allows this
-              await db.ref('couples/' + stableCoupleKey + '/members/partner2').set(authUser.uid);
-              await db.ref('couples/' + stableCoupleKey + '/status').set('active');
+      } else {
+        // Clean up any legacy stored credentials (previously btoa-encoded)
+        localStorage.removeItem('met_auto_login');
+        // Firebase LOCAL persistence should restore the session automatically.
+        // Show login form after a short delay if it doesn't.
+        setTimeout(function () {
+          if (!user && !authUser) {
+            _authResolved = true;
+            showEl('login-form');
+            hideEl('welcome-gate');
+            if (urlInvite) {
+              var invInput = document.getElementById('invite-code-input');
+              if (invInput) invInput.value = urlInvite;
             }
           }
-          await db.ref('users/' + authUser.uid + '/coupleId').set(stableCoupleKey);
-          _coupleId = stableCoupleKey;
-          console.log('Legacy user migrated to couple:', stableCoupleKey);
-        }
-
-        await migrateRolesToNeutral();
-        await migrateRootSettings();
-        await loadProfiles();
-        loadLivingSkyPref();
-        // Legacy users already had a working app — go straight to dashboard.
-        // Profile data at the root level is unreachable from couple-scoped
-        // paths, so names may be empty; finishLogin handles this gracefully.
-        finishLogin();
-      } else {
-        // Authenticated but no couple — show couple setup
-        showCoupleSetup();
+        }, 4000);
       }
-    } else {
-      // Clean up any legacy stored credentials (previously btoa-encoded)
-      localStorage.removeItem('met_auto_login');
-      // Firebase LOCAL persistence should restore the session automatically.
-      // Show login form after a short delay if it doesn't.
-      setTimeout(function () {
-        if (!user && !authUser) {
-          _authResolved = true;
-          showEl('login-form');
-          hideEl('welcome-gate');
-          // Pre-fill invite code from URL if present
-          if (urlInvite) {
-            var invInput = document.getElementById('invite-code-input');
-            if (invInput) invInput.value = urlInvite;
-          }
-        }
-      }, 4000);
+    } catch (err) {
+      console.error('Auth handler error:', err);
+      // Surface the error to the user instead of silently failing
+      showError(err.message || 'Something went wrong. Please try again.');
+      showEl('login-form');
     }
   });
+
+  // Load email map in the background (auth handler also loads it if needed)
+  loadEmailMap();
 }
 
 // Load email-to-role mapping from Firebase, with localStorage fallback.
@@ -328,7 +323,13 @@ const DEFAULT_EMAIL_MAP = {
 
 async function loadEmailMap() {
   try {
-    const snap = await db.ref('config/emailMap').once('value');
+    // Race against a timeout — once('value') can hang if offline and uncached
+    const snap = await Promise.race([
+      db.ref('config/emailMap').once('value'),
+      new Promise(function (_, reject) {
+        setTimeout(function () { reject(new Error('timeout')); }, 5000);
+      })
+    ]);
     const val = snap.val();
     if (val && Object.keys(val).length > 0) {
       EMAIL_MAP = val;
