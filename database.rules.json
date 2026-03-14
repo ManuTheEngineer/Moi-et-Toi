@@ -11,11 +11,18 @@
     "couples": {
       "$coupleId": {
         ".read": "root.child('couples/' + $coupleId + '/members/partner1').val() === auth.uid || root.child('couples/' + $coupleId + '/members/partner2').val() === auth.uid",
-        ".write": "root.child('couples/' + $coupleId + '/members/partner1').val() === auth.uid || root.child('couples/' + $coupleId + '/members/partner2').val() === auth.uid",
+        ".write": "root.child('couples/' + $coupleId + '/members/partner1').val() === auth.uid || root.child('couples/' + $coupleId + '/members/partner2').val() === auth.uid || (auth != null && !data.exists())",
         "members": {
+          ".read": "auth != null",
           "partner2": {
             ".write": "auth != null && (data.val() === null || data.val() === auth.uid)"
           }
+        },
+        "status": {
+          ".write": "auth != null && newData.val() === 'active'"
+        },
+        "inviteCode": {
+          ".read": "auth != null"
         },
         "moods": { ".indexOn": ["timestamp", "date", "user"] },
         "letters": { ".indexOn": ["timestamp", "from"] },

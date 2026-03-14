@@ -88,13 +88,13 @@ async function joinWithCode(code) {
   var snap = await db.ref('invites/' + code).once('value');
   var invite = snap.val();
   if (!invite || !invite.coupleId) throw new Error('Invalid invite code');
-  // Check couple exists and has room
-  var coupleSnap = await db.ref('couples/' + invite.coupleId).once('value');
-  var couple = coupleSnap.val();
-  if (!couple) throw new Error('Couple not found');
-  if (couple.members.partner2) throw new Error('This couple already has two partners');
-  if (couple.members.partner1 === authUser.uid) throw new Error('You created this couple — share the code with your partner');
-  // Join as partner2
+  // Check couple exists and has room (read members — allowed for any auth user)
+  var membersSnap = await db.ref('couples/' + invite.coupleId + '/members').once('value');
+  var members = membersSnap.val();
+  if (!members) throw new Error('Couple not found');
+  if (members.partner2) throw new Error('This couple already has two partners');
+  if (members.partner1 === authUser.uid) throw new Error('You created this couple — share the code with your partner');
+  // Join as partner2 (allowed by partner2 child write rule), then set status
   await db.ref('couples/' + invite.coupleId + '/members/partner2').set(authUser.uid);
   await db.ref('couples/' + invite.coupleId + '/status').set('active');
   await db.ref('users/' + authUser.uid + '/coupleId').set(invite.coupleId);
@@ -234,6 +234,9 @@ async function init() {
       }
 
       // Legacy flow: email-map based role assignment
+      // These users authenticated via EMAIL_MAP but never went through
+      // createCouple(), so they have no users/{uid}/coupleId entry.
+      // Auto-create the couple context so coupleRef() works.
       if (Object.keys(EMAIL_MAP).length === 0) {
         await loadEmailMap();
       }
@@ -241,6 +244,44 @@ async function init() {
       if (role) {
         user = role;
         partner = role === 'partner1' ? 'partner2' : 'partner1';
+
+        // Auto-migrate legacy user into multi-tenant structure
+        if (!_coupleId) {
+          // Derive a stable couple ID from the email map so both partners
+          // end up in the same couple node regardless of who logs in first
+          var mapKeys = Object.keys(EMAIL_MAP).sort();
+          var stableCoupleKey = 'legacy_' + mapKeys.join('_').replace(/[.@]/g, '_');
+
+          // Write our member entry first (partner2 slot has a special rule
+          // allowing writes when empty; partner1 uses the couple-level rule)
+          // For first partner: couple node doesn't exist yet, so create it
+          // For second partner: use the partner2 .write rule which allows
+          // writing when the slot is null
+          var membersRef = db.ref('couples/' + stableCoupleKey + '/members');
+          var membersSnap = await membersRef.once('value').catch(function () { return { val: function () { return null; } }; });
+          var existingMembers = membersSnap.val();
+          if (!existingMembers || !existingMembers[role]) {
+            if (role === 'partner1') {
+              // First partner creates the couple node
+              await db.ref('couples/' + stableCoupleKey).set({
+                members: { partner1: authUser.uid },
+                status: 'pending',
+                migratedFromLegacy: true,
+                createdAt: Date.now()
+              });
+            } else {
+              // partner2 joins — the special partner2 write rule allows this
+              await db.ref('couples/' + stableCoupleKey + '/members/partner2').set(authUser.uid);
+              await db.ref('couples/' + stableCoupleKey + '/status').set('active');
+            }
+          }
+          await db.ref('users/' + authUser.uid + '/coupleId').set(stableCoupleKey);
+          _coupleId = stableCoupleKey;
+          console.log('Legacy user migrated to couple:', stableCoupleKey);
+        }
+
+        await migrateRolesToNeutral();
+        await migrateRootSettings();
         await loadProfiles();
         loadLivingSkyPref();
         if (needsOnboarding()) {
