@@ -514,77 +514,8 @@ async function doLogin() {
       result = await firebase.auth().signInWithEmailAndPassword(email, pass);
     }
     showError('');
-    try {
-      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    } catch (e) {}
-    localStorage.removeItem('met_auto_login');
-    authUser = result.user;
-
-    // Try new multi-tenant flow first
-    if (await resolveCoupleContext()) {
-      await loadProfiles();
-      loadLivingSkyPref();
-      if (needsOnboarding()) {
-        showFirstLocationPrompt();
-      } else if (await coupleIsComplete() && await partnerHasOnboarded()) {
-        finishLogin();
-      } else {
-        showWaitingForPartner();
-      }
-      return;
-    }
-
-    // Legacy flow: email map based role assignment
-    if (Object.keys(EMAIL_MAP).length === 0) {
-      await loadEmailMap();
-    }
-    const role = EMAIL_MAP[email];
-
-    if (role) {
-      user = role;
-      partner = role === 'partner1' ? 'partner2' : 'partner1';
-
-      // Auto-migrate legacy user into multi-tenant structure
-      if (!_coupleId) {
-        var mapKeys = Object.keys(EMAIL_MAP).sort();
-        var stableCoupleKey = 'legacy_' + mapKeys.join('_').replace(/[.@]/g, '_');
-        var membersRef = db.ref('couples/' + stableCoupleKey + '/members');
-        var membersSnap = await membersRef.once('value').catch(function () { return { val: function () { return null; } }; });
-        var existingMembers = membersSnap.val();
-        if (!existingMembers || !existingMembers[role]) {
-          if (role === 'partner1') {
-            await db.ref('couples/' + stableCoupleKey).set({
-              members: { partner1: authUser.uid },
-              status: 'pending',
-              migratedFromLegacy: true,
-              createdAt: Date.now()
-            });
-          } else {
-            await db.ref('couples/' + stableCoupleKey + '/members/partner2').set(authUser.uid);
-            await db.ref('couples/' + stableCoupleKey + '/status').set('active');
-          }
-        }
-        await db.ref('users/' + authUser.uid + '/coupleId').set(stableCoupleKey);
-        _coupleId = stableCoupleKey;
-        console.log('Legacy user migrated to couple:', stableCoupleKey);
-      }
-
-      await migrateRolesToNeutral();
-      await migrateRootSettings();
-      await loadProfiles();
-      loadLivingSkyPref();
-      if (needsOnboarding()) {
-        showFirstLocationPrompt();
-      } else if (await partnerHasOnboarded()) {
-        finishLogin();
-      } else {
-        showWaitingForPartner();
-      }
-      return;
-    }
-
-    // No couple context and no legacy role — show couple setup
-    showCoupleSetup();
+    // signInWithEmailAndPassword triggers onAuthStateChanged which handles
+    // couple context, migration, and routing. No duplicate logic needed here.
   } catch (e) {
     console.error('Login error:', e.code, e.message);
     if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {

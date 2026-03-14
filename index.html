@@ -3171,7 +3171,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('sw.js?v=171')
+          .register('sw.js?v=172')
           .then(function (reg) {
             // Force waiting SW to activate immediately
             if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
