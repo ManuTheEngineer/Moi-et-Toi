@@ -378,7 +378,7 @@ async function loadEmailMap() {
 async function migrateRootDataToCouple() {
   if (!_coupleId || !_coupleId.startsWith('legacy_')) return;
   // Use a versioned flag so we can re-run when the migration logic improves
-  var MIGRATION_VERSION = 'v2';
+  var MIGRATION_VERSION = 'v3';
   if (localStorage.getItem('met_root_migrated') === MIGRATION_VERSION) return;
   console.log('Starting root → couple data migration (' + MIGRATION_VERSION + ') for', _coupleId);
 
@@ -469,6 +469,16 @@ async function migrateRootDataToCouple() {
       await db.ref().update(updates);
       console.log('Migrated ' + migratedCount + ' root-level nodes into couple scope');
     }
+
+    // Clean up: delete all legacy root-level nodes (whether just migrated or
+    // already migrated in a previous run).  This keeps the database tidy and
+    // ensures only the couple-scoped data remains.
+    var deletes = {};
+    for (var j = 0; j < ROOT_NODES.length; j++) {
+      deletes[ROOT_NODES[j]] = null;
+    }
+    await db.ref().update(deletes);
+    console.log('Deleted legacy root-level nodes');
   } catch (e) {
     console.warn('Root migration error (non-fatal):', e);
   }
