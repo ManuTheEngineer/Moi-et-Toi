@@ -42,47 +42,64 @@
       ".read": "auth != null",
       ".write": "auth != null"
     },
-    "moods": {
-      ".read": "auth != null"
-    },
-    "letters": {
-      ".read": "auth != null"
-    },
-    "taps": {
-      ".read": "auth != null"
-    },
-    "profiles": {
-      ".read": "auth != null"
-    },
-    "photos": {
-      ".read": "auth != null"
-    },
-    "onboarding": {
-      ".read": "auth != null"
-    },
-    "streaks": {
-      ".read": "auth != null"
-    },
-    "gratitude": {
-      ".read": "auth != null"
-    },
-    "fitness": {
-      ".read": "auth != null"
-    },
-    "baselines": {
-      ".read": "auth != null"
-    },
-    "analytics": {
-      ".read": "auth != null"
-    },
-    "pushTokens": {
-      ".read": "auth != null"
-    },
+
+    "moods":            { ".read": "auth != null" },
+    "letters":          { ".read": "auth != null" },
+    "taps":             { ".read": "auth != null" },
+    "profiles":         { ".read": "auth != null" },
+    "photos":           { ".read": "auth != null" },
+    "onboarding":       { ".read": "auth != null" },
+    "streaks":          { ".read": "auth != null" },
+    "gratitude":        { ".read": "auth != null" },
+    "fitness":          { ".read": "auth != null" },
+    "baselines":        { ".read": "auth != null" },
+    "analytics":        { ".read": "auth != null" },
+    "pushTokens":       { ".read": "auth != null" },
+    "achievements":     { ".read": "auth != null" },
+    "activity":         { ".read": "auth != null" },
+    "agreements":       { ".read": "auth != null" },
+    "ai":               { ".read": "auth != null" },
+    "dailyAnswers":     { ".read": "auth != null" },
+    "dailyQuestion":    { ".read": "auth != null" },
+    "dateNights":       { ".read": "auth != null" },
+    "games":            { ".read": "auth != null" },
+    "listenTogether":   { ".read": "auth != null" },
+    "morningMessages":  { ".read": "auth != null" },
+    "notifications":    { ".read": "auth != null" },
+    "nutrition":        { ".read": "auth != null" },
+    "attachmentStyle":  { ".read": "auth != null" },
+    "bucketList":       { ".read": "auth != null" },
+    "calendar":         { ".read": "auth != null" },
+    "challenges":       { ".read": "auth != null" },
+    "checkins":         { ".read": "auth != null" },
+    "countdowns":       { ".read": "auth != null" },
+    "culture":          { ".read": "auth != null" },
+    "deepTalk":         { ".read": "auth != null" },
+    "deepTalkJournal":  { ".read": "auth != null" },
+    "dreamHome":        { ".read": "auth != null" },
+    "dreams":           { ".read": "auth != null" },
+    "family":           { ".read": "auth != null" },
+    "finances":         { ".read": "auth != null" },
+    "foundation":       { ".read": "auth != null" },
+    "grocery":          { ".read": "auth != null" },
+    "habits":           { ".read": "auth != null" },
+    "homelife":         { ".read": "auth != null" },
+    "identityQuiz":     { ".read": "auth != null" },
+    "knowYou":          { ".read": "auth != null" },
+    "loveLang":         { ".read": "auth != null" },
+    "memories":         { ".read": "auth != null" },
+    "milestones":       { ".read": "auth != null" },
+    "openWhenLetters":  { ".read": "auth != null" },
+    "personalGoals":    { ".read": "auth != null" },
+    "shared-music":     { ".read": "auth != null" },
+    "sharedTodos":      { ".read": "auth != null" },
+    "spiritual":        { ".read": "auth != null" },
+    "voiceNotes":       { ".read": "auth != null" },
+    "wakeup":           { ".read": "auth != null" },
+    "wellness":         { ".read": "auth != null" },
+    "wishlists":        { ".read": "auth != null" },
+    "workoutLogs":      { ".read": "auth != null" },
     "settings": {
-      ".read": "auth != null",
-      ".write": false
-    },
-    "notifications": {
       ".read": "auth != null",
       ".write": false
     }

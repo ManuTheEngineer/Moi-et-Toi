@@ -370,151 +370,111 @@ async function loadEmailMap() {
 // One-time comprehensive migration: copy ALL root-level data into the couple
 // node and rename him/her → partner1/partner2.  This runs once per device on
 // legacy users' first login with the multi-tenant code.
+//
+// Instead of hardcoding paths, this reads the ENTIRE root and migrates every
+// node that isn't a system node (users, couples, invites, config).  This
+// guarantees that newly-added feature modules (achievements, games, nutrition,
+// dateNights, etc.) are never accidentally left behind at the root level.
 async function migrateRootDataToCouple() {
   if (!_coupleId || !_coupleId.startsWith('legacy_')) return;
-  if (localStorage.getItem('met_root_migrated')) return;
-  console.log('Starting root → couple data migration for', _coupleId);
+  // Use a versioned flag so we can re-run when the migration logic improves
+  var MIGRATION_VERSION = 'v2';
+  if (localStorage.getItem('met_root_migrated') === MIGRATION_VERSION) return;
+  console.log('Starting root → couple data migration (' + MIGRATION_VERSION + ') for', _coupleId);
 
   // him → partner1 (abokemmanuel1), her → partner2 (takelley11)
   var ROLE = { him: 'partner1', her: 'partner2' };
   function renameRole(v) { return ROLE[v] || v; }
 
-  // Rename top-level keys that are him/her (profiles, settings sub-keys, etc.)
-  function renameObjectKeys(obj) {
+  // Recursively walk an object and rename him/her keys + values everywhere
+  function deepRename(obj) {
     if (!obj || typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return obj.map(deepRename);
     var out = {};
     Object.keys(obj).forEach(function (k) {
+      // Rename key
       var nk = k;
-      // Direct role keys
       if (k === 'him') nk = 'partner1';
       else if (k === 'her') nk = 'partner2';
-      // Compound keys like himCallsHer → partner1CallsPartner2
       else if (k === 'himCallsHer') nk = 'partner1CallsPartner2';
       else if (k === 'herCallsHim') nk = 'partner2CallsPartner1';
-      out[nk] = obj[k];
-    });
-    return out;
-  }
 
-  // Rename him/her keys one level deep (for settings: { weather: {him:…, her:…} })
-  function renameNestedKeys(obj) {
-    if (!obj || typeof obj !== 'object') return obj;
-    var out = {};
-    Object.keys(obj).forEach(function (k) {
       var val = obj[k];
-      if (val && typeof val === 'object' && !Array.isArray(val)) {
-        out[k] = renameObjectKeys(val);
+      if (val && typeof val === 'object') {
+        out[nk] = deepRename(val);
       } else {
-        out[k] = val;
+        // Rename string values that are role references (user/from fields)
+        out[nk] = (typeof val === 'string') ? renameRole(val) : val;
       }
     });
     return out;
   }
+
+  // System nodes to skip — these are NOT couple data
+  var SKIP = { users: 1, couples: 1, invites: 1, config: 1 };
 
   var coupleBase = 'couples/' + _coupleId + '/';
 
-  // 1. Collections with entries that have user/from fields (moods, letters, taps)
-  var collections = ['moods', 'letters', 'taps'];
-  for (var i = 0; i < collections.length; i++) {
-    var name = collections[i];
-    try {
-      var snap = await db.ref(name).once('value');
-      var data = snap.val();
-      if (data) {
-        // Check couple node doesn't already have data for this collection
-        var existSnap = await db.ref(coupleBase + name).once('value');
-        if (!existSnap.val()) {
-          Object.keys(data).forEach(function (key) {
-            var entry = data[key];
-            if (entry && typeof entry === 'object') {
-              if (entry.user) entry.user = renameRole(entry.user);
-              if (entry.from) entry.from = renameRole(entry.from);
-            }
-          });
-          await db.ref(coupleBase + name).set(data);
-          console.log('Migrated root/' + name + ' →', coupleBase + name);
+  // Every root-level node that has ever been written to.  We read each one
+  // individually because Firebase rules don't allow a blanket root read.
+  // When you add a new feature module, add its node name here so legacy
+  // data is picked up.
+  var ROOT_NODES = [
+    'moods', 'letters', 'taps', 'profiles', 'photos', 'settings',
+    'notifications', 'onboarding', 'streaks', 'gratitude', 'fitness',
+    'baselines', 'analytics', 'pushTokens',
+    // Feature modules added after the original migration
+    'achievements', 'activity', 'agreements', 'ai', 'attachmentStyle',
+    'bucketList', 'calendar', 'challenges', 'checkins', 'countdowns',
+    'culture', 'dailyAnswers', 'dailyQuestion', 'dateNights', 'deepTalk',
+    'deepTalkJournal', 'dreamHome', 'dreams', 'family', 'finances',
+    'foundation', 'games', 'grocery', 'habits', 'homelife',
+    'identityQuiz', 'knowYou', 'listenTogether', 'loveLang', 'memories',
+    'milestones', 'morningMessages', 'nutrition', 'openWhenLetters',
+    'personalGoals', 'shared-music', 'sharedTodos', 'spiritual',
+    'voiceNotes', 'wakeup', 'wellness', 'wishlists', 'workoutLogs'
+  ];
+
+  try {
+    // Build a single multi-path update for atomic write
+    var updates = {};
+    var migratedCount = 0;
+
+    for (var i = 0; i < ROOT_NODES.length; i++) {
+      var nodeName = ROOT_NODES[i];
+      try {
+        var snap = await db.ref(nodeName).once('value');
+        var nodeData = snap.val();
+        if (!nodeData) continue;
+
+        // Check if the couple node already has data for this path
+        var existSnap = await db.ref(coupleBase + nodeName).once('value');
+        if (existSnap.val()) {
+          console.log('Skipping ' + nodeName + ' — couple already has data');
+          continue;
         }
-      }
-    } catch (e) {
-      console.warn('Migration of ' + name + ' skipped:', e.message);
-    }
-  }
 
-  // 2. Profiles — rename him/her keys and compound nickname keys
-  try {
-    var profSnap = await db.ref('profiles').once('value');
-    var profData = profSnap.val();
-    if (profData) {
-      var existProf = await db.ref(coupleBase + 'profiles').once('value');
-      if (!existProf.val() || (!existProf.val().partner1 && !existProf.val().partner2)) {
-        var renamed = renameObjectKeys(profData);
-        await db.ref(coupleBase + 'profiles').set(renamed);
-        console.log('Migrated root/profiles →', coupleBase + 'profiles');
+        // Deep-rename him/her → partner1/partner2 in keys and values
+        var renamed = deepRename(nodeData);
+        updates[coupleBase + nodeName] = renamed;
+        migratedCount++;
+        console.log('Queued root/' + nodeName + ' → ' + coupleBase + nodeName);
+      } catch (e) {
+        console.warn('Migration of ' + nodeName + ' skipped:', e.message);
       }
+    }
+
+    // Write all at once
+    if (migratedCount > 0) {
+      await db.ref().update(updates);
+      console.log('Migrated ' + migratedCount + ' root-level nodes into couple scope');
     }
   } catch (e) {
-    console.warn('Migration of profiles skipped:', e.message);
+    console.warn('Root migration error (non-fatal):', e);
   }
 
-  // 3. Settings — keys are like weather/{him|her}, skyTheme/{him|her}
-  try {
-    var setSnap = await db.ref('settings').once('value');
-    var setData = setSnap.val();
-    if (setData) {
-      var existSet = await db.ref(coupleBase + 'settings').once('value');
-      if (!existSet.val()) {
-        var renamedSettings = renameNestedKeys(setData);
-        await db.ref(coupleBase + 'settings').set(renamedSettings);
-        console.log('Migrated root/settings →', coupleBase + 'settings');
-      }
-    }
-  } catch (e) {
-    console.warn('Migration of settings skipped:', e.message);
-  }
-
-  // 4. Notifications — keys are him/her
-  try {
-    var notSnap = await db.ref('notifications').once('value');
-    var notData = notSnap.val();
-    if (notData) {
-      var existNot = await db.ref(coupleBase + 'notifications').once('value');
-      if (!existNot.val()) {
-        var renamedNot = renameObjectKeys(notData);
-        await db.ref(coupleBase + 'notifications').set(renamedNot);
-        console.log('Migrated root/notifications →', coupleBase + 'notifications');
-      }
-    }
-  } catch (e) {
-    console.warn('Migration of notifications skipped:', e.message);
-  }
-
-  // 5. Other paths — copy as-is if they exist at root (photos, onboarding,
-  //    streaks, gratitude, fitness, baselines, analytics, pushTokens)
-  var simplePaths = ['photos', 'onboarding', 'streaks', 'gratitude',
-                     'fitness', 'baselines', 'analytics', 'pushTokens'];
-  for (var j = 0; j < simplePaths.length; j++) {
-    var sp = simplePaths[j];
-    try {
-      var spSnap = await db.ref(sp).once('value');
-      var spData = spSnap.val();
-      if (spData) {
-        var existSp = await db.ref(coupleBase + sp).once('value');
-        if (!existSp.val()) {
-          // Rename him/her keys if they appear at the top level
-          var migrated = renameObjectKeys(spData);
-          // Also rename one level deep for paths like photos/{him|her}
-          migrated = renameNestedKeys(migrated);
-          await db.ref(coupleBase + sp).set(migrated);
-          console.log('Migrated root/' + sp + ' →', coupleBase + sp);
-        }
-      }
-    } catch (e) {
-      console.warn('Migration of ' + sp + ' skipped:', e.message);
-    }
-  }
-
-  localStorage.setItem('met_root_migrated', '1');
-  console.log('Root → couple migration complete');
+  localStorage.setItem('met_root_migrated', MIGRATION_VERSION);
+  console.log('Root → couple migration complete (' + MIGRATION_VERSION + ')');
 }
 
 // One-time migration from gendered roles (her/him) to neutral (partner1/partner2)
