@@ -679,6 +679,16 @@ async function executeAITool(toolName, toolInput) {
   }
 }
 
+function aiFetchHeaders() {
+  if (AI_PROXY_URL) return { 'Content-Type': 'application/json' };
+  return {
+    'Content-Type': 'application/json',
+    'x-api-key': CLAUDE_API_KEY,
+    'anthropic-version': '2023-06-01',
+    'anthropic-dangerous-direct-browser-access': 'true'
+  };
+}
+
 async function sendAI() {
   // Rate limit check
   if (!checkAIRateLimit()) {
@@ -727,15 +737,6 @@ async function sendAI() {
       tools: AI_TOOLS
     };
 
-    function aiFetchHeaders() {
-      if (AI_PROXY_URL) return { 'Content-Type': 'application/json' };
-      return {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      };
-    }
     const aiEndpoint = AI_PROXY_URL || 'https://api.anthropic.com/v1/messages';
 
     let response = await fetch(aiEndpoint, {
@@ -1859,14 +1860,7 @@ async function callAIBackground(prompt) {
     console.warn('AI rate limit reached — skipping call');
     return null;
   }
-  const headers = AI_PROXY_URL
-    ? { 'Content-Type': 'application/json' }
-    : {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      };
+  const headers = aiFetchHeaders();
   const endpoint = AI_PROXY_URL || 'https://api.anthropic.com/v1/messages';
 
   const resp = await fetch(endpoint, {

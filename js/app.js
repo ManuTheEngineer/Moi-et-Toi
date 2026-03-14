@@ -2242,6 +2242,11 @@ function trackFeatureUse(feature, action) {
   var now = Date.now();
   if (_analyticsThrottle[key] && now - _analyticsThrottle[key] < 30000) return;
   _analyticsThrottle[key] = now;
+  // Prune stale entries to prevent unbounded growth
+  var keys = Object.keys(_analyticsThrottle);
+  if (keys.length > 100) {
+    keys.forEach(function (k) { if (now - _analyticsThrottle[k] > 35000) delete _analyticsThrottle[k]; });
+  }
   coupleRef('analytics/usage').push({
     feature: feature,
     action: action,
@@ -2258,20 +2263,24 @@ var _dailyActiveTracked = false;
 function trackDailyActive() {
   if (_dailyActiveTracked || !db || !user) return;
   _dailyActiveTracked = true;
-  var today = new Date().toISOString().split('T')[0];
+  var today = localDate();
   coupleRef('analytics/dau/' + today + '/' + user).set(Date.now());
 }
 
-// Compute engagement metrics from analytics data
+// Compute engagement metrics from analytics data (cached for 5 min)
+var _engCache = { data: null, ts: 0 };
 async function computeEngagementMetrics() {
   if (!db) return null;
   var now = Date.now();
-  var thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
+  if (_engCache.data && now - _engCache.ts < 300000) return _engCache.data;
 
-  var [dauSnap, usageSnap, moodsSnap, lettersSnap, tapsSnap] = await Promise.all([
-    coupleRef('analytics/dau').orderByKey().startAt(new Date(thirtyDaysAgo).toISOString().split('T')[0]).once('value'),
+  var thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
+  var startDate = localDate(new Date(thirtyDaysAgo));
+
+  // Reuse MET mood cache if available; only query dau, usage, letters, taps
+  var [dauSnap, usageSnap, lettersSnap, tapsSnap] = await Promise.all([
+    coupleRef('analytics/dau').orderByKey().startAt(startDate).once('value'),
     coupleRef('analytics/usage').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value'),
-    coupleRef('moods').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value'),
     coupleRef('letters').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value'),
     coupleRef('taps').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value')
   ]);
@@ -2298,9 +2307,11 @@ async function computeEngagementMetrics() {
     .sort(function (a, b) { return b[1] - a[1]; })
     .slice(0, 10);
 
-  // Interaction counts
+  // Interaction counts — use MET cache for moods if ready
   var moodCount = 0, letterCount = 0, tapCount = 0;
-  moodsSnap.forEach(function () { moodCount++; });
+  if (typeof MET !== 'undefined' && MET._ready && MET.mood.all.length) {
+    moodCount = MET.mood.all.filter(function (m) { return m.timestamp > thirtyDaysAgo; }).length;
+  }
   lettersSnap.forEach(function () { letterCount++; });
   tapsSnap.forEach(function () { tapCount++; });
 
@@ -2308,11 +2319,11 @@ async function computeEngagementMetrics() {
   var sortedDays = Object.keys(dau).sort();
   var currentStreak = 0;
   var maxStreak = 0;
-  var today = new Date().toISOString().split('T')[0];
+  var today = localDate();
   for (var i = sortedDays.length - 1; i >= 0; i--) {
     var expected = new Date();
     expected.setDate(expected.getDate() - (sortedDays.length - 1 - i));
-    var expStr = expected.toISOString().split('T')[0];
+    var expStr = localDate(expected);
     if (sortedDays[i] === expStr) {
       currentStreak++;
     } else {
@@ -2336,11 +2347,11 @@ async function computeEngagementMetrics() {
   // Retention: 7-day active rate
   var sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  var sevenDayStr = sevenDaysAgo.toISOString().split('T')[0];
+  var sevenDayStr = localDate(sevenDaysAgo);
   var recentDays = Object.keys(dau).filter(function (d) { return d >= sevenDayStr; }).length;
   var retentionRate7d = Math.round((recentDays / 7) * 100);
 
-  return {
+  var result = {
     daysActive: daysActive,
     topFeatures: topFeatures,
     moodCheckins: moodCount,
@@ -2351,6 +2362,8 @@ async function computeEngagementMetrics() {
     retentionRate7d: retentionRate7d,
     totalSessions: daysActive.total
   };
+  _engCache = { data: result, ts: Date.now() };
+  return result;
 }
 
 // Render engagement dashboard on the insights page
@@ -2680,8 +2693,8 @@ function submitApiKey() {
       AI_PROXY_URL = proxyUrl;
       localStorage.setItem('met_ai_proxy', proxyUrl);
       // Clear direct key from Firebase for security
-      CLAUDE_API_KEY = 'proxy';
-      coupleRef('profiles/apiKey').set('proxy');
+      CLAUDE_API_KEY = '';
+      coupleRef('profiles/apiKey').remove();
       closeModal();
       toast('Proxy configured — AI ready');
       updateAISetupStatus();
