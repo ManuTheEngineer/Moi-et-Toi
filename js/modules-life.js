@@ -37,7 +37,7 @@ function nextAffirmation() { rotatePrompt(AFFIRMATIONS, 'hs-affirm-text', functi
 function logPeriodStart() {
   if (!db || !user) return;
   const today = localDate();
-  db.ref('herWellness/cycle')
+  coupleRef('wellness/partner1/cycle')
     .push({ type: 'start', date: today, timestamp: Date.now() })
     .catch(function () { toast('Save failed'); });
   toast('Period start logged');
@@ -47,7 +47,7 @@ function logPeriodStart() {
 function logPeriodEnd() {
   if (!db || !user) return;
   const today = localDate();
-  db.ref('herWellness/cycle')
+  coupleRef('wellness/partner1/cycle')
     .push({ type: 'end', date: today, timestamp: Date.now() })
     .catch(function () { toast('Save failed'); });
   toast('Period end logged');
@@ -56,7 +56,7 @@ function logPeriodEnd() {
 
 function loadCycleData() {
   if (!db) return;
-  db.ref('herWellness/cycle')
+  coupleRef('wellness/partner1/cycle')
     .orderByChild('timestamp')
     .limitToLast(10)
     .once('value', snap => {
@@ -110,13 +110,13 @@ function toggleCare(el, type) {
   el.classList.toggle('done');
   const today = localDate();
   const done = el.classList.contains('done');
-  db.ref('herWellness/selfcare/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
+  coupleRef('wellness/partner1/selfcare/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
 }
 
 function loadSelfCare() {
   if (!db) return;
   const today = localDate();
-  db.ref('herWellness/selfcare/' + today).once('value', snap => {
+  coupleRef('wellness/partner1/selfcare/' + today).once('value', snap => {
     const data = snap.val() || {};
     document.querySelectorAll('#hs-care-grid .hs-care-item').forEach(el => {
       const type = el.onclick.toString().match(/'(\w+)'/)?.[1];
@@ -151,14 +151,14 @@ const MOTIVATIONS = [
 
 let motivIdx = Math.floor(Math.random() * MOTIVATIONS.length);
 
-function loadMotivation() { rotatePrompt(MOTIVATIONS, 'him-affirm-text', function() { return motivIdx; }); }
-function nextMotivation() { rotatePrompt(MOTIVATIONS, 'him-affirm-text', function() { return motivIdx; }, true); }
+function loadMotivation() { rotatePrompt(MOTIVATIONS, 'p1-affirm-text', function() { return motivIdx; }); }
+function nextMotivation() { rotatePrompt(MOTIVATIONS, 'p1-affirm-text', function() { return motivIdx; }, true); }
 
 async function logPR() {
   if (!db || !user) return;
-  const exercise = document.getElementById('him-pr-exercise').value.trim();
-  const weight = document.getElementById('him-pr-weight').value.trim();
-  const reps = document.getElementById('him-pr-reps').value.trim();
+  const exercise = document.getElementById('p1-pr-exercise').value.trim();
+  const weight = document.getElementById('p1-pr-weight').value.trim();
+  const reps = document.getElementById('p1-pr-reps').value.trim();
   if (!exercise) {
     toast('Enter an exercise');
     return;
@@ -168,16 +168,16 @@ async function logPR() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('hisWellness/prs').push({
+  await coupleRef('wellness/partner2/prs').push({
     exercise,
     weight: weight || '--',
     reps: reps || '--',
     timestamp: Date.now(),
     date: localDate()
   });
-  document.getElementById('him-pr-exercise').value = '';
-  document.getElementById('him-pr-weight').value = '';
-  document.getElementById('him-pr-reps').value = '';
+  document.getElementById('p1-pr-exercise').value = '';
+  document.getElementById('p1-pr-weight').value = '';
+  document.getElementById('p1-pr-reps').value = '';
   if (btn) {
     btn.textContent = 'Logged';
     setTimeout(() => {
@@ -189,12 +189,12 @@ async function logPR() {
 }
 
 function listenPRs() {
-  var ref = db.ref('hisWellness/prs').orderByChild('timestamp').limitToLast(20);
+  var ref = coupleRef('wellness/partner2/prs').orderByChild('timestamp').limitToLast(20);
   fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
-      const el = document.getElementById('him-pr-list');
+      const el = document.getElementById('p1-pr-list');
       if (!el) return;
       if (!items.length) {
         el.innerHTML = '<div class="empty">Log your first PR</div>';
@@ -203,7 +203,7 @@ function listenPRs() {
       el.innerHTML = items
         .map(i => {
           const ts = timeAgo(new Date(i.timestamp));
-          return `<div class="him-pr-card"><div class="him-pr-name">${esc(i.exercise)}</div><div class="him-pr-val">${esc(String(i.weight))}${i.weight !== '--' ? ' lbs' : ''} × ${esc(String(i.reps))}</div><div class="him-pr-date">${ts}</div></div>`;
+          return `<div class="p1-pr-card"><div class="p1-pr-name">${esc(i.exercise)}</div><div class="p1-pr-val">${esc(String(i.weight))}${i.weight !== '--' ? ' lbs' : ''} × ${esc(String(i.reps))}</div><div class="p1-pr-date">${ts}</div></div>`;
         })
         .join('');
     });
@@ -214,25 +214,25 @@ function toggleClarity(el, type) {
   el.classList.toggle('done');
   const today = localDate();
   const done = el.classList.contains('done');
-  db.ref('hisWellness/clarity/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
+  coupleRef('wellness/partner2/clarity/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
 }
 
 function loadClarity() {
   if (!db) return;
   const today = localDate();
-  db.ref('hisWellness/clarity/' + today).once('value', snap => {
+  coupleRef('wellness/partner2/clarity/' + today).once('value', snap => {
     const data = snap.val() || {};
-    document.querySelectorAll('#him-clarity-grid .hs-care-item').forEach(el => {
+    document.querySelectorAll('#p1-clarity-grid .hs-care-item').forEach(el => {
       const type = el.onclick.toString().match(/'(\w+)'/)?.[1];
       if (type && data[type]) el.classList.add('done');
     });
   });
 }
 
-// ===== PERSONAL GOALS (shared between her/him spaces) =====
+// ===== PERSONAL GOALS (shared between partner spaces) =====
 async function addPersonalGoal(who) {
   if (!db || !user) return;
-  const inputId = who === 'her' ? 'hs-goal-input' : 'him-goal-input';
+  const inputId = who === 'partner1' ? 'p1-goal-input' : 'p2-goal-input';
   const title = document.getElementById(inputId).value.trim();
   if (!title) {
     toast('Enter a goal');
@@ -243,7 +243,7 @@ async function addPersonalGoal(who) {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('personalGoals/' + who).push({
+  await coupleRef('personalGoals/' + who).push({
     title,
     done: false,
     timestamp: Date.now()
@@ -260,8 +260,8 @@ async function addPersonalGoal(who) {
 }
 
 function listenPersonalGoals(who) {
-  const listId = who === 'her' ? 'hs-goals' : 'him-goals';
-  db.ref('personalGoals/' + who)
+  const listId = who === 'partner1' ? 'p1-goals' : 'p2-goals';
+  coupleRef('personalGoals/' + who)
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -293,7 +293,7 @@ function listenPersonalGoals(who) {
 
 async function toggleGoal(who, key, done) {
   if (!db) return;
-  await db.ref('personalGoals/' + who + '/' + key + '/done').set(done);
+  await coupleRef('personalGoals/' + who + '/' + key + '/done').set(done);
   if (done) toast('Goal completed');
 }
 
@@ -314,7 +314,7 @@ async function addHabit() {
     btn.disabled = true;
     btn.textContent = '...';
   }
-  await db.ref('habits').push({
+  await coupleRef('habits').push({
     name,
     user,
     frequency: 'daily',
@@ -331,7 +331,7 @@ async function addHabit() {
 
 function listenHabits() {
   if (!db) return;
-  db.ref('habits')
+  coupleRef('habits')
     .orderByChild('createdAt')
     .on('value', snap => {
       const items = [];
@@ -382,7 +382,7 @@ function renderHabits(habits) {
           <div class="habit-name">${esc(h.name)}</div>
           <div class="habit-meta">${who} · ${streak > 0 ? '🔥 ' + streak + ' day streak' : 'Start today'}</div>
         </div>
-        <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();db.ref('habits/${h._key}').remove();toast('Removed')">×</button>
+        <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();coupleRef('habits/${h._key}').remove();toast('Removed')">×</button>
       </div>
       <div class="habit-dots">${dots}</div>
     </div>`;
@@ -393,10 +393,10 @@ function renderHabits(habits) {
 async function toggleHabit(key, date, done) {
   if (!db) return;
   if (done) {
-    await db.ref('habits/' + key + '/history/' + date).set(true);
+    await coupleRef('habits/' + key + '/history/' + date).set(true);
     toast('Habit logged ✓');
   } else {
-    await db.ref('habits/' + key + '/history/' + date).remove();
+    await coupleRef('habits/' + key + '/history/' + date).remove();
   }
 }
 
@@ -455,7 +455,7 @@ async function addPhrase() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('culture/phrases').push({
+  await coupleRef('culture/phrases').push({
     word,
     meaning,
     lang,
@@ -477,7 +477,7 @@ async function addPhrase() {
 }
 
 function listenPhrases() {
-  var ref = db.ref('culture/phrases').orderByChild('timestamp');
+  var ref = coupleRef('culture/phrases').orderByChild('timestamp');
   fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
@@ -516,7 +516,7 @@ async function addTradition() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('culture/traditions').push({
+  await coupleRef('culture/traditions').push({
     title,
     emoji,
     origin,
@@ -540,7 +540,7 @@ async function addTradition() {
 }
 
 function listenTraditions() {
-  var ref = db.ref('culture/traditions').orderByChild('timestamp');
+  var ref = coupleRef('culture/traditions').orderByChild('timestamp');
   fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
@@ -582,7 +582,7 @@ async function addRecipe() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('culture/recipes').push({
+  await coupleRef('culture/recipes').push({
     name,
     emoji,
     origin,
@@ -606,7 +606,7 @@ async function addRecipe() {
 }
 
 function listenRecipes() {
-  var ref = db.ref('culture/recipes').orderByChild('timestamp');
+  var ref = coupleRef('culture/recipes').orderByChild('timestamp');
   fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
@@ -721,7 +721,7 @@ async function saveConvoNote() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('deepTalkJournal').push({
+  await coupleRef('deepTalkJournal').push({
     text,
     user,
     userName: NAMES[user],
@@ -741,7 +741,7 @@ async function saveConvoNote() {
 }
 
 function listenConvoNotes() {
-  var ref = db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(20);
+  var ref = coupleRef('deepTalkJournal').orderByChild('timestamp').limitToLast(20);
   fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
@@ -784,7 +784,7 @@ const FAM_DISCUSSIONS = [
 function renderFamDiscussions() {
   const el = document.getElementById('fam-discuss');
   if (!el || !db) return;
-  db.ref('family/discussed').once('value', snap => {
+  coupleRef('family/discussed').once('value', snap => {
     const discussed = snap.val() || {};
     el.innerHTML = FAM_DISCUSSIONS.map(
       (d, i) =>
@@ -798,8 +798,8 @@ function renderFamDiscussions() {
 
 async function toggleDiscussed(idx) {
   if (!db) return;
-  const snap = await db.ref('family/discussed/' + idx).once('value');
-  await db.ref('family/discussed/' + idx).set(!snap.val());
+  const snap = await coupleRef('family/discussed/' + idx).once('value');
+  await coupleRef('family/discussed/' + idx).set(!snap.val());
   renderFamDiscussions();
   toast(snap.val() ? 'Unmarked' : 'Marked as discussed ✓');
 }
@@ -817,7 +817,7 @@ async function addBabyName() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('family/names').push({
+  await coupleRef('family/names').push({
     name,
     gender,
     addedBy: user,
@@ -838,7 +838,7 @@ async function addBabyName() {
 }
 
 function listenBabyNames() {
-  db.ref('family/names')
+  coupleRef('family/names')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -871,8 +871,8 @@ function listenBabyNames() {
 
 async function toggleNameLove(key) {
   if (!db || !user) return;
-  const snap = await db.ref('family/names/' + key + '/loved/' + user).once('value');
-  await db.ref('family/names/' + key + '/loved/' + user).set(!snap.val());
+  const snap = await coupleRef('family/names/' + key + '/loved/' + user).once('value');
+  await coupleRef('family/names/' + key + '/loved/' + user).set(!snap.val());
 }
 
 async function addFamilyGoal() {
@@ -887,7 +887,7 @@ async function addFamilyGoal() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('family/goals').push({ title, done: false, addedBy: user, timestamp: Date.now() });
+  await coupleRef('family/goals').push({ title, done: false, addedBy: user, timestamp: Date.now() });
   document.getElementById('fam-goal-input').value = '';
   document.getElementById('fam-goal-input').focus();
   if (btn) {
@@ -901,7 +901,7 @@ async function addFamilyGoal() {
 }
 
 function listenFamilyGoals() {
-  db.ref('family/goals')
+  coupleRef('family/goals')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -931,7 +931,7 @@ function listenFamilyGoals() {
 
 async function toggleFamGoal(key, done) {
   if (!db) return;
-  await db.ref('family/goals/' + key + '/done').set(done);
+  await coupleRef('family/goals/' + key + '/done').set(done);
 }
 
 // ===== OUR FOUNDATION =====
@@ -947,7 +947,7 @@ async function addValue() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('foundation/values').push({
+  await coupleRef('foundation/values').push({
     title,
     addedBy: user,
     addedByName: NAMES[user],
@@ -966,7 +966,7 @@ async function addValue() {
 }
 
 function listenValues() {
-  db.ref('foundation/values')
+  coupleRef('foundation/values')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -1024,7 +1024,7 @@ function listenAgreements() {
   _migratePersonalToPrivate();
 
   // --- Shared "Our Commitments" ---
-  var activeRef = db.ref('agreements/active').orderByChild('timestamp');
+  var activeRef = coupleRef('agreements/active').orderByChild('timestamp');
   fbOn(activeRef, 'value', function (snap) {
     var el = document.getElementById('agree-active-list');
     if (!el) return;
@@ -1082,7 +1082,7 @@ function listenAgreements() {
   });
 
   // --- Proposals listener ---
-  var proposalRef = db.ref('agreements/proposals').orderByChild('timestamp');
+  var proposalRef = coupleRef('agreements/proposals').orderByChild('timestamp');
   fbOn(proposalRef, 'value', function (snap) {
     var items = [];
     snap.forEach(function (c) {
@@ -1160,7 +1160,7 @@ function listenAgreements() {
 
 function listenPrivateCommitments() {
   if (!db || !user) return;
-  var ref = db.ref('agreements/personal/' + user).orderByChild('timestamp');
+  var ref = coupleRef('agreements/personal/' + user).orderByChild('timestamp');
   fbOn(ref, 'value', function (snap) {
     var el = document.getElementById('agree-private-list');
     if (!el) return;
@@ -1201,7 +1201,7 @@ function addPrivateCommitment() {
     toast('Write a commitment first');
     return;
   }
-  db.ref('agreements/personal/' + user).push({
+  coupleRef('agreements/personal/' + user).push({
     text: text,
     timestamp: Date.now()
   }).catch(function () { toast('Save failed'); });
@@ -1231,7 +1231,7 @@ function savePrivateEdit() {
   var textarea = document.getElementById('agree-private-edit-text');
   var newText = textarea.value.trim();
   if (!newText) return;
-  db.ref('agreements/personal/' + user + '/' + _privateEditingKey + '/text')
+  coupleRef('agreements/personal/' + user + '/' + _privateEditingKey + '/text')
     .set(newText)
     .then(function () { toast('Updated'); })
     .catch(function () { toast('Save failed'); });
@@ -1241,7 +1241,7 @@ function savePrivateEdit() {
 function deletePrivateCommitment(key) {
   if (!db || !user) return;
   if (!confirm('Delete this commitment?')) return;
-  db.ref('agreements/personal/' + user + '/' + key).remove()
+  coupleRef('agreements/personal/' + user + '/' + key).remove()
     .then(function () { toast('Removed'); })
     .catch(function () { toast('Delete failed'); });
 }
@@ -1249,20 +1249,20 @@ function deletePrivateCommitment(key) {
 /* ---------- migration: onboarding + defaults → active ---------- */
 
 function _migrateOnboardingAgreements() {
-  db.ref('agreements/_migrated').once('value', function (snap) {
+  coupleRef('agreements/_migrated').once('value', function (snap) {
     if (snap.val()) return;
 
     var batch = {};
     var count = 0;
 
-    db.ref('agreements/onboarding').once('value', function (obSnap) {
+    coupleRef('agreements/onboarding').once('value', function (obSnap) {
       var obData = obSnap.val() || {};
       Object.keys(obData).forEach(function (role) {
         var d = obData[role];
         // Personal commitments → private path (only owner sees)
         if (d.personal)
           d.personal.forEach(function (t) {
-            var key = db.ref('agreements/personal/' + role).push().key;
+            var key = coupleRef('agreements/personal/' + role).push().key;
             batch['agreements/personal/' + role + '/' + key] = {
               text: t,
               timestamp: Date.now() - 1000 * count++
@@ -1271,7 +1271,7 @@ function _migrateOnboardingAgreements() {
         // Together commitments → shared active path (adder approved, partner pending)
         if (d.together)
           d.together.forEach(function (t) {
-            var key = db.ref('agreements/active').push().key;
+            var key = coupleRef('agreements/active').push().key;
             var approvals = {};
             approvals[role] = true;
             batch['agreements/active/' + key] = {
@@ -1287,10 +1287,10 @@ function _migrateOnboardingAgreements() {
       });
 
       // Migrate old custom agreements
-      db.ref('foundation/customAgreements').once('value', function (custSnap) {
+      coupleRef('foundation/customAgreements').once('value', function (custSnap) {
         custSnap.forEach(function (c) {
           var d = c.val();
-          var key = db.ref('agreements/active').push().key;
+          var key = coupleRef('agreements/active').push().key;
           var custApprovals = {};
           if (d.addedBy) custApprovals[d.addedBy] = true;
           batch['agreements/active/' + key] = {
@@ -1315,19 +1315,19 @@ function _migrateOnboardingAgreements() {
           'We choose understanding over winning'
         ];
         defaults.forEach(function (text) {
-          var key = db.ref('agreements/active').push().key;
+          var key = coupleRef('agreements/active').push().key;
           batch['agreements/active/' + key] = {
             text: text,
             source: 'default',
             timestamp: Date.now() - 1000 * count++,
             signedOff: true,
-            approvals: { her: true, him: true }
+            approvals: { partner1: true, partner2: true }
           };
         });
 
         if (count > 0) {
           batch['agreements/_migrated'] = true;
-          db.ref().update(batch);
+          coupleRef().update(batch);
         }
       });
     });
@@ -1336,9 +1336,9 @@ function _migrateOnboardingAgreements() {
 
 // Migrate personal items already in agreements/active to agreements/personal/{user} (one-time)
 function _migratePersonalToPrivate() {
-  db.ref('agreements/_personalMigrated').once('value', function (snap) {
+  coupleRef('agreements/_personalMigrated').once('value', function (snap) {
     if (snap.val()) return;
-    db.ref('agreements/active').once('value', function (activeSnap) {
+    coupleRef('agreements/active').once('value', function (activeSnap) {
       var batch = {};
       var found = false;
       activeSnap.forEach(function (c) {
@@ -1346,7 +1346,7 @@ function _migratePersonalToPrivate() {
         if (d.source === 'personal' && d.addedBy) {
           found = true;
           var owner = d.addedBy;
-          var newKey = db.ref('agreements/personal/' + owner).push().key;
+          var newKey = coupleRef('agreements/personal/' + owner).push().key;
           batch['agreements/personal/' + owner + '/' + newKey] = {
             text: d.text,
             timestamp: d.timestamp || Date.now()
@@ -1357,9 +1357,9 @@ function _migratePersonalToPrivate() {
       });
       batch['agreements/_personalMigrated'] = true;
       if (found) {
-        db.ref().update(batch);
+        coupleRef().update(batch);
       } else {
-        db.ref('agreements/_personalMigrated').set(true);
+        coupleRef('agreements/_personalMigrated').set(true);
       }
     });
   });
@@ -1369,7 +1369,7 @@ function _migratePersonalToPrivate() {
 
 function toggleCommitmentApproval(key) {
   if (!db || !user) return;
-  db.ref('agreements/active/' + key + '/approvals/' + user).set(true)
+  coupleRef('agreements/active/' + key + '/approvals/' + user).set(true)
     .then(function () { toast('Approved'); })
     .catch(function () { toast('Save failed'); });
 }
@@ -1384,7 +1384,7 @@ function proposeAgreement() {
     toast('Write a commitment first');
     return;
   }
-  db.ref('agreements/proposals').push({
+  coupleRef('agreements/proposals').push({
     type: 'new',
     text: text,
     proposedBy: user,
@@ -1420,7 +1420,7 @@ function submitAgreementEdit() {
   var textarea = document.getElementById('agree-edit-text');
   var newText = textarea.value.trim();
   if (!newText) return;
-  db.ref('agreements/active/' + _agreeEditingKey).once('value', function (snap) {
+  coupleRef('agreements/active/' + _agreeEditingKey).once('value', function (snap) {
     var orig = snap.val();
     if (!orig) {
       toast('Commitment not found');
@@ -1432,7 +1432,7 @@ function submitAgreementEdit() {
       closeAgreementEdit();
       return;
     }
-    db.ref('agreements/proposals').push({
+    coupleRef('agreements/proposals').push({
       type: 'edit',
       targetKey: _agreeEditingKey,
       text: newText,
@@ -1450,7 +1450,7 @@ function submitAgreementEdit() {
 function proposeRemoval(key, text) {
   if (!db || !user) return;
   if (!confirm('Propose removing "' + text + '"?')) return;
-  db.ref('agreements/proposals').push({
+  coupleRef('agreements/proposals').push({
     type: 'remove',
     targetKey: key,
     text: text,
@@ -1464,7 +1464,7 @@ function proposeRemoval(key, text) {
 
 function approveProposal(proposalKey) {
   if (!db || !user) return;
-  db.ref('agreements/proposals/' + proposalKey).once('value', function (snap) {
+  coupleRef('agreements/proposals/' + proposalKey).once('value', function (snap) {
     var proposal = snap.val();
     if (!proposal) return;
 
@@ -1473,7 +1473,7 @@ function approveProposal(proposalKey) {
       var newApprovals = {};
       newApprovals[proposal.proposedBy] = true;
       newApprovals[user] = true;
-      db.ref('agreements/active').push({
+      coupleRef('agreements/active').push({
         text: proposal.text,
         addedBy: proposal.proposedBy,
         addedByName: proposal.proposedByName,
@@ -1483,20 +1483,20 @@ function approveProposal(proposalKey) {
         approvals: newApprovals
       }).catch(_catchFail);
     } else if (proposal.type === 'edit' && proposal.targetKey) {
-      db.ref('agreements/active/' + proposal.targetKey + '/text').set(proposal.text).catch(_catchFail);
-      db.ref('agreements/active/' + proposal.targetKey + '/lastEditBy').set(proposal.proposedBy).catch(_catchFail);
-      db.ref('agreements/active/' + proposal.targetKey + '/lastEditAt').set(Date.now()).catch(_catchFail);
+      coupleRef('agreements/active/' + proposal.targetKey + '/text').set(proposal.text).catch(_catchFail);
+      coupleRef('agreements/active/' + proposal.targetKey + '/lastEditBy').set(proposal.proposedBy).catch(_catchFail);
+      coupleRef('agreements/active/' + proposal.targetKey + '/lastEditAt').set(Date.now()).catch(_catchFail);
     } else if (proposal.type === 'remove' && proposal.targetKey) {
-      db.ref('agreements/active/' + proposal.targetKey).remove().catch(_catchFail);
+      coupleRef('agreements/active/' + proposal.targetKey).remove().catch(_catchFail);
     }
-    db.ref('agreements/proposals/' + proposalKey + '/status').set('approved').catch(_catchFail);
+    coupleRef('agreements/proposals/' + proposalKey + '/status').set('approved').catch(_catchFail);
     toast('Approved!');
   });
 }
 
 function rejectProposal(proposalKey) {
   if (!db || !user) return;
-  db.ref('agreements/proposals/' + proposalKey + '/status').set('rejected').catch(function () { toast('Save failed'); });
+  coupleRef('agreements/proposals/' + proposalKey + '/status').set('rejected').catch(function () { toast('Save failed'); });
   toast('Declined');
 }
 
@@ -1571,7 +1571,7 @@ async function addPrayer() {
     btn.disabled = true;
     btn.textContent = 'Sharing...';
   }
-  await db.ref('spiritual/prayers').push({
+  await coupleRef('spiritual/prayers').push({
     text,
     user,
     userName: NAMES[user],
@@ -1590,7 +1590,7 @@ async function addPrayer() {
 }
 
 function listenPrayers() {
-  db.ref('spiritual/prayers')
+  coupleRef('spiritual/prayers')
     .orderByChild('timestamp')
     .limitToLast(20)
     .on('value', snap => {
@@ -1624,7 +1624,7 @@ function listenPrayers() {
 
 async function prayFor(key) {
   if (!db || !user) return;
-  await db.ref('spiritual/prayers/' + key + '/prayedFor/' + user).set(true);
+  await coupleRef('spiritual/prayers/' + key + '/prayedFor/' + user).set(true);
   toast('Noted');
 }
 
@@ -1640,7 +1640,7 @@ async function addBlessing() {
     btn.disabled = true;
     btn.textContent = 'Sharing...';
   }
-  await db.ref('spiritual/blessings').push({
+  await coupleRef('spiritual/blessings').push({
     text,
     user,
     userName: NAMES[user],
@@ -1659,7 +1659,7 @@ async function addBlessing() {
 }
 
 function listenBlessings() {
-  db.ref('spiritual/blessings')
+  coupleRef('spiritual/blessings')
     .orderByChild('timestamp')
     .limitToLast(20)
     .on('value', snap => {
@@ -1691,7 +1691,7 @@ async function addIntention() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('spiritual/intentions').push({
+  await coupleRef('spiritual/intentions').push({
     text,
     addedBy: user,
     addedByName: NAMES[user],
@@ -1710,7 +1710,7 @@ async function addIntention() {
 }
 
 function listenIntentions() {
-  db.ref('spiritual/intentions')
+  coupleRef('spiritual/intentions')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -1800,7 +1800,7 @@ async function addExpense() {
     timestamp: Date.now()
   };
   if (pendingReceiptData) data.receipt = pendingReceiptData;
-  await db.ref('finances/expenses').push(data);
+  await coupleRef('finances/expenses').push(data);
   document.getElementById('fin-amount').value = '';
   document.getElementById('fin-note').value = '';
   clearReceipt();
@@ -1818,7 +1818,7 @@ async function addExpense() {
 
 function listenExpenses() {
   if (!db) return;
-  db.ref('finances/expenses')
+  coupleRef('finances/expenses')
     .orderByChild('timestamp')
     .on('value', snap => {
       const all = [];
@@ -1906,7 +1906,7 @@ function renderFinRecent(expenses) {
 
 function viewReceipt(key) {
   if (!db) return;
-  db.ref('finances/expenses/' + key).once('value', snap => {
+  coupleRef('finances/expenses/' + key).once('value', snap => {
     const e = snap.val();
     if (!e || !e.receipt) {
       toast('No receipt found');
@@ -1978,7 +1978,7 @@ async function addSavingsGoal() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('homelife/savings').push({
+  await coupleRef('homelife/savings').push({
     name,
     target,
     saved,
@@ -1999,7 +1999,7 @@ async function addSavingsGoal() {
 }
 
 function listenSavings() {
-  db.ref('homelife/savings')
+  coupleRef('homelife/savings')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -2050,67 +2050,10 @@ function updateSavings(key) {
 async function submitSavingsUpdate(key) {
   var amount = parseFloat(document.getElementById('savings-amount-input').value) || 0;
   if (amount > 0) {
-    await db.ref('homelife/savings/' + key + '/saved').set(amount);
+    await coupleRef('homelife/savings/' + key + '/saved').set(amount);
     closeModal();
     toast('Savings updated');
   }
-}
-
-async function addMeal() {
-  if (!db || !user) return;
-  const name = document.getElementById('hl-meal-input').value.trim();
-  const day = document.getElementById('hl-meal-day').value;
-  if (!name) {
-    toast('Name a meal');
-    return;
-  }
-  const btn = event?.target;
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = 'Saving...';
-  }
-  await db.ref('homelife/meals').push({
-    name,
-    day,
-    addedBy: user,
-    addedByName: NAMES[user],
-    timestamp: Date.now()
-  });
-  document.getElementById('hl-meal-input').value = '';
-  if (btn) {
-    btn.textContent = 'Added';
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.textContent = 'Add meal';
-    }, 1500);
-  }
-  toast('Meal added');
-}
-
-function listenMeals() {
-  db.ref('homelife/meals')
-    .orderByChild('timestamp')
-    .on('value', snap => {
-      const items = [];
-      snap.forEach(c => {
-        const v = c.val();
-        v._key = c.key;
-        items.push(v);
-      });
-      items.reverse();
-      const el = document.getElementById('hl-meals');
-      if (!el) return;
-      if (!items.length) {
-        el.innerHTML = '<div class="empty">Plan your meals together</div>';
-        return;
-      }
-      el.innerHTML = items
-        .map(i => {
-          const who = i.addedBy === user ? 'You' : esc(i.addedByName || '?');
-          return `<div class="hl-meal-card"><div class="hl-meal-day">${i.day === 'anytime' ? '' : esc(i.day)}</div><div class="hl-meal-name">${esc(i.name)}</div><div class="hl-meal-by">${who}</div><button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteMeal('${i._key}')">×</button></div>`;
-        })
-        .join('');
-    });
 }
 
 async function addChore() {
@@ -2126,7 +2069,7 @@ async function addChore() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('homelife/chores').push({
+  await coupleRef('homelife/chores').push({
     name,
     assignedTo: who,
     done: false,
@@ -2144,7 +2087,7 @@ async function addChore() {
 }
 
 function listenChores() {
-  db.ref('homelife/chores')
+  coupleRef('homelife/chores')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -2162,8 +2105,8 @@ function listenChores() {
       }
       const whoLabels = {
         shared: 'Shared',
-        her: user === 'her' ? 'You' : NAMES.her,
-        him: user === 'him' ? 'You' : NAMES.him,
+        partner1: user === 'partner1' ? 'You' : NAMES.partner1,
+        partner2: user === 'partner2' ? 'You' : NAMES.partner2,
         alternate: 'Alternate'
       };
       el.innerHTML = items
@@ -2182,7 +2125,7 @@ function listenChores() {
 
 async function toggleChore(key, done) {
   if (!db) return;
-  await db.ref('homelife/chores/' + key + '/done').set(done);
+  await coupleRef('homelife/chores/' + key + '/done').set(done);
 }
 
 // ===== VALUES PAGE TAB SWITCHING =====

@@ -9,19 +9,19 @@ let kypData = {},
 function listenKnowYou() {
   if (!db) return;
   // Listen to partner's data (what they share about themselves)
-  db.ref('knowYou/' + partner + '/favorites').on('value', snap => {
+  coupleRef('knowYou/' + partner + '/favorites').on('value', snap => {
     kypData = snap.val() || {};
     renderKnowYou();
   });
-  db.ref('knowYou/' + user + '/notes').on('value', snap => {
+  coupleRef('knowYou/' + user + '/notes').on('value', snap => {
     kypNotes = snap.val() || {};
     renderKYPNotes();
   });
-  db.ref('knowYou/dates').on('value', snap => {
+  coupleRef('knowYou/dates').on('value', snap => {
     kypDates = snap.val() || {};
     renderKYPDates();
   });
-  db.ref('knowYou/' + user + '/loveNotes').on('value', snap => {
+  coupleRef('knowYou/' + user + '/loveNotes').on('value', snap => {
     kypLoveNotes = snap.val() || {};
     renderKYPLoveNotes();
   });
@@ -86,7 +86,7 @@ function editKYP(field) {
 
 function submitKYPEdit(field) {
   var val = (document.getElementById('kyp-edit-input').value || '').trim();
-  db.ref('knowYou/' + user + '/favorites/' + field).set(val);
+  coupleRef('knowYou/' + user + '/favorites/' + field).set(val);
   var el = document.getElementById('kyp-' + field);
   if (el) el.textContent = val || 'Tap to add';
   closeModal();
@@ -118,7 +118,7 @@ async function addKYPNote() {
   const input = document.getElementById('kyp-note-input');
   const text = input.value.trim();
   if (!text) return;
-  await db.ref('knowYou/' + user + '/notes').push({ text, timestamp: Date.now() });
+  await coupleRef('knowYou/' + user + '/notes').push({ text, timestamp: Date.now() });
   input.value = '';
   toast('Note saved');
   awardXP(5);
@@ -139,7 +139,7 @@ function renderKYPNotes() {
     <div class="kyp-note" style="padding:10px 0;border-bottom:1px solid var(--tint);display:flex;align-items:center;gap:10px">
       <span style="flex:1;font-size:13px;color:var(--cream)">${esc(n.text)}</span>
       <span style="font-size:10px;color:var(--t3)">${timeAgo(n.timestamp)}</span>
-      <button onclick="db.ref('knowYou/${user}/notes/${k}').remove();toast('Removed')" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
+      <button onclick="coupleRef('knowYou/${user}/notes/${k}').remove();toast('Removed')" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
     </div>`
     )
     .join('');
@@ -151,7 +151,7 @@ async function addLoveNote() {
     toast('Write a note first');
     return;
   }
-  await db.ref('knowYou/' + user + '/loveNotes').push({ text, timestamp: Date.now() });
+  await coupleRef('knowYou/' + user + '/loveNotes').push({ text, timestamp: Date.now() });
   document.getElementById('kyp-love-note').value = '';
   toast('Love note saved');
   awardXP(10);
@@ -227,7 +227,7 @@ function startKYPQuiz() {
   showEl('kyp-quiz');
   // Load stats
   if (db)
-    db.ref('knowYou/' + user + '/quizStats').once('value', snap => {
+    coupleRef('knowYou/' + user + '/quizStats').once('value', snap => {
       kypQuizStats = snap.val() || { correct: 0, total: 0 };
       renderKYPQuizStats();
     });
@@ -248,7 +248,7 @@ function checkKYPQuiz() {
     if (res)
       res.innerHTML = '<span style="color:var(--red)">Not quite. It\'s ' + esc(kypData[currentQuizField]) + '</span>';
   }
-  if (db) db.ref('knowYou/' + user + '/quizStats').set(kypQuizStats);
+  if (db) coupleRef('knowYou/' + user + '/quizStats').set(kypQuizStats);
   renderKYPQuizStats();
   setTimeout(() => startKYPQuiz(), 2000);
 }
@@ -258,7 +258,7 @@ function skipKYPQuiz() {
   const res = document.getElementById('kyp-quiz-result');
   if (res) res.innerHTML = '<span style="color:var(--t3)">Answer: ' + esc(kypData[currentQuizField] || '?') + '</span>';
   kypQuizStats.total = (kypQuizStats.total || 0) + 1;
-  if (db) db.ref('knowYou/' + user + '/quizStats').set(kypQuizStats);
+  if (db) coupleRef('knowYou/' + user + '/quizStats').set(kypQuizStats);
   renderKYPQuizStats();
   setTimeout(() => startKYPQuiz(), 1500);
 }
@@ -275,7 +275,7 @@ let kypCategories = {};
 
 function listenKYPCategories() {
   if (!db) return;
-  db.ref('knowYou/' + user + '/categories').on('value', snap => {
+  coupleRef('knowYou/' + user + '/categories').on('value', snap => {
     kypCategories = snap.val() || {};
     renderKYPCategories();
   });
@@ -289,7 +289,7 @@ function saveKYPCategory(cat) {
     toast('Write something first');
     return;
   }
-  db.ref('knowYou/' + user + '/categories/' + cat).push({ text, timestamp: Date.now() });
+  coupleRef('knowYou/' + user + '/categories/' + cat).push({ text, timestamp: Date.now() });
   el.value = '';
   toast('Saved');
   awardXP(5);
@@ -312,7 +312,7 @@ function renderKYPCategories() {
       <div style="padding:8px 0;border-bottom:1px solid var(--tint);display:flex;align-items:center;gap:8px">
         <span style="flex:1;font-size:13px;color:var(--cream)">${esc(n.text)}</span>
         <span style="font-size:10px;color:var(--t3)">${timeAgo(n.timestamp)}</span>
-        <button onclick="db.ref('knowYou/${user}/categories/${cat}/${k}').remove();toast('Removed')" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
+        <button onclick="coupleRef('knowYou/${user}/categories/${cat}/${k}').remove();toast('Removed')" style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer">&times;</button>
       </div>`
       )
       .join('');
@@ -343,7 +343,7 @@ function listenMemories() {
   const savedView = localStorage.getItem('met_mem_view');
   if (savedView === 'timeline') toggleMemoryView('timeline');
   // Listen for data changes
-  db.ref('memories')
+  coupleRef('memories')
     .orderByChild('timestamp')
     .on('value', snap => {
       memoriesData = snap.val() || {};
@@ -372,13 +372,13 @@ function renderMemories() {
   if (!container) return;
   const items = getFilteredMemories();
   if (!items.length) {
-    const msg =
-      memCurrentAlbum === 'all'
-        ? 'Upload your first photo together'
-        : memCurrentAlbum === 'favorites'
-          ? 'No favorites yet. Tap a photo to favorite it.'
-          : 'No memories in this album yet';
-    container.innerHTML = '<div class="empty">' + msg + '</div>';
+    if (memCurrentAlbum === 'all') {
+      container.innerHTML = '<div class="empty" onclick="document.getElementById(\'mem-file\').click()" style="cursor:pointer">Upload your first photo together <span style="opacity:.5">— tap here</span></div>';
+    } else if (memCurrentAlbum === 'favorites') {
+      container.innerHTML = '<div class="empty">No favorites yet. Tap a photo to favorite it.</div>';
+    } else {
+      container.innerHTML = '<div class="empty">No memories in this album yet</div>';
+    }
     return;
   }
   container.innerHTML = items
@@ -454,7 +454,7 @@ async function saveMemory() {
   const date = document.getElementById('mem-date').value || localDate();
   const albumSel = document.getElementById('mem-album');
   const album = albumSel ? albumSel.value : '';
-  await db.ref('memories').push({ imageData, caption, date, album, uploadedBy: user, timestamp: Date.now() });
+  await coupleRef('memories').push({ imageData, caption, date, album, uploadedBy: user, timestamp: Date.now() });
   document.getElementById('mem-caption').value = '';
   document.getElementById('mem-date').value = '';
   if (albumSel) albumSel.value = '';
@@ -645,7 +645,7 @@ function renderMemoryTimeline() {
 function toggleMemFavorite(key) {
   if (!db || !key) return;
   const current = memoriesData[key] && memoriesData[key].favorite;
-  db.ref('memories/' + key + '/favorite').set(!current);
+  coupleRef('memories/' + key + '/favorite').set(!current);
   toast(current ? 'Unfavorited' : 'Favorited');
 }
 
@@ -719,7 +719,7 @@ function toggleMemDetailFav() {
 
 function setMemDetailAlbum(album) {
   if (!currentMemoryKey || !db) return;
-  db.ref('memories/' + currentMemoryKey + '/album').set(album);
+  coupleRef('memories/' + currentMemoryKey + '/album').set(album);
   toast('Album updated');
 }
 
@@ -736,7 +736,7 @@ function deleteMemory() {
 }
 function confirmDeleteMemory() {
   if (!currentMemoryKey || !db) return;
-  db.ref('memories/' + currentMemoryKey).remove();
+  coupleRef('memories/' + currentMemoryKey).remove();
   closeModal();
   closeMemoryDetail();
   toast('Memory deleted');
@@ -749,7 +749,7 @@ let achievementsData = { badges: {}, xp: 0, level: 1 };
 
 function listenAchievements() {
   if (!db) return;
-  db.ref('achievements').on('value', snap => {
+  coupleRef('achievements').on('value', snap => {
     achievementsData = snap.val() || { badges: {}, xp: 0, level: 1 };
     renderAchievements();
   });
@@ -788,25 +788,25 @@ function renderAchProgress(elId, current, target) {
 
 async function awardXP(amount) {
   if (!db) return;
-  const snap = await db.ref('achievements/xp').once('value');
+  const snap = await coupleRef('achievements/xp').once('value');
   const currentXP = snap.val() || 0;
   const newXP = currentXP + amount;
-  const snap2 = await db.ref('achievements/level').once('value');
+  const snap2 = await coupleRef('achievements/level').once('value');
   const currentLevel = snap2.val() || 1;
   const xpForNext = currentLevel * 100;
   if (newXP >= xpForNext) {
-    await db.ref('achievements/level').set(currentLevel + 1);
-    await db.ref('achievements/xp').set(newXP - xpForNext);
+    await coupleRef('achievements/level').set(currentLevel + 1);
+    await coupleRef('achievements/xp').set(newXP - xpForNext);
     toast('Level up! Now level ' + (currentLevel + 1));
   } else {
-    await db.ref('achievements/xp').set(newXP);
+    await coupleRef('achievements/xp').set(newXP);
   }
 }
 
 async function unlockBadge(badgeId, badgeName) {
-  const snap = await db.ref('achievements/badges/' + badgeId).once('value');
+  const snap = await coupleRef('achievements/badges/' + badgeId).once('value');
   if (snap.val()) return;
-  await db.ref('achievements/badges/' + badgeId).set({ unlockedAt: Date.now() });
+  await coupleRef('achievements/badges/' + badgeId).set({ unlockedAt: Date.now() });
   toast('Badge unlocked: ' + badgeName);
   awardXP(25);
 }
@@ -814,7 +814,7 @@ async function unlockBadge(badgeId, badgeName) {
 async function checkAchievements() {
   if (!db) return;
   // Check letter count
-  const letters = await db.ref('letters').once('value');
+  const letters = await coupleRef('letters').once('value');
   const letterCount = letters.val() ? Object.keys(letters.val()).length : 0;
   if (letterCount >= 1) unlockBadge('first-letter', 'First Letter');
   if (letterCount >= 5) unlockBadge('love-letters5', 'Pen Pals');
@@ -825,7 +825,7 @@ async function checkAchievements() {
   renderAchProgress('ach-prog-letters25', letterCount, 25);
 
   // Check games
-  const gamesSnap = await db.ref('games/history').once('value');
+  const gamesSnap = await coupleRef('games/history').once('value');
   const gameCount = gamesSnap.val() ? Object.keys(gamesSnap.val()).length : 0;
   if (gameCount >= 10) unlockBadge('game-champs', 'Game Night Champions');
   if (gameCount >= 50) unlockBadge('game-master', 'Game Master');
@@ -833,18 +833,18 @@ async function checkAchievements() {
   renderAchProgress('ach-prog-games50', gameCount, 50);
 
   // Check moods
-  const moodSnap = await db.ref('moods').once('value');
+  const moodSnap = await coupleRef('moods').once('value');
   const moodCount = moodSnap.val() ? Object.keys(moodSnap.val()).length : 0;
   if (el('ach-stat-moods')) el('ach-stat-moods').textContent = moodCount;
 
   // Check dreams
-  const dreamSnap = await db.ref('dreams').once('value');
+  const dreamSnap = await coupleRef('dreams').once('value');
   const dreamCount = dreamSnap.val() ? Object.keys(dreamSnap.val()).length : 0;
   if (dreamCount >= 20) unlockBadge('dream-big', 'Dream Big');
   if (el('ach-stat-dreams')) el('ach-stat-dreams').textContent = dreamCount;
 
   // Check workouts
-  const fitSnap = await db.ref('fitness/' + user + '/workouts').once('value');
+  const fitSnap = await coupleRef('fitness/' + user + '/workouts').once('value');
   const workoutCount = fitSnap.val() ? Object.keys(fitSnap.val()).length : 0;
   if (el('ach-stat-workouts')) el('ach-stat-workouts').textContent = workoutCount;
 
@@ -854,12 +854,12 @@ async function checkAchievements() {
   if (el('ach-stat-memories')) el('ach-stat-memories').textContent = memCount;
 
   // Check culture
-  const cultureSnap = await db.ref('culture/phrases').once('value');
+  const cultureSnap = await coupleRef('culture/phrases').once('value');
   const cultureCount = cultureSnap.val() ? Object.keys(cultureSnap.val()).length : 0;
   if (cultureCount >= 10) unlockBadge('culture-bridge', 'Culture Bridge');
 
   // Check KYP favorites
-  const kypSnap = await db.ref('knowYou/' + user + '/favorites').once('value');
+  const kypSnap = await coupleRef('knowYou/' + user + '/favorites').once('value');
   const kypFav = kypSnap.val() || {};
   const fields = ['food', 'color', 'movie', 'song', 'book', 'place', 'season', 'coffee'];
   if (fields.every(f => kypFav[f])) unlockBadge('know-it-all', 'Know It All');
@@ -869,13 +869,13 @@ async function checkAchievements() {
   if (dhRooms.length >= 3) unlockBadge('home-dreamers', 'Home Dreamers');
 
   // Check gratitude
-  const gratSnap = await db.ref('gratitude').once('value');
+  const gratSnap = await coupleRef('gratitude').once('value');
   const gratCount = gratSnap.val() ? Object.keys(gratSnap.val()).length : 0;
   if (gratCount >= 30) unlockBadge('gratitude-guru', 'Gratitude Guru');
   renderAchProgress('ach-prog-gratitude', gratCount, 30);
 
   // Check challenges
-  const chSnap = await db.ref('challenges/history').once('value');
+  const chSnap = await coupleRef('challenges/history').once('value');
   const chCount = chSnap.val() ? Object.keys(chSnap.val()).length : 0;
   if (chCount >= 1) unlockBadge('challenge-first', 'Challenger');
   if (chCount >= 3) unlockBadge('challenge-three', 'Challenge Royalty');
@@ -909,12 +909,12 @@ async function checkAchievements() {
   if (myWeek && partnerWeek) unlockBadge('fit-couple', 'Fit Couple');
 
   // Check savings goals
-  const savingsSnap = await db.ref('homelife/savings').once('value');
+  const savingsSnap = await coupleRef('homelife/savings').once('value');
   const savings = savingsSnap.val() ? Object.values(savingsSnap.val()) : [];
   if (savings.some(s => s.saved >= s.target && s.target > 0)) unlockBadge('money-smart', 'Money Smart');
 
   // Deep talk check
-  const dtSnap = await db.ref('deepTalk/completed').once('value');
+  const dtSnap = await coupleRef('deepTalk/completed').once('value');
   const dtCompleted = dtSnap.val() ? Object.keys(dtSnap.val()).length : 0;
   if (dtCompleted >= 10) unlockBadge('deep-divers', 'Deep Divers');
 }
@@ -924,7 +924,7 @@ async function checkAchievements() {
 // ========================================
 function initPresence() {
   if (!db || !user) return;
-  const presRef = db.ref('presence/' + user);
+  const presRef = coupleRef('presence/' + user);
   const connRef = db.ref('.info/connected');
   connRef.on('value', snap => {
     if (snap.val() === true) {
@@ -937,7 +937,7 @@ function initPresence() {
     }
   });
   // Listen to partner presence (green dot only when online, hidden when offline)
-  db.ref('presence/' + partner).on('value', snap => {
+  coupleRef('presence/' + partner).on('value', snap => {
     const p = snap.val() || {};
     // Dashboard dot - green when online, hidden when offline
     const dashDot = document.getElementById('dash-presence-dot');
@@ -1144,7 +1144,7 @@ function answerIdQuiz(answer) {
 
 async function saveIdentityQuiz() {
   if (!db || !user) return;
-  await db.ref('identityQuiz/' + user).set({ answers: idQuizAnswers, completedAt: Date.now() });
+  await coupleRef('identityQuiz/' + user).set({ answers: idQuizAnswers, completedAt: Date.now() });
   const el = document.getElementById('id-quiz-active');
   if (el) hideEl(el);
   toast('Identity profile saved!');
@@ -1154,7 +1154,7 @@ async function saveIdentityQuiz() {
 
 function loadIdentityProfiles() {
   if (!db) return;
-  db.ref('identityQuiz').on('value', snap => {
+  coupleRef('identityQuiz').on('value', snap => {
     const data = snap.val() || {};
     renderIdentityProfiles(data);
     const startEl = document.getElementById('id-quiz-start');

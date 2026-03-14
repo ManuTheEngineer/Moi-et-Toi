@@ -96,9 +96,9 @@ describe('computeMoodStats() — mood statistics', () => {
 
   it('computes correct averages for recent moods', () => {
     const moods = [
-      makeMood('her', 4, 1),
-      makeMood('her', 5, 2),
-      makeMood('her', 3, 3),
+      makeMood('partner1', 4, 1),
+      makeMood('partner1', 5, 2),
+      makeMood('partner1', 3, 3),
     ];
     const stats = win.computeMoodStats(moods);
     expect(stats.avg7d).toBe(4);
@@ -107,9 +107,9 @@ describe('computeMoodStats() — mood statistics', () => {
 
   it('computes 30-day average separately', () => {
     const moods = [
-      makeMood('her', 5, 1),
-      makeMood('her', 2, 10),
-      makeMood('her', 3, 20),
+      makeMood('partner1', 5, 1),
+      makeMood('partner1', 2, 10),
+      makeMood('partner1', 3, 20),
     ];
     const stats = win.computeMoodStats(moods);
     expect(stats.avg7d).toBe(5);
@@ -118,18 +118,18 @@ describe('computeMoodStats() — mood statistics', () => {
 
   it('detects improving trend', () => {
     const moods = [];
-    for (let i = 8; i <= 13; i++) moods.push(makeMood('her', 2, i));
-    for (let i = 1; i <= 6; i++) moods.push(makeMood('her', 5, i));
+    for (let i = 8; i <= 13; i++) moods.push(makeMood('partner1', 2, i));
+    for (let i = 1; i <= 6; i++) moods.push(makeMood('partner1', 5, i));
     const stats = win.computeMoodStats(moods);
     expect(stats.trend).toBe('improving');
   });
 
   it('computes mood distribution', () => {
     const moods = [
-      makeMood('her', 1, 1),
-      makeMood('her', 3, 2),
-      makeMood('her', 5, 3),
-      makeMood('her', 5, 4),
+      makeMood('partner1', 1, 1),
+      makeMood('partner1', 3, 2),
+      makeMood('partner1', 5, 3),
+      makeMood('partner1', 5, 4),
     ];
     const stats = win.computeMoodStats(moods);
     expect(stats.distribution[0]).toBe(1);
@@ -144,35 +144,35 @@ describe('buildMoodIndex() — mood indexing', () => {
 
   it('indexes moods by user', () => {
     const moods = [
-      makeMood('her', 4, 1),
-      makeMood('him', 3, 1),
-      makeMood('her', 5, 2),
+      makeMood('partner1', 4, 1),
+      makeMood('partner2', 3, 1),
+      makeMood('partner1', 5, 2),
     ];
     win.buildMoodIndex(moods);
-    expect(win.MET.mood.byUser.her.length).toBe(2);
-    expect(win.MET.mood.byUser.him.length).toBe(1);
+    expect(win.MET.mood.byUser.partner1.length).toBe(2);
+    expect(win.MET.mood.byUser.partner2.length).toBe(1);
   });
 
   it('indexes moods by date', () => {
     const d = new Date();
     const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     const moods = [
-      makeMood('her', 4, 0),
-      makeMood('him', 3, 0),
+      makeMood('partner1', 4, 0),
+      makeMood('partner2', 3, 0),
     ];
     win.buildMoodIndex(moods);
     expect(win.MET.mood.byDate[today].length).toBe(2);
   });
 
   it('sets _ready flag', () => {
-    win.buildMoodIndex([makeMood('her', 4, 1)]);
+    win.buildMoodIndex([makeMood('partner1', 4, 1)]);
     expect(win.MET._ready).toBe(true);
   });
 
   it('fires listeners', () => {
     let fired = false;
     win.MET._listeners.push(() => { fired = true; });
-    win.buildMoodIndex([makeMood('her', 4, 1)]);
+    win.buildMoodIndex([makeMood('partner1', 4, 1)]);
     expect(fired).toBe(true);
   });
 });

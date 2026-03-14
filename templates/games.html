@@ -1,0 +1,106 @@
+        <div class="ctn">
+          <div class="mod-status" id="games-stats"></div>
+
+          <!-- Would You Rather -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Would You Rather</div>
+          </div>
+          <div class="wyr-card" id="wyr-card">
+            <div class="dq-category">Would You Rather</div>
+            <button class="wyr-option" id="wyr-a" onclick="pickWYR('A')"></button>
+            <div class="wyr-vs">or</div>
+            <button class="wyr-option" id="wyr-b" onclick="pickWYR('B')"></button>
+            <div class="wyr-result" id="wyr-result"></div>
+          </div>
+          <div class="wyr-nav">
+            <button onclick="prevWYR()">← Previous</button>
+            <button onclick="nextWYR()">Next →</button>
+          </div>
+
+          <!-- Truth or Dare -->
+          <div class="sec-head">
+            <div class="sec-dot sd-rose"></div>
+            <div class="sec-title">Truth or Dare</div>
+          </div>
+          <div class="tod-card" id="tod-card">
+            <div class="tod-type" id="tod-type">truth</div>
+            <div class="tod-text" id="tod-text">Tap Truth or Dare to start</div>
+          </div>
+          <div class="tod-btns">
+            <button class="tod-btn truth-btn" onclick="drawTOD('truth')">Truth</button>
+            <button class="tod-btn dare-btn" onclick="drawTOD('dare')">Dare</button>
+          </div>
+
+          <!-- This or That -->
+          <div class="sec-head">
+            <div class="sec-dot sd-purple"></div>
+            <div class="sec-title">This or That</div>
+          </div>
+          <div class="relative" id="tot-wrap">
+            <div class="tot-card" id="tot-card">
+              <button class="tot-option" onclick="pickTOT('A')">
+                <div class="tot-text" id="tot-a">Loading...</div>
+              </button>
+              <button class="tot-option" onclick="pickTOT('B')">
+                <div class="tot-text" id="tot-b">Loading...</div>
+              </button>
+            </div>
+            <div class="tot-or-wrap"><div class="tot-or-badge">OR</div></div>
+          </div>
+          <div class="wyr-nav mb-20">
+            <button onclick="prevTOT()">Previous</button>
+            <button onclick="nextTOT()">Next</button>
+          </div>
+
+          <!-- Game Invite Banner -->
+          <div id="game-invite" class="d-none"></div>
+
+          <!-- Two Truths & a Lie -->
+          <div class="sec-head">
+            <div class="sec-dot sd-teal"></div>
+            <div class="sec-title">Two Truths &amp; a Lie</div>
+          </div>
+          <div id="game-lobby">
+            <div class="card mb-12">
+              <div class="card-h"><span class="card-t">Share 3 statements — one is false</span></div>
+              <div id="ttal-board"></div>
+              <button class="dq-submit" onclick="newTTAL()">New Round</button>
+            </div>
+            <div id="game-stats-board"></div>
+          </div>
+
+          <!-- Compatibility Score -->
+          <div class="sec-head">
+            <div class="sec-dot sd-amber"></div>
+            <div class="sec-title">Compatibility</div>
+          </div>
+          <div class="chart-wrap text-center">
+            <svg class="chart-svg" viewBox="0 0 140 140" style="max-width: 140px">
+              <circle cx="70" cy="70" r="52" fill="none" stroke="var(--bg3)" stroke-width="12" />
+              <circle
+                cx="70"
+                cy="70"
+                r="52"
+                fill="none"
+                stroke="url(#compatGrad)"
+                stroke-width="12"
+                stroke-linecap="round"
+                stroke-dasharray="327"
+                id="compat-ring"
+                stroke-dashoffset="327"
+                transform="rotate(-90 70 70)"
+              />
+              <defs>
+                <linearGradient id="compatGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#1C2B4A" />
+                  <stop offset="100%" stop-color="#C4784A" />
+                </linearGradient>
+              </defs>
+              <text class="donut-label" x="70" y="66" id="compat-score">--</text>
+              <text class="donut-sub" x="70" y="84">match</text>
+            </svg>
+            <div class="compat-desc">Games + Love Languages + Attachment Style</div>
+            <div id="compat-breakdown" class="compat-breakdown"></div>
+          </div>
+        </div>

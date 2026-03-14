@@ -1,0 +1,151 @@
+        <div class="ctn">
+          <!-- Summary Overview Card -->
+          <div class="dh-summary" id="dh-summary">
+            <div class="dh-sum-header">
+              <div class="dh-sum-icon">🏠</div>
+              <div class="dh-sum-title">Our Dream Home</div>
+            </div>
+            <div class="dh-sum-grid" id="dh-sum-grid">
+              <div class="dh-sum-item">
+                <span class="dh-si-label">Location</span><span class="dh-si-val" id="dh-s-location">Not set</span>
+              </div>
+              <div class="dh-sum-item">
+                <span class="dh-si-label">Style</span><span class="dh-si-val" id="dh-s-style">Not set</span>
+              </div>
+              <div class="dh-sum-item">
+                <span class="dh-si-label">Budget</span><span class="dh-si-val" id="dh-s-budget">Not set</span>
+              </div>
+              <div class="dh-sum-item">
+                <span class="dh-si-label">Saved</span><span class="dh-si-val" id="dh-s-saved">$0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location & Vibe -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Where We Want to Live</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-field-row">
+              <input type="text" id="dh-location" class="quiz-q" placeholder="City, suburb, or area..." />
+              <button class="dh-save-btn" onclick="dhSave('location', document.getElementById('dh-location').value)">
+                Save
+              </button>
+            </div>
+            <div class="dh-tag-row" id="dh-location-prefs">
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Suburbs')">Suburbs</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'City')">City</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Rural')">Rural</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Coastal')">Coastal</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Mountain')">Mountain</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'locPref', 'Lake')">Lake</span>
+            </div>
+            <div class="dh-saved-val" id="dh-location-saved"></div>
+          </div>
+
+          <!-- Style Preference -->
+          <div class="sec-head">
+            <div class="sec-dot sd-rose"></div>
+            <div class="sec-title">Style We Love</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-tag-row">
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Modern')">Modern</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Farmhouse')">Farmhouse</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Contemporary')">Contemporary</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Craftsman')">Craftsman</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Mediterranean')">Mediterranean</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Colonial')">Colonial</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'style', 'Minimalist')">Minimalist</span>
+            </div>
+          </div>
+
+          <!-- House Specs -->
+          <div class="sec-head">
+            <div class="sec-dot sd-emerald"></div>
+            <div class="sec-title">What We Need</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-specs-grid">
+              <div class="dh-spec">
+                <label class="dh-spec-label">Bedrooms</label>
+                <div class="dh-stepper">
+                  <button onclick="dhStep('beds', -1)">&#8722;</button><span id="dh-val-beds">3</span><button onclick="dhStep('beds', 1)">+</button>
+                </div>
+              </div>
+              <div class="dh-spec">
+                <label class="dh-spec-label">Bathrooms</label>
+                <div class="dh-stepper">
+                  <button onclick="dhStep('baths', -1)">&#8722;</button><span id="dh-val-baths">2</span><button onclick="dhStep('baths', 1)">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Must-Haves -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Must-Haves</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-tag-row" id="dh-musthaves">
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Walk-in closet')">Walk-in closet</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Home office')">Home office</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Open plan')">Open plan</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Island kitchen')">Island kitchen</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Garage')">Garage</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Laundry room')">Laundry room</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Fireplace')">Fireplace</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Pool')">Pool</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Garden')">Garden</span>
+              <span class="dh-tag" onclick="dhToggleTag(this, 'musthave', 'Smart home')">Smart home</span>
+            </div>
+          </div>
+
+          <!-- Budget & Savings -->
+          <div class="sec-head">
+            <div class="sec-dot sd-teal"></div>
+            <div class="sec-title">Budget &amp; Savings</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-field-row mb-10">
+              <span style="font-size: 16px; color: var(--gold); font-weight: 700">$</span>
+              <input type="number" id="dh-total-budget" class="quiz-q" placeholder="Total budget" style="flex: 1" />
+              <button class="dh-save-btn" onclick="dhSave('totalBudget', document.getElementById('dh-total-budget').value)">Set</button>
+            </div>
+            <div class="dh-field-row">
+              <span style="font-size: 16px; color: var(--emerald); font-weight: 700">$</span>
+              <input type="number" id="dh-saved-amount" class="quiz-q" placeholder="Amount saved so far" style="flex: 1" />
+              <button class="dh-save-btn" onclick="dhSave('savedAmount', document.getElementById('dh-saved-amount').value)">Update</button>
+            </div>
+            <div id="dh-savings-bar" style="margin-top: 12px"></div>
+          </div>
+
+          <!-- Wishlist -->
+          <div class="sec-head">
+            <div class="sec-dot sd-rose"></div>
+            <div class="sec-title">Home Wishlist</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <div class="dh-field-row">
+              <input type="text" id="dh-wish-name" class="quiz-q" placeholder="Item name" style="flex: 2" />
+              <input type="number" id="dh-wish-price" class="quiz-q" placeholder="$" style="flex: 1" min="0" />
+              <button class="dh-save-btn" onclick="addHomeWish()">+</button>
+            </div>
+            <div id="dh-wishlist" style="margin-top: 10px">
+              <div class="empty">Add items to your home wishlist</div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Ideas &amp; Inspiration</div>
+          </div>
+          <div class="card" style="margin-bottom: 12px">
+            <textarea id="dh-design-notes" class="mood-note" placeholder="Ideas, links, things we love..." rows="3"></textarea>
+            <button class="dh-save-btn" style="margin-top: 8px" onclick="dhSaveNote()">Save Note</button>
+            <div id="dh-notes-list" style="margin-top: 10px"></div>
+          </div>
+        </div>

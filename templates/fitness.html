@@ -1,0 +1,101 @@
+        <div class="ctn">
+          <!-- This Week Together -->
+          <div class="fit-summary fit-summary-4" id="fit-summary">
+            <div class="fit-stat">
+              <div class="fit-stat-num" id="fit-sessions">0</div>
+              <div class="fit-stat-label">Sessions</div>
+            </div>
+            <div class="fit-stat">
+              <div class="fit-stat-num" id="fit-streak">0</div>
+              <div class="fit-stat-label">Streak</div>
+            </div>
+          </div>
+
+          <!-- Partner Activity -->
+          <div class="sec-head">
+            <div class="sec-dot sd-emerald"></div>
+            <div class="sec-title">Partner Activity</div>
+          </div>
+          <div class="card-data partner-card" id="fit-partner-status">
+            <div style="width:3px;border-radius:2px;background:var(--emerald);align-self:stretch"></div>
+            <div class="partner-card-inner">
+              <div class="presence-dot" id="fit-partner-dot"></div>
+              <div>
+                <div class="partner-card-name" id="fit-partner-name">Partner</div>
+                <div class="partner-card-status" id="fit-partner-last">No workouts yet</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Couple Challenge -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Couple Challenge</div>
+          </div>
+          <div class="card" id="fit-couple-challenge">
+            <div class="t-body c-cream mb-8" id="fit-challenge-text">Do 20 squats together today</div>
+            <div class="d-flex gap-8">
+              <button class="dq-submit flex-1" onclick="completeFitChallenge()">Done!</button>
+              <button class="btn-sm" onclick="skipFitChallenge()">New challenge</button>
+            </div>
+            <div class="t-xs c-t3 mt-8" id="fit-challenge-status"></div>
+          </div>
+
+          <!-- Quick Log -->
+          <div class="sec-head">
+            <div class="sec-dot sd-emerald"></div>
+            <div class="sec-title">Log Workout</div>
+          </div>
+          <div class="card" id="fit-quick-log-section">
+            <select id="fit-log-type" class="select-field mb-10" style="width:100%">
+              <option value="gym">Gym / Weights</option>
+              <option value="run">Run / Walk</option>
+              <option value="yoga">Yoga / Stretch</option>
+              <option value="cardio">Cardio</option>
+              <option value="sport">Sport</option>
+              <option value="home">Home Workout</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="d-flex gap-8 mb-10">
+              <input type="number" id="fit-log-duration" placeholder="Minutes" class="flex-1" min="1" />
+              <input type="text" id="fit-log-note" placeholder="Notes (optional)" class="flex-2" />
+            </div>
+            <button class="dq-submit" onclick="quickLogWorkout()">Log It</button>
+          </div>
+
+          <!-- Workout Guides -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Workout Guides</div>
+          </div>
+          <div class="fit-programs grid-2">
+            <div class="fit-prog card-action" onclick="go('w1')">
+              <div class="icon-badge ib-emerald ib-sz-32">&#x2726;</div>
+              <div>
+                <div class="t-body fw-600 c-cream">Foundation</div>
+                <div class="t-xs c-t3">Beginner &bull; Full Body</div>
+              </div>
+            </div>
+            <div class="fit-prog card-action" onclick="go('w2')">
+              <div class="icon-badge ib-teal ib-sz-32">&#x25C6;</div>
+              <div>
+                <div class="t-body fw-600 c-cream">Elevated</div>
+                <div class="t-xs c-t3">Advanced &bull; Split</div>
+              </div>
+            </div>
+            <div class="fit-prog card-action" onclick="go('w3')">
+              <div class="icon-badge ib-lavender ib-sz-32">&#x2B21;</div>
+              <div>
+                <div class="t-body fw-600 c-cream">Full Body</div>
+                <div class="t-xs c-t3">Complete &bull; All Levels</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Workouts -->
+          <div class="sec-head">
+            <div class="sec-dot sd-emerald"></div>
+            <div class="sec-title">Recent Workouts</div>
+          </div>
+          <div id="fit-history"><div class="empty">Log your first workout to see history</div></div>
+        </div>

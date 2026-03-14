@@ -141,13 +141,13 @@ function requestLocationPermission() {
         try {
           localStorage.setItem('met_weather_location', JSON.stringify({ lat: WEATHER.lat, lon: WEATHER.lon }));
         } catch (e) {}
-        if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
-          db.ref('settings/weather/' + user + '/location').set({
+        if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user && _coupleId) {
+          coupleRef('settings/weather/' + user + '/location').set({
             lat: WEATHER.lat,
             lon: WEATHER.lon,
             granted: true
           });
-          db.ref('settings/weather/' + user + '/prompted').set(true);
+          coupleRef('settings/weather/' + user + '/prompted').set(true);
         }
         resolve(true);
       },
@@ -2672,8 +2672,8 @@ function toggleAmbientAudio(on) {
   } else {
     stopAllSounds();
   }
-  if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
-    db.ref('settings/weather/' + user + '/audio').set(on);
+  if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user && _coupleId) {
+    coupleRef('settings/weather/' + user + '/audio').set(on);
   }
 }
 
@@ -2842,8 +2842,8 @@ function handleLocationAllow() {
 function handleLocationDeny() {
   var modal = document.getElementById('generic-modal');
   if (modal) modal.classList.remove('on');
-  if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
-    db.ref('settings/weather/' + user + '/prompted').set(true);
+  if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user && _coupleId) {
+    coupleRef('settings/weather/' + user + '/prompted').set(true);
   }
 }
 
@@ -2890,8 +2890,8 @@ function updateWeatherInfoUI() {
 function setWeatherScene(sceneName) {
   if (!SCENES[sceneName]) return;
   WEATHER.scene = sceneName;
-  if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user) {
-    db.ref('settings/weather/' + user + '/scene').set(sceneName);
+  if (typeof db !== 'undefined' && db && typeof user !== 'undefined' && user && _coupleId) {
+    coupleRef('settings/weather/' + user + '/scene').set(sceneName);
   }
   var container = document.getElementById('sky-scene');
   if (container && livingSkyEnabled) renderLivingSky(container);
@@ -2928,13 +2928,13 @@ var MOOD_SOUNDS = {
   // Beach environment (her favorites)
   beachBreeze: { label: 'Beach Breeze', icon: '🏖', type: 'pianoBeachBreeze', desc: 'Sunset piano', env: 'beach' },
   seagulls: { label: 'Seagulls', icon: '🕊', type: 'pianoSeagulls', desc: 'Seaside serenade', env: 'beach' },
-  // Mountain environment (his favorites)
+  // Mountain environment (partner2 favorites)
   mountainCreek: { label: 'Mountain Creek', icon: '🏔', type: 'pianoCreek', desc: 'Sparkling piano', env: 'mountain' },
   mountainWind: { label: 'Mountain Wind', icon: '🦅', type: 'pianoAlpine', desc: 'Majestic alpine piano', env: 'mountain' }
 };
 
-// Nature sound order per user: beach-first for her, mountain-first for him
-var NATURE_ORDER_HER = [
+// Nature sound order per user: beach-first for partner1, mountain-first for partner2
+var NATURE_ORDER_PARTNER1 = [
   'ocean',
   'beachBreeze',
   'seagulls',
@@ -2948,7 +2948,7 @@ var NATURE_ORDER_HER = [
   'mountainWind',
   'campfire'
 ];
-var NATURE_ORDER_HIM = [
+var NATURE_ORDER_PARTNER2 = [
   'forest',
   'mountainCreek',
   'mountainWind',
@@ -2983,7 +2983,7 @@ WEATHER.moodNode = null;
 // Dynamically render sound grids based on user role + environment
 function renderMoodSoundsGrid() {
   var role = typeof user !== 'undefined' ? user : null;
-  var baseOrder = role === 'her' ? NATURE_ORDER_HER : NATURE_ORDER_HIM;
+  var baseOrder = role === 'partner1' ? NATURE_ORDER_PARTNER1 : NATURE_ORDER_PARTNER2;
   // Reorder nature sounds to prioritize current environment
   var sky = typeof currentSkyTheme !== 'undefined' ? currentSkyTheme : 'mixed';
   var natureOrder = baseOrder.slice();
@@ -3300,8 +3300,9 @@ function sendMoodToPartner(moodKey) {
   }
   var mood = MOOD_SOUNDS[moodKey];
   if (!mood) return;
-  var partnerRole = user === 'her' ? 'him' : 'her';
-  db.ref('notifications/' + partnerRole).push({
+  var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
+  if (!_coupleId) return;
+  coupleRef('notifications/' + partnerRole).push({
     type: 'mood-sound',
     from: user,
     fromName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
@@ -3390,11 +3391,11 @@ window.addEventListener('pageshow', function (e) {
 // ===== INIT =====
 var _weatherInitialized = false;
 function initWeatherSystem() {
-  if (typeof db === 'undefined' || !db || typeof user === 'undefined' || !user) return;
+  if (typeof db === 'undefined' || !db || typeof user === 'undefined' || !user || !_coupleId) return;
   if (_weatherInitialized) return; // prevent double-init
   _weatherInitialized = true;
 
-  db.ref('settings/weather/' + user).once('value', function (snap) {
+  coupleRef('settings/weather/' + user).once('value', function (snap) {
     var data = snap.val() || {};
 
     // Load scene
@@ -3413,14 +3414,14 @@ function initWeatherSystem() {
       // touch/click will create and unlock it via _tryUnlock.
     } else if (data.audio === undefined) {
       // No weather audio setting yet — check onboarding nature sounds preference
-      db.ref('settings/natureSounds/' + user).once('value', function (nsSnap) {
+      coupleRef('settings/natureSounds/' + user).once('value', function (nsSnap) {
         var nsEnabled = nsSnap.val();
         if (nsEnabled) {
           WEATHER.audioEnabled = true;
           var audioToggle = document.getElementById('set-ambient-audio');
           if (audioToggle) audioToggle.checked = true;
           // Persist to weather settings so we don't need to check onboarding again
-          db.ref('settings/weather/' + user + '/audio').set(true);
+          coupleRef('settings/weather/' + user + '/audio').set(true);
           if (typeof updateAmbientAudio === 'function') updateAmbientAudio();
         }
       });

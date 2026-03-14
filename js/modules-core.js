@@ -50,8 +50,8 @@ async function submitMood() {
   const dedicated = document.getElementById('mood-dedicate-check');
   if (dedicated && dedicated.checked) entry.dedicatedTo = partner;
 
-  const key = db.ref('moods').push().key;
-  await db.ref('moods/' + key).set(entry);
+  const key = coupleRef('moods').push().key;
+  await coupleRef('moods/' + key).set(entry);
   document.getElementById('mood-note').value = '';
   if (dedicated) dedicated.checked = false;
   selectedMood = 0;
@@ -77,7 +77,7 @@ async function submitMood() {
 }
 
 function listenMoods() {
-  db.ref('moods')
+  coupleRef('moods')
     .orderByChild('timestamp')
     .limitToLast(50)
     .on('value', snap => {
@@ -351,7 +351,7 @@ function renderStreakCalendar() {
   const el = document.getElementById('streak-cal');
   if (!el || !db) return;
 
-  db.ref('moods')
+  coupleRef('moods')
     .orderByChild('timestamp')
     .limitToLast(100)
     .once('value', snap => {
@@ -425,7 +425,7 @@ const AI_TOOLS = [
     input_schema: {
       type: 'object',
       properties: {
-        user: { type: 'string', enum: ['her', 'him', 'both'], description: 'Whose mood stats to get' },
+        user: { type: 'string', enum: ['partner1', 'partner2', 'both'], description: 'Whose mood stats to get' },
         period: { type: 'string', enum: ['7d', '30d', '90d', 'all'], description: 'Time period' }
       },
       required: ['user', 'period']
@@ -520,11 +520,11 @@ function setAIContext(ctx) {
 }
 
 function buildAISystemPrompt() {
-  let prompt = `You are the AI inside "Moi et Toi," a private relationship app for ${NAMES.him} and ${NAMES.her}. The current user is ${NAMES[user]} (${user}).
+  let prompt = `You are the AI inside "Moi et Toi," a private relationship app for ${NAMES.partner1} and ${NAMES.partner2}. The current user is ${NAMES[user]} (${user}).
 
 WHO THEY ARE:
-- ${NAMES.him} (him) is from Togo, West Africa. Ewe, Mina, French. Togolese traditions, values, and food.
-- ${NAMES.her} (her) is from Texas. Southern roots, Texan culture, American traditions.
+- ${NAMES.partner1} (partner1) is from Togo, West Africa. Ewe, Mina, French. Togolese traditions, values, and food.
+- ${NAMES.partner2} (partner2) is from Texas. Southern roots, Texan culture, American traditions.
 - They're an intercultural couple - young, ambitious, building toward marriage and family.
 
 YOUR ROLE:
@@ -539,8 +539,8 @@ YOUR ROLE:
     prompt += `\n\nRELATIONSHIP CONTEXT:
 - Relationship health score: ${MET.relationship.score || 'not yet computed'}
 - Breakdown: ${JSON.stringify(MET.relationship.breakdown || {})}
-- ${NAMES.her}'s 7-day mood avg: ${moodStats.her?.avg7d?.toFixed(1) || 'no data'}
-- ${NAMES.him}'s 7-day mood avg: ${moodStats.him?.avg7d?.toFixed(1) || 'no data'}
+- ${NAMES.partner2}'s 7-day mood avg: ${moodStats.partner2?.avg7d?.toFixed(1) || 'no data'}
+- ${NAMES.partner1}'s 7-day mood avg: ${moodStats.partner1?.avg7d?.toFixed(1) || 'no data'}
 - Mood sync score: ${moodStats.joint?.syncScore ? Math.round(moodStats.joint.syncScore * 100) + '%' : 'no data'}
 - Check-in streak: ${moodStats.joint?.streak || 0} days
 Use this data to provide specific, personalized relationship insights.`;
@@ -581,7 +581,7 @@ async function executeAITool(toolName, toolInput) {
     case 'log_mood': {
       if (!db) return { error: 'Database not connected' };
       const today = new Date().toISOString().split('T')[0];
-      await db.ref('moods').push({
+      await coupleRef('moods').push({
         mood: toolInput.mood,
         energy: toolInput.energy,
         note: toolInput.note || '',
@@ -598,17 +598,17 @@ async function executeAITool(toolName, toolInput) {
       const stats = MET.mood.stats;
       if (target === 'both') {
         return {
-          him: {
-            avg7d: stats.him?.avg7d,
-            avg30d: stats.him?.avg30d,
-            streak: stats.him?.streak,
-            total: stats.him?.total
+          partner1: {
+            avg7d: stats.partner1?.avg7d,
+            avg30d: stats.partner1?.avg30d,
+            streak: stats.partner1?.streak,
+            total: stats.partner1?.total
           },
-          her: {
-            avg7d: stats.her?.avg7d,
-            avg30d: stats.her?.avg30d,
-            streak: stats.her?.streak,
-            total: stats.her?.total
+          partner2: {
+            avg7d: stats.partner2?.avg7d,
+            avg30d: stats.partner2?.avg30d,
+            streak: stats.partner2?.streak,
+            total: stats.partner2?.total
           },
           joint: { syncScore: stats.joint?.syncScore, bestDay: stats.joint?.bestDay, streak: stats.joint?.streak }
         };
@@ -619,7 +619,7 @@ async function executeAITool(toolName, toolInput) {
     case 'add_expense': {
       if (!db) return { error: 'Database not connected' };
       const today = new Date().toISOString().split('T')[0];
-      await db.ref('finances/expenses').push({
+      await coupleRef('finances/expenses').push({
         amount: toolInput.amount,
         category: toolInput.category,
         note: toolInput.note || '',
@@ -631,7 +631,7 @@ async function executeAITool(toolName, toolInput) {
     }
     case 'send_note': {
       if (!db) return { error: 'Database not connected' };
-      await db.ref('letters').push({
+      await coupleRef('letters').push({
         from: user,
         fromName: NAMES[user],
         message: toolInput.message,
@@ -646,7 +646,7 @@ async function executeAITool(toolName, toolInput) {
     }
     case 'add_calendar_event': {
       if (!db) return { error: 'Database not connected' };
-      await db.ref('calendar').push({
+      await coupleRef('calendar').push({
         title: toolInput.title,
         date: toolInput.date,
         notes: toolInput.notes || '',
@@ -659,7 +659,7 @@ async function executeAITool(toolName, toolInput) {
       if (!db) return { error: 'Database not connected' };
       const isShared = toolInput.type === 'shared';
       const path = isShared ? 'personalGoals/shared' : 'personalGoals/' + user;
-      await db.ref(path).push({
+      await coupleRef(path).push({
         title: toolInput.title,
         done: false,
         timestamp: Date.now()
@@ -679,9 +679,24 @@ async function executeAITool(toolName, toolInput) {
   }
 }
 
+function aiFetchHeaders() {
+  if (AI_PROXY_URL) return { 'Content-Type': 'application/json' };
+  return {
+    'Content-Type': 'application/json',
+    'x-api-key': CLAUDE_API_KEY,
+    'anthropic-version': '2023-06-01',
+    'anthropic-dangerous-direct-browser-access': 'true'
+  };
+}
+
 async function sendAI() {
+  // Rate limit check
+  if (!checkAIRateLimit()) {
+    toast('Slow down — too many AI requests. Try again in a minute.');
+    return;
+  }
   // Check for API key
-  if (!CLAUDE_API_KEY) {
+  if (!CLAUDE_API_KEY && !AI_PROXY_URL) {
     openModal(`<div style="text-align:left">
       <h3 style="margin:0 0 8px;font-size:16px;color:var(--t1)">AI Setup</h3>
       <p style="font-size:13px;color:var(--t3);margin:0 0 12px">Enter your Anthropic API key (one-time setup, works for both of you)</p>
@@ -701,6 +716,7 @@ async function sendAI() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
+  if (text.length > 2000) { toast('Message too long (max 2000 chars)'); return; }
   input.value = '';
 
   const msgEl = document.getElementById('chat-messages');
@@ -721,15 +737,6 @@ async function sendAI() {
       tools: AI_TOOLS
     };
 
-    function aiFetchHeaders() {
-      if (AI_PROXY_URL) return { 'Content-Type': 'application/json' };
-      return {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      };
-    }
     const aiEndpoint = AI_PROXY_URL || 'https://api.anthropic.com/v1/messages';
 
     let response = await fetch(aiEndpoint, {
@@ -812,7 +819,7 @@ async function submitAIKey() {
     return;
   }
   CLAUDE_API_KEY = key;
-  await db.ref('profiles/apiKey').set(key);
+  await coupleRef('profiles/apiKey').set(key);
   closeModal();
   toast('API key saved');
   sendAI();
@@ -877,8 +884,8 @@ async function submitLog() {
     timestamp: Date.now(),
     date: localDate()
   };
-  const key = db.ref('workoutLogs').push().key;
-  await db.ref('workoutLogs/' + key).set(entry);
+  const key = coupleRef('workoutLogs').push().key;
+  await coupleRef('workoutLogs/' + key).set(entry);
   closeLog();
   if (typeof logActivity === 'function') logActivity('fitness', 'logged a workout');
   toast('Workout logged');
@@ -903,7 +910,7 @@ async function sendTap(e, type, emoji) {
     fromName: NAMES[user],
     timestamp: Date.now()
   };
-  await db.ref('taps').push(entry);
+  await coupleRef('taps').push(entry);
   if (typeof logActivity === 'function') logActivity('taps', 'sent ' + type);
   // Haptic feedback if available
   if (navigator.vibrate) navigator.vibrate(50);
@@ -916,7 +923,7 @@ async function sendTap(e, type, emoji) {
 }
 
 function listenTaps() {
-  db.ref('taps')
+  coupleRef('taps')
     .orderByChild('timestamp')
     .limitToLast(20)
     .on('value', snap => {
@@ -1028,7 +1035,7 @@ async function sendLetter() {
 
   if (isOpenWhen) {
     // Save as sealed "open when" letter
-    await db.ref('openWhenLetters').push({
+    await coupleRef('openWhenLetters').push({
       from: user,
       fromName: NAMES[user],
       message: text,
@@ -1048,7 +1055,7 @@ async function sendLetter() {
       timestamp: Date.now(),
       read: false
     };
-    await db.ref('letters').push(entry);
+    await coupleRef('letters').push(entry);
     if (typeof sendInAppNotif === 'function') sendInAppNotif('letter', 'Sent you a letter', '💌');
     toast('Delivered');
   }
@@ -1065,7 +1072,7 @@ async function sendLetter() {
 
 function listenOpenWhenLetters() {
   if (!db) return;
-  db.ref('openWhenLetters')
+  coupleRef('openWhenLetters')
     .orderByChild('timestamp')
     .on('value', snap => {
       const letters = [];
@@ -1127,12 +1134,12 @@ function renderOpenWhenLetters(letters) {
 
 async function openSealedLetter(key) {
   if (!db) return;
-  await db.ref('openWhenLetters/' + key + '/opened').set(true);
+  await coupleRef('openWhenLetters/' + key + '/opened').set(true);
   toast('Letter opened 💌');
 }
 
 function listenLetters() {
-  db.ref('letters')
+  coupleRef('letters')
     .orderByChild('timestamp')
     .limitToLast(30)
     .on('value', snap => {
@@ -1147,7 +1154,7 @@ function listenLetters() {
       // Mark unread letters from partner as read
       letters.forEach(l => {
         if (l.from !== user && !l.read) {
-          db.ref('letters/' + l._key + '/read').set(true);
+          coupleRef('letters/' + l._key + '/read').set(true);
         }
       });
     });
@@ -1205,7 +1212,7 @@ async function saveMilestone() {
     userName: NAMES[user],
     timestamp: Date.now()
   };
-  await db.ref('milestones').push(entry);
+  await coupleRef('milestones').push(entry);
   document.getElementById('ms-title').value = '';
   document.getElementById('ms-date').value = '';
   document.getElementById('ms-emoji').value = '';
@@ -1219,7 +1226,7 @@ async function saveMilestone() {
 }
 
 function listenMilestones() {
-  db.ref('milestones')
+  coupleRef('milestones')
     .orderByChild('date')
     .on('value', snap => {
       const milestones = [];
@@ -1233,7 +1240,7 @@ function renderTimeline(milestones) {
   const el = document.getElementById('timeline');
   if (!el) return;
   if (!milestones.length) {
-    el.innerHTML = '<div class="empty">Add your first milestone together</div>';
+    el.innerHTML = '<div class="empty" onclick="toggleMsForm()" style="cursor:pointer">Add your first milestone together <span style="opacity:.5">— tap here</span></div>';
     return;
   }
   el.innerHTML = milestones
@@ -1275,7 +1282,7 @@ async function saveCountdown() {
     createdBy: user,
     timestamp: Date.now()
   };
-  await db.ref('countdowns').push(entry);
+  await coupleRef('countdowns').push(entry);
   document.getElementById('cd-title').value = '';
   document.getElementById('cd-date').value = '';
   document.getElementById('cd-emoji').value = '';
@@ -1288,7 +1295,7 @@ async function saveCountdown() {
 }
 
 function listenCountdowns() {
-  db.ref('countdowns').on('value', snap => {
+  coupleRef('countdowns').on('value', snap => {
     const countdowns = [];
     snap.forEach(c => countdowns.push(c.val()));
     renderCountdowns(countdowns);
@@ -1396,7 +1403,7 @@ async function submitDailyAnswer() {
     btn.textContent = 'Saving...';
   }
   const today = localDate();
-  await db.ref('dailyAnswers/' + today + '/' + user).set({
+  await coupleRef('dailyAnswers/' + today + '/' + user).set({
     answer,
     userName: NAMES[user],
     timestamp: Date.now()
@@ -1412,7 +1419,7 @@ async function submitDailyAnswer() {
 
 function listenDailyAnswers() {
   const today = localDate();
-  db.ref('dailyAnswers/' + today).on('value', snap => {
+  coupleRef('dailyAnswers/' + today).on('value', snap => {
     const data = snap.val() || {};
     renderDailyAnswers(data);
   });
@@ -1446,7 +1453,7 @@ function renderDailyAnswers(data) {
 
 // ===== STREAKS =====
 function listenStreak() {
-  db.ref('streaks').on('value', snap => {
+  coupleRef('streaks').on('value', snap => {
     const data = snap.val() || { current: 0, longest: 0 };
     const countEl = document.getElementById('streak-count');
     if (countEl) countEl.textContent = data.current || 0;
@@ -1457,25 +1464,25 @@ function listenStreak() {
 async function updateStreak() {
   if (!db || !user) return;
   const today = localDate();
-  const snap = await db.ref('streaks').once('value');
+  const snap = await coupleRef('streaks').once('value');
   const data = snap.val() || { current: 0, longest: 0, lastCheckIn: {} };
   if (!data.lastCheckIn) data.lastCheckIn = {};
   data.lastCheckIn[user] = today;
 
   // Check if both checked in today
   const yesterday = localDate(new Date(Date.now() - 86400000));
-  const herToday = data.lastCheckIn.her === today;
-  const himToday = data.lastCheckIn.him === today;
+  const partner2Today = data.lastCheckIn.partner2 === today;
+  const partner1Today = data.lastCheckIn.partner1 === today;
 
-  if (herToday && himToday) {
+  if (partner2Today && partner1Today) {
     // Guard: only bump once per day
     if (data.lastBump === today) {
       // Already counted today — just save the lastCheckIn update
     } else {
       // Check if BOTH had checked in yesterday (continuity for streak)
-      const herHadYesterday = data.prevCheckIn && data.prevCheckIn.her === yesterday;
-      const himHadYesterday = data.prevCheckIn && data.prevCheckIn.him === yesterday;
-      if (herHadYesterday && himHadYesterday) {
+      const partner2HadYesterday = data.prevCheckIn && data.prevCheckIn.partner2 === yesterday;
+      const partner1HadYesterday = data.prevCheckIn && data.prevCheckIn.partner1 === yesterday;
+      if (partner2HadYesterday && partner1HadYesterday) {
         data.current = (data.current || 0) + 1;
       } else {
         data.current = 1;
@@ -1486,10 +1493,10 @@ async function updateStreak() {
   }
   // Store previous check-in dates before overwriting (for next day's continuity check)
   if (!data.prevCheckIn) data.prevCheckIn = {};
-  if (data.lastCheckIn.her && data.lastCheckIn.her !== today) data.prevCheckIn.her = data.lastCheckIn.her;
-  if (data.lastCheckIn.him && data.lastCheckIn.him !== today) data.prevCheckIn.him = data.lastCheckIn.him;
+  if (data.lastCheckIn.partner2 && data.lastCheckIn.partner2 !== today) data.prevCheckIn.partner2 = data.lastCheckIn.partner2;
+  if (data.lastCheckIn.partner1 && data.lastCheckIn.partner1 !== today) data.prevCheckIn.partner1 = data.lastCheckIn.partner1;
 
-  await db.ref('streaks').set(data);
+  await coupleRef('streaks').set(data);
 }
 
 // ===== GRATITUDE =====
@@ -1513,7 +1520,7 @@ async function submitGratitude() {
     date: localDate(),
     timestamp: Date.now()
   };
-  await db.ref('gratitude').push(entry);
+  await coupleRef('gratitude').push(entry);
   input.value = '';
   if (typeof logActivity === 'function') logActivity('gratitude', 'shared gratitude');
   if (btn) {
@@ -1527,7 +1534,7 @@ async function submitGratitude() {
 }
 
 function listenGratitude() {
-  db.ref('gratitude')
+  coupleRef('gratitude')
     .orderByChild('timestamp')
     .limitToLast(20)
     .on('value', snap => {
@@ -1616,7 +1623,7 @@ function initAIBackgroundService() {
   if (!db || !CLAUDE_API_KEY) return;
   // Check each role and run if overdue
   Object.entries(AI_ROLES).forEach(([key, role]) => {
-    db.ref('ai/roles/' + role.lastRunKey).once('value', snap => {
+    coupleRef('ai/roles/' + role.lastRunKey).once('value', snap => {
       const lastRun = snap.val() || 0;
       const now = Date.now();
       if (now - lastRun > role.interval) {
@@ -1627,7 +1634,7 @@ function initAIBackgroundService() {
     });
   });
   // Listen for nudges
-  db.ref('ai/nudges/' + user)
+  coupleRef('ai/nudges/' + user)
     .orderByChild('timestamp')
     .limitToLast(5)
     .on('value', snap => {
@@ -1636,7 +1643,8 @@ function initAIBackgroundService() {
         const n = c.val();
         if (n && !n.dismissed) aiNudges.push({ ...n, key: c.key });
       });
-      renderAINudges();
+      if (typeof renderAINudgesEnhanced === 'function') renderAINudgesEnhanced();
+      else renderAINudges();
     });
 }
 
@@ -1679,7 +1687,7 @@ async function runAIRole(roleKey, role) {
     const result = await callAIBackground(prompt);
     if (result) {
       await processAIRoleResult(roleKey, result);
-      await db.ref('ai/roles/' + role.lastRunKey).set(now);
+      await coupleRef('ai/roles/' + role.lastRunKey).set(now);
     }
   } catch (e) {
     console.warn('AI role ' + roleKey + ' failed:', e);
@@ -1688,7 +1696,7 @@ async function runAIRole(roleKey, role) {
 
 function buildContentCuratorPrompt() {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-  return `You are the AI content curator for Moi et Toi, a couples app for ${NAMES.him} and ${NAMES.her}.
+  return `You are the AI content curator for Moi et Toi, a couples app for ${NAMES.partner1} and ${NAMES.partner2}.
 
 Today is ${today}. Generate fresh content for the app. Return a JSON object with these keys:
 - "dailyQuestion": A thoughtful relationship question for them to answer together
@@ -1701,7 +1709,7 @@ Keep each value to 1-2 sentences. Be warm, specific, and culturally aware. Retur
 }
 
 function buildRelMonitorPrompt(data) {
-  return `You are the relationship wellness monitor for ${NAMES.him} and ${NAMES.her}'s app.
+  return `You are the relationship wellness monitor for ${NAMES.partner1} and ${NAMES.partner2}'s app.
 
 Here is their recent mood data:
 ${JSON.stringify(data)}
@@ -1709,15 +1717,15 @@ ${JSON.stringify(data)}
 Analyze their mood patterns. Return a JSON object:
 - "status": "good" | "attention" | "concern"
 - "insight": A brief insight about their emotional patterns (1 sentence)
-- "nudgeHim": A gentle, supportive message for ${NAMES.him} (or null if not needed)
-- "nudgeHer": A gentle, supportive message for ${NAMES.her} (or null if not needed)
+- "nudgePartner1": A gentle, supportive message for ${NAMES.partner1} (or null if not needed)
+- "nudgePartner2": A gentle, supportive message for ${NAMES.partner2} (or null if not needed)
 - "suggestion": One actionable suggestion to strengthen their connection
 
 Be warm and empathetic, never judgmental. Return ONLY valid JSON.`;
 }
 
 function buildMilestonePrompt(data) {
-  return `You are the milestone tracker for ${NAMES.him} and ${NAMES.her}'s relationship app.
+  return `You are the milestone tracker for ${NAMES.partner1} and ${NAMES.partner2}'s relationship app.
 
 Here are their upcoming dates and milestones:
 ${JSON.stringify(data)}
@@ -1732,14 +1740,14 @@ Return ONLY valid JSON.`;
 }
 
 function buildGoalCoachPrompt(data) {
-  return `You are the goal coach for ${NAMES.him} and ${NAMES.her}'s couples app.
+  return `You are the goal coach for ${NAMES.partner1} and ${NAMES.partner2}'s couples app.
 
 Their current goals and progress:
 ${JSON.stringify(data)}
 
 Return a JSON object:
-- "nudgeHim": Motivational message about ${NAMES.him}'s goals (or null)
-- "nudgeHer": Motivational message about ${NAMES.her}'s goals (or null)
+- "nudgePartner1": Motivational message about ${NAMES.partner1}'s goals (or null)
+- "nudgePartner2": Motivational message about ${NAMES.partner2}'s goals (or null)
 - "sharedInsight": Comment on their shared goals progress (or null)
 - "tip": One productivity or goal-setting tip
 
@@ -1747,7 +1755,7 @@ Keep it concise and encouraging. Return ONLY valid JSON.`;
 }
 
 function buildWellnessPrompt(data) {
-  return `You are the wellness advisor for ${NAMES.him} and ${NAMES.her}'s app.
+  return `You are the wellness advisor for ${NAMES.partner1} and ${NAMES.partner2}'s app.
 
 Recent wellness data:
 ${JSON.stringify(data)}
@@ -1762,7 +1770,7 @@ Be supportive and specific. Return ONLY valid JSON.`;
 }
 
 function buildFinancePrompt(data) {
-  return `You are the finance guardian for ${NAMES.him} and ${NAMES.her}'s shared finances.
+  return `You are the finance guardian for ${NAMES.partner1} and ${NAMES.partner2}'s shared finances.
 
 Recent spending data:
 ${JSON.stringify(data)}
@@ -1778,7 +1786,7 @@ Be helpful and non-judgmental. Return ONLY valid JSON.`;
 
 async function gatherMoodData() {
   if (!db) return {};
-  const snap = await db.ref('moods').orderByChild('timestamp').limitToLast(30).once('value');
+  const snap = await coupleRef('moods').orderByChild('timestamp').limitToLast(30).once('value');
   const moods = [];
   snap.forEach(c => moods.push(c.val()));
   return { recentMoods: moods, count: moods.length };
@@ -1787,9 +1795,9 @@ async function gatherMoodData() {
 async function gatherMilestoneData() {
   if (!db) return {};
   const [msSnap, cdSnap, calSnap] = await Promise.all([
-    db.ref('milestones').once('value'),
-    db.ref('countdowns').once('value'),
-    db.ref('calendar').once('value')
+    coupleRef('milestones').once('value'),
+    coupleRef('countdowns').once('value'),
+    coupleRef('calendar').once('value')
   ]);
   return {
     milestones: msSnap.val() || {},
@@ -1800,14 +1808,14 @@ async function gatherMilestoneData() {
 
 async function gatherGoalData() {
   if (!db) return {};
-  const [herGoals, himGoals, shared] = await Promise.all([
-    db.ref('personalGoals/her').once('value'),
-    db.ref('personalGoals/him').once('value'),
-    db.ref('personalGoals/shared').once('value')
+  const [partner2Goals, partner1Goals, shared] = await Promise.all([
+    coupleRef('personalGoals/partner2').once('value'),
+    coupleRef('personalGoals/partner1').once('value'),
+    coupleRef('personalGoals/shared').once('value')
   ]);
   return {
-    her: herGoals.val() || {},
-    him: himGoals.val() || {},
+    partner2: partner2Goals.val() || {},
+    partner1: partner1Goals.val() || {},
     shared: shared.val() || {}
   };
 }
@@ -1816,8 +1824,8 @@ async function gatherWellnessData() {
   if (!db) return {};
   const today = new Date().toISOString().split('T')[0];
   const [nutrSnap, fitSnap] = await Promise.all([
-    db.ref('nutrition/' + user + '/meals/' + today).once('value'),
-    db.ref('fitness/workouts').orderByChild('timestamp').limitToLast(10).once('value')
+    coupleRef('nutrition/' + user + '/meals/' + today).once('value'),
+    coupleRef('fitness/workouts').orderByChild('timestamp').limitToLast(10).once('value')
   ]);
   const workouts = [];
   fitSnap.forEach(c => workouts.push(c.val()));
@@ -1826,22 +1834,33 @@ async function gatherWellnessData() {
 
 async function gatherFinanceData() {
   if (!db) return {};
-  const snap = await db.ref('finances/expenses').orderByChild('timestamp').limitToLast(30).once('value');
+  const snap = await coupleRef('finances/expenses').orderByChild('timestamp').limitToLast(30).once('value');
   const expenses = [];
   snap.forEach(c => expenses.push(c.val()));
   return { recentExpenses: expenses };
 }
 
+// ===== AI RATE LIMITING =====
+const _aiRateLimit = { calls: [], maxPerMinute: 8, maxPerHour: 40 };
+
+function checkAIRateLimit() {
+  const now = Date.now();
+  // Clean old entries
+  _aiRateLimit.calls = _aiRateLimit.calls.filter(t => now - t < 3600000);
+  const lastMinute = _aiRateLimit.calls.filter(t => now - t < 60000).length;
+  if (lastMinute >= _aiRateLimit.maxPerMinute) return false;
+  if (_aiRateLimit.calls.length >= _aiRateLimit.maxPerHour) return false;
+  _aiRateLimit.calls.push(now);
+  return true;
+}
+
 async function callAIBackground(prompt) {
-  if (!CLAUDE_API_KEY) return null;
-  const headers = AI_PROXY_URL
-    ? { 'Content-Type': 'application/json' }
-    : {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      };
+  if (!CLAUDE_API_KEY && !AI_PROXY_URL) return null;
+  if (!checkAIRateLimit()) {
+    console.warn('AI rate limit reached — skipping call');
+    return null;
+  }
+  const headers = aiFetchHeaders();
   const endpoint = AI_PROXY_URL || 'https://api.anthropic.com/v1/messages';
 
   const resp = await fetch(endpoint, {
@@ -1874,19 +1893,19 @@ async function processAIRoleResult(roleKey, result) {
     case 'contentCurator': {
       // Write fresh content to Firebase
       const today = new Date().toISOString().split('T')[0];
-      if (result.dailyQuestion) await db.ref('ai/content/' + today + '/dailyQuestion').set(result.dailyQuestion);
-      if (result.dateIdea) await db.ref('ai/content/' + today + '/dateIdea').set(result.dateIdea);
-      if (result.affirmation) await db.ref('ai/content/' + today + '/affirmation').set(result.affirmation);
+      if (result.dailyQuestion) await coupleRef('ai/content/' + today + '/dailyQuestion').set(result.dailyQuestion);
+      if (result.dateIdea) await coupleRef('ai/content/' + today + '/dateIdea').set(result.dateIdea);
+      if (result.affirmation) await coupleRef('ai/content/' + today + '/affirmation').set(result.affirmation);
       if (result.conversationStarter)
-        await db.ref('ai/content/' + today + '/conversationStarter').set(result.conversationStarter);
-      if (result.challenge) await db.ref('ai/content/' + today + '/challenge').set(result.challenge);
+        await coupleRef('ai/content/' + today + '/conversationStarter').set(result.conversationStarter);
+      if (result.challenge) await coupleRef('ai/content/' + today + '/challenge').set(result.challenge);
       break;
     }
     case 'relationshipMonitor': {
-      if (result.nudgeHim)
-        await db.ref('ai/nudges/him').push({ message: result.nudgeHim, type: 'relationship', timestamp: now });
-      if (result.nudgeHer)
-        await db.ref('ai/nudges/her').push({ message: result.nudgeHer, type: 'relationship', timestamp: now });
+      if (result.nudgePartner1)
+        await coupleRef('ai/nudges/partner1').push({ message: result.nudgePartner1, type: 'relationship', timestamp: now });
+      if (result.nudgePartner2)
+        await coupleRef('ai/nudges/partner2').push({ message: result.nudgePartner2, type: 'relationship', timestamp: now });
       if (result.insight)
         await db
           .ref('ai/insights/relationship')
@@ -1897,35 +1916,35 @@ async function processAIRoleResult(roleKey, result) {
       if (result.upcoming && result.upcoming.length > 0) {
         result.upcoming.forEach(async item => {
           if (item.daysAway <= 3) {
-            await db.ref('ai/nudges/him').push({ message: item.reminder, type: 'milestone', timestamp: now });
-            await db.ref('ai/nudges/her').push({ message: item.reminder, type: 'milestone', timestamp: now });
+            await coupleRef('ai/nudges/partner1').push({ message: item.reminder, type: 'milestone', timestamp: now });
+            await coupleRef('ai/nudges/partner2').push({ message: item.reminder, type: 'milestone', timestamp: now });
           }
         });
       }
       break;
     }
     case 'goalCoach': {
-      if (result.nudgeHim)
-        await db.ref('ai/nudges/him').push({ message: result.nudgeHim, type: 'goals', timestamp: now });
-      if (result.nudgeHer)
-        await db.ref('ai/nudges/her').push({ message: result.nudgeHer, type: 'goals', timestamp: now });
+      if (result.nudgePartner1)
+        await coupleRef('ai/nudges/partner1').push({ message: result.nudgePartner1, type: 'goals', timestamp: now });
+      if (result.nudgePartner2)
+        await coupleRef('ai/nudges/partner2').push({ message: result.nudgePartner2, type: 'goals', timestamp: now });
       break;
     }
     case 'wellnessAdvisor': {
       const nudge = result.celebration || result.nudge;
       if (nudge) {
-        await db.ref('ai/nudges/him').push({ message: nudge, type: 'wellness', timestamp: now });
-        await db.ref('ai/nudges/her').push({ message: nudge, type: 'wellness', timestamp: now });
+        await coupleRef('ai/nudges/partner1').push({ message: nudge, type: 'wellness', timestamp: now });
+        await coupleRef('ai/nudges/partner2').push({ message: nudge, type: 'wellness', timestamp: now });
       }
       break;
     }
     case 'financeGuardian': {
       if (result.alert) {
-        await db.ref('ai/nudges/him').push({ message: result.alert, type: 'finance', timestamp: now });
-        await db.ref('ai/nudges/her').push({ message: result.alert, type: 'finance', timestamp: now });
+        await coupleRef('ai/nudges/partner1').push({ message: result.alert, type: 'finance', timestamp: now });
+        await coupleRef('ai/nudges/partner2').push({ message: result.alert, type: 'finance', timestamp: now });
       } else if (result.tip) {
-        await db.ref('ai/nudges/him').push({ message: result.tip, type: 'finance', timestamp: now });
-        await db.ref('ai/nudges/her').push({ message: result.tip, type: 'finance', timestamp: now });
+        await coupleRef('ai/nudges/partner1').push({ message: result.tip, type: 'finance', timestamp: now });
+        await coupleRef('ai/nudges/partner2').push({ message: result.tip, type: 'finance', timestamp: now });
       }
       break;
     }
@@ -1962,14 +1981,14 @@ async function dismissAINudge(key) {
     card.classList.add('nudge-dismiss');
     card.addEventListener('animationend', function () { card.remove(); });
   }
-  await db.ref('ai/nudges/' + user + '/' + key + '/dismissed').set(true);
+  await coupleRef('ai/nudges/' + user + '/' + key + '/dismissed').set(true);
 }
 
 // Load AI-generated daily content for dashboard
 async function loadAIDailyContent() {
   if (!db) return;
   const today = new Date().toISOString().split('T')[0];
-  const snap = await db.ref('ai/content/' + today).once('value');
+  const snap = await coupleRef('ai/content/' + today).once('value');
   const content = snap.val();
   if (!content) return;
   // Show the card
@@ -1982,4 +2001,635 @@ async function loadAIDailyContent() {
   if (aiChallenge && content.challenge) aiChallenge.textContent = content.challenge;
   const aiConvo = document.getElementById('ai-convo-starter');
   if (aiConvo && content.conversationStarter) aiConvo.textContent = content.conversationStarter;
+}
+
+// ========================================
+// ===== C1: WEEKLY INSIGHTS REPORT =====
+// ========================================
+
+let insightsWeekOffset = 0;
+
+function getWeekKey(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() - d.getDay() + (offset * 7)); // Sunday of target week
+  return d.toISOString().split('T')[0];
+}
+
+function getWeekLabel(offset) {
+  if (offset === 0) return 'This Week';
+  if (offset === -1) return 'Last Week';
+  const d = new Date();
+  d.setDate(d.getDate() - d.getDay() + (offset * 7));
+  const end = new Date(d);
+  end.setDate(end.getDate() + 6);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' – ' +
+    end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+async function loadWeeklyReport(weekKey) {
+  if (!db) return;
+  const snap = await coupleRef('ai/weeklyReports/' + weekKey).once('value');
+  const report = snap.val();
+  if (report) {
+    renderInsightsReport(report);
+    return true;
+  }
+  return false;
+}
+
+async function gatherWeeklyData() {
+  if (!db) return {};
+  const now = Date.now();
+  const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+  const [moodsSnap, lettersSnap, gratSnap, gamesSnap, goalsSnap, checkinSnap, tapsSnap, fitSnap, finSnap] =
+    await Promise.all([
+      coupleRef('moods').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('letters').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('gratitude').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('games/tot').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('personalGoals/shared').once('value'),
+      coupleRef('checkins').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('taps').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('fitness/workouts').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('finances/expenses').orderByChild('timestamp').startAt(weekAgo).once('value')
+    ]);
+
+  const collect = snap => { const arr = []; snap.forEach(c => arr.push(c.val())); return arr; };
+
+  return {
+    moods: collect(moodsSnap),
+    letters: collect(lettersSnap),
+    gratitude: collect(gratSnap),
+    games: collect(gamesSnap),
+    goals: goalsSnap.val() || {},
+    checkins: collect(checkinSnap),
+    taps: collect(tapsSnap),
+    workouts: collect(fitSnap),
+    expenses: collect(finSnap),
+    partner1Name: NAMES.partner1,
+    partner2Name: NAMES.partner2,
+    currentUser: NAMES[user]
+  };
+}
+
+async function generateWeeklyReport() {
+  if (!CLAUDE_API_KEY) { toast('Set up AI in settings first'); return; }
+  const btn = document.getElementById('insights-gen-btn');
+  const loading = document.getElementById('insights-loading');
+  const empty = document.getElementById('insights-empty');
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Generating...'; }
+  if (loading) loading.classList.remove('d-none');
+  if (empty) empty.classList.add('d-none');
+
+  try {
+    const data = await gatherWeeklyData();
+    const weekKey = getWeekKey(insightsWeekOffset);
+
+    const prompt = `You are the weekly insights engine for Moi et Toi, a couples app for ${NAMES.partner1} and ${NAMES.partner2}.
+
+Analyze their week and generate a comprehensive relationship report. Here is their data:
+${JSON.stringify(data)}
+
+Return a JSON object with these keys:
+- "score": Number 0-100, overall relationship engagement score for the week
+- "scoreLabel": "Thriving" | "Strong" | "Growing" | "Warming Up" | "Getting Started"
+- "scoreTrend": "up" | "stable" | "down" (compared to typical engagement)
+- "pulseDetail": 1-2 sentences about their emotional connection this week
+- "highlights": Array of 3-5 strings — positive things that happened (be specific with names and data)
+- "growthAreas": Array of 1-3 strings — areas where engagement could improve (gentle, not judgmental)
+- "recommendations": Array of 3 objects with { "action": string, "reason": string } — actionable suggestions
+- "appreciation1": A sentence about how ${NAMES.partner1} showed love this week (based on data, or encouraging if sparse)
+- "appreciation2": A sentence about how ${NAMES.partner2} showed love this week
+
+Be warm, specific, and use their names. Reference actual data points. Return ONLY valid JSON.`;
+
+    const result = await callAIBackground(prompt);
+    if (result) {
+      await coupleRef('ai/weeklyReports/' + weekKey).set({ ...result, generatedAt: Date.now() });
+      renderInsightsReport(result);
+    } else {
+      if (empty) empty.classList.remove('d-none');
+      toast('Could not generate report — try again');
+    }
+  } catch (e) {
+    console.warn('Weekly report generation failed:', e);
+    if (empty) empty.classList.remove('d-none');
+    toast('Report generation failed');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Generate Report'; }
+    if (loading) loading.classList.add('d-none');
+  }
+}
+
+function renderInsightsReport(report) {
+  const container = document.getElementById('insights-report');
+  const empty = document.getElementById('insights-empty');
+  if (!container) return;
+
+  if (empty) empty.classList.add('d-none');
+  container.classList.remove('d-none');
+
+  // Score
+  const scoreEl = document.getElementById('ir-score');
+  const labelEl = document.getElementById('ir-score-label');
+  const detailEl = document.getElementById('ir-pulse-detail');
+  if (scoreEl) scoreEl.textContent = report.score || '--';
+  if (labelEl) {
+    labelEl.textContent = report.scoreLabel || '';
+    const trendIcon = report.scoreTrend === 'up' ? ' ↑' : report.scoreTrend === 'down' ? ' ↓' : '';
+    labelEl.textContent += trendIcon;
+  }
+  if (detailEl) detailEl.textContent = report.pulseDetail || '';
+
+  // Highlights
+  const hlEl = document.getElementById('ir-highlights');
+  if (hlEl && report.highlights) {
+    hlEl.innerHTML = report.highlights.map(h => '<div class="ir-item ir-hl">✨ ' + esc(h) + '</div>').join('');
+  }
+
+  // Growth areas
+  const grEl = document.getElementById('ir-growth');
+  if (grEl && report.growthAreas) {
+    grEl.innerHTML = report.growthAreas.map(g => '<div class="ir-item ir-gr">🌱 ' + esc(g) + '</div>').join('');
+  }
+
+  // Recommendations
+  const recEl = document.getElementById('ir-recs');
+  if (recEl && report.recommendations) {
+    recEl.innerHTML = report.recommendations
+      .map(r => '<div class="ir-rec"><div class="ir-rec-action">💡 ' + esc(r.action) + '</div><div class="ir-rec-reason">' + esc(r.reason) + '</div></div>')
+      .join('');
+  }
+
+  // Appreciation
+  const appEl = document.getElementById('ir-appreciation');
+  if (appEl) {
+    let html = '';
+    if (report.appreciation1) html += '<div class="ir-item ir-app">💝 ' + esc(report.appreciation1) + '</div>';
+    if (report.appreciation2) html += '<div class="ir-item ir-app">💝 ' + esc(report.appreciation2) + '</div>';
+    appEl.innerHTML = html;
+  }
+
+  // Week label
+  const weekEl = document.getElementById('insights-week');
+  if (weekEl) weekEl.textContent = getWeekLabel(insightsWeekOffset);
+
+  // Nav buttons
+  const nextBtn = document.getElementById('ir-next');
+  if (nextBtn) nextBtn.disabled = insightsWeekOffset >= 0;
+}
+
+async function prevWeekReport() {
+  insightsWeekOffset--;
+  const weekKey = getWeekKey(insightsWeekOffset);
+  document.getElementById('insights-week').textContent = getWeekLabel(insightsWeekOffset);
+  document.getElementById('ir-next').disabled = false;
+  const found = await loadWeeklyReport(weekKey);
+  if (!found) {
+    document.getElementById('insights-report').classList.add('d-none');
+    document.getElementById('insights-empty').classList.remove('d-none');
+  }
+}
+
+async function nextWeekReport() {
+  if (insightsWeekOffset >= 0) return;
+  insightsWeekOffset++;
+  const weekKey = getWeekKey(insightsWeekOffset);
+  document.getElementById('insights-week').textContent = getWeekLabel(insightsWeekOffset);
+  document.getElementById('ir-next').disabled = insightsWeekOffset >= 0;
+  const found = await loadWeeklyReport(weekKey);
+  if (!found) {
+    document.getElementById('insights-report').classList.add('d-none');
+    document.getElementById('insights-empty').classList.remove('d-none');
+  }
+}
+
+// Auto-generate on Sunday
+function checkAutoInsights() {
+  if (!db || !CLAUDE_API_KEY) return;
+  const now = new Date();
+  if (now.getDay() !== 0) return; // Sunday only
+  const weekKey = getWeekKey(0);
+  coupleRef('ai/weeklyReports/' + weekKey).once('value', snap => {
+    if (!snap.val()) generateWeeklyReport();
+  });
+}
+
+// Load current week's report on page visit
+function initInsightsPage() {
+  insightsWeekOffset = 0;
+  const weekKey = getWeekKey(0);
+  loadWeeklyReport(weekKey);
+  if (typeof renderEngagementDashboard === 'function') renderEngagementDashboard();
+}
+
+// ========================================
+// ===== C2: PROACTIVE COACH =====
+// ========================================
+
+async function runProactiveCoach() {
+  if (!CLAUDE_API_KEY || !db) return;
+
+  try {
+    const data = await gatherCoachData();
+    if (!data || !data.hasEnoughData) return;
+
+    const prompt = buildProactiveCoachPrompt(data);
+    const result = await callAIBackground(prompt);
+    if (result && result.nudges) {
+      const now = Date.now();
+      for (const nudge of result.nudges) {
+        if (!nudge.message) continue;
+        const nudgeData = {
+          message: nudge.message,
+          type: 'coach',
+          timestamp: now,
+          action: nudge.action || null,
+          actionLabel: nudge.actionLabel || null
+        };
+        const target = nudge.target || 'both';
+        if (target === 'both' || target === 'partner1') {
+          await coupleRef('ai/nudges/partner1').push(nudgeData);
+        }
+        if (target === 'both' || target === 'partner2') {
+          await coupleRef('ai/nudges/partner2').push(nudgeData);
+        }
+      }
+      await coupleRef('ai/roles/ai_role_coach').set(Date.now());
+    }
+  } catch (e) {
+    console.warn('Proactive coach failed:', e);
+  }
+}
+
+async function gatherCoachData() {
+  if (!db) return null;
+  const now = Date.now();
+  const threeDaysAgo = now - 3 * 24 * 60 * 60 * 1000;
+  const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+  const [moodsSnap, lettersSnap, tapsSnap, gamesSnap, goalsSnap] = await Promise.all([
+    coupleRef('moods').orderByChild('timestamp').startAt(weekAgo).once('value'),
+    coupleRef('letters').orderByChild('timestamp').startAt(threeDaysAgo).once('value'),
+    coupleRef('taps').orderByChild('timestamp').startAt(threeDaysAgo).once('value'),
+    coupleRef('games/tot').orderByChild('timestamp').startAt(threeDaysAgo).once('value'),
+    coupleRef('personalGoals/shared').once('value')
+  ]);
+
+  const moods = [];
+  moodsSnap.forEach(c => moods.push(c.val()));
+
+  const recentLetters = [];
+  lettersSnap.forEach(c => recentLetters.push(c.val()));
+
+  const recentTaps = [];
+  tapsSnap.forEach(c => recentTaps.push(c.val()));
+
+  const recentGames = [];
+  gamesSnap.forEach(c => recentGames.push(c.val()));
+
+  // Detect patterns
+  const p1Moods = moods.filter(m => m.user === 'partner1').sort((a, b) => a.timestamp - b.timestamp);
+  const p2Moods = moods.filter(m => m.user === 'partner2').sort((a, b) => a.timestamp - b.timestamp);
+
+  const lastP1Mood = p1Moods[p1Moods.length - 1];
+  const lastP2Mood = p2Moods[p2Moods.length - 1];
+
+  // Check for declining moods (3+ days trending down)
+  function detectDecline(userMoods) {
+    if (userMoods.length < 3) return false;
+    const last3 = userMoods.slice(-3);
+    return last3[0].mood > last3[1].mood && last3[1].mood > last3[2].mood;
+  }
+
+  // Check for big mood swing
+  function detectSwing(userMoods) {
+    if (userMoods.length < 2) return false;
+    const last2 = userMoods.slice(-2);
+    return Math.abs(last2[1].mood - last2[0].mood) >= 3;
+  }
+
+  // Check for mood divergence between partners
+  function detectDivergence() {
+    if (!lastP1Mood || !lastP2Mood) return false;
+    return Math.abs(lastP1Mood.mood - lastP2Mood.mood) >= 2;
+  }
+
+  // Days since last check-in
+  function daysSince(userMoods) {
+    if (!userMoods.length) return 99;
+    return Math.floor((now - userMoods[userMoods.length - 1].timestamp) / (24 * 60 * 60 * 1000));
+  }
+
+  // Goals stalled check
+  const goals = goalsSnap.val() || {};
+  const stalledGoals = Object.values(goals).filter(g => {
+    if (g.completed) return false;
+    const updated = g.updatedAt || g.createdAt || 0;
+    return (now - updated) > 7 * 24 * 60 * 60 * 1000;
+  });
+
+  const patterns = {
+    p1Declining: detectDecline(p1Moods),
+    p2Declining: detectDecline(p2Moods),
+    p1Swing: detectSwing(p1Moods),
+    p2Swing: detectSwing(p2Moods),
+    diverging: detectDivergence(),
+    p1DaysSinceCheckin: daysSince(p1Moods),
+    p2DaysSinceCheckin: daysSince(p2Moods),
+    recentlyConnected: recentLetters.length > 0 || recentTaps.length > 0 || recentGames.length > 0,
+    stalledGoalCount: stalledGoals.length,
+    stalledGoalNames: stalledGoals.slice(0, 3).map(g => g.title || 'Untitled')
+  };
+
+  // Only send to AI if there's something worth addressing
+  const hasEnoughData = moods.length >= 2;
+  const hasPatterns = patterns.p1Declining || patterns.p2Declining || patterns.p1Swing || patterns.p2Swing ||
+    patterns.diverging || patterns.p1DaysSinceCheckin >= 3 || patterns.p2DaysSinceCheckin >= 3 ||
+    patterns.stalledGoalCount > 0;
+
+  return {
+    hasEnoughData: hasEnoughData && hasPatterns,
+    patterns,
+    moods: moods.slice(-10),
+    partner1Name: NAMES.partner1,
+    partner2Name: NAMES.partner2
+  };
+}
+
+function buildProactiveCoachPrompt(data) {
+  return `You are the proactive relationship coach for ${data.partner1Name} and ${data.partner2Name}'s app.
+
+DETECTED PATTERNS:
+${JSON.stringify(data.patterns)}
+
+RECENT MOODS (last 10):
+${JSON.stringify(data.moods)}
+
+Based on these patterns, generate targeted, empathetic nudges. Rules:
+- Only generate nudges for patterns that actually need attention
+- If they've recently connected (letters/taps/games), don't push connection nudges
+- Reference actual data (e.g., "Your mood has been lower the past few days")
+- Be warm, never nagging. Max 3 nudges.
+
+Return a JSON object:
+{
+  "nudges": [
+    {
+      "message": "The nudge text (1-2 sentences, warm and specific)",
+      "target": "partner1" | "partner2" | "both",
+      "action": "mood" | "connect" | "deeptalk" | "games" | null,
+      "actionLabel": "Log mood" | "Send a note" | "Start a deep talk" | "Play a game" | null
+    }
+  ]
+}
+
+Return ONLY valid JSON. If no nudges are needed, return { "nudges": [] }.`;
+}
+
+// Replace relationship monitor with proactive coach
+function initProactiveCoach() {
+  if (!db || !CLAUDE_API_KEY) return;
+  coupleRef('ai/roles/ai_role_coach').once('value', snap => {
+    const lastRun = snap.val() || 0;
+    const sixHours = 6 * 60 * 60 * 1000;
+    if (Date.now() - lastRun > sixHours) {
+      const delay = 10000 + Math.random() * 20000;
+      setTimeout(() => runProactiveCoach(), delay);
+    }
+  });
+}
+
+// Enhanced nudge renderer with action buttons
+function renderAINudgesEnhanced() {
+  const container = document.getElementById('ai-nudges');
+  if (!container) return;
+  if (!aiNudges.length) { container.innerHTML = ''; return; }
+
+  const typeIcons = { relationship: '💕', milestone: '📅', goals: '🎯', wellness: '💪', finance: '💰', coach: '🤝' };
+  const actionPages = { mood: 'mood', connect: 'connect', deeptalk: 'together', games: 'games' };
+
+  container.innerHTML = aiNudges.map(n => {
+    let actionBtn = '';
+    if (n.action && n.actionLabel) {
+      const page = actionPages[n.action] || n.action;
+      actionBtn = '<button class="nudge-action-btn" onclick="go(\'' + page + '\'); dismissAINudge(\'' + n.key + '\')">' + esc(n.actionLabel) + '</button>';
+    }
+    return '<div class="ai-nudge-card">' +
+      '<span class="ai-nudge-icon">' + (typeIcons[n.type] || '✨') + '</span>' +
+      '<div class="ai-nudge-body">' +
+        '<div class="ai-nudge-text">' + esc(n.message) + '</div>' +
+        actionBtn +
+      '</div>' +
+      '<button class="ai-nudge-dismiss" onclick="dismissAINudge(\'' + n.key + '\')" aria-label="Dismiss">&times;</button>' +
+    '</div>';
+  }).join('');
+}
+
+// ========================================
+// ===== C3: AI CONVERSATION FACILITATOR =====
+// ========================================
+
+let aiDTCat = 'thisweek';
+let aiDTSession = null; // { intro, question, followUps, history }
+
+function toggleAIFacilitator(enabled) {
+  const standard = document.getElementById('dt-standard');
+  const aiPanel = document.getElementById('dt-ai-mode-panel');
+  if (standard) standard.classList.toggle('d-none', enabled);
+  if (aiPanel) aiPanel.classList.toggle('d-none', !enabled);
+  if (enabled) startAIDeepTalk();
+}
+
+function setAIDTCat(cat, el) {
+  aiDTCat = cat;
+  document.querySelectorAll('.dt-ai-cat').forEach(e => e.classList.remove('on'));
+  if (el) el.classList.add('on');
+  startAIDeepTalk();
+}
+
+async function startAIDeepTalk() {
+  if (!CLAUDE_API_KEY) { toast('Set up AI in settings first'); return; }
+
+  const loading = document.getElementById('dt-ai-loading');
+  const session = document.getElementById('dt-ai-session');
+  const controls = document.getElementById('dt-ai-controls');
+  const summary = document.getElementById('dt-ai-summary');
+
+  if (loading) loading.classList.remove('d-none');
+  if (session) session.style.display = 'none';
+  if (controls) controls.style.display = 'none';
+  if (summary) { summary.classList.add('d-none'); summary.innerHTML = ''; }
+
+  try {
+    const context = await gatherFacilitatorContext();
+    const prompt = buildFacilitatorPrompt(context);
+    const result = await callAIBackground(prompt);
+
+    if (result) {
+      aiDTSession = {
+        intro: result.intro || '',
+        question: result.question || '',
+        followUps: result.followUps || [],
+        history: [result.question],
+        context
+      };
+      renderAIDTSession();
+    } else {
+      toast('Could not generate conversation — try again');
+    }
+  } catch (e) {
+    console.warn('AI facilitator failed:', e);
+    toast('Failed to create conversation');
+  } finally {
+    if (loading) loading.classList.add('d-none');
+  }
+}
+
+async function gatherFacilitatorContext() {
+  if (!db) return {};
+  const now = Date.now();
+  const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+  const [moodsSnap, healthScore] = await Promise.all([
+    coupleRef('moods').orderByChild('timestamp').startAt(weekAgo).once('value'),
+    typeof MET !== 'undefined' && MET._ready ? Promise.resolve(MET.relationship) : Promise.resolve({})
+  ]);
+
+  const moods = [];
+  moodsSnap.forEach(c => moods.push(c.val()));
+
+  return {
+    category: aiDTCat,
+    recentMoods: moods.slice(-6),
+    healthScore: healthScore.score || null,
+    healthBreakdown: healthScore.breakdown || {},
+    partner1Name: NAMES.partner1,
+    partner2Name: NAMES.partner2
+  };
+}
+
+function buildFacilitatorPrompt(ctx) {
+  const catInstructions = {
+    thisweek: `Generate a conversation topic based on their recent moods and events this week. Reference actual emotions or patterns you see in the data.`,
+    growth: `Look at their relationship health breakdown and find the weakest area. Create a conversation topic that gently addresses it. Areas: mood sync, communication, shared goals, games/fun, fitness sync, financial alignment.`,
+    celebrate: `Find something positive in their data — a streak, consistent check-ins, high moods, good sync — and create a conversation topic that celebrates it and deepens appreciation.`
+  };
+
+  return `You are an AI conversation facilitator for ${ctx.partner1Name} and ${ctx.partner2Name}'s deep talk session.
+
+THEIR DATA:
+- Recent moods: ${JSON.stringify(ctx.recentMoods)}
+- Relationship health score: ${ctx.healthScore || 'not computed'}
+- Health breakdown: ${JSON.stringify(ctx.healthBreakdown)}
+
+CATEGORY: ${ctx.category}
+${catInstructions[ctx.category] || catInstructions.thisweek}
+
+Return a JSON object:
+{
+  "intro": "A warm 1-sentence introduction setting the tone (e.g., 'This week has been a mix of highs and lows for you both...')",
+  "question": "The main conversation question (thoughtful, specific to their data, not generic)",
+  "whoFirst": "${ctx.partner1Name}" or "${ctx.partner2Name}" (suggest who should answer first based on context),
+  "followUps": ["Follow-up question 1", "Follow-up question 2", "Follow-up question 3"]
+}
+
+Be warm, specific, culturally aware (Togolese + Texan couple). Make the question feel tailored, not generic. Return ONLY valid JSON.`;
+}
+
+function renderAIDTSession() {
+  const session = document.getElementById('dt-ai-session');
+  const controls = document.getElementById('dt-ai-controls');
+  if (!session || !aiDTSession) return;
+
+  session.style.display = 'block';
+  if (controls) controls.style.display = 'flex';
+
+  const introEl = document.getElementById('dt-ai-intro');
+  const questionEl = document.getElementById('dt-ai-question');
+  const followEl = document.getElementById('dt-ai-followups');
+
+  if (introEl) introEl.textContent = aiDTSession.intro;
+  if (questionEl) questionEl.textContent = aiDTSession.question;
+  if (followEl && aiDTSession.followUps.length) {
+    followEl.innerHTML = '<div class="dt-ai-fu-label">When you\'re ready, explore deeper:</div>' +
+      aiDTSession.followUps.map((f, i) =>
+        '<button class="dt-ai-fu-btn" onclick="useFollowUp(' + i + ')">' + esc(f) + '</button>'
+      ).join('');
+  }
+}
+
+function useFollowUp(idx) {
+  if (!aiDTSession || !aiDTSession.followUps[idx]) return;
+  const q = aiDTSession.followUps[idx];
+  aiDTSession.history.push(q);
+  aiDTSession.question = q;
+  aiDTSession.followUps.splice(idx, 1);
+  renderAIDTSession();
+}
+
+async function getAIFollowUp() {
+  if (!CLAUDE_API_KEY || !aiDTSession) return;
+
+  const prompt = `You are facilitating a deep talk for ${NAMES.partner1} and ${NAMES.partner2}.
+
+Questions discussed so far: ${JSON.stringify(aiDTSession.history)}
+
+Generate ONE new follow-up question that goes deeper based on their conversation journey. Make it specific and emotionally rich.
+
+Return a JSON object: { "question": "The follow-up question" }
+Return ONLY valid JSON.`;
+
+  const result = await callAIBackground(prompt);
+  if (result && result.question) {
+    aiDTSession.history.push(result.question);
+    aiDTSession.question = result.question;
+    renderAIDTSession();
+  }
+}
+
+async function endAISession() {
+  if (!aiDTSession) return;
+
+  const controls = document.getElementById('dt-ai-controls');
+  if (controls) controls.style.display = 'none';
+
+  const summary = document.getElementById('dt-ai-summary');
+  if (!summary) return;
+  summary.classList.remove('d-none');
+  summary.innerHTML = '<div class="insights-loading-text">Reflecting on your conversation...</div>';
+
+  if (CLAUDE_API_KEY) {
+    const prompt = `You facilitated a deep talk for ${NAMES.partner1} and ${NAMES.partner2}.
+
+Questions they discussed: ${JSON.stringify(aiDTSession.history)}
+
+Write a brief, warm summary (3-4 sentences) reflecting on what they explored. End with one small action item they could do this week to keep the conversation going.
+
+Return a JSON object: { "summary": "...", "actionItem": "..." }
+Return ONLY valid JSON.`;
+
+    const result = await callAIBackground(prompt);
+    if (result) {
+      summary.innerHTML =
+        '<div class="dt-ai-summary-title">Conversation Reflection</div>' +
+        '<div class="dt-ai-summary-text">' + esc(result.summary || '') + '</div>' +
+        (result.actionItem ? '<div class="dt-ai-action-item">This week: ' + esc(result.actionItem) + '</div>' : '');
+
+      // Save to journal
+      if (db) {
+        await coupleRef('ai/conversations').push({
+          questions: aiDTSession.history,
+          summary: result.summary,
+          actionItem: result.actionItem,
+          category: aiDTCat,
+          timestamp: Date.now(),
+          user
+        });
+      }
+    }
+  }
+  aiDTSession = null;
 }

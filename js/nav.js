@@ -26,6 +26,7 @@ const TAB_MAP = {
   values: 'plan',
   lists: 'plan',
   more: 'more',
+  insights: 'more',
   ai: 'more',
   memories: 'more',
   achievements: 'more',
@@ -63,6 +64,9 @@ function go(p) {
   // Render workout pages on demand (template system)
   if ((p === 'w1' || p === 'w2' || p === 'w3') && typeof renderWorkoutPage === 'function') renderWorkoutPage(p);
 
+  // Initialize insights page on visit
+  if (p === 'insights' && typeof initInsightsPage === 'function') initInsightsPage();
+
   // Set page identifier (used by CSS selectors — no page-specific backgrounds)
   document.body.dataset.page = p;
 
@@ -76,6 +80,9 @@ function go(p) {
 
   // Track for recent pages in quick action sheet
   trackRecentPage(p);
+
+  // Analytics: track page views for feature usage insights
+  if (typeof trackFeatureUse === 'function') trackFeatureUse(p, 'view');
 
   // Update bottom nav active state
   document.querySelectorAll('.bn').forEach(e => e.classList.remove('on'));
@@ -300,6 +307,7 @@ const PAGE_META = {
   values: { icon: _IC.columns, label: 'Values' },
   lists: { icon: _IC.gift, label: 'Gift Ideas' },
   more: { icon: _IC.compass, label: 'More' },
+  insights: { icon: _IC.trend, label: 'Insights' },
   memories: { icon: _IC.camera, label: 'Memories' },
   ai: { icon: _IC.cpu, label: 'AI Chat' },
   achievements: { icon: _IC.award, label: 'Achievements' },
@@ -398,8 +406,8 @@ function updateNavBadges() {
   var p = typeof partner !== 'undefined' ? partner : null;
 
   // Together tab: count unread letters from partner (last 24h)
-  if (p) {
-    db.ref('letters')
+  if (p && _coupleId) {
+    coupleRef('letters')
       .orderByChild('timestamp')
       .limitToLast(5)
       .once('value', function (snap) {
@@ -423,8 +431,8 @@ function updateNavBadges() {
 
   // Wellness tab: gentle nudge if mood not logged today
   var today = localDate();
-  if (u) {
-    db.ref('moods')
+  if (u && _coupleId) {
+    coupleRef('moods')
       .orderByChild('date')
       .equalTo(today)
       .once('value', function (snap) {

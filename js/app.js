@@ -14,14 +14,14 @@ let CLAUDE_API_KEY = '';
 let AI_PROXY_URL = localStorage.getItem('met_ai_proxy') || '';
 
 // Profile names & nicknames - loaded from Firebase
-let NAMES = { her: '', him: '' };
-let NICKNAMES = { herCallsHim: '', himCallsHer: '' };
+let NAMES = { partner1: '', partner2: '' };
+let NICKNAMES = { partner1CallsPartner2: '', partner2CallsPartner1: '' };
 
 // ==========================================
 
 let db,
-  user,
-  partner,
+  user,        // current user's UID (or legacy 'partner1'/'partner2')
+  partner,     // partner's UID (or legacy 'partner1'/'partner2')
   authUser,
   selectedMood = 0,
   logExercises = [],
@@ -29,8 +29,115 @@ let db,
   chatHistory = [];
 let _authResolved = false; // set true once onAuthStateChanged fires at least once
 
+// ===== COUPLE CONTEXT =====
+// Multi-tenant: all shared data lives under couples/{coupleId}/
+let _coupleId = null;
+
+// coupleRef('moods/abc') → db.ref('couples/{coupleId}/moods/abc')
+// Throws if called before couple context is resolved — never writes to root
+function coupleRef(path) {
+  if (_coupleId) return db.ref('couples/' + _coupleId + '/' + path);
+  console.error('coupleRef() called before _coupleId resolved. Path: ' + path);
+  throw new Error('coupleRef requires _coupleId');
+}
+
+// userRef('settings') → db.ref('users/{uid}/settings')
+// Throws if called before auth is resolved — never writes to root
+function userRef(path) {
+  if (authUser && _coupleId) return db.ref('users/' + authUser.uid + '/' + path);
+  console.error('userRef() called before auth resolved. Path: ' + path);
+  throw new Error('userRef requires auth');
+}
+
 // Map email to profile role — loaded from Firebase at init
 let EMAIL_MAP = {};
+
+// ===== INVITE SYSTEM =====
+function generateInviteCode() {
+  var chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no ambiguous chars
+  var code = '';
+  for (var i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+  return code;
+}
+
+async function createCouple() {
+  if (!authUser) return;
+  var coupleId = db.ref('couples').push().key;
+  var inviteCode = generateInviteCode();
+  await db.ref('couples/' + coupleId).set({
+    members: { partner1: authUser.uid },
+    status: 'pending',
+    inviteCode: inviteCode,
+    createdAt: Date.now()
+  });
+  await db.ref('invites/' + inviteCode).set({
+    coupleId: coupleId,
+    createdBy: authUser.uid,
+    createdAt: Date.now()
+  });
+  await db.ref('users/' + authUser.uid + '/coupleId').set(coupleId);
+  _coupleId = coupleId;
+  user = 'partner1';
+  partner = 'partner2';
+  return { coupleId: coupleId, inviteCode: inviteCode };
+}
+
+async function joinWithCode(code) {
+  if (!authUser) throw new Error('Not authenticated');
+  code = code.trim().toUpperCase();
+  var snap = await db.ref('invites/' + code).once('value');
+  var invite = snap.val();
+  if (!invite || !invite.coupleId) throw new Error('Invalid invite code');
+  // Check couple exists and has room (read members — allowed for any auth user)
+  var membersSnap = await db.ref('couples/' + invite.coupleId + '/members').once('value');
+  var members = membersSnap.val();
+  if (!members) throw new Error('Couple not found');
+  if (members.partner2) throw new Error('This couple already has two partners');
+  if (members.partner1 === authUser.uid) throw new Error('You created this couple — share the code with your partner');
+  // Join as partner2 (allowed by partner2 child write rule), then set status
+  await db.ref('couples/' + invite.coupleId + '/members/partner2').set(authUser.uid);
+  await db.ref('couples/' + invite.coupleId + '/status').set('active');
+  await db.ref('users/' + authUser.uid + '/coupleId').set(invite.coupleId);
+  // Clean up invite
+  await db.ref('invites/' + code).remove();
+  _coupleId = invite.coupleId;
+  user = 'partner2';
+  partner = 'partner1';
+  return { coupleId: invite.coupleId };
+}
+
+// Resolve couple context from authenticated user
+async function resolveCoupleContext() {
+  if (!authUser) return false;
+  // Check if user has a couple
+  var snap = await db.ref('users/' + authUser.uid + '/coupleId').once('value');
+  var coupleId = snap.val();
+  if (!coupleId) return false;
+  // Load couple data
+  var coupleSnap = await db.ref('couples/' + coupleId).once('value');
+  var couple = coupleSnap.val();
+  if (!couple || !couple.members) return false;
+  _coupleId = coupleId;
+  // Determine role
+  if (couple.members.partner1 === authUser.uid) {
+    user = 'partner1';
+    partner = 'partner2';
+  } else if (couple.members.partner2 === authUser.uid) {
+    user = 'partner2';
+    partner = 'partner1';
+  } else {
+    return false;
+  }
+  return true;
+}
+
+// Check if couple has both partners
+async function coupleIsComplete() {
+  if (!_coupleId) return false;
+  var snap = await db.ref('couples/' + _coupleId + '/members').once('value');
+  var members = snap.val();
+  return !!(members && members.partner1 && members.partner2);
+}
 
 // ===== FIREBASE LISTENER REGISTRY =====
 // Tracks all .on() listeners so they can be cleaned up per-page or globally
@@ -87,10 +194,8 @@ async function init() {
   try {
     db.goOnline();
   } catch (e) {}
-  // Keep key refs synced for offline access
-  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles', 'config/emailMap'].forEach(function (p) {
-    db.ref(p).keepSynced(true);
-  });
+  // Keep key refs synced for offline access (set up after couple context is resolved)
+  db.ref('config/emailMap').keepSynced(true);
 
   // Start connection state monitoring
   initConnectionMonitor();
@@ -99,69 +204,136 @@ async function init() {
   // utils.js (renderLoginSky on script load) and weather.js (immediate
   // fetch + geolocation on script load). No duplicate work needed here.
 
-  // Load email-to-role mapping from Firebase (keeps emails out of source code)
-  await loadEmailMap();
+  // Check URL for invite code
+  var urlInvite = new URLSearchParams(window.location.search).get('invite');
 
-  // Check if already signed in
+  // Register auth listener FIRST — before any awaits — so sign-ins are
+  // never missed even if loadEmailMap is slow or hangs.
   firebase.auth().onAuthStateChanged(async fbUser => {
-    if (fbUser) {
-      _authResolved = true;
-      authUser = fbUser;
-      // Retry loading email map if it's empty — Firebase rules may require auth
-      if (Object.keys(EMAIL_MAP).length === 0) {
-        await loadEmailMap();
-      }
-      const role = EMAIL_MAP[fbUser.email];
-      if (role) {
-        user = role;
-        partner = role === 'her' ? 'him' : 'her';
-        await loadProfiles();
-        // Load living sky preference and render (sky-scene is outside shell, always visible)
-        db.ref('settings/livingSky/' + role).once('value', snap => {
-          var val = snap.val();
-          livingSkyEnabled = val !== false;
-          if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
-        });
-        if (needsOnboarding()) {
-          showFirstLocationPrompt();
-        } else {
-          // Returning user — go straight in
+    try {
+      if (fbUser) {
+        _authResolved = true;
+        authUser = fbUser;
+
+        // Ensure email map is loaded (may still be loading from init)
+        if (Object.keys(EMAIL_MAP).length === 0) {
+          await loadEmailMap();
+        }
+
+        // Try new multi-tenant couple context first
+        if (await resolveCoupleContext()) {
+          // Run one-time migrations now that _coupleId and user are set
+          await migrateRootDataToCouple();
+          await migrateRolesToNeutral();
+          await migrateRootSettings();
+          await loadProfiles();
+          loadLivingSkyPref();
+          var isLegacyCouple = _coupleId && _coupleId.startsWith('legacy_');
+          if (isLegacyCouple) {
+            // Legacy couples bypass partner gates — these users already had
+            // a working app. Profile data at the root is unreachable so names
+            // may be empty; finishLogin handles empty names gracefully.
+            finishLogin();
+          } else if (needsOnboarding()) {
+            showFirstLocationPrompt();
+          } else if (await coupleIsComplete() && await partnerHasOnboarded()) {
+            finishLogin();
+          } else {
+            showWaitingForPartner();
+          }
+          return;
+        }
+
+        // Legacy flow: email-map based role assignment
+        const role = EMAIL_MAP[fbUser.email];
+        if (role) {
+          user = role;
+          partner = role === 'partner1' ? 'partner2' : 'partner1';
+
+          // Auto-migrate legacy user into multi-tenant structure
+          if (!_coupleId) {
+            var mapKeys = Object.keys(EMAIL_MAP).sort();
+            var stableCoupleKey = 'legacy_' + mapKeys.join('_').replace(/[.@]/g, '_');
+
+            var membersRef = db.ref('couples/' + stableCoupleKey + '/members');
+            var membersSnap = await membersRef.once('value').catch(function () { return { val: function () { return null; } }; });
+            var existingMembers = membersSnap.val();
+            if (!existingMembers || !existingMembers[role]) {
+              if (role === 'partner1') {
+                await db.ref('couples/' + stableCoupleKey).set({
+                  members: { partner1: authUser.uid },
+                  status: 'pending',
+                  migratedFromLegacy: true,
+                  createdAt: Date.now()
+                });
+              } else {
+                await db.ref('couples/' + stableCoupleKey + '/members/partner2').set(authUser.uid);
+                await db.ref('couples/' + stableCoupleKey + '/status').set('active');
+              }
+            }
+            await db.ref('users/' + authUser.uid + '/coupleId').set(stableCoupleKey);
+            _coupleId = stableCoupleKey;
+            console.log('Legacy user migrated to couple:', stableCoupleKey);
+          }
+
+          // Copy ALL root-level data into the couple node (moods, letters,
+          // taps, profiles, settings, etc.) with him/her → partner1/partner2
+          await migrateRootDataToCouple();
+          await migrateRolesToNeutral();
+          await migrateRootSettings();
+          await loadProfiles();
+          loadLivingSkyPref();
+          // Legacy users already had a working app — go straight to dashboard.
           finishLogin();
+        } else {
+          // Authenticated but no couple — show couple setup
+          showCoupleSetup();
         }
       } else {
-        firebase.auth().signOut();
-        showError(
-          Object.keys(EMAIL_MAP).length === 0
-            ? 'Could not verify account. Check your connection and try again.'
-            : 'Account not authorized.'
-        );
+        // Clean up any legacy stored credentials (previously btoa-encoded)
+        localStorage.removeItem('met_auto_login');
+        // Firebase LOCAL persistence should restore the session automatically.
+        // Show login form after a short delay if it doesn't.
+        setTimeout(function () {
+          if (!user && !authUser) {
+            _authResolved = true;
+            showEl('login-form');
+            hideEl('welcome-gate');
+            if (urlInvite) {
+              var invInput = document.getElementById('invite-code-input');
+              if (invInput) invInput.value = urlInvite;
+            }
+          }
+        }, 4000);
       }
-    } else {
-      // Clean up any legacy stored credentials (previously btoa-encoded)
-      localStorage.removeItem('met_auto_login');
-      // Firebase LOCAL persistence should restore the session automatically.
-      // Show login form after a short delay if it doesn't.
-      setTimeout(function () {
-        if (!user && !authUser) {
-          _authResolved = true;
-          showEl('login-form');
-          hideEl('welcome-gate');
-        }
-      }, 4000);
+    } catch (err) {
+      console.error('Auth handler error:', err);
+      // Surface the error to the user instead of silently failing
+      showError(err.message || 'Something went wrong. Please try again.');
+      showEl('login-form');
     }
   });
+
+  // Load email map in the background (auth handler also loads it if needed)
+  loadEmailMap();
 }
 
 // Load email-to-role mapping from Firebase, with localStorage fallback.
 // Seeds the default map into Firebase if the node doesn't exist yet.
 const DEFAULT_EMAIL_MAP = {
-  'abokemmanuel1@gmail.com': 'him',
-  'takelley11@gmail.com': 'her'
+  'abokemmanuel1@gmail.com': 'partner1',
+  'takelley11@gmail.com': 'partner2'
 };
 
 async function loadEmailMap() {
   try {
-    const snap = await db.ref('config/emailMap').once('value');
+    // Race against a timeout — once('value') can hang if offline and uncached
+    const snap = await Promise.race([
+      db.ref('config/emailMap').once('value'),
+      new Promise(function (_, reject) {
+        setTimeout(function () { reject(new Error('timeout')); }, 5000);
+      })
+    ]);
     const val = snap.val();
     if (val && Object.keys(val).length > 0) {
       EMAIL_MAP = val;
@@ -195,61 +367,288 @@ async function loadEmailMap() {
   }
 }
 
+// One-time comprehensive migration: copy ALL root-level data into the couple
+// node and rename him/her → partner1/partner2.  This runs once per device on
+// legacy users' first login with the multi-tenant code.
+//
+// Instead of hardcoding paths, this reads the ENTIRE root and migrates every
+// node that isn't a system node (users, couples, invites, config).  This
+// guarantees that newly-added feature modules (achievements, games, nutrition,
+// dateNights, etc.) are never accidentally left behind at the root level.
+async function migrateRootDataToCouple() {
+  if (!_coupleId || !_coupleId.startsWith('legacy_')) return;
+  // Use a versioned flag so we can re-run when the migration logic improves
+  var MIGRATION_VERSION = 'v3';
+  if (localStorage.getItem('met_root_migrated') === MIGRATION_VERSION) return;
+  console.log('Starting root → couple data migration (' + MIGRATION_VERSION + ') for', _coupleId);
+
+  // him → partner1 (abokemmanuel1), her → partner2 (takelley11)
+  var ROLE = { him: 'partner1', her: 'partner2' };
+  function renameRole(v) { return ROLE[v] || v; }
+
+  // Recursively walk an object and rename him/her keys + values everywhere
+  function deepRename(obj) {
+    if (!obj || typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return obj.map(deepRename);
+    var out = {};
+    Object.keys(obj).forEach(function (k) {
+      // Rename key
+      var nk = k;
+      if (k === 'him') nk = 'partner1';
+      else if (k === 'her') nk = 'partner2';
+      else if (k === 'himCallsHer') nk = 'partner1CallsPartner2';
+      else if (k === 'herCallsHim') nk = 'partner2CallsPartner1';
+
+      var val = obj[k];
+      if (val && typeof val === 'object') {
+        out[nk] = deepRename(val);
+      } else {
+        // Rename string values that are role references (user/from fields)
+        out[nk] = (typeof val === 'string') ? renameRole(val) : val;
+      }
+    });
+    return out;
+  }
+
+  // System nodes to skip — these are NOT couple data
+  var SKIP = { users: 1, couples: 1, invites: 1, config: 1 };
+
+  var coupleBase = 'couples/' + _coupleId + '/';
+
+  // Every root-level node that has ever been written to.  We read each one
+  // individually because Firebase rules don't allow a blanket root read.
+  // When you add a new feature module, add its node name here so legacy
+  // data is picked up.
+  var ROOT_NODES = [
+    'moods', 'letters', 'taps', 'profiles', 'photos', 'settings',
+    'notifications', 'onboarding', 'streaks', 'gratitude', 'fitness',
+    'baselines', 'analytics', 'pushTokens',
+    // Feature modules added after the original migration
+    'achievements', 'activity', 'agreements', 'ai', 'attachmentStyle',
+    'bucketList', 'calendar', 'challenges', 'checkins', 'countdowns',
+    'culture', 'dailyAnswers', 'dailyQuestion', 'dateNights', 'deepTalk',
+    'deepTalkJournal', 'dreamHome', 'dreams', 'family', 'finances',
+    'foundation', 'games', 'grocery', 'habits', 'homelife',
+    'identityQuiz', 'knowYou', 'listenTogether', 'loveLang', 'memories',
+    'milestones', 'morningMessages', 'nutrition', 'openWhenLetters',
+    'personalGoals', 'shared-music', 'sharedTodos', 'spiritual',
+    'voiceNotes', 'wakeup', 'wellness', 'wishlists', 'workoutLogs'
+  ];
+
+  try {
+    // Build a single multi-path update for atomic write
+    var updates = {};
+    var migratedCount = 0;
+
+    for (var i = 0; i < ROOT_NODES.length; i++) {
+      var nodeName = ROOT_NODES[i];
+      try {
+        var snap = await db.ref(nodeName).once('value');
+        var nodeData = snap.val();
+        if (!nodeData) continue;
+
+        // Check if the couple node already has data for this path
+        var existSnap = await db.ref(coupleBase + nodeName).once('value');
+        if (existSnap.val()) {
+          console.log('Skipping ' + nodeName + ' — couple already has data');
+          continue;
+        }
+
+        // Deep-rename him/her → partner1/partner2 in keys and values
+        var renamed = deepRename(nodeData);
+        updates[coupleBase + nodeName] = renamed;
+        migratedCount++;
+        console.log('Queued root/' + nodeName + ' → ' + coupleBase + nodeName);
+      } catch (e) {
+        console.warn('Migration of ' + nodeName + ' skipped:', e.message);
+      }
+    }
+
+    // Write all at once
+    if (migratedCount > 0) {
+      await db.ref().update(updates);
+      console.log('Migrated ' + migratedCount + ' root-level nodes into couple scope');
+    }
+
+    // Clean up: delete all legacy root-level nodes (whether just migrated or
+    // already migrated in a previous run).  This keeps the database tidy and
+    // ensures only the couple-scoped data remains.
+    var deletes = {};
+    for (var j = 0; j < ROOT_NODES.length; j++) {
+      deletes[ROOT_NODES[j]] = null;
+    }
+    await db.ref().update(deletes);
+    console.log('Deleted legacy root-level nodes');
+  } catch (e) {
+    console.warn('Root migration error (non-fatal):', e);
+  }
+
+  localStorage.setItem('met_root_migrated', MIGRATION_VERSION);
+  console.log('Root → couple migration complete (' + MIGRATION_VERSION + ')');
+}
+
+// One-time migration from gendered roles (her/him) to neutral (partner1/partner2)
+async function migrateRolesToNeutral() {
+  try {
+    var migrated = localStorage.getItem('met_roles_migrated');
+    if (migrated) return;
+    // Check if old-format profiles exist
+    var profileSnap = await coupleRef('profiles').once('value');
+    var profiles = profileSnap.val();
+    if (!profiles) return;
+    // If partner1 already exists, migration is done
+    if (profiles.partner1 || profiles.partner2) {
+      localStorage.setItem('met_roles_migrated', '1');
+      return;
+    }
+    // If old her/him keys exist, migrate them
+    if (profiles.her || profiles.him) {
+      // All profile/settings writes go through the couple node so security
+      // rules allow them (root-level multi-path updates would fail)
+      var coupleUpdates = {};
+      // Migrate profile names: him → partner1, her → partner2
+      if (profiles.him) coupleUpdates['profiles/partner1'] = profiles.him;
+      if (profiles.her) coupleUpdates['profiles/partner2'] = profiles.her;
+      if (profiles.himCallsHer) coupleUpdates['profiles/partner1CallsPartner2'] = profiles.himCallsHer;
+      if (profiles.herCallsHim) coupleUpdates['profiles/partner2CallsPartner1'] = profiles.herCallsHim;
+      // Remove old keys
+      coupleUpdates['profiles/her'] = null;
+      coupleUpdates['profiles/him'] = null;
+      coupleUpdates['profiles/herCallsHim'] = null;
+      coupleUpdates['profiles/himCallsHer'] = null;
+      // Migrate settings paths: settings/*/her → settings/*/partner2, settings/*/him → settings/*/partner1
+      var settingsSnap = await coupleRef('settings').once('value');
+      var settings = settingsSnap.val();
+      if (settings) {
+        Object.keys(settings).forEach(function (key) {
+          var s = settings[key];
+          if (s && typeof s === 'object') {
+            if (s.him !== undefined) { coupleUpdates['settings/' + key + '/partner1'] = s.him; coupleUpdates['settings/' + key + '/him'] = null; }
+            if (s.her !== undefined) { coupleUpdates['settings/' + key + '/partner2'] = s.her; coupleUpdates['settings/' + key + '/her'] = null; }
+          }
+        });
+      }
+      // Write couple-scoped updates
+      await db.ref('couples/' + _coupleId).update(coupleUpdates);
+      // Migrate email map separately (lives under /config, not /couples)
+      var emailSnap = await db.ref('config/emailMap').once('value');
+      var emailMap = emailSnap.val();
+      if (emailMap) {
+        var newMap = {};
+        Object.keys(emailMap).forEach(function (email) {
+          var role = emailMap[email];
+          if (role === 'him') newMap[email] = 'partner1';
+          else if (role === 'her') newMap[email] = 'partner2';
+          else newMap[email] = role;
+        });
+        await db.ref('config/emailMap').set(newMap);
+      }
+      console.log('Migrated roles from her/him to partner1/partner2');
+    }
+    localStorage.setItem('met_roles_migrated', '1');
+  } catch (e) {
+    console.warn('Role migration error (non-fatal):', e);
+  }
+}
+
+// One-time migration: copy root-level settings to couple-scoped paths
+async function migrateRootSettings() {
+  try {
+    if (localStorage.getItem('met_settings_scoped')) return;
+    if (!_coupleId || !user) return;
+    var updates = {};
+    var paths = [
+      'settings/weather/' + user,
+      'settings/skyTheme/' + user,
+      'settings/natureSounds/' + user
+    ];
+    if (partner) paths.push('notifications/' + partner);
+    for (var i = 0; i < paths.length; i++) {
+      var p = paths[i];
+      var snap = await db.ref(p).once('value');
+      var val = snap.val();
+      if (val !== null) {
+        // Check if couple-scoped path already has data — don't overwrite
+        var existingSnap = await coupleRef(p).once('value');
+        if (existingSnap.val() === null) {
+          updates['couples/' + _coupleId + '/' + p] = val;
+        }
+      }
+    }
+    if (Object.keys(updates).length > 0) {
+      await db.ref().update(updates);
+      console.log('Migrated root settings to couple scope:', Object.keys(updates));
+    }
+    localStorage.setItem('met_settings_scoped', '1');
+  } catch (e) {
+    console.warn('Settings migration error (non-fatal):', e);
+  }
+}
+
+// ===== LOGIN MODE TOGGLE =====
+var _isSignUp = false;
+function toggleLoginMode() {
+  _isSignUp = !_isSignUp;
+  var label = document.getElementById('login-mode-label');
+  var nameField = document.getElementById('login-name');
+  var toggleText = document.getElementById('login-toggle-text');
+  var toggleLink = document.getElementById('login-toggle-link');
+  var submitBtn = document.getElementById('login-submit-btn');
+  if (label) label.textContent = _isSignUp ? 'Create Account' : 'Sign In';
+  if (nameField) nameField.classList.toggle('d-none', !_isSignUp);
+  if (toggleText) toggleText.textContent = _isSignUp ? 'Already have an account?' : "Don't have an account?";
+  if (toggleLink) toggleLink.textContent = _isSignUp ? 'Sign in' : 'Sign up';
+  if (submitBtn) submitBtn.textContent = _isSignUp ? 'Create Account' : 'Come in';
+  showError('');
+}
+
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value;
+  const nameField = document.getElementById('login-name');
+  const displayName = nameField ? nameField.value.trim() : '';
 
+  if (_isSignUp && !displayName) {
+    showError('Enter your name');
+    return;
+  }
   if (!email || !pass) {
     showError('Enter email and password');
     return;
   }
+  if (_isSignUp && pass.length < 6) {
+    showError('Password must be at least 6 characters');
+    return;
+  }
 
   try {
-    const result = await firebase.auth().signInWithEmailAndPassword(email, pass);
-    showError(''); // Clear any previous error message on successful login
-    // Firebase LOCAL persistence keeps the session across cold starts — no need to store passwords
-    try {
-      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    } catch (e) {}
-    // Clean up any legacy saved credentials
-    localStorage.removeItem('met_auto_login');
-    authUser = result.user;
-    // Reload email map now that we're authenticated (rules may require auth)
-    if (Object.keys(EMAIL_MAP).length === 0) {
-      await loadEmailMap();
-    }
-    const role = EMAIL_MAP[email];
-
-    if (!role) {
-      firebase.auth().signOut();
-      showError(
-        Object.keys(EMAIL_MAP).length === 0
-          ? 'Could not verify account. Check your connection and try again.'
-          : 'Account not authorized.'
-      );
+    var result;
+    if (_isSignUp) {
+      result = await firebase.auth().createUserWithEmailAndPassword(email, pass);
+      authUser = result.user;
+      // Create user profile node
+      await db.ref('users/' + authUser.uid).set({
+        profile: { name: displayName, email: email },
+        createdAt: Date.now()
+      });
+      showError('');
+      // Show couple setup (create or join)
+      showCoupleSetup();
       return;
-    }
-
-    user = role;
-    partner = role === 'her' ? 'him' : 'her';
-    await loadProfiles();
-    // Load living sky preference and render (sky-scene is outside shell, always visible)
-    db.ref('settings/livingSky/' + role).once('value', snap => {
-      var val = snap.val();
-      livingSkyEnabled = val !== false;
-      if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
-    });
-    if (needsOnboarding()) {
-      showFirstLocationPrompt();
     } else {
-      finishLogin();
+      result = await firebase.auth().signInWithEmailAndPassword(email, pass);
     }
+    showError('');
+    // signInWithEmailAndPassword triggers onAuthStateChanged which handles
+    // couple context, migration, and routing. No duplicate logic needed here.
   } catch (e) {
     console.error('Login error:', e.code, e.message);
     if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
       showError('Wrong email or password.');
     } else if (e.code === 'auth/user-not-found') {
-      showError('Account not found.');
+      showError('Account not found. Sign up first.');
+    } else if (e.code === 'auth/email-already-in-use') {
+      showError('Email already registered. Sign in instead.');
     } else if (e.code === 'auth/invalid-email') {
       showError('Invalid email format.');
     } else if (e.code === 'auth/too-many-requests') {
@@ -260,30 +659,136 @@ async function doLogin() {
   }
 }
 
+function loadLivingSkyPref() {
+  if (!db || !user) return;
+  coupleRef('settings/livingSky/' + user).once('value', snap => {
+    var val = snap.val();
+    livingSkyEnabled = val !== false;
+    if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
+  });
+}
+
+// ===== COUPLE SETUP UI =====
+function showCoupleSetup() {
+  hideEl('login-form');
+  hideEl('welcome-gate');
+  var logo = document.getElementById('login-logo');
+  var heading = document.getElementById('login-heading');
+  var sub = document.getElementById('login-sub');
+  if (logo) logo.style.display = 'none';
+  if (heading) heading.style.display = 'none';
+  if (sub) sub.style.display = 'none';
+  showEl('couple-setup');
+}
+
+var _createdInviteCode = '';
+async function handleCreateCouple() {
+  try {
+    var result = await createCouple();
+    _createdInviteCode = result.inviteCode;
+    hideEl('couple-setup');
+    showEl('invite-display');
+    var codeEl = document.getElementById('invite-code-display');
+    if (codeEl) codeEl.textContent = result.inviteCode;
+    // Start watching for partner to join
+    _startPartnerJoinWatch();
+  } catch (e) {
+    var err = document.getElementById('cs-err');
+    if (err) err.textContent = e.message || 'Could not create couple';
+  }
+}
+
+async function handleJoinCouple() {
+  var input = document.getElementById('invite-code-input');
+  var code = input ? input.value.trim().toUpperCase() : '';
+  if (!code || code.length < 4) {
+    var err = document.getElementById('cs-err');
+    if (err) err.textContent = 'Enter the invite code your partner shared';
+    return;
+  }
+  try {
+    await joinWithCode(code);
+    await loadProfiles();
+    hideEl('couple-setup');
+    if (needsOnboarding()) {
+      showFirstLocationPrompt();
+    } else {
+      finishLogin();
+    }
+  } catch (e) {
+    var err = document.getElementById('cs-err');
+    if (err) err.textContent = e.message || 'Could not join couple';
+  }
+}
+
+function copyInviteCode() {
+  if (!_createdInviteCode) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(_createdInviteCode).then(function () {
+      toast('Code copied!');
+    });
+  } else {
+    // Fallback
+    var t = document.createElement('textarea');
+    t.value = _createdInviteCode;
+    document.body.appendChild(t);
+    t.select();
+    document.execCommand('copy');
+    document.body.removeChild(t);
+    toast('Code copied!');
+  }
+}
+
+// Watch for partner2 to join the couple (real-time)
+var _partnerJoinRef = null;
+function _startPartnerJoinWatch() {
+  if (!_coupleId || _partnerJoinRef) return;
+  _partnerJoinRef = db.ref('couples/' + _coupleId + '/members/partner2');
+  _partnerJoinRef.on('value', function (snap) {
+    var p2uid = snap.val();
+    if (p2uid) {
+      _stopPartnerJoinWatch();
+      hideEl('invite-display');
+      // Partner joined — proceed to onboarding or app
+      if (needsOnboarding()) {
+        showFirstLocationPrompt();
+      } else {
+        finishLogin();
+      }
+    }
+  });
+}
+function _stopPartnerJoinWatch() {
+  if (_partnerJoinRef) { _partnerJoinRef.off(); _partnerJoinRef = null; }
+}
+
 function showError(msg) {
   const el = document.getElementById('login-err');
   if (el) el.textContent = msg;
 }
 
 async function loadProfiles() {
-  return new Promise(resolve => {
-    db.ref('profiles').on('value', snap => {
+  return new Promise((resolve, reject) => {
+    coupleRef('profiles').on('value', snap => {
       const data = snap.val();
       // Reset to empty so onboarding triggers if profiles were wiped
-      NAMES.her = esc((data && data.her) || '');
-      NAMES.him = esc((data && data.him) || '');
-      NICKNAMES.herCallsHim = esc((data && data.herCallsHim) || '');
-      NICKNAMES.himCallsHer = esc((data && data.himCallsHer) || '');
+      NAMES.partner1 = esc((data && data.partner1) || '');
+      NAMES.partner2 = esc((data && data.partner2) || '');
+      NICKNAMES.partner1CallsPartner2 = esc((data && data.partner1CallsPartner2) || '');
+      NICKNAMES.partner2CallsPartner1 = esc((data && data.partner2CallsPartner1) || '');
       if (data && data.apiKey) CLAUDE_API_KEY = data.apiKey;
       // Use the nickname the current user gave their partner as the display name
       if (user) {
-        const nick = user === 'him' ? NICKNAMES.himCallsHer : NICKNAMES.herCallsHim;
+        const nick = user === 'partner1' ? NICKNAMES.partner1CallsPartner2 : NICKNAMES.partner2CallsPartner1;
         if (nick) NAMES[partner] = nick;
         document.querySelectorAll('.uname').forEach(e => (e.textContent = NAMES[user]));
         document.querySelectorAll('.pname').forEach(e => (e.textContent = NAMES[partner]));
         document.querySelectorAll('.partner-nick').forEach(e => (e.textContent = NAMES[partner]));
       }
       resolve();
+    }, function (err) {
+      console.error('loadProfiles permission error:', err);
+      reject(err);
     });
   });
 }
@@ -292,7 +797,7 @@ async function loadProfiles() {
 let myPhoto = '';
 function listenPhoto() {
   if (!db || !user) return;
-  db.ref('photos/' + user).on('value', snap => {
+  coupleRef('photos/' + user).on('value', snap => {
     const d = snap.val();
     myPhoto = (d && d.data) || '';
     applyPhoto();
@@ -313,7 +818,7 @@ function applyPhoto() {
 let partnerPhoto = '';
 function listenPartnerPhoto() {
   if (!db || !partner) return;
-  db.ref('photos/' + partner).on('value', snap => {
+  coupleRef('photos/' + partner).on('value', snap => {
     const d = snap.val();
     partnerPhoto = (d && d.data) || '';
     applyPartnerPhoto();
@@ -348,7 +853,7 @@ function changePartnerPhoto() {
   input.onchange = function () {
     if (!input.files || !input.files[0]) return;
     resizePhoto(input.files[0], function (dataUrl) {
-      db.ref('photos/' + partner).set({
+      coupleRef('photos/' + partner).set({
         data: dataUrl,
         setBy: user,
         timestamp: Date.now()
@@ -360,7 +865,17 @@ function changePartnerPhoto() {
 }
 
 function needsOnboarding() {
-  return !NAMES[user] || NAMES[user] === 'Her' || NAMES[user] === 'Him';
+  return !NAMES[user] || NAMES[user] === 'Partner 1' || NAMES[user] === 'Partner 2';
+}
+
+async function partnerHasOnboarded() {
+  try {
+    var snap = await coupleRef('profiles/' + partner).once('value');
+    var name = snap.val();
+    return !!name && name !== 'Partner 1' && name !== 'Partner 2';
+  } catch (e) {
+    return false;
+  }
 }
 
 // ===== FIRST-TIME LOCATION PROMPT =====
@@ -407,7 +922,7 @@ function handleFirstLocationAllow() {
 function handleFirstLocationSkip() {
   // Mark as prompted so the delayed prompt in initWeatherSystem doesn't fire again
   if (db && user) {
-    db.ref('settings/weather/' + user + '/prompted').set(true);
+    coupleRef('settings/weather/' + user + '/prompted').set(true);
   }
   hideEl('first-location-prompt');
   startOnboarding();
@@ -517,7 +1032,7 @@ function obBroadcastStep() {
     data.morningMsgEnabled = onboardData.morningMsgEnabled;
     if (onboardData.morningCustomMsg) data.morningCustomMsg = onboardData.morningCustomMsg;
   }
-  db.ref('onboarding/' + user).set(data);
+  coupleRef('onboarding/' + user).set(data);
 }
 
 // Partner's live onboarding data (received in real-time)
@@ -527,7 +1042,7 @@ let obPartnerData = { name: '', nickname: '', agreementsTogether: [], morningMsg
 let obPartnerListener = null;
 function obListenPartner() {
   if (!db || !partner) return;
-  obPartnerListener = db.ref('onboarding/' + partner);
+  obPartnerListener = coupleRef('onboarding/' + partner);
   obPartnerListener.on('value', function (snap) {
     var data = snap.val();
     var el = document.getElementById('ob-partner-status');
@@ -543,7 +1058,7 @@ function obListenPartner() {
 
     if (!el) return;
     if (data && data.active) {
-      var partnerName = data.name || (user === 'her' ? 'He' : 'She');
+      var partnerName = data.name || 'Your partner';
       var isRecent = Date.now() - (data.timestamp || 0) < 120000; // 2 min
       if (isRecent) {
         el.style.display = '';
@@ -573,7 +1088,7 @@ function obListenPartner() {
 
 // Clean up onboarding status when done
 function obCleanupStatus() {
-  if (db && user) db.ref('onboarding/' + user).update({ active: false });
+  if (db && user) coupleRef('onboarding/' + user).update({ active: false });
   if (obPartnerListener) obPartnerListener.off();
 }
 
@@ -713,9 +1228,9 @@ function obRenderPartnerCommitments() {
     return;
   }
   container.style.display = '';
-  var partnerName = obPartnerData.nickname ? '' : obPartnerData.name || (user === 'her' ? 'His' : 'Her');
+  var partnerName = obPartnerData.nickname ? '' : obPartnerData.name || 'Your partner';
   // Use partner's name if available
-  var label = obPartnerData.name ? esc(obPartnerData.name) + "'s" : user === 'her' ? 'His' : 'Her';
+  var label = obPartnerData.name ? esc(obPartnerData.name) + "'s" : "Your partner's";
   if (heading) heading.textContent = label + ' together commitments';
   list.innerHTML = items
     .map(function (a) {
@@ -792,10 +1307,9 @@ const OB_ICONS = {
 };
 
 function renderOnboardStep() {
-  var isHer = user === 'her';
-  var partnerLabel = isHer ? 'him' : 'her';
-  var partnerSubject = isHer ? 'he' : 'she';
-  var partnerPossessive = isHer ? 'his' : 'her';
+  var partnerLabel = 'your partner';
+  var partnerSubject = 'they';
+  var partnerPossessive = 'their';
   // Use nickname if already entered (steps after step 2)
   var pNick = onboardData.nickname || partnerLabel;
   transitionStep(function () {
@@ -868,9 +1382,9 @@ function renderOnboardStep() {
     }
     // Step 2: Nickname for partner
     else if (onboardStep === 2) {
-      title.textContent = 'A name for ' + (isHer ? 'him' : 'her');
+      title.textContent = 'A name for your partner';
       sub.textContent = 'Whatever feels right.';
-      nickIn.placeholder = isHer ? 'e.g. Baby, Babe, His name...' : 'e.g. Babe, Love, Her name...';
+      nickIn.placeholder = 'e.g. Baby, Babe, their name...';
       nickIn.style.display = '';
       nickIn.value = onboardData.nickname;
       setTimeout(function () {
@@ -995,7 +1509,7 @@ function renderOnboardStep() {
       title.textContent = 'Your world';
       sub.innerHTML = 'Tap to explore.';
       skyThemeCard.style.display = '';
-      var defaultTheme = isHer ? 'beach' : 'mountain';
+      var defaultTheme = 'mixed';
       if (!onboardData.skyTheme || onboardData.skyTheme === 'mixed') onboardData.skyTheme = defaultTheme;
       document.querySelectorAll('#ob-sky-theme-grid .sky-theme-btn').forEach(function (b) {
         b.classList.toggle('active', b.getAttribute('data-theme') === onboardData.skyTheme);
@@ -1399,27 +1913,27 @@ async function finishOnboarding(startTour) {
   if (loginEl) loginEl.classList.remove('ob-sky-visible');
   obCleanupStatus();
   NAMES[user] = onboardData.name;
-  var nickKey = user === 'him' ? 'himCallsHer' : 'herCallsHim';
+  var nickKey = user === 'partner1' ? 'partner1CallsPartner2' : 'partner2CallsPartner1';
   NICKNAMES[nickKey] = onboardData.nickname;
   if (onboardData.nickname) NAMES[partner] = onboardData.nickname;
   var profileUpdate = { [user]: onboardData.name, [nickKey]: onboardData.nickname };
-  await db.ref('profiles').update(profileUpdate);
+  await coupleRef('profiles').update(profileUpdate);
 
   // Photo
   if (onboardData.photo) {
-    await db.ref('photos/' + partner).set({ data: onboardData.photo, setBy: user, timestamp: Date.now() });
+    await coupleRef('photos/' + partner).set({ data: onboardData.photo, setBy: user, timestamp: Date.now() });
   }
   // Anniversary
   if (onboardData.anniversary) {
-    await db.ref('settings/anniversary').set(onboardData.anniversary);
+    await coupleRef('settings/anniversary').set(onboardData.anniversary);
   }
   // Birthday
   if (onboardData.birthday) {
-    await db.ref('settings/birthday/' + user).set(onboardData.birthday);
+    await coupleRef('settings/birthday/' + user).set(onboardData.birthday);
   }
   // Mood baseline
   if (onboardData.mood) {
-    await db.ref('baselines/' + user + '/mood').set({
+    await coupleRef('baselines/' + user + '/mood').set({
       mood: onboardData.mood,
       energy: onboardData.energy,
       stress: onboardData.stress,
@@ -1427,7 +1941,7 @@ async function finishOnboarding(startTour) {
       source: 'onboarding'
     });
     // Also log as first mood entry
-    await db.ref('moods').push({
+    await coupleRef('moods').push({
       user: user,
       mood: onboardData.mood,
       energy: onboardData.energy,
@@ -1445,10 +1959,10 @@ async function finishOnboarding(startTour) {
     if (onboardData.weight) fitData.weight = parseFloat(onboardData.weight);
     if (onboardData.activityLevel) fitData.activityLevel = onboardData.activityLevel;
     if (onboardData.fitnessGoal) fitData.fitnessGoal = onboardData.fitnessGoal;
-    await db.ref('baselines/' + user + '/fitness').set(fitData);
+    await coupleRef('baselines/' + user + '/fitness').set(fitData);
     // Also log as first body entry
     if (onboardData.weight) {
-      await db.ref('fitness/' + user + '/body').push({
+      await coupleRef('fitness/' + user + '/body').push({
         weight: parseFloat(onboardData.weight),
         timestamp: Date.now(),
         date: localDate()
@@ -1457,7 +1971,7 @@ async function finishOnboarding(startTour) {
   }
   // Relationship baseline
   if (onboardData.commRating || onboardData.qualityRating || onboardData.connectedRating) {
-    await db.ref('baselines/' + user + '/relationship').set({
+    await coupleRef('baselines/' + user + '/relationship').set({
       communication: onboardData.commRating,
       qualityTime: onboardData.qualityRating,
       connection: onboardData.connectedRating,
@@ -1470,10 +1984,10 @@ async function finishOnboarding(startTour) {
     var agreeData = { timestamp: Date.now(), by: user };
     if (onboardData.agreementsMine.length) agreeData.personal = onboardData.agreementsMine;
     if (onboardData.agreementsTogether.length) agreeData.together = onboardData.agreementsTogether;
-    await db.ref('agreements/onboarding/' + user).set(agreeData);
+    await coupleRef('agreements/onboarding/' + user).set(agreeData);
   }
   // Morning message settings
-  await db.ref('settings/morningMsg/' + user).set({
+  await coupleRef('settings/morningMsg/' + user).set({
     enabled: onboardData.morningMsgEnabled,
     customMsg: onboardData.morningCustomMsg || '',
     nickname: onboardData.nickname || onboardData.name
@@ -1487,26 +2001,30 @@ async function finishOnboarding(startTour) {
 
   // Living Sky — sky-scene is outside shell so it can render immediately
   livingSkyEnabled = onboardData.livingSky;
-  await db.ref('settings/livingSky/' + user).set(onboardData.livingSky);
+  await coupleRef('settings/livingSky/' + user).set(onboardData.livingSky);
   if (typeof setLivingSky === 'function') setLivingSky(onboardData.livingSky);
 
   // Sky theme
   var skyTheme = onboardData.skyTheme || 'mixed';
-  await db.ref('settings/skyTheme/' + user).set(skyTheme);
+  await coupleRef('settings/skyTheme/' + user).set(skyTheme);
   if (typeof applySkyTheme === 'function') applySkyTheme(skyTheme);
 
   // Nature sounds preference
-  await db.ref('settings/natureSounds/' + user).set(onboardData.natureSoundsEnabled);
+  await coupleRef('settings/natureSounds/' + user).set(onboardData.natureSoundsEnabled);
   if (onboardData.natureSoundsEnabled && typeof toggleAmbientAudio === 'function') {
     toggleAmbientAudio(true);
   }
 
   document.getElementById('login').classList.remove('onboard-active');
-  finishLogin();
-  if (startTour) {
-    setTimeout(function () {
-      startAppTour();
-    }, 600);
+  if (await partnerHasOnboarded()) {
+    finishLogin();
+    if (startTour) {
+      setTimeout(function () {
+        startAppTour();
+      }, 600);
+    }
+  } else {
+    showWaitingForPartner();
   }
 }
 
@@ -1731,6 +2249,76 @@ function endTour() {
   }, 350);
 }
 
+// ===== WAITING FOR PARTNER SCREEN =====
+let _wfpProfileRef = null;
+let _wfpOnboardRef = null;
+
+function showWaitingForPartner() {
+  hideEl('login-form');
+  hideEl('welcome-gate');
+  hideEl('first-location-prompt');
+  hideEl('onboard-steps');
+  var logo = document.getElementById('login-logo');
+  var heading = document.getElementById('login-heading');
+  var sub = document.getElementById('login-sub');
+  if (logo) logo.style.display = 'none';
+  if (heading) heading.style.display = 'none';
+  if (sub) sub.style.display = 'none';
+  showEl('waiting-for-partner');
+  // Personalize
+  var titleEl = document.getElementById('wfp-title');
+  if (titleEl && NAMES[user]) {
+    titleEl.textContent = 'Hi ' + NAMES[user] + ', waiting for your partner';
+  }
+  // Offline notice
+  var offlineEl = document.getElementById('wfp-offline');
+  if (offlineEl) {
+    offlineEl.classList.toggle('d-none', _isOnline);
+  }
+  _startPartnerWatch();
+}
+
+function _startPartnerWatch() {
+  if (_wfpProfileRef) return;
+  _wfpProfileRef = coupleRef('profiles/' + partner);
+  _wfpProfileRef.on('value', function (snap) {
+    var name = snap.val();
+    if (name && name !== 'Partner 1' && name !== 'Partner 2') {
+      _stopPartnerWatch();
+      hideEl('waiting-for-partner');
+      finishLogin();
+    }
+  });
+  _wfpOnboardRef = coupleRef('onboarding/' + partner);
+  _wfpOnboardRef.on('value', function (snap) {
+    var data = snap.val();
+    var statusEl = document.getElementById('wfp-status');
+    if (!statusEl) return;
+    if (data && data.active) {
+      var pName = data.name || 'Your partner';
+      var isRecent = Date.now() - (data.timestamp || 0) < 120000;
+      if (isRecent) {
+        statusEl.innerHTML = '<span class="ob-ps-dot"></span> ' + esc(pName) + ' is setting up now!';
+        statusEl.classList.remove('offline');
+      } else {
+        statusEl.innerHTML = '<span class="ob-ps-dot"></span> ' + esc(pName) + ' started setup earlier';
+        statusEl.classList.add('offline');
+      }
+    } else {
+      statusEl.innerHTML = '<span class="ob-ps-dot"></span> Partner hasn\'t started yet';
+      statusEl.classList.add('offline');
+    }
+    // Update offline notice
+    var offlineEl = document.getElementById('wfp-offline');
+    if (offlineEl) offlineEl.classList.toggle('d-none', _isOnline);
+  });
+}
+
+function _stopPartnerWatch() {
+  if (_wfpProfileRef) { _wfpProfileRef.off(); _wfpProfileRef = null; }
+  if (_wfpOnboardRef) { _wfpOnboardRef.off(); _wfpOnboardRef = null; }
+}
+
 function showWelcomeGate() {
   const form = document.getElementById('login-form');
   const gate = document.getElementById('welcome-gate');
@@ -1741,7 +2329,7 @@ function showWelcomeGate() {
   // Show photo partner chose for you on the welcome gate
   const welcomePhotoEl = document.getElementById('welcome-photo');
   if (welcomePhotoEl && db) {
-    db.ref('photos/' + user).once('value', snap => {
+    coupleRef('photos/' + user).once('value', snap => {
       const d = snap.val();
       if (d && d.data) {
         welcomePhotoEl.innerHTML = '<img src="' + d.data + '" class="welcome-photo-img" alt="">';
@@ -1775,7 +2363,11 @@ async function enterApp() {
     }
   }
 
-  finishLogin();
+  if (await partnerHasOnboarded()) {
+    finishLogin();
+  } else {
+    showWaitingForPartner();
+  }
 }
 
 // Wait for Firebase auth to resolve (user/authUser to be set)
@@ -1804,7 +2396,197 @@ function _waitForAuth(timeout) {
   });
 }
 
+// ===== ANALYTICS =====
+// Track feature usage for engagement insights
+var _analyticsThrottle = {};
+function trackFeatureUse(feature, action) {
+  if (!db || !user) return;
+  // Throttle: max one event per feature+action per 30 seconds
+  var key = feature + ':' + action;
+  var now = Date.now();
+  if (_analyticsThrottle[key] && now - _analyticsThrottle[key] < 30000) return;
+  _analyticsThrottle[key] = now;
+  // Prune stale entries to prevent unbounded growth
+  var keys = Object.keys(_analyticsThrottle);
+  if (keys.length > 100) {
+    keys.forEach(function (k) { if (now - _analyticsThrottle[k] > 35000) delete _analyticsThrottle[k]; });
+  }
+  coupleRef('analytics/usage').push({
+    feature: feature,
+    action: action,
+    user: user,
+    timestamp: now
+  });
+  // Track session for daily active check
+  trackDailyActive();
+}
+
+// ===== PHASE D: ENGAGEMENT & RETENTION ANALYTICS =====
+var _dailyActiveTracked = false;
+
+function trackDailyActive() {
+  if (_dailyActiveTracked || !db || !user) return;
+  _dailyActiveTracked = true;
+  var today = localDate();
+  coupleRef('analytics/dau/' + today + '/' + user).set(Date.now());
+}
+
+// Compute engagement metrics from analytics data (cached for 5 min)
+var _engCache = { data: null, ts: 0 };
+async function computeEngagementMetrics() {
+  if (!db) return null;
+  var now = Date.now();
+  if (_engCache.data && now - _engCache.ts < 300000) return _engCache.data;
+
+  var thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
+  var startDate = localDate(new Date(thirtyDaysAgo));
+
+  // Reuse MET mood cache if available; only query dau, usage, letters, taps
+  var [dauSnap, usageSnap, lettersSnap, tapsSnap] = await Promise.all([
+    coupleRef('analytics/dau').orderByKey().startAt(startDate).once('value'),
+    coupleRef('analytics/usage').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value'),
+    coupleRef('letters').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value'),
+    coupleRef('taps').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value')
+  ]);
+
+  // DAU — days both partners were active
+  var dau = dauSnap.val() || {};
+  var daysActive = { partner1: 0, partner2: 0, both: 0, total: Object.keys(dau).length };
+  Object.values(dau).forEach(function (day) {
+    if (day.partner1) daysActive.partner1++;
+    if (day.partner2) daysActive.partner2++;
+    if (day.partner1 && day.partner2) daysActive.both++;
+  });
+
+  // Feature usage breakdown
+  var featureCounts = {};
+  usageSnap.forEach(function (c) {
+    var v = c.val();
+    if (!v.feature) return;
+    featureCounts[v.feature] = (featureCounts[v.feature] || 0) + 1;
+  });
+
+  // Top features sorted
+  var topFeatures = Object.entries(featureCounts)
+    .sort(function (a, b) { return b[1] - a[1]; })
+    .slice(0, 10);
+
+  // Interaction counts — use MET cache for moods if ready
+  var moodCount = 0, letterCount = 0, tapCount = 0;
+  if (typeof MET !== 'undefined' && MET._ready && MET.mood.all.length) {
+    moodCount = MET.mood.all.filter(function (m) { return m.timestamp > thirtyDaysAgo; }).length;
+  }
+  lettersSnap.forEach(function () { letterCount++; });
+  tapsSnap.forEach(function () { tapCount++; });
+
+  // Streak calculation — consecutive days with at least one partner active
+  var sortedDays = Object.keys(dau).sort();
+  var currentStreak = 0;
+  var maxStreak = 0;
+  var today = localDate();
+  for (var i = sortedDays.length - 1; i >= 0; i--) {
+    var expected = new Date();
+    expected.setDate(expected.getDate() - (sortedDays.length - 1 - i));
+    var expStr = localDate(expected);
+    if (sortedDays[i] === expStr) {
+      currentStreak++;
+    } else {
+      break;
+    }
+  }
+  // Max streak
+  var streak = 1;
+  for (var j = 1; j < sortedDays.length; j++) {
+    var prev = new Date(sortedDays[j - 1] + 'T12:00:00');
+    var curr = new Date(sortedDays[j] + 'T12:00:00');
+    if (curr - prev <= 86400000 * 1.5) {
+      streak++;
+      if (streak > maxStreak) maxStreak = streak;
+    } else {
+      streak = 1;
+    }
+  }
+  if (currentStreak > maxStreak) maxStreak = currentStreak;
+
+  // Retention: 7-day active rate
+  var sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  var sevenDayStr = localDate(sevenDaysAgo);
+  var recentDays = Object.keys(dau).filter(function (d) { return d >= sevenDayStr; }).length;
+  var retentionRate7d = Math.round((recentDays / 7) * 100);
+
+  var result = {
+    daysActive: daysActive,
+    topFeatures: topFeatures,
+    moodCheckins: moodCount,
+    lettersSent: letterCount,
+    tapsSent: tapCount,
+    currentStreak: currentStreak,
+    maxStreak: maxStreak,
+    retentionRate7d: retentionRate7d,
+    totalSessions: daysActive.total
+  };
+  _engCache = { data: result, ts: Date.now() };
+  return result;
+}
+
+// Render engagement dashboard on the insights page
+async function renderEngagementDashboard() {
+  var container = document.getElementById('engagement-dashboard');
+  if (!container) return;
+
+  var metrics = await computeEngagementMetrics();
+  if (!metrics) {
+    container.innerHTML = '<div class="empty">Not enough data yet — keep using the app!</div>';
+    return;
+  }
+
+  var html = '';
+
+  // Streak & retention row
+  html += '<div class="eng-stats-row">';
+  html += '<div class="eng-stat"><div class="eng-stat-num">' + metrics.currentStreak + '</div><div class="eng-stat-label">Day Streak</div></div>';
+  html += '<div class="eng-stat"><div class="eng-stat-num">' + metrics.maxStreak + '</div><div class="eng-stat-label">Best Streak</div></div>';
+  html += '<div class="eng-stat"><div class="eng-stat-num">' + metrics.retentionRate7d + '%</div><div class="eng-stat-label">7-Day Active</div></div>';
+  html += '</div>';
+
+  // Activity summary
+  html += '<div class="eng-activity">';
+  html += '<div class="eng-activity-title">Last 30 Days</div>';
+  html += '<div class="eng-activity-row"><span>Mood check-ins</span><span class="eng-val">' + metrics.moodCheckins + '</span></div>';
+  html += '<div class="eng-activity-row"><span>Letters sent</span><span class="eng-val">' + metrics.lettersSent + '</span></div>';
+  html += '<div class="eng-activity-row"><span>Taps sent</span><span class="eng-val">' + metrics.tapsSent + '</span></div>';
+  html += '<div class="eng-activity-row"><span>Days you were both active</span><span class="eng-val">' + metrics.daysActive.both + '/' + metrics.daysActive.total + '</span></div>';
+  html += '</div>';
+
+  // Feature heatmap
+  if (metrics.topFeatures.length > 0) {
+    var maxCount = metrics.topFeatures[0][1];
+    html += '<div class="eng-heatmap">';
+    html += '<div class="eng-activity-title">Most Used Features</div>';
+    metrics.topFeatures.forEach(function (f) {
+      var pct = Math.round((f[1] / maxCount) * 100);
+      var label = (typeof PAGE_META !== 'undefined' && PAGE_META[f[0]]) ? PAGE_META[f[0]].label : f[0];
+      html += '<div class="eng-heat-row">';
+      html += '<span class="eng-heat-label">' + esc(label) + '</span>';
+      html += '<div class="eng-heat-bar-wrap"><div class="eng-heat-bar" style="width:' + pct + '%"></div></div>';
+      html += '<span class="eng-heat-count">' + f[1] + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+}
+
 function finishLogin() {
+  // Ensure display names are never blank (legacy migration may leave them empty)
+  if (!NAMES[user]) NAMES[user] = authUser && authUser.displayName ? authUser.displayName : 'Me';
+  if (!NAMES[partner]) NAMES[partner] = 'Partner';
+  // Keep key couple refs synced for offline access
+  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles'].forEach(function (p) {
+    coupleRef(p).keepSynced(true);
+  });
   // Apply cached sky theme BEFORE time-of-day so CSS variables resolve correctly
   var cachedTheme = localStorage.getItem('met_sky_theme');
   if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
@@ -1817,13 +2599,7 @@ function finishLogin() {
   window.scrollTo(0, 0);
   document.querySelectorAll('.uname').forEach(e => (e.textContent = NAMES[user]));
   document.querySelectorAll('.pname').forEach(e => (e.textContent = NAMES[partner]));
-  if (user === 'him') {
-    var ki = document.querySelector('[onclick*="sendTap(event,\'kiss\'"]');
-    if (ki) {
-      var ic = ki.querySelector('.pill-ico');
-      if (ic) ic.textContent = '😘';
-    }
-  }
+  // Customize emoji per user preference (no longer gendered)
   // Handle PWA shortcut deep links
   const startPage = new URLSearchParams(window.location.search).get('page');
   go(startPage || 'dash');
@@ -1862,8 +2638,8 @@ function finishLogin() {
   loadSelfCare();
   listenPRs();
   loadClarity();
-  listenPersonalGoals('her');
-  listenPersonalGoals('him');
+  listenPersonalGoals('partner1');
+  listenPersonalGoals('partner2');
   // New modules v2
   listenPhrases();
   listenTraditions();
@@ -1881,12 +2657,12 @@ function finishLogin() {
   listenBlessings();
   listenIntentions();
   listenSavings();
-  listenMeals();
   listenChores();
   listenExpenses();
   // listenSharedGoals(); — consolidated into Dreams page
   listenHabits();
   listenGrocery();
+  if (typeof loadMealPlans === 'function') loadMealPlans();
   listenSharedTodos();
   enforcePrivacy();
   // Dashboard UX
@@ -1934,6 +2710,8 @@ function finishLogin() {
   // AI Background Service — content curator, relationship monitor, etc.
   setTimeout(() => {
     if (typeof initAIBackgroundService === 'function') initAIBackgroundService();
+    if (typeof initProactiveCoach === 'function') initProactiveCoach();
+    if (typeof checkAutoInsights === 'function') checkAutoInsights();
   }, 5000);
   setTimeout(() => {
     if (typeof loadAIDailyContent === 'function') loadAIDailyContent();
@@ -1994,14 +2772,14 @@ async function clearAllData() {
   }
   try {
     // Preserve API key and email map before wiping
-    const apiSnap = await db.ref('profiles/apiKey').once('value');
+    const apiSnap = await coupleRef('profiles/apiKey').once('value');
     const apiKey = apiSnap.val();
     const emailSnap = await db.ref('config/emailMap').once('value');
     const emailMap = emailSnap.val();
     // Wipe everything
     await db.ref('/').remove();
     // Restore API key and email map so login still works
-    if (apiKey) await db.ref('profiles/apiKey').set(apiKey);
+    if (apiKey) await coupleRef('profiles/apiKey').set(apiKey);
     if (emailMap) await db.ref('config/emailMap').set(emailMap);
     // Clear offline queue in memory so it doesn't re-write wiped data
     _offlineQueue = [];
@@ -2045,31 +2823,81 @@ async function exportAllData() {
 }
 
 function updateApiKey() {
+  var proxyVal = AI_PROXY_URL || '';
+  var keyVal = CLAUDE_API_KEY || '';
+  var mode = proxyVal ? 'proxy' : 'direct';
   openModal(`<div style="text-align:left">
-    <h3 style="margin:0 0 12px;font-size:16px;color:var(--t1)">API Key</h3>
-    <input id="api-key-input" type="text" class="form-input" placeholder="sk-ant-..." value="${esc(CLAUDE_API_KEY || '')}" style="width:100%;font-size:14px;font-family:monospace">
+    <h3 style="margin:0 0 12px;font-size:16px;color:var(--t1)">AI Configuration</h3>
+    <div style="margin-bottom:12px">
+      <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:6px">Mode</label>
+      <div style="display:flex;gap:8px">
+        <button id="ai-mode-proxy" class="bl-cat ${mode === 'proxy' ? 'on' : ''}" onclick="document.getElementById('ai-mode-proxy').classList.add('on');document.getElementById('ai-mode-direct').classList.remove('on');document.getElementById('ai-proxy-field').style.display='';document.getElementById('ai-key-field').style.display='none'" style="flex:1">Proxy (Recommended)</button>
+        <button id="ai-mode-direct" class="bl-cat ${mode === 'direct' ? 'on' : ''}" onclick="document.getElementById('ai-mode-direct').classList.add('on');document.getElementById('ai-mode-proxy').classList.remove('on');document.getElementById('ai-proxy-field').style.display='none';document.getElementById('ai-key-field').style.display=''" style="flex:1">Direct Key</button>
+      </div>
+    </div>
+    <div id="ai-proxy-field" style="display:${mode === 'proxy' ? '' : 'none'}">
+      <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:4px">Proxy URL</label>
+      <input id="ai-proxy-input" type="url" class="form-input" placeholder="https://met-ai-proxy.your.workers.dev/v1/messages" value="${esc(proxyVal)}" style="width:100%;font-size:13px">
+      <div style="font-size:11px;color:var(--t3);margin-top:4px">Your API key stays on the server — never exposed in the browser.</div>
+    </div>
+    <div id="ai-key-field" style="display:${mode === 'direct' ? '' : 'none'}">
+      <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:4px">API Key</label>
+      <input id="api-key-input" type="password" class="form-input" placeholder="sk-ant-..." value="${esc(keyVal)}" style="width:100%;font-size:13px;font-family:monospace">
+      <div style="font-size:11px;color:var(--amber, #ff9800);margin-top:4px">Warning: Key is stored in the database and visible in the browser. Use proxy mode for production.</div>
+    </div>
     <div style="display:flex;gap:8px;margin-top:14px">
       <button class="btn-sm" onclick="closeModal()" style="flex:1;background:var(--card-bg);color:var(--t2)">Cancel</button>
       <button class="btn-sm" onclick="submitApiKey()" style="flex:1">Save</button>
     </div>
   </div>`);
-  setTimeout(function () {
-    var el = document.getElementById('api-key-input');
-    if (el) el.focus();
-  }, 100);
 }
 function submitApiKey() {
-  var key = (document.getElementById('api-key-input') || {}).value || '';
-  key = key.trim();
-  if (key && key.startsWith('sk-ant-')) {
-    CLAUDE_API_KEY = key;
-    db.ref('profiles/apiKey').set(key);
-    closeModal();
-    toast('API key updated');
-  } else if (key) {
-    toast('Invalid key format');
+  var isProxy = document.getElementById('ai-mode-proxy').classList.contains('on');
+  if (isProxy) {
+    var proxyUrl = (document.getElementById('ai-proxy-input') || {}).value || '';
+    proxyUrl = proxyUrl.trim();
+    if (proxyUrl && (proxyUrl.startsWith('https://') || proxyUrl.startsWith('http://localhost'))) {
+      AI_PROXY_URL = proxyUrl;
+      localStorage.setItem('met_ai_proxy', proxyUrl);
+      // Clear direct key from Firebase for security
+      CLAUDE_API_KEY = '';
+      coupleRef('profiles/apiKey').remove();
+      closeModal();
+      toast('Proxy configured — AI ready');
+      updateAISetupStatus();
+    } else {
+      toast('Enter a valid proxy URL (https://)');
+    }
   } else {
-    closeModal();
+    var key = (document.getElementById('api-key-input') || {}).value || '';
+    key = key.trim();
+    if (key && key.startsWith('sk-ant-')) {
+      CLAUDE_API_KEY = key;
+      coupleRef('profiles/apiKey').set(key);
+      AI_PROXY_URL = '';
+      localStorage.removeItem('met_ai_proxy');
+      closeModal();
+      toast('API key updated');
+      updateAISetupStatus();
+    } else if (key) {
+      toast('Invalid key format — must start with sk-ant-');
+    } else {
+      closeModal();
+    }
+  }
+}
+function updateAISetupStatus() {
+  var el = document.getElementById('ai-setup-status');
+  if (!el) return;
+  if (AI_PROXY_URL) {
+    el.textContent = 'Using proxy (secure)';
+    el.style.color = 'var(--emerald, #4db6ac)';
+  } else if (CLAUDE_API_KEY) {
+    el.textContent = 'Using direct key (less secure)';
+    el.style.color = 'var(--amber, #ff9800)';
+  } else {
+    el.textContent = 'Not configured';
+    el.style.color = 'var(--t3)';
   }
 }
 
@@ -2085,6 +2913,8 @@ function switchSettingsTab(tab) {
   var pg = document.getElementById('pg-settings');
   if (pg) pg.scrollTop = 0;
   window.scrollTo({ top: 0 });
+  // Update AI status on account tab
+  if (tab === 'account' && typeof updateAISetupStatus === 'function') updateAISetupStatus();
 }
 
 // ===== PUSH NOTIFICATIONS (#15) =====
@@ -2143,7 +2973,7 @@ async function savePushToken() {
   // Store a flag so we know this device has notifications enabled
   try {
     var reg = await navigator.serviceWorker.ready;
-    db.ref('pushTokens/' + user + '/web').set({
+    coupleRef('pushTokens/' + user + '/web').set({
       enabled: true,
       timestamp: Date.now(),
       userAgent: navigator.userAgent.substring(0, 100)
@@ -2177,7 +3007,7 @@ function sendPushNotification(title, body, icon) {
 function initPartnerNotifications() {
   if (!db || !user || Notification.permission !== 'granted') return;
   // Letters from partner
-  db.ref('letters')
+  coupleRef('letters')
     .orderByChild('timestamp')
     .limitToLast(1)
     .on('child_added', function (snap) {
@@ -2191,7 +3021,7 @@ function initPartnerNotifications() {
       }
     });
   // Taps from partner
-  db.ref('taps')
+  coupleRef('taps')
     .orderByChild('timestamp')
     .limitToLast(1)
     .on('child_added', function (snap) {
@@ -2240,7 +3070,7 @@ function flushOfflineQueue() {
   localStorage.removeItem('met_offline_queue');
   var count = 0;
   queue.forEach(function (item) {
-    db.ref(item.path)
+    coupleRef(item.path)
       .push(item.data)
       .then(function () {
         count++;
