@@ -871,8 +871,8 @@ async function submitLog() {
     timestamp: Date.now(),
     date: localDate()
   };
-  const key = coupleRef('workoutLogs').push().key;
-  await coupleRef('workoutLogs/' + key).set(entry);
+  const key = coupleRef('fitness/' + user + '/workouts').push().key;
+  await coupleRef('fitness/' + user + '/workouts/' + key).set(entry);
   closeLog();
   if (typeof logActivity === 'function') logActivity('fitness', 'logged a workout');
   toast('Workout logged');
@@ -1812,7 +1812,7 @@ async function gatherWellnessData() {
   const today = new Date().toISOString().split('T')[0];
   const [nutrSnap, fitSnap] = await Promise.all([
     coupleRef('nutrition/' + user + '/meals/' + today).once('value'),
-    coupleRef('fitness/workouts').orderByChild('timestamp').limitToLast(10).once('value')
+    coupleRef('fitness/' + user + '/workouts').orderByChild('timestamp').limitToLast(10).once('value')
   ]);
   const workouts = [];
   fitSnap.forEach(c => workouts.push(c.val()));
@@ -2038,7 +2038,7 @@ async function gatherWeeklyData() {
       coupleRef('personalGoals/shared').once('value'),
       coupleRef('checkins').orderByChild('timestamp').startAt(weekAgo).once('value'),
       coupleRef('taps').orderByChild('timestamp').startAt(weekAgo).once('value'),
-      coupleRef('fitness/workouts').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('fitness/' + user + '/workouts').orderByChild('timestamp').startAt(weekAgo).once('value'),
       coupleRef('finances/expenses').orderByChild('timestamp').startAt(weekAgo).once('value')
     ]);
 

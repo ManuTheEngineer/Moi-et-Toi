@@ -914,7 +914,7 @@ async function checkAchievements() {
   if (savings.some(s => s.saved >= s.target && s.target > 0)) unlockBadge('money-smart', 'Money Smart');
 
   // Deep talk check
-  const dtSnap = await coupleRef('deepTalk/completed').once('value');
+  const dtSnap = await coupleRef('deepTalkJournal').once('value');
   const dtCompleted = dtSnap.val() ? Object.keys(dtSnap.val()).length : 0;
   if (dtCompleted >= 10) unlockBadge('deep-divers', 'Deep Divers');
 }

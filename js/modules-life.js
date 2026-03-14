@@ -37,7 +37,7 @@ function nextAffirmation() { rotatePrompt(AFFIRMATIONS, 'hs-affirm-text', functi
 function logPeriodStart() {
   if (!db || !user) return;
   const today = localDate();
-  coupleRef('wellness/partner1/cycle')
+  coupleRef('wellness/' + user + '/cycle')
     .push({ type: 'start', date: today, timestamp: Date.now() })
     .catch(function () { toast('Save failed'); });
   toast('Period start logged');
@@ -47,7 +47,7 @@ function logPeriodStart() {
 function logPeriodEnd() {
   if (!db || !user) return;
   const today = localDate();
-  coupleRef('wellness/partner1/cycle')
+  coupleRef('wellness/' + user + '/cycle')
     .push({ type: 'end', date: today, timestamp: Date.now() })
     .catch(function () { toast('Save failed'); });
   toast('Period end logged');
@@ -56,7 +56,7 @@ function logPeriodEnd() {
 
 function loadCycleData() {
   if (!db) return;
-  coupleRef('wellness/partner1/cycle')
+  coupleRef('wellness/' + user + '/cycle')
     .orderByChild('timestamp')
     .limitToLast(10)
     .once('value', snap => {
@@ -110,13 +110,13 @@ function toggleCare(el, type) {
   el.classList.toggle('done');
   const today = localDate();
   const done = el.classList.contains('done');
-  coupleRef('wellness/partner1/selfcare/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
+  coupleRef('wellness/' + user + '/selfcare/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
 }
 
 function loadSelfCare() {
   if (!db) return;
   const today = localDate();
-  coupleRef('wellness/partner1/selfcare/' + today).once('value', snap => {
+  coupleRef('wellness/' + user + '/selfcare/' + today).once('value', snap => {
     const data = snap.val() || {};
     document.querySelectorAll('#hs-care-grid .hs-care-item').forEach(el => {
       const type = el.onclick.toString().match(/'(\w+)'/)?.[1];
@@ -168,7 +168,7 @@ async function logPR() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await coupleRef('wellness/partner2/prs').push({
+  await coupleRef('wellness/' + user + '/prs').push({
     exercise,
     weight: weight || '--',
     reps: reps || '--',
@@ -189,7 +189,7 @@ async function logPR() {
 }
 
 function listenPRs() {
-  var ref = coupleRef('wellness/partner2/prs').orderByChild('timestamp').limitToLast(20);
+  var ref = coupleRef('wellness/' + user + '/prs').orderByChild('timestamp').limitToLast(20);
   fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
@@ -214,13 +214,13 @@ function toggleClarity(el, type) {
   el.classList.toggle('done');
   const today = localDate();
   const done = el.classList.contains('done');
-  coupleRef('wellness/partner2/clarity/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
+  coupleRef('wellness/' + user + '/clarity/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
 }
 
 function loadClarity() {
   if (!db) return;
   const today = localDate();
-  coupleRef('wellness/partner2/clarity/' + today).once('value', snap => {
+  coupleRef('wellness/' + user + '/clarity/' + today).once('value', snap => {
     const data = snap.val() || {};
     document.querySelectorAll('#p1-clarity-grid .hs-care-item').forEach(el => {
       const type = el.onclick.toString().match(/'(\w+)'/)?.[1];

@@ -2682,7 +2682,6 @@ function finishLogin() {
   listenGrocery();
   if (typeof loadMealPlans === 'function') loadMealPlans();
   listenSharedTodos();
-  enforcePrivacy();
   // Dashboard UX
   renderDashHero();
   renderDashDailyQ();

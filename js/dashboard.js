@@ -1,8 +1,3 @@
-// ===== THEME =====
-function applyTheme() {
-  // Light mode is the default via CSS variables; nothing to do unless dark mode is added
-}
-
 // ===== PULL TO REFRESH =====
 function initPullToRefresh() {
   let startY = 0;
@@ -153,11 +148,6 @@ function closeModal() {
   window.scrollTo(0, scrollY);
 }
 
-// ===== PRIVACY =====
-function enforcePrivacy() {
-  // Hide partner-only sections when viewing your own private space
-}
-
 // ===== DYNAMIC VISUALS =====
 function initDynamicVisuals() {
   // Sky scene is initialized separately via initSkyScene
@@ -166,9 +156,6 @@ function initDynamicVisuals() {
 
 // ===== BOOT =====
 document.addEventListener('DOMContentLoaded', () => {
-  // Apply light theme
-  applyTheme();
-
   // Init pull to refresh
   initPullToRefresh();
 

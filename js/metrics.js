@@ -420,7 +420,7 @@ function computeRelationshipHealth() {
     coupleRef('dreams').once('value'),
     coupleRef('games/wyr').once('value'),
     coupleRef('games/tot').once('value'),
-    coupleRef('workoutLogs').orderByChild('timestamp').limitToLast(30).once('value'),
+    coupleRef('fitness/' + user + '/workouts').orderByChild('timestamp').limitToLast(30).once('value'),
     coupleRef('finances/expenses').orderByChild('timestamp').limitToLast(30).once('value'),
     coupleRef('gratitude').orderByChild('timestamp').limitToLast(10).once('value'),
     coupleRef('deepTalkJournal').orderByChild('timestamp').limitToLast(5).once('value'),
@@ -932,7 +932,7 @@ function initMetricsEngine() {
     });
 
   // Load workouts
-  coupleRef('workoutLogs')
+  coupleRef('fitness/' + user + '/workouts')
     .orderByChild('timestamp')
     .limitToLast(200)
     .once('value', snap => {
