@@ -205,8 +205,8 @@ async function init() {
   try {
     db.goOnline();
   } catch (e) {}
-  // Keep key refs synced for offline access (set up after couple context is resolved)
-  db.ref('config/emailMap').keepSynced(true);
+  // Firebase Web SDK enables local caching automatically via goOnline/enablePersistence.
+  // keepSynced() is only available in native mobile SDKs, not the web SDK.
 
   // Start connection state monitoring
   initConnectionMonitor();
@@ -2613,10 +2613,7 @@ function finishLogin() {
   // Ensure display names are never blank (legacy migration may leave them empty)
   if (!NAMES[user]) NAMES[user] = authUser && authUser.displayName ? authUser.displayName : 'Me';
   if (!NAMES[partner]) NAMES[partner] = 'Partner';
-  // Keep key couple refs synced for offline access
-  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles'].forEach(function (p) {
-    coupleRef(p).keepSynced(true);
-  });
+  // Firebase Web SDK caches data automatically; keepSynced() is native-only.
   // Apply cached sky theme BEFORE time-of-day so CSS variables resolve correctly
   var cachedTheme = localStorage.getItem('met_sky_theme');
   if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
