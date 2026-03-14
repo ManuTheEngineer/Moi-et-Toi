@@ -1186,7 +1186,7 @@ function renderProgressPhotos(photos) {
   const el = document.getElementById('prog-photos-gallery');
   if (!el) return;
   if (!photos || Object.keys(photos).length === 0) {
-    el.innerHTML = '<div class="empty">No progress photos yet</div>';
+    el.innerHTML = '<div class="empty">No progress photos yet — snap a pic to track your journey</div>';
     return;
   }
   const arr = Object.entries(photos)
@@ -2406,7 +2406,7 @@ function renderCalDayEvents() {
   if (label) label.textContent = calSelectedDate;
   const events = Object.entries(calendarEvents).filter(([k, e]) => e.date === calSelectedDate);
   if (!events.length) {
-    container.innerHTML = '<div class="empty">No events for this day</div>';
+    container.innerHTML = '<div class="empty">No events for this day — tap + to add one</div>';
     return;
   }
   const colors = {
@@ -2440,7 +2440,7 @@ function renderUpcoming() {
     .sort((a, b) => a[1].date.localeCompare(b[1].date))
     .slice(0, 5);
   if (!upcoming.length) {
-    container.innerHTML = '<div class="empty">No upcoming events</div>';
+    container.innerHTML = '<div class="empty">No upcoming events — plan something to look forward to</div>';
     return;
   }
   container.innerHTML = upcoming

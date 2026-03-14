@@ -302,7 +302,7 @@ function renderKYPCategories() {
     if (!container) return;
     const items = kypCategories[cat] ? Object.entries(kypCategories[cat]) : [];
     if (!items.length) {
-      container.innerHTML = '<div class="empty" style="font-size:12px">Nothing added yet</div>';
+      container.innerHTML = '<div class="empty" style="font-size:12px">Nothing added yet — use the form above to get started</div>';
       return;
     }
     container.innerHTML = items
@@ -377,7 +377,7 @@ function renderMemories() {
     } else if (memCurrentAlbum === 'favorites') {
       container.innerHTML = '<div class="empty">No favorites yet. Tap a photo to favorite it.</div>';
     } else {
-      container.innerHTML = '<div class="empty">No memories in this album yet</div>';
+      container.innerHTML = '<div class="empty" onclick="document.getElementById(\'mem-file\').click()" style="cursor:pointer">No memories in this album yet <span style="opacity:.5">— tap to upload</span></div>';
     }
     return;
   }

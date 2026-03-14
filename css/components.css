@@ -467,19 +467,6 @@
   margin-top: 4px;
   font-style: italic;
 }
-.mh-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 4px;
-}
-.mh-tag {
-  font-size: 9px;
-  padding: 2px 8px;
-  border-radius: 8px;
-  background: var(--tint);
-  color: var(--gold);
-}
 .mh-dedicate {
   font-size: 10px;
   color: var(--gold);
@@ -492,29 +479,6 @@
   min-width: 50px;
 }
 
-/* Mood Tags */
-.mood-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-.mood-tag {
-  padding: 6px 14px;
-  border-radius: 16px;
-  border: none;
-  background: var(--input-bg);
-  color: var(--t2);
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.mood-tag.sel {
-  background: var(--gold);
-  color: #fff;
-  font-weight: 600;
-}
 
 /* Mood Dedicate */
 .mood-dedicate {

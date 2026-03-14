@@ -1855,7 +1855,7 @@ function renderFinRecent(expenses) {
   if (!el) return;
   const recent = expenses.slice(0, 15);
   if (!recent.length) {
-    el.innerHTML = '<div class="empty">No expenses yet</div>';
+    el.innerHTML = '<div class="empty">No expenses yet — start tracking to see where your money goes</div>';
     return;
   }
   var _s = function (d) {

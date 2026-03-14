@@ -2,7 +2,7 @@
 let selectedEnergy = 3;
 let selectedSleep = 0;
 let selectedStress = 0;
-let selectedTags = [];
+
 
 function selGrid(gridId, val, el) {
   var setters = { 'mood-grid': function(v) { selectedMood = v; }, 'energy-grid': function(v) { selectedEnergy = v; }, 'sleep-grid': function(v) { selectedSleep = v; }, 'stress-grid': function(v) { selectedStress = v; } };
@@ -15,15 +15,7 @@ function selEnergy(val, el) { selGrid('energy-grid', val, el); }
 function selSleep(val, el) { selGrid('sleep-grid', val, el); }
 function selStress(val, el) { selGrid('stress-grid', val, el); }
 
-function toggleTag(el) {
-  const tag = el.dataset.tag;
-  el.classList.toggle('sel');
-  if (selectedTags.includes(tag)) {
-    selectedTags = selectedTags.filter(t => t !== tag);
-  } else {
-    selectedTags.push(tag);
-  }
-}
+
 
 async function submitMood() {
   if (!selectedMood) {
@@ -46,7 +38,6 @@ async function submitMood() {
   };
   if (selectedSleep) entry.sleep = selectedSleep;
   if (selectedStress) entry.stress = selectedStress;
-  if (selectedTags.length) entry.tags = selectedTags;
   const dedicated = document.getElementById('mood-dedicate-check');
   if (dedicated && dedicated.checked) entry.dedicatedTo = partner;
 
@@ -58,11 +49,9 @@ async function submitMood() {
   selectedEnergy = 3;
   selectedSleep = 0;
   selectedStress = 0;
-  selectedTags = [];
   document
     .querySelectorAll('#mood-grid .pill-btn, #energy-grid .pill-btn, #sleep-grid .pill-btn, #stress-grid .pill-btn')
     .forEach(b => b.classList.remove('sel'));
-  document.querySelectorAll('.mood-tag').forEach(b => b.classList.remove('sel'));
   updateStreak();
   if (typeof logActivity === 'function') logActivity('mood', 'checked in');
   if (entry.dedicatedTo) toast('Dedicated to ' + NAMES[partner] + ' 💕');
@@ -106,7 +95,7 @@ function renderMoodFeed(moods) {
       let details = [energyLbls[m.energy] + ' energy'];
       if (m.sleep) details.push(sleepLbls[m.sleep] + ' sleep');
       if (m.stress) details.push(stressLbls[m.stress] + ' stress');
-      const tagHtml = m.tags ? m.tags.map(t => `<span class="mh-tag">#${t}</span>`).join('') : '';
+
       const dedicateHtml = m.dedicatedTo
         ? `<div class="mh-dedicate">💕 For ${m.dedicatedTo === user ? 'you' : NAMES[m.dedicatedTo]}</div>`
         : '';
@@ -115,7 +104,6 @@ function renderMoodFeed(moods) {
       <div class="mh-info">
         <div class="mh-name">${m.user === user ? 'You' : m.userName || '?'}</div>
         <div class="mh-detail">${details.join(' · ')}</div>
-        ${tagHtml ? `<div class="mh-tags">${tagHtml}</div>` : ''}
         ${m.note ? `<div class="mh-note">${esc(m.note)}</div>` : ''}
         ${dedicateHtml}
       </div>
@@ -1093,7 +1081,7 @@ function renderOpenWhenLetters(letters) {
   const forMe = letters.filter(l => l.from === partner);
   const fromMe = letters.filter(l => l.from === user);
   if (!letters.length) {
-    el.innerHTML = '<div class="empty">No sealed letters yet</div>';
+    el.innerHTML = '<div class="empty">No sealed letters yet — write one for your partner to open later</div>';
     return;
   }
 
