@@ -42,6 +42,42 @@
       ".read": "auth != null",
       ".write": "auth != null"
     },
+    "moods": {
+      ".read": "auth != null"
+    },
+    "letters": {
+      ".read": "auth != null"
+    },
+    "taps": {
+      ".read": "auth != null"
+    },
+    "profiles": {
+      ".read": "auth != null"
+    },
+    "photos": {
+      ".read": "auth != null"
+    },
+    "onboarding": {
+      ".read": "auth != null"
+    },
+    "streaks": {
+      ".read": "auth != null"
+    },
+    "gratitude": {
+      ".read": "auth != null"
+    },
+    "fitness": {
+      ".read": "auth != null"
+    },
+    "baselines": {
+      ".read": "auth != null"
+    },
+    "analytics": {
+      ".read": "auth != null"
+    },
+    "pushTokens": {
+      ".read": "auth != null"
+    },
     "settings": {
       ".read": "auth != null",
       ".write": false
