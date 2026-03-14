@@ -204,10 +204,6 @@ async function init() {
   // utils.js (renderLoginSky on script load) and weather.js (immediate
   // fetch + geolocation on script load). No duplicate work needed here.
 
-  // One-time migration: rename her/him roles to partner1/partner2
-  await migrateRolesToNeutral();
-  await migrateRootSettings();
-
   // Load email-to-role mapping from Firebase (keeps emails out of source code)
   await loadEmailMap();
 
@@ -222,6 +218,9 @@ async function init() {
 
       // Try new multi-tenant couple context first
       if (await resolveCoupleContext()) {
+        // Run one-time migrations now that _coupleId and user are set
+        await migrateRolesToNeutral();
+        await migrateRootSettings();
         await loadProfiles();
         loadLivingSkyPref();
         if (needsOnboarding()) {
