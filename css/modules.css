@@ -12354,3 +12354,102 @@ body[data-page='build'] {
   background: rgba(77, 182, 172, .08);
   border-radius: 10px;
 }
+
+/* ========================================
+   D: ENGAGEMENT DASHBOARD
+   ======================================== */
+.eng-stats-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.eng-stat {
+  flex: 1;
+  background: var(--card-bg, rgba(255, 250, 245, 0.92));
+  border-radius: 14px;
+  padding: 16px 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.eng-stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--teal, #4db6ac);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.eng-stat-label {
+  font-size: 11px;
+  color: var(--t2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.eng-activity {
+  background: var(--card-bg, rgba(255, 250, 245, 0.92));
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.eng-activity-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--t1);
+  margin-bottom: 10px;
+}
+.eng-activity-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--t1);
+  border-bottom: 1px solid rgba(0,0,0,.04);
+}
+.eng-activity-row:last-child { border-bottom: none; }
+.eng-val {
+  font-weight: 600;
+  color: var(--teal, #4db6ac);
+}
+.eng-heatmap {
+  background: var(--card-bg, rgba(255, 250, 245, 0.92));
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.eng-heat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.eng-heat-row:last-child { margin-bottom: 0; }
+.eng-heat-label {
+  width: 80px;
+  font-size: 12px;
+  color: var(--t2);
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.eng-heat-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: rgba(0,0,0,.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.eng-heat-bar {
+  height: 100%;
+  background: var(--teal, #4db6ac);
+  border-radius: 4px;
+  transition: width .4s ease;
+}
+.eng-heat-count {
+  width: 30px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--t1);
+}

@@ -2248,6 +2248,158 @@ function trackFeatureUse(feature, action) {
     user: user,
     timestamp: now
   });
+  // Track session for daily active check
+  trackDailyActive();
+}
+
+// ===== PHASE D: ENGAGEMENT & RETENTION ANALYTICS =====
+var _dailyActiveTracked = false;
+
+function trackDailyActive() {
+  if (_dailyActiveTracked || !db || !user) return;
+  _dailyActiveTracked = true;
+  var today = new Date().toISOString().split('T')[0];
+  coupleRef('analytics/dau/' + today + '/' + user).set(Date.now());
+}
+
+// Compute engagement metrics from analytics data
+async function computeEngagementMetrics() {
+  if (!db) return null;
+  var now = Date.now();
+  var thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
+
+  var [dauSnap, usageSnap, moodsSnap, lettersSnap, tapsSnap] = await Promise.all([
+    coupleRef('analytics/dau').orderByKey().startAt(new Date(thirtyDaysAgo).toISOString().split('T')[0]).once('value'),
+    coupleRef('analytics/usage').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value'),
+    coupleRef('moods').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value'),
+    coupleRef('letters').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value'),
+    coupleRef('taps').orderByChild('timestamp').startAt(thirtyDaysAgo).once('value')
+  ]);
+
+  // DAU — days both partners were active
+  var dau = dauSnap.val() || {};
+  var daysActive = { partner1: 0, partner2: 0, both: 0, total: Object.keys(dau).length };
+  Object.values(dau).forEach(function (day) {
+    if (day.partner1) daysActive.partner1++;
+    if (day.partner2) daysActive.partner2++;
+    if (day.partner1 && day.partner2) daysActive.both++;
+  });
+
+  // Feature usage breakdown
+  var featureCounts = {};
+  usageSnap.forEach(function (c) {
+    var v = c.val();
+    if (!v.feature) return;
+    featureCounts[v.feature] = (featureCounts[v.feature] || 0) + 1;
+  });
+
+  // Top features sorted
+  var topFeatures = Object.entries(featureCounts)
+    .sort(function (a, b) { return b[1] - a[1]; })
+    .slice(0, 10);
+
+  // Interaction counts
+  var moodCount = 0, letterCount = 0, tapCount = 0;
+  moodsSnap.forEach(function () { moodCount++; });
+  lettersSnap.forEach(function () { letterCount++; });
+  tapsSnap.forEach(function () { tapCount++; });
+
+  // Streak calculation — consecutive days with at least one partner active
+  var sortedDays = Object.keys(dau).sort();
+  var currentStreak = 0;
+  var maxStreak = 0;
+  var today = new Date().toISOString().split('T')[0];
+  for (var i = sortedDays.length - 1; i >= 0; i--) {
+    var expected = new Date();
+    expected.setDate(expected.getDate() - (sortedDays.length - 1 - i));
+    var expStr = expected.toISOString().split('T')[0];
+    if (sortedDays[i] === expStr) {
+      currentStreak++;
+    } else {
+      break;
+    }
+  }
+  // Max streak
+  var streak = 1;
+  for (var j = 1; j < sortedDays.length; j++) {
+    var prev = new Date(sortedDays[j - 1] + 'T12:00:00');
+    var curr = new Date(sortedDays[j] + 'T12:00:00');
+    if (curr - prev <= 86400000 * 1.5) {
+      streak++;
+      if (streak > maxStreak) maxStreak = streak;
+    } else {
+      streak = 1;
+    }
+  }
+  if (currentStreak > maxStreak) maxStreak = currentStreak;
+
+  // Retention: 7-day active rate
+  var sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  var sevenDayStr = sevenDaysAgo.toISOString().split('T')[0];
+  var recentDays = Object.keys(dau).filter(function (d) { return d >= sevenDayStr; }).length;
+  var retentionRate7d = Math.round((recentDays / 7) * 100);
+
+  return {
+    daysActive: daysActive,
+    topFeatures: topFeatures,
+    moodCheckins: moodCount,
+    lettersSent: letterCount,
+    tapsSent: tapCount,
+    currentStreak: currentStreak,
+    maxStreak: maxStreak,
+    retentionRate7d: retentionRate7d,
+    totalSessions: daysActive.total
+  };
+}
+
+// Render engagement dashboard on the insights page
+async function renderEngagementDashboard() {
+  var container = document.getElementById('engagement-dashboard');
+  if (!container) return;
+
+  var metrics = await computeEngagementMetrics();
+  if (!metrics) {
+    container.innerHTML = '<div class="empty">Not enough data yet — keep using the app!</div>';
+    return;
+  }
+
+  var html = '';
+
+  // Streak & retention row
+  html += '<div class="eng-stats-row">';
+  html += '<div class="eng-stat"><div class="eng-stat-num">' + metrics.currentStreak + '</div><div class="eng-stat-label">Day Streak</div></div>';
+  html += '<div class="eng-stat"><div class="eng-stat-num">' + metrics.maxStreak + '</div><div class="eng-stat-label">Best Streak</div></div>';
+  html += '<div class="eng-stat"><div class="eng-stat-num">' + metrics.retentionRate7d + '%</div><div class="eng-stat-label">7-Day Active</div></div>';
+  html += '</div>';
+
+  // Activity summary
+  html += '<div class="eng-activity">';
+  html += '<div class="eng-activity-title">Last 30 Days</div>';
+  html += '<div class="eng-activity-row"><span>Mood check-ins</span><span class="eng-val">' + metrics.moodCheckins + '</span></div>';
+  html += '<div class="eng-activity-row"><span>Letters sent</span><span class="eng-val">' + metrics.lettersSent + '</span></div>';
+  html += '<div class="eng-activity-row"><span>Taps sent</span><span class="eng-val">' + metrics.tapsSent + '</span></div>';
+  html += '<div class="eng-activity-row"><span>Days you were both active</span><span class="eng-val">' + metrics.daysActive.both + '/' + metrics.daysActive.total + '</span></div>';
+  html += '</div>';
+
+  // Feature heatmap
+  if (metrics.topFeatures.length > 0) {
+    var maxCount = metrics.topFeatures[0][1];
+    html += '<div class="eng-heatmap">';
+    html += '<div class="eng-activity-title">Most Used Features</div>';
+    metrics.topFeatures.forEach(function (f) {
+      var pct = Math.round((f[1] / maxCount) * 100);
+      var label = (typeof PAGE_META !== 'undefined' && PAGE_META[f[0]]) ? PAGE_META[f[0]].label : f[0];
+      html += '<div class="eng-heat-row">';
+      html += '<span class="eng-heat-label">' + esc(label) + '</span>';
+      html += '<div class="eng-heat-bar-wrap"><div class="eng-heat-bar" style="width:' + pct + '%"></div></div>';
+      html += '<span class="eng-heat-count">' + f[1] + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
 }
 
 function finishLogin() {
@@ -2491,31 +2643,81 @@ async function exportAllData() {
 }
 
 function updateApiKey() {
+  var proxyVal = AI_PROXY_URL || '';
+  var keyVal = CLAUDE_API_KEY || '';
+  var mode = proxyVal ? 'proxy' : 'direct';
   openModal(`<div style="text-align:left">
-    <h3 style="margin:0 0 12px;font-size:16px;color:var(--t1)">API Key</h3>
-    <input id="api-key-input" type="text" class="form-input" placeholder="sk-ant-..." value="${esc(CLAUDE_API_KEY || '')}" style="width:100%;font-size:14px;font-family:monospace">
+    <h3 style="margin:0 0 12px;font-size:16px;color:var(--t1)">AI Configuration</h3>
+    <div style="margin-bottom:12px">
+      <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:6px">Mode</label>
+      <div style="display:flex;gap:8px">
+        <button id="ai-mode-proxy" class="bl-cat ${mode === 'proxy' ? 'on' : ''}" onclick="document.getElementById('ai-mode-proxy').classList.add('on');document.getElementById('ai-mode-direct').classList.remove('on');document.getElementById('ai-proxy-field').style.display='';document.getElementById('ai-key-field').style.display='none'" style="flex:1">Proxy (Recommended)</button>
+        <button id="ai-mode-direct" class="bl-cat ${mode === 'direct' ? 'on' : ''}" onclick="document.getElementById('ai-mode-direct').classList.add('on');document.getElementById('ai-mode-proxy').classList.remove('on');document.getElementById('ai-proxy-field').style.display='none';document.getElementById('ai-key-field').style.display=''" style="flex:1">Direct Key</button>
+      </div>
+    </div>
+    <div id="ai-proxy-field" style="display:${mode === 'proxy' ? '' : 'none'}">
+      <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:4px">Proxy URL</label>
+      <input id="ai-proxy-input" type="url" class="form-input" placeholder="https://met-ai-proxy.your.workers.dev/v1/messages" value="${esc(proxyVal)}" style="width:100%;font-size:13px">
+      <div style="font-size:11px;color:var(--t3);margin-top:4px">Your API key stays on the server — never exposed in the browser.</div>
+    </div>
+    <div id="ai-key-field" style="display:${mode === 'direct' ? '' : 'none'}">
+      <label style="font-size:13px;color:var(--t2);display:block;margin-bottom:4px">API Key</label>
+      <input id="api-key-input" type="password" class="form-input" placeholder="sk-ant-..." value="${esc(keyVal)}" style="width:100%;font-size:13px;font-family:monospace">
+      <div style="font-size:11px;color:var(--amber, #ff9800);margin-top:4px">Warning: Key is stored in the database and visible in the browser. Use proxy mode for production.</div>
+    </div>
     <div style="display:flex;gap:8px;margin-top:14px">
       <button class="btn-sm" onclick="closeModal()" style="flex:1;background:var(--card-bg);color:var(--t2)">Cancel</button>
       <button class="btn-sm" onclick="submitApiKey()" style="flex:1">Save</button>
     </div>
   </div>`);
-  setTimeout(function () {
-    var el = document.getElementById('api-key-input');
-    if (el) el.focus();
-  }, 100);
 }
 function submitApiKey() {
-  var key = (document.getElementById('api-key-input') || {}).value || '';
-  key = key.trim();
-  if (key && key.startsWith('sk-ant-')) {
-    CLAUDE_API_KEY = key;
-    coupleRef('profiles/apiKey').set(key);
-    closeModal();
-    toast('API key updated');
-  } else if (key) {
-    toast('Invalid key format');
+  var isProxy = document.getElementById('ai-mode-proxy').classList.contains('on');
+  if (isProxy) {
+    var proxyUrl = (document.getElementById('ai-proxy-input') || {}).value || '';
+    proxyUrl = proxyUrl.trim();
+    if (proxyUrl && (proxyUrl.startsWith('https://') || proxyUrl.startsWith('http://localhost'))) {
+      AI_PROXY_URL = proxyUrl;
+      localStorage.setItem('met_ai_proxy', proxyUrl);
+      // Clear direct key from Firebase for security
+      CLAUDE_API_KEY = 'proxy';
+      coupleRef('profiles/apiKey').set('proxy');
+      closeModal();
+      toast('Proxy configured — AI ready');
+      updateAISetupStatus();
+    } else {
+      toast('Enter a valid proxy URL (https://)');
+    }
   } else {
-    closeModal();
+    var key = (document.getElementById('api-key-input') || {}).value || '';
+    key = key.trim();
+    if (key && key.startsWith('sk-ant-')) {
+      CLAUDE_API_KEY = key;
+      coupleRef('profiles/apiKey').set(key);
+      AI_PROXY_URL = '';
+      localStorage.removeItem('met_ai_proxy');
+      closeModal();
+      toast('API key updated');
+      updateAISetupStatus();
+    } else if (key) {
+      toast('Invalid key format — must start with sk-ant-');
+    } else {
+      closeModal();
+    }
+  }
+}
+function updateAISetupStatus() {
+  var el = document.getElementById('ai-setup-status');
+  if (!el) return;
+  if (AI_PROXY_URL) {
+    el.textContent = 'Using proxy (secure)';
+    el.style.color = 'var(--emerald, #4db6ac)';
+  } else if (CLAUDE_API_KEY) {
+    el.textContent = 'Using direct key (less secure)';
+    el.style.color = 'var(--amber, #ff9800)';
+  } else {
+    el.textContent = 'Not configured';
+    el.style.color = 'var(--t3)';
   }
 }
 
@@ -2531,6 +2733,8 @@ function switchSettingsTab(tab) {
   var pg = document.getElementById('pg-settings');
   if (pg) pg.scrollTop = 0;
   window.scrollTo({ top: 0 });
+  // Update AI status on account tab
+  if (tab === 'account' && typeof updateAISetupStatus === 'function') updateAISetupStatus();
 }
 
 // ===== PUSH NOTIFICATIONS (#15) =====

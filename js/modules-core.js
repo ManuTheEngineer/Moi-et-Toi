@@ -680,8 +680,13 @@ async function executeAITool(toolName, toolInput) {
 }
 
 async function sendAI() {
+  // Rate limit check
+  if (!checkAIRateLimit()) {
+    toast('Slow down — too many AI requests. Try again in a minute.');
+    return;
+  }
   // Check for API key
-  if (!CLAUDE_API_KEY) {
+  if (!CLAUDE_API_KEY && !AI_PROXY_URL) {
     openModal(`<div style="text-align:left">
       <h3 style="margin:0 0 8px;font-size:16px;color:var(--t1)">AI Setup</h3>
       <p style="font-size:13px;color:var(--t3);margin:0 0 12px">Enter your Anthropic API key (one-time setup, works for both of you)</p>
@@ -701,6 +706,7 @@ async function sendAI() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
+  if (text.length > 2000) { toast('Message too long (max 2000 chars)'); return; }
   input.value = '';
 
   const msgEl = document.getElementById('chat-messages');
@@ -1833,8 +1839,26 @@ async function gatherFinanceData() {
   return { recentExpenses: expenses };
 }
 
+// ===== AI RATE LIMITING =====
+const _aiRateLimit = { calls: [], maxPerMinute: 8, maxPerHour: 40 };
+
+function checkAIRateLimit() {
+  const now = Date.now();
+  // Clean old entries
+  _aiRateLimit.calls = _aiRateLimit.calls.filter(t => now - t < 3600000);
+  const lastMinute = _aiRateLimit.calls.filter(t => now - t < 60000).length;
+  if (lastMinute >= _aiRateLimit.maxPerMinute) return false;
+  if (_aiRateLimit.calls.length >= _aiRateLimit.maxPerHour) return false;
+  _aiRateLimit.calls.push(now);
+  return true;
+}
+
 async function callAIBackground(prompt) {
-  if (!CLAUDE_API_KEY) return null;
+  if (!CLAUDE_API_KEY && !AI_PROXY_URL) return null;
+  if (!checkAIRateLimit()) {
+    console.warn('AI rate limit reached — skipping call');
+    return null;
+  }
   const headers = AI_PROXY_URL
     ? { 'Content-Type': 'application/json' }
     : {
@@ -2204,6 +2228,7 @@ function initInsightsPage() {
   insightsWeekOffset = 0;
   const weekKey = getWeekKey(0);
   loadWeeklyReport(weekKey);
+  if (typeof renderEngagementDashboard === 'function') renderEngagementDashboard();
 }
 
 // ========================================
