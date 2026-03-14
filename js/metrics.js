@@ -415,16 +415,16 @@ function computeRelationshipHealth() {
   const weekMs = 7 * 86400000;
 
   Promise.all([
-    db.ref('moods').orderByChild('timestamp').limitToLast(60).once('value'),
-    db.ref('letters').orderByChild('timestamp').limitToLast(20).once('value'),
-    db.ref('dreams').once('value'),
-    db.ref('games/wyr').once('value'),
-    db.ref('games/tot').once('value'),
-    db.ref('workoutLogs').orderByChild('timestamp').limitToLast(30).once('value'),
-    db.ref('finances/expenses').orderByChild('timestamp').limitToLast(30).once('value'),
-    db.ref('gratitude').orderByChild('timestamp').limitToLast(10).once('value'),
-    db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(5).once('value'),
-    db.ref('checkins/' + weekId()).once('value')
+    coupleRef('moods').orderByChild('timestamp').limitToLast(60).once('value'),
+    coupleRef('letters').orderByChild('timestamp').limitToLast(20).once('value'),
+    coupleRef('dreams').once('value'),
+    coupleRef('games/wyr').once('value'),
+    coupleRef('games/tot').once('value'),
+    coupleRef('workoutLogs').orderByChild('timestamp').limitToLast(30).once('value'),
+    coupleRef('finances/expenses').orderByChild('timestamp').limitToLast(30).once('value'),
+    coupleRef('gratitude').orderByChild('timestamp').limitToLast(10).once('value'),
+    coupleRef('deepTalkJournal').orderByChild('timestamp').limitToLast(5).once('value'),
+    coupleRef('checkins/' + weekId()).once('value')
   ]).then(([moodSnap, letterSnap, goalSnap, wyrSnap, totSnap, fitSnap, expSnap, gratSnap, dtSnap, ciSnap]) => {
     const breakdown = {};
     let totalWeight = 0,
@@ -646,7 +646,7 @@ function storeWeeklyAnalytics(healthScore) {
     relationshipHealthScore: healthScore || 0,
     updatedAt: Date.now()
   };
-  db.ref('analytics/weekly/' + wk).update(stats);
+  coupleRef('analytics/weekly/' + wk).update(stats);
 }
 
 // ===== CHART RENDERERS =====
@@ -917,7 +917,7 @@ function initMetricsEngine() {
   if (!db) return;
 
   // Load moods
-  db.ref('moods')
+  coupleRef('moods')
     .orderByChild('timestamp')
     .limitToLast(500)
     .once('value', snap => {
@@ -932,7 +932,7 @@ function initMetricsEngine() {
     });
 
   // Load workouts
-  db.ref('workoutLogs')
+  coupleRef('workoutLogs')
     .orderByChild('timestamp')
     .limitToLast(200)
     .once('value', snap => {
@@ -948,9 +948,9 @@ function initMetricsEngine() {
 
   // Load finances
   Promise.all([
-    db.ref('finances/expenses').orderByChild('timestamp').limitToLast(300).once('value'),
-    db.ref('finances/budgets/' + monthId()).once('value'),
-    db.ref('finances/savingsGoals').once('value')
+    coupleRef('finances/expenses').orderByChild('timestamp').limitToLast(300).once('value'),
+    coupleRef('finances/budgets/' + monthId()).once('value'),
+    coupleRef('finances/savingsGoals').once('value')
   ]).then(([expSnap, budSnap, savSnap]) => {
     const expenses = [];
     if (expSnap.exists())
@@ -971,7 +971,7 @@ function initMetricsEngine() {
   });
 
   // Load relationship baselines from onboarding
-  db.ref('baselines').once('value', snap => {
+  coupleRef('baselines').once('value', snap => {
     var data = snap.val();
     if (data) window._relBaselines = data;
   });
@@ -983,14 +983,14 @@ function initMetricsEngine() {
 // Listen for incremental mood updates
 function listenMoodUpdates() {
   if (!db) return;
-  db.ref('moods')
+  coupleRef('moods')
     .orderByChild('timestamp')
     .limitToLast(1)
     .on('child_added', () => {
       // Debounced rebuild
       clearTimeout(MET._moodDebounce);
       MET._moodDebounce = setTimeout(() => {
-        db.ref('moods')
+        coupleRef('moods')
           .orderByChild('timestamp')
           .limitToLast(500)
           .once('value', snap => {
@@ -1110,7 +1110,7 @@ function renderMoodBaseline(u, stats) {
   var bl = window._relBaselines && window._relBaselines[u] && window._relBaselines[u].mood;
   if (!bl) {
     // Try loading if not cached yet
-    db.ref('baselines/' + u + '/mood').once('value', function (snap) {
+    coupleRef('baselines/' + u + '/mood').once('value', function (snap) {
       var data = snap.val();
       if (!data) return;
       if (!window._relBaselines) window._relBaselines = {};

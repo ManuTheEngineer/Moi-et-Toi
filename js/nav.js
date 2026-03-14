@@ -77,6 +77,9 @@ function go(p) {
   // Track for recent pages in quick action sheet
   trackRecentPage(p);
 
+  // Analytics: track page views for feature usage insights
+  if (typeof trackFeatureUse === 'function') trackFeatureUse(p, 'view');
+
   // Update bottom nav active state
   document.querySelectorAll('.bn').forEach(e => e.classList.remove('on'));
   const tabId = TAB_MAP[p] || p;

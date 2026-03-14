@@ -277,30 +277,30 @@ var fitBaseline = null;
 function listenFitnessData() {
   if (!db) return;
   // Load onboarding baseline
-  db.ref('baselines/' + user + '/fitness').once('value', snap => {
+  coupleRef('baselines/' + user + '/fitness').once('value', snap => {
     fitBaseline = snap.val();
     renderFitnessBaseline();
   });
-  db.ref('fitness/' + user + '/workouts')
+  coupleRef('fitness/' + user + '/workouts')
     .orderByChild('date')
     .limitToLast(60)
     .on('value', snap => {
       fitnessData = snap.val() || {};
       renderFitnessHub();
     });
-  db.ref('fitness/' + user + '/prs').on('value', snap => {
+  coupleRef('fitness/' + user + '/prs').on('value', snap => {
     fitPRs = snap.val() || {};
   });
-  db.ref('fitness/' + user + '/body')
+  coupleRef('fitness/' + user + '/body')
     .orderByChild('timestamp')
     .limitToLast(10)
     .on('value', snap => {
       fitBodyData = snap.val() || {};
     });
-  db.ref('fitness/' + user + '/programs').on('value', snap => {
+  coupleRef('fitness/' + user + '/programs').on('value', snap => {
     renderSavedPrograms(snap.val() || {});
   });
-  db.ref('fitness/' + user + '/photos')
+  coupleRef('fitness/' + user + '/photos')
     .orderByChild('timestamp')
     .limitToLast(12)
     .on('value', snap => {
@@ -652,7 +652,7 @@ async function saveCustomProgram() {
     return;
   }
   const name = (document.getElementById('fit-builder-name') || {}).value?.trim() || 'Custom Workout';
-  await db.ref('fitness/' + user + '/programs').push({
+  await coupleRef('fitness/' + user + '/programs').push({
     name,
     exercises: builderExercises.map(e => ({ name: e.name, sets: e.sets, reps: e.reps, category: e.category })),
     created: Date.now()
@@ -685,7 +685,7 @@ function renderSavedPrograms(programs) {
       .join('');
 }
 async function startSavedProgram(key) {
-  const snap = await db.ref('fitness/' + user + '/programs/' + key).once('value');
+  const snap = await coupleRef('fitness/' + user + '/programs/' + key).once('value');
   const prog = snap.val();
   if (!prog) return;
   activeWorkout = {
@@ -704,7 +704,7 @@ async function startSavedProgram(key) {
   startWorkoutTimer();
 }
 async function deleteSavedProgram(key) {
-  await db.ref('fitness/' + user + '/programs/' + key).remove();
+  await coupleRef('fitness/' + user + '/programs/' + key).remove();
   toast('Program deleted');
 }
 function startBuilderWorkout() {
@@ -968,13 +968,13 @@ async function finishWorkout() {
     }),
     user
   };
-  await db.ref('fitness/' + user + '/workouts').push(entry);
+  await coupleRef('fitness/' + user + '/workouts').push(entry);
   // Check PRs
   for (const ex of entry.exercises) {
     const key = ex.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
     const current = fitPRs[key];
     if (!current || ex.weight > (current.weight || 0)) {
-      await db.ref('fitness/' + user + '/prs/' + key).set({
+      await coupleRef('fitness/' + user + '/prs/' + key).set({
         weight: ex.weight,
         sets: ex.sets,
         reps: ex.reps,
@@ -1009,7 +1009,7 @@ async function quickLogExercise() {
   }
   const today = localDate();
   const cat = guessCategory(name);
-  await db.ref('fitness/' + user + '/workouts').push({
+  await coupleRef('fitness/' + user + '/workouts').push({
     program: 'Quick Log',
     date: today,
     timestamp: Date.now(),
@@ -1021,7 +1021,7 @@ async function quickLogExercise() {
   const key = name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
   const current = fitPRs[key];
   if (!current || weight > (current.weight || 0)) {
-    await db.ref('fitness/' + user + '/prs/' + key).set({ weight, sets, reps, date: today });
+    await coupleRef('fitness/' + user + '/prs/' + key).set({ weight, sets, reps, date: today });
   }
   document.getElementById('fit-ex-name').value = '';
   document.getElementById('fit-ex-sets').value = '';
@@ -1072,7 +1072,7 @@ async function logBodyMetrics() {
     data.bmi = Math.round((data.weight / (heightIn * heightIn)) * 703 * 10) / 10;
   }
   const today = localDate();
-  await db.ref('fitness/' + user + '/body/' + today).set(data);
+  await coupleRef('fitness/' + user + '/body/' + today).set(data);
   // Update trends
   Object.keys(fields).forEach(k => {
     const el = document.getElementById(fields[k]);
@@ -1167,8 +1167,8 @@ async function saveProgressPhoto(dataUrl) {
   if (!db || !user) return;
   const type = (document.getElementById('prog-photo-type') || {}).value || 'front';
   const note = (document.getElementById('prog-photo-note') || {}).value || '';
-  const key = db.ref('fitness/' + user + '/photos').push().key;
-  await db.ref('fitness/' + user + '/photos/' + key).set({
+  const key = coupleRef('fitness/' + user + '/photos').push().key;
+  await coupleRef('fitness/' + user + '/photos/' + key).set({
     data: dataUrl,
     type: type,
     note: note,
@@ -1216,7 +1216,7 @@ function renderProgressPhotos(photos) {
 
 function viewProgressPhoto(key) {
   if (!db || !user) return;
-  db.ref('fitness/' + user + '/photos/' + key).once('value', snap => {
+  coupleRef('fitness/' + user + '/photos/' + key).once('value', snap => {
     const p = snap.val();
     if (!p) return;
     const typeLabels = { front: 'Front', side: 'Side', back: 'Back', flex: 'Flex' };
@@ -1243,14 +1243,14 @@ function deleteProgressPhoto(key) {
   </div>`);
 }
 async function confirmDeletePhoto(key) {
-  await db.ref('fitness/' + user + '/photos/' + key).remove();
+  await coupleRef('fitness/' + user + '/photos/' + key).remove();
   closeModal();
   toast('Photo removed');
 }
 
 function compareProgressPhotos() {
   if (!db || !user) return;
-  db.ref('fitness/' + user + '/photos')
+  coupleRef('fitness/' + user + '/photos')
     .orderByChild('timestamp')
     .once('value', snap => {
       const arr = [];
@@ -1931,11 +1931,11 @@ function setGrowPath(path) {
 
 function listenGrowData() {
   if (!db) return;
-  db.ref('grow/' + user + '/completed').on('value', snap => {
+  coupleRef('grow/' + user + '/completed').on('value', snap => {
     growCompleted = snap.val() || {};
     renderGrowModules();
   });
-  db.ref('grow/' + user + '/reflections').on('value', snap => {
+  coupleRef('grow/' + user + '/reflections').on('value', snap => {
     growReflections = snap.val() || {};
   });
 }
@@ -2036,7 +2036,7 @@ function closeGrowLesson() {
   if (growCurrentLesson) {
     const key = growCurrentLesson.path + '_' + growCurrentLesson.moduleId + '_' + growCurrentLesson.lessonIdx;
     const text = document.getElementById('grow-lesson-reflection').value.trim();
-    if (text && db) db.ref('grow/' + user + '/reflections/' + key).set(text);
+    if (text && db) coupleRef('grow/' + user + '/reflections/' + key).set(text);
   }
   document.getElementById('grow-lesson-modal').classList.remove('on');
   document.body.style.overflow = '';
@@ -2047,8 +2047,8 @@ async function completeGrowLesson() {
   if (!growCurrentLesson || !db) return;
   const key = growCurrentLesson.path + '_' + growCurrentLesson.moduleId + '_' + growCurrentLesson.lessonIdx;
   const text = document.getElementById('grow-lesson-reflection').value.trim();
-  await db.ref('grow/' + user + '/completed/' + key).set(true);
-  if (text) await db.ref('grow/' + user + '/reflections/' + key).set(text);
+  await coupleRef('grow/' + user + '/completed/' + key).set(true);
+  if (text) await coupleRef('grow/' + user + '/reflections/' + key).set(text);
   toast('Lesson completed!');
   awardXP(25);
   document.getElementById('grow-complete-btn').textContent = '✓ Completed';
@@ -2061,7 +2061,7 @@ function nextGrowLesson() {
   // Save current reflection
   const key = path + '_' + moduleId + '_' + lessonIdx;
   const text = document.getElementById('grow-lesson-reflection').value.trim();
-  if (text && db) db.ref('grow/' + user + '/reflections/' + key).set(text);
+  if (text && db) coupleRef('grow/' + user + '/reflections/' + key).set(text);
   openGrowLesson(path, moduleId, lessonIdx + 1);
 }
 
@@ -2078,7 +2078,7 @@ async function saveGrowReflection() {
     return;
   }
   const today = localDate();
-  await db.ref('grow/' + user + '/dailyReflections/' + today).set({ text, path: growPath, timestamp: Date.now() });
+  await coupleRef('grow/' + user + '/dailyReflections/' + today).set({ text, path: growPath, timestamp: Date.now() });
   document.getElementById('grow-reflection-input').value = '';
   toast('Reflection saved!');
   awardXP(10);
@@ -2097,17 +2097,17 @@ function listenNutritionData() {
   var today = localDate();
   // If date changed (e.g., past midnight), detach old listener and re-attach
   if (_nutrListenDate && _nutrListenDate !== today) {
-    db.ref('nutrition/' + user + '/meals/' + _nutrListenDate).off();
+    coupleRef('nutrition/' + user + '/meals/' + _nutrListenDate).off();
   }
   _nutrListenDate = today;
-  db.ref('nutrition/' + user + '/meals/' + today).on('value', snap => {
+  coupleRef('nutrition/' + user + '/meals/' + today).on('value', snap => {
     nutritionData = snap.val() || {};
     renderNutritionDay();
   });
   // Only attach recipes listener once (it doesn't change per-page-visit)
   if (!_nutrRecipeListening) {
     _nutrRecipeListening = true;
-    db.ref('nutrition/recipes').on('value', snap => {
+    coupleRef('nutrition/recipes').on('value', snap => {
       recipeData = snap.val() || {};
       renderRecipeList();
     });
@@ -2207,7 +2207,7 @@ async function addMealItem(type) {
   const carbs = parseInt(carbsInput?.value) || 0;
   const fats = parseInt(fatsInput?.value) || 0;
   const today = localDate();
-  await db.ref('nutrition/' + user + '/meals/' + today + '/' + type).push({
+  await coupleRef('nutrition/' + user + '/meals/' + today + '/' + type).push({
     name,
     calories,
     protein,
@@ -2229,7 +2229,7 @@ async function quickAddFood(name, cal, protein, carbs, fats) {
   // Determine meal type by time of day
   const hour = new Date().getHours();
   const type = hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 20 ? 'dinner' : 'snacks';
-  await db.ref('nutrition/' + user + '/meals/' + today + '/' + type).push({
+  await coupleRef('nutrition/' + user + '/meals/' + today + '/' + type).push({
     name,
     calories: cal,
     protein,
@@ -2248,7 +2248,7 @@ function toggleMealSection(type) {
 
 async function logWater(count) {
   const today = localDate();
-  await db.ref('nutrition/' + user + '/meals/' + today + '/water').set(count);
+  await coupleRef('nutrition/' + user + '/meals/' + today + '/water').set(count);
 }
 
 // Meal planning functions consolidated into pg-homelife (modules-life.js)
@@ -2260,7 +2260,7 @@ async function saveRecipe() {
     toast('Enter recipe name');
     return;
   }
-  await db.ref('nutrition/recipes').push({ name, description: desc, user, timestamp: Date.now() });
+  await coupleRef('nutrition/recipes').push({ name, description: desc, user, timestamp: Date.now() });
   document.getElementById('recipe-name').value = '';
   document.getElementById('recipe-desc').value = '';
   toast('Recipe saved');
@@ -2296,7 +2296,7 @@ let calendarEvents = {},
 
 function listenCalendarEvents() {
   if (!db) return;
-  db.ref('calendar').on('value', snap => {
+  coupleRef('calendar').on('value', snap => {
     calendarEvents = snap.val() || {};
     renderCalendar();
   });
@@ -2465,7 +2465,7 @@ async function addCalEvent() {
     toast('Enter title and date');
     return;
   }
-  await db.ref('calendar').push({ title, date, time, type, notes, createdBy: user, timestamp: Date.now() });
+  await coupleRef('calendar').push({ title, date, time, type, notes, createdBy: user, timestamp: Date.now() });
   document.getElementById('cal-event-title').value = '';
   document.getElementById('cal-event-notes').value = '';
   toast('Event added');
@@ -2473,7 +2473,7 @@ async function addCalEvent() {
 }
 
 async function deleteCalEvent(key) {
-  await db.ref('calendar/' + key).remove();
+  await coupleRef('calendar/' + key).remove();
   toast('Event removed');
 }
 
@@ -2487,7 +2487,7 @@ let dreamHomeData = {},
 
 function listenDreamHome() {
   if (!db) return;
-  db.ref('dreamHome').on('value', snap => {
+  coupleRef('dreamHome').on('value', snap => {
     const data = snap.val() || {};
     dreamHomeData = data.rooms || {};
     dhWishlist = data.wishlist || {};
@@ -2509,7 +2509,7 @@ function dhPhase(phase, el) {
 // Load saved config into UI
 function dhLoadAll() {
   if (!db) return;
-  db.ref('dreamHome/config')
+  coupleRef('dreamHome/config')
     .once('value')
     .then(snap => {
       const c = snap.val() || {};
@@ -2642,7 +2642,7 @@ function dhPersonalize() {
 // Save a single config key
 async function dhSave(key, val) {
   if (!db || !val) return;
-  await db.ref('dreamHome/config/' + key).set(val);
+  await coupleRef('dreamHome/config/' + key).set(val);
   toast('Saved');
   dhConfig[key] = val;
   // Update displayed saved values
@@ -2667,14 +2667,14 @@ function dhStep(key, dir) {
   if (key === 'stories' && v > 4) v = 4;
   if (v > 20) v = 20;
   el.textContent = v;
-  if (db) db.ref('dreamHome/config/' + key).set(v);
+  if (db) coupleRef('dreamHome/config/' + key).set(v);
 }
 
 // Plot size
 function dhSelectSize(el, size) {
   document.querySelectorAll('.dh-size-opt').forEach(o => o.classList.remove('sel'));
   el.classList.add('sel');
-  if (db) db.ref('dreamHome/config/plotSize').set(size);
+  if (db) coupleRef('dreamHome/config/plotSize').set(size);
   toast('Plot size: ' + size);
 }
 
@@ -2682,7 +2682,7 @@ function dhSelectSize(el, size) {
 function dhSelectBuild(el, type) {
   document.querySelectorAll('.dh-build-opt').forEach(o => o.classList.remove('sel'));
   el.classList.add('sel');
-  if (db) db.ref('dreamHome/config/buildType').set(type);
+  if (db) coupleRef('dreamHome/config/buildType').set(type);
   toast('Build type saved');
 }
 
@@ -2690,7 +2690,7 @@ function dhSelectBuild(el, type) {
 function dhSelectArch(el, style) {
   document.querySelectorAll('.dh-arch-card').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
-  if (db) db.ref('dreamHome/config/archStyle').set(style);
+  if (db) coupleRef('dreamHome/config/archStyle').set(style);
   const saved = document.getElementById('dh-arch-saved');
   if (saved) saved.textContent = style;
   toast('Style: ' + style);
@@ -2700,7 +2700,7 @@ function dhSelectArch(el, style) {
 function dhToggleTag(el, group, val) {
   el.classList.toggle('sel');
   if (!db) return;
-  const ref = db.ref('dreamHome/config/tags/' + group);
+  const ref = coupleRef('dreamHome/config/tags/' + group);
   // Collect all selected in this group
   const selected = [];
   document.querySelectorAll('.dh-tag.sel').forEach(t => {
@@ -2718,14 +2718,14 @@ function dhToggleColor(el, hex) {
     const match = c.onclick.toString().match(/'(#[A-Fa-f0-9]+)'/);
     if (match) selected.push(match[1]);
   });
-  db.ref('dreamHome/config/colors').set(selected.length ? selected : null);
+  coupleRef('dreamHome/config/colors').set(selected.length ? selected : null);
 }
 
 // Design notes
 async function dhSaveNote() {
   const el = document.getElementById('dh-design-notes');
   if (!el || !el.value.trim() || !db) return;
-  await db.ref('dreamHome/notes').push({ text: el.value.trim(), user, timestamp: Date.now() });
+  await coupleRef('dreamHome/notes').push({ text: el.value.trim(), user, timestamp: Date.now() });
   el.value = '';
   toast('Note saved');
   dhRenderNotes();
@@ -2734,7 +2734,7 @@ async function dhSaveNote() {
 function dhRenderNotes() {
   const container = document.getElementById('dh-notes-list');
   if (!container || !db) return;
-  db.ref('dreamHome/notes')
+  coupleRef('dreamHome/notes')
     .orderByChild('timestamp')
     .limitToLast(20)
     .once('value')
@@ -2765,7 +2765,7 @@ function dhRenderNotes() {
 
 async function dhDelNote(key) {
   if (!db) return;
-  await db.ref('dreamHome/notes/' + key).remove();
+  await coupleRef('dreamHome/notes/' + key).remove();
   dhRenderNotes();
   toast('Note removed');
 }
@@ -2773,7 +2773,7 @@ async function dhDelNote(key) {
 // Budget breakdown save
 async function dhSaveBudget(cat, val) {
   if (!db) return;
-  await db.ref('dreamHome/config/budgetBreakdown/' + cat).set(parseInt(val) || 0);
+  await coupleRef('dreamHome/config/budgetBreakdown/' + cat).set(parseInt(val) || 0);
   dhRenderFinance();
 }
 
@@ -2784,7 +2784,7 @@ function dhSetTimeline(el, phase) {
   document.querySelectorAll('.dh-tl-phase').forEach((p, i) => {
     p.classList.toggle('done', i <= idx);
   });
-  if (db) db.ref('dreamHome/config/timelinePhase').set(phase);
+  if (db) coupleRef('dreamHome/config/timelinePhase').set(phase);
   toast('Phase: ' + phase);
   dhConfig.timelinePhase = phase;
   dhRenderSummary();
@@ -2978,21 +2978,21 @@ async function addRoomIdea() {
 
 async function deleteRoomIdea(key) {
   if (!currentRoom) return;
-  await db.ref('dreamHome/rooms/' + currentRoom + '/' + key).remove();
+  await coupleRef('dreamHome/rooms/' + currentRoom + '/' + key).remove();
 }
 
 async function addHomeWish() {
   const name = document.getElementById('dh-wish-name').value.trim();
   const price = parseInt(document.getElementById('dh-wish-price').value) || 0;
   if (!name) return;
-  await db.ref('dreamHome/wishlist').push({ name, price, user, timestamp: Date.now() });
+  await coupleRef('dreamHome/wishlist').push({ name, price, user, timestamp: Date.now() });
   document.getElementById('dh-wish-name').value = '';
   document.getElementById('dh-wish-price').value = '';
   toast('Added to wishlist');
 }
 
 async function deleteHomeWish(key) {
-  await db.ref('dreamHome/wishlist/' + key).remove();
+  await coupleRef('dreamHome/wishlist/' + key).remove();
   toast('Removed from wishlist');
 }
 
@@ -3089,12 +3089,12 @@ function dhToggleCheck(el) {
   items.forEach((item, i) => {
     state[i] = item.classList.contains('done');
   });
-  db.ref('dreamHome/config/checklist').set(state);
+  coupleRef('dreamHome/config/checklist').set(state);
 }
 
 function dhLoadChecklist() {
   if (!db) return;
-  db.ref('dreamHome/config/checklist')
+  coupleRef('dreamHome/config/checklist')
     .once('value')
     .then(snap => {
       const state = snap.val() || {};
@@ -3112,7 +3112,7 @@ async function addGroceryItem(inputId) {
   if (!input) return;
   const name = input.value.trim();
   if (!name) return;
-  await db.ref('grocery').push({
+  await coupleRef('grocery').push({
     name,
     checked: false,
     addedBy: user,
@@ -3124,7 +3124,7 @@ async function addGroceryItem(inputId) {
 
 function listenGrocery() {
   if (!db) return;
-  db.ref('grocery')
+  coupleRef('grocery')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -3148,7 +3148,7 @@ function listenGrocery() {
             return `<div class="grocery-item ${i.checked ? 'done' : ''}">
           <div class="grocery-check" onclick="toggleGrocery('${i._key}',${!i.checked})">${i.checked ? '✓' : ''}</div>
           <span class="grocery-name">${esc(i.name)}</span>
-          <button class="item-delete" aria-label="Delete" onclick="db.ref('grocery/${i._key}').remove();toast('Removed')">×</button>
+          <button class="item-delete" aria-label="Delete" onclick="coupleRef('grocery/${i._key}').remove();toast('Removed')">×</button>
         </div>`;
           })
           .join('');
@@ -3158,17 +3158,17 @@ function listenGrocery() {
 
 async function toggleGrocery(key, checked) {
   if (!db) return;
-  await db.ref('grocery/' + key + '/checked').set(checked);
+  await coupleRef('grocery/' + key + '/checked').set(checked);
 }
 
 async function clearCheckedGrocery() {
   if (!db) return;
-  const snap = await db.ref('grocery').once('value');
+  const snap = await coupleRef('grocery').once('value');
   const updates = {};
   snap.forEach(c => {
     if (c.val().checked) updates[c.key] = null;
   });
-  await db.ref('grocery').update(updates);
+  await coupleRef('grocery').update(updates);
   toast('Cleared checked items');
 }
 
@@ -3178,7 +3178,7 @@ async function addSharedTodo() {
   const input = document.getElementById('todo-input');
   const title = input.value.trim();
   if (!title) return;
-  await db.ref('sharedTodos').push({
+  await coupleRef('sharedTodos').push({
     title,
     done: false,
     addedBy: user,
@@ -3190,7 +3190,7 @@ async function addSharedTodo() {
 
 function listenSharedTodos() {
   if (!db) return;
-  db.ref('sharedTodos')
+  coupleRef('sharedTodos')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -3215,7 +3215,7 @@ function listenSharedTodos() {
           <span class="todo-title">${esc(i.title)}</span>
           <span class="todo-by">${who}</span>
         </div>
-        <button class="item-delete" aria-label="Delete" onclick="db.ref('sharedTodos/${i._key}').remove();toast('Removed')">×</button>
+        <button class="item-delete" aria-label="Delete" onclick="coupleRef('sharedTodos/${i._key}').remove();toast('Removed')">×</button>
       </div>`;
         })
         .join('');
@@ -3224,7 +3224,7 @@ function listenSharedTodos() {
 
 async function toggleSharedTodo(key, done) {
   if (!db) return;
-  await db.ref('sharedTodos/' + key + '/done').set(done);
+  await coupleRef('sharedTodos/' + key + '/done').set(done);
   if (done) toast('Done ✓');
 }
 
@@ -3258,7 +3258,7 @@ function toggleDHMust(item, btn) {
 
 async function saveDHVision() {
   if (!db || !user) return;
-  await db.ref('dreamHome/vision/' + user).set({
+  await coupleRef('dreamHome/vision/' + user).set({
     colors: dhSelectedColors,
     mustHaves: dhSelectedMusts,
     updatedAt: Date.now()
@@ -3269,7 +3269,7 @@ async function saveDHVision() {
 
 function loadDHVisions() {
   if (!db) return;
-  db.ref('dreamHome/vision').on('value', snap => {
+  coupleRef('dreamHome/vision').on('value', snap => {
     const data = snap.val() || {};
     renderDHVisionCompare(data);
     // Restore selections
@@ -3378,7 +3378,7 @@ var FIT_CHALLENGES = [
 function completeFitChallenge() {
   if (typeof db === 'undefined' || !db) return;
   var today = localDate();
-  db.ref('fitness/' + user + '/challenges/' + today).set({
+  coupleRef('fitness/' + user + '/challenges/' + today).set({
     challenge: document.getElementById('fit-challenge-text').textContent,
     completed: true,
     timestamp: Date.now()
@@ -3402,7 +3402,7 @@ function quickLogWorkout() {
   var note = (document.getElementById('fit-log-note').value || '').trim();
   if (!duration) { toast('How many minutes?'); return; }
   var today = localDate();
-  db.ref('fitness/' + user + '/workouts').push({
+  coupleRef('fitness/' + user + '/workouts').push({
     type: type,
     duration: duration,
     note: note,
@@ -3425,7 +3425,7 @@ function addMealPlan() {
   var slot = document.getElementById('meal-plan-slot').value;
   if (!meal) { toast('What are you eating?'); return; }
   var today = localDate();
-  db.ref('nutrition/mealPlans/' + today).push({
+  coupleRef('nutrition/mealPlans/' + today).push({
     meal: meal,
     slot: slot,
     user: user,
@@ -3441,7 +3441,7 @@ function loadMealPlans() {
   var el = document.getElementById('meal-plan-list');
   if (!el) return;
   var today = localDate();
-  db.ref('nutrition/mealPlans/' + today).orderByChild('timestamp').once('value', function (snap) {
+  coupleRef('nutrition/mealPlans/' + today).orderByChild('timestamp').once('value', function (snap) {
     if (!snap.exists()) { el.innerHTML = ''; return; }
     var items = [];
     snap.forEach(function (c) { var v = c.val(); v._key = c.key; items.push(v); });
@@ -3461,7 +3461,7 @@ function loadMealPlans() {
 
 function deleteMealPlan(key) {
   if (typeof db === 'undefined' || !db) return;
-  db.ref('nutrition/mealPlans/' + localDate() + '/' + key).remove();
+  coupleRef('nutrition/mealPlans/' + localDate() + '/' + key).remove();
   toast('Removed');
   loadMealPlans();
 }
@@ -3497,7 +3497,7 @@ function saveDateMemory() {
   if (typeof db === 'undefined' || !db) return;
   var text = (document.getElementById('dn-memory-text').value || '').trim();
   if (!text) { toast('Write a quick memory first'); return; }
-  db.ref('memories').push({
+  coupleRef('memories').push({
     caption: text,
     album: 'dates',
     date: localDate(),

@@ -40,7 +40,7 @@ function loadWYR() {
   document.getElementById('wyr-result').textContent = '';
   // Load saved answers
   if (db) {
-    db.ref('games/wyr/' + wyrIndex).once('value', snap => {
+    coupleRef('games/wyr/' + wyrIndex).once('value', snap => {
       const data = snap.val();
       if (data && data[user]) {
         document.getElementById('wyr-' + data[user].toLowerCase()).classList.add('picked');
@@ -58,12 +58,12 @@ function loadWYR() {
 
 async function pickWYR(choice) {
   if (!db || !user) return;
-  await db.ref('games/wyr/' + wyrIndex + '/' + user).set(choice);
+  await coupleRef('games/wyr/' + wyrIndex + '/' + user).set(choice);
   document.getElementById('wyr-a').classList.remove('picked');
   document.getElementById('wyr-b').classList.remove('picked');
   document.getElementById('wyr-' + choice.toLowerCase()).classList.add('picked');
   // Check partner answer
-  const snap = await db.ref('games/wyr/' + wyrIndex + '/' + partner).once('value');
+  const snap = await coupleRef('games/wyr/' + wyrIndex + '/' + partner).once('value');
   if (snap.val()) {
     document.getElementById('wyr-' + snap.val().toLowerCase()).classList.add('partner-picked');
     const match = choice === snap.val();
@@ -97,7 +97,7 @@ async function submitQuizQ() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('games/knowme/' + user).push({
+  await coupleRef('games/knowme/' + user).push({
     question: q,
     answer: a,
     timestamp: Date.now()
@@ -120,7 +120,7 @@ async function submitQuizQ() {
 
 function listenQuiz() {
   // My questions
-  db.ref('games/knowme/' + user).on('value', snap => {
+  coupleRef('games/knowme/' + user).on('value', snap => {
     const el = document.getElementById('quiz-mine');
     if (!el) return;
     const qs = [];
@@ -137,7 +137,7 @@ function listenQuiz() {
       .join('');
   });
   // Partner's questions
-  db.ref('games/knowme/' + partner).on('value', snap => {
+  coupleRef('games/knowme/' + partner).on('value', snap => {
     const el = document.getElementById('quiz-theirs');
     if (!el) return;
     const qs = [];
@@ -200,7 +200,7 @@ async function addBucketItem() {
   else if (/try|climb|dive|jump|hike|run|swim|sky|bungee|surf/.test(lower)) cat = 'adventure';
   else if (/house|apartment|decor|garden|furniture|move|build/.test(lower)) cat = 'home';
 
-  await db.ref('bucketList').push({
+  await coupleRef('bucketList').push({
     title,
     emoji,
     category: cat,
@@ -228,12 +228,12 @@ function filterBucket(cat, el) {
   document.querySelectorAll('.bl-cat').forEach(e => e.classList.remove('on'));
   if (el) el.classList.add('on');
   // Remove previous listener before re-attaching to prevent stacking
-  if (db) db.ref('bucketList').off('value');
+  if (db) coupleRef('bucketList').off('value');
   listenBucketList();
 }
 
 function listenBucketList() {
-  db.ref('bucketList')
+  coupleRef('bucketList')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -273,7 +273,7 @@ function renderBucketList(items) {
 
 async function toggleBucket(key, completed) {
   if (!db) return;
-  await db.ref('bucketList/' + key + '/completed').set(completed);
+  await coupleRef('bucketList/' + key + '/completed').set(completed);
   if (completed) toast('Dream achieved');
 }
 
@@ -292,7 +292,7 @@ async function addWishItem() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('wishlists/' + user).push({
+  await coupleRef('wishlists/' + user).push({
     title,
     link,
     priority,
@@ -314,7 +314,7 @@ async function addWishItem() {
 
 function listenWishlists() {
   // My wishlist
-  db.ref('wishlists/' + user)
+  coupleRef('wishlists/' + user)
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -344,7 +344,7 @@ function listenWishlists() {
         .join('');
     });
   // Partner's wishlist
-  db.ref('wishlists/' + partner)
+  coupleRef('wishlists/' + partner)
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -377,7 +377,7 @@ function listenWishlists() {
 
 async function markPurchased(key) {
   if (!db) return;
-  await db.ref('wishlists/' + partner + '/' + key + '/purchased').set(true);
+  await coupleRef('wishlists/' + partner + '/' + key + '/purchased').set(true);
   toast('Marked as purchased');
 }
 
@@ -610,7 +610,7 @@ function filterDN(cat, el) {
 
 async function saveDateIdea() {
   if (!db || !user || !currentDateIdea) return;
-  await db.ref('dateNights').push({
+  await coupleRef('dateNights').push({
     ...currentDateIdea,
     savedBy: user,
     savedByName: NAMES[user],
@@ -622,7 +622,7 @@ async function saveDateIdea() {
 }
 
 function listenDateNights() {
-  db.ref('dateNights')
+  coupleRef('dateNights')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -744,7 +744,7 @@ let llScores = [0, 0, 0, 0, 0];
 
 function loadLLQuiz() {
   if (!db || !user) return;
-  db.ref('loveLang/' + user).once('value', snap => {
+  coupleRef('loveLang/' + user).once('value', snap => {
     const data = snap.val();
     if (data && data.scores) {
       showLLResults();
@@ -789,14 +789,14 @@ function pickLL(choice) {
 
 async function submitLLResults() {
   if (!db || !user) return;
-  await db.ref('loveLang/' + user).set({ scores: llScores, timestamp: Date.now() });
+  await coupleRef('loveLang/' + user).set({ scores: llScores, timestamp: Date.now() });
   showLLResults();
 }
 
 function showLLResults() {
   hideEl('ll-quiz');
   showEl('ll-results');
-  db.ref('loveLang').on('value', snap => {
+  coupleRef('loveLang').on('value', snap => {
     const data = snap.val() || {};
     renderLLProfile('ll-my-primary', 'll-my-bars', data[user]);
     renderLLProfile('ll-partner-primary', 'll-partner-bars', data[partner]);
@@ -885,7 +885,7 @@ async function submitCheckin() {
     btn.textContent = 'Saving...';
   }
   const week = getWeekId();
-  await db.ref('checkins/' + week + '/' + user).set({
+  await coupleRef('checkins/' + week + '/' + user).set({
     well,
     better,
     need,
@@ -908,7 +908,7 @@ async function submitCheckin() {
 }
 
 function listenCheckins() {
-  db.ref('checkins')
+  coupleRef('checkins')
     .orderByKey()
     .limitToLast(8)
     .on('value', snap => {
@@ -1005,7 +1005,7 @@ async function addDream() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await db.ref('dreams').push({
+  await coupleRef('dreams').push({
     title,
     emoji,
     category: cat,
@@ -1039,12 +1039,12 @@ function filterDreams(cat, el) {
   document.querySelectorAll('#dr-cats .bl-cat').forEach(e => e.classList.remove('on'));
   if (el) el.classList.add('on');
   // Remove previous listener before re-attaching to prevent stacking
-  if (db) db.ref('dreams').off('value');
+  if (db) coupleRef('dreams').off('value');
   listenDreams();
 }
 
 function listenDreams() {
-  db.ref('dreams')
+  coupleRef('dreams')
     .orderByChild('timestamp')
     .on('value', snap => {
       const items = [];
@@ -1127,7 +1127,7 @@ function updateDRStats(items) {
 
 async function toggleDream(key, achieved) {
   if (!db) return;
-  await db.ref('dreams/' + key + '/achieved').set(achieved);
+  await coupleRef('dreams/' + key + '/achieved').set(achieved);
   if (achieved) {
     toast('Dream achieved!');
     showConfetti();
@@ -1245,7 +1245,7 @@ let asScores = [0, 0, 0, 0];
 
 function loadASQuiz() {
   if (!db || !user) return;
-  db.ref('attachmentStyle/' + user).once('value', snap => {
+  coupleRef('attachmentStyle/' + user).once('value', snap => {
     const data = snap.val();
     if (data && data.scores) {
       showASResults();
@@ -1285,7 +1285,7 @@ function pickAS(choice) {
 
 async function submitASResults() {
   if (!db || !user) return;
-  await db.ref('attachmentStyle/' + user).set({ scores: asScores, timestamp: Date.now() });
+  await coupleRef('attachmentStyle/' + user).set({ scores: asScores, timestamp: Date.now() });
   showASResults();
   // Recalculate enhanced compatibility
   updateEnhancedCompat();
@@ -1294,7 +1294,7 @@ async function submitASResults() {
 function showASResults() {
   hideEl('as-quiz');
   showEl('as-results');
-  db.ref('attachmentStyle').on('value', snap => {
+  coupleRef('attachmentStyle').on('value', snap => {
     const data = snap.val() || {};
     renderASProfile('as-my-result', data[user]);
     renderASProfile('as-partner-result', data[partner]);
@@ -1477,10 +1477,10 @@ function retakeASQuiz() {
 function updateEnhancedCompat() {
   if (!db) return;
   Promise.all([
-    db.ref('games/wyr').once('value'),
-    db.ref('games/tot').once('value'),
-    db.ref('loveLang').once('value'),
-    db.ref('attachmentStyle').once('value')
+    coupleRef('games/wyr').once('value'),
+    coupleRef('games/tot').once('value'),
+    coupleRef('loveLang').once('value'),
+    coupleRef('attachmentStyle').once('value')
   ]).then(([wyrSnap, totSnap, llSnap, asSnap]) => {
     let gameMatches = 0,
       gameTotal = 0;
@@ -1593,7 +1593,7 @@ let activeGameListener = null;
 
 async function startGame(type, initialState) {
   if (!db || !user) return null;
-  const ref = db.ref('games/sessions').push();
+  const ref = coupleRef('games/sessions').push();
   const session = {
     type,
     ...initialState,
@@ -1609,11 +1609,11 @@ async function startGame(type, initialState) {
 
 function listenGame(key, renderFn) {
   if (activeGameListener) {
-    db.ref('games/sessions/' + activeGameListener).off();
+    coupleRef('games/sessions/' + activeGameListener).off();
   }
   activeGameKey = key;
   activeGameListener = key;
-  db.ref('games/sessions/' + key).on('value', snap => {
+  coupleRef('games/sessions/' + key).on('value', snap => {
     const data = snap.val();
     if (data) renderFn(data, key);
   });
@@ -1621,7 +1621,7 @@ function listenGame(key, renderFn) {
 
 function stopListeningGame() {
   if (activeGameListener) {
-    db.ref('games/sessions/' + activeGameListener).off();
+    coupleRef('games/sessions/' + activeGameListener).off();
     activeGameListener = null;
     activeGameKey = null;
   }
@@ -1629,22 +1629,22 @@ function stopListeningGame() {
 
 async function endGame(key, type, winner) {
   if (!db) return;
-  await db.ref('games/sessions/' + key).update({ winner, status: 'finished', endedAt: Date.now() });
+  await coupleRef('games/sessions/' + key).update({ winner, status: 'finished', endedAt: Date.now() });
   // Update stats
   const myResult = winner === 'draw' ? 'd' : winner === user ? 'w' : 'l';
   const partnerResult = winner === 'draw' ? 'd' : winner === partner ? 'w' : 'l';
-  const myStatsRef = db.ref('games/stats/' + user + '/' + type + '/' + myResult);
-  const partnerStatsRef = db.ref('games/stats/' + partner + '/' + type + '/' + partnerResult);
+  const myStatsRef = coupleRef('games/stats/' + user + '/' + type + '/' + myResult);
+  const partnerStatsRef = coupleRef('games/stats/' + partner + '/' + type + '/' + partnerResult);
   myStatsRef.transaction(v => (v || 0) + 1);
   partnerStatsRef.transaction(v => (v || 0) + 1);
   // Total games
-  db.ref('games/stats/' + user + '/totalGames').transaction(v => (v || 0) + 1);
-  db.ref('games/stats/' + partner + '/totalGames').transaction(v => (v || 0) + 1);
+  coupleRef('games/stats/' + user + '/totalGames').transaction(v => (v || 0) + 1);
+  coupleRef('games/stats/' + partner + '/totalGames').transaction(v => (v || 0) + 1);
   // Win streak for winner
   if (winner !== 'draw' && winner) {
-    db.ref('games/stats/' + winner + '/streak').transaction(v => (v || 0) + 1);
+    coupleRef('games/stats/' + winner + '/streak').transaction(v => (v || 0) + 1);
     const loser = winner === 'partner2' ? 'partner1' : 'partner2';
-    db.ref('games/stats/' + loser + '/streak').set(0);
+    coupleRef('games/stats/' + loser + '/streak').set(0);
   }
   // Celebrate
   if (winner === user) {
@@ -1661,7 +1661,7 @@ async function endGame(key, type, winner) {
 function renderAllGameStats() {
   const el = document.getElementById('game-stats-board');
   if (!el || !db) return;
-  Promise.all([db.ref('games/stats/' + user).once('value'), db.ref('games/stats/' + partner).once('value')]).then(
+  Promise.all([coupleRef('games/stats/' + user).once('value'), coupleRef('games/stats/' + partner).once('value')]).then(
     ([mySnap, theirSnap]) => {
       const my = mySnap.val() || {};
       const their = theirSnap.val() || {};
@@ -1715,7 +1715,7 @@ function renderAllGameStats() {
 // Check for active game invite from partner
 function listenGameInvites() {
   if (!db) return;
-  db.ref('games/sessions')
+  coupleRef('games/sessions')
     .orderByChild('status')
     .equalTo('active')
     .on('value', snap => {
@@ -1828,7 +1828,7 @@ async function newTTT() {
 
 async function playTTT(idx) {
   if (!activeGameKey || !db) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const g = snap.val();
   if (!g || g.status !== 'active' || g.turn !== user || g.board[idx]) return;
   g.board[idx] = user;
@@ -1844,7 +1844,7 @@ async function playTTT(idx) {
     updates.status = 'finished';
     updates.endedAt = Date.now();
   }
-  await db.ref('games/sessions/' + activeGameKey).update(updates);
+  await coupleRef('games/sessions/' + activeGameKey).update(updates);
   if (winner) endGame(activeGameKey, 'ttt', winner);
   else if (isDraw) endGame(activeGameKey, 'ttt', 'draw');
 }
@@ -1930,7 +1930,7 @@ async function newC4() {
 
 async function playC4(col) {
   if (!activeGameKey || !db) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const g = snap.val();
   if (!g || g.status !== 'active' || g.turn !== user) return;
   // Find lowest empty row in column
@@ -1955,7 +1955,7 @@ async function playC4(col) {
     updates.status = 'finished';
     updates.endedAt = Date.now();
   }
-  await db.ref('games/sessions/' + activeGameKey).update(updates);
+  await coupleRef('games/sessions/' + activeGameKey).update(updates);
   if (winner) endGame(activeGameKey, 'c4', winner);
   else if (isDraw) endGame(activeGameKey, 'c4', 'draw');
 }
@@ -2083,7 +2083,7 @@ async function newMemory() {
 
 async function flipMemCard(idx) {
   if (!activeGameKey || !db || memProcessing) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const g = snap.val();
   if (!g || g.status !== 'active' || g.turn !== user || g.matched[idx] || g.revealed[idx]) return;
 
@@ -2096,11 +2096,11 @@ async function flipMemCard(idx) {
   if (flipped.length === 2) {
     memProcessing = true;
     const [a, b] = flipped;
-    await db.ref('games/sessions/' + activeGameKey).update({ revealed: g.revealed, flipped });
+    await coupleRef('games/sessions/' + activeGameKey).update({ revealed: g.revealed, flipped });
 
     // Check match after a delay
     setTimeout(async () => {
-      const freshSnap = await db.ref('games/sessions/' + activeGameKey).once('value');
+      const freshSnap = await coupleRef('games/sessions/' + activeGameKey).once('value');
       const fg = freshSnap.val();
       if (!fg) {
         memProcessing = false;
@@ -2119,17 +2119,17 @@ async function flipMemCard(idx) {
           updates.endedAt = Date.now();
           const winner = fg.scores.partner2 > fg.scores.partner1 ? 'partner2' : fg.scores.partner1 > fg.scores.partner2 ? 'partner1' : 'draw';
           updates.winner = winner;
-          await db.ref('games/sessions/' + activeGameKey).update(updates);
+          await coupleRef('games/sessions/' + activeGameKey).update(updates);
           endGame(activeGameKey, 'memory', winner);
         } else {
           // Same player goes again on match
-          await db.ref('games/sessions/' + activeGameKey).update(updates);
+          await coupleRef('games/sessions/' + activeGameKey).update(updates);
         }
       } else {
         // No match - flip back, switch turns
         fg.revealed[a] = false;
         fg.revealed[b] = false;
-        await db.ref('games/sessions/' + activeGameKey).update({
+        await coupleRef('games/sessions/' + activeGameKey).update({
           revealed: fg.revealed,
           flipped: [],
           turn: partner
@@ -2138,7 +2138,7 @@ async function flipMemCard(idx) {
       memProcessing = false;
     }, 1000);
   } else {
-    await db.ref('games/sessions/' + activeGameKey).update({ revealed: g.revealed, flipped });
+    await coupleRef('games/sessions/' + activeGameKey).update({ revealed: g.revealed, flipped });
   }
 }
 
@@ -2193,13 +2193,13 @@ async function newRPS() {
 
 async function pickRPS(choice) {
   if (!activeGameKey || !db) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const g = snap.val();
   if (!g || g.status !== 'active' || g.choices[user]) return;
-  await db.ref('games/sessions/' + activeGameKey + '/choices/' + user).set(choice);
+  await coupleRef('games/sessions/' + activeGameKey + '/choices/' + user).set(choice);
 
   // Check if both have chosen
-  const fresh = (await db.ref('games/sessions/' + activeGameKey).once('value')).val();
+  const fresh = (await coupleRef('games/sessions/' + activeGameKey).once('value')).val();
   if (fresh.choices.partner2 && fresh.choices.partner1) {
     // Resolve round
     const result = resolveRPS(fresh.choices.partner2, fresh.choices.partner1);
@@ -2213,7 +2213,7 @@ async function pickRPS(choice) {
 
     if (scores.partner2 >= winsNeeded || scores.partner1 >= winsNeeded) {
       const winner = scores.partner2 >= winsNeeded ? 'partner2' : 'partner1';
-      await db.ref('games/sessions/' + activeGameKey).update({
+      await coupleRef('games/sessions/' + activeGameKey).update({
         roundHistory: history,
         totalScores: scores,
         choices: { partner2: null, partner1: null },
@@ -2224,7 +2224,7 @@ async function pickRPS(choice) {
       });
       endGame(activeGameKey, 'rps', winner);
     } else {
-      await db.ref('games/sessions/' + activeGameKey).update({
+      await coupleRef('games/sessions/' + activeGameKey).update({
         roundHistory: history,
         totalScores: scores,
         choices: { partner2: null, partner1: null },
@@ -2341,7 +2341,7 @@ async function submitEmojiGuess() {
   if (!guess) return;
   input.value = '';
 
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const g = snap.val();
   if (!g || g.status !== 'active' || g.guesser !== user) return;
 
@@ -2350,7 +2350,7 @@ async function submitEmojiGuess() {
   guesses.push({ text: guess, correct: isCorrect, timestamp: Date.now() });
 
   if (isCorrect) {
-    await db.ref('games/sessions/' + activeGameKey).update({
+    await coupleRef('games/sessions/' + activeGameKey).update({
       guesses,
       winner: user,
       status: 'finished',
@@ -2358,7 +2358,7 @@ async function submitEmojiGuess() {
     });
     endGame(activeGameKey, 'emoji', user);
   } else if (guesses.length >= (g.maxGuesses || 3)) {
-    await db.ref('games/sessions/' + activeGameKey).update({
+    await coupleRef('games/sessions/' + activeGameKey).update({
       guesses,
       winner: g.clueGiver,
       status: 'finished',
@@ -2366,7 +2366,7 @@ async function submitEmojiGuess() {
     });
     endGame(activeGameKey, 'emoji', g.clueGiver);
   } else {
-    await db.ref('games/sessions/' + activeGameKey).update({ guesses });
+    await coupleRef('games/sessions/' + activeGameKey).update({ guesses });
     toast(`Not quite! ${(g.maxGuesses || 3) - guesses.length} guesses left`);
   }
 }
@@ -2377,7 +2377,7 @@ async function sendCustomEmoji() {
   if (!input) return;
   const clue = input.value.trim();
   if (!clue) return;
-  await db.ref('games/sessions/' + activeGameKey + '/customClue').set(clue);
+  await coupleRef('games/sessions/' + activeGameKey + '/customClue').set(clue);
   toast('Extra clue sent!');
   input.value = '';
 }
@@ -2452,7 +2452,7 @@ async function set21QAnswer() {
     toast('Enter your secret answer');
     return;
   }
-  await db.ref('games/sessions/' + activeGameKey).update({ answer, phase: 'playing' });
+  await coupleRef('games/sessions/' + activeGameKey).update({ answer, phase: 'playing' });
 }
 
 async function ask21Q() {
@@ -2461,23 +2461,23 @@ async function ask21Q() {
   if (!input) return;
   const q = input.value.trim();
   if (!q) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data || data.phase !== 'playing') return;
   const questions = data.questions || [];
   questions.push({ text: q, from: user, answer: null });
-  await db.ref('games/sessions/' + activeGameKey).update({ questions, questionsLeft: (data.questionsLeft || 21) - 1 });
+  await coupleRef('games/sessions/' + activeGameKey).update({ questions, questionsLeft: (data.questionsLeft || 21) - 1 });
   input.value = '';
 }
 
 async function answer21Q(idx, ans) {
   if (!activeGameKey) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data) return;
   const questions = data.questions || [];
   if (questions[idx]) questions[idx].answer = ans;
-  await db.ref('games/sessions/' + activeGameKey).update({ questions });
+  await coupleRef('games/sessions/' + activeGameKey).update({ questions });
 }
 
 async function guess21Q() {
@@ -2486,13 +2486,13 @@ async function guess21Q() {
   if (!input) return;
   const guess = input.value.trim().toLowerCase();
   if (!guess) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data) return;
   const correct = guess === (data.answer || '').toLowerCase();
   const winner = correct ? data.guesser : data.thinker;
   await endGame(activeGameKey, '21q', winner);
-  await db.ref('games/sessions/' + activeGameKey).update({ finalGuess: guess, correct });
+  await coupleRef('games/sessions/' + activeGameKey).update({ finalGuess: guess, correct });
 }
 
 function render21Q(data, key) {
@@ -2597,7 +2597,7 @@ async function submitTTAL() {
     toast('Select which one is the lie');
     return;
   }
-  await db.ref('games/sessions/' + activeGameKey).update({
+  await coupleRef('games/sessions/' + activeGameKey).update({
     statements: [s1, s2, s3],
     lieIndex: lieIdx,
     phase: 'guessing'
@@ -2606,12 +2606,12 @@ async function submitTTAL() {
 
 async function guessTTAL(idx) {
   if (!activeGameKey) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data) return;
   const correct = idx === data.lieIndex;
   const winner = correct ? data.guesser : data.writer;
-  await db.ref('games/sessions/' + activeGameKey).update({ guess: idx });
+  await coupleRef('games/sessions/' + activeGameKey).update({ guess: idx });
   await endGame(activeGameKey, 'ttal', winner);
 }
 
@@ -2694,7 +2694,7 @@ async function submitWord() {
   if (!input) return;
   const word = input.value.trim().toLowerCase();
   if (!word) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data || data.turn !== user || data.status !== 'active') return;
   const words = data.words || [];
@@ -2715,7 +2715,7 @@ async function submitWord() {
   words.push({ word, by: user });
   const scores = data.scores || { partner1: 0, partner2: 0 };
   scores[user] = (scores[user] || 0) + 1;
-  await db.ref('games/sessions/' + activeGameKey).update({
+  await coupleRef('games/sessions/' + activeGameKey).update({
     words,
     scores,
     turn: partner,
@@ -2727,7 +2727,7 @@ async function submitWord() {
 async function passWordChain() {
   if (!activeGameKey) return;
   // Passing means you lose
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data || data.status !== 'active') return;
   await endGame(activeGameKey, 'wordchain', partner);
@@ -2832,7 +2832,7 @@ async function newTrivia() {
 
 async function answerTrivia(answer) {
   if (!activeGameKey) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data || data.status !== 'active' || data.turn !== user) return;
   const q = data.questions[data.current];
@@ -2854,7 +2854,7 @@ async function answerTrivia(answer) {
       // Game over
       const w = scores[user] > scores[partner] ? user : scores[partner] > scores[user] ? partner : 'draw';
       updates.turn = null;
-      await db.ref('games/sessions/' + activeGameKey).update(updates);
+      await coupleRef('games/sessions/' + activeGameKey).update(updates);
       await endGame(activeGameKey, 'trivia', w);
       return;
     } else {
@@ -2864,7 +2864,7 @@ async function answerTrivia(answer) {
   } else {
     updates.turn = partner; // wait for partner
   }
-  await db.ref('games/sessions/' + activeGameKey).update(updates);
+  await coupleRef('games/sessions/' + activeGameKey).update(updates);
 }
 
 function renderTrivia(data, key) {
@@ -2937,7 +2937,7 @@ async function newWar() {
 
 async function flipWar() {
   if (!activeGameKey) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data || data.status !== 'active' || data.phase !== 'flip') return;
   const isP1 = data.startedBy === user;
@@ -2953,12 +2953,12 @@ async function flipWar() {
   updates[myDeck] = deck;
   const otherSlot = isP1 ? 'p2' : 'p1';
   if (played[otherSlot]) updates.phase = 'reveal';
-  await db.ref('games/sessions/' + activeGameKey).update(updates);
+  await coupleRef('games/sessions/' + activeGameKey).update(updates);
 }
 
 async function resolveWar() {
   if (!activeGameKey) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data || data.phase !== 'reveal') return;
   const p = data.played || {};
@@ -2970,7 +2970,7 @@ async function resolveWar() {
 
   if (p.p1.value > p.p2.value) {
     deck1 = [...deck1, ...allCards.sort(() => Math.random() - 0.5)];
-    await db.ref('games/sessions/' + activeGameKey).update({
+    await coupleRef('games/sessions/' + activeGameKey).update({
       deck1,
       deck2,
       played: { p1: null, p2: null },
@@ -2981,7 +2981,7 @@ async function resolveWar() {
     });
   } else if (p.p2.value > p.p1.value) {
     deck2 = [...deck2, ...allCards.sort(() => Math.random() - 0.5)];
-    await db.ref('games/sessions/' + activeGameKey).update({
+    await coupleRef('games/sessions/' + activeGameKey).update({
       deck1,
       deck2,
       played: { p1: null, p2: null },
@@ -2994,7 +2994,7 @@ async function resolveWar() {
     const faceDown1 = deck1.splice(0, Math.min(3, deck1.length));
     const faceDown2 = deck2.splice(0, Math.min(3, deck2.length));
     const newPile = [...allCards, ...faceDown1, ...faceDown2];
-    await db.ref('games/sessions/' + activeGameKey).update({
+    await coupleRef('games/sessions/' + activeGameKey).update({
       deck1,
       deck2,
       played: { p1: null, p2: null },
@@ -3004,7 +3004,7 @@ async function resolveWar() {
       lastWinner: 'war'
     });
   }
-  const updated = (await db.ref('games/sessions/' + activeGameKey).once('value')).val();
+  const updated = (await coupleRef('games/sessions/' + activeGameKey).once('value')).val();
   if (updated && updated.status === 'active') {
     if (!(updated.deck1 || []).length && !updated.played?.p1) {
       await endGame(activeGameKey, 'war', updated.startedBy === 'partner2' ? 'partner1' : 'partner2');
@@ -3147,7 +3147,7 @@ function getCheckerMoves(board, r, c, piece) {
 
 async function clickChecker(r, c) {
   if (!activeGameKey) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data || data.status !== 'active' || data.turn !== user) return;
   const board = data.board;
@@ -3186,7 +3186,7 @@ async function clickChecker(r, c) {
     checkersSelected = null;
     if (move.jump && extraJumps.length) {
       checkersSelected = { sr: r, sc: c };
-      await db.ref('games/sessions/' + activeGameKey).update({ board });
+      await coupleRef('games/sessions/' + activeGameKey).update({ board });
     } else {
       const opColor = myColor === 'light' ? 'dark' : 'light';
       let opPieces = 0;
@@ -3196,10 +3196,10 @@ async function clickChecker(r, c) {
         })
       );
       if (opPieces === 0) {
-        await db.ref('games/sessions/' + activeGameKey).update({ board });
+        await coupleRef('games/sessions/' + activeGameKey).update({ board });
         await endGame(activeGameKey, 'checkers', user);
       } else {
-        await db.ref('games/sessions/' + activeGameKey).update({ board, turn: partner });
+        await coupleRef('games/sessions/' + activeGameKey).update({ board, turn: partner });
       }
     }
   } else {
@@ -3317,7 +3317,7 @@ function checkBooks(hand) {
 
 async function askGoFish(rank) {
   if (!activeGameKey) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data || data.status !== 'active' || data.turn !== user) return;
   const hands = data.hands;
@@ -3340,11 +3340,11 @@ async function askGoFish(rank) {
     hands[user] = result.remaining;
     const updates = { hands, books: bks, lastAction: action, turn: user };
     if (bks.partner2 + bks.partner1 >= 13 || (!hands.partner2.length && !hands.partner1.length && !deck.length)) {
-      await db.ref('games/sessions/' + activeGameKey).update(updates);
+      await coupleRef('games/sessions/' + activeGameKey).update(updates);
       const w = bks[user] > bks[partner] ? user : bks[partner] > bks[user] ? partner : 'draw';
       await endGame(activeGameKey, 'gofish', w);
     } else {
-      await db.ref('games/sessions/' + activeGameKey).update(updates);
+      await coupleRef('games/sessions/' + activeGameKey).update(updates);
     }
   } else {
     action = `${NAMES[user]} asked for ${rank}s - Go Fish!`;
@@ -3360,12 +3360,12 @@ async function askGoFish(rank) {
     hands[user] = result.remaining;
     const updates = { hands, books: bks, deck, lastAction: action, turn: partner };
     if (bks.partner2 + bks.partner1 >= 13 || (!hands.partner2.length && !hands.partner1.length && !deck.length)) {
-      await db.ref('games/sessions/' + activeGameKey).update(updates);
+      await coupleRef('games/sessions/' + activeGameKey).update(updates);
       const w = bks[user] > bks[partner] ? user : bks[partner] > bks[user] ? partner : 'draw';
       await endGame(activeGameKey, 'gofish', w);
     } else {
       if (!hands[user].length && deck.length) hands[user] = [deck.shift()];
-      await db.ref('games/sessions/' + activeGameKey).update(updates);
+      await coupleRef('games/sessions/' + activeGameKey).update(updates);
     }
   }
 }
@@ -3453,7 +3453,7 @@ async function newHangman() {
 
 async function guessHangmanLetter(letter) {
   if (!activeGameKey) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data || data.status !== 'active' || data.guesser !== user) return;
   const guessed = data.guessed || [];
@@ -3467,13 +3467,13 @@ async function guessHangmanLetter(letter) {
   const wordLetters = [...new Set(data.word.split(''))];
   const allGuessed = wordLetters.every(l => guessed.includes(l));
   if (allGuessed) {
-    await db.ref('games/sessions/' + activeGameKey).update(updates);
+    await coupleRef('games/sessions/' + activeGameKey).update(updates);
     await endGame(activeGameKey, 'hangman', data.guesser);
   } else if (wrong >= (data.maxWrong || 6)) {
-    await db.ref('games/sessions/' + activeGameKey).update(updates);
+    await coupleRef('games/sessions/' + activeGameKey).update(updates);
     await endGame(activeGameKey, 'hangman', data.setter);
   } else {
-    await db.ref('games/sessions/' + activeGameKey).update(updates);
+    await coupleRef('games/sessions/' + activeGameKey).update(updates);
   }
 }
 
@@ -3587,7 +3587,7 @@ async function newBattleship() {
 
 async function fireBattleship(r, c) {
   if (!activeGameKey) return;
-  const snap = await db.ref('games/sessions/' + activeGameKey).once('value');
+  const snap = await coupleRef('games/sessions/' + activeGameKey).once('value');
   const data = snap.val();
   if (!data || data.status !== 'active' || data.turn !== user) return;
   const shots = data.shots || {};
@@ -3602,10 +3602,10 @@ async function fireBattleship(r, c) {
   if (isHit) shipsLeft[partner] = (shipsLeft[partner] || 14) - 1;
 
   if (shipsLeft[partner] <= 0) {
-    await db.ref('games/sessions/' + activeGameKey).update({ shots, shipsLeft });
+    await coupleRef('games/sessions/' + activeGameKey).update({ shots, shipsLeft });
     await endGame(activeGameKey, 'battleship', user);
   } else {
-    await db.ref('games/sessions/' + activeGameKey).update({ shots, shipsLeft, turn: partner });
+    await coupleRef('games/sessions/' + activeGameKey).update({ shots, shipsLeft, turn: partner });
   }
 }
 
@@ -3821,7 +3821,7 @@ const CHALLENGE_PACKS = {
 
 function listenChallenges() {
   if (!db) return;
-  db.ref('challenges').on('value', snap => {
+  coupleRef('challenges').on('value', snap => {
     renderChallenges(snap.val() || {});
   });
 }
@@ -3905,7 +3905,7 @@ async function startChallenge(packId) {
   if (!db) return;
   const pack = CHALLENGE_PACKS[packId];
   if (!pack) return;
-  const snap = await db.ref('challenges/active').once('value');
+  const snap = await coupleRef('challenges/active').once('value');
   if (snap.val()) {
     openModal(`<div style="text-align:center">
       <p style="font-size:15px;color:var(--t1);margin:0 0 6px;font-weight:600">Replace Challenge?</p>
@@ -3922,7 +3922,7 @@ async function startChallenge(packId) {
 async function confirmStartChallenge(packId) {
   const pack = CHALLENGE_PACKS[packId];
   if (!pack) return;
-  await db.ref('challenges/active').set({
+  await coupleRef('challenges/active').set({
     packId,
     startedAt: Date.now(),
     startedBy: user,
@@ -3934,24 +3934,24 @@ async function confirmStartChallenge(packId) {
 async function completeChallenge() {
   if (!db) return;
   const today = new Date().toISOString().split('T')[0];
-  await db.ref('challenges/active/completed/' + today).set({
+  await coupleRef('challenges/active/completed/' + today).set({
     by: user,
     at: Date.now()
   });
   toast('Day completed! 🎉');
-  const snap = await db.ref('challenges/active').once('value');
+  const snap = await coupleRef('challenges/active').once('value');
   const active = snap.val();
   if (active) {
     const pack = CHALLENGE_PACKS[active.packId];
     const completedCount = active.completed ? Object.keys(active.completed).length : 0;
     if (pack && completedCount >= pack.days) {
-      await db.ref('challenges/history').push({
+      await coupleRef('challenges/history').push({
         packId: active.packId,
         startedAt: active.startedAt,
         completedAt: Date.now(),
         daysCompleted: completedCount
       });
-      await db.ref('challenges/active').remove();
+      await coupleRef('challenges/active').remove();
       toast('Challenge COMPLETE! 🏆🎉');
     }
   }
@@ -3969,7 +3969,7 @@ function abandonChallenge() {
   </div>`);
 }
 async function confirmAbandonChallenge() {
-  await db.ref('challenges/active').remove();
+  await coupleRef('challenges/active').remove();
   toast('Challenge abandoned');
 }
 
@@ -4047,7 +4047,7 @@ function ltShareSong() {
     startedAt: Date.now(),
     active: true
   };
-  db.ref('listenTogether').set(session);
+  coupleRef('listenTogether').set(session);
   input.value = '';
   toast('Song shared - listening together');
   if (navigator.vibrate) navigator.vibrate(50);
@@ -4057,7 +4057,7 @@ function ltStartListening() {
   if (!db) return;
   if (LT.listener) return; // already listening
   var firstLoad = true;
-  LT.listener = db.ref('listenTogether').on('value', function (snap) {
+  LT.listener = coupleRef('listenTogether').on('value', function (snap) {
     var data = snap.val();
     if (!data || !data.active) {
       if (LT.active) ltClearUI();
@@ -4075,9 +4075,9 @@ function ltStartListening() {
   });
   // Also listen to partner presence changes to update "listening together" status
   var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
-  db.ref('presence/' + partnerRole).on('value', function (snap) {
+  coupleRef('presence/' + partnerRole).on('value', function (snap) {
     if (!LT.active) return;
-    db.ref('listenTogether').once('value', function (s) {
+    coupleRef('listenTogether').once('value', function (s) {
       var d = s.val();
       if (d && d.active) {
         var p = snap.val() || {};
@@ -4091,7 +4091,7 @@ function ltShowSession(data) {
   LT.active = true;
   // Check if partner is online
   var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
-  db.ref('presence/' + partnerRole).once('value', function (snap) {
+  coupleRef('presence/' + partnerRole).once('value', function (snap) {
     var p = snap.val() || {};
     var bothOnline = !!p.online;
     ltUpdateStatus(data, bothOnline);
@@ -4189,7 +4189,7 @@ function ltClearUI() {
 
 function ltEndSession() {
   if (!db) return;
-  db.ref('listenTogether').set({ active: false, endedBy: user, endedAt: Date.now() });
+  coupleRef('listenTogether').set({ active: false, endedBy: user, endedAt: Date.now() });
   toast('Listening session ended');
 }
 
@@ -4295,7 +4295,7 @@ function updatePartnerTimePreview() {
 
   const myTz = getMyTimezone();
   // Get partner's timezone from firebase data
-  db.ref('wakeup/timezone').once('value', function (snap) {
+  coupleRef('wakeup/timezone').once('value', function (snap) {
     const tzData = snap.val() || {};
     const partnerTz = tzData[partner] || myTz;
     const converted = convertTimeToTimezone(timeInput.value, myTz, partnerTz);
@@ -4335,10 +4335,10 @@ function setWakeUpTime() {
   }
 
   // Save timezone
-  db.ref('wakeup/timezone/' + user).set(myTz);
+  coupleRef('wakeup/timezone/' + user).set(myTz);
 
   // Save alarm
-  db.ref('wakeup/alarms/' + today + '/' + user)
+  coupleRef('wakeup/alarms/' + today + '/' + user)
     .set({
       time: timeInput.value,
       timezone: myTz,
@@ -4367,7 +4367,7 @@ function sendGoodnightMsg() {
   }
 
   const today = localDate();
-  db.ref('wakeup/goodnight/' + today + '/' + user)
+  coupleRef('wakeup/goodnight/' + today + '/' + user)
     .set({
       message: input.value.trim(),
       timestamp: Date.now(),
@@ -4390,7 +4390,7 @@ function sendWakeUp() {
   const today = localDate();
   const btn = document.getElementById('wu-wake-btn');
 
-  db.ref('wakeup/wakeups/' + today)
+  coupleRef('wakeup/wakeups/' + today)
     .push({
       from: user,
       fromName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
@@ -4408,7 +4408,7 @@ function sendWakeUp() {
       toast('Wake up sent!');
 
       // Mark their alarm as woken up
-      db.ref('wakeup/alarms/' + today + '/' + partner + '/wokenUp').set(true);
+      coupleRef('wakeup/alarms/' + today + '/' + partner + '/wokenUp').set(true);
     });
 }
 
@@ -4423,7 +4423,7 @@ function toggleRitual(el, key) {
 
   // Sync ritual to firebase
   if (db && user) {
-    db.ref('wakeup/rituals/' + today + '/' + user + '/' + key).set(wuRituals[key]);
+    coupleRef('wakeup/rituals/' + today + '/' + user + '/' + key).set(wuRituals[key]);
   }
 
   // Check if all rituals done
@@ -4438,9 +4438,9 @@ function listenWakeUp() {
   const today = localDate();
 
   // Listen for alarm changes
-  if (wuListener) db.ref('wakeup').off('value', wuListener);
+  if (wuListener) coupleRef('wakeup').off('value', wuListener);
 
-  wuListener = db.ref('wakeup').on('value', function (snap) {
+  wuListener = coupleRef('wakeup').on('value', function (snap) {
     const data = snap.val() || {};
     const alarms = (data.alarms && data.alarms[today]) || {};
     const goodnights = (data.goodnight && data.goodnight[today]) || {};
@@ -4614,7 +4614,7 @@ function scheduleAlarm() {
   clearAlarm();
   if (!db || !user) return;
   var today = localDate();
-  db.ref('wakeup/alarms/' + today + '/' + user).once('value', function (snap) {
+  coupleRef('wakeup/alarms/' + today + '/' + user).once('value', function (snap) {
     var alarm = snap.val();
     if (!alarm || !alarm.time || alarm.wokenUp) return;
     var ms = msUntilAlarm(alarm.time, alarm.timezone || getMyTimezone());
@@ -4653,14 +4653,14 @@ function fireAlarm(alarm) {
   if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 300, 200, 300]);
   // Fetch partner's goodnight message, then show overlay
   var today = localDate();
-  db.ref('wakeup/goodnight/' + today + '/' + partner).once('value', function (snap) {
+  coupleRef('wakeup/goodnight/' + today + '/' + partner).once('value', function (snap) {
     var gn = snap.val();
     showWakeUpOverlay(alarm, gn);
   });
   // Notify partner that our alarm fired
   notifyPartnerAlarmFired();
   // Mark alarm as wokenUp (fired)
-  db.ref('wakeup/alarms/' + today + '/' + user + '/firedAt').set(Date.now());
+  coupleRef('wakeup/alarms/' + today + '/' + user + '/firedAt').set(Date.now());
 }
 
 /* ---------- Web Audio alarm tone ---------- */
@@ -4779,10 +4779,10 @@ function dismissAlarm() {
   var today = localDate();
   if (db && user) {
     // Mark alarm as confirmed awake
-    db.ref('wakeup/alarms/' + today + '/' + user + '/wokenUp').set(true);
-    db.ref('wakeup/alarms/' + today + '/' + user + '/wokeAt').set(Date.now());
+    coupleRef('wakeup/alarms/' + today + '/' + user + '/wokenUp').set(true);
+    coupleRef('wakeup/alarms/' + today + '/' + user + '/wokeAt').set(Date.now());
     // Record confirmation so partner sees it
-    db.ref('wakeup/confirmations/' + today + '/' + user).set({
+    coupleRef('wakeup/confirmations/' + today + '/' + user).set({
       timestamp: Date.now(),
       userName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
       snoozeCount: wuSnoozeCount
@@ -4806,7 +4806,7 @@ function snoozeAlarm() {
   // Notify partner about snooze
   if (db && user) {
     var today = localDate();
-    db.ref('wakeup/snoozes/' + today).push({
+    coupleRef('wakeup/snoozes/' + today).push({
       from: user,
       fromName: typeof NAMES !== 'undefined' ? NAMES[user] : user,
       timestamp: Date.now(),
@@ -4823,10 +4823,10 @@ function snoozeAlarm() {
     if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 300, 200, 300]);
     // Re-show overlay with updated snooze count
     var today = localDate();
-    db.ref('wakeup/alarms/' + today + '/' + user).once('value', function (snap) {
+    coupleRef('wakeup/alarms/' + today + '/' + user).once('value', function (snap) {
       var alarm = snap.val();
       if (!alarm) return;
-      db.ref('wakeup/goodnight/' + today + '/' + partner).once('value', function (gnSnap) {
+      coupleRef('wakeup/goodnight/' + today + '/' + partner).once('value', function (gnSnap) {
         showWakeUpOverlay(alarm, gnSnap.val());
       });
     });
@@ -4883,7 +4883,7 @@ function listenPartnerWakeEvents() {
   var today = localDate();
 
   // Partner confirmed awake
-  db.ref('wakeup/confirmations/' + today + '/' + partner).on('value', function (snap) {
+  coupleRef('wakeup/confirmations/' + today + '/' + partner).on('value', function (snap) {
     var conf = snap.val();
     if (!conf) return;
     var partnerName = typeof NAMES !== 'undefined' ? NAMES[partner] : 'Your partner';
@@ -4901,7 +4901,7 @@ function listenPartnerWakeEvents() {
   });
 
   // Partner snoozed
-  db.ref('wakeup/snoozes/' + today).orderByChild('from').equalTo(partner)
+  coupleRef('wakeup/snoozes/' + today).orderByChild('from').equalTo(partner)
     .on('child_added', function (snap) {
       var s = snap.val();
       if (!s || Date.now() - s.timestamp > 10000) return; // only show fresh snoozes

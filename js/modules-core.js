@@ -50,8 +50,8 @@ async function submitMood() {
   const dedicated = document.getElementById('mood-dedicate-check');
   if (dedicated && dedicated.checked) entry.dedicatedTo = partner;
 
-  const key = db.ref('moods').push().key;
-  await db.ref('moods/' + key).set(entry);
+  const key = coupleRef('moods').push().key;
+  await coupleRef('moods/' + key).set(entry);
   document.getElementById('mood-note').value = '';
   if (dedicated) dedicated.checked = false;
   selectedMood = 0;
@@ -77,7 +77,7 @@ async function submitMood() {
 }
 
 function listenMoods() {
-  db.ref('moods')
+  coupleRef('moods')
     .orderByChild('timestamp')
     .limitToLast(50)
     .on('value', snap => {
@@ -351,7 +351,7 @@ function renderStreakCalendar() {
   const el = document.getElementById('streak-cal');
   if (!el || !db) return;
 
-  db.ref('moods')
+  coupleRef('moods')
     .orderByChild('timestamp')
     .limitToLast(100)
     .once('value', snap => {
@@ -581,7 +581,7 @@ async function executeAITool(toolName, toolInput) {
     case 'log_mood': {
       if (!db) return { error: 'Database not connected' };
       const today = new Date().toISOString().split('T')[0];
-      await db.ref('moods').push({
+      await coupleRef('moods').push({
         mood: toolInput.mood,
         energy: toolInput.energy,
         note: toolInput.note || '',
@@ -619,7 +619,7 @@ async function executeAITool(toolName, toolInput) {
     case 'add_expense': {
       if (!db) return { error: 'Database not connected' };
       const today = new Date().toISOString().split('T')[0];
-      await db.ref('finances/expenses').push({
+      await coupleRef('finances/expenses').push({
         amount: toolInput.amount,
         category: toolInput.category,
         note: toolInput.note || '',
@@ -631,7 +631,7 @@ async function executeAITool(toolName, toolInput) {
     }
     case 'send_note': {
       if (!db) return { error: 'Database not connected' };
-      await db.ref('letters').push({
+      await coupleRef('letters').push({
         from: user,
         fromName: NAMES[user],
         message: toolInput.message,
@@ -646,7 +646,7 @@ async function executeAITool(toolName, toolInput) {
     }
     case 'add_calendar_event': {
       if (!db) return { error: 'Database not connected' };
-      await db.ref('calendar').push({
+      await coupleRef('calendar').push({
         title: toolInput.title,
         date: toolInput.date,
         notes: toolInput.notes || '',
@@ -659,7 +659,7 @@ async function executeAITool(toolName, toolInput) {
       if (!db) return { error: 'Database not connected' };
       const isShared = toolInput.type === 'shared';
       const path = isShared ? 'personalGoals/shared' : 'personalGoals/' + user;
-      await db.ref(path).push({
+      await coupleRef(path).push({
         title: toolInput.title,
         done: false,
         timestamp: Date.now()
@@ -812,7 +812,7 @@ async function submitAIKey() {
     return;
   }
   CLAUDE_API_KEY = key;
-  await db.ref('profiles/apiKey').set(key);
+  await coupleRef('profiles/apiKey').set(key);
   closeModal();
   toast('API key saved');
   sendAI();
@@ -877,8 +877,8 @@ async function submitLog() {
     timestamp: Date.now(),
     date: localDate()
   };
-  const key = db.ref('workoutLogs').push().key;
-  await db.ref('workoutLogs/' + key).set(entry);
+  const key = coupleRef('workoutLogs').push().key;
+  await coupleRef('workoutLogs/' + key).set(entry);
   closeLog();
   if (typeof logActivity === 'function') logActivity('fitness', 'logged a workout');
   toast('Workout logged');
@@ -903,7 +903,7 @@ async function sendTap(e, type, emoji) {
     fromName: NAMES[user],
     timestamp: Date.now()
   };
-  await db.ref('taps').push(entry);
+  await coupleRef('taps').push(entry);
   if (typeof logActivity === 'function') logActivity('taps', 'sent ' + type);
   // Haptic feedback if available
   if (navigator.vibrate) navigator.vibrate(50);
@@ -916,7 +916,7 @@ async function sendTap(e, type, emoji) {
 }
 
 function listenTaps() {
-  db.ref('taps')
+  coupleRef('taps')
     .orderByChild('timestamp')
     .limitToLast(20)
     .on('value', snap => {
@@ -1028,7 +1028,7 @@ async function sendLetter() {
 
   if (isOpenWhen) {
     // Save as sealed "open when" letter
-    await db.ref('openWhenLetters').push({
+    await coupleRef('openWhenLetters').push({
       from: user,
       fromName: NAMES[user],
       message: text,
@@ -1048,7 +1048,7 @@ async function sendLetter() {
       timestamp: Date.now(),
       read: false
     };
-    await db.ref('letters').push(entry);
+    await coupleRef('letters').push(entry);
     if (typeof sendInAppNotif === 'function') sendInAppNotif('letter', 'Sent you a letter', '💌');
     toast('Delivered');
   }
@@ -1065,7 +1065,7 @@ async function sendLetter() {
 
 function listenOpenWhenLetters() {
   if (!db) return;
-  db.ref('openWhenLetters')
+  coupleRef('openWhenLetters')
     .orderByChild('timestamp')
     .on('value', snap => {
       const letters = [];
@@ -1127,12 +1127,12 @@ function renderOpenWhenLetters(letters) {
 
 async function openSealedLetter(key) {
   if (!db) return;
-  await db.ref('openWhenLetters/' + key + '/opened').set(true);
+  await coupleRef('openWhenLetters/' + key + '/opened').set(true);
   toast('Letter opened 💌');
 }
 
 function listenLetters() {
-  db.ref('letters')
+  coupleRef('letters')
     .orderByChild('timestamp')
     .limitToLast(30)
     .on('value', snap => {
@@ -1147,7 +1147,7 @@ function listenLetters() {
       // Mark unread letters from partner as read
       letters.forEach(l => {
         if (l.from !== user && !l.read) {
-          db.ref('letters/' + l._key + '/read').set(true);
+          coupleRef('letters/' + l._key + '/read').set(true);
         }
       });
     });
@@ -1205,7 +1205,7 @@ async function saveMilestone() {
     userName: NAMES[user],
     timestamp: Date.now()
   };
-  await db.ref('milestones').push(entry);
+  await coupleRef('milestones').push(entry);
   document.getElementById('ms-title').value = '';
   document.getElementById('ms-date').value = '';
   document.getElementById('ms-emoji').value = '';
@@ -1219,7 +1219,7 @@ async function saveMilestone() {
 }
 
 function listenMilestones() {
-  db.ref('milestones')
+  coupleRef('milestones')
     .orderByChild('date')
     .on('value', snap => {
       const milestones = [];
@@ -1275,7 +1275,7 @@ async function saveCountdown() {
     createdBy: user,
     timestamp: Date.now()
   };
-  await db.ref('countdowns').push(entry);
+  await coupleRef('countdowns').push(entry);
   document.getElementById('cd-title').value = '';
   document.getElementById('cd-date').value = '';
   document.getElementById('cd-emoji').value = '';
@@ -1288,7 +1288,7 @@ async function saveCountdown() {
 }
 
 function listenCountdowns() {
-  db.ref('countdowns').on('value', snap => {
+  coupleRef('countdowns').on('value', snap => {
     const countdowns = [];
     snap.forEach(c => countdowns.push(c.val()));
     renderCountdowns(countdowns);
@@ -1396,7 +1396,7 @@ async function submitDailyAnswer() {
     btn.textContent = 'Saving...';
   }
   const today = localDate();
-  await db.ref('dailyAnswers/' + today + '/' + user).set({
+  await coupleRef('dailyAnswers/' + today + '/' + user).set({
     answer,
     userName: NAMES[user],
     timestamp: Date.now()
@@ -1412,7 +1412,7 @@ async function submitDailyAnswer() {
 
 function listenDailyAnswers() {
   const today = localDate();
-  db.ref('dailyAnswers/' + today).on('value', snap => {
+  coupleRef('dailyAnswers/' + today).on('value', snap => {
     const data = snap.val() || {};
     renderDailyAnswers(data);
   });
@@ -1446,7 +1446,7 @@ function renderDailyAnswers(data) {
 
 // ===== STREAKS =====
 function listenStreak() {
-  db.ref('streaks').on('value', snap => {
+  coupleRef('streaks').on('value', snap => {
     const data = snap.val() || { current: 0, longest: 0 };
     const countEl = document.getElementById('streak-count');
     if (countEl) countEl.textContent = data.current || 0;
@@ -1457,7 +1457,7 @@ function listenStreak() {
 async function updateStreak() {
   if (!db || !user) return;
   const today = localDate();
-  const snap = await db.ref('streaks').once('value');
+  const snap = await coupleRef('streaks').once('value');
   const data = snap.val() || { current: 0, longest: 0, lastCheckIn: {} };
   if (!data.lastCheckIn) data.lastCheckIn = {};
   data.lastCheckIn[user] = today;
@@ -1489,7 +1489,7 @@ async function updateStreak() {
   if (data.lastCheckIn.partner2 && data.lastCheckIn.partner2 !== today) data.prevCheckIn.partner2 = data.lastCheckIn.partner2;
   if (data.lastCheckIn.partner1 && data.lastCheckIn.partner1 !== today) data.prevCheckIn.partner1 = data.lastCheckIn.partner1;
 
-  await db.ref('streaks').set(data);
+  await coupleRef('streaks').set(data);
 }
 
 // ===== GRATITUDE =====
@@ -1513,7 +1513,7 @@ async function submitGratitude() {
     date: localDate(),
     timestamp: Date.now()
   };
-  await db.ref('gratitude').push(entry);
+  await coupleRef('gratitude').push(entry);
   input.value = '';
   if (typeof logActivity === 'function') logActivity('gratitude', 'shared gratitude');
   if (btn) {
@@ -1527,7 +1527,7 @@ async function submitGratitude() {
 }
 
 function listenGratitude() {
-  db.ref('gratitude')
+  coupleRef('gratitude')
     .orderByChild('timestamp')
     .limitToLast(20)
     .on('value', snap => {
@@ -1616,7 +1616,7 @@ function initAIBackgroundService() {
   if (!db || !CLAUDE_API_KEY) return;
   // Check each role and run if overdue
   Object.entries(AI_ROLES).forEach(([key, role]) => {
-    db.ref('ai/roles/' + role.lastRunKey).once('value', snap => {
+    coupleRef('ai/roles/' + role.lastRunKey).once('value', snap => {
       const lastRun = snap.val() || 0;
       const now = Date.now();
       if (now - lastRun > role.interval) {
@@ -1627,7 +1627,7 @@ function initAIBackgroundService() {
     });
   });
   // Listen for nudges
-  db.ref('ai/nudges/' + user)
+  coupleRef('ai/nudges/' + user)
     .orderByChild('timestamp')
     .limitToLast(5)
     .on('value', snap => {
@@ -1679,7 +1679,7 @@ async function runAIRole(roleKey, role) {
     const result = await callAIBackground(prompt);
     if (result) {
       await processAIRoleResult(roleKey, result);
-      await db.ref('ai/roles/' + role.lastRunKey).set(now);
+      await coupleRef('ai/roles/' + role.lastRunKey).set(now);
     }
   } catch (e) {
     console.warn('AI role ' + roleKey + ' failed:', e);
@@ -1778,7 +1778,7 @@ Be helpful and non-judgmental. Return ONLY valid JSON.`;
 
 async function gatherMoodData() {
   if (!db) return {};
-  const snap = await db.ref('moods').orderByChild('timestamp').limitToLast(30).once('value');
+  const snap = await coupleRef('moods').orderByChild('timestamp').limitToLast(30).once('value');
   const moods = [];
   snap.forEach(c => moods.push(c.val()));
   return { recentMoods: moods, count: moods.length };
@@ -1787,9 +1787,9 @@ async function gatherMoodData() {
 async function gatherMilestoneData() {
   if (!db) return {};
   const [msSnap, cdSnap, calSnap] = await Promise.all([
-    db.ref('milestones').once('value'),
-    db.ref('countdowns').once('value'),
-    db.ref('calendar').once('value')
+    coupleRef('milestones').once('value'),
+    coupleRef('countdowns').once('value'),
+    coupleRef('calendar').once('value')
   ]);
   return {
     milestones: msSnap.val() || {},
@@ -1801,9 +1801,9 @@ async function gatherMilestoneData() {
 async function gatherGoalData() {
   if (!db) return {};
   const [partner2Goals, partner1Goals, shared] = await Promise.all([
-    db.ref('personalGoals/partner2').once('value'),
-    db.ref('personalGoals/partner1').once('value'),
-    db.ref('personalGoals/shared').once('value')
+    coupleRef('personalGoals/partner2').once('value'),
+    coupleRef('personalGoals/partner1').once('value'),
+    coupleRef('personalGoals/shared').once('value')
   ]);
   return {
     partner2: partner2Goals.val() || {},
@@ -1816,8 +1816,8 @@ async function gatherWellnessData() {
   if (!db) return {};
   const today = new Date().toISOString().split('T')[0];
   const [nutrSnap, fitSnap] = await Promise.all([
-    db.ref('nutrition/' + user + '/meals/' + today).once('value'),
-    db.ref('fitness/workouts').orderByChild('timestamp').limitToLast(10).once('value')
+    coupleRef('nutrition/' + user + '/meals/' + today).once('value'),
+    coupleRef('fitness/workouts').orderByChild('timestamp').limitToLast(10).once('value')
   ]);
   const workouts = [];
   fitSnap.forEach(c => workouts.push(c.val()));
@@ -1826,7 +1826,7 @@ async function gatherWellnessData() {
 
 async function gatherFinanceData() {
   if (!db) return {};
-  const snap = await db.ref('finances/expenses').orderByChild('timestamp').limitToLast(30).once('value');
+  const snap = await coupleRef('finances/expenses').orderByChild('timestamp').limitToLast(30).once('value');
   const expenses = [];
   snap.forEach(c => expenses.push(c.val()));
   return { recentExpenses: expenses };
@@ -1874,19 +1874,19 @@ async function processAIRoleResult(roleKey, result) {
     case 'contentCurator': {
       // Write fresh content to Firebase
       const today = new Date().toISOString().split('T')[0];
-      if (result.dailyQuestion) await db.ref('ai/content/' + today + '/dailyQuestion').set(result.dailyQuestion);
-      if (result.dateIdea) await db.ref('ai/content/' + today + '/dateIdea').set(result.dateIdea);
-      if (result.affirmation) await db.ref('ai/content/' + today + '/affirmation').set(result.affirmation);
+      if (result.dailyQuestion) await coupleRef('ai/content/' + today + '/dailyQuestion').set(result.dailyQuestion);
+      if (result.dateIdea) await coupleRef('ai/content/' + today + '/dateIdea').set(result.dateIdea);
+      if (result.affirmation) await coupleRef('ai/content/' + today + '/affirmation').set(result.affirmation);
       if (result.conversationStarter)
-        await db.ref('ai/content/' + today + '/conversationStarter').set(result.conversationStarter);
-      if (result.challenge) await db.ref('ai/content/' + today + '/challenge').set(result.challenge);
+        await coupleRef('ai/content/' + today + '/conversationStarter').set(result.conversationStarter);
+      if (result.challenge) await coupleRef('ai/content/' + today + '/challenge').set(result.challenge);
       break;
     }
     case 'relationshipMonitor': {
       if (result.nudgePartner1)
-        await db.ref('ai/nudges/partner1').push({ message: result.nudgePartner1, type: 'relationship', timestamp: now });
+        await coupleRef('ai/nudges/partner1').push({ message: result.nudgePartner1, type: 'relationship', timestamp: now });
       if (result.nudgePartner2)
-        await db.ref('ai/nudges/partner2').push({ message: result.nudgePartner2, type: 'relationship', timestamp: now });
+        await coupleRef('ai/nudges/partner2').push({ message: result.nudgePartner2, type: 'relationship', timestamp: now });
       if (result.insight)
         await db
           .ref('ai/insights/relationship')
@@ -1897,8 +1897,8 @@ async function processAIRoleResult(roleKey, result) {
       if (result.upcoming && result.upcoming.length > 0) {
         result.upcoming.forEach(async item => {
           if (item.daysAway <= 3) {
-            await db.ref('ai/nudges/partner1').push({ message: item.reminder, type: 'milestone', timestamp: now });
-            await db.ref('ai/nudges/partner2').push({ message: item.reminder, type: 'milestone', timestamp: now });
+            await coupleRef('ai/nudges/partner1').push({ message: item.reminder, type: 'milestone', timestamp: now });
+            await coupleRef('ai/nudges/partner2').push({ message: item.reminder, type: 'milestone', timestamp: now });
           }
         });
       }
@@ -1906,26 +1906,26 @@ async function processAIRoleResult(roleKey, result) {
     }
     case 'goalCoach': {
       if (result.nudgePartner1)
-        await db.ref('ai/nudges/partner1').push({ message: result.nudgePartner1, type: 'goals', timestamp: now });
+        await coupleRef('ai/nudges/partner1').push({ message: result.nudgePartner1, type: 'goals', timestamp: now });
       if (result.nudgePartner2)
-        await db.ref('ai/nudges/partner2').push({ message: result.nudgePartner2, type: 'goals', timestamp: now });
+        await coupleRef('ai/nudges/partner2').push({ message: result.nudgePartner2, type: 'goals', timestamp: now });
       break;
     }
     case 'wellnessAdvisor': {
       const nudge = result.celebration || result.nudge;
       if (nudge) {
-        await db.ref('ai/nudges/partner1').push({ message: nudge, type: 'wellness', timestamp: now });
-        await db.ref('ai/nudges/partner2').push({ message: nudge, type: 'wellness', timestamp: now });
+        await coupleRef('ai/nudges/partner1').push({ message: nudge, type: 'wellness', timestamp: now });
+        await coupleRef('ai/nudges/partner2').push({ message: nudge, type: 'wellness', timestamp: now });
       }
       break;
     }
     case 'financeGuardian': {
       if (result.alert) {
-        await db.ref('ai/nudges/partner1').push({ message: result.alert, type: 'finance', timestamp: now });
-        await db.ref('ai/nudges/partner2').push({ message: result.alert, type: 'finance', timestamp: now });
+        await coupleRef('ai/nudges/partner1').push({ message: result.alert, type: 'finance', timestamp: now });
+        await coupleRef('ai/nudges/partner2').push({ message: result.alert, type: 'finance', timestamp: now });
       } else if (result.tip) {
-        await db.ref('ai/nudges/partner1').push({ message: result.tip, type: 'finance', timestamp: now });
-        await db.ref('ai/nudges/partner2').push({ message: result.tip, type: 'finance', timestamp: now });
+        await coupleRef('ai/nudges/partner1').push({ message: result.tip, type: 'finance', timestamp: now });
+        await coupleRef('ai/nudges/partner2').push({ message: result.tip, type: 'finance', timestamp: now });
       }
       break;
     }
@@ -1962,14 +1962,14 @@ async function dismissAINudge(key) {
     card.classList.add('nudge-dismiss');
     card.addEventListener('animationend', function () { card.remove(); });
   }
-  await db.ref('ai/nudges/' + user + '/' + key + '/dismissed').set(true);
+  await coupleRef('ai/nudges/' + user + '/' + key + '/dismissed').set(true);
 }
 
 // Load AI-generated daily content for dashboard
 async function loadAIDailyContent() {
   if (!db) return;
   const today = new Date().toISOString().split('T')[0];
-  const snap = await db.ref('ai/content/' + today).once('value');
+  const snap = await coupleRef('ai/content/' + today).once('value');
   const content = snap.val();
   if (!content) return;
   // Show the card

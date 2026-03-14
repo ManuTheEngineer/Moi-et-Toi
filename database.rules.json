@@ -1,0 +1,31 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid"
+      }
+    },
+    "couples": {
+      "$coupleId": {
+        ".read": "root.child('couples/' + $coupleId + '/members/partner1').val() === auth.uid || root.child('couples/' + $coupleId + '/members/partner2').val() === auth.uid",
+        ".write": "root.child('couples/' + $coupleId + '/members/partner1').val() === auth.uid || root.child('couples/' + $coupleId + '/members/partner2').val() === auth.uid",
+        "members": {
+          "partner2": {
+            ".write": "auth != null && (data.val() === null || data.val() === auth.uid)"
+          }
+        }
+      }
+    },
+    "invites": {
+      "$code": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "config": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}

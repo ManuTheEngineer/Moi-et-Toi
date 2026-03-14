@@ -20,8 +20,8 @@ let NICKNAMES = { partner1CallsPartner2: '', partner2CallsPartner1: '' };
 // ==========================================
 
 let db,
-  user,
-  partner,
+  user,        // current user's UID (or legacy 'partner1'/'partner2')
+  partner,     // partner's UID (or legacy 'partner1'/'partner2')
   authUser,
   selectedMood = 0,
   logExercises = [],
@@ -29,8 +29,113 @@ let db,
   chatHistory = [];
 let _authResolved = false; // set true once onAuthStateChanged fires at least once
 
+// ===== COUPLE CONTEXT =====
+// Multi-tenant: all shared data lives under couples/{coupleId}/
+let _coupleId = null;
+
+// coupleRef('moods/abc') → db.ref('couples/{coupleId}/moods/abc')
+// Falls back to db.ref(path) for legacy single-tenant mode
+function coupleRef(path) {
+  if (_coupleId) return db.ref('couples/' + _coupleId + '/' + path);
+  return db.ref(path); // legacy fallback
+}
+
+// userRef('settings') → db.ref('users/{uid}/settings')
+// Falls back to db.ref(path) for legacy mode
+function userRef(path) {
+  if (authUser && _coupleId) return db.ref('users/' + authUser.uid + '/' + path);
+  return db.ref(path); // legacy fallback
+}
+
 // Map email to profile role — loaded from Firebase at init
 let EMAIL_MAP = {};
+
+// ===== INVITE SYSTEM =====
+function generateInviteCode() {
+  var chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no ambiguous chars
+  var code = '';
+  for (var i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+  return code;
+}
+
+async function createCouple() {
+  if (!authUser) return;
+  var coupleId = db.ref('couples').push().key;
+  var inviteCode = generateInviteCode();
+  await db.ref('couples/' + coupleId).set({
+    members: { partner1: authUser.uid },
+    status: 'pending',
+    inviteCode: inviteCode,
+    createdAt: Date.now()
+  });
+  await db.ref('invites/' + inviteCode).set({
+    coupleId: coupleId,
+    createdBy: authUser.uid,
+    createdAt: Date.now()
+  });
+  await db.ref('users/' + authUser.uid + '/coupleId').set(coupleId);
+  _coupleId = coupleId;
+  user = 'partner1';
+  partner = 'partner2';
+  return { coupleId: coupleId, inviteCode: inviteCode };
+}
+
+async function joinWithCode(code) {
+  if (!authUser) throw new Error('Not authenticated');
+  code = code.trim().toUpperCase();
+  var snap = await db.ref('invites/' + code).once('value');
+  var invite = snap.val();
+  if (!invite || !invite.coupleId) throw new Error('Invalid invite code');
+  // Check couple exists and has room
+  var coupleSnap = await db.ref('couples/' + invite.coupleId).once('value');
+  var couple = coupleSnap.val();
+  if (!couple) throw new Error('Couple not found');
+  if (couple.members.partner2) throw new Error('This couple already has two partners');
+  if (couple.members.partner1 === authUser.uid) throw new Error('You created this couple — share the code with your partner');
+  // Join as partner2
+  await db.ref('couples/' + invite.coupleId + '/members/partner2').set(authUser.uid);
+  await db.ref('couples/' + invite.coupleId + '/status').set('active');
+  await db.ref('users/' + authUser.uid + '/coupleId').set(invite.coupleId);
+  // Clean up invite
+  await db.ref('invites/' + code).remove();
+  _coupleId = invite.coupleId;
+  user = 'partner2';
+  partner = 'partner1';
+  return { coupleId: invite.coupleId };
+}
+
+// Resolve couple context from authenticated user
+async function resolveCoupleContext() {
+  if (!authUser) return false;
+  // Check if user has a couple
+  var snap = await db.ref('users/' + authUser.uid + '/coupleId').once('value');
+  var coupleId = snap.val();
+  if (!coupleId) return false;
+  // Load couple data
+  var coupleSnap = await db.ref('couples/' + coupleId).once('value');
+  var couple = coupleSnap.val();
+  if (!couple || !couple.members) return false;
+  _coupleId = coupleId;
+  // Determine role
+  if (couple.members.partner1 === authUser.uid) {
+    user = 'partner1';
+    partner = 'partner2';
+  } else if (couple.members.partner2 === authUser.uid) {
+    user = 'partner2';
+    partner = 'partner1';
+  } else {
+    return false;
+  }
+  return true;
+}
+
+// Check if couple has both partners
+async function coupleIsComplete() {
+  if (!_coupleId) return false;
+  var snap = await db.ref('couples/' + _coupleId + '/members').once('value');
+  var members = snap.val();
+  return !!(members && members.partner1 && members.partner2);
+}
 
 // ===== FIREBASE LISTENER REGISTRY =====
 // Tracks all .on() listeners so they can be cleaned up per-page or globally
@@ -87,10 +192,8 @@ async function init() {
   try {
     db.goOnline();
   } catch (e) {}
-  // Keep key refs synced for offline access
-  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles', 'config/emailMap'].forEach(function (p) {
-    db.ref(p).keepSynced(true);
-  });
+  // Keep key refs synced for offline access (set up after couple context is resolved)
+  db.ref('config/emailMap').keepSynced(true);
 
   // Start connection state monitoring
   initConnectionMonitor();
@@ -105,12 +208,30 @@ async function init() {
   // Load email-to-role mapping from Firebase (keeps emails out of source code)
   await loadEmailMap();
 
+  // Check URL for invite code
+  var urlInvite = new URLSearchParams(window.location.search).get('invite');
+
   // Check if already signed in
   firebase.auth().onAuthStateChanged(async fbUser => {
     if (fbUser) {
       _authResolved = true;
       authUser = fbUser;
-      // Retry loading email map if it's empty — Firebase rules may require auth
+
+      // Try new multi-tenant couple context first
+      if (await resolveCoupleContext()) {
+        await loadProfiles();
+        loadLivingSkyPref();
+        if (needsOnboarding()) {
+          showFirstLocationPrompt();
+        } else if (await coupleIsComplete() && await partnerHasOnboarded()) {
+          finishLogin();
+        } else {
+          showWaitingForPartner();
+        }
+        return;
+      }
+
+      // Legacy flow: email-map based role assignment
       if (Object.keys(EMAIL_MAP).length === 0) {
         await loadEmailMap();
       }
@@ -119,27 +240,17 @@ async function init() {
         user = role;
         partner = role === 'partner1' ? 'partner2' : 'partner1';
         await loadProfiles();
-        // Load living sky preference and render (sky-scene is outside shell, always visible)
-        db.ref('settings/livingSky/' + role).once('value', snap => {
-          var val = snap.val();
-          livingSkyEnabled = val !== false;
-          if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
-        });
+        loadLivingSkyPref();
         if (needsOnboarding()) {
           showFirstLocationPrompt();
         } else if (await partnerHasOnboarded()) {
-          // Returning user — go straight in
           finishLogin();
         } else {
           showWaitingForPartner();
         }
       } else {
-        firebase.auth().signOut();
-        showError(
-          Object.keys(EMAIL_MAP).length === 0
-            ? 'Could not verify account. Check your connection and try again.'
-            : 'Account not authorized.'
-        );
+        // Authenticated but no couple — show couple setup
+        showCoupleSetup();
       }
     } else {
       // Clean up any legacy stored credentials (previously btoa-encoded)
@@ -151,6 +262,11 @@ async function init() {
           _authResolved = true;
           showEl('login-form');
           hideEl('welcome-gate');
+          // Pre-fill invite code from URL if present
+          if (urlInvite) {
+            var invInput = document.getElementById('invite-code-input');
+            if (invInput) invInput.value = urlInvite;
+          }
         }
       }, 4000);
     }
@@ -206,7 +322,7 @@ async function migrateRolesToNeutral() {
     var migrated = localStorage.getItem('met_roles_migrated');
     if (migrated) return;
     // Check if old-format profiles exist
-    var profileSnap = await db.ref('profiles').once('value');
+    var profileSnap = await coupleRef('profiles').once('value');
     var profiles = profileSnap.val();
     if (!profiles) return;
     // If partner1 already exists, migration is done
@@ -243,7 +359,7 @@ async function migrateRolesToNeutral() {
         updates['config/emailMap'] = newMap;
       }
       // Migrate settings paths: settings/*/her → settings/*/partner2, settings/*/him → settings/*/partner1
-      var settingsSnap = await db.ref('settings').once('value');
+      var settingsSnap = await coupleRef('settings').once('value');
       var settings = settingsSnap.val();
       if (settings) {
         Object.keys(settings).forEach(function (key) {
@@ -267,63 +383,111 @@ async function migrateRolesToNeutral() {
   }
 }
 
+// ===== LOGIN MODE TOGGLE =====
+var _isSignUp = false;
+function toggleLoginMode() {
+  _isSignUp = !_isSignUp;
+  var label = document.getElementById('login-mode-label');
+  var nameField = document.getElementById('login-name');
+  var toggleText = document.getElementById('login-toggle-text');
+  var toggleLink = document.getElementById('login-toggle-link');
+  var submitBtn = document.getElementById('login-submit-btn');
+  if (label) label.textContent = _isSignUp ? 'Create Account' : 'Sign In';
+  if (nameField) nameField.classList.toggle('d-none', !_isSignUp);
+  if (toggleText) toggleText.textContent = _isSignUp ? 'Already have an account?' : "Don't have an account?";
+  if (toggleLink) toggleLink.textContent = _isSignUp ? 'Sign in' : 'Sign up';
+  if (submitBtn) submitBtn.textContent = _isSignUp ? 'Create Account' : 'Come in';
+  showError('');
+}
+
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value;
+  const nameField = document.getElementById('login-name');
+  const displayName = nameField ? nameField.value.trim() : '';
 
+  if (_isSignUp && !displayName) {
+    showError('Enter your name');
+    return;
+  }
   if (!email || !pass) {
     showError('Enter email and password');
     return;
   }
+  if (_isSignUp && pass.length < 6) {
+    showError('Password must be at least 6 characters');
+    return;
+  }
 
   try {
-    const result = await firebase.auth().signInWithEmailAndPassword(email, pass);
-    showError(''); // Clear any previous error message on successful login
-    // Firebase LOCAL persistence keeps the session across cold starts — no need to store passwords
+    var result;
+    if (_isSignUp) {
+      result = await firebase.auth().createUserWithEmailAndPassword(email, pass);
+      authUser = result.user;
+      // Create user profile node
+      await db.ref('users/' + authUser.uid).set({
+        profile: { name: displayName, email: email },
+        createdAt: Date.now()
+      });
+      showError('');
+      // Show couple setup (create or join)
+      showCoupleSetup();
+      return;
+    } else {
+      result = await firebase.auth().signInWithEmailAndPassword(email, pass);
+    }
+    showError('');
     try {
       firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     } catch (e) {}
-    // Clean up any legacy saved credentials
     localStorage.removeItem('met_auto_login');
     authUser = result.user;
-    // Reload email map now that we're authenticated (rules may require auth)
+
+    // Try new multi-tenant flow first
+    if (await resolveCoupleContext()) {
+      await loadProfiles();
+      loadLivingSkyPref();
+      if (needsOnboarding()) {
+        showFirstLocationPrompt();
+      } else if (await coupleIsComplete() && await partnerHasOnboarded()) {
+        finishLogin();
+      } else {
+        showWaitingForPartner();
+      }
+      return;
+    }
+
+    // Legacy flow: email map based role assignment
     if (Object.keys(EMAIL_MAP).length === 0) {
       await loadEmailMap();
     }
     const role = EMAIL_MAP[email];
 
-    if (!role) {
-      firebase.auth().signOut();
-      showError(
-        Object.keys(EMAIL_MAP).length === 0
-          ? 'Could not verify account. Check your connection and try again.'
-          : 'Account not authorized.'
-      );
+    if (role) {
+      user = role;
+      partner = role === 'partner1' ? 'partner2' : 'partner1';
+      await loadProfiles();
+      loadLivingSkyPref();
+      if (needsOnboarding()) {
+        showFirstLocationPrompt();
+      } else if (await partnerHasOnboarded()) {
+        finishLogin();
+      } else {
+        showWaitingForPartner();
+      }
       return;
     }
 
-    user = role;
-    partner = role === 'partner1' ? 'partner2' : 'partner1';
-    await loadProfiles();
-    // Load living sky preference and render (sky-scene is outside shell, always visible)
-    db.ref('settings/livingSky/' + role).once('value', snap => {
-      var val = snap.val();
-      livingSkyEnabled = val !== false;
-      if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
-    });
-    if (needsOnboarding()) {
-      showFirstLocationPrompt();
-    } else if (await partnerHasOnboarded()) {
-      finishLogin();
-    } else {
-      showWaitingForPartner();
-    }
+    // No couple context and no legacy role — show couple setup
+    showCoupleSetup();
   } catch (e) {
     console.error('Login error:', e.code, e.message);
     if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
       showError('Wrong email or password.');
     } else if (e.code === 'auth/user-not-found') {
-      showError('Account not found.');
+      showError('Account not found. Sign up first.');
+    } else if (e.code === 'auth/email-already-in-use') {
+      showError('Email already registered. Sign in instead.');
     } else if (e.code === 'auth/invalid-email') {
       showError('Invalid email format.');
     } else if (e.code === 'auth/too-many-requests') {
@@ -334,6 +498,109 @@ async function doLogin() {
   }
 }
 
+function loadLivingSkyPref() {
+  if (!db || !user) return;
+  coupleRef('settings/livingSky/' + user).once('value', snap => {
+    var val = snap.val();
+    livingSkyEnabled = val !== false;
+    if (typeof setLivingSky === 'function') setLivingSky(livingSkyEnabled);
+  });
+}
+
+// ===== COUPLE SETUP UI =====
+function showCoupleSetup() {
+  hideEl('login-form');
+  hideEl('welcome-gate');
+  var logo = document.getElementById('login-logo');
+  var heading = document.getElementById('login-heading');
+  var sub = document.getElementById('login-sub');
+  if (logo) logo.style.display = 'none';
+  if (heading) heading.style.display = 'none';
+  if (sub) sub.style.display = 'none';
+  showEl('couple-setup');
+}
+
+var _createdInviteCode = '';
+async function handleCreateCouple() {
+  try {
+    var result = await createCouple();
+    _createdInviteCode = result.inviteCode;
+    hideEl('couple-setup');
+    showEl('invite-display');
+    var codeEl = document.getElementById('invite-code-display');
+    if (codeEl) codeEl.textContent = result.inviteCode;
+    // Start watching for partner to join
+    _startPartnerJoinWatch();
+  } catch (e) {
+    var err = document.getElementById('cs-err');
+    if (err) err.textContent = e.message || 'Could not create couple';
+  }
+}
+
+async function handleJoinCouple() {
+  var input = document.getElementById('invite-code-input');
+  var code = input ? input.value.trim().toUpperCase() : '';
+  if (!code || code.length < 4) {
+    var err = document.getElementById('cs-err');
+    if (err) err.textContent = 'Enter the invite code your partner shared';
+    return;
+  }
+  try {
+    await joinWithCode(code);
+    await loadProfiles();
+    hideEl('couple-setup');
+    if (needsOnboarding()) {
+      showFirstLocationPrompt();
+    } else {
+      finishLogin();
+    }
+  } catch (e) {
+    var err = document.getElementById('cs-err');
+    if (err) err.textContent = e.message || 'Could not join couple';
+  }
+}
+
+function copyInviteCode() {
+  if (!_createdInviteCode) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(_createdInviteCode).then(function () {
+      toast('Code copied!');
+    });
+  } else {
+    // Fallback
+    var t = document.createElement('textarea');
+    t.value = _createdInviteCode;
+    document.body.appendChild(t);
+    t.select();
+    document.execCommand('copy');
+    document.body.removeChild(t);
+    toast('Code copied!');
+  }
+}
+
+// Watch for partner2 to join the couple (real-time)
+var _partnerJoinRef = null;
+function _startPartnerJoinWatch() {
+  if (!_coupleId || _partnerJoinRef) return;
+  _partnerJoinRef = db.ref('couples/' + _coupleId + '/members/partner2');
+  _partnerJoinRef.on('value', function (snap) {
+    var p2uid = snap.val();
+    if (p2uid) {
+      _stopPartnerJoinWatch();
+      hideEl('invite-display');
+      // Partner joined — proceed to onboarding or app
+      if (needsOnboarding()) {
+        showFirstLocationPrompt();
+      } else {
+        finishLogin();
+      }
+    }
+  });
+}
+function _stopPartnerJoinWatch() {
+  if (_partnerJoinRef) { _partnerJoinRef.off(); _partnerJoinRef = null; }
+}
+
 function showError(msg) {
   const el = document.getElementById('login-err');
   if (el) el.textContent = msg;
@@ -341,7 +608,7 @@ function showError(msg) {
 
 async function loadProfiles() {
   return new Promise(resolve => {
-    db.ref('profiles').on('value', snap => {
+    coupleRef('profiles').on('value', snap => {
       const data = snap.val();
       // Reset to empty so onboarding triggers if profiles were wiped
       NAMES.partner1 = esc((data && data.partner1) || '');
@@ -366,7 +633,7 @@ async function loadProfiles() {
 let myPhoto = '';
 function listenPhoto() {
   if (!db || !user) return;
-  db.ref('photos/' + user).on('value', snap => {
+  coupleRef('photos/' + user).on('value', snap => {
     const d = snap.val();
     myPhoto = (d && d.data) || '';
     applyPhoto();
@@ -387,7 +654,7 @@ function applyPhoto() {
 let partnerPhoto = '';
 function listenPartnerPhoto() {
   if (!db || !partner) return;
-  db.ref('photos/' + partner).on('value', snap => {
+  coupleRef('photos/' + partner).on('value', snap => {
     const d = snap.val();
     partnerPhoto = (d && d.data) || '';
     applyPartnerPhoto();
@@ -422,7 +689,7 @@ function changePartnerPhoto() {
   input.onchange = function () {
     if (!input.files || !input.files[0]) return;
     resizePhoto(input.files[0], function (dataUrl) {
-      db.ref('photos/' + partner).set({
+      coupleRef('photos/' + partner).set({
         data: dataUrl,
         setBy: user,
         timestamp: Date.now()
@@ -439,7 +706,7 @@ function needsOnboarding() {
 
 async function partnerHasOnboarded() {
   try {
-    var snap = await db.ref('profiles/' + partner).once('value');
+    var snap = await coupleRef('profiles/' + partner).once('value');
     var name = snap.val();
     return !!name && name !== 'Partner 1' && name !== 'Partner 2';
   } catch (e) {
@@ -491,7 +758,7 @@ function handleFirstLocationAllow() {
 function handleFirstLocationSkip() {
   // Mark as prompted so the delayed prompt in initWeatherSystem doesn't fire again
   if (db && user) {
-    db.ref('settings/weather/' + user + '/prompted').set(true);
+    coupleRef('settings/weather/' + user + '/prompted').set(true);
   }
   hideEl('first-location-prompt');
   startOnboarding();
@@ -601,7 +868,7 @@ function obBroadcastStep() {
     data.morningMsgEnabled = onboardData.morningMsgEnabled;
     if (onboardData.morningCustomMsg) data.morningCustomMsg = onboardData.morningCustomMsg;
   }
-  db.ref('onboarding/' + user).set(data);
+  coupleRef('onboarding/' + user).set(data);
 }
 
 // Partner's live onboarding data (received in real-time)
@@ -611,7 +878,7 @@ let obPartnerData = { name: '', nickname: '', agreementsTogether: [], morningMsg
 let obPartnerListener = null;
 function obListenPartner() {
   if (!db || !partner) return;
-  obPartnerListener = db.ref('onboarding/' + partner);
+  obPartnerListener = coupleRef('onboarding/' + partner);
   obPartnerListener.on('value', function (snap) {
     var data = snap.val();
     var el = document.getElementById('ob-partner-status');
@@ -657,7 +924,7 @@ function obListenPartner() {
 
 // Clean up onboarding status when done
 function obCleanupStatus() {
-  if (db && user) db.ref('onboarding/' + user).update({ active: false });
+  if (db && user) coupleRef('onboarding/' + user).update({ active: false });
   if (obPartnerListener) obPartnerListener.off();
 }
 
@@ -1486,23 +1753,23 @@ async function finishOnboarding(startTour) {
   NICKNAMES[nickKey] = onboardData.nickname;
   if (onboardData.nickname) NAMES[partner] = onboardData.nickname;
   var profileUpdate = { [user]: onboardData.name, [nickKey]: onboardData.nickname };
-  await db.ref('profiles').update(profileUpdate);
+  await coupleRef('profiles').update(profileUpdate);
 
   // Photo
   if (onboardData.photo) {
-    await db.ref('photos/' + partner).set({ data: onboardData.photo, setBy: user, timestamp: Date.now() });
+    await coupleRef('photos/' + partner).set({ data: onboardData.photo, setBy: user, timestamp: Date.now() });
   }
   // Anniversary
   if (onboardData.anniversary) {
-    await db.ref('settings/anniversary').set(onboardData.anniversary);
+    await coupleRef('settings/anniversary').set(onboardData.anniversary);
   }
   // Birthday
   if (onboardData.birthday) {
-    await db.ref('settings/birthday/' + user).set(onboardData.birthday);
+    await coupleRef('settings/birthday/' + user).set(onboardData.birthday);
   }
   // Mood baseline
   if (onboardData.mood) {
-    await db.ref('baselines/' + user + '/mood').set({
+    await coupleRef('baselines/' + user + '/mood').set({
       mood: onboardData.mood,
       energy: onboardData.energy,
       stress: onboardData.stress,
@@ -1510,7 +1777,7 @@ async function finishOnboarding(startTour) {
       source: 'onboarding'
     });
     // Also log as first mood entry
-    await db.ref('moods').push({
+    await coupleRef('moods').push({
       user: user,
       mood: onboardData.mood,
       energy: onboardData.energy,
@@ -1528,10 +1795,10 @@ async function finishOnboarding(startTour) {
     if (onboardData.weight) fitData.weight = parseFloat(onboardData.weight);
     if (onboardData.activityLevel) fitData.activityLevel = onboardData.activityLevel;
     if (onboardData.fitnessGoal) fitData.fitnessGoal = onboardData.fitnessGoal;
-    await db.ref('baselines/' + user + '/fitness').set(fitData);
+    await coupleRef('baselines/' + user + '/fitness').set(fitData);
     // Also log as first body entry
     if (onboardData.weight) {
-      await db.ref('fitness/' + user + '/body').push({
+      await coupleRef('fitness/' + user + '/body').push({
         weight: parseFloat(onboardData.weight),
         timestamp: Date.now(),
         date: localDate()
@@ -1540,7 +1807,7 @@ async function finishOnboarding(startTour) {
   }
   // Relationship baseline
   if (onboardData.commRating || onboardData.qualityRating || onboardData.connectedRating) {
-    await db.ref('baselines/' + user + '/relationship').set({
+    await coupleRef('baselines/' + user + '/relationship').set({
       communication: onboardData.commRating,
       qualityTime: onboardData.qualityRating,
       connection: onboardData.connectedRating,
@@ -1553,10 +1820,10 @@ async function finishOnboarding(startTour) {
     var agreeData = { timestamp: Date.now(), by: user };
     if (onboardData.agreementsMine.length) agreeData.personal = onboardData.agreementsMine;
     if (onboardData.agreementsTogether.length) agreeData.together = onboardData.agreementsTogether;
-    await db.ref('agreements/onboarding/' + user).set(agreeData);
+    await coupleRef('agreements/onboarding/' + user).set(agreeData);
   }
   // Morning message settings
-  await db.ref('settings/morningMsg/' + user).set({
+  await coupleRef('settings/morningMsg/' + user).set({
     enabled: onboardData.morningMsgEnabled,
     customMsg: onboardData.morningCustomMsg || '',
     nickname: onboardData.nickname || onboardData.name
@@ -1570,16 +1837,16 @@ async function finishOnboarding(startTour) {
 
   // Living Sky — sky-scene is outside shell so it can render immediately
   livingSkyEnabled = onboardData.livingSky;
-  await db.ref('settings/livingSky/' + user).set(onboardData.livingSky);
+  await coupleRef('settings/livingSky/' + user).set(onboardData.livingSky);
   if (typeof setLivingSky === 'function') setLivingSky(onboardData.livingSky);
 
   // Sky theme
   var skyTheme = onboardData.skyTheme || 'mixed';
-  await db.ref('settings/skyTheme/' + user).set(skyTheme);
+  await coupleRef('settings/skyTheme/' + user).set(skyTheme);
   if (typeof applySkyTheme === 'function') applySkyTheme(skyTheme);
 
   // Nature sounds preference
-  await db.ref('settings/natureSounds/' + user).set(onboardData.natureSoundsEnabled);
+  await coupleRef('settings/natureSounds/' + user).set(onboardData.natureSoundsEnabled);
   if (onboardData.natureSoundsEnabled && typeof toggleAmbientAudio === 'function') {
     toggleAmbientAudio(true);
   }
@@ -1849,7 +2116,7 @@ function showWaitingForPartner() {
 
 function _startPartnerWatch() {
   if (_wfpProfileRef) return;
-  _wfpProfileRef = db.ref('profiles/' + partner);
+  _wfpProfileRef = coupleRef('profiles/' + partner);
   _wfpProfileRef.on('value', function (snap) {
     var name = snap.val();
     if (name && name !== 'Partner 1' && name !== 'Partner 2') {
@@ -1858,7 +2125,7 @@ function _startPartnerWatch() {
       finishLogin();
     }
   });
-  _wfpOnboardRef = db.ref('onboarding/' + partner);
+  _wfpOnboardRef = coupleRef('onboarding/' + partner);
   _wfpOnboardRef.on('value', function (snap) {
     var data = snap.val();
     var statusEl = document.getElementById('wfp-status');
@@ -1898,7 +2165,7 @@ function showWelcomeGate() {
   // Show photo partner chose for you on the welcome gate
   const welcomePhotoEl = document.getElementById('welcome-photo');
   if (welcomePhotoEl && db) {
-    db.ref('photos/' + user).once('value', snap => {
+    coupleRef('photos/' + user).once('value', snap => {
       const d = snap.val();
       if (d && d.data) {
         welcomePhotoEl.innerHTML = '<img src="' + d.data + '" class="welcome-photo-img" alt="">';
@@ -1965,7 +2232,29 @@ function _waitForAuth(timeout) {
   });
 }
 
+// ===== ANALYTICS =====
+// Track feature usage for engagement insights
+var _analyticsThrottle = {};
+function trackFeatureUse(feature, action) {
+  if (!db || !user) return;
+  // Throttle: max one event per feature+action per 30 seconds
+  var key = feature + ':' + action;
+  var now = Date.now();
+  if (_analyticsThrottle[key] && now - _analyticsThrottle[key] < 30000) return;
+  _analyticsThrottle[key] = now;
+  coupleRef('analytics/usage').push({
+    feature: feature,
+    action: action,
+    user: user,
+    timestamp: now
+  });
+}
+
 function finishLogin() {
+  // Keep key couple refs synced for offline access
+  ['moods', 'letters', 'taps', 'streaks', 'gratitude', 'profiles'].forEach(function (p) {
+    coupleRef(p).keepSynced(true);
+  });
   // Apply cached sky theme BEFORE time-of-day so CSS variables resolve correctly
   var cachedTheme = localStorage.getItem('met_sky_theme');
   if (cachedTheme && typeof applySkyTheme === 'function') applySkyTheme(cachedTheme);
@@ -2149,14 +2438,14 @@ async function clearAllData() {
   }
   try {
     // Preserve API key and email map before wiping
-    const apiSnap = await db.ref('profiles/apiKey').once('value');
+    const apiSnap = await coupleRef('profiles/apiKey').once('value');
     const apiKey = apiSnap.val();
     const emailSnap = await db.ref('config/emailMap').once('value');
     const emailMap = emailSnap.val();
     // Wipe everything
     await db.ref('/').remove();
     // Restore API key and email map so login still works
-    if (apiKey) await db.ref('profiles/apiKey').set(apiKey);
+    if (apiKey) await coupleRef('profiles/apiKey').set(apiKey);
     if (emailMap) await db.ref('config/emailMap').set(emailMap);
     // Clear offline queue in memory so it doesn't re-write wiped data
     _offlineQueue = [];
@@ -2218,7 +2507,7 @@ function submitApiKey() {
   key = key.trim();
   if (key && key.startsWith('sk-ant-')) {
     CLAUDE_API_KEY = key;
-    db.ref('profiles/apiKey').set(key);
+    coupleRef('profiles/apiKey').set(key);
     closeModal();
     toast('API key updated');
   } else if (key) {
@@ -2298,7 +2587,7 @@ async function savePushToken() {
   // Store a flag so we know this device has notifications enabled
   try {
     var reg = await navigator.serviceWorker.ready;
-    db.ref('pushTokens/' + user + '/web').set({
+    coupleRef('pushTokens/' + user + '/web').set({
       enabled: true,
       timestamp: Date.now(),
       userAgent: navigator.userAgent.substring(0, 100)
@@ -2332,7 +2621,7 @@ function sendPushNotification(title, body, icon) {
 function initPartnerNotifications() {
   if (!db || !user || Notification.permission !== 'granted') return;
   // Letters from partner
-  db.ref('letters')
+  coupleRef('letters')
     .orderByChild('timestamp')
     .limitToLast(1)
     .on('child_added', function (snap) {
@@ -2346,7 +2635,7 @@ function initPartnerNotifications() {
       }
     });
   // Taps from partner
-  db.ref('taps')
+  coupleRef('taps')
     .orderByChild('timestamp')
     .limitToLast(1)
     .on('child_added', function (snap) {
@@ -2395,7 +2684,7 @@ function flushOfflineQueue() {
   localStorage.removeItem('met_offline_queue');
   var count = 0;
   queue.forEach(function (item) {
-    db.ref(item.path)
+    coupleRef(item.path)
       .push(item.data)
       .then(function () {
         count++;

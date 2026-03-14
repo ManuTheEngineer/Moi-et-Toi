@@ -327,7 +327,7 @@ function loadTOT() {
   bEl.closest('.tot-option').classList.remove('picked', 'partner-picked');
   // Load saved answers
   if (db) {
-    db.ref('games/tot/' + totIndex).once('value', snap => {
+    coupleRef('games/tot/' + totIndex).once('value', snap => {
       const data = snap.val();
       if (data && data[user]) {
         const pickedEl = data[user] === 'A' ? aEl : bEl;
@@ -343,7 +343,7 @@ function loadTOT() {
 
 async function pickTOT(choice) {
   if (!db || !user) return;
-  await db.ref('games/tot/' + totIndex + '/' + user).set(choice);
+  await coupleRef('games/tot/' + totIndex + '/' + user).set(choice);
   const aEl = document.getElementById('tot-a');
   const bEl = document.getElementById('tot-b');
   aEl.closest('.tot-option').classList.remove('picked');
@@ -351,7 +351,7 @@ async function pickTOT(choice) {
   const pickedEl = choice === 'A' ? aEl : bEl;
   pickedEl.closest('.tot-option').classList.add('picked');
   // Check partner
-  const snap = await db.ref('games/tot/' + totIndex + '/' + partner).once('value');
+  const snap = await coupleRef('games/tot/' + totIndex + '/' + partner).once('value');
   if (snap.val()) {
     const partnerEl = snap.val() === 'A' ? aEl : bEl;
     partnerEl.closest('.tot-option').classList.add('partner-picked');
@@ -379,8 +379,8 @@ function updateCompat() {
     total = 0;
 
   // Check WYR answers
-  const wyrChecks = WYR_QUESTIONS.map((_, i) => db.ref('games/wyr/' + i).once('value'));
-  const totChecks = TOT_QUESTIONS.map((_, i) => db.ref('games/tot/' + i).once('value'));
+  const wyrChecks = WYR_QUESTIONS.map((_, i) => coupleRef('games/wyr/' + i).once('value'));
+  const totChecks = TOT_QUESTIONS.map((_, i) => coupleRef('games/tot/' + i).once('value'));
 
   Promise.all([...wyrChecks, ...totChecks]).then(snaps => {
     snaps.forEach(snap => {
@@ -459,7 +459,7 @@ function renderDashHero() {
   // Calculate "together since" from settings/anniversary
   const togetherNum = document.getElementById('dash-together-num');
   if (togetherNum && db) {
-    db.ref('settings/anniversary').once('value', snap => {
+    coupleRef('settings/anniversary').once('value', snap => {
       const dateStr = snap.val();
       if (dateStr) {
         const start = new Date(dateStr + 'T00:00:00');
@@ -477,7 +477,7 @@ function renderDashHero() {
   var bdayNum = document.getElementById('dash-birthday-num');
   var bdayLabel = document.getElementById('dash-birthday-label');
   if (bdayCard && bdayNum && db) {
-    db.ref('settings/birthday/' + partner).once('value', function (snap) {
+    coupleRef('settings/birthday/' + partner).once('value', function (snap) {
       var bday = snap.val();
       if (!bday) return;
       var parts = bday.split('-');
@@ -496,7 +496,7 @@ function renderDashHero() {
       }
     });
     // Also show own birthday countdown
-    db.ref('settings/birthday/' + user).once('value', function (snap) {
+    coupleRef('settings/birthday/' + user).once('value', function (snap) {
       var bday = snap.val();
       if (!bday) return;
       var parts = bday.split('-');
@@ -529,7 +529,7 @@ function renderDashNudges() {
   const today = localDate();
 
   // Check for unread letters
-  db.ref('letters')
+  coupleRef('letters')
     .orderByChild('timestamp')
     .limitToLast(10)
     .once('value', snap => {
@@ -546,7 +546,7 @@ function renderDashNudges() {
       }
 
       // Check if user hasn't done mood today
-      db.ref('moods')
+      coupleRef('moods')
         .orderByChild('timestamp')
         .limitToLast(10)
         .once('value', moodSnap => {
@@ -563,7 +563,7 @@ function renderDashNudges() {
           }
 
           // Check daily question
-          db.ref('dailyAnswers/' + today + '/' + user).once('value', dqSnap => {
+          coupleRef('dailyAnswers/' + today + '/' + user).once('value', dqSnap => {
             if (!dqSnap.exists()) {
               nudges.push(
                 `<div onclick="go('question')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:var(--card-bg);box-shadow:var(--card-shadow);font-size:12px;color:var(--cream);cursor:pointer;white-space:nowrap;font-weight:500">Answer today's question ❓</div>`
@@ -585,7 +585,7 @@ function renderDashNudges() {
 function renderDashCountdown() {
   // Find nearest upcoming countdown and show as a nudge pill
   if (!db) return;
-  db.ref('countdowns').once('value', snap => {
+  coupleRef('countdowns').once('value', snap => {
     if (!snap.exists()) return;
     const now = new Date();
     let nearest = null,
@@ -639,50 +639,50 @@ function doConfirm() {
 var _delFail = function () { toast('Delete failed'); };
 function deleteBucketItem(key) {
   showConfirmDialog('Remove item', 'Delete this from your bucket list?', 'Delete', () => {
-    db.ref('bucketList/' + key).remove().catch(_delFail);
+    coupleRef('bucketList/' + key).remove().catch(_delFail);
     toast('Removed');
   });
 }
 function deleteDream(key) {
   showConfirmDialog('Remove dream', 'Delete this dream?', 'Delete', () => {
-    db.ref('dreams/' + key).remove().catch(_delFail);
+    coupleRef('dreams/' + key).remove().catch(_delFail);
     toast('Removed');
   });
 }
 function deleteChore(key) {
   showConfirmDialog('Remove task', 'Delete this household task?', 'Delete', () => {
-    db.ref('homelife/chores/' + key).remove().catch(_delFail);
+    coupleRef('homelife/chores/' + key).remove().catch(_delFail);
     toast('Removed');
   });
 }
 function deleteSavingsGoal(key) {
   showConfirmDialog('Remove goal', 'Delete this savings goal?', 'Delete', () => {
-    db.ref('homelife/savings/' + key).remove().catch(_delFail);
+    coupleRef('homelife/savings/' + key).remove().catch(_delFail);
     toast('Removed');
   });
 }
 function deleteBabyName(key) {
-  db.ref('family/names/' + key).remove().catch(_delFail);
+  coupleRef('family/names/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deleteFamilyGoal(key) {
-  db.ref('family/goals/' + key).remove().catch(_delFail);
+  coupleRef('family/goals/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deleteWishItem(owner, key) {
-  db.ref('wishlists/' + owner + '/' + key).remove().catch(_delFail);
+  coupleRef('wishlists/' + owner + '/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deleteIntention(key) {
-  db.ref('spiritual/intentions/' + key).remove().catch(_delFail);
+  coupleRef('spiritual/intentions/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deletePersonalGoal(who, key) {
-  db.ref('personalGoals/' + who + '/' + key).remove().catch(_delFail);
+  coupleRef('personalGoals/' + who + '/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 function deleteDateIdea(key) {
-  db.ref('dateNights/' + key).remove().catch(_delFail);
+  coupleRef('dateNights/' + key).remove().catch(_delFail);
   toast('Removed');
 }
 
@@ -700,7 +700,7 @@ function _hubBadge(el, text, cls) {
 }
 
 function _hubBothCheck(el, path, noLabel, doneLabel, waitLabel, yourLabel, noCls, doneCls, waitCls, yourCls) {
-  db.ref(path).once('value', function(snap) {
+  coupleRef(path).once('value', function(snap) {
     var d = snap.val();
     if (!d) { _hubBadge(el, noLabel, noCls || 'pending'); }
     else if (d[user] && d[partner]) { _hubBadge(el, doneLabel, doneCls || 'done'); }
@@ -710,7 +710,7 @@ function _hubBothCheck(el, path, noLabel, doneLabel, waitLabel, yourLabel, noCls
 }
 
 function _hubCount(el, path, label, emptyLabel, doneKey) {
-  db.ref(path).once('value', function(snap) {
+  coupleRef(path).once('value', function(snap) {
     if (!snap.exists()) { _hubBadge(el, emptyLabel || 'Start'); return; }
     var total = 0, done = 0;
     snap.forEach(function(c) { total++; if (doneKey && c.val()[doneKey]) done++; });
@@ -738,7 +738,7 @@ function updateHubStatuses() {
 
   // Dreams — count with achieved
   _hubUpdate('hub-dr-status', function(el) {
-    db.ref('dreams').once('value', function(snap) {
+    coupleRef('dreams').once('value', function(snap) {
       if (!snap.exists()) { _hubBadge(el, 'Start'); return; }
       var total = 0, done = 0;
       snap.forEach(function(c) { total++; if (c.val().achieved) done++; });
@@ -748,7 +748,7 @@ function updateHubStatuses() {
 
   // Wishlist — nested count
   _hubUpdate('hub-wl-status', function(el) {
-    db.ref('wishlists').once('value', function(snap) {
+    coupleRef('wishlists').once('value', function(snap) {
       if (!snap.exists()) { _hubBadge(el, 'Add items'); return; }
       var total = 0;
       snap.forEach(function(u) { u.forEach(function() { total++; }); });
@@ -758,7 +758,7 @@ function updateHubStatuses() {
 
   // Gratitude — date-filtered
   _hubUpdate('hub-grat-status', function(el) {
-    db.ref('gratitude').orderByChild('date').equalTo(localDate()).once('value', function(snap) {
+    coupleRef('gratitude').orderByChild('date').equalTo(localDate()).once('value', function(snap) {
       if (!snap.exists()) { _hubBadge(el, 'Share today', 'pending'); return; }
       var count = 0;
       snap.forEach(function() { count++; });
@@ -775,13 +775,13 @@ function updateHubStatuses() {
   _hubUpdate('hub-cx-status', function(el) {
     var total = 0;
     Promise.all(['culture/phrases', 'culture/traditions', 'culture/recipes'].map(function(p) {
-      return db.ref(p).once('value').then(function(s) { if (s.exists()) s.forEach(function() { total++; }); });
+      return coupleRef(p).once('value').then(function(s) { if (s.exists()) s.forEach(function() { total++; }); });
     })).then(function() { _hubBadge(el, total > 0 ? total + ' items' : 'Start'); });
   });
 
   // Foundation — simple count
   _hubUpdate('hub-fdn-status', function(el) {
-    db.ref('foundation/values').once('value', function(snap) {
+    coupleRef('foundation/values').once('value', function(snap) {
       var count = 0;
       if (snap.exists()) snap.forEach(function() { count++; });
       _hubBadge(el, count > 0 ? count + ' values' : 'Define');
@@ -790,7 +790,7 @@ function updateHubStatuses() {
 
   // Family — simple count
   _hubUpdate('hub-fam-status', function(el) {
-    db.ref('family/names').once('value', function(snap) {
+    coupleRef('family/names').once('value', function(snap) {
       var count = 0;
       if (snap.exists()) snap.forEach(function() { count++; });
       _hubBadge(el, count > 0 ? count + ' names' : 'Plan');
@@ -804,7 +804,7 @@ function updateHubStatuses() {
 
   // Spiritual — latest timestamp
   _hubUpdate('hub-sp-status', function(el) {
-    db.ref('spiritual/prayers').orderByChild('timestamp').limitToLast(1).once('value', function(snap) {
+    coupleRef('spiritual/prayers').orderByChild('timestamp').limitToLast(1).once('value', function(snap) {
       if (!snap.exists()) { _hubBadge(el, 'Reflect'); return; }
       var latest = null;
       snap.forEach(function(c) { latest = c.val(); });
@@ -814,7 +814,7 @@ function updateHubStatuses() {
 
   // Date Night — saved vs done split
   _hubUpdate('hub-dn-status', function(el) {
-    db.ref('dateNights').once('value', function(snap) {
+    coupleRef('dateNights').once('value', function(snap) {
       if (!snap.exists()) { _hubBadge(el, 'Spin the wheel'); return; }
       var saved = 0, done = 0;
       snap.forEach(function(c) { if (c.val().done) done++; else saved++; });
@@ -824,7 +824,7 @@ function updateHubStatuses() {
 
   // Deep Talk — simple count
   _hubUpdate('hub-dt-status', function(el) {
-    db.ref('deepTalkJournal').once('value', function(snap) {
+    coupleRef('deepTalkJournal').once('value', function(snap) {
       if (!snap.exists()) { _hubBadge(el, 'Start a conversation'); return; }
       var count = 0;
       snap.forEach(function() { count++; });
@@ -860,7 +860,7 @@ function updateModuleStats() {
 function updateBLStats() {
   const el = document.getElementById('bl-stats');
   if (!el || !db) return;
-  db.ref('bucketList').once('value', snap => {
+  coupleRef('bucketList').once('value', snap => {
     if (!snap.exists()) {
       el.innerHTML = '';
       return;
@@ -890,8 +890,7 @@ function updateHLStats() {
     choresDone = 0,
     meals = 0;
   Promise.all([
-    db
-      .ref('homelife/savings')
+    coupleRef('homelife/savings')
       .once('value')
       .then(s => {
         if (s.exists())
@@ -901,8 +900,7 @@ function updateHLStats() {
             target += v.target || 0;
           });
       }),
-    db
-      .ref('homelife/chores')
+    coupleRef('homelife/chores')
       .once('value')
       .then(s => {
         if (s.exists())
@@ -911,8 +909,7 @@ function updateHLStats() {
             if (c.val().done) choresDone++;
           });
       }),
-    db
-      .ref('nutrition/mealPlans/' + localDate())
+    coupleRef('nutrition/mealPlans/' + localDate())
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => meals++);
@@ -942,20 +939,17 @@ function updateCXStats() {
     traditions = 0,
     recipes = 0;
   Promise.all([
-    db
-      .ref('culture/phrases')
+    coupleRef('culture/phrases')
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => phrases++);
       }),
-    db
-      .ref('culture/traditions')
+    coupleRef('culture/traditions')
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => traditions++);
       }),
-    db
-      .ref('culture/recipes')
+    coupleRef('culture/recipes')
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => recipes++);
@@ -979,20 +973,17 @@ function updateSPStats() {
     blessings = 0,
     intentions = 0;
   Promise.all([
-    db
-      .ref('spiritual/prayers')
+    coupleRef('spiritual/prayers')
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => prayers++);
       }),
-    db
-      .ref('spiritual/blessings')
+    coupleRef('spiritual/blessings')
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => blessings++);
       }),
-    db
-      .ref('spiritual/intentions')
+    coupleRef('spiritual/intentions')
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => intentions++);
@@ -1015,14 +1006,12 @@ function updateFDNStats() {
   let values = 0,
     agrees = 0;
   Promise.all([
-    db
-      .ref('foundation/values')
+    coupleRef('foundation/values')
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => values++);
       }),
-    db
-      .ref('foundation/agreements/' + user)
+    coupleRef('foundation/agreements/' + user)
       .once('value')
       .then(s => {
         const data = s.val() || {};
@@ -1045,14 +1034,12 @@ function updateFAMStats() {
   let names = 0,
     goals = 0;
   Promise.all([
-    db
-      .ref('family/names')
+    coupleRef('family/names')
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => names++);
       }),
-    db
-      .ref('family/goals')
+    coupleRef('family/goals')
       .once('value')
       .then(s => {
         if (s.exists()) s.forEach(() => goals++);
@@ -1086,7 +1073,7 @@ function updateGamesStats() {
 function updateDNStats() {
   const el = document.getElementById('dn-stats');
   if (!el || !db) return;
-  db.ref('dateNights').once('value', snap => {
+  coupleRef('dateNights').once('value', snap => {
     if (!snap.exists()) {
       el.innerHTML = '';
       return;
@@ -1109,7 +1096,7 @@ function updateDashQuickNav() {
   if (!db) return;
 
   // Letters count
-  db.ref('letters')
+  coupleRef('letters')
     .orderByChild('timestamp')
     .limitToLast(50)
     .once('value', snap => {
@@ -1127,7 +1114,7 @@ function updateDashQuickNav() {
   }, 2000);
 
   // Date nights
-  db.ref('dateNights').once('value', snap => {
+  coupleRef('dateNights').once('value', snap => {
     let saved = 0;
     if (snap.exists())
       snap.forEach(c => {
@@ -1138,7 +1125,7 @@ function updateDashQuickNav() {
   });
 
   // Deep talk reflections
-  db.ref('deepTalkJournal').once('value', snap => {
+  coupleRef('deepTalkJournal').once('value', snap => {
     let count = 0;
     if (snap.exists()) snap.forEach(() => count++);
     const el = document.getElementById('dash-qn-talks');
@@ -1172,7 +1159,7 @@ function initViewToggle() {
 function renderMeDashboard() {
   if (!db || !user) return;
   // Personal mood average
-  db.ref('moods')
+  coupleRef('moods')
     .orderByChild('timestamp')
     .limitToLast(30)
     .once('value', snap => {
@@ -1194,7 +1181,7 @@ function renderMeDashboard() {
     });
   // Personal goals count
   const who = user;
-  db.ref('personalGoals/' + who).once('value', snap => {
+  coupleRef('personalGoals/' + who).once('value', snap => {
     let done = 0,
       total = 0;
     if (snap.exists())
@@ -1300,19 +1287,19 @@ function calculateRelationshipPulse() {
 
   Promise.all([
     // Communication: taps + letters in last 7 days
-    db.ref('taps').orderByChild('timestamp').limitToLast(20).once('value'),
-    db.ref('letters').orderByChild('timestamp').limitToLast(10).once('value'),
+    coupleRef('taps').orderByChild('timestamp').limitToLast(20).once('value'),
+    coupleRef('letters').orderByChild('timestamp').limitToLast(10).once('value'),
     // Mood: both checked in today
-    db.ref('moods').orderByChild('date').equalTo(today).once('value'),
+    coupleRef('moods').orderByChild('date').equalTo(today).once('value'),
     // Weekly check-in
-    db.ref('checkins/' + week).once('value'),
+    coupleRef('checkins/' + week).once('value'),
     // Games played
-    db.ref('games/wyr').once('value'),
-    db.ref('games/tot').once('value'),
+    coupleRef('games/wyr').once('value'),
+    coupleRef('games/tot').once('value'),
     // Gratitude
-    db.ref('gratitude').orderByChild('timestamp').limitToLast(10).once('value'),
+    coupleRef('gratitude').orderByChild('timestamp').limitToLast(10).once('value'),
     // Deep talk
-    db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(5).once('value')
+    coupleRef('deepTalkJournal').orderByChild('timestamp').limitToLast(5).once('value')
   ]).then(([taps, letters, todayMoods, checkin, wyr, tot, gratitude, deepTalk]) => {
     const now = Date.now();
     const weekMs = 7 * 86400000;
@@ -1419,7 +1406,7 @@ function calculateRelationshipPulse() {
 // ===== ACTIVITY FEED =====
 function logActivity(module, description) {
   if (!db || !user) return;
-  db.ref('activity').push({
+  coupleRef('activity').push({
     module,
     description,
     user,
@@ -1433,7 +1420,7 @@ function renderActivityFeed() {
   if (!db) return;
   if (_activityListening) return;
   _activityListening = true;
-  db.ref('activity')
+  coupleRef('activity')
     .orderByChild('timestamp')
     .limitToLast(12)
     .on('value', snap => {
@@ -1481,7 +1468,7 @@ function renderDashMeGratitude() {
   const card = document.getElementById('dash-me-gratitude');
   const list = document.getElementById('dash-me-grat-list');
   if (!card || !list) return;
-  db.ref('gratitude')
+  coupleRef('gratitude')
     .orderByChild('timestamp')
     .limitToLast(5)
     .once('value', snap => {
@@ -1532,14 +1519,14 @@ function renderDashDailyQ() {
   if (!card || !textEl) return;
   const today = localDate();
 
-  db.ref('dailyQuestion').once('value', snap => {
+  coupleRef('dailyQuestion').once('value', snap => {
     const q = snap.val();
     if (!q || !q.text) return;
     textEl.textContent = q.text;
     showEl(card);
 
     // Check who answered
-    db.ref('dailyAnswers/' + today).once('value', aSnap => {
+    coupleRef('dailyAnswers/' + today).once('value', aSnap => {
       const answers = aSnap.val() || {};
       const youDone = !!answers[user];
       const partnerDone = !!answers[partner];
@@ -1562,14 +1549,14 @@ function renderSmartNudges() {
   const week = getWeekId();
 
   Promise.all([
-    db.ref('letters').orderByChild('timestamp').limitToLast(10).once('value'),
-    db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value'),
-    db.ref('dailyAnswers/' + today + '/' + user).once('value'),
-    db.ref('checkins/' + week + '/' + user).once('value'),
-    db.ref('deepTalkJournal').orderByChild('timestamp').limitToLast(1).once('value'),
-    db.ref('games/wyr').once('value'),
-    db.ref('dateNights').once('value'),
-    db.ref('countdowns').once('value')
+    coupleRef('letters').orderByChild('timestamp').limitToLast(10).once('value'),
+    coupleRef('moods').orderByChild('timestamp').limitToLast(10).once('value'),
+    coupleRef('dailyAnswers/' + today + '/' + user).once('value'),
+    coupleRef('checkins/' + week + '/' + user).once('value'),
+    coupleRef('deepTalkJournal').orderByChild('timestamp').limitToLast(1).once('value'),
+    coupleRef('games/wyr').once('value'),
+    coupleRef('dateNights').once('value'),
+    coupleRef('countdowns').once('value')
   ]).then(([letters, moods, dq, checkin, deepTalk, games, dates, countdowns]) => {
     // Unread letters
     let unread = 0;
@@ -1652,10 +1639,10 @@ function renderDailyTasks() {
   const week = getWeekId();
 
   Promise.all([
-    db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value'),
-    db.ref('dailyAnswers/' + today + '/' + user).once('value'),
-    db.ref('checkins/' + week + '/' + user).once('value'),
-    db.ref('gratitude').orderByChild('timestamp').limitToLast(5).once('value')
+    coupleRef('moods').orderByChild('timestamp').limitToLast(10).once('value'),
+    coupleRef('dailyAnswers/' + today + '/' + user).once('value'),
+    coupleRef('checkins/' + week + '/' + user).once('value'),
+    coupleRef('gratitude').orderByChild('timestamp').limitToLast(5).once('value')
   ]).then(([moods, dq, checkin, gratitude]) => {
     // Check mood
     let moodDone = false;
@@ -1756,8 +1743,8 @@ function scheduleDailyReminder() {
 
     // Check the two most important daily tasks (mood + daily question)
     Promise.all([
-      db.ref('moods').orderByChild('timestamp').limitToLast(10).once('value'),
-      db.ref('dailyAnswers/' + today + '/' + user).once('value')
+      coupleRef('moods').orderByChild('timestamp').limitToLast(10).once('value'),
+      coupleRef('dailyAnswers/' + today + '/' + user).once('value')
     ]).then(([moods, dq]) => {
       let moodDone = false;
       if (moods.exists())
@@ -1862,7 +1849,7 @@ go = function (p) {
     updateModuleStats();
   }
   // Update presence
-  if (db && user) db.ref('presence/' + user + '/currentPage').set(p);
+  if (db && user) coupleRef('presence/' + user + '/currentPage').set(p);
 };
 
 // ===== SETTINGS =====
@@ -1875,7 +1862,7 @@ function loadSettings() {
   if (nameEl) nameEl.value = NAMES[user] || '';
   // Show partner's real name (not the nickname we gave them)
   if (partnerEl && db) {
-    db.ref('profiles/' + partner).once('value', snap => {
+    coupleRef('profiles/' + partner).once('value', snap => {
       partnerEl.value = snap.val() || '';
     });
   }
@@ -1885,20 +1872,20 @@ function loadSettings() {
     nickEl.value = NICKNAMES[nickKey] || '';
   }
   if (annivEl && db) {
-    db.ref('settings/anniversary').once('value', snap => {
+    coupleRef('settings/anniversary').once('value', snap => {
       if (snap.val()) annivEl.value = snap.val();
     });
   }
   // Birthday
   if (bdayEl && db && user) {
-    db.ref('settings/birthday/' + user).once('value', snap => {
+    coupleRef('settings/birthday/' + user).once('value', snap => {
       if (snap.val()) bdayEl.value = snap.val();
     });
   }
   // Living Sky toggle
   const skyToggle = document.getElementById('set-living-sky');
   if (skyToggle && db && user) {
-    db.ref('settings/livingSky/' + user).once('value', snap => {
+    coupleRef('settings/livingSky/' + user).once('value', snap => {
       var val = snap.val();
       var enabled = val !== false; // default to true
       skyToggle.checked = enabled;
@@ -1908,7 +1895,7 @@ function loadSettings() {
   }
   // Sky theme
   if (db && user) {
-    db.ref('settings/skyTheme/' + user).once('value', snap => {
+    coupleRef('settings/skyTheme/' + user).once('value', snap => {
       var theme = snap.val() || 'mixed';
       document.querySelectorAll('#set-sky-theme .sky-theme-btn').forEach(function (b) {
         b.classList.toggle('active', b.getAttribute('data-theme') === theme);
@@ -1925,13 +1912,13 @@ function toggleLivingSkySetting(on) {
   livingSkyEnabled = on;
   setLivingSky(on);
   if (db && user) {
-    db.ref('settings/livingSky/' + user).set(on);
+    coupleRef('settings/livingSky/' + user).set(on);
   }
 }
 
 function setSkyTheme(theme) {
   if (db && user) {
-    db.ref('settings/skyTheme/' + user).set(theme);
+    coupleRef('settings/skyTheme/' + user).set(theme);
   }
   // Update UI
   document.querySelectorAll('#set-sky-theme .sky-theme-btn, #ob-sky-theme-grid .sky-theme-btn').forEach(function (b) {
@@ -2021,7 +2008,7 @@ function connectSpotify() {
       '</div>'
   );
   if (db && user) {
-    db.ref('settings/music/' + user + '/spotify').once('value', function (s) {
+    coupleRef('settings/music/' + user + '/spotify').once('value', function (s) {
       var el = document.getElementById('spotify-link');
       if (el && s.val()) {
         el.value = s.val();
@@ -2029,7 +2016,7 @@ function connectSpotify() {
       }
     });
     var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
-    db.ref('settings/music/' + partnerRole + '/spotify').once('value', function (s) {
+    coupleRef('settings/music/' + partnerRole + '/spotify').once('value', function (s) {
       var el = document.getElementById('spotify-partner-section');
       if (el && s.val()) {
         var embedUrl = getSpotifyEmbedUrl(s.val());
@@ -2063,7 +2050,7 @@ function saveSpotifyLink() {
   var link = document.getElementById('spotify-link');
   if (!link || !link.value.trim()) return;
   if (db && user) {
-    db.ref('settings/music/' + user + '/spotify').set(link.value.trim());
+    coupleRef('settings/music/' + user + '/spotify').set(link.value.trim());
     showSpotifyEmbed(link.value.trim());
     toast('Spotify link saved');
   }
@@ -2085,7 +2072,7 @@ function connectYouTubeMusic() {
       '</div>'
   );
   if (db && user) {
-    db.ref('settings/music/' + user + '/youtube').once('value', function (s) {
+    coupleRef('settings/music/' + user + '/youtube').once('value', function (s) {
       var el = document.getElementById('ytm-link');
       if (el && s.val()) {
         el.value = s.val();
@@ -2093,7 +2080,7 @@ function connectYouTubeMusic() {
       }
     });
     var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
-    db.ref('settings/music/' + partnerRole + '/youtube').once('value', function (s) {
+    coupleRef('settings/music/' + partnerRole + '/youtube').once('value', function (s) {
       var el = document.getElementById('ytm-partner-section');
       if (el && s.val()) {
         var embedUrl = getYouTubeEmbedUrl(s.val());
@@ -2127,7 +2114,7 @@ function saveYTMLink() {
   var link = document.getElementById('ytm-link');
   if (!link || !link.value.trim()) return;
   if (db && user) {
-    db.ref('settings/music/' + user + '/youtube').set(link.value.trim());
+    coupleRef('settings/music/' + user + '/youtube').set(link.value.trim());
     showYTMEmbed(link.value.trim());
     toast('YouTube Music link saved');
   }
@@ -2151,7 +2138,7 @@ function shareSongWithPartner(platform) {
   var icon = platform === 'spotify' ? '🎵' : '🎶';
 
   // Save to shared music feed
-  db.ref('shared-music').push({
+  coupleRef('shared-music').push({
     from: user,
     fromName: senderName,
     platform: platform,
@@ -2160,7 +2147,7 @@ function shareSongWithPartner(platform) {
   });
 
   // Send notification to partner
-  db.ref('notifications/' + partnerRole).push({
+  coupleRef('notifications/' + partnerRole).push({
     type: 'shared-song',
     from: user,
     fromName: senderName,
@@ -2179,7 +2166,7 @@ function shareSongWithPartner(platform) {
 function loadSharedMusicFeed() {
   var feed = document.getElementById('shared-music-feed');
   if (!feed || !db) return;
-  db.ref('shared-music')
+  coupleRef('shared-music')
     .orderByChild('ts')
     .limitToLast(5)
     .once('value', function (snap) {
@@ -2244,20 +2231,20 @@ async function saveSettings() {
 
   if (newName && newName !== NAMES[user]) {
     NAMES[user] = newName;
-    await db.ref('profiles/' + user).set(newName);
+    await coupleRef('profiles/' + user).set(newName);
     document.querySelectorAll('.uname').forEach(e => (e.textContent = newName));
   }
   if (newAnniv) {
-    await db.ref('settings/anniversary').set(newAnniv);
+    await coupleRef('settings/anniversary').set(newAnniv);
   }
   if (newBday) {
-    await db.ref('settings/birthday/' + user).set(newBday);
+    await coupleRef('settings/birthday/' + user).set(newBday);
   }
   if (newNick) {
     var nickKey = user === 'partner1' ? 'partner1CallsPartner2' : 'partner2CallsPartner1';
     NICKNAMES[nickKey] = newNick;
     NAMES[partner] = newNick;
-    await db.ref('profiles/' + nickKey).set(newNick);
+    await coupleRef('profiles/' + nickKey).set(newNick);
     document.querySelectorAll('.pname').forEach(e => (e.textContent = newNick));
     document.querySelectorAll('.partner-nick').forEach(e => (e.textContent = newNick));
   }
@@ -2271,14 +2258,14 @@ function initHubPages() {
   const today = localDate();
 
   // Together hub stats
-  db.ref('letters')
+  coupleRef('letters')
     .orderByChild('timestamp')
     .limitToLast(50)
     .once('value', snap => {
       const el = document.getElementById('hub-tg-letters');
       if (el) el.textContent = snap.numChildren() || 0;
     });
-  db.ref('daily_answers/' + today).once('value', snap => {
+  coupleRef('daily_answers/' + today).once('value', snap => {
     // Use streak from existing streak logic
     const el = document.getElementById('hub-tg-streak');
     const streakEl = document.getElementById('streak-count');
@@ -2286,7 +2273,7 @@ function initHubPages() {
   });
 
   // Together recent feed (last 3 activities: taps, letters, answers)
-  db.ref('taps')
+  coupleRef('taps')
     .orderByChild('ts')
     .limitToLast(3)
     .once('value', snap => {
@@ -2313,7 +2300,7 @@ function initHubPages() {
     });
 
   // Track hub stats
-  db.ref('moods')
+  coupleRef('moods')
     .orderByChild('timestamp')
     .limitToLast(7)
     .once('value', snap => {
@@ -2343,7 +2330,7 @@ function initHubPages() {
       if (snapEnergy && todayEnergy) snapEnergy.textContent = ENERGY_LABELS[todayEnergy] || todayEnergy;
     });
 
-  db.ref('gratitude')
+  coupleRef('gratitude')
     .orderByChild('timestamp')
     .limitToLast(20)
     .once('value', snap => {
@@ -2352,12 +2339,12 @@ function initHubPages() {
     });
 
   // Build hub stats
-  db.ref('dreams').once('value', snap => {
+  coupleRef('dreams').once('value', snap => {
     const el = document.getElementById('hub-bd-dreams');
     if (el) el.textContent = snap.numChildren() || 0;
   });
 
-  db.ref('calendar').once('value', snap => {
+  coupleRef('calendar').once('value', snap => {
     const el = document.getElementById('hub-bd-events');
     if (el) el.textContent = snap.numChildren() || 0;
   });
@@ -2557,7 +2544,7 @@ function sendVoiceNote() {
       playCount: 0,
       expiresAt: expirySec > 0 ? Date.now() + expirySec * 1000 : 0
     };
-    db.ref('voiceNotes')
+    coupleRef('voiceNotes')
       .push(noteData)
       .then(function () {
         // Send notification to partner
@@ -2580,7 +2567,7 @@ function loadVoiceNoteFeed() {
   if (!db) return;
   var feed = document.getElementById('vn-feed');
   if (!feed) return;
-  db.ref('voiceNotes')
+  coupleRef('voiceNotes')
     .orderByChild('timestamp')
     .limitToLast(10)
     .once('value', function (snap) {
@@ -2594,12 +2581,12 @@ function loadVoiceNoteFeed() {
         v._key = c.key;
         // Check expiry
         if (v.expiresAt && v.expiresAt > 0 && Date.now() > v.expiresAt) {
-          db.ref('voiceNotes/' + c.key).remove();
+          coupleRef('voiceNotes/' + c.key).remove();
           return;
         }
         // Check max replays
         if (v.maxReplays > 0 && (v.playCount || 0) >= v.maxReplays) {
-          db.ref('voiceNotes/' + c.key).remove();
+          coupleRef('voiceNotes/' + c.key).remove();
           return;
         }
         notes.push(v);
@@ -2637,16 +2624,16 @@ function loadVoiceNoteFeed() {
 
 function playVoiceNoteFeed(key) {
   if (!db || !key) return;
-  db.ref('voiceNotes/' + key).once('value', function (snap) {
+  coupleRef('voiceNotes/' + key).once('value', function (snap) {
     if (!snap.exists()) return;
     var note = snap.val();
     // Increment play count
     var newCount = (note.playCount || 0) + 1;
-    db.ref('voiceNotes/' + key + '/playCount').set(newCount);
+    coupleRef('voiceNotes/' + key + '/playCount').set(newCount);
     // Check if should be removed after this play
     if (note.maxReplays > 0 && newCount >= note.maxReplays) {
       setTimeout(function () {
-        db.ref('voiceNotes/' + key).remove();
+        coupleRef('voiceNotes/' + key).remove();
         loadVoiceNoteFeed();
       }, 2000);
     }
@@ -2658,7 +2645,7 @@ function playVoiceNoteFeed(key) {
 // ===== VOICE NOTE ON PARTNER AVATAR (Dashboard) =====
 function checkPartnerVoiceNote() {
   if (!db || !user) return;
-  db.ref('voiceNotes')
+  coupleRef('voiceNotes')
     .orderByChild('timestamp')
     .limitToLast(5)
     .once('value', function (snap) {
@@ -2708,12 +2695,12 @@ function playAvatarVoiceNote(key) {
     if (playBtn) playBtn.classList.remove('vn-avatar-playing');
     return;
   }
-  db.ref('voiceNotes/' + key).once('value', function (snap) {
+  coupleRef('voiceNotes/' + key).once('value', function (snap) {
     if (!snap.exists()) return;
     var note = snap.val();
     // Increment play count
     var newCount = (note.playCount || 0) + 1;
-    db.ref('voiceNotes/' + key + '/playCount').set(newCount);
+    coupleRef('voiceNotes/' + key + '/playCount').set(newCount);
     // Play as background audio
     vnAvatarPlaying = true;
     var playBtn = document.querySelector('.vn-avatar-play');
@@ -2724,7 +2711,7 @@ function playAvatarVoiceNote(key) {
       // Remove play button if max replays reached
       if (note.maxReplays > 0 && newCount >= note.maxReplays) {
         if (playBtn) playBtn.remove();
-        db.ref('voiceNotes/' + key).remove();
+        coupleRef('voiceNotes/' + key).remove();
       }
       checkPartnerVoiceNote();
     });
@@ -2763,12 +2750,12 @@ function sendInAppNotif(type, message, icon) {
     timestamp: Date.now(),
     read: false
   };
-  db.ref('notifications/' + partnerRole).push(notifData);
+  coupleRef('notifications/' + partnerRole).push(notifData);
 }
 
 function listenNotifications() {
   if (!db || !user) return;
-  db.ref('notifications/' + user)
+  coupleRef('notifications/' + user)
     .orderByChild('timestamp')
     .limitToLast(1)
     .on('child_added', function (snap) {
@@ -2780,7 +2767,7 @@ function listenNotifications() {
       var notifPage = NOTIF_PAGE_MAP[notif.type] || null;
       showNotifToast(notif.fromName || notif.from, notif.message, notif.icon, notifPage);
       // Mark as read
-      db.ref('notifications/' + user + '/' + snap.key + '/read').set(true);
+      coupleRef('notifications/' + user + '/' + snap.key + '/read').set(true);
       // If voice note, refresh avatar play button
       if (notif.type === 'voiceNote') {
         checkPartnerVoiceNote();
@@ -2939,7 +2926,7 @@ function checkMorningMessage() {
 
   // Read partner's morning message settings (see what they wrote for you)
   var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
-  db.ref('settings/morningMsg/' + partnerRole).once('value', function (snap) {
+  coupleRef('settings/morningMsg/' + partnerRole).once('value', function (snap) {
     var settings = snap.val();
     if (!settings || !settings.enabled) return;
 
@@ -2966,7 +2953,7 @@ function checkMorningMessage() {
     }
 
     // Save to Firebase so it persists and partner can see what was sent
-    db.ref('morningMessages/' + user + '/' + today).set({
+    coupleRef('morningMessages/' + user + '/' + today).set({
       message: msg.message,
       category: msg.category,
       from: partnerRole,

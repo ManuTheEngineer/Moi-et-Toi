@@ -80,9 +80,10 @@
           Ask Manu for the connection key. You only need to do this once on each device.
         </div>
       </div>
-      <!-- Sign-in form (shown when not authenticated) -->
+      <!-- Sign-in / Sign-up form -->
       <div id="login-form" class="login-inner">
-        <div class="lbl">Sign In</div>
+        <div class="lbl" id="login-mode-label">Sign In</div>
+        <input type="text" id="login-name" class="login-input d-none" placeholder="Your name" autocomplete="name" />
         <input type="email" id="login-email" class="login-input" placeholder="Email" />
         <input
           type="password"
@@ -91,7 +92,31 @@
           placeholder="Password"
           onkeydown="if (event.key === 'Enter') doLogin();"
         />
-        <button onclick="doLogin()" class="login-btn">Come in</button>
+        <button onclick="doLogin()" class="login-btn" id="login-submit-btn">Come in</button>
+        <div style="margin-top:14px;font-size:13px;color:var(--t2)">
+          <span id="login-toggle-text">Don't have an account?</span>
+          <a href="#" onclick="event.preventDefault();toggleLoginMode()" id="login-toggle-link" style="color:var(--accent);font-weight:600">Sign up</a>
+        </div>
+      </div>
+      <!-- Couple setup (shown after signup — create or join) -->
+      <div id="couple-setup" class="login-inner d-none">
+        <div class="onboard-emoji">💑</div>
+        <h1 class="onboard-title" id="cs-title">Set up your couple</h1>
+        <p class="onboard-sub">Start a new couple or join your partner with their invite code.</p>
+        <button onclick="handleCreateCouple()" class="login-btn" style="margin-bottom:12px">Start a Couple</button>
+        <div style="font-size:13px;color:var(--t3);margin-bottom:12px">— or —</div>
+        <input type="text" id="invite-code-input" class="login-input" placeholder="Enter invite code" maxlength="6" style="text-transform:uppercase;text-align:center;letter-spacing:4px;font-size:18px" autocomplete="off" />
+        <button onclick="handleJoinCouple()" class="login-btn" style="margin-top:8px;background:var(--t2)">Join Partner</button>
+        <div id="cs-err" class="login-err" style="margin-top:12px"></div>
+      </div>
+      <!-- Invite code display (shown after creating a couple) -->
+      <div id="invite-display" class="login-inner d-none">
+        <div class="onboard-emoji">🔗</div>
+        <h1 class="onboard-title">Share with your partner</h1>
+        <p class="onboard-sub">Give this code to your partner so they can join you.</p>
+        <div id="invite-code-display" style="font-size:32px;letter-spacing:6px;font-weight:700;color:var(--accent);margin:20px 0;font-family:monospace"></div>
+        <button onclick="copyInviteCode()" class="login-btn" style="margin-bottom:12px">Copy Code</button>
+        <p class="onboard-sub" style="font-size:12px">The app will start automatically when your partner joins.</p>
       </div>
       <!-- Welcome gate (shown when already authenticated) -->
       <div id="welcome-gate" class="login-inner d-none">
