@@ -1,0 +1,100 @@
+        <div class="ctn">
+          <!-- On This Day -->
+          <div id="mem-onthisday" class="d-none">
+            <div class="card-story">
+              <div class="otd-label">On This Day</div>
+              <div id="mem-otd-content"></div>
+            </div>
+          </div>
+
+          <!-- Memory Prompt -->
+          <div class="mem-prompt-card" id="mem-prompt">
+            <div class="mem-prompt-label">Memory Prompt</div>
+            <div class="mem-prompt-text" id="mem-prompt-text"></div>
+            <button class="btn-sm" onclick="useMemoryPrompt()" class="btn-rose btn-sm">Add Memory</button>
+          </div>
+
+          <!-- View Toggle -->
+          <div class="mem-view-toggle">
+            <button class="mem-view-btn active" id="mem-view-grid-btn" onclick="toggleMemoryView('grid')">Grid</button>
+            <button class="mem-view-btn" id="mem-view-tl-btn" onclick="toggleMemoryView('timeline')">Timeline</button>
+          </div>
+
+          <!-- Album Filter Bar -->
+          <div class="mem-album-bar" id="mem-album-bar">
+            <button class="mem-album-pill active" onclick="filterMemAlbum('all')">All</button>
+            <button class="mem-album-pill" onclick="filterMemAlbum('favorites')">Favorites</button>
+            <button class="mem-album-pill" onclick="filterMemAlbum('Dates')">Dates</button>
+            <button class="mem-album-pill" onclick="filterMemAlbum('Trips')">Trips</button>
+            <button class="mem-album-pill" onclick="filterMemAlbum('Home')">Home</button>
+            <button class="mem-album-pill" onclick="filterMemAlbum('Milestones')">Milestones</button>
+            <button class="mem-album-pill" onclick="addCustomAlbum()" class="mem-album-dashed">+ New</button>
+          </div>
+
+          <!-- Upload -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Add Memory</div>
+          </div>
+          <div class="card">
+            <div class="mem-upload" onclick="document.getElementById('mem-file').click()">
+              <div class="mem-upload-icon">&#x1F4F7;</div>
+              <div class="mem-upload-text">Tap to upload a photo</div>
+            </div>
+            <input type="file" id="mem-file" accept="image/*" class="d-none" onchange="previewMemory(this)" />
+            <div id="mem-preview" class="d-none" style="margin: 10px 0">
+              <img
+                id="mem-preview-img"
+                alt="Memory preview"
+                style="width: 100%; border-radius: 14px; max-height: 200px; object-fit: cover"
+              />
+            </div>
+            <input type="text" id="mem-caption" placeholder="Caption this moment..." class="mb-8" />
+            <input type="date" id="mem-date" class="form-input-inline w-full mb-8" />
+            <select id="mem-album" class="form-input-inline w-full mb-8">
+              <option value="">No album</option>
+              <option value="Dates">Dates</option>
+              <option value="Trips">Trips</option>
+              <option value="Home">Home</option>
+              <option value="Milestones">Milestones</option>
+            </select>
+            <button class="dq-submit" onclick="saveMemory()">Save Memory</button>
+          </div>
+
+          <!-- Memory Grid -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title" id="mem-section-title">All Memories</div>
+          </div>
+          <div class="mem-grid" id="mem-grid"><div class="empty" onclick="document.getElementById('mem-file').click()" style="cursor:pointer">Upload your first photo together <span style="opacity:.5">— tap here</span></div></div>
+
+          <!-- Memory Timeline (hidden by default) -->
+          <div class="mem-timeline" id="mem-timeline" class="d-none"></div>
+        </div>
+      </div>
+
+      <!-- Memory Detail Modal -->
+      <div class="mem-detail-modal" id="mem-detail-modal">
+        <button class="mem-detail-close" onclick="closeMemoryDetail()" aria-label="Close">&times;</button>
+        <img id="mem-detail-img" src="" alt="Memory photo" />
+        <div class="text-center" style="max-width: 90%">
+          <div class="mem-detail-caption" id="mem-detail-caption"></div>
+          <div class="mem-detail-meta" id="mem-detail-meta"></div>
+        </div>
+        <div class="mem-detail-actions">
+          <button id="mem-detail-fav-btn" onclick="toggleMemDetailFav()" class="mem-fav-btn">Favorite</button>
+          <select
+            id="mem-detail-album"
+            onchange="setMemDetailAlbum(this.value)"
+            class="form-input-inline cursor-pointer"
+          >
+            <option value="">No album</option>
+            <option value="Dates">Dates</option>
+            <option value="Trips">Trips</option>
+            <option value="Home">Home</option>
+            <option value="Milestones">Milestones</option>
+          </select>
+          <button onclick="deleteMemory()" class="btn-sm" style="background: var(--red); color: #fff">Delete</button>
+        </div>
+      </div>
+

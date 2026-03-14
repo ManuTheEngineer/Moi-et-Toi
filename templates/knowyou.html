@@ -1,0 +1,266 @@
+        <div class="ctn">
+          <!-- Love Map Score -->
+          <div class="card-hero kyp-hero">
+            <div class="d-flex items-center justify-between">
+              <div>
+                <div class="grow-progress-label">Love Map Score</div>
+                <div class="grow-progress-val" id="kyp-score">0%</div>
+              </div>
+              <button class="dq-submit btn-rose" onclick="startKYPQuiz()" style="padding: 8px 16px; font-size: 11px">
+                Quiz Me!
+              </button>
+            </div>
+          </div>
+
+          <!-- Identity Profile -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Identity Profile</div>
+          </div>
+          <div id="id-quiz-start">
+            <div class="card text-center p-20" style="padding: 24px">
+              <div class="id-quiz-emoji">🪞</div>
+              <div class="id-quiz-title">Discover Your Identity</div>
+              <div class="id-quiz-desc">
+                Take a quick quiz about your personality, values, and preferences. Your partner will see your results!
+              </div>
+              <button class="dq-submit btn-lavender" onclick="startIdentityQuiz()">Start Quiz</button>
+            </div>
+          </div>
+          <div id="id-quiz-active" class="d-none"></div>
+          <div id="id-quiz-results"></div>
+
+          <!-- "Do You Know?" Quiz -->
+          <button class="nh-action-btn" id="kyp-quiz-btn" onclick="startKYPQuiz();showEl('kyp-quiz');hideEl('kyp-quiz-btn')" style="width:100%;margin-bottom:12px">Quiz Me! How well do you know your partner?</button>
+          <div id="kyp-quiz" class="d-none">
+            <div class="card mb-16" style="border-color: var(--rose)">
+              <div class="kyp-quiz-label">Do You Know?</div>
+              <div class="kyp-quiz-q" id="kyp-quiz-q"></div>
+              <input type="text" id="kyp-quiz-answer" placeholder="Your answer..." class="mb-8" />
+              <div class="d-flex gap-8">
+                <button class="dq-submit flex-1 btn-rose" onclick="checkKYPQuiz()">Check</button>
+                <button class="btn-sm" onclick="skipKYPQuiz()">Skip</button>
+              </div>
+              <div id="kyp-quiz-result" class="kyp-quiz-result"></div>
+              <div id="kyp-quiz-stats" class="kyp-quiz-stats"></div>
+            </div>
+          </div>
+
+          <!-- Favorites (expanded to 20) -->
+          <div class="sec-head">
+            <div class="sec-dot sd-rose"></div>
+            <div class="sec-title">Favorites</div>
+          </div>
+          <div class="kyp-grid" id="kyp-favorites">
+            <div class="kyp-item card" onclick="editKYP('food')">
+              <div class="kyp-fav-label">Food</div>
+              <div class="kyp-fav-val" id="kyp-food">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('color')">
+              <div class="kyp-fav-label">Color</div>
+              <div class="kyp-fav-val" id="kyp-color">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('movie')">
+              <div class="kyp-fav-label">Movie</div>
+              <div class="kyp-fav-val" id="kyp-movie">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('song')">
+              <div class="kyp-fav-label">Song</div>
+              <div class="kyp-fav-val" id="kyp-song">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('book')">
+              <div class="kyp-fav-label">Book</div>
+              <div class="kyp-fav-val" id="kyp-book">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('place')">
+              <div class="kyp-fav-label">Place</div>
+              <div class="kyp-fav-val" id="kyp-place">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('season')">
+              <div class="kyp-fav-label">Season</div>
+              <div class="kyp-fav-val" id="kyp-season">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('coffee')">
+              <div class="kyp-fav-label">Coffee Order</div>
+              <div class="kyp-fav-val" id="kyp-coffee">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('drink')">
+              <div class="kyp-fav-label">Drink</div>
+              <div class="kyp-fav-val" id="kyp-drink">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('flower')">
+              <div class="kyp-fav-label">Flower</div>
+              <div class="kyp-fav-val" id="kyp-flower">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('hobby')">
+              <div class="kyp-fav-label">Hobby</div>
+              <div class="kyp-fav-val" id="kyp-hobby">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('sport')">
+              <div class="kyp-fav-label">Sport</div>
+              <div class="kyp-fav-val" id="kyp-sport">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('restaurant')">
+              <div class="kyp-fav-label">Restaurant</div>
+              <div class="kyp-fav-val" id="kyp-restaurant">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('vacationspot')">
+              <div class="kyp-fav-label">Vacation Spot</div>
+              <div class="kyp-fav-val" id="kyp-vacationspot">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('scent')">
+              <div class="kyp-fav-label">Scent</div>
+              <div class="kyp-fav-val" id="kyp-scent">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('tvshow')">
+              <div class="kyp-fav-label">TV Show</div>
+              <div class="kyp-fav-val" id="kyp-tvshow">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('dessert')">
+              <div class="kyp-fav-label">Dessert</div>
+              <div class="kyp-fav-val" id="kyp-dessert">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('comfortfood')">
+              <div class="kyp-fav-label">Comfort Food</div>
+              <div class="kyp-fav-val" id="kyp-comfortfood">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('quote')">
+              <div class="kyp-fav-label">Fav Quote</div>
+              <div class="kyp-fav-val" id="kyp-quote">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('fear')">
+              <div class="kyp-fav-label">Biggest Fear</div>
+              <div class="kyp-fav-val" id="kyp-fear">Tap to add</div>
+            </div>
+          </div>
+
+          <!-- Sizes & Preferences -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Sizes &amp; Preferences</div>
+          </div>
+          <div class="kyp-grid" id="kyp-sizes">
+            <div class="kyp-item card" onclick="editKYP('shirt')">
+              <div class="kyp-fav-label">Shirt</div>
+              <div class="kyp-fav-val" id="kyp-shirt">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('pants')">
+              <div class="kyp-fav-label">Pants</div>
+              <div class="kyp-fav-val" id="kyp-pants">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('shoe')">
+              <div class="kyp-fav-label">Shoe</div>
+              <div class="kyp-fav-val" id="kyp-shoe">Tap to add</div>
+            </div>
+            <div class="kyp-item card" onclick="editKYP('ring')">
+              <div class="kyp-fav-label">Ring</div>
+              <div class="kyp-fav-val" id="kyp-ring">Tap to add</div>
+            </div>
+          </div>
+
+          <!-- How Well Do You Know Me -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">How Well Do You Know Me?</div>
+          </div>
+          <div class="card-game">
+            <div class="card-h">
+              <span class="card-t">Your questions</span><span class="card-s">For <span class="pname"></span></span>
+            </div>
+            <div class="quiz-form">
+              <input class="quiz-q" id="quiz-q" placeholder="Write a question about yourself..." />
+              <input class="quiz-q" id="quiz-a" placeholder="The correct answer..." />
+              <button class="dq-submit" onclick="submitQuizQ()">Add Question</button>
+            </div>
+            <div id="quiz-mine"></div>
+          </div>
+          <div class="card-game mt-12">
+            <div class="card-h">
+              <span class="card-t"><span class="pname"></span>'s questions</span
+              ><span class="card-s">Test yourself</span>
+            </div>
+            <div id="quiz-theirs"><div class="empty">Waiting for your partner to write some questions</div></div>
+          </div>
+
+          <!-- Remember This -->
+          <div class="sec-head">
+            <div class="sec-dot sd-amber"></div>
+            <div class="sec-title">Remember This</div>
+          </div>
+          <div class="bl-form">
+            <input type="text" id="kyp-note-input" placeholder="Something to remember about them..." class="quiz-q" />
+            <button onclick="addKYPNote()">+</button>
+          </div>
+          <div id="kyp-notes"><div class="empty">Jot down things to remember</div></div>
+
+          <!-- Love Notes (private) -->
+          <div class="sec-head">
+            <div class="sec-dot sd-rose"></div>
+            <div class="sec-title">Private Love Notes</div>
+          </div>
+          <div class="card">
+            <textarea
+              id="kyp-love-note"
+              placeholder="Things that make them light up..."
+              class="form-textarea form-textarea-min mb-8"
+            ></textarea>
+            <button class="dq-submit" onclick="addLoveNote()">Save Note</button>
+          </div>
+          <div id="kyp-love-notes"><div class="empty">Your private notes about what they love</div></div>
+
+          <!-- Note Categories -->
+          <div class="sec-head">
+            <div class="sec-dot sd-emerald"></div>
+            <div class="sec-title">Things That Make Them Happy</div>
+          </div>
+          <div class="card mb-4">
+            <div class="d-flex gap-8">
+              <input
+                type="text"
+                id="kyp-cat-happy"
+                placeholder="Something that makes them light up..."
+                class="flex-1"
+              />
+              <button class="dq-submit p-8-14" onclick="saveKYPCategory('happy')">+</button>
+            </div>
+          </div>
+          <div id="kyp-cat-list-happy"><div class="empty t-sm">Nothing added yet</div></div>
+
+          <div class="sec-head">
+            <div class="sec-dot sd-amber"></div>
+            <div class="sec-title">Pet Peeves</div>
+          </div>
+          <div class="card mb-4">
+            <div class="d-flex gap-8">
+              <input type="text" id="kyp-cat-petpeeves" placeholder="Things they can't stand..." class="flex-1" />
+              <button class="dq-submit p-8-14" onclick="saveKYPCategory('petpeeves')">+</button>
+            </div>
+          </div>
+          <div id="kyp-cat-list-petpeeves"><div class="empty t-sm">Nothing added yet</div></div>
+
+          <div class="sec-head">
+            <div class="sec-dot sd-teal"></div>
+            <div class="sec-title">Their Dreams</div>
+          </div>
+          <div class="card mb-4">
+            <div class="d-flex gap-8">
+              <input type="text" id="kyp-cat-dreams" placeholder="Big dreams and aspirations..." class="flex-1" />
+              <button class="dq-submit p-8-14" onclick="saveKYPCategory('dreams')">+</button>
+            </div>
+          </div>
+          <div id="kyp-cat-list-dreams"><div class="empty t-sm">Nothing added yet</div></div>
+
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Their Fears</div>
+          </div>
+          <div class="card mb-4">
+            <div class="d-flex gap-8">
+              <input type="text" id="kyp-cat-fears" placeholder="Things that worry or scare them..." class="flex-1" />
+              <button class="dq-submit p-8-14" onclick="saveKYPCategory('fears')">+</button>
+            </div>
+          </div>
+          <div id="kyp-cat-list-fears"><div class="empty t-sm">Nothing added yet</div></div>
+        </div>
+      </div>
+

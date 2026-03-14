@@ -441,6 +441,32 @@ function renderRelHealthCard() {
 }
 
 // ===== CULTURE EXCHANGE =====
+function populateCultureNames() {
+  var n1 = NAMES.partner1 || 'Partner 1';
+  var n2 = NAMES.partner2 || 'Partner 2';
+  var el1 = document.getElementById('cx-name-p1');
+  var el2 = document.getElementById('cx-name-p2');
+  if (el1) el1.textContent = n1;
+  if (el2) el2.textContent = n2;
+  // Update select options with partner names
+  var tradSel = document.getElementById('cx-trad-origin');
+  if (tradSel) {
+    var opts = tradSel.options;
+    for (var i = 0; i < opts.length; i++) {
+      if (opts[i].value === 'partner1') opts[i].textContent = 'From ' + n1;
+      if (opts[i].value === 'partner2') opts[i].textContent = 'From ' + n2;
+    }
+  }
+  var recipeSel = document.getElementById('cx-recipe-origin');
+  if (recipeSel) {
+    var opts = recipeSel.options;
+    for (var i = 0; i < opts.length; i++) {
+      if (opts[i].value === 'partner1') opts[i].textContent = n1 + "'s";
+      if (opts[i].value === 'partner2') opts[i].textContent = n2 + "'s";
+    }
+  }
+}
+
 async function addPhrase() {
   if (!db || !user) return;
   const word = document.getElementById('cx-word').value.trim();
@@ -488,7 +514,7 @@ function listenPhrases() {
         el.innerHTML = '<div class="empty">Teach each other your languages</div>';
         return;
       }
-      const langLabels = { ewe: 'Ewe', french: 'French', mina: 'Mina', english: 'English', slang: 'Texas Slang' };
+      const langLabels = {}; // Languages are now free-text input, use stored value directly
       el.innerHTML = items
         .map(i => {
           const who = i.addedBy === user ? 'You' : esc(i.addedByName || '?');
@@ -551,7 +577,7 @@ function listenTraditions() {
         el.innerHTML = '<div class="empty">Share your cultural traditions</div>';
         return;
       }
-      const originLabels = { togo: 'From Togo', texas: 'From Texas', ours: 'Our Tradition' };
+      const originLabels = { partner1: 'From ' + (NAMES.partner1 || 'Partner 1'), partner2: 'From ' + (NAMES.partner2 || 'Partner 2'), ours: 'Our Tradition', togo: 'From Partner 1', texas: 'From Partner 2' };
       el.innerHTML = items
         .map(i => {
           const ts = timeAgo(new Date(i.timestamp));
@@ -617,12 +643,12 @@ function listenRecipes() {
         el.innerHTML = '<div class="empty">Share recipes from your cultures</div>';
         return;
       }
-      const originLabels = { togo: 'Togolese', texas: 'Texan', fusion: 'Fusion' };
+      const originLabels = { partner1: (NAMES.partner1 || 'Partner 1') + "'s", partner2: (NAMES.partner2 || 'Partner 2') + "'s", fusion: 'Fusion', togo: 'Partner 1', texas: 'Partner 2' };
       el.innerHTML = items
         .map(i => {
           const who = i.addedBy === user ? 'You' : esc(i.addedByName || '?');
           return `<div class="cx-recipe-card">
-        <div class="cx-trad-origin ${i.origin === 'togo' ? 'togo' : i.origin === 'texas' ? 'texas' : 'ours'}">${esc(originLabels[i.origin] || i.origin)}</div>
+        <div class="cx-trad-origin ${i.origin === 'ours' ? 'ours' : 'partner'}">${esc(originLabels[i.origin] || i.origin)}</div>
         <div class="cx-trad-title">${esc(i.emoji || '')} ${esc(i.name)}</div>
         ${i.recipe ? `<div class="cx-trad-desc">${esc(i.recipe).replace(/\n/g, '<br>')}</div>` : ''}
         <div class="cx-trad-meta">${who}</div>
@@ -776,7 +802,7 @@ const FAM_DISCUSSIONS = [
   { q: 'How will we balance career and family?', cat: 'Lifestyle' },
   { q: 'What names from your culture would you want to honor?', cat: 'Culture' },
   { q: 'How do we feel about adoption or fostering?', cat: 'Family' },
-  { q: 'What traditions from Togo and Texas do we blend?', cat: 'Culture' },
+  { q: 'What traditions from each of our backgrounds do we blend?', cat: 'Culture' },
   { q: 'How do we handle disagreements about parenting?', cat: 'Communication' },
   { q: 'What kind of home environment do you want for our kids?', cat: 'Home' }
 ];

@@ -511,9 +511,8 @@ function buildAISystemPrompt() {
   let prompt = `You are the AI inside "Moi et Toi," a private relationship app for ${NAMES.partner1} and ${NAMES.partner2}. The current user is ${NAMES[user]} (${user}).
 
 WHO THEY ARE:
-- ${NAMES.partner1} (partner1) is from Togo, West Africa. Ewe, Mina, French. Togolese traditions, values, and food.
-- ${NAMES.partner2} (partner2) is from Texas. Southern roots, Texan culture, American traditions.
-- They're an intercultural couple - young, ambitious, building toward marriage and family.
+- ${NAMES.partner1} and ${NAMES.partner2} are a couple using this app to grow together.
+- They're building toward a shared future.
 
 YOUR ROLE:
 - Their trusted friend. Part of the inner circle. Not a chatbot.
@@ -558,7 +557,7 @@ Use this data to help with budgeting and spending analysis.`;
   }
 
   if (aiContext === 'planning') {
-    prompt += `\n\nPLANNING CONTEXT: Help plan dates, coordinate schedules, suggest activities. Consider both Togolese and Texan cultural activities. Be creative and specific.`;
+    prompt += `\n\nPLANNING CONTEXT: Help plan dates, coordinate schedules, suggest activities. Be creative and specific.`;
   }
 
   return prompt;
@@ -1688,7 +1687,7 @@ function buildContentCuratorPrompt() {
 
 Today is ${today}. Generate fresh content for the app. Return a JSON object with these keys:
 - "dailyQuestion": A thoughtful relationship question for them to answer together
-- "dateIdea": A creative date night idea (consider both Togolese/West African and Texan influences)
+- "dateIdea": A creative date night idea
 - "affirmation": A personalized affirmation for the day
 - "conversationStarter": A fun/deep conversation topic
 - "challenge": A small couples challenge for the day (e.g., "Cook a meal together from a new cuisine")
@@ -2524,7 +2523,7 @@ Return a JSON object:
   "followUps": ["Follow-up question 1", "Follow-up question 2", "Follow-up question 3"]
 }
 
-Be warm, specific, culturally aware (Togolese + Texan couple). Make the question feel tailored, not generic. Return ONLY valid JSON.`;
+Be warm, specific, and make the question feel tailored, not generic. Return ONLY valid JSON.`;
 }
 
 function renderAIDTSession() {

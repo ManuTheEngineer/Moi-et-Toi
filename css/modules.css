@@ -2448,11 +2448,12 @@
   font-weight: 500;
   margin-bottom: 4px;
 }
-.cx-trad-origin.togo {
-  color: #2a6b4a;
+.cx-trad-origin.partner1,
+.cx-trad-origin.partner {
+  color: var(--teal);
 }
-.cx-trad-origin.texas {
-  color: var(--red);
+.cx-trad-origin.partner2 {
+  color: var(--rose);
 }
 .cx-trad-origin.ours {
   color: var(--gold);

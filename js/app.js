@@ -2661,6 +2661,7 @@ function finishLogin() {
   listenPhrases();
   listenTraditions();
   listenRecipes();
+  if (typeof populateCultureNames === 'function') populateCultureNames();
   loadDeepTalk();
   listenConvoNotes();
   renderFamDiscussions();

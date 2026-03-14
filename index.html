@@ -44,8 +44,6 @@
 
     <!-- ===== LOGIN / WELCOME GATE / ONBOARDING ===== -->
     <div class="login" id="login">
-      <div class="login-sky-scene" id="login-sky-scene"></div>
-      <div class="login-terrain-scene" id="login-terrain-scene"></div>
       <div class="login-logo" id="login-logo">M&T</div>
       <h1 id="login-heading">Moi et Toi</h1>
       <div class="sub" id="login-sub">Our place</div>
@@ -2001,7 +1999,7 @@
           <div class="card-story">
             <div class="card-h"><span class="card-t">Recent</span></div>
             <div class="tap-feed" id="tap-feed">
-              <div class="empty">Send a quick tap to let them know you're thinking of them</div>
+              <div class="empty">No taps yet — send one above to let them know you care</div>
             </div>
           </div>
 
@@ -2149,7 +2147,7 @@
             <div class="sec-dot sd-amber"></div>
             <div class="sec-title">Letters</div>
           </div>
-          <div class="letter-feed" id="letter-feed"><div class="empty">Write something only they will read</div></div>
+          <div class="letter-feed" id="letter-feed"><div class="empty" onclick="document.getElementById('letter-input').focus()" style="cursor:pointer">No letters yet — write something only they will read <span style="opacity:.5">&#8593;</span></div></div>
         </div>
       </div>
 
@@ -2560,7 +2558,7 @@
             <div class="sec-dot sd-amber"></div>
             <div class="sec-title">Feed</div>
           </div>
-          <div id="grat-feed"><div class="empty">Tell them what you're grateful for today</div></div>
+          <div id="grat-feed"><div class="empty" onclick="document.getElementById('grat-input').focus()" style="cursor:pointer">Share what you're grateful for today <span style="opacity:.5">— tap here</span></div></div>
         </div>
       </div>
 
@@ -2592,26 +2590,14 @@
             </div>
           </div>
 
-          <!-- Mood Sounds -->
+          <!-- Set the Mood — link to Connect page -->
           <div class="sec-head">
             <div class="sec-dot sd-amber"></div>
             <div class="sec-title">Set the Mood</div>
           </div>
-          <!-- Populated by renderMoodSoundsGrid() -->
-          <div class="mood-sounds-grid" id="mood-sounds-grid"></div>
-          <div style="display: flex; gap: 8px; margin-top: 6px">
-            <button class="mood-stop-btn d-none" id="mood-stop-main" onclick="stopMoodSound()" style="flex: 1">
-              Stop Sound
-            </button>
-            <button
-              class="mood-send-btn d-none"
-              id="mood-send-btn"
-              onclick="sendMoodToPartner(WEATHER.moodPlaying)"
-              style="flex: 1"
-            >
-              Send mood to partner
-            </button>
-          </div>
+          <button class="hub-action-btn" onclick="go('connect')" style="width:100%;padding:14px;border-radius:12px;background:var(--bg2);border:1px solid var(--bdr-s);cursor:pointer">
+            <span style="font-size:13px;color:var(--cream)">Send a vibe to your partner →</span>
+          </button>
 
           <div class="sec-head">
             <div class="sec-dot sd-rose"></div>
@@ -3030,6 +3016,15 @@
 
       <div class="pg" id="pg-settings" data-template="settings"></div>
 
+      <!-- ===== TEMPLATE-LOADED PAGES ===== -->
+      <div class="pg" id="pg-calendar" data-template="calendar"></div>
+      <div class="pg" id="pg-knowyou" data-template="knowyou"></div>
+      <div class="pg" id="pg-memories" data-template="memories"></div>
+      <div class="pg" id="pg-achievements" data-template="achievements"></div>
+      <div class="pg" id="pg-values" data-template="values"></div>
+      <div class="pg" id="pg-lists" data-template="lists"></div>
+      <div class="pg" id="pg-wakeup" data-template="wakeup"></div>
+
       <!-- ===== LOG MODAL ===== -->
       <div class="lmod" id="lmod">
         <div class="lsht">
@@ -3157,7 +3152,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('sw.js?v=178')
+          .register('sw.js?v=179')
           .then(function (reg) {
             // Force waiting SW to activate immediately
             if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
