@@ -379,20 +379,34 @@ async function migrateRolesToNeutral() {
     }
     // If old her/him keys exist, migrate them
     if (profiles.her || profiles.him) {
-      var updates = {};
-      // Migrate profile names: her → partner1 (matching DEFAULT_EMAIL_MAP order)
-      // Note: In the old system, 'him' mapped to abokemmanuel1, 'her' mapped to takelley11
-      // In the new system, partner1 = abokemmanuel1 (was 'him'), partner2 = takelley11 (was 'her')
-      if (profiles.him) updates['profiles/partner1'] = profiles.him;
-      if (profiles.her) updates['profiles/partner2'] = profiles.her;
-      if (profiles.himCallsHer) updates['profiles/partner1CallsPartner2'] = profiles.himCallsHer;
-      if (profiles.herCallsHim) updates['profiles/partner2CallsPartner1'] = profiles.herCallsHim;
+      // All profile/settings writes go through the couple node so security
+      // rules allow them (root-level multi-path updates would fail)
+      var coupleUpdates = {};
+      // Migrate profile names: him → partner1, her → partner2
+      if (profiles.him) coupleUpdates['profiles/partner1'] = profiles.him;
+      if (profiles.her) coupleUpdates['profiles/partner2'] = profiles.her;
+      if (profiles.himCallsHer) coupleUpdates['profiles/partner1CallsPartner2'] = profiles.himCallsHer;
+      if (profiles.herCallsHim) coupleUpdates['profiles/partner2CallsPartner1'] = profiles.herCallsHim;
       // Remove old keys
-      updates['profiles/her'] = null;
-      updates['profiles/him'] = null;
-      updates['profiles/herCallsHim'] = null;
-      updates['profiles/himCallsHer'] = null;
-      // Migrate email map
+      coupleUpdates['profiles/her'] = null;
+      coupleUpdates['profiles/him'] = null;
+      coupleUpdates['profiles/herCallsHim'] = null;
+      coupleUpdates['profiles/himCallsHer'] = null;
+      // Migrate settings paths: settings/*/her → settings/*/partner2, settings/*/him → settings/*/partner1
+      var settingsSnap = await coupleRef('settings').once('value');
+      var settings = settingsSnap.val();
+      if (settings) {
+        Object.keys(settings).forEach(function (key) {
+          var s = settings[key];
+          if (s && typeof s === 'object') {
+            if (s.him !== undefined) { coupleUpdates['settings/' + key + '/partner1'] = s.him; coupleUpdates['settings/' + key + '/him'] = null; }
+            if (s.her !== undefined) { coupleUpdates['settings/' + key + '/partner2'] = s.her; coupleUpdates['settings/' + key + '/her'] = null; }
+          }
+        });
+      }
+      // Write couple-scoped updates
+      await db.ref('couples/' + _coupleId).update(coupleUpdates);
+      // Migrate email map separately (lives under /config, not /couples)
       var emailSnap = await db.ref('config/emailMap').once('value');
       var emailMap = emailSnap.val();
       if (emailMap) {
@@ -403,25 +417,8 @@ async function migrateRolesToNeutral() {
           else if (role === 'her') newMap[email] = 'partner2';
           else newMap[email] = role;
         });
-        updates['config/emailMap'] = newMap;
+        await db.ref('config/emailMap').set(newMap);
       }
-      // Migrate settings paths: settings/*/her → settings/*/partner2, settings/*/him → settings/*/partner1
-      var settingsSnap = await coupleRef('settings').once('value');
-      var settings = settingsSnap.val();
-      if (settings) {
-        Object.keys(settings).forEach(function (key) {
-          var s = settings[key];
-          if (s && typeof s === 'object') {
-            if (s.him !== undefined) { updates['settings/' + key + '/partner1'] = s.him; updates['settings/' + key + '/him'] = null; }
-            if (s.her !== undefined) { updates['settings/' + key + '/partner2'] = s.her; updates['settings/' + key + '/her'] = null; }
-          }
-        });
-      }
-      // Migrate personalGoals, photos, onboarding, ai/nudges
-      ['personalGoals', 'photos', 'onboarding', 'ai/nudges'].forEach(function (path) {
-        // These will be done lazily — the paths use dynamic keys
-      });
-      await db.ref().update(updates);
       console.log('Migrated roles from her/him to partner1/partner2');
     }
     localStorage.setItem('met_roles_migrated', '1');
@@ -647,7 +644,7 @@ function showError(msg) {
 }
 
 async function loadProfiles() {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     coupleRef('profiles').on('value', snap => {
       const data = snap.val();
       // Reset to empty so onboarding triggers if profiles were wiped
@@ -665,6 +662,9 @@ async function loadProfiles() {
         document.querySelectorAll('.partner-nick').forEach(e => (e.textContent = NAMES[partner]));
       }
       resolve();
+    }, function (err) {
+      console.error('loadProfiles permission error:', err);
+      reject(err);
     });
   });
 }
