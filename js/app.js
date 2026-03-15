@@ -88,7 +88,9 @@ async function joinWithCode(code) {
   var snap = await db.ref('invites/' + code).once('value');
   var invite = snap.val();
   if (!invite || !invite.coupleId) throw new Error('Invalid invite code');
-  // Check couple exists and has room (read members — allowed for any auth user)
+  // Write a pendingJoin marker so security rules allow reading the couple's members
+  await db.ref('users/' + authUser.uid + '/pendingJoin').set(invite.coupleId);
+  // Check couple exists and has room
   var membersSnap = await db.ref('couples/' + invite.coupleId + '/members').once('value');
   var members = membersSnap.val();
   if (!members) throw new Error('Couple not found');
@@ -98,7 +100,8 @@ async function joinWithCode(code) {
   await db.ref('couples/' + invite.coupleId + '/members/partner2').set(authUser.uid);
   await db.ref('couples/' + invite.coupleId + '/status').set('active');
   await db.ref('users/' + authUser.uid + '/coupleId').set(invite.coupleId);
-  // Clean up invite
+  // Clean up pendingJoin marker and invite
+  await db.ref('users/' + authUser.uid + '/pendingJoin').remove();
   await db.ref('invites/' + code).remove();
   _coupleId = invite.coupleId;
   user = 'partner2';
@@ -485,11 +488,16 @@ async function migrateRootDataToCouple() {
     // Clean up: delete all legacy root-level nodes (whether just migrated or
     // already migrated in a previous run).  This keeps the database tidy and
     // ensures only the couple-scoped data remains.
-    var deletes = {};
-    for (var j = 0; j < ROOT_NODES.length; j++) {
-      deletes[ROOT_NODES[j]] = null;
+    try {
+      var deletes = {};
+      for (var j = 0; j < ROOT_NODES.length; j++) {
+        deletes[ROOT_NODES[j]] = null;
+      }
+      await db.ref().update(deletes);
+    } catch (cleanupErr) {
+      // Root-level writes may be denied by security rules — non-fatal
+      console.warn('Legacy root cleanup skipped (rules may deny):', cleanupErr.message);
     }
-    await db.ref().update(deletes);
   } catch (e) {
     console.warn('Root migration error (non-fatal):', e);
   }
@@ -2790,16 +2798,14 @@ async function clearAllData() {
     return;
   }
   try {
-    // Preserve API key and email map before wiping
+    // Preserve API key before wiping
     const apiSnap = await coupleRef('profiles/apiKey').once('value');
     const apiKey = apiSnap.val();
-    const emailSnap = await db.ref('config/emailMap').once('value');
-    const emailMap = emailSnap.val();
-    // Wipe everything
-    await db.ref('/').remove();
-    // Restore API key and email map so login still works
+    // Wipe only this couple's data — never touch root or other couples
+    await coupleRef('').remove();
+    await db.ref('users/' + authUser.uid).remove();
+    // Restore API key so login still works
     if (apiKey) await coupleRef('profiles/apiKey').set(apiKey);
-    if (emailMap) await db.ref('config/emailMap').set(emailMap);
     // Clear offline queue in memory so it doesn't re-write wiped data
     _offlineQueue = [];
     // Clear all app localStorage (preserve Firebase config)
@@ -2825,8 +2831,10 @@ async function exportAllData() {
   }
   toast('Preparing export...');
   try {
-    const snap = await db.ref('/').once('value');
-    const data = snap.val();
+    // Export only this couple's data and the current user's data
+    const coupleSnap = await coupleRef('').once('value');
+    const userSnap = await db.ref('users/' + authUser.uid).once('value');
+    const data = { couple: coupleSnap.val(), user: userSnap.val(), coupleId: _coupleId };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
