@@ -4472,14 +4472,17 @@
   color: #fff;
   font-weight: 600;
 }
-.cal-day.has-event::after {
-  content: '';
-  position: absolute;
-  bottom: 4px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--rose);
+.cal-day.has-event {
+  background: rgba(255, 255, 255, 0.04);
+}
+.cal-day.has-joint {
+  background: rgba(180, 160, 255, 0.1);
+}
+.cal-day.today.has-event {
+  background: var(--gold);
+}
+.cal-day.today.has-event div[style*="background:var(--gold)"] {
+  background: #fff !important;
 }
 .cal-day.selected {
   outline: 2px solid var(--gold);

@@ -2331,7 +2331,10 @@ function renderCalendar() {
     const isToday = dateStr === today;
     const isSelected = dateStr === calSelectedDate;
     const dayEvents = events.filter(e => e.date === dateStr);
+    const hasJoint = dayEvents.some(e => e.type === 'joint');
+    const hasEvent = dayEvents.length > 0;
     const dots = dayEvents
+      .slice(0, 3)
       .map(e => {
         const colors = {
           joint: 'var(--lavender)',
@@ -2342,11 +2345,15 @@ function renderCalendar() {
           recurring: 'var(--gold)',
           countdown: 'var(--gold)'
         };
-        return `<div style="width:4px;height:4px;border-radius:50%;background:${colors[e.type] || 'var(--gold)'}"></div>`;
+        const color = colors[e.type] || 'var(--gold)';
+        const size = e.type === 'joint' ? 7 : 6;
+        const shadow = e.type === 'joint' ? `;box-shadow:0 0 4px ${color}` : '';
+        return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color}${shadow}"></div>`;
       })
       .join('');
-    html += `<div class="cal-day${isToday ? ' today' : ''}${isSelected ? ' selected' : ''}" onclick="selectCalDay('${dateStr}')">
-      <span>${d}</span>${dots ? `<div style="display:flex;gap:2px;justify-content:center;margin-top:2px">${dots}</div>` : ''}
+    const cls = 'cal-day' + (isToday ? ' today' : '') + (isSelected ? ' selected' : '') + (hasEvent ? ' has-event' : '') + (hasJoint ? ' has-joint' : '');
+    html += `<div class="${cls}" onclick="selectCalDay('${dateStr}')">
+      <span>${d}</span>${dots ? `<div style="display:flex;gap:3px;justify-content:center;margin-top:2px">${dots}</div>` : ''}
     </div>`;
   }
   grid.innerHTML = html;
