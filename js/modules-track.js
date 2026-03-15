@@ -2400,7 +2400,11 @@ function renderCalDayEvents() {
   const container = document.getElementById('cal-events');
   const label = document.getElementById('cal-day-label');
   if (!container) return;
-  if (label) label.textContent = calSelectedDate;
+  if (label) {
+    const [y, m, d] = calSelectedDate.split('-');
+    const dt = new Date(+y, +m - 1, +d);
+    label.textContent = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
   const events = Object.entries(calendarEvents).filter(([k, e]) => e.date === calSelectedDate);
   if (!events.length) {
     container.innerHTML = '<div class="empty">No events for this day — tap + to add one</div>';
@@ -2440,13 +2444,14 @@ function renderUpcoming() {
     container.innerHTML = '<div class="empty">No upcoming events — plan something to look forward to</div>';
     return;
   }
+  const upColors = { joint: 'var(--lavender)', partner1: 'var(--rose)', partner2: 'var(--teal)', recurring: 'var(--gold)', countdown: 'var(--gold)' };
   container.innerHTML = upcoming
     .map(
       ([k, e]) => `
     <div class="card-data" style="margin-bottom:6px">
-      <div class="cd-accent" style="background:var(--teal)"></div>
-      <div class="cd-number" style="font-size:11px;color:var(--teal)">${e.date.slice(5)}</div>
-      <div class="cd-info"><div class="cd-label">${esc(e.title)}</div><div class="cd-sub">${e.type}</div></div>
+      <div class="cd-accent" style="background:${upColors[e.type] || 'var(--gold)'}"></div>
+      <div class="cd-number" style="font-size:11px;color:${upColors[e.type] || 'var(--gold)'}">${e.date.slice(5)}</div>
+      <div class="cd-info"><div class="cd-label">${esc(e.title)}</div><div class="cd-sub">${e.type}${e.time ? ' · ' + e.time : ''}</div></div>
     </div>`
     )
     .join('');
@@ -2464,6 +2469,9 @@ async function addCalEvent() {
   }
   await coupleRef('calendar').push({ title, date, time, type, notes, createdBy: user, timestamp: Date.now() });
   document.getElementById('cal-event-title').value = '';
+  document.getElementById('cal-event-date').value = '';
+  document.getElementById('cal-event-time').value = '';
+  document.getElementById('cal-event-type').value = 'joint';
   document.getElementById('cal-event-notes').value = '';
   toast('Event added');
   awardXP(5);

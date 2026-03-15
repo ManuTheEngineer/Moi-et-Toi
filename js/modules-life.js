@@ -907,7 +907,7 @@ async function addFamilyGoal() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await coupleRef('family/goals').push({ title, done: false, addedBy: user, timestamp: Date.now() });
+  await coupleRef('family/goals').push({ title, done: false, addedBy: user, addedByName: NAMES[user], timestamp: Date.now() });
   document.getElementById('fam-goal-input').value = '';
   document.getElementById('fam-goal-input').focus();
   if (btn) {
@@ -937,11 +937,14 @@ function listenFamilyGoals() {
       }
       el.innerHTML = items
         .map(
-          i => `<div class="pg-goal ${i.done ? 'done' : ''}">
+          i => {
+            const who = i.addedBy === user ? 'You' : esc(i.addedByName || '');
+            return `<div class="pg-goal ${i.done ? 'done' : ''}">
       <div class="pg-goal-check" onclick="toggleFamGoal('${i._key}',${!i.done})">${i.done ? '✓' : ''}</div>
-      <div class="pg-goal-text">${esc(i.title)}</div>
+      <div class="pg-goal-text">${esc(i.title)}${who ? `<div style="font-size:10px;color:var(--t3)">${who}</div>` : ''}</div>
       <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteFamilyGoal('${i._key}')">×</button>
-    </div>`
+    </div>`;
+          }
         )
         .join('');
     }, 'homelife');
@@ -1737,7 +1740,7 @@ function listenIntentions() {
       el.innerHTML = items
         .map(i => {
           const who = i.addedBy === user ? 'You' : esc(i.addedByName || '?');
-          return `<div class="sp-intent-card"><div class="sp-intent-text">${esc(i.text)}</div><div class="sp-intent-by">${who}</div><button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteIntention('${i._key}')">×</button></div>`;
+          return `<div class="sp-intent-card"><div class="sp-intent-text">${esc(i.text)}</div><div class="sp-intent-by">${who} · ${timeAgo(i.timestamp)}</div><button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteIntention('${i._key}')">×</button></div>`;
         })
         .join('');
     }, 'values');
