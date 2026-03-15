@@ -1034,6 +1034,8 @@ function switchCommitTab(tab) {
 
 /* ---------- main listener ---------- */
 
+var _agreeRefs = [];  // stored for refreshAgreements()
+
 function listenAgreements() {
   if (!db || !user) return;
 
@@ -1046,7 +1048,7 @@ function listenAgreements() {
 
   // --- Shared "Our Commitments" ---
   var activeRef = coupleRef('agreements/active').orderByChild('timestamp');
-  fbOn(activeRef, 'value', function (snap) {
+  var activeCb = function (snap) {
     var el = document.getElementById('agree-active-list');
     if (!el) return;
     var items = [];
@@ -1100,11 +1102,13 @@ function listenAgreements() {
         );
       })
       .join('');
-  });
+  };
+  fbOn(activeRef, 'value', activeCb);
+  _agreeRefs.push({ ref: activeRef, cb: activeCb });
 
   // --- Proposals listener ---
   var proposalRef = coupleRef('agreements/proposals').orderByChild('timestamp');
-  fbOn(proposalRef, 'value', function (snap) {
+  var proposalCb = function (snap) {
     var items = [];
     snap.forEach(function (c) {
       items.push({ key: c.key, data: c.val() });
@@ -1171,10 +1175,19 @@ function listenAgreements() {
         );
       })
       .join('');
-  });
+  };
+  fbOn(proposalRef, 'value', proposalCb);
+  _agreeRefs.push({ ref: proposalRef, cb: proposalCb });
 
   // --- Private "My Commitments" ---
   listenPrivateCommitments();
+}
+
+// Re-read agreement data and render (for use after lazy template injection)
+function refreshAgreements() {
+  _agreeRefs.forEach(function (entry) {
+    entry.ref.once('value', entry.cb);
+  });
 }
 
 /* ---------- private commitments (My Commitments) ---------- */
@@ -1182,7 +1195,7 @@ function listenAgreements() {
 function listenPrivateCommitments() {
   if (!db || !user) return;
   var ref = coupleRef('agreements/personal/' + user).orderByChild('timestamp');
-  fbOn(ref, 'value', function (snap) {
+  var privateCb = function (snap) {
     var el = document.getElementById('agree-private-list');
     if (!el) return;
     var items = [];
@@ -1211,7 +1224,9 @@ function listenPrivateCommitments() {
         );
       })
       .join('');
-  });
+  };
+  fbOn(ref, 'value', privateCb);
+  _agreeRefs.push({ ref: ref, cb: privateCb });
 }
 
 function addPrivateCommitment() {

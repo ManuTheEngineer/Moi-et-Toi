@@ -67,6 +67,9 @@ function go(p) {
   // Initialize insights page on visit
   if (p === 'insights' && typeof initInsightsPage === 'function') initInsightsPage();
 
+  // Re-render agreements after lazy template injection
+  if (p === 'values' && typeof refreshAgreements === 'function') refreshAgreements();
+
   // Set page identifier (used by CSS selectors — no page-specific backgrounds)
   document.body.dataset.page = p;
 
