@@ -8799,8 +8799,8 @@
 .dash-task {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 0;
+  gap: 12px;
+  padding: 12px 0;
   cursor: pointer;
   border-bottom: 1px solid var(--bdr-s);
 }
@@ -8808,19 +8808,21 @@
   border-bottom: none;
 }
 .dash-task-check {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  border: 2px solid var(--t3);
 }
 .dash-task-check.done {
   background: var(--tint);
+  border-color: var(--tint);
 }
 .dash-task-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--cream);
   flex: 1;
@@ -8831,9 +8833,9 @@
   text-decoration: line-through;
 }
 .dash-task-desc {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--t3);
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 /* Me dashboard care grid */
