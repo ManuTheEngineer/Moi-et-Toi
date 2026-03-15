@@ -243,7 +243,7 @@
   box-shadow: var(--card-shadow);
   border: 1px solid var(--bdr-s);
 }
-.vt-option {
+button.vt-option {
   flex: 1;
   text-align: center;
   padding: 10px;
@@ -256,6 +256,9 @@
   transition: color 0.3s;
   cursor: pointer;
   border-radius: 50px;
+  background: none;
+  border: none;
+  margin: 0;
 }
 .vt-option.active {
   color: #fff;

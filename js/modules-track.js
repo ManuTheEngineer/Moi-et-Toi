@@ -2296,6 +2296,8 @@ function listenCalendarEvents() {
   fbOn(coupleRef('calendar'), 'value', snap => {
     calendarEvents = snap.val() || {};
     renderCalendar();
+    // Also update dashboard upcoming events (calendar page may not be loaded yet)
+    renderUpcoming();
   }, 'calendar');
 }
 
@@ -2440,28 +2442,61 @@ function renderCalDayEvents() {
 }
 
 function renderUpcoming() {
-  const container = document.getElementById('cal-upcoming');
-  if (!container) return;
   const today = localDate();
   const upcoming = Object.entries(calendarEvents)
     .filter(([k, e]) => e.date >= today)
     .sort((a, b) => a[1].date.localeCompare(b[1].date))
     .slice(0, 5);
-  if (!upcoming.length) {
-    container.innerHTML = '<div class="empty">No upcoming events — plan something to look forward to</div>';
+  const upColors = { joint: 'var(--lavender)', partner1: 'var(--rose)', partner2: 'var(--teal)', recurring: 'var(--gold)', countdown: 'var(--gold)' };
+
+  // Render on calendar page
+  const container = document.getElementById('cal-upcoming');
+  if (container) {
+    if (!upcoming.length) {
+      container.innerHTML = '<div class="empty">No upcoming events — plan something to look forward to</div>';
+    } else {
+      container.innerHTML = upcoming
+        .map(
+          ([k, e]) => `
+        <div class="card-data" style="margin-bottom:6px">
+          <div class="cd-accent" style="background:${upColors[e.type] || 'var(--gold)'}"></div>
+          <div class="cd-number" style="font-size:11px;color:${upColors[e.type] || 'var(--gold)'}">${e.date.slice(5)}</div>
+          <div class="cd-info"><div class="cd-label">${esc(e.title)}</div><div class="cd-sub">${e.type}${e.time ? ' · ' + e.time : ''}</div></div>
+        </div>`
+        )
+        .join('');
+    }
+  }
+
+  // Render on home dashboard
+  renderDashUpcoming(upcoming, upColors);
+}
+
+function renderDashUpcoming(upcoming, upColors) {
+  const dashCard = document.getElementById('dash-upcoming-events');
+  const dashList = document.getElementById('dash-upcoming-list');
+  const dashCount = document.getElementById('dash-upcoming-count');
+  if (!dashCard || !dashList) return;
+
+  if (!upcoming || !upcoming.length) {
+    hideEl(dashCard);
     return;
   }
-  const upColors = { joint: 'var(--lavender)', partner1: 'var(--rose)', partner2: 'var(--teal)', recurring: 'var(--gold)', countdown: 'var(--gold)' };
-  container.innerHTML = upcoming
-    .map(
-      ([k, e]) => `
-    <div class="card-data" style="margin-bottom:6px">
-      <div class="cd-accent" style="background:${upColors[e.type] || 'var(--gold)'}"></div>
-      <div class="cd-number" style="font-size:11px;color:${upColors[e.type] || 'var(--gold)'}">${e.date.slice(5)}</div>
-      <div class="cd-info"><div class="cd-label">${esc(e.title)}</div><div class="cd-sub">${e.type}${e.time ? ' · ' + e.time : ''}</div></div>
-    </div>`
-    )
-    .join('');
+
+  showEl(dashCard);
+  if (dashCount) dashCount.textContent = upcoming.length + ' event' + (upcoming.length > 1 ? 's' : '');
+  dashList.innerHTML = upcoming.slice(0, 3)
+    .map(([k, e]) => {
+      var color = upColors[e.type] || 'var(--gold)';
+      var parts = e.date.split('-');
+      var dt = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+      var dateLabel = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--bdr)">' +
+        '<div style="width:6px;height:6px;border-radius:50%;background:' + color + ';flex-shrink:0"></div>' +
+        '<div style="flex:1;min-width:0"><div class="t-body c-cream" style="font-size:13px">' + esc(e.title) + '</div></div>' +
+        '<div class="t-xs c-t3" style="flex-shrink:0">' + dateLabel + (e.time ? ' · ' + e.time : '') + '</div>' +
+        '</div>';
+    }).join('');
 }
 
 async function addCalEvent() {

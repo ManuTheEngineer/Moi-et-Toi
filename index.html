@@ -497,8 +497,8 @@
 
           <!-- Us / Me Toggle -->
           <div class="view-toggle" id="view-toggle">
-            <button class="vt-option active btn-reset" data-mode="us" onclick="setViewMode('us')">Us</button>
-            <button class="vt-option btn-reset" data-mode="me" onclick="setViewMode('me')">Me</button>
+            <button class="vt-option active" data-mode="us" onclick="setViewMode('us')">Us</button>
+            <button class="vt-option" data-mode="me" onclick="setViewMode('me')">Me</button>
             <div class="vt-slider" id="vt-slider"></div>
           </div>
 
@@ -580,7 +580,7 @@
                   <div class="stat-mini-num gold" id="dash-together-num">--</div>
                   <div class="stat-mini-label">Days Together</div>
                 </div>
-                <div class="stat-mini" id="dash-birthday-card" style="display: none">
+                <div class="stat-mini cursor-pointer" id="dash-birthday-card" style="display: none" onclick="event.stopPropagation(); go('calendar')">
                   <div class="stat-mini-num gold" id="dash-birthday-num">--</div>
                   <div class="stat-mini-label" id="dash-birthday-label">Birthday</div>
                 </div>
@@ -610,6 +610,17 @@
                 <div class="dash-card-status" id="dash-tasks-count"></div>
               </div>
               <div id="dash-tasks-list"></div>
+            </div>
+
+            <!-- Upcoming Calendar Events -->
+            <div class="dash-card d-none cursor-pointer" id="dash-upcoming-events" onclick="go('calendar')">
+              <div class="dash-card-header mb-6">
+                <div class="dash-card-title c-gold">Upcoming Events</div>
+                <div class="dash-card-status" id="dash-upcoming-count"></div>
+              </div>
+              <div id="dash-upcoming-list">
+                <div class="t-xs c-t3">No upcoming events</div>
+              </div>
             </div>
 
             <!-- Daily Question preview -->
