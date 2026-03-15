@@ -1041,6 +1041,8 @@ function listenAgreements() {
   _migrateOnboardingAgreements();
   // Migrate any personal items already in active to the new private path
   _migratePersonalToPrivate();
+  // Migrate flat legacy commitments (pre-multi-tenant) into agreements/active
+  _migrateLegacyFlatAgreements();
 
   // --- Shared "Our Commitments" ---
   var activeRef = coupleRef('agreements/active').orderByChild('timestamp');
@@ -1379,6 +1381,51 @@ function _migratePersonalToPrivate() {
         coupleRef().update(batch);
       } else {
         coupleRef('agreements/_personalMigrated').set(true);
+      }
+    });
+  });
+}
+
+// Migrate flat legacy commitments (root-level agreements/{pushId}) into agreements/active/
+// Legacy users stored commitments directly under agreements/ — not in the active/ sub-path.
+function _migrateLegacyFlatAgreements() {
+  coupleRef('agreements/_legacyFlatMigrated').once('value', function (snap) {
+    if (snap.val()) return;
+    coupleRef('agreements').once('value', function (agreeSnap) {
+      var batch = {};
+      var found = false;
+      // Known sub-paths that are NOT orphaned commitments
+      var RESERVED = {
+        active: 1, personal: 1, proposals: 1, daily: 1, onboarding: 1,
+        _migrated: 1, _personalMigrated: 1, _legacyFlatMigrated: 1
+      };
+      agreeSnap.forEach(function (c) {
+        if (RESERVED[c.key]) return;
+        var d = c.val();
+        // Must look like a commitment (has text field and is an object)
+        if (!d || typeof d !== 'object' || !d.text) return;
+        found = true;
+        var approvals = d.approvals || {};
+        // Ensure both partners have approved legacy commitments
+        if (!approvals.partner1) approvals.partner1 = true;
+        if (!approvals.partner2) approvals.partner2 = true;
+        batch['agreements/active/' + c.key] = {
+          text: d.text,
+          addedBy: d.addedBy || 'partner1',
+          addedByName: d.addedByName || '',
+          source: 'legacy',
+          timestamp: d.timestamp || Date.now(),
+          signedOff: true,
+          approvals: approvals
+        };
+        // Remove from old flat location
+        batch['agreements/' + c.key] = null;
+      });
+      batch['agreements/_legacyFlatMigrated'] = true;
+      if (found) {
+        coupleRef().update(batch);
+      } else {
+        coupleRef('agreements/_legacyFlatMigrated').set(true);
       }
     });
   });
