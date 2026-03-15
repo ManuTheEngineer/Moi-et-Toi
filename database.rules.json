@@ -13,13 +13,20 @@
         ".read": "root.child('couples/' + $coupleId + '/members/partner1').val() === auth.uid || root.child('couples/' + $coupleId + '/members/partner2').val() === auth.uid",
         ".write": "root.child('couples/' + $coupleId + '/members/partner1').val() === auth.uid || root.child('couples/' + $coupleId + '/members/partner2').val() === auth.uid || (auth != null && !data.exists())",
         "members": {
-          ".read": "auth != null",
+          ".read": "auth != null && (root.child('couples/' + $coupleId + '/members/partner1').val() === auth.uid || root.child('couples/' + $coupleId + '/members/partner2').val() === auth.uid || root.child('users/' + auth.uid + '/pendingJoin').val() === $coupleId)",
+          ".validate": "newData.hasChildren(['partner1'])",
+          "partner1": {
+            ".validate": "newData.isString() && newData.val().length > 0"
+          },
           "partner2": {
-            ".write": "auth != null && (data.val() === null || data.val() === auth.uid)"
-          }
+            ".write": "auth != null && (data.val() === null || data.val() === auth.uid)",
+            ".validate": "newData.isString() && newData.val().length > 0"
+          },
+          "$other": { ".validate": false }
         },
         "status": {
-          ".write": "auth != null && newData.val() === 'active'"
+          ".write": "(root.child('couples/' + $coupleId + '/members/partner1').val() === auth.uid || root.child('couples/' + $coupleId + '/members/partner2').val() === auth.uid) && newData.val() === 'active'",
+          ".validate": "newData.val() === 'pending' || newData.val() === 'active'"
         },
         "inviteCode": {
           ".read": "auth != null"
@@ -35,70 +42,19 @@
     "invites": {
       "$code": {
         ".read": "auth != null",
-        ".write": "auth != null"
+        ".write": "auth != null && (!data.exists() || data.child('createdBy').val() === auth.uid || root.child('couples/' + data.child('coupleId').val() + '/members/partner1').val() === auth.uid || root.child('couples/' + data.child('coupleId').val() + '/members/partner2').val() === auth.uid)"
       }
     },
     "config": {
       ".read": "auth != null",
-      ".write": "auth != null"
+      ".write": false,
+      "emailMap": {
+        ".write": "auth != null"
+      }
     },
-
-    "moods":            { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "letters":          { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "taps":             { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "profiles":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "photos":           { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "onboarding":       { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "streaks":          { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "gratitude":        { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "fitness":          { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "baselines":        { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "analytics":        { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "pushTokens":       { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "achievements":     { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "activity":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "agreements":       { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "ai":               { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "dailyAnswers":     { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "dailyQuestion":    { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "dateNights":       { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "games":            { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "listenTogether":   { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "morningMessages":  { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "notifications":    { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "nutrition":        { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "attachmentStyle":  { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "bucketList":       { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "calendar":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "challenges":       { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "checkins":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "countdowns":       { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "culture":          { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "deepTalk":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "deepTalkJournal":  { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "dreamHome":        { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "dreams":           { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "family":           { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "finances":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "foundation":       { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "grocery":          { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "habits":           { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "homelife":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "identityQuiz":     { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "knowYou":          { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "loveLang":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "memories":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "milestones":       { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "openWhenLetters":  { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "personalGoals":    { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "shared-music":     { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "sharedTodos":      { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "spiritual":        { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "voiceNotes":       { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "wakeup":           { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "wellness":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "wishlists":        { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "workoutLogs":      { ".read": "auth != null", ".write": "auth != null && !newData.exists()" },
-    "settings":         { ".read": "auth != null", ".write": "auth != null && !newData.exists()" }
+    "$other": {
+      ".read": false,
+      ".write": false
+    }
   }
 }

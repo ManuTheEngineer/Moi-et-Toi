@@ -1,0 +1,101 @@
+        <div class="ctn">
+          <!-- Month Navigation -->
+          <div class="cal-header">
+            <button class="cal-nav" onclick="calNav(-1)">&#x2190;</button>
+            <div class="cal-month" id="cal-month-label">March 2026</div>
+            <button class="cal-nav" onclick="calNav(1)">&#x2192;</button>
+          </div>
+
+          <!-- Day Labels -->
+          <div class="cal-grid mb-4">
+            <div class="cal-day-label">S</div>
+            <div class="cal-day-label">M</div>
+            <div class="cal-day-label">T</div>
+            <div class="cal-day-label">W</div>
+            <div class="cal-day-label">T</div>
+            <div class="cal-day-label">F</div>
+            <div class="cal-day-label">S</div>
+          </div>
+
+          <!-- Calendar Grid -->
+          <div class="cal-grid" id="cal-grid"></div>
+
+          <!-- Selected Day Events -->
+          <div class="sec-head mt-20">
+            <div class="sec-dot sd-teal"></div>
+            <div class="sec-title" id="cal-day-label">Today</div>
+          </div>
+          <div id="cal-events"><div class="empty">No events for this day</div></div>
+
+          <!-- Add Event -->
+          <div class="sec-head">
+            <div class="sec-dot sd-teal"></div>
+            <div class="sec-title">Add Event</div>
+          </div>
+          <div class="card">
+            <input type="text" id="cal-event-title" placeholder="Event title" class="quiz-q mb-8" />
+            <div class="d-flex gap-8 mb-8">
+              <input type="date" id="cal-event-date" class="form-input-inline" />
+              <input type="time" id="cal-event-time" class="form-input-inline" />
+            </div>
+            <div class="d-flex gap-8 mb-8">
+              <select id="cal-event-type" class="form-input-inline">
+                <option value="joint">Joint</option>
+                <option value="partner1">Partner 1</option>
+                <option value="partner2">Partner 2</option>
+                <option value="recurring">Recurring</option>
+                <option value="countdown">Countdown</option>
+              </select>
+            </div>
+            <textarea
+              id="cal-event-notes"
+              placeholder="Notes..."
+              class="form-textarea mb-8"
+              style="min-height: 40px"
+            ></textarea>
+            <button class="dq-submit" onclick="addCalEvent()">Add Event</button>
+          </div>
+
+          <!-- Countdowns -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Countdowns</div>
+          </div>
+          <div class="countdown-grid" id="countdown-grid"><div class="empty">No countdowns yet</div></div>
+          <div class="card d-none" id="cd-form">
+            <input type="text" id="cd-title" placeholder="What are you counting down to?" class="mb-8" />
+            <div class="d-flex gap-8 mb-8">
+              <input type="date" id="cd-date" class="form-input-inline flex-2" />
+              <input type="text" id="cd-emoji" placeholder="Emoji" maxlength="2" style="width: 60px; text-align: center;" />
+            </div>
+            <button class="dq-submit" onclick="saveCountdown()">Add countdown</button>
+          </div>
+
+          <!-- Upcoming -->
+          <div class="sec-head">
+            <div class="sec-dot sd-gold"></div>
+            <div class="sec-title">Upcoming</div>
+          </div>
+          <div id="cal-upcoming"><div class="empty">No upcoming events</div></div>
+
+          <!-- Shared Tasks (To-Do + Chores) -->
+          <div class="sec-head">
+            <div class="sec-dot sd-lavender"></div>
+            <div class="sec-title">Shared Tasks</div>
+          </div>
+          <div class="bl-form">
+            <input
+              type="text"
+              id="todo-input"
+              placeholder="Add a task..."
+              onkeydown="if (event.key === 'Enter') addSharedTodo();"
+            />
+            <select id="todo-who" class="select-field">
+              <option value="shared">Both</option>
+              <option value="partner1">Partner 1</option>
+              <option value="partner2">Partner 2</option>
+            </select>
+            <button onclick="addSharedTodo()">+</button>
+          </div>
+          <div id="shared-todo-list"><div class="empty">Tasks for both of you</div></div>
+        </div>

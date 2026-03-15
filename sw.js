@@ -1,4 +1,4 @@
-const CACHE_NAME = 'moiettoi-v177';
+const CACHE_NAME = 'moiettoi-v181';
 
 const ASSETS = [
   './',
@@ -22,6 +22,18 @@ const ASSETS = [
   './js/template-loader.js',
   './js/weather.js',
   './js/firebase-init.mjs',
+  './templates/nutrition.html',
+  './templates/games.html',
+  './templates/fitness.html',
+  './templates/settings.html',
+  './templates/dreamhome.html',
+  './templates/calendar.html',
+  './templates/knowyou.html',
+  './templates/memories.html',
+  './templates/achievements.html',
+  './templates/values.html',
+  './templates/lists.html',
+  './templates/wakeup.html',
   './manifest.json',
   './icons/icon-192x192.png',
   './icons/icon-96x96.png'

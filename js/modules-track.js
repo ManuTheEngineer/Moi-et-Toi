@@ -281,31 +281,28 @@ function listenFitnessData() {
     fitBaseline = snap.val();
     renderFitnessBaseline();
   });
-  coupleRef('fitness/' + user + '/workouts')
+  fbOn(coupleRef('fitness/' + user + '/workouts')
     .orderByChild('date')
-    .limitToLast(60)
-    .on('value', snap => {
+    .limitToLast(60), 'value', snap => {
       fitnessData = snap.val() || {};
       renderFitnessHub();
-    });
-  coupleRef('fitness/' + user + '/prs').on('value', snap => {
+    }, 'fitness');
+  fbOn(coupleRef('fitness/' + user + '/prs'), 'value', snap => {
     fitPRs = snap.val() || {};
-  });
-  coupleRef('fitness/' + user + '/body')
+  }, 'fitness');
+  fbOn(coupleRef('fitness/' + user + '/body')
     .orderByChild('timestamp')
-    .limitToLast(10)
-    .on('value', snap => {
+    .limitToLast(10), 'value', snap => {
       fitBodyData = snap.val() || {};
-    });
-  coupleRef('fitness/' + user + '/programs').on('value', snap => {
+    }, 'fitness');
+  fbOn(coupleRef('fitness/' + user + '/programs'), 'value', snap => {
     renderSavedPrograms(snap.val() || {});
-  });
-  coupleRef('fitness/' + user + '/photos')
+  }, 'fitness');
+  fbOn(coupleRef('fitness/' + user + '/photos')
     .orderByChild('timestamp')
-    .limitToLast(12)
-    .on('value', snap => {
+    .limitToLast(12), 'value', snap => {
       renderProgressPhotos(snap.val() || {});
-    });
+    }, 'fitness');
   // Populate exercise datalist for quick log
   const dl = document.getElementById('fit-ex-datalist');
   if (dl) dl.innerHTML = EXERCISE_DB.map(e => '<option value="' + esc(e.name) + '">').join('');
@@ -1186,7 +1183,7 @@ function renderProgressPhotos(photos) {
   const el = document.getElementById('prog-photos-gallery');
   if (!el) return;
   if (!photos || Object.keys(photos).length === 0) {
-    el.innerHTML = '<div class="empty">No progress photos yet</div>';
+    el.innerHTML = '<div class="empty">No progress photos yet — snap a pic to track your journey</div>';
     return;
   }
   const arr = Object.entries(photos)
@@ -1931,13 +1928,13 @@ function setGrowPath(path) {
 
 function listenGrowData() {
   if (!db) return;
-  coupleRef('grow/' + user + '/completed').on('value', snap => {
+  fbOn(coupleRef('grow/' + user + '/completed'), 'value', snap => {
     growCompleted = snap.val() || {};
     renderGrowModules();
-  });
-  coupleRef('grow/' + user + '/reflections').on('value', snap => {
+  }, 'grow');
+  fbOn(coupleRef('grow/' + user + '/reflections'), 'value', snap => {
     growReflections = snap.val() || {};
-  });
+  }, 'grow');
 }
 
 function renderGrowModules() {
@@ -2100,17 +2097,17 @@ function listenNutritionData() {
     coupleRef('nutrition/' + user + '/meals/' + _nutrListenDate).off();
   }
   _nutrListenDate = today;
-  coupleRef('nutrition/' + user + '/meals/' + today).on('value', snap => {
+  fbOn(coupleRef('nutrition/' + user + '/meals/' + today), 'value', snap => {
     nutritionData = snap.val() || {};
     renderNutritionDay();
-  });
+  }, 'nutrition');
   // Only attach recipes listener once (it doesn't change per-page-visit)
   if (!_nutrRecipeListening) {
     _nutrRecipeListening = true;
-    coupleRef('nutrition/recipes').on('value', snap => {
+    fbOn(coupleRef('nutrition/recipes'), 'value', snap => {
       recipeData = snap.val() || {};
       renderRecipeList();
-    });
+    }, 'nutrition');
   }
 }
 
@@ -2296,10 +2293,39 @@ let calendarEvents = {},
 
 function listenCalendarEvents() {
   if (!db) return;
-  coupleRef('calendar').on('value', snap => {
+  fbOn(coupleRef('calendar'), 'value', snap => {
     calendarEvents = snap.val() || {};
     renderCalendar();
-  });
+    renderPlanUpcoming();
+    if (typeof renderDashUpcomingEvents === 'function') renderDashUpcomingEvents();
+  }, 'calendar');
+}
+
+// Render upcoming calendar events in the Plan hub "Coming Up" section
+function renderPlanUpcoming() {
+  const container = document.getElementById('plan-upcoming');
+  if (!container) return;
+  const today = localDate();
+  const upcoming = Object.entries(calendarEvents)
+    .filter(([k, e]) => e.date >= today)
+    .sort((a, b) => a[1].date.localeCompare(b[1].date))
+    .slice(0, 5);
+  if (!upcoming.length) {
+    container.innerHTML = '<div class="hub-upcoming-empty"><div class="c-t3" style="font-size:12px">No upcoming events</div><button class="hub-upcoming-add" onclick="go(\'calendar\')">Add to Calendar</button></div>';
+    return;
+  }
+  const colors = { joint: 'var(--lavender)', partner1: 'var(--rose)', partner2: 'var(--teal)', recurring: 'var(--gold)', countdown: 'var(--gold)' };
+  container.innerHTML = upcoming
+    .map(([k, e]) => {
+      const dt = new Date(e.date + 'T00:00:00');
+      const dateLabel = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return `<div class="card-data" style="margin-bottom:6px;cursor:pointer" onclick="go('calendar')">
+        <div class="cd-accent" style="background:${colors[e.type] || 'var(--gold)'}"></div>
+        <div class="cd-number" style="font-size:11px;color:${colors[e.type] || 'var(--gold)'}">${dateLabel}</div>
+        <div class="cd-info"><div class="cd-label">${esc(e.title)}</div><div class="cd-sub">${e.type}${e.time ? ' · ' + e.time : ''}</div></div>
+      </div>`;
+    })
+    .join('');
 }
 
 function renderCalendar() {
@@ -2334,7 +2360,10 @@ function renderCalendar() {
     const isToday = dateStr === today;
     const isSelected = dateStr === calSelectedDate;
     const dayEvents = events.filter(e => e.date === dateStr);
+    const hasJoint = dayEvents.some(e => e.type === 'joint');
+    const hasEvent = dayEvents.length > 0;
     const dots = dayEvents
+      .slice(0, 3)
       .map(e => {
         const colors = {
           joint: 'var(--lavender)',
@@ -2345,11 +2374,15 @@ function renderCalendar() {
           recurring: 'var(--gold)',
           countdown: 'var(--gold)'
         };
-        return `<div style="width:4px;height:4px;border-radius:50%;background:${colors[e.type] || 'var(--gold)'}"></div>`;
+        const color = colors[e.type] || 'var(--gold)';
+        const size = e.type === 'joint' ? 7 : 6;
+        const shadow = e.type === 'joint' ? `;box-shadow:0 0 4px ${color}` : '';
+        return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color}${shadow}"></div>`;
       })
       .join('');
-    html += `<div class="cal-day${isToday ? ' today' : ''}${isSelected ? ' selected' : ''}" onclick="selectCalDay('${dateStr}')">
-      <span>${d}</span>${dots ? `<div style="display:flex;gap:2px;justify-content:center;margin-top:2px">${dots}</div>` : ''}
+    const cls = 'cal-day' + (isToday ? ' today' : '') + (isSelected ? ' selected' : '') + (hasEvent ? ' has-event' : '') + (hasJoint ? ' has-joint' : '');
+    html += `<div class="${cls}" onclick="selectCalDay('${dateStr}')">
+      <span>${d}</span>${dots ? `<div style="display:flex;gap:3px;justify-content:center;margin-top:2px">${dots}</div>` : ''}
     </div>`;
   }
   grid.innerHTML = html;
@@ -2403,10 +2436,14 @@ function renderCalDayEvents() {
   const container = document.getElementById('cal-events');
   const label = document.getElementById('cal-day-label');
   if (!container) return;
-  if (label) label.textContent = calSelectedDate;
+  if (label) {
+    const [y, m, d] = calSelectedDate.split('-');
+    const dt = new Date(+y, +m - 1, +d);
+    label.textContent = dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
   const events = Object.entries(calendarEvents).filter(([k, e]) => e.date === calSelectedDate);
   if (!events.length) {
-    container.innerHTML = '<div class="empty">No events for this day</div>';
+    container.innerHTML = '<div class="empty">No events for this day — tap + to add one</div>';
     return;
   }
   const colors = {
@@ -2440,16 +2477,17 @@ function renderUpcoming() {
     .sort((a, b) => a[1].date.localeCompare(b[1].date))
     .slice(0, 5);
   if (!upcoming.length) {
-    container.innerHTML = '<div class="empty">No upcoming events</div>';
+    container.innerHTML = '<div class="empty">No upcoming events — plan something to look forward to</div>';
     return;
   }
+  const upColors = { joint: 'var(--lavender)', partner1: 'var(--rose)', partner2: 'var(--teal)', recurring: 'var(--gold)', countdown: 'var(--gold)' };
   container.innerHTML = upcoming
     .map(
       ([k, e]) => `
     <div class="card-data" style="margin-bottom:6px">
-      <div class="cd-accent" style="background:var(--teal)"></div>
-      <div class="cd-number" style="font-size:11px;color:var(--teal)">${e.date.slice(5)}</div>
-      <div class="cd-info"><div class="cd-label">${esc(e.title)}</div><div class="cd-sub">${e.type}</div></div>
+      <div class="cd-accent" style="background:${upColors[e.type] || 'var(--gold)'}"></div>
+      <div class="cd-number" style="font-size:11px;color:${upColors[e.type] || 'var(--gold)'}">${e.date.slice(5)}</div>
+      <div class="cd-info"><div class="cd-label">${esc(e.title)}</div><div class="cd-sub">${e.type}${e.time ? ' · ' + e.time : ''}</div></div>
     </div>`
     )
     .join('');
@@ -2467,6 +2505,9 @@ async function addCalEvent() {
   }
   await coupleRef('calendar').push({ title, date, time, type, notes, createdBy: user, timestamp: Date.now() });
   document.getElementById('cal-event-title').value = '';
+  document.getElementById('cal-event-date').value = '';
+  document.getElementById('cal-event-time').value = '';
+  document.getElementById('cal-event-type').value = 'joint';
   document.getElementById('cal-event-notes').value = '';
   toast('Event added');
   awardXP(5);
@@ -2487,14 +2528,14 @@ let dreamHomeData = {},
 
 function listenDreamHome() {
   if (!db) return;
-  coupleRef('dreamHome').on('value', snap => {
+  fbOn(coupleRef('dreamHome'), 'value', snap => {
     const data = snap.val() || {};
     dreamHomeData = data.rooms || {};
     dhWishlist = data.wishlist || {};
     dhConfig = data.config || {};
     renderDreamHome();
     dhRenderFinance();
-  });
+  }, 'dreamHome');
 }
 
 // Phase tabs
@@ -3124,9 +3165,8 @@ async function addGroceryItem(inputId) {
 
 function listenGrocery() {
   if (!db) return;
-  coupleRef('grocery')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('grocery')
+    .orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -3153,7 +3193,7 @@ function listenGrocery() {
           })
           .join('');
       });
-    });
+    }, 'grocery');
 }
 
 async function toggleGrocery(key, checked) {
@@ -3190,9 +3230,8 @@ async function addSharedTodo() {
 
 function listenSharedTodos() {
   if (!db) return;
-  coupleRef('sharedTodos')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('sharedTodos')
+    .orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -3219,7 +3258,7 @@ function listenSharedTodos() {
       </div>`;
         })
         .join('');
-    });
+    }, 'sharedTodos');
 }
 
 async function toggleSharedTodo(key, done) {
@@ -3269,7 +3308,7 @@ async function saveDHVision() {
 
 function loadDHVisions() {
   if (!db) return;
-  coupleRef('dreamHome/vision').on('value', snap => {
+  fbOn(coupleRef('dreamHome/vision'), 'value', snap => {
     const data = snap.val() || {};
     renderDHVisionCompare(data);
     // Restore selections
@@ -3289,7 +3328,7 @@ function loadDHVisions() {
         if (item) el.classList.toggle('selected', dhSelectedMusts.includes(item));
       });
     }
-  });
+  }, 'dreamHome');
 }
 
 function renderDHVisionCompare(data) {

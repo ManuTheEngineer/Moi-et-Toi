@@ -37,7 +37,7 @@ function nextAffirmation() { rotatePrompt(AFFIRMATIONS, 'hs-affirm-text', functi
 function logPeriodStart() {
   if (!db || !user) return;
   const today = localDate();
-  coupleRef('wellness/partner1/cycle')
+  coupleRef('wellness/' + user + '/cycle')
     .push({ type: 'start', date: today, timestamp: Date.now() })
     .catch(function () { toast('Save failed'); });
   toast('Period start logged');
@@ -47,7 +47,7 @@ function logPeriodStart() {
 function logPeriodEnd() {
   if (!db || !user) return;
   const today = localDate();
-  coupleRef('wellness/partner1/cycle')
+  coupleRef('wellness/' + user + '/cycle')
     .push({ type: 'end', date: today, timestamp: Date.now() })
     .catch(function () { toast('Save failed'); });
   toast('Period end logged');
@@ -56,7 +56,7 @@ function logPeriodEnd() {
 
 function loadCycleData() {
   if (!db) return;
-  coupleRef('wellness/partner1/cycle')
+  coupleRef('wellness/' + user + '/cycle')
     .orderByChild('timestamp')
     .limitToLast(10)
     .once('value', snap => {
@@ -110,13 +110,13 @@ function toggleCare(el, type) {
   el.classList.toggle('done');
   const today = localDate();
   const done = el.classList.contains('done');
-  coupleRef('wellness/partner1/selfcare/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
+  coupleRef('wellness/' + user + '/selfcare/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
 }
 
 function loadSelfCare() {
   if (!db) return;
   const today = localDate();
-  coupleRef('wellness/partner1/selfcare/' + today).once('value', snap => {
+  coupleRef('wellness/' + user + '/selfcare/' + today).once('value', snap => {
     const data = snap.val() || {};
     document.querySelectorAll('#hs-care-grid .hs-care-item').forEach(el => {
       const type = el.onclick.toString().match(/'(\w+)'/)?.[1];
@@ -168,7 +168,7 @@ async function logPR() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await coupleRef('wellness/partner2/prs').push({
+  await coupleRef('wellness/' + user + '/prs').push({
     exercise,
     weight: weight || '--',
     reps: reps || '--',
@@ -189,7 +189,7 @@ async function logPR() {
 }
 
 function listenPRs() {
-  var ref = coupleRef('wellness/partner2/prs').orderByChild('timestamp').limitToLast(20);
+  var ref = coupleRef('wellness/' + user + '/prs').orderByChild('timestamp').limitToLast(20);
   fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
@@ -214,13 +214,13 @@ function toggleClarity(el, type) {
   el.classList.toggle('done');
   const today = localDate();
   const done = el.classList.contains('done');
-  coupleRef('wellness/partner2/clarity/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
+  coupleRef('wellness/' + user + '/clarity/' + today + '/' + type).set(done ? true : null).catch(function () { toast('Save failed'); });
 }
 
 function loadClarity() {
   if (!db) return;
   const today = localDate();
-  coupleRef('wellness/partner2/clarity/' + today).once('value', snap => {
+  coupleRef('wellness/' + user + '/clarity/' + today).once('value', snap => {
     const data = snap.val() || {};
     document.querySelectorAll('#p1-clarity-grid .hs-care-item').forEach(el => {
       const type = el.onclick.toString().match(/'(\w+)'/)?.[1];
@@ -261,9 +261,7 @@ async function addPersonalGoal(who) {
 
 function listenPersonalGoals(who) {
   const listId = who === 'partner1' ? 'p1-goals' : 'p2-goals';
-  coupleRef('personalGoals/' + who)
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('personalGoals/' + who).orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -288,7 +286,7 @@ function listenPersonalGoals(who) {
       </div>`;
         })
         .join('');
-    });
+    }, 'homelife');
 }
 
 async function toggleGoal(who, key, done) {
@@ -331,9 +329,7 @@ async function addHabit() {
 
 function listenHabits() {
   if (!db) return;
-  coupleRef('habits')
-    .orderByChild('createdAt')
-    .on('value', snap => {
+  fbOn(coupleRef('habits').orderByChild('createdAt'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -341,7 +337,7 @@ function listenHabits() {
         items.push(v);
       });
       renderHabits(items);
-    });
+    }, 'homelife');
 }
 
 function renderHabits(habits) {
@@ -441,6 +437,32 @@ function renderRelHealthCard() {
 }
 
 // ===== CULTURE EXCHANGE =====
+function populateCultureNames() {
+  var n1 = NAMES.partner1 || 'Partner 1';
+  var n2 = NAMES.partner2 || 'Partner 2';
+  var el1 = document.getElementById('cx-name-p1');
+  var el2 = document.getElementById('cx-name-p2');
+  if (el1) el1.textContent = n1;
+  if (el2) el2.textContent = n2;
+  // Update select options with partner names
+  var tradSel = document.getElementById('cx-trad-origin');
+  if (tradSel) {
+    var opts = tradSel.options;
+    for (var i = 0; i < opts.length; i++) {
+      if (opts[i].value === 'partner1') opts[i].textContent = 'From ' + n1;
+      if (opts[i].value === 'partner2') opts[i].textContent = 'From ' + n2;
+    }
+  }
+  var recipeSel = document.getElementById('cx-recipe-origin');
+  if (recipeSel) {
+    var opts = recipeSel.options;
+    for (var i = 0; i < opts.length; i++) {
+      if (opts[i].value === 'partner1') opts[i].textContent = n1 + "'s";
+      if (opts[i].value === 'partner2') opts[i].textContent = n2 + "'s";
+    }
+  }
+}
+
 async function addPhrase() {
   if (!db || !user) return;
   const word = document.getElementById('cx-word').value.trim();
@@ -488,7 +510,7 @@ function listenPhrases() {
         el.innerHTML = '<div class="empty">Teach each other your languages</div>';
         return;
       }
-      const langLabels = { ewe: 'Ewe', french: 'French', mina: 'Mina', english: 'English', slang: 'Texas Slang' };
+      const langLabels = {}; // Languages are now free-text input, use stored value directly
       el.innerHTML = items
         .map(i => {
           const who = i.addedBy === user ? 'You' : esc(i.addedByName || '?');
@@ -551,7 +573,7 @@ function listenTraditions() {
         el.innerHTML = '<div class="empty">Share your cultural traditions</div>';
         return;
       }
-      const originLabels = { togo: 'From Togo', texas: 'From Texas', ours: 'Our Tradition' };
+      const originLabels = { partner1: 'From ' + (NAMES.partner1 || 'Partner 1'), partner2: 'From ' + (NAMES.partner2 || 'Partner 2'), ours: 'Our Tradition', togo: 'From Partner 1', texas: 'From Partner 2' };
       el.innerHTML = items
         .map(i => {
           const ts = timeAgo(new Date(i.timestamp));
@@ -617,12 +639,12 @@ function listenRecipes() {
         el.innerHTML = '<div class="empty">Share recipes from your cultures</div>';
         return;
       }
-      const originLabels = { togo: 'Togolese', texas: 'Texan', fusion: 'Fusion' };
+      const originLabels = { partner1: (NAMES.partner1 || 'Partner 1') + "'s", partner2: (NAMES.partner2 || 'Partner 2') + "'s", fusion: 'Fusion', togo: 'Partner 1', texas: 'Partner 2' };
       el.innerHTML = items
         .map(i => {
           const who = i.addedBy === user ? 'You' : esc(i.addedByName || '?');
           return `<div class="cx-recipe-card">
-        <div class="cx-trad-origin ${i.origin === 'togo' ? 'togo' : i.origin === 'texas' ? 'texas' : 'ours'}">${esc(originLabels[i.origin] || i.origin)}</div>
+        <div class="cx-trad-origin ${i.origin === 'ours' ? 'ours' : 'partner'}">${esc(originLabels[i.origin] || i.origin)}</div>
         <div class="cx-trad-title">${esc(i.emoji || '')} ${esc(i.name)}</div>
         ${i.recipe ? `<div class="cx-trad-desc">${esc(i.recipe).replace(/\n/g, '<br>')}</div>` : ''}
         <div class="cx-trad-meta">${who}</div>
@@ -776,7 +798,7 @@ const FAM_DISCUSSIONS = [
   { q: 'How will we balance career and family?', cat: 'Lifestyle' },
   { q: 'What names from your culture would you want to honor?', cat: 'Culture' },
   { q: 'How do we feel about adoption or fostering?', cat: 'Family' },
-  { q: 'What traditions from Togo and Texas do we blend?', cat: 'Culture' },
+  { q: 'What traditions from each of our backgrounds do we blend?', cat: 'Culture' },
   { q: 'How do we handle disagreements about parenting?', cat: 'Communication' },
   { q: 'What kind of home environment do you want for our kids?', cat: 'Home' }
 ];
@@ -838,9 +860,7 @@ async function addBabyName() {
 }
 
 function listenBabyNames() {
-  coupleRef('family/names')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('family/names').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -866,7 +886,7 @@ function listenBabyNames() {
       </div>`;
         })
         .join('');
-    });
+    }, 'homelife');
 }
 
 async function toggleNameLove(key) {
@@ -887,7 +907,7 @@ async function addFamilyGoal() {
     btn.disabled = true;
     btn.textContent = 'Saving...';
   }
-  await coupleRef('family/goals').push({ title, done: false, addedBy: user, timestamp: Date.now() });
+  await coupleRef('family/goals').push({ title, done: false, addedBy: user, addedByName: NAMES[user], timestamp: Date.now() });
   document.getElementById('fam-goal-input').value = '';
   document.getElementById('fam-goal-input').focus();
   if (btn) {
@@ -901,9 +921,7 @@ async function addFamilyGoal() {
 }
 
 function listenFamilyGoals() {
-  coupleRef('family/goals')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('family/goals').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -919,14 +937,17 @@ function listenFamilyGoals() {
       }
       el.innerHTML = items
         .map(
-          i => `<div class="pg-goal ${i.done ? 'done' : ''}">
+          i => {
+            const who = i.addedBy === user ? 'You' : esc(i.addedByName || '');
+            return `<div class="pg-goal ${i.done ? 'done' : ''}">
       <div class="pg-goal-check" onclick="toggleFamGoal('${i._key}',${!i.done})">${i.done ? '✓' : ''}</div>
-      <div class="pg-goal-text">${esc(i.title)}</div>
+      <div class="pg-goal-text">${esc(i.title)}${who ? `<div style="font-size:10px;color:var(--t3)">${who}</div>` : ''}</div>
       <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteFamilyGoal('${i._key}')">×</button>
-    </div>`
+    </div>`;
+          }
         )
         .join('');
-    });
+    }, 'homelife');
 }
 
 async function toggleFamGoal(key, done) {
@@ -966,9 +987,7 @@ async function addValue() {
 }
 
 function listenValues() {
-  coupleRef('foundation/values')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('foundation/values').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
@@ -989,7 +1008,7 @@ function listenValues() {
     </div>`;
         })
         .join('');
-    });
+    }, 'values');
 }
 
 // ===== AGREEMENT / COMMITMENT SYSTEM =====
@@ -1015,6 +1034,8 @@ function switchCommitTab(tab) {
 
 /* ---------- main listener ---------- */
 
+var _agreeRefs = [];  // stored for refreshAgreements()
+
 function listenAgreements() {
   if (!db || !user) return;
 
@@ -1022,10 +1043,12 @@ function listenAgreements() {
   _migrateOnboardingAgreements();
   // Migrate any personal items already in active to the new private path
   _migratePersonalToPrivate();
+  // Migrate flat legacy commitments (pre-multi-tenant) into agreements/active
+  _migrateLegacyFlatAgreements();
 
   // --- Shared "Our Commitments" ---
   var activeRef = coupleRef('agreements/active').orderByChild('timestamp');
-  fbOn(activeRef, 'value', function (snap) {
+  var activeCb = function (snap) {
     var el = document.getElementById('agree-active-list');
     if (!el) return;
     var items = [];
@@ -1079,11 +1102,13 @@ function listenAgreements() {
         );
       })
       .join('');
-  });
+  };
+  fbOn(activeRef, 'value', activeCb);
+  _agreeRefs.push({ ref: activeRef, cb: activeCb });
 
   // --- Proposals listener ---
   var proposalRef = coupleRef('agreements/proposals').orderByChild('timestamp');
-  fbOn(proposalRef, 'value', function (snap) {
+  var proposalCb = function (snap) {
     var items = [];
     snap.forEach(function (c) {
       items.push({ key: c.key, data: c.val() });
@@ -1150,10 +1175,19 @@ function listenAgreements() {
         );
       })
       .join('');
-  });
+  };
+  fbOn(proposalRef, 'value', proposalCb);
+  _agreeRefs.push({ ref: proposalRef, cb: proposalCb });
 
   // --- Private "My Commitments" ---
   listenPrivateCommitments();
+}
+
+// Re-read agreement data and render (for use after lazy template injection)
+function refreshAgreements() {
+  _agreeRefs.forEach(function (entry) {
+    entry.ref.once('value', entry.cb);
+  });
 }
 
 /* ---------- private commitments (My Commitments) ---------- */
@@ -1161,7 +1195,7 @@ function listenAgreements() {
 function listenPrivateCommitments() {
   if (!db || !user) return;
   var ref = coupleRef('agreements/personal/' + user).orderByChild('timestamp');
-  fbOn(ref, 'value', function (snap) {
+  var privateCb = function (snap) {
     var el = document.getElementById('agree-private-list');
     if (!el) return;
     var items = [];
@@ -1190,7 +1224,9 @@ function listenPrivateCommitments() {
         );
       })
       .join('');
-  });
+  };
+  fbOn(ref, 'value', privateCb);
+  _agreeRefs.push({ ref: ref, cb: privateCb });
 }
 
 function addPrivateCommitment() {
@@ -1361,6 +1397,69 @@ function _migratePersonalToPrivate() {
       } else {
         coupleRef('agreements/_personalMigrated').set(true);
       }
+    });
+  });
+}
+
+// Migrate flat legacy commitments (root-level agreements/{pushId}) into agreements/active/
+// Legacy users stored commitments directly under agreements/ — not in the active/ sub-path.
+function _migrateLegacyFlatAgreements() {
+  coupleRef('agreements/_legacyFlatMigratedV2').once('value', function (snap) {
+    if (snap.val()) return;
+    coupleRef('agreements').once('value', function (agreeSnap) {
+      var batch = {};
+      var found = false;
+      // Known sub-paths that are NOT orphaned commitments
+      var RESERVED = {
+        active: 1, personal: 1, proposals: 1, daily: 1, onboarding: 1,
+        _migrated: 1, _personalMigrated: 1, _legacyFlatMigrated: 1,
+        _legacyFlatMigratedV2: 1, undefined: 1
+      };
+      agreeSnap.forEach(function (c) {
+        if (RESERVED[c.key]) return;
+        var d = c.val();
+        // Must look like a commitment (has text field and is an object)
+        if (!d || typeof d !== 'object' || !d.text) return;
+        found = true;
+        var approvals = d.approvals || {};
+        // Ensure both partners have approved legacy commitments
+        if (!approvals.partner1) approvals.partner1 = true;
+        if (!approvals.partner2) approvals.partner2 = true;
+        batch['agreements/active/' + c.key] = {
+          text: d.text,
+          addedBy: d.addedBy || 'partner1',
+          addedByName: d.addedByName || '',
+          source: 'legacy',
+          timestamp: d.timestamp || Date.now(),
+          signedOff: true,
+          approvals: approvals
+        };
+        // Remove from old flat location
+        batch['agreements/' + c.key] = null;
+      });
+
+      batch['agreements/_legacyFlatMigratedV2'] = true;
+
+      // Also recover data previously mis-migrated to couples/{id}/undefined/
+      // (caused by coupleRef() being called without a path argument)
+      coupleRef('undefined/agreements/active').once('value', function (misSnap) {
+        if (misSnap.exists()) {
+          misSnap.forEach(function (c) {
+            var d = c.val();
+            if (!d || typeof d !== 'object' || !d.text) return;
+            found = true;
+            batch['agreements/active/' + c.key] = d;
+          });
+          // Clean up the mis-migrated 'undefined' node
+          batch['undefined'] = null;
+        }
+
+        if (found) {
+          coupleRef('').update(batch);
+        } else {
+          coupleRef('agreements/_legacyFlatMigratedV2').set(true);
+        }
+      });
     });
   });
 }
@@ -1590,10 +1689,7 @@ async function addPrayer() {
 }
 
 function listenPrayers() {
-  coupleRef('spiritual/prayers')
-    .orderByChild('timestamp')
-    .limitToLast(20)
-    .on('value', snap => {
+  fbOn(coupleRef('spiritual/prayers').orderByChild('timestamp').limitToLast(20), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -1619,7 +1715,7 @@ function listenPrayers() {
       </div>`;
         })
         .join('');
-    });
+    }, 'values');
 }
 
 async function prayFor(key) {
@@ -1659,10 +1755,7 @@ async function addBlessing() {
 }
 
 function listenBlessings() {
-  coupleRef('spiritual/blessings')
-    .orderByChild('timestamp')
-    .limitToLast(20)
-    .on('value', snap => {
+  fbOn(coupleRef('spiritual/blessings').orderByChild('timestamp').limitToLast(20), 'value', snap => {
       const items = [];
       snap.forEach(c => items.push(c.val()));
       items.reverse();
@@ -1679,7 +1772,7 @@ function listenBlessings() {
           return `<div class="sp-bless-card"><div class="sp-prayer-from">${who} · ${ts}</div><div class="sp-prayer-text">${i.text.replace(/</g, '&lt;')}</div></div>`;
         })
         .join('');
-    });
+    }, 'values');
 }
 
 async function addIntention() {
@@ -1710,9 +1803,7 @@ async function addIntention() {
 }
 
 function listenIntentions() {
-  coupleRef('spiritual/intentions')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('spiritual/intentions').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -1729,10 +1820,10 @@ function listenIntentions() {
       el.innerHTML = items
         .map(i => {
           const who = i.addedBy === user ? 'You' : esc(i.addedByName || '?');
-          return `<div class="sp-intent-card"><div class="sp-intent-text">${esc(i.text)}</div><div class="sp-intent-by">${who}</div><button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteIntention('${i._key}')">×</button></div>`;
+          return `<div class="sp-intent-card"><div class="sp-intent-text">${esc(i.text)}</div><div class="sp-intent-by">${who} · ${timeAgo(i.timestamp)}</div><button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteIntention('${i._key}')">×</button></div>`;
         })
         .join('');
-    });
+    }, 'values');
 }
 
 // ===== HOME BUILDING =====
@@ -1818,9 +1909,7 @@ async function addExpense() {
 
 function listenExpenses() {
   if (!db) return;
-  coupleRef('finances/expenses')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('finances/expenses').orderByChild('timestamp'), 'value', snap => {
       const all = [];
       snap.forEach(c => {
         const v = c.val();
@@ -1831,7 +1920,7 @@ function listenExpenses() {
       renderFinOverview(all);
       renderFinRecent(all);
       renderFinCatChart(all);
-    });
+    }, 'homelife');
 }
 
 function renderFinOverview(expenses) {
@@ -1855,7 +1944,7 @@ function renderFinRecent(expenses) {
   if (!el) return;
   const recent = expenses.slice(0, 15);
   if (!recent.length) {
-    el.innerHTML = '<div class="empty">No expenses yet</div>';
+    el.innerHTML = '<div class="empty">No expenses yet — start tracking to see where your money goes</div>';
     return;
   }
   var _s = function (d) {
@@ -1999,9 +2088,7 @@ async function addSavingsGoal() {
 }
 
 function listenSavings() {
-  coupleRef('homelife/savings')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('homelife/savings').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -2026,7 +2113,7 @@ function listenSavings() {
       </div>`;
         })
         .join('');
-    });
+    }, 'homelife');
 }
 
 function updateSavings(key) {
@@ -2087,9 +2174,7 @@ async function addChore() {
 }
 
 function listenChores() {
-  coupleRef('homelife/chores')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('homelife/chores').orderByChild('timestamp'), 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -2120,7 +2205,7 @@ function listenChores() {
       </div>`
         )
         .join('');
-    });
+    }, 'homelife');
 }
 
 async function toggleChore(key, done) {

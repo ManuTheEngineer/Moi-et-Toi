@@ -36,6 +36,7 @@ let _coupleId = null;
 // coupleRef('moods/abc') → db.ref('couples/{coupleId}/moods/abc')
 // Throws if called before couple context is resolved — never writes to root
 function coupleRef(path) {
+  if (!path) path = '';
   if (_coupleId) return db.ref('couples/' + _coupleId + '/' + path);
   console.error('coupleRef() called before _coupleId resolved. Path: ' + path);
   throw new Error('coupleRef requires _coupleId');
@@ -88,7 +89,9 @@ async function joinWithCode(code) {
   var snap = await db.ref('invites/' + code).once('value');
   var invite = snap.val();
   if (!invite || !invite.coupleId) throw new Error('Invalid invite code');
-  // Check couple exists and has room (read members — allowed for any auth user)
+  // Write a pendingJoin marker so security rules allow reading the couple's members
+  await db.ref('users/' + authUser.uid + '/pendingJoin').set(invite.coupleId);
+  // Check couple exists and has room
   var membersSnap = await db.ref('couples/' + invite.coupleId + '/members').once('value');
   var members = membersSnap.val();
   if (!members) throw new Error('Couple not found');
@@ -98,7 +101,8 @@ async function joinWithCode(code) {
   await db.ref('couples/' + invite.coupleId + '/members/partner2').set(authUser.uid);
   await db.ref('couples/' + invite.coupleId + '/status').set('active');
   await db.ref('users/' + authUser.uid + '/coupleId').set(invite.coupleId);
-  // Clean up invite
+  // Clean up pendingJoin marker and invite
+  await db.ref('users/' + authUser.uid + '/pendingJoin').remove();
   await db.ref('invites/' + code).remove();
   _coupleId = invite.coupleId;
   user = 'partner2';
@@ -284,7 +288,6 @@ async function init() {
             }
             await db.ref('users/' + authUser.uid + '/coupleId').set(stableCoupleKey);
             _coupleId = stableCoupleKey;
-            console.log('Legacy user migrated to couple:', stableCoupleKey);
           }
 
           // Copy ALL root-level data into the couple node (moods, letters,
@@ -338,10 +341,9 @@ async function init() {
 
 // Load email-to-role mapping from Firebase, with localStorage fallback.
 // Seeds the default map into Firebase if the node doesn't exist yet.
-const DEFAULT_EMAIL_MAP = {
-  'abokemmanuel1@gmail.com': 'partner1',
-  'takelley11@gmail.com': 'partner2'
-};
+// Default email map is empty — actual mapping is loaded from Firebase config/emailMap.
+// New couples use invite codes instead; this fallback only seeds when Firebase has no data.
+const DEFAULT_EMAIL_MAP = {};
 
 async function loadEmailMap() {
   try {
@@ -398,9 +400,8 @@ async function migrateRootDataToCouple() {
   // Use a versioned flag so we can re-run when the migration logic improves
   var MIGRATION_VERSION = 'v3';
   if (localStorage.getItem('met_root_migrated') === MIGRATION_VERSION) return;
-  console.log('Starting root → couple data migration (' + MIGRATION_VERSION + ') for', _coupleId);
 
-  // him → partner1 (abokemmanuel1), her → partner2 (takelley11)
+  // Legacy role migration: him → partner1, her → partner2
   var ROLE = { him: 'partner1', her: 'partner2' };
   function renameRole(v) { return ROLE[v] || v; }
 
@@ -468,7 +469,6 @@ async function migrateRootDataToCouple() {
         // Check if the couple node already has data for this path
         var existSnap = await db.ref(coupleBase + nodeName).once('value');
         if (existSnap.val()) {
-          console.log('Skipping ' + nodeName + ' — couple already has data');
           continue;
         }
 
@@ -476,7 +476,6 @@ async function migrateRootDataToCouple() {
         var renamed = deepRename(nodeData);
         updates[coupleBase + nodeName] = renamed;
         migratedCount++;
-        console.log('Queued root/' + nodeName + ' → ' + coupleBase + nodeName);
       } catch (e) {
         console.warn('Migration of ' + nodeName + ' skipped:', e.message);
       }
@@ -485,24 +484,26 @@ async function migrateRootDataToCouple() {
     // Write all at once
     if (migratedCount > 0) {
       await db.ref().update(updates);
-      console.log('Migrated ' + migratedCount + ' root-level nodes into couple scope');
     }
 
     // Clean up: delete all legacy root-level nodes (whether just migrated or
     // already migrated in a previous run).  This keeps the database tidy and
     // ensures only the couple-scoped data remains.
-    var deletes = {};
-    for (var j = 0; j < ROOT_NODES.length; j++) {
-      deletes[ROOT_NODES[j]] = null;
+    try {
+      var deletes = {};
+      for (var j = 0; j < ROOT_NODES.length; j++) {
+        deletes[ROOT_NODES[j]] = null;
+      }
+      await db.ref().update(deletes);
+    } catch (cleanupErr) {
+      // Root-level writes may be denied by security rules — non-fatal
+      console.warn('Legacy root cleanup skipped (rules may deny):', cleanupErr.message);
     }
-    await db.ref().update(deletes);
-    console.log('Deleted legacy root-level nodes');
   } catch (e) {
     console.warn('Root migration error (non-fatal):', e);
   }
 
   localStorage.setItem('met_root_migrated', MIGRATION_VERSION);
-  console.log('Root → couple migration complete (' + MIGRATION_VERSION + ')');
 }
 
 // One-time migration from gendered roles (her/him) to neutral (partner1/partner2)
@@ -561,7 +562,6 @@ async function migrateRolesToNeutral() {
         });
         await db.ref('config/emailMap').set(newMap);
       }
-      console.log('Migrated roles from her/him to partner1/partner2');
     }
     localStorage.setItem('met_roles_migrated', '1');
   } catch (e) {
@@ -595,7 +595,6 @@ async function migrateRootSettings() {
     }
     if (Object.keys(updates).length > 0) {
       await db.ref().update(updates);
-      console.log('Migrated root settings to couple scope:', Object.keys(updates));
     }
     localStorage.setItem('met_settings_scoped', '1');
   } catch (e) {
@@ -2467,6 +2466,7 @@ async function computeEngagementMetrics() {
   if (!db) return null;
   var now = Date.now();
   if (_engCache.data && now - _engCache.ts < 300000) return _engCache.data;
+  try {
 
   var thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
   var startDate = localDate(new Date(thirtyDaysAgo));
@@ -2558,6 +2558,7 @@ async function computeEngagementMetrics() {
   };
   _engCache = { data: result, ts: Date.now() };
   return result;
+  } catch (e) { console.warn('computeEngagementMetrics failed:', e); return null; }
 }
 
 // Render engagement dashboard on the insights page
@@ -2671,6 +2672,7 @@ function finishLogin() {
   listenPhrases();
   listenTraditions();
   listenRecipes();
+  if (typeof populateCultureNames === 'function') populateCultureNames();
   loadDeepTalk();
   listenConvoNotes();
   renderFamDiscussions();
@@ -2691,7 +2693,6 @@ function finishLogin() {
   listenGrocery();
   if (typeof loadMealPlans === 'function') loadMealPlans();
   listenSharedTodos();
-  enforcePrivacy();
   // Dashboard UX
   renderDashHero();
   renderDashDailyQ();
@@ -2798,16 +2799,14 @@ async function clearAllData() {
     return;
   }
   try {
-    // Preserve API key and email map before wiping
+    // Preserve API key before wiping
     const apiSnap = await coupleRef('profiles/apiKey').once('value');
     const apiKey = apiSnap.val();
-    const emailSnap = await db.ref('config/emailMap').once('value');
-    const emailMap = emailSnap.val();
-    // Wipe everything
-    await db.ref('/').remove();
-    // Restore API key and email map so login still works
+    // Wipe only this couple's data — never touch root or other couples
+    await coupleRef('').remove();
+    await db.ref('users/' + authUser.uid).remove();
+    // Restore API key so login still works
     if (apiKey) await coupleRef('profiles/apiKey').set(apiKey);
-    if (emailMap) await db.ref('config/emailMap').set(emailMap);
     // Clear offline queue in memory so it doesn't re-write wiped data
     _offlineQueue = [];
     // Clear all app localStorage (preserve Firebase config)
@@ -2833,8 +2832,10 @@ async function exportAllData() {
   }
   toast('Preparing export...');
   try {
-    const snap = await db.ref('/').once('value');
-    const data = snap.val();
+    // Export only this couple's data and the current user's data
+    const coupleSnap = await coupleRef('').once('value');
+    const userSnap = await db.ref('users/' + authUser.uid).once('value');
+    const data = { couple: coupleSnap.val(), user: userSnap.val(), coupleId: _coupleId };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

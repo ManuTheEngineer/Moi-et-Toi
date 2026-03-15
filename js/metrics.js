@@ -420,7 +420,7 @@ function computeRelationshipHealth() {
     coupleRef('dreams').once('value'),
     coupleRef('games/wyr').once('value'),
     coupleRef('games/tot').once('value'),
-    coupleRef('workoutLogs').orderByChild('timestamp').limitToLast(30).once('value'),
+    coupleRef('fitness/' + user + '/workouts').orderByChild('timestamp').limitToLast(30).once('value'),
     coupleRef('finances/expenses').orderByChild('timestamp').limitToLast(30).once('value'),
     coupleRef('gratitude').orderByChild('timestamp').limitToLast(10).once('value'),
     coupleRef('deepTalkJournal').orderByChild('timestamp').limitToLast(5).once('value'),
@@ -583,7 +583,7 @@ function computeRelationshipHealth() {
     storeWeeklyAnalytics(pct);
 
     MET._listeners.forEach(fn => fn('relationship'));
-  });
+  }).catch(function(e) { console.warn('computeRelationshipHealth failed:', e); });
 }
 
 // ===== RELATIONSHIP BASELINE PROGRESS =====
@@ -932,7 +932,7 @@ function initMetricsEngine() {
     });
 
   // Load workouts
-  coupleRef('workoutLogs')
+  coupleRef('fitness/' + user + '/workouts')
     .orderByChild('timestamp')
     .limitToLast(200)
     .once('value', snap => {
@@ -968,7 +968,7 @@ function initMetricsEngine() {
         goals.push(g);
       });
     buildFinanceIndex(expenses, budget, goals);
-  });
+  }).catch(function(e) { console.warn('loadFinanceData failed:', e); });
 
   // Load relationship baselines from onboarding
   coupleRef('baselines').once('value', snap => {
@@ -983,10 +983,9 @@ function initMetricsEngine() {
 // Listen for incremental mood updates
 function listenMoodUpdates() {
   if (!db) return;
-  coupleRef('moods')
+  fbOn(coupleRef('moods')
     .orderByChild('timestamp')
-    .limitToLast(1)
-    .on('child_added', () => {
+    .limitToLast(1), 'child_added', () => {
       // Debounced rebuild
       clearTimeout(MET._moodDebounce);
       MET._moodDebounce = setTimeout(() => {
@@ -1004,7 +1003,7 @@ function listenMoodUpdates() {
             buildMoodIndex(moods);
           });
       }, 1000);
-    });
+    }, '_global');
 }
 
 // Subscribe to metric changes

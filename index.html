@@ -10,7 +10,7 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
-    <title>Manu & Taylor</title>
+    <title>Moi et Toi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -44,10 +44,8 @@
 
     <!-- ===== LOGIN / WELCOME GATE / ONBOARDING ===== -->
     <div class="login" id="login">
-      <div class="login-sky-scene" id="login-sky-scene"></div>
-      <div class="login-terrain-scene" id="login-terrain-scene"></div>
       <div class="login-logo" id="login-logo">M&T</div>
-      <h1 id="login-heading">Manu & Taylor</h1>
+      <h1 id="login-heading">Moi et Toi</h1>
       <div class="sub" id="login-sub">Our place</div>
       <!-- Config setup (shown when no Firebase config exists) -->
       <div id="config-setup" class="login-inner d-none">
@@ -77,7 +75,7 @@
             line-height: 1.5;
           "
         >
-          Ask Manu for the connection key. You only need to do this once on each device.
+          Ask your partner for the connection key. You only need to do this once on each device.
         </div>
       </div>
       <!-- Sign-in / Sign-up form -->
@@ -149,7 +147,7 @@
         <h1 class="onboard-title">Your Living World</h1>
         <p class="onboard-sub">Allow location so the sky, weather, and sounds always match your real world — even when you come back later.</p>
         <button onclick="handleFirstLocationAllow()" class="login-btn" style="margin-top: 24px">Always Allow Location</button>
-        <div class="onboard-skip" onclick="handleFirstLocationSkip()" style="margin-top: 12px">Maybe later</div>
+        <button class="onboard-skip btn-reset" onclick="handleFirstLocationSkip()" style="margin-top: 12px">Maybe later</button>
       </div>
       <!-- Onboarding steps (inputs in DOM from load, keyboard works) -->
       <div id="onboard-steps" class="login-inner d-none">
@@ -499,8 +497,8 @@
 
           <!-- Us / Me Toggle -->
           <div class="view-toggle" id="view-toggle">
-            <div class="vt-option active" data-mode="us" onclick="setViewMode('us')">Us</div>
-            <div class="vt-option" data-mode="me" onclick="setViewMode('me')">Me</div>
+            <button class="vt-option active btn-reset" data-mode="us" onclick="setViewMode('us')">Us</button>
+            <button class="vt-option btn-reset" data-mode="me" onclick="setViewMode('me')">Me</button>
             <div class="vt-slider" id="vt-slider"></div>
           </div>
 
@@ -651,6 +649,15 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- Upcoming Events -->
+            <div class="dash-card d-none" id="dash-upcoming-events">
+              <div class="dash-card-header mb-8">
+                <div class="dash-card-title c-lavender">Coming Up</div>
+                <div class="dash-card-status" style="cursor:pointer;color:var(--t3);font-size:11px" onclick="go('calendar')">View all</div>
+              </div>
+              <div id="dash-upcoming-list"></div>
             </div>
 
             <!-- Recent activity feed -->
@@ -994,10 +1001,10 @@
               <button class="dn-action" onclick="nextDeepTalk()">Next Prompt</button>
             </div>
             <div class="bl-cats" id="dt-levels">
-              <span class="bl-cat on" onclick="setDTLevel('light', this)">Light</span>
-              <span class="bl-cat" onclick="setDTLevel('medium', this)">Medium</span>
-              <span class="bl-cat" onclick="setDTLevel('deep', this)">Deep</span>
-              <span class="bl-cat" onclick="setDTLevel('soul', this)">Soul</span>
+              <button class="bl-cat on btn-reset" onclick="setDTLevel('light', this)">Light</button>
+              <button class="bl-cat btn-reset" onclick="setDTLevel('medium', this)">Medium</button>
+              <button class="bl-cat btn-reset" onclick="setDTLevel('deep', this)">Deep</button>
+              <button class="bl-cat btn-reset" onclick="setDTLevel('soul', this)">Soul</button>
             </div>
           </div>
 
@@ -1028,7 +1035,7 @@
 
           <!-- Know Your Person + Wake Up Together -->
           <div class="hub-list-group" style="margin-top: 16px">
-            <div class="hub-list-row" onclick="go('knowyou')">
+            <button class="hub-list-row btn-reset" onclick="go('knowyou')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -1051,8 +1058,8 @@
                 <div class="hub-list-sub">Learn everything about each other</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
-            <div class="hub-list-row" onclick="go('wakeup')">
+            </button>
+            <button class="hub-list-row btn-reset" onclick="go('wakeup')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -1080,7 +1087,7 @@
                 <div class="hub-list-sub">Goodnight & wake each other up across time zones</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -1179,7 +1186,7 @@
             <div class="sec-title">Today</div>
           </div>
           <div class="hub-today-grid">
-            <div class="hub-today-card htc-mood" onclick="go('mood')">
+            <button class="hub-today-card htc-mood btn-reset" onclick="go('mood')">
               <div class="htc-emoji" id="well-mood-emoji">
                 <svg
                   width="22"
@@ -1199,8 +1206,8 @@
               </div>
               <div class="htc-value" id="well-mood-val">--</div>
               <div class="htc-label">Mood</div>
-            </div>
-            <div class="hub-today-card htc-energy" onclick="go('fitness')">
+            </button>
+            <button class="hub-today-card htc-energy btn-reset" onclick="go('fitness')">
               <div class="htc-emoji">
                 <svg
                   width="22"
@@ -1217,8 +1224,8 @@
               </div>
               <div class="htc-value" id="well-energy-val">--</div>
               <div class="htc-label">Energy</div>
-            </div>
-            <div class="hub-today-card htc-workout" onclick="go('fitness')">
+            </button>
+            <button class="hub-today-card htc-workout btn-reset" onclick="go('fitness')">
               <div class="htc-emoji">
                 <svg
                   width="22"
@@ -1235,8 +1242,8 @@
               </div>
               <div class="htc-value" id="well-workout-val">--</div>
               <div class="htc-label">Active</div>
-            </div>
-            <div class="hub-today-card htc-meals" onclick="go('nutrition')">
+            </button>
+            <button class="hub-today-card htc-meals btn-reset" onclick="go('nutrition')">
               <div class="htc-emoji">
                 <svg
                   width="22"
@@ -1255,7 +1262,7 @@
               </div>
               <div class="htc-value" id="well-meals-val">0</div>
               <div class="htc-label">Meals</div>
-            </div>
+            </button>
           </div>
 
           <!-- Weekly Mood Chart -->
@@ -1307,7 +1314,7 @@
             <div class="sec-title">Workout Programs</div>
           </div>
           <div class="hub-list-group">
-            <div class="hub-list-row" onclick="go('w1')">
+            <button class="hub-list-row btn-reset" onclick="go('w1')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -1330,9 +1337,9 @@
                 <div class="hub-list-sub">Beginner strength &amp; shape</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
             <div class="hub-list-divider"></div>
-            <div class="hub-list-row" onclick="go('w2')">
+            <button class="hub-list-row btn-reset" onclick="go('w2')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -1352,9 +1359,9 @@
                 <div class="hub-list-sub">Intermediate power &amp; definition</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
             <div class="hub-list-divider"></div>
-            <div class="hub-list-row" onclick="go('w3')">
+            <button class="hub-list-row btn-reset" onclick="go('w3')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -1375,7 +1382,7 @@
                 <div class="hub-list-sub">Complete head-to-toe session</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -1515,7 +1522,7 @@
             <div class="sec-title">Building Together</div>
           </div>
           <div class="hub-list-group">
-            <div class="hub-list-row" onclick="go('dreams')">
+            <button class="hub-list-row btn-reset" onclick="go('dreams')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -1537,9 +1544,9 @@
                 <div class="hub-list-sub" id="plan-dreams-sub">Vision board &amp; goals</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
             <div class="hub-list-divider"></div>
-            <div class="hub-list-row" onclick="go('dreamhome')">
+            <button class="hub-list-row btn-reset" onclick="go('dreamhome')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -1560,9 +1567,9 @@
                 <div class="hub-list-sub">Plan &amp; design our future home</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
             <div class="hub-list-divider"></div>
-            <div class="hub-list-row" onclick="go('story')">
+            <button class="hub-list-row btn-reset" onclick="go('story')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -1583,9 +1590,9 @@
                 <div class="hub-list-sub">Milestones &amp; memories</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
             <div class="hub-list-divider"></div>
-            <div class="hub-list-row" onclick="go('values')">
+            <button class="hub-list-row btn-reset" onclick="go('values')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -1606,9 +1613,9 @@
                 <div class="hub-list-sub">Foundation, culture &amp; spiritual</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
             <div class="hub-list-divider"></div>
-            <div class="hub-list-row" onclick="go('lists')">
+            <button class="hub-list-row btn-reset" onclick="go('lists')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -1633,7 +1640,7 @@
                 <div class="hub-list-sub">Wishlists &amp; gift inspiration</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -1689,20 +1696,6 @@
             <button class="pill-btn" onclick="selStress(5, this)">Max</button>
           </div>
 
-          <div class="sec-head">
-            <div class="sec-dot sd-teal"></div>
-            <div class="sec-title">Tags</div>
-          </div>
-          <div class="mood-tags" id="mood-tags">
-            <button class="mood-tag" onclick="toggleTag(this)" data-tag="work">#work</button>
-            <button class="mood-tag" onclick="toggleTag(this)" data-tag="health">#health</button>
-            <button class="mood-tag" onclick="toggleTag(this)" data-tag="relationship">#relationship</button>
-            <button class="mood-tag" onclick="toggleTag(this)" data-tag="family">#family</button>
-            <button class="mood-tag" onclick="toggleTag(this)" data-tag="money">#money</button>
-            <button class="mood-tag" onclick="toggleTag(this)" data-tag="growth">#growth</button>
-            <button class="mood-tag" onclick="toggleTag(this)" data-tag="social">#social</button>
-            <button class="mood-tag" onclick="toggleTag(this)" data-tag="rest">#rest</button>
-          </div>
 
           <div class="sec-head">
             <div class="sec-dot sd-teal"></div>
@@ -2015,7 +2008,7 @@
           <div class="card-story">
             <div class="card-h"><span class="card-t">Recent</span></div>
             <div class="tap-feed" id="tap-feed">
-              <div class="empty">Send a quick tap to let them know you're thinking of them</div>
+              <div class="empty">No taps yet — send one above to let them know you care</div>
             </div>
           </div>
 
@@ -2060,7 +2053,7 @@
             <div class="sec-dot sd-lavender"></div>
             <div class="sec-title">Open When...</div>
           </div>
-          <div id="ow-letters"><div class="empty">No sealed letters yet</div></div>
+          <div id="ow-letters"><div class="empty">No sealed letters yet — write one for your partner to open later</div></div>
 
           <!-- Voice Notes -->
           <div class="sec-head">
@@ -2163,7 +2156,7 @@
             <div class="sec-dot sd-amber"></div>
             <div class="sec-title">Letters</div>
           </div>
-          <div class="letter-feed" id="letter-feed"><div class="empty">Write something only they will read</div></div>
+          <div class="letter-feed" id="letter-feed"><div class="empty" onclick="document.getElementById('letter-input').focus()" style="cursor:pointer">No letters yet — write something only they will read <span style="opacity:.5">&#8593;</span></div></div>
         </div>
       </div>
 
@@ -2206,7 +2199,7 @@
             </div>
             <textarea id="ms-desc" placeholder="Description (optional)..."></textarea>
             <button class="ms-save" onclick="saveMilestone()">Save Milestone</button>
-            <div class="ms-cancel" onclick="toggleMsForm()">Cancel</div>
+            <button class="ms-cancel btn-reset" onclick="toggleMsForm()">Cancel</button>
           </div>
           <div class="timeline" id="timeline"><div class="empty" onclick="toggleMsForm()" style="cursor:pointer">Add your first milestone together <span style="opacity:.5">— tap here</span></div></div>
         </div>
@@ -2433,7 +2426,7 @@
 
           <!-- Feature Links -->
           <div class="hub-list-group">
-            <div class="hub-list-row" onclick="go('insights')">
+            <button class="hub-list-row btn-reset" onclick="go('insights')">
               <div class="hub-list-icon">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
@@ -2445,9 +2438,9 @@
                 <div class="hub-list-sub">AI-powered relationship report</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
             <div class="hub-list-divider"></div>
-            <div class="hub-list-row" onclick="go('memories')">
+            <button class="hub-list-row btn-reset" onclick="go('memories')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -2469,9 +2462,9 @@
                 <div class="hub-list-sub">Your shared photo timeline</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
             <div class="hub-list-divider"></div>
-            <div class="hub-list-row" onclick="go('ai')">
+            <button class="hub-list-row btn-reset" onclick="go('ai')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -2492,9 +2485,9 @@
                 <div class="hub-list-sub">Relationship advice &amp; ideas</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
             <div class="hub-list-divider"></div>
-            <div class="hub-list-row" onclick="go('achievements')">
+            <button class="hub-list-row btn-reset" onclick="go('achievements')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -2515,7 +2508,7 @@
                 <div class="hub-list-sub" id="more-badges-sub">Unlock badges together</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
           </div>
 
           <!-- Settings -->
@@ -2524,7 +2517,7 @@
             <div class="sec-title">Settings</div>
           </div>
           <div class="hub-list-group mb-20">
-            <div class="hub-list-row" onclick="go('settings')">
+            <button class="hub-list-row btn-reset" onclick="go('settings')">
               <div class="hub-list-icon">
                 <svg
                   width="18"
@@ -2547,7 +2540,7 @@
                 <div class="hub-list-sub">Profile, API key, log out</div>
               </div>
               <div class="hub-list-arrow">&#x203A;</div>
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -2574,7 +2567,7 @@
             <div class="sec-dot sd-amber"></div>
             <div class="sec-title">Feed</div>
           </div>
-          <div id="grat-feed"><div class="empty">Tell them what you're grateful for today</div></div>
+          <div id="grat-feed"><div class="empty" onclick="document.getElementById('grat-input').focus()" style="cursor:pointer">Share what you're grateful for today <span style="opacity:.5">— tap here</span></div></div>
         </div>
       </div>
 
@@ -2589,12 +2582,12 @@
         <div class="ctn">
           <div class="mod-status" id="dn-stats"></div>
 
-          <div class="dn-wheel" id="dn-wheel" onclick="spinDateNight()">
+          <button class="dn-wheel btn-reset" id="dn-wheel" onclick="spinDateNight()">
             <div class="dn-spinner" id="dn-spinner">
               <div class="dn-emoji" id="dn-emoji">🎲</div>
               <div class="dn-label">Tap to Spin</div>
             </div>
-          </div>
+          </button>
 
           <div class="dn-result d-none" id="dn-result">
             <div class="dn-cat" id="dn-result-cat"></div>
@@ -2606,38 +2599,26 @@
             </div>
           </div>
 
-          <!-- Mood Sounds -->
+          <!-- Set the Mood — link to Connect page -->
           <div class="sec-head">
             <div class="sec-dot sd-amber"></div>
             <div class="sec-title">Set the Mood</div>
           </div>
-          <!-- Populated by renderMoodSoundsGrid() -->
-          <div class="mood-sounds-grid" id="mood-sounds-grid"></div>
-          <div style="display: flex; gap: 8px; margin-top: 6px">
-            <button class="mood-stop-btn d-none" id="mood-stop-main" onclick="stopMoodSound()" style="flex: 1">
-              Stop Sound
-            </button>
-            <button
-              class="mood-send-btn d-none"
-              id="mood-send-btn"
-              onclick="sendMoodToPartner(WEATHER.moodPlaying)"
-              style="flex: 1"
-            >
-              Send mood to partner
-            </button>
-          </div>
+          <button class="hub-action-btn" onclick="go('connect')" style="width:100%;padding:14px;border-radius:12px;background:var(--bg2);border:1px solid var(--bdr-s);cursor:pointer">
+            <span style="font-size:13px;color:var(--cream)">Send a vibe to your partner →</span>
+          </button>
 
           <div class="sec-head">
             <div class="sec-dot sd-rose"></div>
             <div class="sec-title">Filter by vibe</div>
           </div>
           <div class="bl-cats" id="dn-cats">
-            <span class="bl-cat on" onclick="filterDN('all', this)">All</span>
-            <span class="bl-cat" onclick="filterDN('home', this)">Home</span>
-            <span class="bl-cat" onclick="filterDN('outdoor', this)">Outdoor</span>
-            <span class="bl-cat" onclick="filterDN('fancy', this)">Fancy</span>
-            <span class="bl-cat" onclick="filterDN('adventure', this)">Adventure</span>
-            <span class="bl-cat" onclick="filterDN('budget', this)">Budget</span>
+            <button class="bl-cat on btn-reset" onclick="filterDN('all', this)">All</button>
+            <button class="bl-cat btn-reset" onclick="filterDN('home', this)">Home</button>
+            <button class="bl-cat btn-reset" onclick="filterDN('outdoor', this)">Outdoor</button>
+            <button class="bl-cat btn-reset" onclick="filterDN('fancy', this)">Fancy</button>
+            <button class="bl-cat btn-reset" onclick="filterDN('adventure', this)">Adventure</button>
+            <button class="bl-cat btn-reset" onclick="filterDN('budget', this)">Budget</button>
           </div>
 
           <div class="sec-head">
@@ -2740,14 +2721,14 @@
           </div>
 
           <!-- Quick link to Dream Home -->
-          <div class="dr-home-link" onclick="go('dreamhome')">
+          <button class="dr-home-link btn-reset" onclick="go('dreamhome')">
             <div class="dr-hl-icon">🏠</div>
             <div class="dr-hl-info">
               <div class="dr-hl-title">Dream Home Planner</div>
               <div class="dr-hl-sub">Design your future home together</div>
             </div>
             <div class="dr-hl-arrow">&#x203A;</div>
-          </div>
+          </button>
 
           <!-- Add Dream Form -->
           <div class="dr-form">
@@ -2787,16 +2768,16 @@
 
           <!-- Category Filters -->
           <div class="bl-cats" id="dr-cats">
-            <span class="bl-cat on" onclick="filterDreams('all', this)">All</span>
-            <span class="bl-cat" onclick="filterDreams('home', this)">🏠 Home</span>
-            <span class="bl-cat" onclick="filterDreams('travel', this)">✈️ Travel</span>
-            <span class="bl-cat" onclick="filterDreams('career', this)">💼 Career</span>
-            <span class="bl-cat" onclick="filterDreams('family', this)">👨‍👩‍👧 Family</span>
-            <span class="bl-cat" onclick="filterDreams('experience', this)">🎯 Experiences</span>
-            <span class="bl-cat" onclick="filterDreams('bucket', this)">🪣 Bucket</span>
-            <span class="bl-cat" onclick="filterDreams('financial', this)">💰 Financial</span>
-            <span class="bl-cat" onclick="filterDreams('shared', this)">🤝 Goals</span>
-            <span class="bl-cat" onclick="filterDreams('achieved', this)">✓ Achieved</span>
+            <button class="bl-cat on btn-reset" onclick="filterDreams('all', this)">All</button>
+            <button class="bl-cat btn-reset" onclick="filterDreams('home', this)">🏠 Home</button>
+            <button class="bl-cat btn-reset" onclick="filterDreams('travel', this)">✈️ Travel</button>
+            <button class="bl-cat btn-reset" onclick="filterDreams('career', this)">💼 Career</button>
+            <button class="bl-cat btn-reset" onclick="filterDreams('family', this)">👨‍👩‍👧 Family</button>
+            <button class="bl-cat btn-reset" onclick="filterDreams('experience', this)">🎯 Experiences</button>
+            <button class="bl-cat btn-reset" onclick="filterDreams('bucket', this)">🪣 Bucket</button>
+            <button class="bl-cat btn-reset" onclick="filterDreams('financial', this)">💰 Financial</button>
+            <button class="bl-cat btn-reset" onclick="filterDreams('shared', this)">🤝 Goals</button>
+            <button class="bl-cat btn-reset" onclick="filterDreams('achieved', this)">✓ Achieved</button>
           </div>
 
           <!-- Dream List -->
@@ -3044,6 +3025,15 @@
 
       <div class="pg" id="pg-settings" data-template="settings"></div>
 
+      <!-- ===== TEMPLATE-LOADED PAGES ===== -->
+      <div class="pg" id="pg-calendar" data-template="calendar"></div>
+      <div class="pg" id="pg-knowyou" data-template="knowyou"></div>
+      <div class="pg" id="pg-memories" data-template="memories"></div>
+      <div class="pg" id="pg-achievements" data-template="achievements"></div>
+      <div class="pg" id="pg-values" data-template="values"></div>
+      <div class="pg" id="pg-lists" data-template="lists"></div>
+      <div class="pg" id="pg-wakeup" data-template="wakeup"></div>
+
       <!-- ===== LOG MODAL ===== -->
       <div class="lmod" id="lmod">
         <div class="lsht">
@@ -3077,7 +3067,7 @@
           <div class="lslb">Notes</div>
           <textarea class="mood-note" id="log-notes" placeholder="How did it feel..."></textarea>
           <button class="lsubmit" onclick="submitLog()">Save Workout ✓</button>
-          <div class="lcancel" onclick="closeLog()">Cancel</div>
+          <button class="lcancel btn-reset" onclick="closeLog()">Cancel</button>
         </div>
       </div>
     </div>
@@ -3171,7 +3161,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('sw.js?v=177')
+          .register('sw.js?v=179')
           .then(function (reg) {
             // Force waiting SW to activate immediately
             if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });

@@ -1,0 +1,30 @@
+        <div class="ctn">
+          <!-- My Wishlist -->
+          <div class="list-section" id="list-wishlist">
+            <div class="sec-head">
+              <div class="sec-dot sd-gold"></div>
+              <div class="sec-title">My Wishlist</div>
+            </div>
+            <div class="bl-form">
+              <input type="text" id="wl-input" class="quiz-q" placeholder="Add something you want..." />
+              <button onclick="addWishItem()">+</button>
+            </div>
+            <div class="bl-form mt-neg8">
+              <input type="url" id="wl-link" placeholder="Link (optional)" class="flex-2" />
+              <select id="wl-priority" class="select-field">
+                <option value="love">Love it</option>
+                <option value="want">Want it</option>
+                <option value="need">Need it</option>
+              </select>
+            </div>
+            <div id="wl-mine" class="stagger-in"><div class="empty">Drop hints here</div></div>
+
+            <div class="sec-head mt-24">
+              <div class="sec-dot sd-gold"></div>
+              <div class="sec-title"><span class="pname"></span>'s Wishlist</div>
+            </div>
+            <div id="wl-theirs" class="stagger-in">
+              <div class="empty">Nothing here yet. They're being mysterious</div>
+            </div>
+          </div>
+        </div>

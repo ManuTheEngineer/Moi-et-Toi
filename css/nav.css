@@ -80,13 +80,7 @@
   box-sizing: border-box;
   overflow: hidden;
 }
-/* Login sky/terrain scenes hidden — the universal #bg container provides
-   the single background for the entire app including login. */
-.login-sky-scene,
-.login-terrain-scene {
-  display: none;
-}
-.login > *:not(.login-sky-scene):not(.login-terrain-scene) {
+.login > * {
   position: relative;
   z-index: 1;
 }

@@ -120,7 +120,7 @@ async function submitQuizQ() {
 
 function listenQuiz() {
   // My questions
-  coupleRef('games/knowme/' + user).on('value', snap => {
+  fbOn(coupleRef('games/knowme/' + user), 'value', snap => {
     const el = document.getElementById('quiz-mine');
     if (!el) return;
     const qs = [];
@@ -135,9 +135,9 @@ function listenQuiz() {
           `<div class="quiz-item"><div class="quiz-item-q">${esc(q.question)}</div><div class="quiz-item-a correct">Answer: ${esc(q.answer)}</div></div>`
       )
       .join('');
-  });
+  }, 'games');
   // Partner's questions
-  coupleRef('games/knowme/' + partner).on('value', snap => {
+  fbOn(coupleRef('games/knowme/' + partner), 'value', snap => {
     const el = document.getElementById('quiz-theirs');
     if (!el) return;
     const qs = [];
@@ -158,7 +158,7 @@ function listenQuiz() {
       </div>`;
       })
       .join('');
-  });
+  }, 'games');
 }
 
 function checkQuizAnswer(input, correct) {
@@ -233,18 +233,17 @@ function filterBucket(cat, el) {
 }
 
 function listenBucketList() {
-  coupleRef('bucketList')
-    .orderByChild('timestamp')
-    .on('value', snap => {
-      const items = [];
-      snap.forEach(c => {
-        const v = c.val();
-        v._key = c.key;
-        items.push(v);
-      });
-      items.reverse();
-      renderBucketList(items);
+  var ref = coupleRef('bucketList').orderByChild('timestamp');
+  fbOn(ref, 'value', snap => {
+    const items = [];
+    snap.forEach(c => {
+      const v = c.val();
+      v._key = c.key;
+      items.push(v);
     });
+    items.reverse();
+    renderBucketList(items);
+  }, 'bucketlist');
 }
 
 function renderBucketList(items) {
@@ -314,25 +313,24 @@ async function addWishItem() {
 
 function listenWishlists() {
   // My wishlist
-  coupleRef('wishlists/' + user)
-    .orderByChild('timestamp')
-    .on('value', snap => {
-      const items = [];
-      snap.forEach(c => {
-        const v = c.val();
-        v._key = c.key;
-        items.push(v);
-      });
-      items.reverse();
-      const el = document.getElementById('wl-mine');
-      if (!el) return;
-      if (!items.length) {
-        el.innerHTML = '<div class="empty">Drop hints here</div>';
-        return;
-      }
-      el.innerHTML = items
-        .map(
-          i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
+  var myWlRef = coupleRef('wishlists/' + user).orderByChild('timestamp');
+  fbOn(myWlRef, 'value', snap => {
+    const items = [];
+    snap.forEach(c => {
+      const v = c.val();
+      v._key = c.key;
+      items.push(v);
+    });
+    items.reverse();
+    const el = document.getElementById('wl-mine');
+    if (!el) return;
+    if (!items.length) {
+      el.innerHTML = '<div class="empty">Drop hints here</div>';
+      return;
+    }
+    el.innerHTML = items
+      .map(
+        i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
       <div class="wl-info">
         <div class="wl-title">${esc(i.title)}</div>
         <span class="wl-priority ${i.priority}">${i.priority === 'love' ? '♡ Love it' : i.priority === 'want' ? '★ Want it' : '● Need it'}</span>
@@ -340,29 +338,28 @@ function listenWishlists() {
       </div>
       <button class="item-delete" aria-label="Delete" onclick="event.stopPropagation();deleteWishItem('${user}','${i._key}')">×</button>
     </div>`
-        )
-        .join('');
-    });
+      )
+      .join('');
+  }, 'wishlists');
   // Partner's wishlist
-  coupleRef('wishlists/' + partner)
-    .orderByChild('timestamp')
-    .on('value', snap => {
-      const items = [];
-      snap.forEach(c => {
-        const v = c.val();
-        v._key = c.key;
-        items.push(v);
-      });
-      items.reverse();
-      const el = document.getElementById('wl-theirs');
-      if (!el) return;
-      if (!items.length) {
-        el.innerHTML = '<div class="empty">Nothing here yet - someone is being mysterious</div>';
-        return;
-      }
-      el.innerHTML = items
-        .map(
-          i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
+  var partnerWlRef = coupleRef('wishlists/' + partner).orderByChild('timestamp');
+  fbOn(partnerWlRef, 'value', snap => {
+    const items = [];
+    snap.forEach(c => {
+      const v = c.val();
+      v._key = c.key;
+      items.push(v);
+    });
+    items.reverse();
+    const el = document.getElementById('wl-theirs');
+    if (!el) return;
+    if (!items.length) {
+      el.innerHTML = '<div class="empty">Nothing here yet - someone is being mysterious</div>';
+      return;
+    }
+    el.innerHTML = items
+      .map(
+        i => `<div class="wl-item ${i.purchased ? 'purchased' : ''}">
       <div class="wl-info">
         <div class="wl-title">${esc(i.title)}</div>
         <span class="wl-priority ${i.priority}">${i.priority === 'love' ? '♡ Love it' : i.priority === 'want' ? '★ Want it' : '● Need it'}</span>
@@ -370,9 +367,9 @@ function listenWishlists() {
       </div>
       ${!i.purchased ? `<button class="wl-buy" onclick="markPurchased('${i._key}')">Got it</button>` : '<span style="font-size:10px;color:var(--gold)">✓ Got</span>'}
     </div>`
-        )
-        .join('');
-    });
+      )
+      .join('');
+  }, 'wishlists');
 }
 
 async function markPurchased(key) {
@@ -622,9 +619,8 @@ async function saveDateIdea() {
 }
 
 function listenDateNights() {
-  coupleRef('dateNights')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  var ref = coupleRef('dateNights').orderByChild('timestamp');
+  fbOn(ref, 'value', snap => {
       const items = [];
       snap.forEach(c => {
         const v = c.val();
@@ -661,7 +657,7 @@ function listenDateNights() {
             })
             .join('');
       }
-    });
+  }, 'datenights');
 }
 
 function markDateDone(key) {
@@ -796,14 +792,14 @@ async function submitLLResults() {
 function showLLResults() {
   hideEl('ll-quiz');
   showEl('ll-results');
-  coupleRef('loveLang').on('value', snap => {
+  fbOn(coupleRef('loveLang'), 'value', snap => {
     const data = snap.val() || {};
     renderLLProfile('ll-my-primary', 'll-my-bars', data[user]);
     renderLLProfile('ll-partner-primary', 'll-partner-bars', data[partner]);
     renderLLTips(data[user], data[partner]);
     document.querySelectorAll('.uname').forEach(e => (e.textContent = NAMES[user]));
     document.querySelectorAll('.pname').forEach(e => (e.textContent = NAMES[partner]));
-  });
+  }, 'lovelang');
 }
 
 function renderLLProfile(primaryId, barsId, data) {
@@ -908,16 +904,14 @@ async function submitCheckin() {
 }
 
 function listenCheckins() {
-  coupleRef('checkins')
-    .orderByKey()
-    .limitToLast(8)
-    .on('value', snap => {
-      const weeks = [];
-      snap.forEach(c => weeks.push({ week: c.key, data: c.val() }));
-      weeks.reverse();
-      renderCheckinStatus(weeks);
-      renderCheckinFeed(weeks);
-    });
+  var ref = coupleRef('checkins').orderByKey().limitToLast(8);
+  fbOn(ref, 'value', snap => {
+    const weeks = [];
+    snap.forEach(c => weeks.push({ week: c.key, data: c.val() }));
+    weeks.reverse();
+    renderCheckinStatus(weeks);
+    renderCheckinFeed(weeks);
+  }, 'checkins');
 }
 
 function renderCheckinStatus(weeks) {
@@ -1044,19 +1038,18 @@ function filterDreams(cat, el) {
 }
 
 function listenDreams() {
-  coupleRef('dreams')
-    .orderByChild('timestamp')
-    .on('value', snap => {
-      const items = [];
-      snap.forEach(c => {
-        const v = c.val();
-        v._key = c.key;
-        items.push(v);
-      });
-      items.reverse();
-      _lastDreamItems = items;
-      renderDreams(items);
+  var ref = coupleRef('dreams').orderByChild('timestamp');
+  fbOn(ref, 'value', snap => {
+    const items = [];
+    snap.forEach(c => {
+      const v = c.val();
+      v._key = c.key;
+      items.push(v);
     });
+    items.reverse();
+    _lastDreamItems = items;
+    renderDreams(items);
+  }, 'dreams');
 }
 
 function renderDreams(items) {
@@ -1294,7 +1287,7 @@ async function submitASResults() {
 function showASResults() {
   hideEl('as-quiz');
   showEl('as-results');
-  coupleRef('attachmentStyle').on('value', snap => {
+  fbOn(coupleRef('attachmentStyle'), 'value', snap => {
     const data = snap.val() || {};
     renderASProfile('as-my-result', data[user]);
     renderASProfile('as-partner-result', data[partner]);
@@ -1302,7 +1295,7 @@ function showASResults() {
     renderASRadar(data[user], data[partner]);
     document.querySelectorAll('.uname').forEach(e => (e.textContent = NAMES[user]));
     document.querySelectorAll('.pname').forEach(e => (e.textContent = NAMES[partner]));
-  });
+  }, 'attachment');
 }
 
 function renderASProfile(containerId, data) {
@@ -1584,7 +1577,7 @@ function updateEnhancedCompat() {
     // Dashboard quick note
     const dashQn = document.getElementById('dash-qn-compat');
     if (dashQn) dashQn.textContent = pct ? pct + '% compatible' : '';
-  });
+  }).catch(function(e) { console.warn('updateEnhancedCompat failed:', e); });
 }
 
 // ===== GAME FRAMEWORK =====
@@ -1613,10 +1606,10 @@ function listenGame(key, renderFn) {
   }
   activeGameKey = key;
   activeGameListener = key;
-  coupleRef('games/sessions/' + key).on('value', snap => {
+  fbOn(coupleRef('games/sessions/' + key), 'value', snap => {
     const data = snap.val();
     if (data) renderFn(data, key);
-  });
+  }, 'games');
 }
 
 function stopListeningGame() {
@@ -1709,16 +1702,14 @@ function renderAllGameStats() {
       html += '</div>';
       el.innerHTML = html;
     }
-  );
+  ).catch(function(e) { console.warn('renderAllGameStats failed:', e); });
 }
 
 // Check for active game invite from partner
 function listenGameInvites() {
   if (!db) return;
-  coupleRef('games/sessions')
-    .orderByChild('status')
-    .equalTo('active')
-    .on('value', snap => {
+  var inviteRef = coupleRef('games/sessions').orderByChild('status').equalTo('active');
+  fbOn(inviteRef, 'value', snap => {
       snap.forEach(c => {
         const g = c.val();
         if (g.startedBy === partner && g.status === 'active') {
@@ -1748,7 +1739,7 @@ function listenGameInvites() {
           }
         }
       });
-    });
+  }, 'games');
 }
 
 function joinGame(key, type) {
@@ -3821,9 +3812,9 @@ const CHALLENGE_PACKS = {
 
 function listenChallenges() {
   if (!db) return;
-  coupleRef('challenges').on('value', snap => {
+  fbOn(coupleRef('challenges'), 'value', snap => {
     renderChallenges(snap.val() || {});
-  });
+  }, 'challenges');
 }
 
 function renderChallenges(data) {
@@ -4057,7 +4048,8 @@ function ltStartListening() {
   if (!db) return;
   if (LT.listener) return; // already listening
   var firstLoad = true;
-  LT.listener = coupleRef('listenTogether').on('value', function (snap) {
+  LT.listener = true;
+  fbOn(coupleRef('listenTogether'), 'value', function (snap) {
     var data = snap.val();
     if (!data || !data.active) {
       if (LT.active) ltClearUI();
@@ -4072,10 +4064,10 @@ function ltStartListening() {
     }
     firstLoad = false;
     ltShowSession(data);
-  });
+  }, 'listentogether');
   // Also listen to partner presence changes to update "listening together" status
   var partnerRole = user === 'partner1' ? 'partner2' : 'partner1';
-  coupleRef('presence/' + partnerRole).on('value', function (snap) {
+  fbOn(coupleRef('presence/' + partnerRole), 'value', function (snap) {
     if (!LT.active) return;
     coupleRef('listenTogether').once('value', function (s) {
       var d = s.val();
@@ -4084,7 +4076,7 @@ function ltStartListening() {
         ltUpdateStatus(d, !!p.online);
       }
     });
-  });
+  }, 'listentogether');
 }
 
 function ltShowSession(data) {
@@ -4440,7 +4432,7 @@ function listenWakeUp() {
   // Listen for alarm changes
   if (wuListener) coupleRef('wakeup').off('value', wuListener);
 
-  wuListener = coupleRef('wakeup').on('value', function (snap) {
+  wuListener = function (snap) {
     const data = snap.val() || {};
     const alarms = (data.alarms && data.alarms[today]) || {};
     const goodnights = (data.goodnight && data.goodnight[today]) || {};
@@ -4519,7 +4511,8 @@ function listenWakeUp() {
 
     // Build history
     buildWakeUpHistory(data);
-  });
+  };
+  fbOn(coupleRef('wakeup'), 'value', wuListener, 'wakeup');
 }
 
 function updateWakeUpHero() {
@@ -4883,7 +4876,7 @@ function listenPartnerWakeEvents() {
   var today = localDate();
 
   // Partner confirmed awake
-  coupleRef('wakeup/confirmations/' + today + '/' + partner).on('value', function (snap) {
+  fbOn(coupleRef('wakeup/confirmations/' + today + '/' + partner), 'value', function (snap) {
     var conf = snap.val();
     if (!conf) return;
     var partnerName = typeof NAMES !== 'undefined' ? NAMES[partner] : 'Your partner';
@@ -4898,16 +4891,16 @@ function listenPartnerWakeEvents() {
         new Date(conf.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
         '</span>';
     }
-  });
+  }, 'wakeup');
 
   // Partner snoozed
-  coupleRef('wakeup/snoozes/' + today).orderByChild('from').equalTo(partner)
-    .on('child_added', function (snap) {
-      var s = snap.val();
-      if (!s || Date.now() - s.timestamp > 10000) return; // only show fresh snoozes
-      var partnerName = typeof NAMES !== 'undefined' ? NAMES[partner] : 'Your love';
-      toast(partnerName + ' hit snooze... ' + WU_SNOOZE_MINUTES + ' more minutes');
-    });
+  var snoozeRef = coupleRef('wakeup/snoozes/' + today).orderByChild('from').equalTo(partner);
+  fbOn(snoozeRef, 'child_added', function (snap) {
+    var s = snap.val();
+    if (!s || Date.now() - s.timestamp > 10000) return; // only show fresh snoozes
+    var partnerName = typeof NAMES !== 'undefined' ? NAMES[partner] : 'Your love';
+    toast(partnerName + ' hit snooze... ' + WU_SNOOZE_MINUTES + ' more minutes');
+  }, 'wakeup');
 }
 
 /* ---------- hook into setWakeUpTime to auto-schedule ---------- */

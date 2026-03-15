@@ -1,0 +1,250 @@
+        <div class="ctn">
+          <!-- Section tabs -->
+          <div class="bl-cats" id="val-tabs" style="margin-bottom: 16px">
+            <button class="bl-cat on btn-reset" onclick="showValSection('foundation', this)">Foundation</button>
+            <button class="bl-cat btn-reset" onclick="showValSection('culture', this)">Culture</button>
+            <button class="bl-cat btn-reset" onclick="showValSection('spiritual', this)">Spiritual</button>
+          </div>
+
+          <!-- Foundation section -->
+          <div class="val-section" id="val-foundation">
+            <div class="mod-status" id="fdn-stats"></div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-amber"></div>
+              <div class="sec-title">Our Values</div>
+            </div>
+            <div class="fdn-values" id="fdn-values"></div>
+            <div class="bl-form">
+              <input type="text" id="fdn-value-input" placeholder="A value we share..." class="quiz-q" />
+              <button onclick="addValue()">+</button>
+            </div>
+            <div id="fdn-value-list" class="stagger-in"><div class="empty">What do you both stand for?</div></div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-lavender"></div>
+              <div class="sec-title">Daily Habits</div>
+            </div>
+            <div class="bl-form">
+              <input type="text" id="habit-input" class="quiz-q" placeholder="A daily habit to track..." />
+              <button onclick="addHabit()">+</button>
+            </div>
+            <div id="habits-list" class="stagger-in"><div class="empty">Build consistency together</div></div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-rose"></div>
+              <div class="sec-title">Relationship Health</div>
+            </div>
+            <div id="rel-health-card"></div>
+
+            <!-- Commitments Section -->
+            <div class="sec-head">
+              <div class="sec-dot sd-green"></div>
+              <div class="sec-title">Commitments</div>
+            </div>
+
+            <!-- Tab switcher -->
+            <div class="agree-tabs" id="agree-tabs">
+              <button class="agree-tab active" data-tab="ours" onclick="switchCommitTab('ours')">Our Commitments</button>
+              <button class="agree-tab" data-tab="mine" onclick="switchCommitTab('mine')">My Commitments</button>
+            </div>
+
+            <!-- TAB: Our Commitments (shared, proposal-based) -->
+            <div class="agree-tab-panel active" id="agree-panel-ours">
+              <!-- Pending proposals banner -->
+              <button id="agree-pending-banner" class="agree-pending-banner d-none btn-reset" onclick="scrollToProposals()">
+                <span class="agree-pending-dot"></span>
+                <span id="agree-pending-text">You have proposals to review</span>
+              </button>
+
+              <div class="agree-tab-hint">Changes require both partners to agree</div>
+
+              <!-- Active shared agreements list -->
+              <div id="agree-active-list" class="agree-list"></div>
+
+              <!-- Add new shared agreement -->
+              <div class="bl-form mt-12">
+                <input type="text" id="agree-new-input" class="quiz-q" placeholder="Propose a new commitment..." />
+                <button onclick="proposeAgreement()">Propose</button>
+              </div>
+
+              <!-- Pending proposals section -->
+              <div id="agree-proposals-section" class="d-none">
+                <div class="sec-head mt-12">
+                  <div class="sec-dot sd-amber"></div>
+                  <div class="sec-title">Pending Proposals</div>
+                </div>
+                <div id="agree-proposals-list" class="agree-list"></div>
+              </div>
+            </div>
+
+            <!-- TAB: My Commitments (private, only visible to me) -->
+            <div class="agree-tab-panel" id="agree-panel-mine">
+              <div class="agree-tab-hint">Private — only you can see these</div>
+
+              <!-- Private commitments list -->
+              <div id="agree-private-list" class="agree-list"></div>
+
+              <!-- Add new private commitment -->
+              <div class="bl-form mt-12">
+                <input type="text" id="agree-private-input" class="quiz-q" placeholder="Add a commitment to yourself..." />
+                <button onclick="addPrivateCommitment()">Add</button>
+              </div>
+            </div>
+
+            <!-- Edit modal (shared) -->
+            <div
+              id="agree-edit-overlay"
+              class="agree-edit-overlay"
+              onclick="if (event.target === this) closeAgreementEdit();"
+            >
+              <div class="agree-edit-card">
+                <div class="agree-edit-title">Propose Change</div>
+                <div class="agree-edit-original" id="agree-edit-original"></div>
+                <textarea
+                  id="agree-edit-text"
+                  class="agree-edit-textarea"
+                  placeholder="Suggest updated wording..."
+                ></textarea>
+                <div class="agree-edit-actions">
+                  <button class="agree-edit-cancel" onclick="closeAgreementEdit()">Cancel</button>
+                  <button class="agree-edit-submit" onclick="submitAgreementEdit()">Propose Change</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit modal (private) -->
+            <div
+              id="agree-private-edit-overlay"
+              class="agree-edit-overlay"
+              onclick="if (event.target === this) closePrivateEdit();"
+            >
+              <div class="agree-edit-card">
+                <div class="agree-edit-title">Edit Commitment</div>
+                <textarea
+                  id="agree-private-edit-text"
+                  class="agree-edit-textarea"
+                  placeholder="Update your commitment..."
+                ></textarea>
+                <div class="agree-edit-actions">
+                  <button class="agree-edit-cancel" onclick="closePrivateEdit()">Cancel</button>
+                  <button class="agree-edit-submit" onclick="savePrivateEdit()">Save</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-rose"></div>
+              <div class="sec-title">When We Disagree</div>
+            </div>
+            <div class="fdn-conflict-card">
+              <div class="fdn-conflict-step">
+                <span class="fdn-num">1</span><strong>Pause.</strong> Take 20 minutes apart to cool down. No texting in
+                anger.
+              </div>
+              <div class="fdn-conflict-step">
+                <span class="fdn-num">2</span><strong>Own your part.</strong> Start with "I feel ___ when ___." No
+                blame.
+              </div>
+              <div class="fdn-conflict-step">
+                <span class="fdn-num">3</span><strong>Listen to understand</strong>, not to respond. Repeat back what
+                you heard.
+              </div>
+              <div class="fdn-conflict-step">
+                <span class="fdn-num">4</span><strong>Find the need.</strong> Behind every complaint is an unmet need.
+                Find it.
+              </div>
+              <div class="fdn-conflict-step">
+                <span class="fdn-num">5</span><strong>Repair.</strong> Say what you'll do differently. Mean it. Follow
+                through.
+              </div>
+            </div>
+          </div>
+
+          <!-- Culture section -->
+          <div class="val-section d-none" id="val-culture">
+            <div class="mod-status" id="cx-stats"></div>
+
+            <div class="cx-hero" id="cx-hero">
+              <div class="cx-flag"><span id="cx-name-p1">Partner 1</span></div>
+              <div class="cx-bridge">&#9825;</div>
+              <div class="cx-flag"><span id="cx-name-p2">Partner 2</span></div>
+            </div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-amber"></div>
+              <div class="sec-title">Teach Me</div>
+            </div>
+            <div class="card">
+              <div class="card-h">
+                <span class="card-t">Language Exchange</span><span class="card-s">Learn each other's words</span>
+              </div>
+              <div class="cx-phrase-form">
+                <input type="text" id="cx-word" placeholder="Word or phrase..." class="quiz-q" />
+                <input type="text" id="cx-meaning" placeholder="What it means..." class="quiz-q" />
+                <input type="text" id="cx-lang" class="quiz-q" placeholder="Language (e.g. Spanish, French...)" />
+                <button class="dq-submit mt-8" onclick="addPhrase()">Add Phrase</button>
+              </div>
+              <div id="cx-phrases" class="stagger-in"><div class="empty">Teach each other your languages</div></div>
+            </div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-green"></div>
+              <div class="sec-title">Our Traditions</div>
+            </div>
+            <div class="cx-trad-form">
+              <input type="text" id="cx-trad-title" class="quiz-q" placeholder="A tradition, food, or custom..." />
+              <div class="ms-row">
+                <input type="text" id="cx-trad-emoji" placeholder="&#x1F389;" maxlength="2" class="input-emoji" />
+                <select id="cx-trad-origin" class="select-field flex-1">
+                  <option value="partner1">From partner</option>
+                  <option value="partner2">From partner</option>
+                  <option value="ours">Ours (new)</option>
+                </select>
+              </div>
+              <textarea id="cx-trad-desc" class="mood-note" placeholder="Tell the story behind it..."></textarea>
+              <button class="dq-submit" onclick="addTradition()">Save Tradition</button>
+            </div>
+            <div id="cx-traditions" class="stagger-in"><div class="empty">Share your cultural traditions</div></div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-rose"></div>
+              <div class="sec-title">Recipes From Home</div>
+            </div>
+            <button class="nh-action-btn" onclick="go('nutrition')" style="width:100%">Go to Recipes →</button>
+            <div id="cx-recipes" class="stagger-in"></div>
+          </div>
+
+          <!-- Spiritual section -->
+          <div class="val-section d-none" id="val-spiritual">
+            <div class="mod-status" id="sp-stats"></div>
+
+            <button class="sp-devo btn-reset" id="sp-devo" onclick="nextDevotional()">
+              <div class="sp-devo-label">Daily Reflection</div>
+              <div class="sp-devo-verse" id="sp-devo-verse"></div>
+              <div class="sp-devo-ref" id="sp-devo-ref"></div>
+              <div class="hs-affirm-tap">Tap for another</div>
+            </button>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-amber"></div>
+              <div class="sec-title">Prayer Requests</div>
+            </div>
+            <div class="sp-prayer-form">
+              <textarea class="mood-note" id="sp-prayer-input" placeholder="What's on your heart..."></textarea>
+              <button class="dq-submit" onclick="addPrayer()">Share Prayer Request</button>
+            </div>
+            <div id="sp-prayers" class="stagger-in"><div class="empty">Share what you need prayer for</div></div>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-green"></div>
+              <div class="sec-title">Gratitude & Blessings</div>
+            </div>
+            <button class="nh-action-btn" onclick="go('gratitude')" style="width:100%">Open Gratitude Journal →</button>
+
+            <div class="sec-head">
+              <div class="sec-dot sd-rose"></div>
+              <div class="sec-title">Our Intentions</div>
+            </div>
+            <div class="bl-form">
+              <input type="text" id="sp-intent-input" class="quiz-q" placeholder="An intention for this season..." />

@@ -235,21 +235,21 @@
 .view-toggle {
   display: flex;
   position: relative;
-  background: var(--card-bg);
+  background: var(--bg2);
   border-radius: 50px;
   padding: 4px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   cursor: pointer;
-  box-shadow: var(--card-shadow);
-  border: 1px solid var(--bdr-s);
+  box-shadow: none;
+  border: none;
 }
-.vt-option {
+.vt-option.btn-reset {
   flex: 1;
   text-align: center;
-  padding: 10px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--t3);
   z-index: 1;
@@ -263,16 +263,16 @@
 .vt-slider {
   position: absolute;
   top: 4px;
+  bottom: 4px;
   left: 4px;
   width: calc(50% - 4px);
-  height: calc(100% - 8px);
   background: var(--gold);
   border-radius: 50px;
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
 }
 .vt-slider.me {
-  transform: translateX(100%);
+  left: 50%;
 }
 /* ===== QUICK NAV CARDS ===== */
 .dash-qn-card {
@@ -467,19 +467,6 @@
   margin-top: 4px;
   font-style: italic;
 }
-.mh-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 4px;
-}
-.mh-tag {
-  font-size: 9px;
-  padding: 2px 8px;
-  border-radius: 8px;
-  background: var(--tint);
-  color: var(--gold);
-}
 .mh-dedicate {
   font-size: 10px;
   color: var(--gold);
@@ -492,29 +479,6 @@
   min-width: 50px;
 }
 
-/* Mood Tags */
-.mood-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-.mood-tag {
-  padding: 6px 14px;
-  border-radius: 16px;
-  border: none;
-  background: var(--input-bg);
-  color: var(--t2);
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.mood-tag.sel {
-  background: var(--gold);
-  color: #fff;
-  font-weight: 600;
-}
 
 /* Mood Dedicate */
 .mood-dedicate {
@@ -1853,6 +1817,18 @@
 }
 .btn-sm:active {
   transform: scale(0.96);
+}
+
+/* ===== ACCESSIBLE BUTTON RESET ===== */
+.btn-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: inherit;
 }
 
 /* ===== CONNECT PAGE - TAPS & LETTERS ===== */

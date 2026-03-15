@@ -2,7 +2,7 @@
 let selectedEnergy = 3;
 let selectedSleep = 0;
 let selectedStress = 0;
-let selectedTags = [];
+
 
 function selGrid(gridId, val, el) {
   var setters = { 'mood-grid': function(v) { selectedMood = v; }, 'energy-grid': function(v) { selectedEnergy = v; }, 'sleep-grid': function(v) { selectedSleep = v; }, 'stress-grid': function(v) { selectedStress = v; } };
@@ -15,15 +15,7 @@ function selEnergy(val, el) { selGrid('energy-grid', val, el); }
 function selSleep(val, el) { selGrid('sleep-grid', val, el); }
 function selStress(val, el) { selGrid('stress-grid', val, el); }
 
-function toggleTag(el) {
-  const tag = el.dataset.tag;
-  el.classList.toggle('sel');
-  if (selectedTags.includes(tag)) {
-    selectedTags = selectedTags.filter(t => t !== tag);
-  } else {
-    selectedTags.push(tag);
-  }
-}
+
 
 async function submitMood() {
   if (!selectedMood) {
@@ -46,7 +38,6 @@ async function submitMood() {
   };
   if (selectedSleep) entry.sleep = selectedSleep;
   if (selectedStress) entry.stress = selectedStress;
-  if (selectedTags.length) entry.tags = selectedTags;
   const dedicated = document.getElementById('mood-dedicate-check');
   if (dedicated && dedicated.checked) entry.dedicatedTo = partner;
 
@@ -58,11 +49,9 @@ async function submitMood() {
   selectedEnergy = 3;
   selectedSleep = 0;
   selectedStress = 0;
-  selectedTags = [];
   document
     .querySelectorAll('#mood-grid .pill-btn, #energy-grid .pill-btn, #sleep-grid .pill-btn, #stress-grid .pill-btn')
     .forEach(b => b.classList.remove('sel'));
-  document.querySelectorAll('.mood-tag').forEach(b => b.classList.remove('sel'));
   updateStreak();
   if (typeof logActivity === 'function') logActivity('mood', 'checked in');
   if (entry.dedicatedTo) toast('Dedicated to ' + NAMES[partner] + ' 💕');
@@ -77,16 +66,13 @@ async function submitMood() {
 }
 
 function listenMoods() {
-  coupleRef('moods')
-    .orderByChild('timestamp')
-    .limitToLast(50)
-    .on('value', snap => {
+  fbOn(coupleRef('moods').orderByChild('timestamp').limitToLast(50), 'value', snap => {
       const moods = [];
       snap.forEach(c => moods.push(c.val()));
       moods.reverse();
       renderMoodFeed(moods);
       renderDashMoods(moods);
-    });
+    }, 'mood');
 }
 
 function renderMoodFeed(moods) {
@@ -106,7 +92,7 @@ function renderMoodFeed(moods) {
       let details = [energyLbls[m.energy] + ' energy'];
       if (m.sleep) details.push(sleepLbls[m.sleep] + ' sleep');
       if (m.stress) details.push(stressLbls[m.stress] + ' stress');
-      const tagHtml = m.tags ? m.tags.map(t => `<span class="mh-tag">#${t}</span>`).join('') : '';
+
       const dedicateHtml = m.dedicatedTo
         ? `<div class="mh-dedicate">💕 For ${m.dedicatedTo === user ? 'you' : NAMES[m.dedicatedTo]}</div>`
         : '';
@@ -115,7 +101,6 @@ function renderMoodFeed(moods) {
       <div class="mh-info">
         <div class="mh-name">${m.user === user ? 'You' : m.userName || '?'}</div>
         <div class="mh-detail">${details.join(' · ')}</div>
-        ${tagHtml ? `<div class="mh-tags">${tagHtml}</div>` : ''}
         ${m.note ? `<div class="mh-note">${esc(m.note)}</div>` : ''}
         ${dedicateHtml}
       </div>
@@ -523,9 +508,8 @@ function buildAISystemPrompt() {
   let prompt = `You are the AI inside "Moi et Toi," a private relationship app for ${NAMES.partner1} and ${NAMES.partner2}. The current user is ${NAMES[user]} (${user}).
 
 WHO THEY ARE:
-- ${NAMES.partner1} (partner1) is from Togo, West Africa. Ewe, Mina, French. Togolese traditions, values, and food.
-- ${NAMES.partner2} (partner2) is from Texas. Southern roots, Texan culture, American traditions.
-- They're an intercultural couple - young, ambitious, building toward marriage and family.
+- ${NAMES.partner1} and ${NAMES.partner2} are a couple using this app to grow together.
+- They're building toward a shared future.
 
 YOUR ROLE:
 - Their trusted friend. Part of the inner circle. Not a chatbot.
@@ -570,7 +554,7 @@ Use this data to help with budgeting and spending analysis.`;
   }
 
   if (aiContext === 'planning') {
-    prompt += `\n\nPLANNING CONTEXT: Help plan dates, coordinate schedules, suggest activities. Consider both Togolese and Texan cultural activities. Be creative and specific.`;
+    prompt += `\n\nPLANNING CONTEXT: Help plan dates, coordinate schedules, suggest activities. Be creative and specific.`;
   }
 
   return prompt;
@@ -884,8 +868,8 @@ async function submitLog() {
     timestamp: Date.now(),
     date: localDate()
   };
-  const key = coupleRef('workoutLogs').push().key;
-  await coupleRef('workoutLogs/' + key).set(entry);
+  const key = coupleRef('fitness/' + user + '/workouts').push().key;
+  await coupleRef('fitness/' + user + '/workouts/' + key).set(entry);
   closeLog();
   if (typeof logActivity === 'function') logActivity('fitness', 'logged a workout');
   toast('Workout logged');
@@ -923,10 +907,7 @@ async function sendTap(e, type, emoji) {
 }
 
 function listenTaps() {
-  coupleRef('taps')
-    .orderByChild('timestamp')
-    .limitToLast(20)
-    .on('value', snap => {
+  fbOn(coupleRef('taps').orderByChild('timestamp').limitToLast(20), 'value', snap => {
       const taps = [];
       snap.forEach(c => taps.push(c.val()));
       taps.reverse();
@@ -938,7 +919,7 @@ function listenTaps() {
           showTapOverlay(latest.type);
         }
       }
-    });
+    }, 'connect');
 }
 
 function renderTapFeed(taps) {
@@ -1072,9 +1053,7 @@ async function sendLetter() {
 
 function listenOpenWhenLetters() {
   if (!db) return;
-  coupleRef('openWhenLetters')
-    .orderByChild('timestamp')
-    .on('value', snap => {
+  fbOn(coupleRef('openWhenLetters').orderByChild('timestamp'), 'value', snap => {
       const letters = [];
       snap.forEach(c => {
         const v = c.val();
@@ -1083,7 +1062,7 @@ function listenOpenWhenLetters() {
       });
       letters.reverse();
       renderOpenWhenLetters(letters);
-    });
+    }, 'connect');
 }
 
 function renderOpenWhenLetters(letters) {
@@ -1093,7 +1072,7 @@ function renderOpenWhenLetters(letters) {
   const forMe = letters.filter(l => l.from === partner);
   const fromMe = letters.filter(l => l.from === user);
   if (!letters.length) {
-    el.innerHTML = '<div class="empty">No sealed letters yet</div>';
+    el.innerHTML = '<div class="empty">No sealed letters yet — write one for your partner to open later</div>';
     return;
   }
 
@@ -1139,10 +1118,7 @@ async function openSealedLetter(key) {
 }
 
 function listenLetters() {
-  coupleRef('letters')
-    .orderByChild('timestamp')
-    .limitToLast(30)
-    .on('value', snap => {
+  fbOn(coupleRef('letters').orderByChild('timestamp').limitToLast(30), 'value', snap => {
       const letters = [];
       snap.forEach(c => {
         const v = c.val();
@@ -1157,7 +1133,7 @@ function listenLetters() {
           coupleRef('letters/' + l._key + '/read').set(true);
         }
       });
-    });
+    }, 'connect');
 }
 
 function renderLetterFeed(letters) {
@@ -1226,14 +1202,12 @@ async function saveMilestone() {
 }
 
 function listenMilestones() {
-  coupleRef('milestones')
-    .orderByChild('date')
-    .on('value', snap => {
+  fbOn(coupleRef('milestones').orderByChild('date'), 'value', snap => {
       const milestones = [];
       snap.forEach(c => milestones.push(c.val()));
       milestones.reverse();
       renderTimeline(milestones);
-    });
+    }, 'together');
 }
 
 function renderTimeline(milestones) {
@@ -1295,11 +1269,11 @@ async function saveCountdown() {
 }
 
 function listenCountdowns() {
-  coupleRef('countdowns').on('value', snap => {
+  fbOn(coupleRef('countdowns'), 'value', snap => {
     const countdowns = [];
     snap.forEach(c => countdowns.push(c.val()));
     renderCountdowns(countdowns);
-  });
+  }, 'together');
 }
 
 function renderCountdowns(countdowns) {
@@ -1419,10 +1393,10 @@ async function submitDailyAnswer() {
 
 function listenDailyAnswers() {
   const today = localDate();
-  coupleRef('dailyAnswers/' + today).on('value', snap => {
+  fbOn(coupleRef('dailyAnswers/' + today), 'value', snap => {
     const data = snap.val() || {};
     renderDailyAnswers(data);
-  });
+  }, 'together');
 }
 
 function renderDailyAnswers(data) {
@@ -1453,12 +1427,12 @@ function renderDailyAnswers(data) {
 
 // ===== STREAKS =====
 function listenStreak() {
-  coupleRef('streaks').on('value', snap => {
+  fbOn(coupleRef('streaks'), 'value', snap => {
     const data = snap.val() || { current: 0, longest: 0 };
     const countEl = document.getElementById('streak-count');
     if (countEl) countEl.textContent = data.current || 0;
     updateDashStreak(data);
-  });
+  }, 'mood');
 }
 
 async function updateStreak() {
@@ -1534,15 +1508,12 @@ async function submitGratitude() {
 }
 
 function listenGratitude() {
-  coupleRef('gratitude')
-    .orderByChild('timestamp')
-    .limitToLast(20)
-    .on('value', snap => {
+  fbOn(coupleRef('gratitude').orderByChild('timestamp').limitToLast(20), 'value', snap => {
       const entries = [];
       snap.forEach(c => entries.push(c.val()));
       entries.reverse();
       renderGratitude(entries);
-    });
+    }, 'together');
 }
 
 function renderGratitude(entries) {
@@ -1634,10 +1605,7 @@ function initAIBackgroundService() {
     });
   });
   // Listen for nudges
-  coupleRef('ai/nudges/' + user)
-    .orderByChild('timestamp')
-    .limitToLast(5)
-    .on('value', snap => {
+  fbOn(coupleRef('ai/nudges/' + user).orderByChild('timestamp').limitToLast(5), 'value', snap => {
       aiNudges = [];
       snap.forEach(c => {
         const n = c.val();
@@ -1645,7 +1613,7 @@ function initAIBackgroundService() {
       });
       if (typeof renderAINudgesEnhanced === 'function') renderAINudgesEnhanced();
       else renderAINudges();
-    });
+    }, '_global');
 }
 
 async function runAIRole(roleKey, role) {
@@ -1700,7 +1668,7 @@ function buildContentCuratorPrompt() {
 
 Today is ${today}. Generate fresh content for the app. Return a JSON object with these keys:
 - "dailyQuestion": A thoughtful relationship question for them to answer together
-- "dateIdea": A creative date night idea (consider both Togolese/West African and Texan influences)
+- "dateIdea": A creative date night idea
 - "affirmation": A personalized affirmation for the day
 - "conversationStarter": A fun/deep conversation topic
 - "challenge": A small couples challenge for the day (e.g., "Cook a meal together from a new cuisine")
@@ -1825,7 +1793,7 @@ async function gatherWellnessData() {
   const today = new Date().toISOString().split('T')[0];
   const [nutrSnap, fitSnap] = await Promise.all([
     coupleRef('nutrition/' + user + '/meals/' + today).once('value'),
-    coupleRef('fitness/workouts').orderByChild('timestamp').limitToLast(10).once('value')
+    coupleRef('fitness/' + user + '/workouts').orderByChild('timestamp').limitToLast(10).once('value')
   ]);
   const workouts = [];
   fitSnap.forEach(c => workouts.push(c.val()));
@@ -2051,7 +2019,7 @@ async function gatherWeeklyData() {
       coupleRef('personalGoals/shared').once('value'),
       coupleRef('checkins').orderByChild('timestamp').startAt(weekAgo).once('value'),
       coupleRef('taps').orderByChild('timestamp').startAt(weekAgo).once('value'),
-      coupleRef('fitness/workouts').orderByChild('timestamp').startAt(weekAgo).once('value'),
+      coupleRef('fitness/' + user + '/workouts').orderByChild('timestamp').startAt(weekAgo).once('value'),
       coupleRef('finances/expenses').orderByChild('timestamp').startAt(weekAgo).once('value')
     ]);
 
@@ -2536,7 +2504,7 @@ Return a JSON object:
   "followUps": ["Follow-up question 1", "Follow-up question 2", "Follow-up question 3"]
 }
 
-Be warm, specific, culturally aware (Togolese + Texan couple). Make the question feel tailored, not generic. Return ONLY valid JSON.`;
+Be warm, specific, and make the question feel tailored, not generic. Return ONLY valid JSON.`;
 }
 
 function renderAIDTSession() {

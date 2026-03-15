@@ -1,8 +1,3 @@
-// ===== THEME =====
-function applyTheme() {
-  // Light mode is the default via CSS variables; nothing to do unless dark mode is added
-}
-
 // ===== PULL TO REFRESH =====
 function initPullToRefresh() {
   let startY = 0;
@@ -153,11 +148,6 @@ function closeModal() {
   window.scrollTo(0, scrollY);
 }
 
-// ===== PRIVACY =====
-function enforcePrivacy() {
-  // Hide partner-only sections when viewing your own private space
-}
-
 // ===== DYNAMIC VISUALS =====
 function initDynamicVisuals() {
   // Sky scene is initialized separately via initSkyScene
@@ -166,9 +156,6 @@ function initDynamicVisuals() {
 
 // ===== BOOT =====
 document.addEventListener('DOMContentLoaded', () => {
-  // Apply light theme
-  applyTheme();
-
   // Init pull to refresh
   initPullToRefresh();
 
@@ -409,7 +396,7 @@ function updateCompat() {
     ring.setAttribute('stroke-dashoffset', String(offset));
 
     if (pct >= 80) showConfetti();
-  });
+  }).catch(function(e) { console.warn('updateCompatRing failed:', e); });
 }
 
 // ===== CONFETTI ANIMATION =====
@@ -579,6 +566,40 @@ function renderDashNudges() {
           });
         });
     });
+}
+
+// ===== DASHBOARD UPCOMING EVENTS =====
+function renderDashUpcomingEvents() {
+  const card = document.getElementById('dash-upcoming-events');
+  const list = document.getElementById('dash-upcoming-list');
+  if (!card || !list) return;
+  if (typeof calendarEvents === 'undefined') return;
+  const today = localDate();
+  const upcoming = Object.entries(calendarEvents)
+    .filter(([k, e]) => e.date >= today)
+    .sort((a, b) => a[1].date.localeCompare(b[1].date))
+    .slice(0, 3);
+  if (!upcoming.length) {
+    card.classList.add('d-none');
+    return;
+  }
+  card.classList.remove('d-none');
+  const colors = { joint: 'var(--lavender)', partner1: 'var(--rose)', partner2: 'var(--teal)', recurring: 'var(--gold)', countdown: 'var(--gold)' };
+  list.innerHTML = upcoming
+    .map(([k, e]) => {
+      const dt = new Date(e.date + 'T00:00:00');
+      const diff = Math.ceil((dt - new Date(today + 'T00:00:00')) / 86400000);
+      const when = diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : diff + ' days';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer" onclick="go('calendar')">
+        <div style="width:4px;height:28px;border-radius:2px;background:${colors[e.type] || 'var(--gold)'}"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:500;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.title)}</div>
+          <div style="font-size:11px;color:var(--t3)">${dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}${e.time ? ' · ' + e.time : ''}</div>
+        </div>
+        <div style="font-size:11px;color:${colors[e.type] || 'var(--gold)'};white-space:nowrap">${when}</div>
+      </div>`;
+    })
+    .join('');
 }
 
 // ===== DASHBOARD UPCOMING COUNTDOWN =====
@@ -776,7 +797,7 @@ function updateHubStatuses() {
     var total = 0;
     Promise.all(['culture/phrases', 'culture/traditions', 'culture/recipes'].map(function(p) {
       return coupleRef(p).once('value').then(function(s) { if (s.exists()) s.forEach(function() { total++; }); });
-    })).then(function() { _hubBadge(el, total > 0 ? total + ' items' : 'Start'); });
+    })).then(function() { _hubBadge(el, total > 0 ? total + ' items' : 'Start'); }).catch(function(e) { console.warn('hub culture stats failed:', e); });
   });
 
   // Foundation — simple count
@@ -929,7 +950,7 @@ function updateHLStats() {
         `<div class="mod-stat"><div class="mod-stat-num">${meals}</div><div class="mod-stat-label">Meals</div></div>`
       );
     el.innerHTML = parts.join('');
-  });
+  }).catch(function(e) { console.warn('updateHLStats failed:', e); });
 }
 
 function updateCXStats() {
@@ -963,7 +984,7 @@ function updateCXStats() {
       <div class="mod-stat"><div class="mod-stat-num">${phrases}</div><div class="mod-stat-label">Phrases</div></div>
       <div class="mod-stat"><div class="mod-stat-num">${traditions}</div><div class="mod-stat-label">Traditions</div></div>
       <div class="mod-stat"><div class="mod-stat-num">${recipes}</div><div class="mod-stat-label">Recipes</div></div>`;
-  });
+  }).catch(function(e) { console.warn('updateCXStats failed:', e); });
 }
 
 function updateSPStats() {
@@ -997,7 +1018,7 @@ function updateSPStats() {
       <div class="mod-stat"><div class="mod-stat-num">${prayers}</div><div class="mod-stat-label">Prayers</div></div>
       <div class="mod-stat"><div class="mod-stat-num">${blessings}</div><div class="mod-stat-label">Blessings</div></div>
       <div class="mod-stat"><div class="mod-stat-num">${intentions}</div><div class="mod-stat-label">Intentions</div></div>`;
-  });
+  }).catch(function(e) { console.warn('updateSPStats failed:', e); });
 }
 
 function updateFDNStats() {
@@ -1025,7 +1046,7 @@ function updateFDNStats() {
     el.innerHTML = `
       <div class="mod-stat"><div class="mod-stat-num">${values}</div><div class="mod-stat-label">Values</div></div>
       <div class="mod-stat"><div class="mod-stat-num">${agrees}/6</div><div class="mod-stat-label">Agreed</div></div>`;
-  });
+  }).catch(function(e) { console.warn('updateFDNStats failed:', e); });
 }
 
 function updateFAMStats() {
@@ -1059,7 +1080,7 @@ function updateFAMStats() {
         `<div class="mod-stat"><div class="mod-stat-num">${goals}</div><div class="mod-stat-label">Goals</div></div>`
       );
     el.innerHTML = parts.join('');
-  });
+  }).catch(function(e) { console.warn('updateFAMStats failed:', e); });
 }
 
 function updateGamesStats() {
@@ -1400,7 +1421,7 @@ function calculateRelationshipPulse() {
       if (labelEl) labelEl.textContent = 'Getting started';
       if (tipEl) tipEl.textContent = 'Start with a mood check-in';
     }
-  });
+  }).catch(function(e) { console.warn('computeRelHealthScore failed:', e); });
 }
 
 // ===== ACTIVITY FEED =====
@@ -1420,10 +1441,9 @@ function renderActivityFeed() {
   if (!db) return;
   if (_activityListening) return;
   _activityListening = true;
-  coupleRef('activity')
+  fbOn(coupleRef('activity')
     .orderByChild('timestamp')
-    .limitToLast(12)
-    .on('value', snap => {
+    .limitToLast(12), 'value', snap => {
       const el = document.getElementById('dash-activity-feed');
       if (!el) return;
       const items = [];
@@ -1450,7 +1470,7 @@ function renderActivityFeed() {
         html += `<div id="activity-toggle" class="act-more" onclick="toggleActivityFeed()">Show more</div>`;
       }
       el.innerHTML = html;
-    });
+    }, '_global');
 }
 
 function toggleActivityFeed() {
@@ -1629,7 +1649,7 @@ function renderSmartNudges() {
       })
       .join('');
     container.style.display = nudges.length === 0 ? 'none' : 'flex';
-  });
+  }).catch(function(e) { console.warn('renderSmartNudges failed:', e); });
 }
 
 // ===== DAILY TASKS CHECKLIST =====
@@ -1680,7 +1700,7 @@ function renderDailyTasks() {
 
     // Trigger daily notification check
     checkDailyNotification(tasks, doneCount);
-  });
+  }).catch(function(e) { console.warn('renderDailyTasks failed:', e); });
 }
 
 function renderTaskList(containerId, listId, countId, tasks, doneCount) {
@@ -1761,7 +1781,7 @@ function scheduleDailyReminder() {
         sendNotification(pending);
         localStorage.setItem(REMINDER_KEY, today);
       }
-    });
+    }).catch(function(e) { console.warn('dailyReminder check failed:', e); });
   }
 
   // Initial check after a longer delay (don't notify right after login)
@@ -2755,10 +2775,9 @@ function sendInAppNotif(type, message, icon) {
 
 function listenNotifications() {
   if (!db || !user) return;
-  coupleRef('notifications/' + user)
+  fbOn(coupleRef('notifications/' + user)
     .orderByChild('timestamp')
-    .limitToLast(1)
-    .on('child_added', function (snap) {
+    .limitToLast(1), 'child_added', function (snap) {
       var notif = snap.val();
       if (!notif || notif.read) return;
       // Only show if recent (within last 10 seconds)
@@ -2776,7 +2795,7 @@ function listenNotifications() {
       if (notif.type === 'mood-sound' && notif.mood && typeof playMoodSound === 'function') {
         playMoodSound(notif.mood);
       }
-    });
+    }, '_global');
 }
 
 // Map notification types to the page they should navigate to
