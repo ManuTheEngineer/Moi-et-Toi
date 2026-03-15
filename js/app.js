@@ -36,6 +36,7 @@ let _coupleId = null;
 // coupleRef('moods/abc') → db.ref('couples/{coupleId}/moods/abc')
 // Throws if called before couple context is resolved — never writes to root
 function coupleRef(path) {
+  if (!path) path = '';
   if (_coupleId) return db.ref('couples/' + _coupleId + '/' + path);
   console.error('coupleRef() called before _coupleId resolved. Path: ' + path);
   throw new Error('coupleRef requires _coupleId');

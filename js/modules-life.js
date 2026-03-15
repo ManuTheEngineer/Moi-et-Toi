@@ -1389,7 +1389,7 @@ function _migratePersonalToPrivate() {
 // Migrate flat legacy commitments (root-level agreements/{pushId}) into agreements/active/
 // Legacy users stored commitments directly under agreements/ — not in the active/ sub-path.
 function _migrateLegacyFlatAgreements() {
-  coupleRef('agreements/_legacyFlatMigrated').once('value', function (snap) {
+  coupleRef('agreements/_legacyFlatMigratedV2').once('value', function (snap) {
     if (snap.val()) return;
     coupleRef('agreements').once('value', function (agreeSnap) {
       var batch = {};
@@ -1397,7 +1397,8 @@ function _migrateLegacyFlatAgreements() {
       // Known sub-paths that are NOT orphaned commitments
       var RESERVED = {
         active: 1, personal: 1, proposals: 1, daily: 1, onboarding: 1,
-        _migrated: 1, _personalMigrated: 1, _legacyFlatMigrated: 1
+        _migrated: 1, _personalMigrated: 1, _legacyFlatMigrated: 1,
+        _legacyFlatMigratedV2: 1, undefined: 1
       };
       agreeSnap.forEach(function (c) {
         if (RESERVED[c.key]) return;
@@ -1421,12 +1422,29 @@ function _migrateLegacyFlatAgreements() {
         // Remove from old flat location
         batch['agreements/' + c.key] = null;
       });
-      batch['agreements/_legacyFlatMigrated'] = true;
-      if (found) {
-        coupleRef().update(batch);
-      } else {
-        coupleRef('agreements/_legacyFlatMigrated').set(true);
-      }
+
+      batch['agreements/_legacyFlatMigratedV2'] = true;
+
+      // Also recover data previously mis-migrated to couples/{id}/undefined/
+      // (caused by coupleRef() being called without a path argument)
+      coupleRef('undefined/agreements/active').once('value', function (misSnap) {
+        if (misSnap.exists()) {
+          misSnap.forEach(function (c) {
+            var d = c.val();
+            if (!d || typeof d !== 'object' || !d.text) return;
+            found = true;
+            batch['agreements/active/' + c.key] = d;
+          });
+          // Clean up the mis-migrated 'undefined' node
+          batch['undefined'] = null;
+        }
+
+        if (found) {
+          coupleRef('').update(batch);
+        } else {
+          coupleRef('agreements/_legacyFlatMigratedV2').set(true);
+        }
+      });
     });
   });
 }
