@@ -568,6 +568,40 @@ function renderDashNudges() {
     });
 }
 
+// ===== DASHBOARD UPCOMING EVENTS =====
+function renderDashUpcomingEvents() {
+  const card = document.getElementById('dash-upcoming-events');
+  const list = document.getElementById('dash-upcoming-list');
+  if (!card || !list) return;
+  if (typeof calendarEvents === 'undefined') return;
+  const today = localDate();
+  const upcoming = Object.entries(calendarEvents)
+    .filter(([k, e]) => e.date >= today)
+    .sort((a, b) => a[1].date.localeCompare(b[1].date))
+    .slice(0, 3);
+  if (!upcoming.length) {
+    card.classList.add('d-none');
+    return;
+  }
+  card.classList.remove('d-none');
+  const colors = { joint: 'var(--lavender)', partner1: 'var(--rose)', partner2: 'var(--teal)', recurring: 'var(--gold)', countdown: 'var(--gold)' };
+  list.innerHTML = upcoming
+    .map(([k, e]) => {
+      const dt = new Date(e.date + 'T00:00:00');
+      const diff = Math.ceil((dt - new Date(today + 'T00:00:00')) / 86400000);
+      const when = diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : diff + ' days';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer" onclick="go('calendar')">
+        <div style="width:4px;height:28px;border-radius:2px;background:${colors[e.type] || 'var(--gold)'}"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:500;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(e.title)}</div>
+          <div style="font-size:11px;color:var(--t3)">${dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}${e.time ? ' · ' + e.time : ''}</div>
+        </div>
+        <div style="font-size:11px;color:${colors[e.type] || 'var(--gold)'};white-space:nowrap">${when}</div>
+      </div>`;
+    })
+    .join('');
+}
+
 // ===== DASHBOARD UPCOMING COUNTDOWN =====
 function renderDashCountdown() {
   // Find nearest upcoming countdown and show as a nudge pill

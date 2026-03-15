@@ -2296,7 +2296,36 @@ function listenCalendarEvents() {
   fbOn(coupleRef('calendar'), 'value', snap => {
     calendarEvents = snap.val() || {};
     renderCalendar();
+    renderPlanUpcoming();
+    if (typeof renderDashUpcomingEvents === 'function') renderDashUpcomingEvents();
   }, 'calendar');
+}
+
+// Render upcoming calendar events in the Plan hub "Coming Up" section
+function renderPlanUpcoming() {
+  const container = document.getElementById('plan-upcoming');
+  if (!container) return;
+  const today = localDate();
+  const upcoming = Object.entries(calendarEvents)
+    .filter(([k, e]) => e.date >= today)
+    .sort((a, b) => a[1].date.localeCompare(b[1].date))
+    .slice(0, 5);
+  if (!upcoming.length) {
+    container.innerHTML = '<div class="hub-upcoming-empty"><div class="c-t3" style="font-size:12px">No upcoming events</div><button class="hub-upcoming-add" onclick="go(\'calendar\')">Add to Calendar</button></div>';
+    return;
+  }
+  const colors = { joint: 'var(--lavender)', partner1: 'var(--rose)', partner2: 'var(--teal)', recurring: 'var(--gold)', countdown: 'var(--gold)' };
+  container.innerHTML = upcoming
+    .map(([k, e]) => {
+      const dt = new Date(e.date + 'T00:00:00');
+      const dateLabel = dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return `<div class="card-data" style="margin-bottom:6px;cursor:pointer" onclick="go('calendar')">
+        <div class="cd-accent" style="background:${colors[e.type] || 'var(--gold)'}"></div>
+        <div class="cd-number" style="font-size:11px;color:${colors[e.type] || 'var(--gold)'}">${dateLabel}</div>
+        <div class="cd-info"><div class="cd-label">${esc(e.title)}</div><div class="cd-sub">${e.type}${e.time ? ' · ' + e.time : ''}</div></div>
+      </div>`;
+    })
+    .join('');
 }
 
 function renderCalendar() {
