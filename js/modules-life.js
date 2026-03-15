@@ -1185,6 +1185,15 @@ function listenAgreements() {
 
 // Re-read agreement data and render (for use after lazy template injection)
 function refreshAgreements() {
+  if (!db || !user) return;
+
+  // Self-heal: if listeners were never set up (e.g. error during finishLogin), do it now
+  if (!_agreeRefs.length) {
+    listenAgreements();
+    // .on('value') fires immediately with current data; DOM exists now so it will render
+    return;
+  }
+
   _agreeRefs.forEach(function (entry) {
     entry.ref.once('value', entry.cb);
   });
@@ -1285,7 +1294,8 @@ function deletePrivateCommitment(key) {
 /* ---------- migration: onboarding + defaults → active ---------- */
 
 function _migrateOnboardingAgreements() {
-  coupleRef('agreements/_migrated').once('value', function (snap) {
+  // V2 flag ensures re-run after coupleRef() path bug fix
+  coupleRef('agreements/_migratedV2').once('value', function (snap) {
     if (snap.val()) return;
 
     var batch = {};
@@ -1341,30 +1351,37 @@ function _migrateOnboardingAgreements() {
           count++;
         });
 
-        // Default communication agreements (both approved)
-        var defaults = [
-          "We don't go to bed angry",
-          'We use "I feel" not "you always"',
-          'We take a pause when heated before responding',
-          "We validate each other's feelings, even when we disagree",
-          'We never bring up past resolved issues',
-          'We choose understanding over winning'
-        ];
-        defaults.forEach(function (text) {
-          var key = coupleRef('agreements/active').push().key;
-          batch['agreements/active/' + key] = {
-            text: text,
-            source: 'default',
-            timestamp: Date.now() - 1000 * count++,
-            signedOff: true,
-            approvals: { partner1: true, partner2: true }
-          };
-        });
+        // Check if defaults already exist (avoid duplicates from re-migration)
+        coupleRef('agreements/active').orderByChild('source').equalTo('default').once('value', function (existSnap) {
+          if (!existSnap.numChildren()) {
+            // Default communication agreements (both approved by real UIDs)
+            var defaultApprovals = {};
+            defaultApprovals[user] = true;
+            if (partner) defaultApprovals[partner] = true;
+            var defaults = [
+              "We don't go to bed angry",
+              'We use "I feel" not "you always"',
+              'We take a pause when heated before responding',
+              "We validate each other's feelings, even when we disagree",
+              'We never bring up past resolved issues',
+              'We choose understanding over winning'
+            ];
+            defaults.forEach(function (text) {
+              var key = coupleRef('agreements/active').push().key;
+              batch['agreements/active/' + key] = {
+                text: text,
+                source: 'default',
+                timestamp: Date.now() - 1000 * count++,
+                signedOff: true,
+                approvals: defaultApprovals
+              };
+            });
+          }
 
-        if (count > 0) {
-          batch['agreements/_migrated'] = true;
-          coupleRef().update(batch);
-        }
+          // Always set the flag, even if count is 0 (prevents re-running)
+          batch['agreements/_migratedV2'] = true;
+          coupleRef('').update(batch);
+        });
       });
     });
   });
